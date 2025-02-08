@@ -13,15 +13,26 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
 
     return (
         <AletheiaModal
-            className="ant-modal-content"
             open={open}
-            footer={false}
             namespace={nameSpace}
             onCancel={handleCancel}
-            title={t("orderModal:title")}
+            style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+            title={
+                <h2
+                    style={{
+                        fontFamily: "open sans, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        textAlign: "center",
+                        textTransform: "uppercase",
+                    }}
+                >
+                    {t("orderModal:title")}
+                </h2>
+            }
         >
             <OrderRadio value={value} setValue={setValue} />
-
+            
             <div
                 style={{
                     marginTop: 30,
@@ -29,7 +40,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                     justifyContent: "space-between",
                 }}
             >
-                <ModalCancelButton type="text" onClick={handleCancel}>
+                <ModalCancelButton type="button" onClick={handleCancel}>
                     <span
                         style={{
                             textDecorationLine: "underline",

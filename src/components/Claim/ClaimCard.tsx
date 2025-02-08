@@ -1,4 +1,4 @@
-import { Col, Comment, Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
@@ -7,7 +7,6 @@ import ClaimSummary from "./ClaimSummary";
 import Button, { ButtonType } from "../Button";
 import ClaimCardHeader from "./ClaimCardHeader";
 import colors from "../../styles/colors";
-import styled from "styled-components";
 import ClaimSummaryContent from "./ClaimSummaryContent";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 import actions from "../../store/actions";
@@ -17,15 +16,6 @@ import { useAppSelector } from "../../store/store";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
-
-const { Paragraph } = Typography;
-
-const CommentStyled = styled(Comment)`
-    width: 100%;
-    .ant-comment-inner {
-        padding: 0;
-    }
-`;
 
 const ClaimCard = ({
     personality,
@@ -87,51 +77,45 @@ const ClaimCard = ({
 
     return (
         <CardBase style={{ padding: "16px 12px" }}>
-            <Row style={{ width: "100%" }}>
-                <CommentStyled
-                    author={
-                        <ClaimCardHeader
-                            personality={personality}
-                            date={claim?.date}
-                            claimType={claim?.contentModel}
-                        />
-                    }
-                    content={
-                        <ClaimSummary
-                            style={{
-                                padding: "12px 16px",
-                                width: "100%",
-                            }}
-                        >
-                            {collapsed ? (
-                                <ClaimSummaryContent
-                                    claimTitle={claim?.title}
-                                    claimContent={claimContent}
-                                    contentModel={claim?.contentModel}
-                                    href={href}
-                                />
-                            ) : (
-                                <ClaimSpeechBody
-                                    handleSentenceClick={
-                                        dispatchPersonalityAndClaim
-                                    }
-                                    paragraphs={paragraphs}
-                                    showHighlights={true}
-                                />
-                            )}
-                        </ClaimSummary>
-                    }
+            <Grid container style={{ width: "100%" }}>
+                <ClaimCardHeader
+                    personality={personality}
+                    date={claim?.date}
+                    claimType={claim?.contentModel}
                 />
-            </Row>
-            <Row
+                <ClaimSummary
+                    style={{
+                        padding: "12px 16px",
+                        width: "100%",
+                    }}
+                >
+                    {collapsed ? (
+                        <ClaimSummaryContent
+                            claimTitle={claim?.title}
+                            claimContent={claimContent}
+                            contentModel={claim?.contentModel}
+                            href={href}
+                        />
+                    ) : (
+                        <ClaimSpeechBody
+                            handleSentenceClick={
+                                dispatchPersonalityAndClaim
+                            }
+                            paragraphs={paragraphs}
+                            showHighlights={true}
+                        />
+                    )}
+                </ClaimSummary>
+            </Grid>
+            <Grid container
                 style={{
+                    justifyContent:"space-between",
                     padding: "4px 15px 0 0",
                     width: "100%",
                 }}
-                justify="space-between"
             >
-                <Col
-                    span={16}
+                <Grid item
+                    xs={8}
                     style={{
                         display: "flex",
                         flexWrap: "wrap",
@@ -152,7 +136,8 @@ const ClaimCard = ({
                             })}
                         </p>
                     )}{" "}
-                    <Paragraph
+                    <Typography
+                        variant="body1"
                         style={{
                             fontSize: "10px",
                             lineHeight: "18px",
@@ -178,9 +163,9 @@ const ClaimCard = ({
                                 ({review?.count})
                             </span>
                         )}
-                    </Paragraph>
-                </Col>
-                <Col>
+                    </Typography>
+                </Grid>
+                <Grid item>
                     {!isInsideDebate && (
                         <Button
                             type={ButtonType.blue}
@@ -201,8 +186,8 @@ const ClaimCard = ({
                             </span>
                         </Button>
                     )}
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </CardBase>
     );
 };

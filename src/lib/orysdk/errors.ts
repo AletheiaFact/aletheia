@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { MessageManager } from "../../components/Messages";
 import { AxiosError } from "axios";
 import { TFunction } from "i18next";
 import { NextRouter } from "next/router";
@@ -29,15 +29,15 @@ export function handleGetFlowError<S>(
                 await router.push("/");
                 return;
             case "self_service_flow_return_to_forbidden":
-                message.error(t("oryErrors:returnAddressForbidden"));
+                MessageManager.showMessage("error", t("oryErrors:returnAddressForbidden"));
                 await requestNewFlow();
                 return;
             case "self_service_flow_expired":
-                message.error(t("oryErrors:flowExpired"));
+                MessageManager.showMessage("error", t("oryErrors:flowExpired"));
                 await requestNewFlow();
                 return;
             case "security_csrf_violation":
-                message.error(t("oryErrors:csrfViolation"));
+                MessageManager.showMessage("error", t("oryErrors:csrfViolation"));
                 await requestNewFlow();
 
                 return;

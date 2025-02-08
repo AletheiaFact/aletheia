@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { Col, Layout, Row } from "antd";
+import { Box, Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { useLayoutEffect, useState } from "react";
-
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
@@ -20,35 +19,33 @@ const Footer = () => {
 
     useLayoutEffect(() => {
         setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
     return (
-        <Layout.Footer
-            style={{
+        <Box
+            component="footer"
+            sx={{
                 textAlign: "center",
                 background: backgroundColor,
                 color: colors.white,
                 padding: "32px",
             }}
         >
-            <Row gutter={24} justify="center">
-                <Col lg={8} md={10} sm={24}>
+            <Grid container spacing={3} justifyContent="center">
+                <Grid item lg={4} md={5} sm={12}>
                     <AletheiaSocialMediaFooter />
-
-                    <Row
-                        style={{
-                            marginTop: "10px",
-                            width: "100%",
+                    <Box
+                        sx={{
+                            mt: 1,
                             textAlign: "center",
+                            display: "flex",
                             flexDirection: "column",
-                            marginBottom: vw?.sm ? "32px" : "0",
+                            mb: vw?.sm ? 4 : 0,
                         }}
                     >
-                        <Col style={{ marginBottom: "16px" }}>
+                        <Box sx={{ mb: 2 }}>
                             <a
                                 rel="license noreferrer"
                                 href="https://creativecommons.org/licenses/by-sa/4.0/"
@@ -61,7 +58,7 @@ const Footer = () => {
                                     src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"
                                 />
                             </a>
-                        </Col>
+                        </Box>
 
                         {t("footer:creativeCommons")}
                         <a
@@ -77,49 +74,41 @@ const Footer = () => {
                             Creative Commons Attribution-ShareAlike 4.0
                             International License
                         </a>
-                    </Row>
-                </Col>
-                <Col
-                    lg={8}
-                    md={10}
-                    sm={24}
-                    style={{
+                    </Box>
+                </Grid>
+                <Grid
+                    item
+                    lg={4}
+                    md={5}
+                    sm={12}
+                    sx={{
                         display: "flex",
-                        justifyContent: "space-between",
                         flexDirection: "column",
+                        justifyContent: "space-between",
                     }}
                 >
                     <FooterInfo />
-                    <Row>
-                        <h3
-                            style={{
-                                width: "100%",
+                    <Box sx={{ mt: vw?.sm ? 8 : 0 }}>
+                        <Typography
+                            variant="h6"
+                            sx={{
                                 fontSize: "23px",
                                 color: colors.white,
-                                marginBottom: 0,
-                                marginTop: vw?.sm ? "64px" : "0",
+                                mb: 0,
                                 textAlign: "center",
                             }}
                         >
                             {t("footer:copyright", {
                                 date: new Date().getFullYear(),
                             })}
-                        </h3>
-                    </Row>
-                </Col>
-                <Col
-                    lg={8}
-                    md={10}
-                    sm={24}
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                    }}
-                >
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item lg={4} md={5} sm={12}>
                     <AletheiaInfo />
-                </Col>
-            </Row>
-        </Layout.Footer>
+                </Grid>
+            </Grid>
+        </Box>
     );
 };
 

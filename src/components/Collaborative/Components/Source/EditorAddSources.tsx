@@ -4,7 +4,7 @@ import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
-import { PlusOutlined } from "@ant-design/icons";
+import AddIcon from '@mui/icons-material/Add';
 import { URL_PATTERN } from "../../hooks/useFloatingLinkState";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
@@ -106,7 +106,7 @@ const EditorAddSources = ({
                             onClick={() => setShowDialog(true)}
                             data-cy="testAddEditorSources"
                         >
-                            <PlusOutlined style={{ fontSize: "24px" }} />
+                            <AddIcon style={{ fontSize: "24px" }} />
                         </AletheiaButton>
                     )}
                 </>

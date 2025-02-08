@@ -3,7 +3,7 @@ import "remirror/styles/all.css";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useCommands, useHelpers } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import CommentsList from "./CommentsList";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useSelector } from "@xstate/react";
@@ -77,7 +77,7 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     ]);
 
     return (
-        <Row
+        <Grid container
             style={{
                 order: 3,
                 width: "280px",
@@ -96,7 +96,7 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
             )}
 
             <CommentsList comments={comments} user={user} />
-        </Row>
+        </Grid>
     );
 };
 

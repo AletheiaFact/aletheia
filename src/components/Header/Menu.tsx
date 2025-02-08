@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
 import AletheiaButton from "../Button";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined } from "@mui/icons-material";
 import colors from "../../styles/colors";
 
 const Menu = () => {
@@ -17,8 +17,8 @@ const Menu = () => {
             }}
         >
             <MenuOutlined
+                fontSize="small"
                 style={{
-                    fontSize: "16px",
                     color: colors.white,
                 }}
             />

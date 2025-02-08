@@ -1,6 +1,6 @@
 import React from "react";
 import CTARegistration from "../Home/CTARegistration";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import SentenceReportComments from "./SentenceReportComments";
 import SentenceReportContent from "./SentenceReportContent";
 import { isUserLoggedIn } from "../../atoms/currentUser";
@@ -14,7 +14,7 @@ const SentenceReportPreview = ({
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     return (
-        <Col span={componentStyle.span} offset={componentStyle.offset}>
+        <Grid item xs={componentStyle.span}>
             {canShowReportPreview && (
                 <SentenceReportComments context={context} />
             )}
@@ -25,7 +25,7 @@ const SentenceReportPreview = ({
                 href={href}
             />
             {!isLoggedIn && <CTARegistration />}
-        </Col>
+        </Grid>
     );
 };
 

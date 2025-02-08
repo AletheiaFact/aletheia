@@ -1,11 +1,9 @@
-import { Col, Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import { ContentModelEnum } from "../../types/enums";
 import LocalizedDate from "../LocalizedDate";
-
-const { Paragraph } = Typography;
 
 const ClaimCardHeader = ({
     personality,
@@ -23,8 +21,8 @@ const ClaimCardHeader = ({
 
     const speechTypeTranslation = speechTypeMapping[claimType];
     return (
-        <Col
-            span={24}
+        <Grid item
+            xs={12}
             style={{
                 color: colors.blackSecondary,
                 width: "100%",
@@ -32,7 +30,8 @@ const ClaimCardHeader = ({
         >
             {personality && (
                 <>
-                    <Paragraph
+                    <Typography
+                        variant="body1"
                         style={{
                             fontSize: "14px",
                             lineHeight: "20px",
@@ -42,10 +41,11 @@ const ClaimCardHeader = ({
                         }}
                     >
                         {personality.name}
-                    </Paragraph>
+                    </Typography>
 
-                    <Row>
-                        <Paragraph
+                    <Grid container>
+                        <Typography
+                            variant="body1"
                             style={{
                                 fontSize: 10,
                                 fontWeight: 400,
@@ -54,13 +54,14 @@ const ClaimCardHeader = ({
                             }}
                         >
                             {personality.description}
-                        </Paragraph>
-                    </Row>
+                        </Typography>
+                    </Grid>
                 </>
             )}
-            <Row>
+            <Grid container>
                 {!isImage ? (
-                    <Paragraph
+                    <Typography
+                        variant="body1"
                         style={{
                             fontSize: 10,
                             fontWeight: 400,
@@ -76,9 +77,10 @@ const ClaimCardHeader = ({
                         <span style={{ fontWeight: 700 }}>
                             {speechTypeTranslation}
                         </span>
-                    </Paragraph>
+                    </Typography>
                 ) : (
-                    <Paragraph
+                    <Typography
+                        variant="body1"
                         style={{
                             fontSize: 10,
                             fontWeight: 400,
@@ -90,10 +92,10 @@ const ClaimCardHeader = ({
                         {t("claim:cardHeader3")}
                         &nbsp;
                         <LocalizedDate date={date || new Date()} />
-                    </Paragraph>
+                    </Typography>
                 )}
-            </Row>
-        </Col>
+            </Grid>
+        </Grid>
     );
 };
 

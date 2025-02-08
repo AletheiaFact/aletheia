@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -68,7 +68,7 @@ const createSource = (t, router, source: any = {}) => {
     return request
         .post("/", source)
         .then((response) => {
-            message.success(t("sources:sourcesCreateSuccess"));
+            MessageManager.showMessage("success", t("sources:sourcesCreateSuccess"));
             router.push(
                 nameSpace === NameSpaceEnum.Main
                     ? "/sources"
@@ -78,7 +78,7 @@ const createSource = (t, router, source: any = {}) => {
         })
         .catch((err) => {
             console.error(err);
-            message.error(t("sources:sourcesCreateError"));
+            MessageManager.showMessage("error", t("sources:sourcesCreateError"));
         });
 };
 
@@ -89,7 +89,7 @@ const getById = (id, t, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            message.error("error"); //TODO: Improve feedback message
+            MessageManager.showMessage("error", t("sources:sourcesErrorFetching")); 
         });
 };
 

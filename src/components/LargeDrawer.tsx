@@ -1,4 +1,4 @@
-import { Drawer } from "antd";
+import { Drawer } from "@mui/material";
 import React from "react";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
@@ -14,15 +14,18 @@ const LargeDrawer = ({
         <Drawer
             open={open}
             onClose={onClose}
-            width={vw?.sm ? "100%" : "60%"}
-            height={vw?.sm ? "85%" : "100%"}
-            placement={vw?.sm ? "bottom" : "right"}
-            bodyStyle={{ padding: 0 }}
-            drawerStyle={{
-                backgroundColor,
+            anchor={vw?.sm ? "bottom" : "right"}
+            variant="temporary"
+            keepMounted={false}
+            sx={{
+                "& .MuiDrawer-paper": {
+                    width: vw?.sm ? "100%" : "60%",
+                    height: vw?.sm ? "85%" : "100%",
+                    backgroundColor,
+                    padding: "0",
+
+                }
             }}
-            closable={false}
-            destroyOnClose
         >
             {children}
         </Drawer>

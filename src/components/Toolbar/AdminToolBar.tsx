@@ -1,6 +1,5 @@
-import { DeleteFilled } from "@ant-design/icons";
-import { Button, Col, Row } from "antd";
-import { Toolbar } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { Button, Grid, Toolbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import HideContentButton from "../HideContentButton";
 import { useRouter } from "next/router";
@@ -93,8 +92,8 @@ const AdminToolBar = ({
     };
 
     return (
-        <Row justify="center">
-            <Col xs={22} lg={18}>
+        <Grid container style={{justifyContent:"center"}}>
+            <Grid item xs={11} lg={9}>
                 <AdminToolBarStyle
                     namespace={nameSpace}
                     position="static"
@@ -112,7 +111,7 @@ const AdminToolBar = ({
                             <Button
                                 onClick={() => setIsDeleteModalVisible(true)}
                             >
-                                <DeleteFilled />
+                                <Delete fontSize="small"/>
                             </Button>
                         </div>
                     </Toolbar>
@@ -128,7 +127,7 @@ const AdminToolBar = ({
                         />
                     </div>
                 )}
-            </Col>
+            </Grid>
 
             <ToolbarActionsModal
                 open={isHideModalVisible}
@@ -160,7 +159,7 @@ const AdminToolBar = ({
                 handleCancel={() => setIsDeleteModalVisible(false)}
                 updatingHideStatus={false}
             />
-        </Row>
+        </Grid>
     );
 };
 

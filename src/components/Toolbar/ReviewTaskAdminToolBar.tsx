@@ -1,5 +1,4 @@
-import { Button, Col, Row } from "antd";
-import { Toolbar } from "@mui/material";
+import { Grid, IconButton, Toolbar } from "@mui/material";
 import React, { useContext } from "react";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AdminToolBarStyle from "./AdminToolBar.style";
@@ -23,8 +22,8 @@ const ReviewTaskAdminToolBar = () => {
     };
 
     return (
-        <Row justify="center" style={{ background: colors.lightNeutral }}>
-            <Col xs={22} lg={18}>
+        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+            <Grid item xs={11} lg={9}>
                 <AdminToolBarStyle
                     namespace={nameSpace}
                     position="static"
@@ -32,14 +31,14 @@ const ReviewTaskAdminToolBar = () => {
                 >
                     <Toolbar className="toolbar">
                         <div className="toolbar-item">
-                            <Button onClick={handleReassignUser}>
+                            <IconButton onClick={handleReassignUser}>
                                 <ManageAccountsIcon />
-                            </Button>
+                            </IconButton>
                         </div>
                     </Toolbar>
                 </AdminToolBarStyle>
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

@@ -13,6 +13,7 @@ const ClaimSourceList = ({ claimId }) => {
         <BaseList
             apiCall={SourceApi.getByTargetId}
             filter={{ targetId: claimId, i18n }}
+            style={{ fontSize: 14, padding: 5 }}
             renderItem={(source) =>
                 source && (
                     <LinkPreview

@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
 import AletheiaAlert from "../AletheiaAlert";
@@ -88,9 +88,9 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
     }
 
     return (
-        <Col span={24}>
+        <Grid item xs={12}>
             <AletheiaAlert {...alertContent} />
-        </Col>
+        </Grid>
     );
 };
 

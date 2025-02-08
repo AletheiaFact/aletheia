@@ -1,7 +1,7 @@
-import { Button } from "antd";
+import { IconButton } from "@mui/material";
 import React from "react";
 import colors from "../../styles/colors";
-import { EditFilled, PlusOutlined } from "@ant-design/icons";
+import { Edit, AddOutlined } from "@mui/icons-material";
 import TagsList from "./TagsList";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
@@ -17,7 +17,7 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
-        <TagDisplayStyled>
+        <TagDisplayStyled item>
             <TagsList
                 tags={tags}
                 editable={isLoggedIn}
@@ -25,18 +25,14 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
             />
 
             {isLoggedIn && (
-                <Button
+                <IconButton
                     onClick={() => setShowTopicsForm((prev: boolean) => !prev)}
                     style={{
-                        padding: "5px",
-                        background: "none",
-                        border: "none",
-                        fontSize: 16,
                         color: colors.primary,
                     }}
                 >
-                    {tags.length ? <EditFilled /> : <PlusOutlined />}
-                </Button>
+                    {tags.length ? <Edit fontSize="small"/> : <AddOutlined fontSize="small"/>}
+                </IconButton>
             )}
         </TagDisplayStyled>
     );

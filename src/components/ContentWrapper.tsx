@@ -1,26 +1,6 @@
-import { Layout, Row } from "antd";
+import { Box, Grid } from "@mui/material";
 import { useRouter } from "next/router";
-import styled from "styled-components";
-
-import colors from "../styles/colors";
-import { queries } from "../styles/mediaQueries";
 import BackButton from "./BackButton";
-
-const { Content } = Layout;
-
-const StyledContent = styled(Content)`
-    padding: 0;
-
-    ${({ layout }: { layout: string }) =>
-        layout === "mobile" &&
-        `
-        padding: 0 30%;
-
-        @media ${queries.sm} {
-            padding: 0 15px;
-        }
-    `}
-`;
 
 const ContentWrapper = ({ children }) => {
     const router = useRouter();
@@ -45,21 +25,31 @@ const ContentWrapper = ({ children }) => {
         : "desktop";
 
     return (
-        <StyledContent layout={layout}>
+        <Box
+            sx={{
+                padding: layout === "mobile" ? "0 30%" : "0",
+                "@media (max-width: 600px)": {
+                    padding: layout === "mobile" ? "0 15px" : "0",
+                },
+            }}
+        >
             {layout === "mobile" && (
-                <Row
-                    style={{
+                <Grid
+                    container
+                    item
+                    xs={12}
+                    sx={{
                         padding: "10px 30px",
-                        background: colors.white,
+                        backgroundColor: "white",
                         boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
-                        margin: "0px",
+                        margin: 0,
                     }}
                 >
                     <BackButton />
-                </Row>
+                </Grid>
             )}
             {children}
-        </StyledContent>
+        </Box>
     );
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { uniqueId } from "remirror";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import CardStyle from "./CardStyle";
 
 interface EditorCardProps {
@@ -17,13 +17,13 @@ const EditorCard = ({
     dataCy,
     forwardRef,
     extra,
-    span = 24,
+    span = 12,
     inputSize = 100,
 }: EditorCardProps) => {
     return (
-        <CardStyle>
+        <CardStyle container>
             <label>{label}</label>
-            <Col span={span} className="card-container">
+            <Grid item xs={span} className="card-container">
                 <div
                     className="card-content"
                     data-cy={dataCy}
@@ -31,7 +31,7 @@ const EditorCard = ({
                 >
                     <p style={{ overflowY: "inherit" }} ref={forwardRef} />
                 </div>
-            </Col>
+            </Grid>
             {extra}
         </CardStyle>
     );

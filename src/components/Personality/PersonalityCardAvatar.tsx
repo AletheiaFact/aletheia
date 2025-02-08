@@ -1,5 +1,5 @@
 import React from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import AletheiaAvatar from "../AletheiaAvatar";
 import { useTranslation } from "next-i18next";
 import PersonalityCardAvatarTooltip from "./PersonalityCardAvatarTooltip";
@@ -8,16 +8,14 @@ const PersonalityCardAvatar = ({
     hoistAvatar,
     personality,
     componentStyle,
-    header,
-    offset = null,
 }) => {
     const { t } = useTranslation();
-    const tooltipOffset = offset || (header ? [-24, 24] : [-4, 4]);
 
     return (
-        <Col
-            span={componentStyle.avatarSpan}
+        <Grid item
+            xs={componentStyle.avatarSpan}
             style={{
+                alignContent: componentStyle.avatarSize < 90 ? undefined : "center",
                 padding: 0,
                 minWidth:
                     componentStyle.avatarSize < 100
@@ -28,9 +26,7 @@ const PersonalityCardAvatar = ({
             {!hoistAvatar && (
                 <PersonalityCardAvatarTooltip
                     isHidden={personality?.isHidden}
-                    offset={tooltipOffset}
                     style={{
-                        padding: componentStyle.hiddenIconSize / 2.5,
                         fontSize: componentStyle.hiddenIconSize,
                     }}
                 >
@@ -43,7 +39,7 @@ const PersonalityCardAvatar = ({
                     />
                 </PersonalityCardAvatarTooltip>
             )}
-        </Col>
+        </Grid>
     );
 };
 export default PersonalityCardAvatar;

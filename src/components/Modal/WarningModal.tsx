@@ -1,6 +1,6 @@
 import React from "react";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Col } from "antd";
+import { ErrorOutlineOutlined } from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
@@ -12,44 +12,44 @@ const WarningModal = ({
     width,
     handleOk,
     handleCancel,
-    footer = false,
     ...props
 }) => {
     const { t } = useTranslation();
 
     return (
         <AletheiaModal
-            className="ant-modal-content"
             open={open}
-            footer={footer}
             onCancel={handleCancel}
             width={width}
             {...props}
+            style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+            title={
+                <Grid item style={{ display: "flex", marginTop: "-4px" }}>
+                    <ErrorOutlineOutlined
+                        style={{ fontSize: 26, color: colors.warning }}
+                    />
+                    <span
+                        style={{
+                            marginLeft: 10,
+                            paddingRight: 28,
+                            fontSize: 16,
+                            fontWeight: 600,
+                            lineHeight: "18px",
+                        }}
+                    >
+                        {t(title)}
+                    </span>
+                </Grid>
+            }
         >
-            <Col style={{ display: "flex", marginTop: "-4px" }}>
-                <ExclamationCircleOutlined
-                    style={{ fontSize: 24, color: colors.warning }}
-                />
-                <span
-                    style={{
-                        marginLeft: 10,
-                        paddingRight: 28,
-                        fontSize: 16,
-                        fontWeight: 600,
-                        lineHeight: "18px",
-                    }}
-                >
-                    {t(title)}
-                </span>
-            </Col>
-            <Col
+            <Grid item
                 style={{
                     marginTop: 16,
                     display: "flex",
                     justifyContent: "space-around",
                 }}
             >
-                <ModalCancelButton type="text" onClick={() => handleCancel()}>
+                <ModalCancelButton type="button" onClick={() => handleCancel()}>
                     <span
                         style={{
                             width: "auto",
@@ -63,7 +63,7 @@ const WarningModal = ({
                 <AletheiaButton onClick={handleOk} type={ButtonType.blue}>
                     {t("warningModal:okButton")}
                 </AletheiaButton>
-            </Col>
+            </Grid>
         </AletheiaModal>
     );
 };

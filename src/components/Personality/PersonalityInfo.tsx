@@ -1,9 +1,7 @@
 import React from "react";
-import { Col, Divider, Row, Typography } from "antd";
+import { Grid, Typography, Divider } from "@mui/material";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
-
-const { Title, Paragraph } = Typography;
 
 interface PersonalityInfo {
     summarized: boolean;
@@ -11,7 +9,7 @@ interface PersonalityInfo {
     personality: any;
     componentStyle: any; //adicionar tipo do componente style
     centralized: boolean;
-    titleLevel: 1 | 2 | 3 | 4 | 5;
+    titleLevel: "h1" | "h2" | "h3" | "h4" | "h5";
 }
 
 export const PersonalityInfo = (props: PersonalityInfo) => {
@@ -19,8 +17,8 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
     const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
     return (
-        <Col
-            span={componentStyle.titleSpan}
+        <Grid item
+            xs={componentStyle.titleSpan}
             className="personality-card-content"
             style={{
                 width: "50%",
@@ -32,7 +30,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
             }}
         >
             {summarized && (
-                <Paragraph
+                <Typography variant="body1"
                     style={{
                         fontSize: "14px",
                         lineHeight: "20px",
@@ -41,11 +39,11 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     }}
                 >
                     {personality.name}
-                </Paragraph>
+                </Typography>
             )}
             {!summarized && (
-                <Title
-                    level={titleLevel}
+                <Typography
+                    variant={titleLevel}
                     style={{
                         fontSize: "24px",
                         lineHeight: "32px",
@@ -54,9 +52,9 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     }}
                 >
                     {personality.name}
-                </Title>
+                </Typography>
             )}
-            <Paragraph
+            <Typography variant="body1"
                 style={{
                     fontSize: summarized ? "10px" : "14px",
                     color: colors.blackSecondary,
@@ -64,16 +62,17 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                 }}
             >
                 {personality.description}
-            </Paragraph>
+            </Typography>
             {summarized &&
                 enableStats &&
                 personality.stats?.total !== undefined && (
-                    <Paragraph
+                    <Typography variant="body1"
                         style={{
                             fontSize: "10px",
                             fontWeight: 600,
                             lineHeight: "15px",
                             color: colors.blackSecondary,
+                            marginBottom: 10,
                         }}
                     >
                         <b>
@@ -81,7 +80,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                                 totalReviews: personality.stats?.total,
                             })}
                         </b>
-                    </Paragraph>
+                    </Typography>
                 )}
             {!summarized && personality.wikipedia && (
                 <a
@@ -99,11 +98,11 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     {t("personality:wikipediaPage")}
                 </a>
             )}
-            {!summarized && <Divider style={{ margin: "16px 0" }} />}
+            {!summarized && <Divider flexItem variant="middle" style={{ margin: "16px 0" }} />}
             {enableStats && (
-                <Row>
+                <Grid container>
                     {!summarized && (
-                        <Row
+                        <Grid container
                             style={{
                                 flexDirection: 'column',
                                 color: colors.black,
@@ -125,10 +124,10 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                                     })}
                                 </span>
                             )}
-                        </Row>
+                        </Grid>
                     )}
-                </Row>
+                </Grid>
             )}
-        </Col>
+        </Grid>
     );
 };

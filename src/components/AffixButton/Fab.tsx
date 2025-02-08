@@ -1,4 +1,5 @@
-import { Button, ButtonProps, Tooltip } from "antd";
+import { ButtonProps, IconButton } from "@mui/material";
+import InfoTooltip from "../Claim/InfoTooltip";
 import React, { useLayoutEffect, useState } from "react";
 import colors from "../../styles/colors";
 import { NameSpaceEnum } from "../../types/Namespace";
@@ -18,28 +19,35 @@ const Fab = ({ tooltipText, style, icon, size, ...rest }: FabProps) => {
     useLayoutEffect(() => {
         setNameSpaceProp(nameSpace);
     }, [nameSpace]);
+
+    const TooltipBanner = (
+        <IconButton
+            style={{
+                background: colors.white,
+                color:
+                    nameSpaceProp === NameSpaceEnum.Main
+                        ? colors.primary
+                        : colors.secondary,
+                boxShadow: `0px 8px 24px ${colors.shadow}`,
+                display: "grid",
+                placeContent: "center",
+                width: size,
+                height: size,
+                ...style,
+            }}
+            {...rest}
+        >
+            {icon}
+        </IconButton>
+    );
+
     return (
-        <Tooltip placement="left" title={tooltipText}>
-            <Button
-                style={{
-                    background: colors.white,
-                    color:
-                        nameSpaceProp === NameSpaceEnum.Main
-                            ? colors.primary
-                            : colors.secondary,
-                    boxShadow: `0px 8px 24px ${colors.shadow}`,
-                    display: "grid",
-                    placeContent: "center",
-                    width: size,
-                    height: size,
-                    ...style,
-                }}
-                shape="circle"
-                type="link"
-                icon={icon}
-                {...rest}
-            />
-        </Tooltip>
+        <InfoTooltip
+            useCustomStyle={false}
+            placement="left"
+            children={TooltipBanner}
+            content={tooltipText}
+        />
     );
 };
 

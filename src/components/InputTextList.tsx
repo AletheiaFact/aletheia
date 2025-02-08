@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { Col, Row } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Grid } from "@mui/material"
+import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import AletheiaInput from "./AletheiaInput";
@@ -59,14 +59,14 @@ export default function InputTextList({
         <div>
             {controlledFields.map((_field, index) => {
                 return (
-                    <Row
+                    <Grid container
                         key={`fieldArray.${index}.content`}
                         style={{
                             marginBottom: 20,
                             justifyContent: "space-between",
                         }}
                     >
-                        <Col span={index > 0 ? 20 : 24}>
+                        <Grid item xs={index > 0 ? 10 : 12}>
                             <AletheiaInput
                                 {...register(
                                     `fieldArray.${index}.content` as const
@@ -76,9 +76,9 @@ export default function InputTextList({
                                 data-cy={`${dataCy}${index}`}
                                 white={white}
                             />
-                        </Col>
+                        </Grid>
                         {index > 0 && (
-                            <Col span={3}>
+                            <Grid item xs={1.5}>
                                 <Button
                                     style={{ height: "40px", margin: "0 auto" }}
                                     onClick={() => {
@@ -90,11 +90,11 @@ export default function InputTextList({
                                     }}
                                     data-cy={`${dataCy}Remove${index}`}
                                 >
-                                    <DeleteOutlined />
+                                    <DeleteOutlined fontSize="small" />
                                 </Button>
-                            </Col>
+                            </Grid>
                         )}
-                    </Row>
+                    </Grid>
                 );
             })}
 
@@ -120,7 +120,7 @@ export default function InputTextList({
                     }}
                     data-cy={`${dataCy}Add`}
                 >
-                    <PlusOutlined /> {addInputLabel}
+                    <AddOutlined fontSize="small" /> {addInputLabel}
                 </a>
             </div>
         </div>

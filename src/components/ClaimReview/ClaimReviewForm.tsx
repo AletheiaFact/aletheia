@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import React, { useContext, useEffect, useState } from "react";
 import {
     reviewingSelector,
@@ -72,13 +72,14 @@ const ClaimReviewForm = ({
     }, [isUnassigned]);
 
     return (
-        <Row
+        <Grid container
             style={{
                 background: colors.lightNeutral,
                 padding: "20px 15px",
+                justifyContent:"center"
             }}
         >
-            <Col span={componentStyle.span} offset={componentStyle.offset}>
+            <Grid item xs={componentStyle.span}>
                 {formCollapsed && (
                     <ReportModelButtons setFormCollapsed={setFormCollapsed} />
                 )}
@@ -90,8 +91,8 @@ const ClaimReviewForm = ({
                         target={target?._id}
                     />
                 )}
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

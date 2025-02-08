@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React, { useLayoutEffect, useState } from "react";
@@ -11,10 +11,9 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import AletheiaButton, { ButtonType } from "../Button";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@mui/icons-material";
 import { Roles } from "../../types/enums";
 
-const { Title } = Typography;
 const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
@@ -45,12 +44,12 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
 
     const { vw } = useAppSelector((state) => state);
     return (
-        <Row
+        <Grid container
             className="home-header-container"
-            justify="center"
             style={{
                 paddingTop: "32px",
                 backgroundColor: colors.lightNeutral,
+                justifyContent:"center"
             }}
         >
             <div
@@ -69,15 +68,16 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                     gap: "2vw",
                 }}
             >
-                <Title
+                <Typography
                     style={{
                         color: colors.white,
                         margin: 0,
+                        fontWeight: 700,
                         fontSize: vw?.sm || vw?.xs ? "25px" : "38px",
                     }}
                 >
                     {title}
-                </Title>
+                </Typography>
             </div>
             {userRole === Roles.Admin && claim?.claimId ? (
                 <AletheiaButton
@@ -88,18 +88,17 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                         marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
                     }}
                 >
-                    <span>{t("debates:openEditDebateMode")}</span>
-                    <EditOutlined color={colors.white} />
+                    {t("debates:openEditDebateMode")} <EditOutlined fontSize="small" style={{margin:"0 0 5 5"}} />
                 </AletheiaButton>
             ) : null}
-            <Row
+            <Grid container
                 style={{
                     justifyContent: "space-evenly",
                 }}
             >
                 {personalitiesArray
                     ? personalitiesArray.map((p, index) => (
-                        <Col
+                        <Grid item
                             style={{
                                 display: "flex",
                                 justifyContent: "center",
@@ -123,11 +122,11 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                                     padding: "20px",
                                 }}
                             />
-                        </Col>
+                        </Grid>
                     ))
                     : null}
-            </Row>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

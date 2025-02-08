@@ -1,10 +1,10 @@
 import React from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 
-const HeaderTotpStatusStyle = styled(Col)`
+const HeaderTotpStatusStyle = styled(Grid)`
     ::before {
         content: "";
         display: inline-block;

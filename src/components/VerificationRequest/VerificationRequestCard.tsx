@@ -1,12 +1,12 @@
-import { Col, Tag, Typography } from "antd";
-import React from "react";
+import { Grid, Chip, Typography, Button } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
 import Link from "next/link";
 import colors from "../../styles/colors";
 import LocalizedDate from "../LocalizedDate";
 
-const CustomTag = styled(Tag)`
+const CustomTag = styled(Chip)`
     border-radius: 4px;
     font-size: 10px;
     margin-bottom: 4px;
@@ -66,6 +66,21 @@ const VerificationRequestCard = ({
     t,
     style = {},
 }) => {
+    const [visible, setVisible] = useState(false);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+    const textRef = useRef(null);
+
+    const handleToggle = () => {
+        setVisible(true);
+    };
+
+    useEffect(() => {
+        if (textRef.current) {
+            const isOverflow = textRef.current.scrollHeight > textRef.current.clientHeight;
+            setIsOverflowing(isOverflow);
+        }
+    }, [verificationRequest.content]);
+
     const getTags = (verificationRequest) => {
         const tags = [];
         if (verificationRequest.publicationDate) {
@@ -77,65 +92,77 @@ const VerificationRequestCard = ({
 
             tags.push(
                 <CustomTag
-                    color={colors.secondary}
+                    style={{ backgroundColor: colors.secondary, color: colors.white }}
                     key={`${verificationRequest._id}|publicationDate`}
-                >
-                    <strong>
-                        {t(
-                            "verificationRequest:verificationRequestTagPublicationDate"
-                        )}
-                        :
-                    </strong>{" "}
-                    {isValidDate ? (
-                        <LocalizedDate date={publicationDate} />
-                    ) : (
-                        verificationRequest.publicationDate
-                    )}
-                </CustomTag>
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagPublicationDate"
+                                )}
+                                :
+                            </strong>{" "}
+                            {isValidDate ? (
+                                <LocalizedDate date={publicationDate} />
+                            ) : (
+                                verificationRequest.publicationDate
+                            )}
+                        </div>
+                    }
+                />
             );
         }
         if (verificationRequest.date) {
             tags.push(
                 <CustomTag
-                    color={colors.neutralSecondary}
+                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
                     key={`${verificationRequest._id}|date`}
-                >
-                    <strong>
-                        {t("verificationRequest:verificationRequestTagDate")}:
-                    </strong>{" "}
-                    <LocalizedDate date={verificationRequest.date} />
-                </CustomTag>
+                    label={
+                        <div>
+                            <strong>
+                                {t("verificationRequest:verificationRequestTagDate")}:
+                            </strong>{" "}
+                            <LocalizedDate date={verificationRequest.date} />
+                        </div>
+                    }
+                />
             );
         }
         if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
-                    color={colors.tertiary}
+                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
                     key={`${verificationRequest._id}|heardFrom`}
-                >
-                    <strong>
-                        {t(
-                            "verificationRequest:verificationRequestTagHeardFrom"
-                        )}
-                        :
-                    </strong>{" "}
-                    {verificationRequest.heardFrom}
-                </CustomTag>
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagHeardFrom"
+                                )}
+                                :
+                            </strong>{" "}
+                            {verificationRequest.heardFrom}
+                        </div>
+                    }
+                />
             );
         }
         if (verificationRequest.source) {
             tags.push(
                 <CustomTag
-                    color={colors.lightPrimary}
+                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
                     key={`${verificationRequest._id}|source`}
-                >
-                    <strong>
-                        {t("verificationRequest:verificationRequestTagSource")}:
-                    </strong>
-                    <Link href={verificationRequest.source.href} passHref>
-                        <a>{truncateUrl(verificationRequest.source.href)}</a>
-                    </Link>
-                </CustomTag>
+                    label={
+                        <div>
+                            <strong>
+                                {t("verificationRequest:verificationRequestTagSource")}:
+                            </strong>
+                            <Link href={verificationRequest.source.href} passHref>
+                                <a>{truncateUrl(verificationRequest.source.href)}</a>
+                            </Link>
+                        </div>
+                    }
+                />
             );
         }
         return tags;
@@ -144,21 +171,36 @@ const VerificationRequestCard = ({
     return (
         <CardBase style={{ padding: 32, ...style }}>
             <ContentWrapper>
-                <Typography.Paragraph
+                <Typography
+                    ref={textRef}
+                    variant="body1"
                     style={{
-                        marginBottom: 0,
                         color: colors.black,
                         margin: 0,
                         lineHeight: 1.6,
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        WebkitLineClamp: visible ? "none" : 3,
                     }}
-                    ellipsis={{ rows: 4, expandable }}
+
                 >
                     {verificationRequest.content}
-                </Typography.Paragraph>
+                </Typography>
+                {expandable && !visible && isOverflowing && (
+                    <Button
+                        variant="text"
+                        style={{ marginLeft: "auto", color: colors.lightPrimary, textDecoration: 'underline', padding: 0 }}
+                        onClick={handleToggle}
+                    >
+                        {t("verificationRequest:showText")}
+                    </Button>
+                )}
                 <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 
-            <Col
+            <Grid item
                 style={{
                     marginTop: 16,
                     display: "flex",
@@ -170,7 +212,7 @@ const VerificationRequestCard = ({
                 }}
             >
                 {actions ? actions.map((action) => action) : <></>}
-            </Col>
+            </Grid>
         </CardBase>
     );
 };

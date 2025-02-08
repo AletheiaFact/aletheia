@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import InputSearch from "../../Form/InputSearch";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
 import SearchApi from "../../../api/searchApi";
@@ -10,6 +10,7 @@ import AletheiaButton, { ButtonType } from "../../Button";
 import HomeHeaderSearchStyled from "./HomeHeaderSearch.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
+import { InputAdornment } from "@mui/material";
 
 const HomeHeaderSearch = () => {
     const { t } = useTranslation();
@@ -41,14 +42,19 @@ const HomeHeaderSearch = () => {
     };
 
     return (
-        <HomeHeaderSearchStyled xxl={12} lg={16} sm={18} xs={24}>
+        <HomeHeaderSearchStyled container item xl={6} lg={8} sm={9} xs={12}>
             <h2 className="title">{t("home:homeHeaderSearchTitle")}</h2>
 
             <InputSearch
+                sx={{ width: "100%" }}
                 placeholder={t("header:search_placeholder")}
-                prefix={
-                    <SearchOutlined style={{ fontSize: 24, marginRight: 16 }} />
-                }
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchOutlined />
+                        </InputAdornment>
+                    ),
+                }}
                 data-cy={"testInputSearchOverlay"}
                 onChange={({ target }) => setName(target.value)}
                 onKeyDown={({ key }) => {

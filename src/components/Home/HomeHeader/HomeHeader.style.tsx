@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { queries } from "../../../styles/mediaQueries";
 import colors from "../../../styles/colors";
-import { Col } from "antd";
+import Grid from "@mui/material/Grid";
 
-const HomeHeaderStyle = styled(Col)`
+const HomeHeaderStyle = styled(Grid)`
     display: flex;
     background-color: ${colors.blackTertiary};
     align-items: center;
@@ -16,7 +16,7 @@ const HomeHeaderStyle = styled(Col)`
         display: flex;
         flex-direction: column;
         width: 100%;
-        align-items: center;
+        align-items: start;
     }
 
     .home-header-title > h1 {

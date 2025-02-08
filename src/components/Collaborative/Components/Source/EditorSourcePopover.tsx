@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Popover } from "antd";
+import PopoverClick from "../../../Claim/Popover";
 import EditorSourcePopoverContent from "./EditorSourcePopoverContent";
 import { useCommands } from "@remirror/react";
 import { VisualEditorContext } from "../../VisualEditorProvider";
@@ -118,10 +118,8 @@ const EditorSourcePopover = ({
     };
 
     return (
-        <Popover
-            trigger="click"
-            placement="bottom"
-            overlayInnerStyle={{ padding: 0 }}
+        <PopoverClick
+            children={children}
             content={
                 <EditorSourcePopoverContent
                     isArchive={isArchive}
@@ -129,9 +127,7 @@ const EditorSourcePopover = ({
                     handleDeleteClick={handleDeleteClick}
                 />
             }
-        >
-            {children}
-        </Popover>
+        />
     );
 };
 

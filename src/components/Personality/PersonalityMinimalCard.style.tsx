@@ -1,9 +1,9 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
 
-const PersonalityMinimalCardStyle = styled(Row)`
+const PersonalityMinimalCardStyle = styled(Grid)`
     text-align: center;
     display: flex;
     justify-content: center;

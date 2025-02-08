@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import Grid from "@mui/material/Grid";
 import React from "react";
 import CTASection from "../CTA/CTASection";
 import HomeHeaderStyle from "./HomeHeader.style";
@@ -8,17 +8,17 @@ import HomeHeaderSearch from "./HomeHeaderSearch";
 
 const HomeHeader = ({ stats }) => {
     return (
-        <HomeHeaderStyle>
-            <Col
-                xxl={12}
-                lg={16}
-                sm={18}
-                xs={24}
+        <HomeHeaderStyle container>
+            <Grid item
+                xl={6}
+                lg={8}
+                sm={9}
+                xs={12}
                 className="home-header-content"
             >
                 <HomeHeaderTitle />
                 <CTASection />
-            </Col>
+            </Grid>
             <HomeStats stats={stats} />
 
             <HomeHeaderSearch />

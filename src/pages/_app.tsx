@@ -4,6 +4,7 @@ import "../styles/app.css";
 import "antd/dist/antd.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
+import { GlobalMessage } from "../components/Messages";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
 import * as umamiConfig from "../lib/umami";
@@ -63,6 +64,7 @@ function MyApp({ Component, pageProps }) {
             </Head>
             <Provider store={store}>
                 <ThemeProvider theme={materialTheme}>
+                    <GlobalMessage />
                     <CssBaseline />
                     <MainApp>
                         <DefaultSeo

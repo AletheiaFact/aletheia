@@ -1,6 +1,7 @@
-import { Col, Form, Row } from "antd";
+import { Form } from "antd";
 import React from "react";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
 import Button from "../Button";
@@ -30,8 +31,8 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                             },
                         ]}
                     >
-                        <Row>
-                            <Col span={index > 0 ? 20 : 24}>
+                        <Grid container>
+                            <Grid item xs={index > 0 ? 10 : 12}>
                                 <Input
                                     key={index}
                                     value={source || ""}
@@ -39,11 +40,11 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                                     placeholder={placeholder}
                                     data-cy={'testSource1'}
                                 />
-                            </Col>
-                            <Col span={4}>
-                                {index > 0 && <Button style={{ width: "100%", height: "40px" }} onClick={() => removeSource(index)}><DeleteOutlined /></Button>}
-                            </Col>
-                        </Row>
+                            </Grid>
+                            <Grid item xs={2}>
+                                {index > 0 && <Button style={{ width: "100%", height: "40px" }} onClick={() => removeSource(index)}><DeleteOutlined fontSize="small" /></Button>}
+                            </Grid>
+                        </Grid>
                     </Form.Item>
                 )
             })
@@ -58,10 +59,13 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                 <a
                     onClick={addSource}
                     style={{
+                        display:"flex",
+                        justifyContent:"end",
+                        alignContent:"center",
                         textDecoration: "underline"
                     }}
                 >
-                    <PlusOutlined /> {t("sourceForm:addNewSourceButton")}
+                    <AddOutlined fontSize="small" /> {t("sourceForm:addNewSourceButton")}
                 </a>
             </div>
         </>

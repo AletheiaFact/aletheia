@@ -1,35 +1,29 @@
 import React, { useEffect, useState } from "react";
-
-import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { CloseOutlined, HelpOutlineOutlined } from "@mui/icons-material";
 import Fab from "../AffixButton/Fab";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import Banner from "../SentenceReport/Banner";
 import { useTranslation } from "next-i18next";
 import Cookies from "js-cookie";
 import CtaAnimation from "../CtaAnimation";
-import { Tooltip } from "antd";
+import InfoTooltip from "../Claim/InfoTooltip";
 import colors from "../../styles/colors";
-import { t } from "i18next";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useAppSelector } from "../../store/store";
 
 const CloseIcon = () => {
+    const { t } = useTranslation();
     return (
-        <Tooltip
-            title={t("affix:AffixCloseTooltip")}
-            placement="topRight"
-            defaultOpen
-            color={colors.white}
-            overlayInnerStyle={{ color: colors.black }}
-        >
-            <CloseOutlined
-                style={{
-                    marginTop: 20,
-                    paddingBottom: 20,
-                    height: 20,
-                }}
-            />
-        </Tooltip>
+        <InfoTooltip
+            children={
+                <CloseOutlined style={{ margin: "10px", color: colors.white, position: "absolute", top: 5, right: 5 }} />
+            }
+            content={
+                <span style={{ color: colors.black, fontSize: 15 }}>
+                    {t("affix:AffixCloseTooltip")}
+                </span>
+            }
+        />
     );
 };
 
@@ -85,10 +79,8 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                             onClick={handleCTAClick}
                             data-cy={"testCTAFloatButton"}
                             icon={
-                                <QuestionCircleOutlined
-                                    style={{
-                                        fontSize: "24px",
-                                    }}
+                                <HelpOutlineOutlined
+                                    fontSize="medium"
                                 />
                             }
                         />
@@ -98,13 +90,28 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
 
             <AletheiaModal
                 open={modalVisible}
-                footer={null}
-                title={t("NewCTARegistration:body")}
                 onCancel={() => setModalVisible(false)}
-                maskClosable={false}
                 theme="dark"
-                width={"75%"}
+                width={vw?.xs ? "100%" : "60%"}
                 closeIcon={<CloseIcon />}
+                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+                title={
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <h2
+                            style={{
+                                color: colors.white,
+                                fontFamily: "open sans, sans-serif",
+                                fontWeight: 700,
+                                fontSize: 14,
+                                textAlign: "center",
+                                textTransform: "uppercase",
+                                padding: "0 30px",
+                            }}
+                        >
+                            {t("NewCTARegistration:body")}
+                        </h2>
+                    </div>
+                }
             >
                 <Banner />
             </AletheiaModal>

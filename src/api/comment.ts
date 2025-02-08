@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -13,7 +13,7 @@ const createComment = (comment) => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -25,7 +25,7 @@ const updateComments = (comments) => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -37,7 +37,7 @@ const updateComment = (commentId, comment) => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -49,7 +49,7 @@ const createReplyComment = (commentId, newComment) => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -61,7 +61,7 @@ const deleteReplyComment = (commentId, replyCommentId) => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };

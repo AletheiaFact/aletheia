@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 

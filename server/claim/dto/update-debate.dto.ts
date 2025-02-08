@@ -1,5 +1,5 @@
 import { IsBoolean, IsString } from "class-validator";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateDebateDto {

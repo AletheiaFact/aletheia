@@ -1,9 +1,10 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-const DashboardViewStyle = styled(Row)`
-    row-gap: 64px;
+const DashboardViewStyle = styled(Grid)`
+    gap: 64px;
+    justify-content: center;
 
     .dashboard-item {
         padding: 20px;

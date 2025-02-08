@@ -1,9 +1,8 @@
 import React from "react";
 import SearchApi from "../../api/searchApi";
-import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
 import { useAppSelector } from "../../store/store";
-import { Divider, Grid } from "@mui/material";
+import { Divider, Grid, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { ActionTypes, SearchTypes } from "../../store/types";
 import { useRouter } from "next/router";
@@ -176,9 +175,9 @@ function SearchPageView({ searchText }) {
                 my={2}
             >
                 <Grid item xs={7}>
-                    <Typography.Title level={3}>
+                    <Typography fontSize={24} fontWeight={600} variant="h3">
                         {t("search:searchPageTittle")}
-                    </Typography.Title>
+                    </Typography>
                     <Divider />
                     <form style={{ width: "50%" }} onSubmit={handleSubmit}>
                         <div

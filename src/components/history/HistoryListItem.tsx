@@ -1,7 +1,7 @@
-import Text from 'antd/lib/typography/Text'
-import { useTranslation } from 'next-i18next'
-import React from 'react'
-import LocalizedDate from '../LocalizedDate'
+import Typography from "@mui/material/Typography"
+import { useTranslation } from "next-i18next"
+import React from "react"
+import LocalizedDate from "../LocalizedDate"
 interface IHistoryListItemProps {
     history: {
         _id: string,
@@ -27,10 +27,14 @@ const HistoryListItem = ({ history }: IHistoryListItemProps) => {
         title = oldTitle
     }
     return (
-        <div>
+        <div style={{ fontSize: 14 }}>
             <LocalizedDate date={history.date} showTime />{` - `}
             {t('history:historyItem', { username, type, targetModel, title })}
-            {oldTitle && oldTitle !== title && <Text>  (<Text delete>{oldTitle}</Text>)</Text>}
+            {oldTitle && oldTitle !== title && (
+                <Typography variant="body1" display="flex">
+                    (<span style={{ textDecoration: "line-through" }}>{oldTitle}</span>)
+                </Typography>
+            )}
         </div>
     )
 }

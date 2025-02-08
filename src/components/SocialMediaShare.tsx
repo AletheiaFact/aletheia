@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "antd";
+import Typography from "@mui/material/Typography"
 import {
     FacebookShareButton,
     FacebookIcon,
@@ -18,8 +18,6 @@ import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
-
-const { Title } = Typography;
 
 const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
     const { t } = useTranslation();
@@ -53,20 +51,21 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                 marginTop: "20px",
             }}
         >
-            <Title
-                level={3}
+            <Typography
+                variant="h3"
                 style={{
+                    fontFamily:"initial",
                     width: "auto",
                     textAlign: "center",
                     marginBottom: 0,
-                    fontSize: "26px",
+                    fontSize: "28px",
                     lineHeight: "39px",
-                    fontWeight: 400,
+                    fontWeight: 500,
                     color: colors.blackSecondary,
                 }}
             >
                 {t("share:title")}
-            </Title>
+            </Typography>
             <nav className="social-media-container">
                 <ul
                     className="social-media-list"

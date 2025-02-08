@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import claimRevisionApi from "../../api/claimRevision";
 import Loading from "../Loading";
@@ -50,10 +50,10 @@ const HomeFeed = ({ searchResults }) => {
     return (
         <>
             {results.length > 0 && (
-                <Col>
+                <Grid>
                     <h2>{t("home:homeFeedTitle")}</h2>
 
-                    <Col
+                    <Grid
                         style={{
                             display: "flex",
                             gap: 16,
@@ -62,8 +62,8 @@ const HomeFeed = ({ searchResults }) => {
                         }}
                     >
                         <HomeFeedList results={results} />
-                    </Col>
-                </Col>
+                    </Grid>
+                </Grid>
             )}
         </>
     );

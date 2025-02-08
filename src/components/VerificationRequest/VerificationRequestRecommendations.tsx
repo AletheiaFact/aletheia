@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Typography } from "antd";
+import { Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
 import VerificationRequestResultList from "./VerificationRequestResultList";
@@ -12,9 +12,9 @@ const VerificationRequestRecommendations = () => {
         <>
             {recommendations?.length > 0 && (
                 <section style={{ width: "100%" }}>
-                    <Typography.Title level={4}>
+                    <Typography style={{ fontFamily: "serif", fontWeight: 600, fontSize: 26, lineHeight: 1.35 }} variant="h4">
                         {t("verificationRequest:recommendationTitle")}
-                    </Typography.Title>
+                    </Typography>
                     <VerificationRequestResultList results={recommendations} />
                 </section>
             )}

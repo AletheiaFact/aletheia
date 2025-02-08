@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import router from "next/router";
 import React from "react";
@@ -62,7 +62,7 @@ const OverlaySearchResults = () => {
     };
 
     return (
-        <Row
+        <Grid container
             className="main-content"
             style={{
                 position: "absolute",
@@ -94,7 +94,7 @@ const OverlaySearchResults = () => {
                     );
                 })
             )}
-        </Row>
+        </Grid>
     );
 };
 

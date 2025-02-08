@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 
 import Label from "../Label";
@@ -14,7 +14,7 @@ const PersonalitySearchResultSection = ({
     const isCreatingClaim = selectPersonality !== null;
 
     return personalities.length ? (
-        <Row
+        <Grid container
             style={{
                 marginTop: "10px",
                 width: "100%",
@@ -37,7 +37,7 @@ const PersonalitySearchResultSection = ({
                         />
                     )
             )}
-        </Row>
+        </Grid>
     ) : null;
 };
 

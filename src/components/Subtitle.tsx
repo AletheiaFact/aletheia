@@ -1,21 +1,19 @@
 import React from 'react'
-import { Typography } from "antd";
-
-const { Title } = Typography;
+import  Typography  from "@mui/material/Typography";
 
 const Subtitle = (props) => {
     return(
-        <Title
-            level={2} 
+        <Typography
+            variant="h2"
             style={{
-                fontWeight: 600,
+                fontWeight: 700,
                 fontSize: 24,
                 lineHeight: 1.35,
                 ...props.style
             }}
         >
             {props.children}
-        </Title>
+        </Typography>
     )
 }
 

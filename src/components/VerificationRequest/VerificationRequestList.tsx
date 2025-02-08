@@ -79,7 +79,7 @@ const VerificationRequestList = () => {
 
     const fetchTopicList = async (term) => {
         try {
-            await TopicsApi.searchTopics({ query: term, dispatch });
+            await TopicsApi.searchTopics({ query: term, dispatch, t });
         } catch (error) {
             console.error(`Error: ${error.message}`);
         }

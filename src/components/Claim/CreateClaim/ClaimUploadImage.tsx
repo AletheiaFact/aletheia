@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import { UploadFile } from "antd/lib/upload/interface";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
@@ -94,13 +94,13 @@ const ClaimUploadImage = () => {
                 isLoading={isLoading}
                 dateExtraText={t("claimForm:dateFieldHelpImage")}
                 content={
-                    <Row style={{ marginBottom: 24 }}>
+                    <Grid container style={{ marginBottom: 24 }}>
                         <Label required>{t("claimForm:fileInputButton")}</Label>
                         <ImageUpload
                             onChange={handleAntdChange}
                             error={imageError}
                         />
-                    </Row>
+                    </Grid>
                 }
             />
         </>

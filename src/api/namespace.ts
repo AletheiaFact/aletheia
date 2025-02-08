@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -10,11 +10,11 @@ const createNameSpace = (nameSpace, t) => {
     return request
         .post(`/`, { ...nameSpace })
         .then((response) => {
-            message.success(t("namespaces:nameSpaceSaved"));
+            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -23,11 +23,11 @@ const updateNameSpace = (nameSpace, t) => {
     return request
         .put(`/${nameSpace._id}`, { ...nameSpace })
         .then((response) => {
-            message.success(t("namespaces:nameSpaceSaved"));
+            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -39,7 +39,7 @@ const getNameSpaces = () => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            MessageManager.showMessage("error", err.response.data?.message);
             throw err;
         });
 };

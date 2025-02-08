@@ -1,5 +1,5 @@
 import AletheiaButton, { ButtonType } from "../Button";
-import { List, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 
 import React from "react";
 import ClaimSourceListItem from "./ClaimSourceListItem";
@@ -17,36 +17,30 @@ const ClaimSourceList = ({
 }) => {
     const { t } = useTranslation();
     const sourcesGridColumns = 6;
+    const dataSource = showAllSources
+        ? sources
+        : sources.slice(0, sourcesGridColumns);
 
     return (
         <ClaimSourceListStyle>
             {sources && (
-                <List
-                    dataSource={
-                        showAllSources
-                            ? sources
-                            : sources.slice(0, sourcesGridColumns)
-                    }
-                    style={{ width: "100%" }}
-                    grid={{
-                        gutter: 38,
-                        xs: 1,
-                        sm: 2,
-                        md: 2,
-                        lg: 3,
-                        xl: 3,
-                        xxl: 3,
-                    }}
-                    renderItem={(source, index) => {
-                        return (
+                <Grid container style={{ width: '100%' }}>
+                    {dataSource.map((source, index) => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={6}
+                            lg={4}
+                            key={source}
+                        >
                             <ClaimSourceListItem
-                                key={index}
                                 source={source}
                                 index={index + 1}
                             />
-                        );
-                    }}
-                />
+                        </Grid>
+                    ))}
+                </Grid>
             )}
             {!showAllSources && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
@@ -54,9 +48,9 @@ const ClaimSourceList = ({
                     href={seeMoreHref}
                     className="all-sources-link-button"
                 >
-                    <Typography.Title level={4} className="all-sources-link">
+                    <Typography variant="h4" className="all-sources-link">
                         {t("claim:seeSourcesButton")}
-                    </Typography.Title>
+                    </Typography>
                 </AletheiaButton>
             )}
         </ClaimSourceListStyle>

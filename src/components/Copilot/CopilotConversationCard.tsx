@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar } from "antd";
+import { Avatar } from "@mui/material";
 import colors from "../../styles/colors";
 import CopilotConversationCardStyle from "./CopilotConversationCard.style";
 import { SenderEnum } from "../../types/enums";
@@ -9,7 +9,7 @@ const CopilotConversationCard = ({ message }) => {
     const { t } = useTranslation();
     const { type, sender, content } = message;
     return (
-        <CopilotConversationCardStyle>
+        <CopilotConversationCardStyle item>
             <div className="conversation-card-header">
                 {sender === SenderEnum.Assistant ? (
                     <img
@@ -20,7 +20,7 @@ const CopilotConversationCard = ({ message }) => {
                         style={{ borderRadius: 16 }}
                     />
                 ) : (
-                    <Avatar style={{ background: colors.quartiary }}>
+                    <Avatar style={{ background: colors.quartiary, width: 30, height: 30}}>
                         {SenderEnum.User.slice(0, 1).toUpperCase()}
                     </Avatar>
                 )}

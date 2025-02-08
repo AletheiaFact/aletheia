@@ -1,19 +1,17 @@
 import React from "react";
-import { Typography } from "antd";
+import { Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import SentenceReportSummary from "./SentenceReportSummary";
 import AletheiaButton from "../Button";
-
-const { Paragraph } = Typography;
 
 const SourceSummaryDisplay = ({ href }) => {
     const { t } = useTranslation();
 
     return (
-        <SentenceReportSummary>
-            <Paragraph className="sentence-content">
+        <SentenceReportSummary item>
+            <Typography variant="body1" className="sentence-content">
                 <cite>{href}</cite>
-            </Paragraph>
+            </Typography>
 
             <AletheiaButton
                 href={href}

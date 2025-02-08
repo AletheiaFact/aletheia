@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
 
@@ -10,8 +10,6 @@ import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-
-const { Title } = Typography;
 
 const DebateGrid = ({ debates }) => {
     const { t } = useTranslation();
@@ -43,9 +41,9 @@ const DebateGrid = ({ debates }) => {
                                 width: "100%",
                             }}
                         >
-                            <Row>
-                                <Title
-                                    level={3}
+                            <Grid container>
+                                <Typography
+                                    variant="h3"
                                     style={{
                                         fontSize: "22px",
                                         lineHeight: "32px",
@@ -56,30 +54,30 @@ const DebateGrid = ({ debates }) => {
                                 >
                                     {debateClaim.title} (
                                     {t("debates:liveLabel")})
-                                </Title>
-                            </Row>
-                            <Row
+                                </Typography>
+                            </Grid>
+                            <Grid container
                                 style={{
                                     justifyContent: "space-evenly",
                                 }}
                             >
                                 {debateClaim.personalities.map((p) => {
                                     return (
-                                        <Col key={p._id} xs={24} md={11}>
+                                        <Grid item key={p._id} xs={12} md={5.5}>
                                             <PersonalityMinimalCard
                                                 personality={p}
                                             />
-                                        </Col>
+                                        </Grid>
                                     );
                                 })}
-                            </Row>
-                            <Row
+                            </Grid>
+                            <Grid container
                                 style={{
                                     justifyContent: "center",
                                     marginTop: "16px",
                                 }}
                             >
-                                <Col>
+                                <Grid item>
                                     <Button
                                         href={
                                             nameSpace !== NameSpaceEnum.Main
@@ -91,8 +89,8 @@ const DebateGrid = ({ debates }) => {
                                             {t("debates:seeDebate")}
                                         </span>
                                     </Button>
-                                </Col>
-                            </Row>
+                                </Grid>
+                            </Grid>
                         </div>
                     </CardBase>
                 );

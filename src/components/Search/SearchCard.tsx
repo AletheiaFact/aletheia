@@ -2,7 +2,7 @@ import React from "react";
 import AletheiaAvatar from "../AletheiaAvatar";
 import SearchResult from "./SearchResult";
 import colors from "../../styles/colors";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import SearchDescription from "./SearchDescription";
 
@@ -35,17 +35,17 @@ const SearchCard = ({
     };
 
     return (
-        <Row
+        <Grid container
             style={{
                 background: colors.white,
                 padding: "0 10%",
                 boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
                 width: "100%",
             }}
-            align="middle"
+            alignContent="middle"
         >
             {content && Array.isArray(content) && content.length > 0 && (
-                <Col
+                <Grid item
                     style={{
                         padding: "10px 0",
                         borderTop: `1px solid ${colors.neutralTertiary}`,
@@ -96,9 +96,9 @@ const SearchCard = ({
                                 />
                             )
                     )}
-                </Col>
+                </Grid>
             )}
-        </Row>
+        </Grid>
     );
 };
 

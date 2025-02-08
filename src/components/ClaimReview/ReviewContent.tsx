@@ -1,7 +1,7 @@
 import React from "react";
 import ImageClaim from "../ImageClaim";
 import ReviewContentStyled from "./ReviewContent.style";
-import { Typography } from "antd";
+import Typography from "@mui/material/Typography";
 
 const ReviewContent = ({
     title,
@@ -14,16 +14,17 @@ const ReviewContent = ({
 }) => {
     return (
         <ReviewContentStyled>
-            <Typography.Paragraph
-                ellipsis={
-                    ellipsis
-                        ? {
-                              rows: 4,
-                              expandable: false,
-                          }
-                        : null
-                }
-                style={{ marginBottom: 0, ...style }}
+            <Typography
+                variant="body1"
+                style={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    WebkitLineClamp: ellipsis ? 4 : "none",
+                    marginBottom: 0,
+                    ...style,
+                  }}
             >
                 <cite>{title}</cite>
                 {isImage && <ImageClaim src={content} title={title} />}
@@ -32,7 +33,7 @@ const ReviewContent = ({
                         {linkText}
                     </a>
                 )}
-            </Typography.Paragraph>
+            </Typography>
             {ellipsis && contentPath && linkText && (
                 <a
                     href={contentPath}

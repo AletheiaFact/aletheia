@@ -1,6 +1,7 @@
 import React from "react";
 import Button, { ButtonType } from "../../../Button";
-import { Col, Tooltip } from "antd";
+import { Grid } from "@mui/material";
+import InfoTooltip from "../../../Claim/InfoTooltip";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
@@ -11,29 +12,35 @@ const EditorSourcePopoverContent = ({
     handleDeleteClick,
 }) => {
     const { t } = useTranslation();
+
+    const ButtonTooltip = (
+        <span>
+            <Button
+                type={ButtonType.white}
+                onClick={handleArchiveClick}
+                style={{
+                    gap: 8,
+                    border: "none",
+                    display: "flex",
+                    justifyContent: "start",
+                    textDecoration: "underline",
+                    marginTop: 10,
+                }}
+            >
+                <ArchiveIcon />
+                Internet archive
+            </Button>
+        </span>
+    );
+
     return (
-        <Col className="source-card-popover-content">
+        <Grid item className="source-card-popover-content">
             {!isArchive && (
-                <Tooltip
-                    placement="top"
-                    title={t("sourceForm:intertArchiveTooltip")}
-                >
-                    <Button
-                        type={ButtonType.white}
-                        onClick={handleArchiveClick}
-                        style={{
-                            textDecoration: "underline",
-                            gap: 8,
-                            border: "none",
-                            display: "flex",
-                            justifyContent: "start",
-                            padding: 0,
-                        }}
-                    >
-                        <ArchiveIcon />
-                        Internet archive
-                    </Button>
-                </Tooltip>
+                <InfoTooltip
+                    useCustomStyle={false}
+                    children={ButtonTooltip}
+                    content={t("sourceForm:intertArchiveTooltip")}
+                />
             )}
             <Button
                 type={ButtonType.white}
@@ -43,14 +50,14 @@ const EditorSourcePopoverContent = ({
                     border: "none",
                     display: "flex",
                     justifyContent: "start",
-                    padding: 0,
+                    marginBottom: 10,
                 }}
                 onClick={handleDeleteClick}
             >
                 <DeleteIcon />
                 {t("sourceForm:deleteSourceButton")}
             </Button>
-        </Col>
+        </Grid>
     );
 };
 

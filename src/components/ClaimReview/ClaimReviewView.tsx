@@ -55,13 +55,11 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const isSourceOrVerificationRequest = reviewTaskType === "Source" || reviewTaskType === "VerificationRequest";
 
     const componentStyle = {
-        span: 18,
-        offset: 3,
+        span: 9,
     };
 
     if (!reviewDrawerCollapsed) {
-        componentStyle.span = 22;
-        componentStyle.offset = 1;
+        componentStyle.span = 11;
     }
 
     const reviewContentPath = generateReviewContentPath(

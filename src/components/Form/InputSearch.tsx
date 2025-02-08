@@ -1,13 +1,13 @@
 import React from "react";
-import { Input } from "antd";
+import { TextField, InputAdornment } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-const InputSearchStyled = styled(Input.Search)`
-    span.ant-input-group-addon {
-        display: none;
+const InputSearchStyled = styled(TextField)`
+    .MuiInputAdornment-root {
+        color: ${colors.primary};
     }
-    span.ant-input-affix-wrapper {
+    .MuiOutlinedInput-root {
         background: ${({ backgroundColor = colors.lightNeutral }) =>
         backgroundColor};
         box-shadow: 0px 2px 2px ${colors.shadow};
@@ -16,7 +16,7 @@ const InputSearchStyled = styled(Input.Search)`
             border-color: ${colors.neutralTertiary};
         }
     }
-    input.ant-input {
+    .MuiOutlinedInput-input {
         background: ${({ backgroundColor = colors.lightNeutral }) =>
         backgroundColor};
         color: ${colors.blackSecondary};
@@ -44,14 +44,19 @@ const InputSearch = (props) => {
 
     return (
         <InputSearchStyled
+            variant="outlined"
             placeholder={props.placeholder || ""}
             size="large"
             loading={loading}
-            addonAfter={false}
-            addonBefore={false}
             onChange={(e) => doSearch(e)}
-            suffix={props.suffix || <></>}
-            prefix={props.prefix || <></>}
+            InputProps={{
+                startAdornment: props.prefix ? (
+                    <InputAdornment position="start">{props.prefix}</InputAdornment>
+                ) : null,
+                endAdornment: props.suffix ? (
+                    <InputAdornment position="end">{props.suffix}</InputAdornment>
+                ) : null,
+            }}
             data-cy={props["data-cy"] || "testInputSearchPersonality"}
             {...props}
         />

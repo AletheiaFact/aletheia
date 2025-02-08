@@ -1,18 +1,20 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { queries } from "../../styles/mediaQueries";
 
-const DonationBannerStyle = styled(Col)`
-        background-color: ${colors.inactive};
 
-    .close-banner { 
+const DonationBannerStyle = styled(Grid)`
+        background-color: ${colors.inactive};
+        position: relative;
+
+    .close-banner {
         color: ${colors.primary};
         font-size: 25px;
         align-self: flex-end;
         position: absolute;
         right: 10px;
-        bottom: -10px;
+        bottom: 10px;
         z-index: 1;
     }
 
@@ -27,7 +29,7 @@ const DonationBannerStyle = styled(Col)`
 
     .banner-buttons {
         display: flex;
-        gap: 30px;   
+        gap: 30px;
     }
 
     .banner-content > h1 {
@@ -65,9 +67,9 @@ const DonationBannerStyle = styled(Col)`
             font-size: 12px;
         }
 
-        .close-banner { 
+        .close-banner {
             align-self: flex-start;
-            top: -10px;    
+            top: 10px;    
         }
     }
 `;

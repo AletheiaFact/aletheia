@@ -1,5 +1,5 @@
 import colors from "../../styles/colors";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "next-i18next";
 import { ContentModelEnum } from "../../types/enums";
@@ -56,7 +56,7 @@ const ClaimSummaryContent = ({
         : {};
 
     return (
-        <Col>
+        <Grid>
             <ReviewContent
                 title={
                     isImage ? (
@@ -83,7 +83,7 @@ const ClaimSummaryContent = ({
                 linkText={t(linkText)}
                 ellipsis={true}
             />
-        </Col>
+        </Grid>
     );
 };
 

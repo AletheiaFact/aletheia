@@ -1,9 +1,7 @@
-import { Col, Row } from "antd";
-
+import { Grid, Typography } from "@mui/material"
 import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
 import React from "react";
-import Text from "antd/lib/typography/Text";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
@@ -31,8 +29,8 @@ const DynamicForm = ({
                 const defaultValue = machineValues[fieldName];
 
                 return (
-                    <Row key={fieldName + index}>
-                        <Col span={24}>
+                    <Grid container key={fieldName + index}>
+                        <Grid item xs={12}>
                             <h4
                                 style={{
                                     color: colors.blackSecondary,
@@ -43,8 +41,15 @@ const DynamicForm = ({
                             >
                                 {t(label)}
                             </h4>
-                        </Col>
-                        <Col span={24} style={{ margin: "10px 0" }}>
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            style={{
+                                margin: "10px 0",
+                                wordBreak: "break-word",
+                            }}
+                        >
                             <Controller
                                 name={fieldName}
                                 control={control}
@@ -66,12 +71,12 @@ const DynamicForm = ({
                                 )}
                             />
                             {errors[fieldName] && (
-                                <Text type="danger" style={{ marginLeft: 20 }}>
+                                <Typography variant="body1" style={{ marginLeft: 20, color: colors.error, fontSize: 16 }}>
                                     {t(errors[fieldName].message)}
-                                </Text>
+                                </Typography>
                             )}
-                        </Col>
-                    </Row>
+                        </Grid>
+                    </Grid>
                 );
             })}
         </div>

@@ -1,15 +1,15 @@
 import React from "react";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import colors from "../../../styles/colors";
 import DynamicSourceForm from "./DynamicSourceForm";
 
 const CreateSourceView = () => {
     return (
-        <Row justify="center" style={{ background: colors.lightNeutral }}>
-            <Col span={18}>
+        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+            <Grid item xs={9}>
                 <DynamicSourceForm />
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

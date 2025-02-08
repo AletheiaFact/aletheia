@@ -1,20 +1,16 @@
 import React from "react";
 import DonationBannerButton from "./DonationBannerButton";
 import { ButtonType } from "../../Button";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 import DonationBannerStyle from "../DonationBanner.style";
 
 function DonationBannerContent({ closeClick }) {
     const { t } = useTranslation();
     return (
-        <DonationBannerStyle >
-            <Col
-                className="banner-content"
-            >
-                <h1>
-                    {t("donationBanner:title")}
-                </h1>
+        <DonationBannerStyle>
+            <Grid item className="banner-content">
+                <h1>{t("donationBanner:title")}</h1>
                 <p>
                     <Trans i18nKey="donationBanner:paragraph" />
                 </p>
@@ -33,9 +29,8 @@ function DonationBannerContent({ closeClick }) {
                         trackEvent={"banner-donate-button-yes"}
                     />
                 </div>
-            </Col>
-        </DonationBannerStyle >
-
+            </Grid>
+        </DonationBannerStyle>
     );
 }
 

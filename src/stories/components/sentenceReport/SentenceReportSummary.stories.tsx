@@ -22,11 +22,11 @@ export default {
 } as ComponentMeta<typeof SentenceReportSummary>;
 
 export const Default = (args) => (
-    <SentenceReportSummary>{args.content}</SentenceReportSummary>
+    <SentenceReportSummary container>{args.content}</SentenceReportSummary>
 );
 
 export const ClaimReview = (args) => (
-    <SentenceReportSummary className="claim-review">
+    <SentenceReportSummary container className="claim-review">
         {args.content}
     </SentenceReportSummary>
 );

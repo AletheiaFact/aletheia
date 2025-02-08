@@ -1,9 +1,11 @@
 import {
-    FileAddFilled,
-    PlusCircleFilled,
-    PlusOutlined,
-    UserAddOutlined,
-} from "@ant-design/icons";
+    NoteAdd,
+    AddCircle,
+    AddOutlined,
+    PersonAddAlt1Outlined,
+    Source,
+    Report
+} from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
@@ -18,8 +20,6 @@ import Fab from "./Fab";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
-import SourceIcon from "@mui/icons-material/Source";
-import ReportIcon from "@mui/icons-material/Report";
 
 interface AffixButtonProps {
     personalitySlug?: string;
@@ -44,7 +44,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const { t } = useTranslation();
     const actions = [
         {
-            icon: <UserAddOutlined />,
+            icon: <PersonAddAlt1Outlined />,
             tooltip: t("affix:affixButtonCreatePersonality"),
             href:
                 nameSpace !== NameSpaceEnum.Main
@@ -61,7 +61,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     userRole !== "regular" &&
         actions.push(
             {
-                icon: <FileAddFilled />,
+                icon: <NoteAdd />,
                 tooltip: t("affix:affixButtonCreateClaim"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
@@ -70,7 +70,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 dataCy: "testFloatButtonAddClaim",
             },
             {
-                icon: <SourceIcon />,
+                icon: <Source />,
                 tooltip: t("affix:affixButtonCreateVerifiedSources"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
@@ -79,7 +79,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 dataCy: "testFloatButtonAddSources",
             },
             {
-                icon: <ReportIcon />,
+                icon: <Report />,
                 tooltip: t("affix:affixButtonCreateVerificationRequest"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
@@ -157,10 +157,8 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
                         icon={
-                            <PlusOutlined
-                                style={{
-                                    fontSize: "27px",
-                                }}
+                            <AddOutlined
+                                fontSize="large"
                             />
                         }
                     />
@@ -179,12 +177,21 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     ))}
             </div>
             <AletheiaModal
-                className="ant-modal-content"
                 open={isModalVisible}
-                footer={false}
                 onCancel={handleHideModal}
-                centered
-                title={t("tutorial:modalTitle")}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px"
+                        }}>
+                        {t("tutorial:modalTitle")}
+                    </h2>
+                }
             >
                 <p
                     style={{
@@ -196,10 +203,10 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<PlusCircleFilled key={"icon"} />]}
+                        components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
                     />
                 </p>
-
+                
                 <div
                     style={{
                         marginTop: 24,

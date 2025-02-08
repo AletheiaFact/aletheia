@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
@@ -16,7 +16,7 @@ const PersonalityList = () => {
     const { i18n, t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const createPersonalityCTA = (
-        <Row
+        <Grid container
             style={{
                 flexDirection: "column",
                 alignItems: "center",
@@ -30,7 +30,7 @@ const PersonalityList = () => {
                         : "/personality/search"
                 }
             />
-        </Row>
+        </Grid>
     );
     return (
         <>
@@ -44,6 +44,7 @@ const PersonalityList = () => {
                     i18n,
                     nameSpace,
                 }}
+                style={{ paddingTop: 10 }}
                 emptyFallback={createPersonalityCTA}
                 renderItem={(p) =>
                     p && (

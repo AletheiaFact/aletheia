@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -45,8 +45,9 @@ const ClaimReviewHeader = ({
         reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
-        <Row
+        <Grid container
             style={{
+                justifyContent:"center",
                 background:
                     isPublished &&
                     reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
@@ -54,16 +55,11 @@ const ClaimReviewHeader = ({
                         : colors.lightNeutral,
             }}
         >
-            <Col offset={componentStyle.offset} span={componentStyle.span}>
-                <Row>
-                    <Col
-                        lg={{
-                            order: 1,
-                            span: 24,
-                        }}
-                        md={{ order: 2, span: 24 }}
-                        sm={{ order: 2, span: 24 }}
-                        xs={{ order: 2, span: 24 }}
+            <Grid item xs={componentStyle.span}>
+                <Grid container>
+                    <Grid item
+                       xs={12} 
+                       order={{ xs: 2, lg: 1 }}
                     >
                         <SentenceReportCard
                             personality={personality}
@@ -84,16 +80,16 @@ const ClaimReviewHeader = ({
                                 topics={content?.topics || []}
                             />
                         )}
-                    </Col>
+                    </Grid>
 
                     <ReviewAlert
                         isHidden={isHidden}
                         isPublished={isPublished}
                         hideDescription={hideDescription}
                     />
-                </Row>
-            </Col>
-        </Row>
+                </Grid>
+            </Grid>
+        </Grid>
     );
 };
 

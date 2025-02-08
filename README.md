@@ -8,7 +8,7 @@
 
 - Fork this repo and clone it locally:
   ``` sh
-  git clone https://github.com/<your-username>/aletheia
+  git clone https://github.com/AletheiaFact/aletheia
   cd aletheia
   ```
 - Startup Mongo DB via Docker and Ory Kratos:

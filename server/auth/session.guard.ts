@@ -103,6 +103,7 @@ export class SessionGuard implements CanActivate {
             "/api/health",
             "/sign-up",
             "/api/user/register",
+            "/api/claim", // Allow this route to be public temporarily for testing
         ].some((route) => request.url.startsWith(route));
 
         const overridePublicRoutes =

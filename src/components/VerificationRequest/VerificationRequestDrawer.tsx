@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import LargeDrawer from "../LargeDrawer";
-import { Col, Typography } from "antd";
+import { Grid, Typography } from "@mui/material"
 import colors from "../../styles/colors";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
-import { DeleteOutlined } from "@ant-design/icons";
+import  { DeleteOutlined }  from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../Modal/WarningModal";
 
@@ -24,10 +24,10 @@ const VerificationRequestDrawer = ({
             onClose={onCloseDrawer}
             backgroundColor={colors.lightNeutralSecondary}
         >
-            <Col style={{ margin: "32px 64px" }}>
-                <Typography.Title level={3}>
+            <Grid item style={{ margin: "32px 64px" }}>
+                <Typography fontWeight={700} variant="h5">
                     {t("verificationRequest:verificationRequestTitle")}s
-                </Typography.Title>
+                </Typography>
                 {groupContent?.length > 0 ? (
                     groupContent?.map((item) => (
                         <>
@@ -43,7 +43,7 @@ const VerificationRequestDrawer = ({
                                         }
                                         loading={isLoading}
                                     >
-                                        <DeleteOutlined />
+                                        <DeleteOutlined fontSize="small" />
                                     </AletheiaButton>,
                                 ]}
                             />
@@ -70,7 +70,7 @@ const VerificationRequestDrawer = ({
                         {t("verificationRequest:noVerificationRequestsMessage")}
                     </span>
                 )}
-            </Col>
+            </Grid>
         </LargeDrawer>
     );
 };

@@ -2,14 +2,11 @@ import React from "react";
 import { ContentModelEnum } from "../../types/enums";
 import SentenceReportSummary from "./SentenceReportSummary";
 import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
-import { Typography } from "antd";
 import ClaimInfo from "../Claim/ClaimInfo";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useTranslation } from "next-i18next";
 import ReviewContent from "../ClaimReview/ReviewContent";
-
-const { Paragraph } = Typography;
 
 const ClaimSummaryDisplay = ({
     claim,
@@ -76,7 +73,7 @@ const ClaimSummaryDisplay = ({
 
     return (
         <>
-            <SentenceReportSummary className={personality ? "after" : ""}>
+            <SentenceReportSummary container className={personality ? "after" : ""}>
                 <ReviewContent
                     title={isImage ? claim?.title : title}
                     content={content?.content}

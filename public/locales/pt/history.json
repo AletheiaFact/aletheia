@@ -3,6 +3,8 @@
     "create": "criou",
     "update": "atualizou",
     "delete": "deletou",
+    "hide": "ocultou",
+    "unhide": "exibiu",
     "personality": "o perfil de",
     "claim": "a afirmação",
     "historyItem": "{{username}} {{type}} {{targetModel}} {{title}}"

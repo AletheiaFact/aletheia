@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ActionTypes } from "../store/types";
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 interface SearchOptions {
     searchText?: string;
@@ -25,7 +25,7 @@ const createVerificationRequest = (
     return request
         .post("/", verificationRequest)
         .then((response) => {
-            message.success(
+            MessageManager.showMessage("success", 
                 t("verificationRequest:verificationRequestCreateSuccess")
             );
             router.push(
@@ -37,7 +37,7 @@ const createVerificationRequest = (
         })
         .catch((err) => {
             console.error(err);
-            message.error(
+            MessageManager.showMessage("error",
                 t("verificationRequest:verificationRequestCreateError")
             );
         });
@@ -113,13 +113,13 @@ const updateVerificationRequest = (id, params, t) => {
     return request
         .put(`/${id}`, params)
         .then((response) => {
-            message.success(
+            MessageManager.showMessage("success", 
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            message.error(t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
             console.error("error while updating verification request", e);
         });
 };
@@ -128,13 +128,13 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
         .put(`/${id}/group`, params)
         .then((response) => {
-            message.success(
+            MessageManager.showMessage("success", 
                 t("verificationRequest:removeVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            message.error(
+            MessageManager.showMessage("error",
                 t("verificationRequest:removeVerificationRequestError")
             );
             console.error("error while removing verification request", e);
@@ -145,11 +145,11 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            message.success(t("topics:deleteTopics"));
+            MessageManager.showMessage("success", t("topics:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
-            message.error(t("topics:deleteTopicsError"));
+            MessageManager.showMessage("error", t("topics:deleteTopicsError"));
             throw err;
         });
 };

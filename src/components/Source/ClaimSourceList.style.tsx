@@ -9,6 +9,7 @@ export const ClaimSourceListStyle = styled.div`
     .source {
         display: flex;
         flex-direction: column;
+        font-size: 14px;
     }
 
     .all-sources-link-button {

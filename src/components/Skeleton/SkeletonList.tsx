@@ -1,13 +1,13 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 
 const SkeletonList = ({ listItem, repeat }) => {
     return (
-        <Row gutter={40} style={{ marginTop: 32 }}>
+        <Grid container spacing={5} style={{ marginTop: 32 }}>
             {[...Array(repeat)].map((_item, index) => (
                 <React.Fragment key={index}>{listItem}</React.Fragment>
             ))}
-        </Row>
+        </Grid>
     );
 };
 

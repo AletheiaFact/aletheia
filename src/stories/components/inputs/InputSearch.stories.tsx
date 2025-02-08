@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import InputSearch from "../../../components/Form/InputSearch";
 
