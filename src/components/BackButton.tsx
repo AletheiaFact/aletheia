@@ -4,51 +4,49 @@ import { ArrowBackOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import colors from "../styles/colors";
 
-interface BackButtonProps {
-    style?: CSSProperties;
-    callback?: () => void;
-    isVisible?: boolean;
-}
-
-const BackButton: React.FC<BackButtonProps> = ({
+function BackButton({
     style,
     callback,
     isVisible = true,
-}) => {
+}: {
+    style?: CSSProperties;
+    callback?: () => void;
+    isVisible?: boolean;
+}) {
     const { t } = useTranslation();
     const router = useRouter();
     const pathname = router?.pathname || "";
 
-    if (!isVisible || pathname === "/" || pathname === "/home-page") {
-        return null;
+    console.log("pthname:", pathname);
+    console.log("isVisible:", isVisible);
+
+    if (pathname !== "/" && pathname !== "/home-page" && isVisible) {
+        return (
+            <a
+                style={{
+                    display: "flex",
+                    alignContent: "center",
+                    fontWeight: "bold",
+                    color: colors.secondary,
+                    ...style,
+                }}
+                data-cy="testBackButton"
+                onClick={() => {
+                    if (callback) {
+                        callback();
+                    } else {
+                        // TODO: check if the previous page in history is from Aletheia
+                        // if it's not, go to home page
+                        router.back();
+                    }
+                }}
+            >
+                <ArrowBackOutlined fontSize="small" /> {t("common:back_button")}
+            </a>
+        );
+    } else {
+        return <></>;
     }
-
-    const handleClick = () => {
-        if (callback) {
-            callback();
-        } else {
-            router.back();
-        }
-    };
-
-    return (
-        <button
-            style={{
-                display: "flex",
-                fontWeight: "bold",
-                color: colors.secondary,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                ...style,
-            }}
-            data-cy="testBackButton"
-            onClick={handleClick}
-        >
-            <ArrowBackOutlined fontSize="small" />
-            {t("common:back_button")}
-        </button>
-    );
-};
+}
 
 export default BackButton;
