@@ -39,7 +39,6 @@ const MainApp = ({ children }) => {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
                 width:
                     copilotDrawerCollapsed || vw?.md
                         ? "100%"
@@ -47,11 +46,17 @@ const MainApp = ({ children }) => {
             }}
         >
             <Sidebar />
-            <Box sx={{ background: colors.white }}>
-                <Header />
-                <DonationBanner />
-                {renderCTAButton()}
-                <ContentWrapper>{children}</ContentWrapper>
+            <Box sx={{
+                display: "grid",
+                minHeight: "100vh",
+                background: colors.white
+            }}>
+                <Box>
+                    <Header />
+                    <DonationBanner />
+                    {renderCTAButton()}
+                    <ContentWrapper>{children}</ContentWrapper>
+                </Box>
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}
             </Box>
