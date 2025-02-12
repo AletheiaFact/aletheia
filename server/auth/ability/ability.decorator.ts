@@ -1,6 +1,7 @@
 import { SetMetadata } from "@nestjs/common";
-import { User } from "../../enities/user.entity";
+import { User } from "../../entities/user.entity";
 import { Action, Subjects } from "./ability.factory";
+import { M2M } from "../../entities/m2m.entity";
 
 export interface RequiredRule {
     action: Action;
@@ -25,4 +26,9 @@ export class FactCheckerUserAbility implements RequiredRule {
 export class AdminUserAbility implements RequiredRule {
     action = Action.Manage;
     subject = User;
+}
+
+export class IntegrationAbility implements RequiredRule {
+    action = Action.Create;
+    subject = M2M;
 }
