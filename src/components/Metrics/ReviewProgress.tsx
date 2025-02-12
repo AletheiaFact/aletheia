@@ -1,30 +1,33 @@
 import React from "react";
-import { Progress, ProgressProps } from "antd";
+import {
+    Grid,
+    LinearProgress,
+    CircularProgress,
+    linearProgressClasses,
+    circularProgressClasses
+} from "@mui/material";
+import styled from "styled-components";
 import ReviewColors from "../../constants/reviewColors";
 import colors from "../../styles/colors";
-import StatsReviewColors from "../../constants/statsReviewColors";
 import { useTranslation } from "next-i18next";
 
 const ReviewProgress = ({ reviews, statsProps }) => {
     const { t } = useTranslation();
-
-    const getStyle = (reviewId) => {
-        const defaultStyle: ProgressProps = {
-            strokeWidth: statsProps.strokeWidth || 18,
-            width: statsProps.width || 80,
-            strokeLinecap: statsProps.type === "circle" ? "square" : "round",
-            trailColor: colors.neutralTertiary,
-        };
-
-        return {
-            ...defaultStyle,
-            strokeColor: StatsReviewColors[reviewId] || colors.black,
-        };
-    };
-
+    
     return reviews.map((review) => {
-        const format =
-            statsProps.format === "count" ? () => review.count : null;
+        const BorderLinearProgress = styled(LinearProgress)(() => ({
+            [`& .${linearProgressClasses.bar}`]: {
+                borderRadius: 10,
+                backgroundColor: ReviewColors[review._id] || colors.black,
+            },
+        }));
+
+        const BorderCircularProgress = styled(CircularProgress)(() => ({
+            [`& .${circularProgressClasses.circle}`]: {
+                color: ReviewColors[review._id] || colors.black,
+            },
+        }));
+
         return (
             <div
                 style={
@@ -52,13 +55,53 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                     {statsProps.countInTitle && `${review.count} `}
                     {t(`claimReviewForm:${review._id}`)}
                 </span>
-                <Progress
-                    percent={review.percentage}
-                    type={statsProps.type}
-                    format={format}
-                    {...getStyle(review._id)}
-                />
-            </div>
+                {statsProps.type === "circle" ?
+                    <Grid container position="relative" display="inline-flex" justifyContent="center"
+                        alignItems="center">
+                        <CircularProgress
+                            variant="determinate"
+                            value={100}
+                            size={statsProps.size}
+                            thickness={8}
+                            sx={{ color: colors.neutralTertiary, position: "absolute" }}
+                        />
+                        <BorderCircularProgress
+                            variant="determinate"
+                            value={review.percentage}
+                            size={statsProps.size}
+                            thickness={8}
+                        />
+                        <p
+                            style={{
+                                fontSize: statsProps.size === 30 ? "10px" : "14px",
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                            }}
+                        >
+                            {review.count}
+                        </p>
+                    </Grid>
+                    :
+                    <Grid container alignItems="center">
+                        <Grid item xs={11}>
+                            <BorderLinearProgress
+                                variant="determinate"
+                                value={review.percentage}
+                                sx={{ height: 18, borderRadius: 10 }}
+                            />
+                        </Grid>
+                        <Grid item xs={1}>
+                            <p
+                                style={{ fontSize: "12px", margin: 0, padding: "0px 10px" }}
+                            >
+                                {review.percentage}%
+                            </p>
+                        </Grid>
+                    </Grid>
+                }
+            </div >
         );
     });
 };
