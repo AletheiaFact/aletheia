@@ -1,10 +1,9 @@
-import { Button, ButtonProps } from "@mui/material";
+import { Button, ButtonProps } from "antd";
 import colors from "../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useLayoutEffect, useState } from "react";
-
 export enum ButtonType {
     blue = "blue",
     white = "white",
@@ -13,25 +12,19 @@ export enum ButtonType {
     whiteBlack = "whiteBlack",
     lightBlue = "lightBlue",
 }
-
 type AletheiaButtonProps = Omit<ButtonProps, "type">;
 interface IAletheiaButtonProps extends AletheiaButtonProps {
     type?: ButtonType;
     event?: any;
     rounded?: string;
-    loading?: boolean;
-    htmlType?: "button" | "submit" | "reset";
-    icon?: any;
-    target?: "_blank" | "_self" | "_parent" | "_top";
 }
 
-const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
-    const { children, type, rounded, htmlType, style, ...restProps } = props;
-
+const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
+    props: IAletheiaButtonProps
+) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     const [backgroundColor, setBackgroundColor] = useState(colors.primary);
-
     useLayoutEffect(() => {
         setBackgroundColor(
             nameSpace === NameSpaceEnum.Main
@@ -39,7 +32,6 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
                 : colors.secondary
         );
     }, [nameSpace]);
-
     let buttonStyle = {
         borderWidth: "2px",
         display: "flex",
@@ -103,10 +95,9 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     }
 
     return (
-        <Button type={htmlType || "button"} variant="outlined" style={buttonStyle} {...restProps}>
-            {children}
+        <Button {...props} type="default" style={buttonStyle}>
+            {props.children}
         </Button>
     );
 };
-
 export default AletheiaButton;
