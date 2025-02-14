@@ -23,10 +23,19 @@ interface IAletheiaButtonProps extends AletheiaButtonProps {
     htmlType?: "button" | "submit" | "reset";
     icon?: any;
     target?: "_blank" | "_self" | "_parent" | "_top";
+    ["data-cy"]?: string;
 }
 
 const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
-    const { children, type, rounded, htmlType, style, ...restProps } = props;
+    const {
+        children,
+        type,
+        rounded,
+        htmlType,
+        style,
+        "data-cy": dataCy,
+        ...restProps
+    } = props;
 
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -34,9 +43,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
 
     useLayoutEffect(() => {
         setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
@@ -103,7 +110,13 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     }
 
     return (
-        <Button type={htmlType || "button"} variant="outlined" style={buttonStyle} {...restProps}>
+        <Button
+            type={htmlType || "button"}
+            variant="outlined"
+            style={buttonStyle}
+            data-cy={dataCy}
+            {...restProps}
+        >
             {children}
         </Button>
     );
