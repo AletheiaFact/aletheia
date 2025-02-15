@@ -65,12 +65,14 @@ const ClaimReviewDrawer = () => {
                                 padding: "1rem",
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent:"space-between"
+                                justifyContent: "space-between"
                             }}
                         >
                             <Grid item style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
-                                    icon={<ArrowBackOutlined style={{marginRight:"10px"}} fontSize="small"/>}
+                                    startIcon={
+                                        <ArrowBackOutlined style={{ marginRight: "10px" }} fontSize="small" />
+                                    }
                                     onClick={() =>
                                         dispatch(actions.closeReviewDrawer())
                                     }
@@ -108,7 +110,7 @@ const ClaimReviewDrawer = () => {
                                         justifyContent: "center",
                                         gap: 8,
                                         alignItems: "center",
-                                        marginTop:"10px"
+                                        marginTop: "10px"
                                     }}
                                 >
                                     <ErrorOutlineOutlined
