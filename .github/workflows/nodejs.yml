@@ -111,4 +111,4 @@ jobs:
               env:
                   CI: true
             - name: Run Cypress Component Tests
-            - run: yarn cypress run --component
+              run: yarn cypress run --component
