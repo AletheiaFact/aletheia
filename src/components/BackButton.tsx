@@ -17,9 +17,6 @@ function BackButton({
     const router = useRouter();
     const pathname = router?.pathname || "";
 
-    console.log("pthname:", pathname);
-    console.log("isVisible:", isVisible);
-
     if (pathname !== "/" && pathname !== "/home-page" && isVisible) {
         return (
             <a
