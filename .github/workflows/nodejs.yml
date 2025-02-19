@@ -110,3 +110,5 @@ jobs:
                   wait-on: "http://localhost:3000"
               env:
                   CI: true
+            - name: Run Cypress Component Tests
+            - run: yarn cypress run --component
