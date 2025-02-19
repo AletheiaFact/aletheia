@@ -1,160 +1,160 @@
 name: Deploy to AWS EKS
 
 on:
-  push:
-    branches:
-      - master
-      - stage
-      - ufpb-labcheck
-  # For future
-  # release:
-  #   types: [created]
+    push:
+        branches:
+            - master
+            - stage
+            - ufpb-labcheck
+    # For future
+    # release:
+    #   types: [created]
 env:
-  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: us-east-1
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+    KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+    AWS_DEFAULT_REGION: us-east-1
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
-  setup-build-publish:
-    name: Build & Publish
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-    env:
-      ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-      AWS_SDK_BUCKET: ${{ secrets.AWS_SDK_BUCKET }}
-      API_URL: ${{ secrets.API_URL }}
-      GITHUB_SHA: ${{ github.sha }}
-      IMAGE: aletheiafact-production
-      ENV: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-      NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
-      UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      MONGODB_NAME: ${{ secrets.MONGODB_NAME }}
-      ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
-      ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
-      ORYCLOUD: "enabled"
-      ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
-      ALETHEIA_SCHEMA_ID: ${{ secrets.ALETHEIA_SCHEMA_ID }}
-      RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
-      NOVU_API_KEY: ${{ secrets.NOVU_API_KEY }}
-      NOVU_APPLICATION_IDENTIFIER: ${{ secrets.NOVU_APPLICATION_IDENTIFIER }}
-      NEW_RELIC_APP_NAME: ${{ secrets.NEW_RELIC_APP_NAME }}
-      GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
-      GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
-      # Needed env variables for first build on next
-      NEXT_PUBLIC_UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
-      NEXT_PUBLIC_RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
-      AGENTS_API_URL: ${{ secrets.AGENTS_API_URL }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ZENVIA_API_URL: ${{ secrets.ZENVIA_API_URL }}
-      ZENVIA_API_TOKEN: ${{ secrets.ZENVIA_API_TOKEN }}
-      AGENCIA_ACCESS_TOKEN: ${{ secrets.AGENCIA_ACCESS_TOKEN }}
-      RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
-      TAG: ${{ github.sha}}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    setup-build-publish:
+        name: Build & Publish
+        runs-on: ubuntu-latest
+        environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
+        env:
+            ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
+            AWS_SDK_BUCKET: ${{ secrets.AWS_SDK_BUCKET }}
+            API_URL: ${{ secrets.API_URL }}
+            GITHUB_SHA: ${{ github.sha }}
+            IMAGE: aletheiafact-production
+            ENV: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
+            NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+            UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+            MONGODB_NAME: ${{ secrets.MONGODB_NAME }}
+            ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
+            ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
+            ORYCLOUD: "enabled"
+            ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
+            ALETHEIA_SCHEMA_ID: ${{ secrets.ALETHEIA_SCHEMA_ID }}
+            RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+            NOVU_API_KEY: ${{ secrets.NOVU_API_KEY }}
+            NOVU_APPLICATION_IDENTIFIER: ${{ secrets.NOVU_APPLICATION_IDENTIFIER }}
+            NEW_RELIC_APP_NAME: ${{ secrets.NEW_RELIC_APP_NAME }}
+            GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
+            GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
+            # Needed env variables for first build on next
+            NEXT_PUBLIC_UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
+            NEXT_PUBLIC_RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+            AGENTS_API_URL: ${{ secrets.AGENTS_API_URL }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            ZENVIA_API_URL: ${{ secrets.ZENVIA_API_URL }}
+            ZENVIA_API_TOKEN: ${{ secrets.ZENVIA_API_TOKEN }}
+            AGENCIA_ACCESS_TOKEN: ${{ secrets.AGENCIA_ACCESS_TOKEN }}
+            RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
+            TAG: ${{ github.sha}}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-east-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+            - name: Login to Amazon ECR
+              id: login-ecr
+              uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Install pkl
-        uses: pkl-community/setup-pkl@v0
-        with:
-          pkl-version: 0.25.2
-      # Setting up config.yaml based on environment
-      - name: Set config.yaml
-        run: |
-          pkl eval -f yaml ./deployment/config/config-file/$ENVIRONMENT.pkl > config.$ENVIRONMENT.yaml
+            - name: Install pkl
+              uses: pkl-community/setup-pkl@v0
+              with:
+                  pkl-version: 0.25.2
+            # Setting up config.yaml based on environment
+            - name: Set config.yaml
+              run: |
+                  pkl eval -f yaml ./deployment/config/config-file/$ENVIRONMENT.pkl > config.$ENVIRONMENT.yaml
 
-      - name: Set migrate-mongo-config.ts
-        run: |
-          sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.ts
-          sed -i "s%MONGODB_NAME%$MONGODB_NAME%g" migrate-mongo-config-example.ts
+            - name: Set migrate-mongo-config.ts
+              run: |
+                  sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.ts
+                  sed -i "s%MONGODB_NAME%$MONGODB_NAME%g" migrate-mongo-config-example.ts
 
-      # Build the Docker image
-      - name: Build
-        run: |
-          docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
-            --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-            --build-arg NEXT_PUBLIC_ENVIRONMENT=$ENVIRONMENT \
-            --build-arg NEXT_PUBLIC_ORY_SDK_URL=$ORY_SDK_URL \
-            --build-arg NEXT_PUBLIC_ORYCLOUD=$ORYCLOUD \
-            --build-arg NEXT_PUBLIC_ENABLE_BANNER_DONATION=$ENABLE_BANNER_DONATION \
-            --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
-            -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
-          docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
+            # Build the Docker image
+            - name: Build
+              run: |
+                  docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
+                    --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+                    --build-arg NEXT_PUBLIC_ENVIRONMENT=$ENVIRONMENT \
+                    --build-arg NEXT_PUBLIC_ORY_SDK_URL=$ORY_SDK_URL \
+                    --build-arg NEXT_PUBLIC_ORYCLOUD=$ORYCLOUD \
+                    --build-arg NEXT_PUBLIC_ENABLE_BANNER_DONATION=$ENABLE_BANNER_DONATION \
+                    --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
+                    -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
+                  docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
 
-      # Push the Docker image to Google Container Registry
-      - name: Publish
-        run: |
-          docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
-          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
+            # Push the Docker image to Google Container Registry
+            - name: Publish
+              run: |
+                  docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
+                  if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
 
-  deploy:
-    name: Deploy
-    needs: setup-build-publish
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-    env:
-      ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-      NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
-      UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
-      ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
-      ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
-      RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ORYCLOUD: "enabled"
-      ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
-      TAG: ${{ github.sha}}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    deploy:
+        name: Deploy
+        needs: setup-build-publish
+        runs-on: ubuntu-latest
+        environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
+        env:
+            ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
+            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+            NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+            UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
+            ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
+            ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
+            RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            ORYCLOUD: "enabled"
+            ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
+            TAG: ${{ github.sha}}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Install pkl
-        uses: pkl-community/setup-pkl@v0
-        with:
-          pkl-version: 0.25.2
+            - name: Install pkl
+              uses: pkl-community/setup-pkl@v0
+              with:
+                  pkl-version: 0.25.2
 
-      - name: Set deployment/app.yml
-        run: |
-          pkl eval -f yaml ./deployment/k8s/$ENVIRONMENT.pkl > deployment/app.yml
+            - name: Set deployment/app.yml
+              run: |
+                  pkl eval -f yaml ./deployment/k8s/$ENVIRONMENT.pkl > deployment/app.yml
 
-      - name: Applying Kubernetes Deployment
-        uses: giovannirossini/aws-eks@v1.0.1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1"
-          cluster-name: "production"
-          command: kubectl apply -f ./deployment/
+            - name: Applying Kubernetes Deployment
+              uses: giovannirossini/aws-eks@v1.0.1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: "us-east-1"
+                  cluster-name: "production"
+                  command: kubectl apply -f ./deployment/
 
-      - name: Validation
-        uses: giovannirossini/aws-eks@v1.0.1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1"
-          cluster-name: "production"
-          command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=360s
-        if: success()
+            - name: Validation
+              uses: giovannirossini/aws-eks@v1.0.1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: "us-east-1"
+                  cluster-name: "production"
+                  command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=360s
+              if: success()
 
-      - name: Rollback
-        uses: giovannirossini/aws-eks@v1.0.1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1"
-          cluster-name: "production"
-          command: kubectl rollout undo deployments/aletheia -n ${{ env.ENVIRONMENT }}
-        if: failure()
+            - name: Rollback
+              uses: giovannirossini/aws-eks@v1.0.1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: "us-east-1"
+                  cluster-name: "production"
+                  command: kubectl rollout undo deployments/aletheia -n ${{ env.ENVIRONMENT }}
+              if: failure()
