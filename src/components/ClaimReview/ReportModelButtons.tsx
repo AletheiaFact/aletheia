@@ -27,6 +27,12 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
         recreateMachine(event.currentTarget.id);
     };
 
+    const addIcon = (
+        <AddIcon
+            style={{ marginBottom: "5px" }}
+        />
+    );
+
     return (
         <Grid container
             style={{
@@ -51,7 +57,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<AddIcon />}
+                                    startIcon={addIcon}
                                     data-cy={
                                         "testAddInformativeNewsReviewButton"
                                     }
@@ -64,7 +70,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<AddIcon />}
+                                    startIcon={addIcon}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
                                 >
@@ -78,7 +84,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<AddIcon />}
+                                startIcon={addIcon}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
                             >
@@ -89,7 +95,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<AddIcon />}
+                                startIcon={addIcon}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }
