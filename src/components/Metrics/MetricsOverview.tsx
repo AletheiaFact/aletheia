@@ -44,7 +44,7 @@ const MetricsOverview = ({ stats }) => {
                 ) : (
                     t("metrics:empytOverview")
                 )}
-                <ReviewStats stats={stats} countInTitle={true} type="line" />
+                <ReviewStats stats={stats} countInTitle={true} />
             </Col>
         </Row>
     );
