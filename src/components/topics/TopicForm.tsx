@@ -144,6 +144,9 @@ const TopicForm = ({
                         padding: "0 5px",
                         fontSize: 12,
                         marginLeft: 5,
+                        textAlign: "center",
+                        justifyContent: "center",
+                        lineHeight: "13px",
                     }}
                 >
                     {t("topics:addTopicsButton")}

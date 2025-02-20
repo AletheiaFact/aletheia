@@ -52,7 +52,13 @@ const SourceListItem = ({ source }) => {
                         href={source.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ width: "fit-content" }}
+                        style={{
+                            width: "fit-content",
+                            textAlign: "center",
+                            justifyContent: "center",
+                            lineHeight: "13px",
+                            padding: "20px 8px",
+                        }}
                     >
                         {t("sources:sourceCardButton")}
                     </AletheiaButton>

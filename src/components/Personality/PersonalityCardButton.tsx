@@ -26,9 +26,11 @@ const PersonalityCardButton = ({
                 {...buttonProps}
                 style={{
                     fontSize: "12px",
-                    lineHeight: "20px",
+                    lineHeight: "16px",
                     height: "auto",
                     padding: "4px 12px",
+                    textAlign: "center",
+                    justifyContent: "center",
                 }}
             >
                 <span style={{ marginTop: 4 }}>
