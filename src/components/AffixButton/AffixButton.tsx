@@ -4,7 +4,7 @@ import {
     AddOutlined,
     PersonAddAlt1Outlined,
     Source,
-    Report
+    Report,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
@@ -156,11 +156,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
-                        icon={
-                            <AddOutlined
-                                fontSize="large"
-                            />
-                        }
+                        icon={<AddOutlined fontSize="large" />}
                     />
                 </PulseAnimation>
 
@@ -187,8 +183,9 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                             fontSize: 14,
                             textAlign: "center",
                             textTransform: "uppercase",
-                            padding: "0 34px"
-                        }}>
+                            padding: "0 34px",
+                        }}
+                    >
                         {t("tutorial:modalTitle")}
                     </h2>
                 }
@@ -203,10 +200,18 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
+                        components={[
+                            <AddCircle
+                                style={{
+                                    marginBottom: "-5px",
+                                    fontSize: "18px",
+                                }}
+                                key={"icon"}
+                            />,
+                        ]}
                     />
                 </p>
-                
+
                 <div
                     style={{
                         marginTop: 24,

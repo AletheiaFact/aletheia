@@ -1,4 +1,4 @@
-import { Box ,Grid , Typography} from "@mui/material"
+import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
@@ -45,7 +45,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
 
     useEffect(() => {
         if (!ref.current) return;
-        
+
         const scrollableSpeech = ref.current.scrollHeight > window.innerHeight;
         if (scrollableSpeech) {
             setIsAffixed(true);
@@ -89,7 +89,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                         )}
                         <section>
                             <ClaimInfo isImage={isImage} date={claim?.date} />
-                            <Grid container
+                            <Grid
+                                container
                                 style={{ paddingBottom: "15px" }}
                                 justifyContent="center"
                             >
@@ -97,7 +98,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                     <Typography
                                         variant="h1"
                                         style={{
-                                            fontFamily:"initial",
+                                            fontFamily: "initial",
                                             fontWeight: 700,
                                             margin: "20px 0",
                                             fontSize: 20,
@@ -118,7 +119,9 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                 </Grid>
                                 <Box
                                     style={{
-                                        position: isAffixed ? "fixed" : "relative",
+                                        position: isAffixed
+                                            ? "fixed"
+                                            : "relative",
                                         bottom: isAffixed ? 15 : "auto",
                                         textAlign: "center",
                                         width: "100%",
@@ -129,14 +132,25 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         onChange={(e) => {
                                             setShowHighlights(e.target.value);
                                         }}
-                                        labelTrue={t("claim:showHighlightsButton")}
-                                        labelFalse={t("claim:hideHighlightsButton")}
+                                        labelTrue={t(
+                                            "claim:showHighlightsButton"
+                                        )}
+                                        labelFalse={t(
+                                            "claim:hideHighlightsButton"
+                                        )}
                                     />
                                 </Box>
                             </Grid>
                             {sources.length > 0 && (
                                 <>
-                                    <Typography variant="h4" style={{fontSize: 24, fontFamily:"initial", fontWeight: 700}}>
+                                    <Typography
+                                        variant="h4"
+                                        style={{
+                                            fontSize: 24,
+                                            fontFamily: "initial",
+                                            fontWeight: 700,
+                                        }}
+                                    >
                                         {t("claim:sourceSectionTitle")}
                                     </Typography>
                                     <ClaimSourceList

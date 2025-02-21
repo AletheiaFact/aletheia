@@ -107,7 +107,7 @@ const BaseList = ({
                 onClick={loadMoreData}
                 style={{
                     color: colors.primary,
-                    fontSize: 14
+                    fontSize: 14,
                 }}
             >
                 {t("list:loadMoreButton")}
@@ -117,12 +117,13 @@ const BaseList = ({
     if (items && Array.isArray(items) && (items.length > 0 || !emptyFallback)) {
         return (
             <>
-                <Grid container
+                <Grid
+                    container
                     style={{
                         alignContent: "middle",
                         justifyContent: "space-between",
                         padding: "12px 0",
-                        borderBottom: "1px solid #eee"
+                        borderBottom: "1px solid #eee",
                     }}
                 >
                     <Grid item>
@@ -150,9 +151,7 @@ const BaseList = ({
                         </p>
                     </Grid>
                     <Grid item>
-                        <SortByButton
-                            refreshListItems={refreshListItems}
-                        />
+                        <SortByButton refreshListItems={refreshListItems} />
                     </Grid>
                 </Grid>
                 <List
@@ -164,25 +163,49 @@ const BaseList = ({
                     }}
                 >
                     {loading && loadingProps ? (
-                        <Grid container style={{ display: "flex", justifyContent: "center", padding: 2 }}>
+                        <Grid
+                            container
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                padding: 2,
+                            }}
+                        >
                             {loadingIcon}
                         </Grid>
                     ) : (
                         items.map((item) => (
                             <Grid container item {...grid}>
-                                <ListItem key={item} style={{ borderBottom: showDividers ? "1px solid #eee" : "none", padding: "0 10px", ...style }}>
+                                <ListItem
+                                    key={item}
+                                    style={{
+                                        borderBottom: showDividers
+                                            ? "1px solid #eee"
+                                            : "none",
+                                        padding: "0 10px",
+                                        ...style,
+                                    }}
+                                >
                                     {renderItem(item)}
                                 </ListItem>
                             </Grid>
                         ))
                     )}
                     {loadMoreButton && (
-                        <Grid item style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                        <Grid
+                            item
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
                             {loadMoreButton}
                         </Grid>
                     )}
-                </List >
-                <Grid container
+                </List>
+                <Grid
+                    container
                     style={{
                         textAlign: "center",
                         display: "block",

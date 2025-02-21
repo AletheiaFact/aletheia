@@ -76,7 +76,8 @@ const VerificationRequestCard = ({
 
     useEffect(() => {
         if (textRef.current) {
-            const isOverflow = textRef.current.scrollHeight > textRef.current.clientHeight;
+            const isOverflow =
+                textRef.current.scrollHeight > textRef.current.clientHeight;
             setIsOverflowing(isOverflow);
         }
     }, [verificationRequest.content]);
@@ -92,7 +93,10 @@ const VerificationRequestCard = ({
 
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.secondary, color: colors.white }}
+                    style={{
+                        backgroundColor: colors.secondary,
+                        color: colors.white,
+                    }}
                     key={`${verificationRequest._id}|publicationDate`}
                     label={
                         <div>
@@ -115,12 +119,18 @@ const VerificationRequestCard = ({
         if (verificationRequest.date) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
+                    style={{
+                        backgroundColor: colors.neutralSecondary,
+                        color: colors.white,
+                    }}
                     key={`${verificationRequest._id}|date`}
                     label={
                         <div>
                             <strong>
-                                {t("verificationRequest:verificationRequestTagDate")}:
+                                {t(
+                                    "verificationRequest:verificationRequestTagDate"
+                                )}
+                                :
                             </strong>{" "}
                             <LocalizedDate date={verificationRequest.date} />
                         </div>
@@ -131,7 +141,10 @@ const VerificationRequestCard = ({
         if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
+                    style={{
+                        backgroundColor: colors.tertiary,
+                        color: colors.white,
+                    }}
                     key={`${verificationRequest._id}|heardFrom`}
                     label={
                         <div>
@@ -150,15 +163,28 @@ const VerificationRequestCard = ({
         if (verificationRequest.source) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
+                    style={{
+                        backgroundColor: colors.lightPrimary,
+                        color: colors.white,
+                    }}
                     key={`${verificationRequest._id}|source`}
                     label={
                         <div>
                             <strong>
-                                {t("verificationRequest:verificationRequestTagSource")}:
+                                {t(
+                                    "verificationRequest:verificationRequestTagSource"
+                                )}
+                                :
                             </strong>
-                            <Link href={verificationRequest.source.href} passHref>
-                                <a>{truncateUrl(verificationRequest.source.href)}</a>
+                            <Link
+                                href={verificationRequest.source.href}
+                                passHref
+                            >
+                                <a>
+                                    {truncateUrl(
+                                        verificationRequest.source.href
+                                    )}
+                                </a>
                             </Link>
                         </div>
                     }
@@ -184,14 +210,18 @@ const VerificationRequestCard = ({
                         textOverflow: "ellipsis",
                         WebkitLineClamp: visible ? "none" : 3,
                     }}
-
                 >
                     {verificationRequest.content}
                 </Typography>
                 {expandable && !visible && isOverflowing && (
                     <Button
                         variant="text"
-                        style={{ marginLeft: "auto", color: colors.lightPrimary, textDecoration: 'underline', padding: 0 }}
+                        style={{
+                            marginLeft: "auto",
+                            color: colors.lightPrimary,
+                            textDecoration: "underline",
+                            padding: 0,
+                        }}
                         onClick={handleToggle}
                     >
                         {t("verificationRequest:showText")}
@@ -200,7 +230,8 @@ const VerificationRequestCard = ({
                 <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 
-            <Grid item
+            <Grid
+                item
                 style={{
                     marginTop: 16,
                     display: "flex",

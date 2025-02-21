@@ -12,7 +12,15 @@ const VerificationRequestRecommendations = () => {
         <>
             {recommendations?.length > 0 && (
                 <section style={{ width: "100%" }}>
-                    <Typography style={{ fontFamily: "serif", fontWeight: 600, fontSize: 26, lineHeight: 1.35 }} variant="h4">
+                    <Typography
+                        style={{
+                            fontFamily: "serif",
+                            fontWeight: 600,
+                            fontSize: 26,
+                            lineHeight: 1.35,
+                        }}
+                        variant="h4"
+                    >
                         {t("verificationRequest:recommendationTitle")}
                     </Typography>
                     <VerificationRequestResultList results={recommendations} />

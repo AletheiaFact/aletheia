@@ -9,11 +9,10 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 
-
 const SelectInput = styled(Select)`
     .MuiOutlinedInput-notchedOutline {
         border: none;
-     }
+    }
 
     .MuiSelect-select {
         display: flex;
@@ -27,25 +26,27 @@ const SelectInput = styled(Select)`
 `;
 
 const StyledSwitch = styled(Switch)`
-  .MuiSwitch-switchBase {
-    padding: 6px;
-  }
+    .MuiSwitch-switchBase {
+        padding: 6px;
+    }
 
-  MuiSwitch-thumb {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: ${colors.white};
-    border-radius: 50%;
-  }
+    MuiSwitch-thumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: ${colors.white};
+        border-radius: 50%;
+    }
 
-  .MuiSwitch-track {
-    border-radius: 22px;
-    background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main ? colors.secondary : colors.primary};
-    opacity: 1;
-    height: 18px;
-  }
+    .MuiSwitch-track {
+        border-radius: 22px;
+        background-color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.secondary
+                : colors.primary};
+        opacity: 1;
+        height: 18px;
+    }
 `;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
@@ -79,7 +80,9 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     bordered={false}
                     showArrow={true}
                     value={language}
-                    onChange={(e) => setDefaultLanguage(e.target.value as string)}
+                    onChange={(e) =>
+                        setDefaultLanguage(e.target.value as string)
+                    }
                     onSelect={setDefaultLanguage}
                     data-cy={props.dataCy}
                     loading={switchLoading}

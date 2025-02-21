@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "antd";
-import { ErrorOutlineOutlined, WarningAmberOutlined} from "@mui/icons-material";
+import {
+    ErrorOutlineOutlined,
+    WarningAmberOutlined,
+} from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
@@ -37,18 +40,19 @@ const UnhideContentModal = ({
             width={vw?.xs || vw?.xl ? "100%" : "70%"}
             style={{
                 alignSelf: "flex-start",
-                paddingTop: "10vh"
+                paddingTop: "10vh",
             }}
             title={
                 <Grid item xs={12}>
                     <h2
-                        className={`${updatingHideStatus ? "hide-modal" : "delete-modal"
-                            }`}
+                        className={`${
+                            updatingHideStatus ? "hide-modal" : "delete-modal"
+                        }`}
                         style={{
                             display: "flex",
                             alignItems: "center",
                             gap: 10,
-                            fontSize: 24
+                            fontSize: 24,
                         }}
                     >
                         {updatingHideStatus ? (
@@ -59,7 +63,6 @@ const UnhideContentModal = ({
                         {contentTitle}
                     </h2>
                     <p style={{ marginTop: 8 }}>{contentBody}</p>
-
                 </Grid>
             }
         >
@@ -75,7 +78,9 @@ const UnhideContentModal = ({
                             rules={[
                                 {
                                     required: true,
-                                    message: t("claimReview:descriptionInputError"),
+                                    message: t(
+                                        "claimReview:descriptionInputError"
+                                    ),
                                 },
                             ]}
                             style={{ marginBottom: 16 }}
