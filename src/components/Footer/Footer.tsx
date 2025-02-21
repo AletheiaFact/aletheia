@@ -31,6 +31,7 @@ const Footer = () => {
                 background: backgroundColor,
                 color: colors.white,
                 padding: "32px",
+                alignSelf: "flex-end",
             }}
         >
             <Grid container spacing={3} justifyContent="center">

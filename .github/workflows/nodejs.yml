@@ -34,7 +34,7 @@ jobs:
                 node-version: [18.19.1]
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v2
             - name: Test docker image build before merge
               run: |
                   docker build --build-arg ENVIRONMENT=development \
@@ -66,7 +66,7 @@ jobs:
                 node-version: [18.19.1]
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v2
             - uses: actions/download-artifact@v4
               with:
                   name: aletheia-dist
@@ -93,7 +93,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v2
             - uses: actions/download-artifact@v4
               with:
                   name: aletheia-dist
@@ -108,5 +108,24 @@ jobs:
               with:
                   start: yarn test:e2e:cy
                   wait-on: "http://localhost:3000"
+              env:
+                  CI: true
+    cypress-run-component:
+        needs: build
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - uses: actions/download-artifact@v4
+              with:
+                  name: aletheia-dist
+                  path: dist
+            - run: |
+                  echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
+                  yarn install
+            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - run: yarn build
+            - name: Run Cypress Component Tests
+              run: yarn cypress run --component
               env:
                   CI: true

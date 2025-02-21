@@ -10,6 +10,7 @@ import AletheiaButton, { ButtonType } from "../../Button";
 import HomeHeaderSearchStyled from "./HomeHeaderSearch.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
+import { InputAdornment } from "@mui/material";
 
 const HomeHeaderSearch = () => {
     const { t } = useTranslation();
@@ -45,10 +46,15 @@ const HomeHeaderSearch = () => {
             <h2 className="title">{t("home:homeHeaderSearchTitle")}</h2>
 
             <InputSearch
+                sx={{ width: "100%" }}
                 placeholder={t("header:search_placeholder")}
-                prefix={
-                    <SearchOutlined style={{ fontSize: 25, marginRight: 16 }} />
-                }
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchOutlined />
+                        </InputAdornment>
+                    ),
+                }}
                 data-cy={"testInputSearchOverlay"}
                 onChange={({ target }) => setName(target.value)}
                 onKeyDown={({ key }) => {

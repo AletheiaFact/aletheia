@@ -5,19 +5,18 @@ import {
     Injectable,
     UnauthorizedException,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
-import { Configuration, FrontendApi } from "@ory/client";
 import { CHECK_ABILITY, RequiredRule } from "./ability.decorator";
 import { AbilityFactory } from "./ability.factory";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { User } from "../../entities/user.entity";
+import { M2M } from "../../entities/m2m.entity";
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
-        private caslAbilityFactor: AbilityFactory,
-        private configService: ConfigService
+        private caslAbilityFactor: AbilityFactory
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,20 +27,17 @@ export class AbilitiesGuard implements CanActivate {
             ) || [];
 
         const request = context.switchToHttp().getRequest();
-        const oryConfig = new Configuration({
-            basePath: this.configService.get<string>("ory.url"),
-            accessToken: this.configService.get<string>("access_token"),
-        });
-        const ory = new FrontendApi(oryConfig);
-        const { data: session } = await ory.toSession({
-            cookie: request.header("Cookie"),
-        });
-        const user = session.identity.traits;
+        const subject: User | M2M | undefined = request.user;
+        if (!subject) {
+            // Not authenticated
+            return false;
+        }
         const nameSpaceSlug = request.params.namespace || NameSpaceEnum.Main;
         const ability = this.caslAbilityFactor.defineAbility(
-            user,
+            subject,
             nameSpaceSlug
         );
+
         try {
             rules.forEach((rule) =>
                 ForbiddenError.from(ability).throwUnlessCan(
@@ -55,6 +51,7 @@ export class AbilitiesGuard implements CanActivate {
             if (error instanceof ForbiddenError) {
                 throw new UnauthorizedException(error.message);
             }
+            throw error;
         }
     }
 }

@@ -22,16 +22,23 @@ const SearchResult = ({
     };
 
     return (
-        <Grid container
+        <Grid
+            container
             style={{
                 padding: "10px 5%",
                 cursor: "pointer",
                 width: "100%",
-                alignContent:"middle"
+                alignContent: "middle",
+                flexWrap: "nowrap",
+                gap: "10px",
             }}
             onClick={handleOnClick}
         >
-            {avatar && <Grid item xs={vw?.xs ? 2 : 1}>{avatar}</Grid>}
+            {avatar && (
+                <Grid item xs={vw?.xs ? 2 : 1}>
+                    {avatar}
+                </Grid>
+            )}
             <Grid item xs={getTextSpan()}>
                 <Typography
                     variant="body1"
@@ -39,7 +46,7 @@ const SearchResult = ({
                         marginBottom: 0,
                         fontSize: "14px",
                         whiteSpace: "nowrap",
-                        overflow: "hidden",    
+                        overflow: "hidden",
                         textOverflow: "ellipsis",
                     }}
                 >

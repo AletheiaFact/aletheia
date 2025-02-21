@@ -1,5 +1,10 @@
 version: "3"
 services:
+  sqlite:
+    image: busybox
+    volumes:
+      - hydra-sqlite:/mnt/sqlite
+    command: "chmod -R 777 /mnt/sqlite"
   mongodb:
     container_name: mongodb
     image: mongo:6.0.17
@@ -9,7 +14,6 @@ services:
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
       - "${MONGODB_PORT:-27017}:27017"
-
   localstack:
     container_name: aletheia-localstack
     image: localstack/localstack:3.7.2
@@ -81,7 +85,60 @@ services:
       - "4437:4437"
     networks:
       - intranet
+  hydra:
+    image: oryd/hydra:v2.3.0
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile-local-build
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command: serve -c /etc/config/hydra/hydra.yml all --dev
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/hydra
+    pull_policy: missing
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+      - sqlite
+    networks:
+      - intranet
+  hydra-migrate:
+    image: oryd/hydra:v2.3.0
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile-local-build
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    command: migrate -c /etc/config/hydra/hydra.yml sql up -e --yes
+    pull_policy: missing
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/hydra
+    restart: on-failure
+    networks:
+      - intranet
+    depends_on:
+      - sqlite
+  consent:
+    environment:
+      - HYDRA_ADMIN_URL=http://hydra:4445
+    image: oryd/hydra-login-consent-node:v2.3.0
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - intranet
 networks:
   intranet:
 volumes:
   kratos-sqlite:
+  hydra-sqlite:

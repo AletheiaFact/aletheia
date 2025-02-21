@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "antd";
+import { Button, ButtonProps } from "@mui/material";
 import colors from "../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -19,19 +19,22 @@ interface IAletheiaButtonProps extends AletheiaButtonProps {
     type?: ButtonType;
     event?: any;
     rounded?: string;
+    loading?: boolean;
+    htmlType?: "button" | "submit" | "reset";
+    icon?: any;
+    target?: "_blank" | "_self" | "_parent" | "_top";
 }
 
-const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
-    props: IAletheiaButtonProps
-) => {
+const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
+    const { children, type, rounded, htmlType, style, ...restProps } = props;
+
     const [nameSpace] = useAtom(currentNameSpace);
 
     const [backgroundColor, setBackgroundColor] = useState(colors.primary);
+
     useLayoutEffect(() => {
         setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
@@ -98,8 +101,13 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
     }
 
     return (
-        <Button {...props} type="default" style={buttonStyle}>
-            {props.children}
+        <Button
+            type={htmlType || "button"}
+            variant="outlined"
+            style={buttonStyle}
+            {...restProps}
+        >
+            {children}
         </Button>
     );
 };

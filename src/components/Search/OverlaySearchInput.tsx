@@ -48,6 +48,7 @@ const OverlaySearchInput = () => {
 
     return (
         <InputSearch
+            size="small"
             placeholder={t("header:search_placeholder")}
             callback={handleInputSearch}
             suffix={<SearchOutlined />}

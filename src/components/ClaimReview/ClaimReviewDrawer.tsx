@@ -1,5 +1,5 @@
 import { ArrowBackOutlined, ErrorOutlineOutlined } from "@mui/icons-material";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -59,18 +59,24 @@ const ClaimReviewDrawer = () => {
                     }
                 >
                     <VisualEditorProvider data_hash={data_hash}>
-                        <Grid container
+                        <Grid
+                            container
                             style={{
                                 width: "100%",
                                 padding: "1rem",
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent:"space-between"
+                                justifyContent: "space-between",
                             }}
                         >
                             <Grid item style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
-                                    icon={<ArrowBackOutlined style={{marginRight:"10px"}} fontSize="small"/>}
+                                    startIcon={
+                                        <ArrowBackOutlined
+                                            style={{ marginRight: "10px" }}
+                                            fontSize="small"
+                                        />
+                                    }
                                     onClick={() =>
                                         dispatch(actions.closeReviewDrawer())
                                     }
@@ -102,13 +108,14 @@ const ClaimReviewDrawer = () => {
                                 </Grid>
                             </Grid>
                             {enableCopilotChatBot && (
-                                <Grid item
+                                <Grid
+                                    item
                                     style={{
                                         display: "flex",
                                         justifyContent: "center",
                                         gap: 8,
                                         alignItems: "center",
-                                        marginTop:"10px"
+                                        marginTop: "10px",
                                     }}
                                 >
                                     <ErrorOutlineOutlined

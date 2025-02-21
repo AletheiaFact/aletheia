@@ -95,7 +95,7 @@ const ImageUpload = ({
     const uploadButton = (
         <AletheiaButton
             data-cy="testUploadImage"
-            icon={
+            startIcon={
                 <FileUploadOutlined
                     style={{ fontSize: "17px", margin: "0 5 4 0" }}
                 />
