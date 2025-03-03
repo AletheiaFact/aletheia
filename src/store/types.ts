@@ -70,7 +70,6 @@ export interface RootState {
     enableCollaborativeEdit: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
-    enableAddEditorSourcesWithoutSelecting: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
     websocketUrl: string;

@@ -21,7 +21,6 @@ export interface ClaimPageProps {
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
-    enableAddEditorSourcesWithoutSelecting: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
     hideDescriptions: object;
@@ -37,7 +36,6 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
-        enableAddEditorSourcesWithoutSelecting,
         enableReviewersUpdateReport,
         enableViewReportPreview,
     } = props;
@@ -52,7 +50,6 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     dispatch(
         actions.setEditorEnvironment(
             enableCollaborativeEditor,
-            enableAddEditorSourcesWithoutSelecting,
             enableEditorAnnotations,
             enableCopilotChatBot,
             false,
@@ -110,8 +107,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
-            enableAddEditorSourcesWithoutSelecting:
-                query?.enableAddEditorSourcesWithoutSelecting,
             enableViewReportPreview: query?.enableViewReportPreview,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             websocketUrl: query.websocketUrl,
