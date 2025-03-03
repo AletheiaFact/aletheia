@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, List, ListItem } from "@mui/material";
+import { Grid, List } from "@mui/material";
 import PersonalityCard from "../Personality/PersonalityCard";
 import ClaimCard from "../Claim/ClaimCard";
 import styled from "styled-components";
@@ -24,8 +24,7 @@ const HomeFeedList = ({ results }) => {
             style={{ width: "100%", display: "flex" }}
         >
             {results?.map((item) => (
-                <ListItem>
-                    <Grid item className="item">
+                    <Grid item className="item" key={item}>
                         {item && item.type === "personality" && (
                             <PersonalityCard personality={item} summarized={true} />
                         )}
@@ -52,7 +51,6 @@ const HomeFeedList = ({ results }) => {
                             />
                         )}
                     </Grid>
-                </ListItem>
             ))
             }
         </HomeFeedListStyled>
