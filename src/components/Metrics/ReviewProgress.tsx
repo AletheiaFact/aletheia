@@ -4,7 +4,7 @@ import {
     LinearProgress,
     CircularProgress,
     linearProgressClasses,
-    circularProgressClasses
+    circularProgressClasses,
 } from "@mui/material";
 import styled from "styled-components";
 import ReviewColors from "../../constants/reviewColors";
@@ -13,7 +13,7 @@ import { useTranslation } from "next-i18next";
 
 const ReviewProgress = ({ reviews, statsProps }) => {
     const { t } = useTranslation();
-    
+
     return reviews.map((review) => {
         const BorderLinearProgress = styled(LinearProgress)(() => ({
             [`& .${linearProgressClasses.bar}`]: {
@@ -33,11 +33,11 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                 style={
                     statsProps.type === "circle"
                         ? {
-                            display: "flex",
-                            flexDirection: "column-reverse",
-                            alignItems: "center",
-                            paddingRight: "10px",
-                        }
+                              display: "flex",
+                              flexDirection: "column-reverse",
+                              alignItems: "center",
+                              paddingRight: "10px",
+                          }
                         : {}
                 }
                 key={review._id}
@@ -55,15 +55,23 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                     {statsProps.countInTitle && `${review.count} `}
                     {t(`claimReviewForm:${review._id}`)}
                 </span>
-                {statsProps.type === "circle" ?
-                    <Grid container position="relative" display="inline-flex" justifyContent="center"
-                        alignItems="center">
+                {statsProps.type === "circle" ? (
+                    <Grid
+                        container
+                        position="relative"
+                        display="inline-flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
                         <CircularProgress
                             variant="determinate"
                             value={100}
                             size={statsProps.size}
                             thickness={8}
-                            sx={{ color: colors.neutralTertiary, position: "absolute" }}
+                            sx={{
+                                color: colors.neutralTertiary,
+                                position: "absolute",
+                            }}
                         />
                         <BorderCircularProgress
                             variant="determinate"
@@ -73,7 +81,8 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                         />
                         <p
                             style={{
-                                fontSize: statsProps.size === 30 ? "10px" : "14px",
+                                fontSize:
+                                    statsProps.size === 30 ? "10px" : "14px",
                                 position: "absolute",
                                 top: "50%",
                                 left: "50%",
@@ -83,7 +92,7 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                             {review.count}
                         </p>
                     </Grid>
-                    :
+                ) : (
                     <Grid container alignItems="center">
                         <Grid item xs={11}>
                             <BorderLinearProgress
@@ -94,14 +103,18 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                         </Grid>
                         <Grid item xs={1}>
                             <p
-                                style={{ fontSize: "12px", margin: 0, padding: "0px 10px" }}
+                                style={{
+                                    fontSize: "12px",
+                                    margin: 0,
+                                    padding: "0px 10px",
+                                }}
                             >
                                 {review.percentage}%
                             </p>
                         </Grid>
                     </Grid>
-                }
-            </div >
+                )}
+            </div>
         );
     });
 };

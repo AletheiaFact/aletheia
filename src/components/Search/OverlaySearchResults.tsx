@@ -62,7 +62,8 @@ const OverlaySearchResults = () => {
     };
 
     return (
-        <Grid container
+        <Grid
+            container
             className="main-content"
             style={{
                 position: "absolute",

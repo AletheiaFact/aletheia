@@ -6,7 +6,8 @@ const KanbanSkeleton = () => {
         <Grid item style={{ width: "95%" }}>
             <Skeleton variant="text" width="40%" animation="wave" />
             <Skeleton variant="text" width="100%" animation="wave" />
-            <Grid item
+            <Grid
+                item
                 style={{
                     display: "flex",
                     justifyContent: "flex-end",

@@ -32,7 +32,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
             }
         >
             <OrderRadio value={value} setValue={setValue} />
-            
+
             <div
                 style={{
                     marginTop: 30,

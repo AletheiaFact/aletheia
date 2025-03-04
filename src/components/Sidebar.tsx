@@ -31,7 +31,7 @@ const Sidebar = () => {
                     width: "17rem",
                     padding: "0",
                     backgroundColor: colors.lightNeutral,
-                }
+                },
             }}
         >
             <div
@@ -40,11 +40,7 @@ const Sidebar = () => {
                     paddingLeft: "48px",
                 }}
             >
-                <Logo
-                    color={colors.primary}
-                    height="48px"
-                    lineHeight="36px"
-                />
+                <Logo color={colors.primary} height="48px" lineHeight="36px" />
             </div>
             <AletheiaMenu />
         </Drawer>

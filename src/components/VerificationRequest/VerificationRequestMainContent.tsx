@@ -19,7 +19,15 @@ const VerificationRequestMainContent = ({
 
     return (
         <main style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <Typography style={{ fontFamily: "serif", fontWeight: 600, fontSize: 26, lineHeight: 1.35 }} variant="h3">
+            <Typography
+                style={{
+                    fontFamily: "serif",
+                    fontWeight: 600,
+                    fontSize: 26,
+                    lineHeight: 1.35,
+                }}
+                variant="h3"
+            >
                 {t("verificationRequest:verificationRequestTitle")}
             </Typography>
             <VerificationRequestCard verificationRequest={content} t={t} />

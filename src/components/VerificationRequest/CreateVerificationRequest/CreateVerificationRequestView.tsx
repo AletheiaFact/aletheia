@@ -5,7 +5,11 @@ import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
 
 const CreateVerificationRequestView = () => {
     return (
-        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+        <Grid
+            container
+            justifyContent="center"
+            style={{ background: colors.lightNeutral }}
+        >
             <Grid item xs={9}>
                 <DynamicVerificationRequestForm />
             </Grid>

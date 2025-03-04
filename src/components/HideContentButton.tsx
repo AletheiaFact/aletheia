@@ -23,7 +23,7 @@ const HideContentButton = ({ hide, handleHide, handleUnhide, style = {} }) => {
         <div style={{ ...style }}>
             {hide ? (
                 <IconButton onClick={handleHide} style={buttonStyle}>
-                    <Visibility fontSize="small"/>
+                    <Visibility fontSize="small" />
                 </IconButton>
             ) : (
                 <IconButton onClick={handleUnhide} style={buttonStyle}>

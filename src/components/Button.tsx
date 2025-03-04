@@ -34,9 +34,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
 
     useLayoutEffect(() => {
         setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
@@ -103,7 +101,12 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     }
 
     return (
-        <Button type={htmlType || "button"} variant="outlined" style={buttonStyle} {...restProps}>
+        <Button
+            type={htmlType || "button"}
+            variant="outlined"
+            style={buttonStyle}
+            {...restProps}
+        >
             {children}
         </Button>
     );

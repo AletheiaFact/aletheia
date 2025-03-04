@@ -14,7 +14,8 @@ const PersonalitySearchResultSection = ({
     const isCreatingClaim = selectPersonality !== null;
 
     return personalities.length ? (
-        <Grid container
+        <Grid
+            container
             style={{
                 marginTop: "10px",
                 width: "100%",

@@ -23,8 +23,7 @@ const LargeDrawer = ({
                     height: vw?.sm ? "85%" : "100%",
                     backgroundColor,
                     padding: "0",
-
-                }
+                },
             }}
         >
             {children}
