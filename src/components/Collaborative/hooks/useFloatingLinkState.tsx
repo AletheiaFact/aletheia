@@ -20,7 +20,7 @@ import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 
 export const URL_PATTERN =
-    /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk|pt)(\/|\?|#|$)/;
+  /^(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/;
 
 function useFloatingLinkState() {
     const { t } = useTranslation();
