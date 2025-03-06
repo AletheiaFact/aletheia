@@ -1,4 +1,4 @@
-import { Avatar } from "antd";
+import { Avatar } from "@mui/material";
 import React from "react";
 import colors from "../styles/colors";
 
@@ -25,7 +25,7 @@ const AletheiaAvatar = ({ size, src, alt }: AletheiaAvatarProps) => {
                 aspectRatio: "1",
             }}
         >
-            <Avatar size={size} src={src} alt={alt} />
+            <Avatar sx={{width: size, height: size}} src={src} alt={alt} />
         </div>
     );
 };

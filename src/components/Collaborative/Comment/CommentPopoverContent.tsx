@@ -1,13 +1,13 @@
 import React from "react";
 import Button, { ButtonType } from "../../Button";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 
 const CommentPopoverContent = ({ handleDeleteClick }) => {
     const { t } = useTranslation();
     return (
-        <Col className="source-card-popover-content">
+        <Grid className="source-card-popover-content">
             <Button
                 type={ButtonType.white}
                 style={{
@@ -15,14 +15,14 @@ const CommentPopoverContent = ({ handleDeleteClick }) => {
                     border: "none",
                     display: "flex",
                     justifyContent: "start",
-                    padding: 0,
+                    margin: "5px 0px",
                 }}
                 onClick={handleDeleteClick}
             >
                 <DeleteIcon />
                 {t("sourceForm:deleteSourceButton")}
             </Button>
-        </Col>
+        </Grid>
     );
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import CTARegistration from "./CTARegistration";
-import { Row, Col } from "antd";
+import { Grid } from "@mui/material"
 import SocialMediaShare from "../SocialMediaShare";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
@@ -26,52 +26,53 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
 
     return (
         <>
-            <Row
+            <Grid container
                 style={{
                     width: "100%",
                     paddingTop: "32px",
                     justifyContent: "center",
                 }}
             >
-                <Col xs={22} sm={22} md={18}>
+                <Grid item xs={11} sm={11} md={9}>
                     <HomeFeed searchResults={results} />
-                </Col>
-                <Col xs={22} sm={22} md={18} style={{ marginBottom: 32 }}>
+                </Grid>
+                <Grid item xs={11} sm={11} md={9} style={{ marginBottom: 32 }}>
                     <ReviewsGrid
                         reviews={reviews}
                         title={t("home:latestReviewsTitle")}
                     />
-                </Col>
+                </Grid>
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
-                    <Col
-                        xs={{ span: 20, order: 1 }}
-                        sm={{ span: 20, order: 1 }}
-                        md={{ span: 18, order: 1 }}
-                        style={{
+                    <Grid item
+                        order={1}
+                        xs={10}
+                        sm={10}
+                        md={9}
+                         style={{
                             width: "100%",
                             paddingBottom: "32px",
                             justifyContent: "center",
                         }}
                     >
                         <DebateGrid debates={debateClaims} />
-                    </Col>
+                    </Grid>
                 )}
-                <Col xs={22} sm={22} md={18}>
+                <Grid item xs={11} sm={11} md={9}>
                     <PersonalitiesGrid
                         personalities={personalities}
                         title={title}
                     />
-                </Col>
+                </Grid>
 
                 {!isLoggedIn && (
-                    <Col xs={24} lg={18} order={3}>
+                    <Grid item xs={12} lg={9} order={3}>
                         <CTARegistration />
-                    </Col>
+                    </Grid>
                 )}
-                <Col span={24} order={4}>
+                <Grid item xs={12} order={4}>
                     <SocialMediaShare href={href} />
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </>
     );
 };

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Badge, Spin } from "antd";
 import colors from "../../styles/colors";
-import { LoadingOutlined } from "@ant-design/icons";
-import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
-import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
+import { CircularProgress } from "@mui/material";
+import { DraftsOutlined, MailOutlineOutlined } from "@mui/icons-material";
 import NotificationCardActions from "./NotificationCardActions";
 import NotificationCardTime from "./NotificationCardTime";
 import NotificationCardStyle from "./NotificationCard.style";
@@ -29,7 +28,7 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
 
     return (
         <Spin
-            indicator={<LoadingOutlined />}
+            indicator={<CircularProgress />}
             spinning={isLoading}
             style={{ fontSize: 48, color: colors.primary, display: "flex" }}
         >
@@ -39,9 +38,9 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
                         {!isSeen && <Badge status="processing" />}
 
                         {!isSeen ? (
-                            <MailOutlineOutlinedIcon className="notification-avatar-icon" />
+                            <MailOutlineOutlined className="notification-avatar-icon" />
                         ) : (
-                            <DraftsOutlinedIcon className="notification-avatar-icon" />
+                            <DraftsOutlined className="notification-avatar-icon" />
                         )}
                     </div>
 

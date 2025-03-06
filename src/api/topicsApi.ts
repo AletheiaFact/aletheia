@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 
 interface IGetTopicsOptions {
@@ -13,7 +13,7 @@ const request = axios.create({
     baseURL: `/api/topics`,
 });
 
-const searchTopics = ({ query, dispatch }) => {
+const searchTopics = ({ query, dispatch, t }) => {
     const params = { query };
     return request
         .get(`/search`, { params })
@@ -26,7 +26,7 @@ const searchTopics = ({ query, dispatch }) => {
             return topicResults;
         })
         .catch((e) => {
-            message.error("Failed to fetch topics");
+            MessageManager.showMessage("error", t("topics:getTopicsFailed"));
             return [];
         });
 };
@@ -58,11 +58,11 @@ const createTopics = (params, t) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            message.success(t("topics:createTopicsSuccess"));
+            MessageManager.showMessage("success", t("topics:createTopicsSuccess"));
             return response.data;
         })
         .catch((err) => {
-            message.error(t("topics:createTopicsError"));
+            MessageManager.showMessage("error", t("topics:createTopicsError"));
             throw err;
         });
 };

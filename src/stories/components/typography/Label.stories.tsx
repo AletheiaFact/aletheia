@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Form } from "antd";
+import { FormControl, FormLabel } from "@mui/material";
 import AletheiaInput from "../../../components/AletheiaInput";
 import Label from "../../../components/Label";
 
@@ -23,17 +23,16 @@ export const Default: ComponentStory<typeof Label> = (args) => (
 
 
 const TemplateWithInput: ComponentStory<any> = (args) => (
-    <Form.Item
-        label={
+    <FormControl style={{ display: "flex", flexDirection: "row", gap: 10 }} >
+        <FormLabel>
             <Label>
-                {args.children}
+                {args.children}:
             </Label>
-        }
-    >
+        </FormLabel>
         <AletheiaInput
             placeholder={args.inputPlaceholder}
         />
-    </Form.Item>
+    </FormControl>
 )
 
 export const WithInput = TemplateWithInput.bind({})

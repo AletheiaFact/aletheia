@@ -1,9 +1,9 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import colors from "../../styles/colors";
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 
-const SentenceReportSummary = styled(Row)`
+const SentenceReportSummary = styled(Grid)`
     position: relative;
     margin: 8px 0 16px 4px;
     padding: 16px 24px;

@@ -1,21 +1,31 @@
 import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowBackOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import colors from "../styles/colors";
 
-function BackButton({ style, callback }: { style?: CSSProperties; callback?: () => void }) {
+function BackButton({
+    style,
+    callback,
+    isVisible = true,
+}: {
+    style?: CSSProperties;
+    callback?: () => void;
+    isVisible?: boolean;
+}) {
     const { t } = useTranslation();
     const router = useRouter();
-    const pathname = router.pathname || "";
+    const pathname = router?.pathname || "";
 
-    if (pathname !== "/" && pathname !== "/home-page") {
+    if (pathname !== "/" && pathname !== "/home-page" && isVisible) {
         return (
             <a
                 style={{
+                    display: "flex",
+                    alignContent: "center",
                     fontWeight: "bold",
                     color: colors.secondary,
-                    ...style
+                    ...style,
                 }}
                 data-cy="testBackButton"
                 onClick={() => {
@@ -28,7 +38,7 @@ function BackButton({ style, callback }: { style?: CSSProperties; callback?: () 
                     }
                 }}
             >
-                <ArrowLeftOutlined /> {t("common:back_button")}
+                <ArrowBackOutlined fontSize="small" /> {t("common:back_button")}
             </a>
         );
     } else {

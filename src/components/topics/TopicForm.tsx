@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import FormControl from "@mui/joy/FormControl";
@@ -94,7 +94,7 @@ const TopicForm = ({
 
     return (
         <form onSubmit={handleSubmit(handleOnSubmit)}>
-            <Col style={{ display: "flex" }}>
+            <Grid item style={{ display: "flex" }}>
                 <Controller
                     control={control}
                     name="topics"
@@ -103,20 +103,25 @@ const TopicForm = ({
                     }}
                     render={({ field: { onChange, value } }) => (
                         <CssVarsProvider>
-
-                            <FormControl sx={{ width: 655 }}>
+                            <FormControl sx={{ width: "100%" }}>
                                 <Autocomplete
                                     freeSolo
                                     multiple
                                     placeholder={t("topics:placeholder")}
                                     options={options}
-                                    onInputChange={(_, inputValue) => fetchOptions(inputValue)}
+                                    onInputChange={(_, inputValue) =>
+                                        fetchOptions(inputValue)
+                                    }
                                     onChange={(_, selectedValues) => {
                                         onChange(selectedValues);
                                         setInputValue(selectedValues);
                                     }}
-                                    getOptionLabel={(option) => option.label || ""}
-                                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                                    getOptionLabel={(option) =>
+                                        option.label || ""
+                                    }
+                                    isOptionEqualToValue={(option, value) =>
+                                        option.value === value.value
+                                    }
                                     loading={isLoading}
                                     endDecorator={
                                         isLoading ? (
@@ -139,11 +144,14 @@ const TopicForm = ({
                         padding: "0 5px",
                         fontSize: 12,
                         marginLeft: 5,
+                        textAlign: "center",
+                        justifyContent: "center",
+                        lineHeight: "13px",
                     }}
                 >
                     {t("topics:addTopicsButton")}
                 </AletheiaButton>
-            </Col>
+            </Grid>
 
             <TopicInputErrorMessages errors={errors} />
         </form>

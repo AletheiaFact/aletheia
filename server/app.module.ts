@@ -60,6 +60,8 @@ import { ChatbotModule } from "./chat-bot/chat-bot.module";
 import { VerificationRequestModule } from "./verification-request/verification-request.module";
 import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
 import { GroupModule } from "./group/group.module";
+import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
+import { M2MGuard } from "./auth/m2m.guard";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -72,60 +74,17 @@ export class AppModule implements NestModule {
     }
 
     static register(options): DynamicModule {
-        const imports = [
-            MongooseModule.forRoot(
-                options.db.connection_uri,
-                options.db.options
-            ),
-            ConfigModule.forRoot({
-                load: [() => options || {}],
-            }),
-            ThrottlerModule.forRoot({
-                ttl: options.throttle.ttl,
-                limit: options.throttle.limit,
-            }),
-            UsersModule,
-            WikidataModule,
-            PersonalityModule,
-            ClaimModule,
-            ClaimReviewModule,
-            ReviewTaskModule,
-            ClaimRevisionModule,
-            HistoryModule,
-            StateEventModule,
-            SourceModule,
-            SpeechModule,
-            ParagraphModule,
-            SentenceModule,
-            StatsModule,
-            ViewModule,
-            EmailModule,
-            SitemapModule,
-            OryModule,
-            ReportModule,
-            CaptchaModule,
-            TopicModule,
-            ImageModule,
-            SearchModule,
-            FileManagementModule,
-            DebateModule,
-            EditorModule,
-            BadgeModule,
-            EditorParseModule,
-            NotificationModule,
-            CommentModule,
-            NameSpaceModule,
-            AutomatedFactCheckingModule,
-            CopilotChatModule,
-            UnattributedModule,
-            DailyReportModule,
-            SummarizationCrawlerModule,
-            ChatbotModule,
-            VerificationRequestModule,
-            FeatureFlagModule,
-            GroupModule,
-            HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
-        ];
+        const imports = [];
+        if (options.db.type === "mongodb") {
+            imports.push(
+                MongooseModule.forRoot(
+                    options.db.connection_uri,
+                    options.db.options
+                )
+            );
+        } else {
+            throw new Error("Invalid DB_TYPE in configuration");
+        }
         if (options.feature_flag) {
             imports.push(
                 UnleashModule.forRoot({
@@ -141,7 +100,57 @@ export class AppModule implements NestModule {
         return {
             module: AppModule,
             global: true,
-            imports,
+            imports: [
+                ...imports,
+                ConfigModule.forRoot({
+                    load: [() => options || {}],
+                }),
+                ThrottlerModule.forRoot({
+                    ttl: options.throttle.ttl,
+                    limit: options.throttle.limit,
+                }),
+                UsersModule,
+                WikidataModule,
+                PersonalityModule.register(),
+                ClaimModule,
+                ClaimReviewModule,
+                ReviewTaskModule,
+                ClaimRevisionModule,
+                HistoryModule,
+                StateEventModule,
+                SourceModule,
+                SpeechModule,
+                ParagraphModule,
+                SentenceModule,
+                StatsModule,
+                ViewModule,
+                EmailModule,
+                SitemapModule,
+                OryModule,
+                ReportModule,
+                CaptchaModule,
+                TopicModule,
+                ImageModule,
+                SearchModule,
+                FileManagementModule,
+                DebateModule,
+                EditorModule,
+                BadgeModule,
+                EditorParseModule,
+                NotificationModule,
+                CommentModule,
+                NameSpaceModule,
+                AutomatedFactCheckingModule,
+                CopilotChatModule,
+                UnattributedModule,
+                DailyReportModule,
+                SummarizationCrawlerModule,
+                ChatbotModule,
+                VerificationRequestModule,
+                FeatureFlagModule,
+                GroupModule,
+                HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
+            ],
             controllers: [RootController],
             providers: [
                 {
@@ -158,14 +167,16 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useExisting: SessionGuard,
+                    useExisting: SessionOrM2MGuard,
                 },
                 {
                     provide: APP_GUARD,
                     useExisting: NameSpaceGuard,
                 },
                 NameSpaceGuard,
+                SessionOrM2MGuard,
                 SessionGuard,
+                M2MGuard,
             ],
         };
     }

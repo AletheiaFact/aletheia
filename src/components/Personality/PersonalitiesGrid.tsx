@@ -19,7 +19,7 @@ const PersonalitiesGrid = ({ personalities, title }) => {
         <GridList
             title={title}
             dataSource={personalities}
-            loggedInMaxColumns={2}
+            loggedInMaxColumns={6}
             href={href}
             dataCy="testSeeMorePersonality"
             seeMoreButtonLabel={t("home:seeMorePersonalitiesButton")}

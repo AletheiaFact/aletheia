@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "next-i18next";
 import Button from "./Button";
@@ -7,7 +7,7 @@ const LoginButton = () => {
     const { t } = useTranslation();
 
     return (
-        <Col
+        <Grid   
             style={{
                 display: "flex",
                 justifyContent: "center",
@@ -15,7 +15,7 @@ const LoginButton = () => {
             }}
         >
             <Button href="/login">{t("claimReviewForm:loginButton")}</Button>
-        </Col>
+        </Grid>
     );
 };
 

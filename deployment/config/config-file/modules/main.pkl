@@ -21,6 +21,9 @@ hidden var = new {
         }
         ory = (oryConfig) {
             admin_endpoint = "admin"
+            hydra = new {
+                admin_endpoint = "admin"
+            }
         }
     }
 }

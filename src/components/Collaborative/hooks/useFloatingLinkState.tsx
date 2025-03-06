@@ -14,7 +14,6 @@ import {
     useCurrentSelection,
     useUpdateReason,
 } from "@remirror/react";
-import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
@@ -23,7 +22,6 @@ export const URL_PATTERN =
   /^(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/;
 
 function useFloatingLinkState() {
-    const { t } = useTranslation();
     const { editorSources, setEditorSources } = useContext(VisualEditorContext);
 
     const [error, setError] = useState(null);
@@ -53,13 +51,6 @@ function useFloatingLinkState() {
     }, [isEditing, setIsEditing, updateReason.doc, updateReason.selection]);
 
     useEffect(() => setHref(url), [url]);
-
-    const validateFloatingLink = useCallback(() => {
-        // TODO: use a library or service that maintains a comprehensive list of valid TLDs
-        if (!URL_PATTERN.test(href)) {
-            throw new Error(t("sourceForm:errorMessageValidURL"));
-        }
-    }, [href, t]);
 
     const updateFloatingLink = useCallback(
         (id) => {

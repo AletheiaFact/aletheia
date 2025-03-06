@@ -1,15 +1,14 @@
 import React from "react";
-import { Typography } from "antd";
 import colors from "../styles/colors";
-const { Text } = Typography;
+import Typography from "@mui/material/Typography"
 
 const Label = ({ children, required = false }) => {
     return (
         <span style={{ color: colors.error }}>
             {required && "* "}
-            <Text strong style={{ color: colors.blackSecondary }}>
+            <Typography variant="body2" style={{ color: colors.blackSecondary, fontWeight:600 }}>
                 {children}
-            </Text>
+            </Typography>
         </span>
     );
 };

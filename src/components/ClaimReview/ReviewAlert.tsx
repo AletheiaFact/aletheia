@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
@@ -107,7 +107,7 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     return (
         <>
             {alert.show && (
-                <Col
+                <Grid
                     style={{
                         margin: isPublished ? "16px 0" : "16px",
                         width: "100%",
@@ -120,7 +120,7 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
                         description={alert.description}
                         showIcon={true}
                     />
-                </Col>
+                </Grid>
             )}
         </>
     );

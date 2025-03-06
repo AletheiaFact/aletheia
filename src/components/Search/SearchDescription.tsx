@@ -1,16 +1,14 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { Typography } from "antd";
+import { Typography } from "@mui/material";
 import LocalizedDate from "../LocalizedDate";
 import ReviewClassification from "../ClaimReview/ReviewClassification";
-
-const { Paragraph } = Typography;
 
 const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
     const { t } = useTranslation();
 
     return (
-        <Paragraph>
+        <Typography variant="body1">
             <span>{personalityName}</span>
             &nbsp;
             <span style={{ textTransform: "lowercase" }}>
@@ -27,7 +25,7 @@ const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
                     />
                 </>
             )}
-        </Paragraph>
+        </Typography>
     );
 };
 

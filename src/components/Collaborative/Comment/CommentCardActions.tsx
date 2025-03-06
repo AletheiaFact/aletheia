@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CheckIcon from "@mui/icons-material/Check";
 import CommentPopoverContent from "./CommentPopoverContent";
-import { Popover } from "antd";
+import PopoverClick from "../../Claim/Popover";
 import Button, { ButtonType } from "../../Button";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import CommentApi from "../../../api/comment";
@@ -45,11 +45,11 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                     comments.map((comment) =>
                         comment._id === content.targetId
                             ? {
-                                  ...comment,
-                                  replies: comment.replies.filter(
-                                      (reply) => reply._id !== content._id
-                                  ),
-                              }
+                                ...comment,
+                                replies: comment.replies.filter(
+                                    (reply) => reply._id !== content._id
+                                ),
+                            }
                             : comment
                     )
                 );
@@ -82,18 +82,16 @@ const CommentCardActions = ({ content, setIsResolved }) => {
             {role !== Roles.Regular &&
                 role !== Roles.FactChecker &&
                 isReviewing && (
-                    <Popover
-                        trigger="click"
-                        placement="bottom"
-                        overlayInnerStyle={{ padding: 0 }}
+                    <PopoverClick
+                        children={
+                            <MoreVertIcon style={{ cursor: "pointer" }} />
+                        }
                         content={
                             <CommentPopoverContent
                                 handleDeleteClick={handleDeleteClick}
                             />
                         }
-                    >
-                        <MoreVertIcon style={{ cursor: "pointer" }} />
-                    </Popover>
+                    />
                 )}
         </div>
     );

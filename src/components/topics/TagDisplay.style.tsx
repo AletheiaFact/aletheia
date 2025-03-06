@@ -1,7 +1,7 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
 
-const TagDisplayStyled = styled(Col)`
+const TagDisplayStyled = styled(Grid)`
     margin: 16px 16px 12px 16px;
     margin-bottom: 12px;
     display: flex;

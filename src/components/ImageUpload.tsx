@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { UploadOutlined } from "@ant-design/icons";
-import { Col, message, Upload } from "antd";
+import { FileUploadOutlined } from "@mui/icons-material";
+import { Upload } from "antd";
+import { Grid, Typography } from "@mui/material";
+import { MessageManager } from "../components/Messages";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
@@ -9,7 +11,6 @@ import AletheiaButton from "./Button";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 
 import type { UploadFile } from "antd/lib/upload/interface";
-import Text from "antd/lib/typography/Text";
 
 interface ImageUploadProps {
     onChange: (fileList: UploadFile[]) => void;
@@ -64,7 +65,7 @@ const ImageUpload = ({
         );
 
         if (!isAllowedFormat) {
-            message.error(
+            MessageManager.showMessage("error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -72,7 +73,7 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            message.error(
+            MessageManager.showMessage("error",
                 t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
             );
         }
@@ -90,13 +91,16 @@ const ImageUpload = ({
     };
 
     const uploadButton = (
-        <AletheiaButton data-cy="testUploadImage" icon={<UploadOutlined />}>
+        <AletheiaButton
+            data-cy="testUploadImage"
+            startIcon={<FileUploadOutlined style={{ fontSize: "17px", margin: "0 5 4 0" }} />}
+        >
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
     );
 
     return (
-        <Col span={24}>
+        <Grid item xs={12}>
             <Upload
                 listType="picture"
                 fileList={fileList}
@@ -108,16 +112,29 @@ const ImageUpload = ({
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
             {error && (
-                <Text type="danger" style={{ display: "block" }}>
+                <Typography variant="body2" color="error" style={{ display: "block" }}>
                     {t("common:requiredFieldError")}
-                </Text>
+                </Typography>
             )}
             <AletheiaModal
                 open={previewOpen}
-                title={previewTitle}
-                footer={null}
                 onCancel={handleCancel}
                 width={"fit-content"}
+                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px",
+                        }}
+                    >
+                        {previewTitle}
+                    </h2>
+                }
             >
                 <img
                     alt={`preview uploaded file ${previewTitle}`}
@@ -126,7 +143,7 @@ const ImageUpload = ({
                     src={previewImage}
                 />
             </AletheiaModal>
-        </Col>
+        </Grid>
     );
 };
 

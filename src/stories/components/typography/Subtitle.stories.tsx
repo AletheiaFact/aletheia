@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Typography } from "antd";
+import { Typography } from "@mui/material";
 import Paragraph from "../../../components/Paragraph";
 import Subtitle from "../../../components/Subtitle";
 
@@ -21,7 +21,7 @@ const Template: ComponentStory<typeof Subtitle> = (args) => (
 
 const ComparisonTemplate: ComponentStory<typeof Subtitle> = (args) => (
     <>
-        <Typography.Title>{args.title}</Typography.Title>
+        <Typography variant="h1" fontWeight={600} fontSize={38}>{args.title}</Typography>
         <Subtitle>{args.subtitle}</Subtitle>
         <Paragraph>{args.paragraph}</Paragraph>
     </>

@@ -12,8 +12,8 @@ import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Row } from "antd";
-import Text from "antd/lib/typography/Text";
+import { Grid, Typography } from "@mui/material"
+import colors from "../../../styles/colors";
 import {
     isUserLoggedIn,
     currentUserId,
@@ -118,9 +118,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                  !reviewData.usersId.includes(data.crossCheckerId)
+                !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                  !reviewData.usersId.includes(data.reviewerId);
+                !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -230,9 +230,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                     />
                     <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
-                            <Text type="danger" data-cy="testReviewerError">
+                            <Typography variant="body1" style={{ color: colors.error, fontSize: 16 }} data-cy="testReviewerError">
                                 {t("reviewTask:invalidReviewerMessage")}
-                            </Text>
+                            </Typography>
                         )}
                     </div>
                     {events?.length > 0 && showButtons && (
@@ -244,10 +244,11 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                 </>
             )}
             {showButtons && (
-                <Row
+                <Grid container
                     style={{
                         padding: "32px 0 0",
                         justifyContent: "space-evenly",
+                        gap: "10px"
                     }}
                 >
                     {events?.map((event) => {
@@ -266,7 +267,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                             </AletheiaButton>
                         );
                     })}
-                </Row>
+                </Grid>
             )}
 
             <WarningModal

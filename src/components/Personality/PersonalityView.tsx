@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import Grid from "@mui/material/Grid"
 import { useTranslation } from "next-i18next";
 
 import ClaimList from "../Claim/ClaimList";
@@ -25,20 +25,20 @@ const PersonalityView = ({ personality, href, personalities }) => {
                     url: href,
                 }}
             />
-            <Row justify="center">
-                <Col sm={22} md={22} lg={18}>
+            <Grid container justifyContent="center">
+                <Grid item sm={11} md={11} lg={9}>
                     <PersonalityCard personality={personality} header={true} />
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
 
-            <Row justify="center" style={{ marginTop: "64px" }}>
-                <Col sm={22} md={14} lg={12}>
+            <Grid container justifyContent="center"style={{ marginTop: "64px" }}>
+                <Grid item sm={11} md={7} lg={6}>
                     <ClaimList personality={personality} />
-                </Col>
-                <Col sm={22} md={8} lg={6} style={{ width: "100%" }}>
+                </Grid>
+                <Grid item sm={11} md={4} lg={3} style={{ width: "100%" }}>
                     <MetricsOverview stats={personality.stats} />
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
 
             <MorePersonalities
                 personalities={personalities}

@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 
-const VerificationRequestDisplayStyle = styled(Row)`
+const VerificationRequestDisplayStyle = styled(Grid)`
     display: flex;
     gap: 16px;
 

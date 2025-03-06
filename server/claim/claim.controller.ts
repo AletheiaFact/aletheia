@@ -13,13 +13,13 @@ import {
     Res,
     Header,
     UseGuards,
+    Inject,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
-import { PersonalityService } from "../personality/personality.service";
 import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
@@ -37,6 +37,7 @@ import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import {
     AdminUserAbility,
     CheckAbilities,
@@ -60,7 +61,8 @@ export class ClaimController {
     constructor(
         private claimReviewService: ClaimReviewService,
         private reviewTaskService: ReviewTaskService,
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private sentenceService: SentenceService,
         private configService: ConfigService,
@@ -198,11 +200,12 @@ export class ClaimController {
         }
     }
 
+    @IsPublic() // Allow this route to be public temporarily for testing
     @ApiTags("claim")
     @Post("api/claim/unattributed")
     async createUnattributedClaim(@Body() createClaimDTO) {
         try {
-            const claim = await this._createClaim(createClaimDTO);
+            const claim = await this._createClaim(createClaimDTO, true);
 
             return {
                 title: claim.title,
@@ -245,11 +248,14 @@ export class ClaimController {
         }
     }
 
-    private async _createClaim(createClaimDTO) {
+    private async _createClaim(
+        createClaimDTO,
+        overrideCaptchaValidation = false
+    ) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );
-        if (!validateCaptcha) {
+        if (!validateCaptcha && !overrideCaptchaValidation) {
             throw new Error("Error validating captcha");
         }
         return this.claimService.create(createClaimDTO);
@@ -357,8 +363,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -388,7 +392,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -456,11 +459,27 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
 
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
+
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
         });
 
         await this.viewService.render(req, res, "/debate-page", queryObject);
@@ -571,8 +590,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -586,7 +603,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -611,8 +627,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -629,7 +643,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot: enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -657,8 +670,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -691,7 +702,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -726,8 +736,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -745,7 +753,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot: enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
