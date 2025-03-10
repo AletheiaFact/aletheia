@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, TimelineProps } from "@mui/lab";
+import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, timelineItemClasses } from "@mui/lab";
 import DebateClaimCardWrapper from "./DebateClaimCardWrapper";
 import { useAtom } from "jotai";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
@@ -23,9 +23,12 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
         <>
             <Timeline
                 sx={{
-                    padding: "10px",
+                    [`& .${timelineItemClasses.root}:before`]: {
+                        flex: 0,
+                        padding: 0,
+                    },
                     width: "100%",
-                    marginRight: "25%",
+                    padding: "10px",
                 }}
             >
                 {[...(timelineData || [])].reverse().map((timelineItem) => {
@@ -33,9 +36,9 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                     return (
                         personality &&
                         speechId && (
-                            <TimelineItem key={speechId} >
-                                <TimelineSeparator >
-                                    <TimelineDot color="primary" />
+                            <TimelineItem key={speechId}>
+                                <TimelineSeparator>
+                                    <TimelineDot variant="outlined" color="primary" />
                                     <TimelineConnector />
                                 </TimelineSeparator>
                                 <TimelineContent>
@@ -48,14 +51,14 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                 {isLive ? (
                     <TimelineItem>
                         <TimelineSeparator>
-                            <TimelineDot color="secondary" />
+                            <TimelineDot variant="outlined" color="secondary" />
                         </TimelineSeparator>
                         <TimelineContent>{t("debates:liveLabel")}</TimelineContent>
                     </TimelineItem>
                 ) : (
                     <TimelineItem>
                         <TimelineSeparator>
-                            <TimelineDot color="error" />
+                            <TimelineDot variant="outlined" color="error" />
                         </TimelineSeparator>
                         <TimelineContent>
                             {t("debates:isEnded")}
@@ -68,7 +71,3 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
 };
 
 export default DebateTimelineWrapper;
-function styled(Timeline: React.ForwardRefExoticComponent<TimelineProps & React.RefAttributes<HTMLUListElement>>) {
-    throw new Error("Function not implemented.");
-}
-
