@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { Timeline } from "antd";
+import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, TimelineProps } from "@mui/lab";
 import DebateClaimCardWrapper from "./DebateClaimCardWrapper";
-
 import { useAtom } from "jotai";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
+
 const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(speeches);
     const [state] = useAtom(callbackTimerAtom);
@@ -22,32 +22,45 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     return (
         <>
             <Timeline
-                style={{
+                sx={{
                     padding: "10px",
                     width: "100%",
+                    marginRight: "25%",
                 }}
-                pending={isLive && t("debates:liveLabel")}
-                reverse={true}
             >
-                {Array.isArray(timelineData) &&
-                    timelineData.map((timelineItem) => {
-                        const { personality, _id: speechId } = timelineItem;
-                        return (
-                            personality &&
-                            speechId && (
-                                <Timeline.Item key={speechId}>
-                                    <DebateClaimCardWrapper
-                                        personalityId={personality}
-                                        speech={timelineItem}
-                                    />
-                                </Timeline.Item>
-                            )
-                        );
-                    })}
-                {!isLive && (
-                    <Timeline.Item color="red">
-                        {t("debates:isEnded")}
-                    </Timeline.Item>
+                {[...(timelineData || [])].reverse().map((timelineItem) => {
+                    const { personality, _id: speechId } = timelineItem;
+                    return (
+                        personality &&
+                        speechId && (
+                            <TimelineItem key={speechId} >
+                                <TimelineSeparator >
+                                    <TimelineDot color="primary" />
+                                    <TimelineConnector />
+                                </TimelineSeparator>
+                                <TimelineContent>
+                                    <DebateClaimCardWrapper personalityId={personality} speech={timelineItem} />
+                                </TimelineContent>
+                            </TimelineItem>
+                        )
+                    );
+                })}
+                {isLive ? (
+                    <TimelineItem>
+                        <TimelineSeparator>
+                            <TimelineDot color="secondary" />
+                        </TimelineSeparator>
+                        <TimelineContent>{t("debates:liveLabel")}</TimelineContent>
+                    </TimelineItem>
+                ) : (
+                    <TimelineItem>
+                        <TimelineSeparator>
+                            <TimelineDot color="error" />
+                        </TimelineSeparator>
+                        <TimelineContent>
+                            {t("debates:isEnded")}
+                        </TimelineContent>
+                    </TimelineItem>
                 )}
             </Timeline>
         </>
@@ -55,3 +68,7 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
 };
 
 export default DebateTimelineWrapper;
+function styled(Timeline: React.ForwardRefExoticComponent<TimelineProps & React.RefAttributes<HTMLUListElement>>) {
+    throw new Error("Function not implemented.");
+}
+

@@ -4244,6 +4244,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mui/lab@npm:^6.0.0-beta.30":
+  version: 6.0.0-dev.240424162023-9968b4889d
+  resolution: "@mui/lab@npm:6.0.0-dev.240424162023-9968b4889d"
+  dependencies:
+    "@babel/runtime": ^7.24.4
+    "@mui/base": 5.0.0-beta.42
+    "@mui/system": ^6.0.0-dev.240424162023-9968b4889d
+    "@mui/types": ^7.2.14
+    "@mui/utils": ^6.0.0-alpha.3
+    clsx: ^2.1.0
+    prop-types: ^15.8.1
+  peerDependencies:
+    "@emotion/react": ^11.5.0
+    "@emotion/styled": ^11.3.0
+    "@mui/material": ^6.0.0-dev.240424162023-9968b4889d
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/react":
+      optional: true
+    "@emotion/styled":
+      optional: true
+    "@types/react":
+      optional: true
+  checksum: 9eb3ff01720e8d4b0d921b50370de9177333c06d1082908bca3dcd5f3a7f0d1470d24d80a097d78618bed93ab3c00952d5329b9365ff8c0230f5282859bbe43b
+  languageName: node
+  linkType: hard
+
 "@mui/material@npm:5.16.6":
   version: 5.16.6
   resolution: "@mui/material@npm:5.16.6"
@@ -11412,6 +11441,7 @@ __metadata:
     "@langchain/openai": ^0.0.28
     "@mui/icons-material": ^5.10.9
     "@mui/joy": ^5.0.0-beta.48
+    "@mui/lab": ^6.0.0-beta.30
     "@mui/material": 5.16.6
     "@mui/x-data-grid": ^7.12.0
     "@nestjs/axios": ^3.0.0
