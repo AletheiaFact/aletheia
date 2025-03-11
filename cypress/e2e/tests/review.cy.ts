@@ -9,6 +9,7 @@ import locators from "../../support/locators";
 const goToClaimReviewPage = () => {
     cy.get(`${locators.personality.SELECT_PERSONALITY} > *`)
         .should("be.visible")
+        .first()
         .click();
     cy.url().should(
         "contains",
