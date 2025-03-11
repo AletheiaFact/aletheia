@@ -25,12 +25,10 @@ const goToClaimReviewPage = () => {
 };
 
 const assignUser = () => {
-    cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
         .type(review.username, { delay: 200 })
         .trigger('keydown', { key: 'Enter' });
-    cy.get(".ant-select-item-option-active").click();
     cy.get('[title="reCAPTCHA"]').should("exist");
     cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
     cy.checkRecaptcha();
@@ -45,7 +43,6 @@ const blockAssignedUserReview = () => {
         .should("exist")
         .type(review.username, { delay: 200 })
         .trigger('keydown', { key: 'Enter' });
-    cy.get(".ant-select-item-option-active").click();
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
@@ -85,6 +82,7 @@ describe("Test claim review", () => {
             .click();
         cy.get(`[data-cy=${review.classification}]`)
             .should("be.visible")
+            .first()
             .click();
         cy.get(locators.claimReview.BTN_ADD_QUESTION).should("exist").click();
         cy.wait(6000);
