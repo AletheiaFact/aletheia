@@ -15,7 +15,7 @@ const FooterInfo = () => {
 
     return (
         <Grid container style={{ justifyContent: vw?.sm ? "center" : "start" }}>
-            <span style={{ textAlign: "justify", marginBottom: "16px" }}>
+            <span style={{ fontSize: "14px", textAlign: "justify", marginBottom: "16px" }}>
                 {t("about:alertInfo")}
                 <a
                     style={{
@@ -38,7 +38,7 @@ const FooterInfo = () => {
                     target="_blank"
                     rel="noreferrer"
                 >
-                        {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
+                    {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
                 </AletheiaButton>
             ) : null}
         </Grid>
