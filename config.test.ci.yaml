@@ -26,6 +26,8 @@ services:
         # url: {env(ORY_SDK_URL)}
         # access_token: {env(ORY_ACCESS_TOKEN)}
         # schema_id: {env(ALETHEIA_SCHEMA_ID)}
+      env:
+        PERCY_ENABLED: false
       feature_flag:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
