@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 
 const SkeletonGrid = styled(Grid)(() => ({
-    '& .MuiSkeleton-root': {
+    "& .MuiSkeleton-root": {
         width: "100%",
         borderRadius: "10px",
     },

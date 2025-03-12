@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormControl, FormLabel, Grid } from '@mui/material';
+import { FormControl, FormLabel, Grid } from "@mui/material";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
 import { useTranslation } from "next-i18next";
@@ -58,7 +58,8 @@ const PersonalityCreateSearch = ({
             } else {
                 router
                     .push(
-                        `/${nameSpace === NameSpaceEnum.Main ? "" : nameSpace
+                        `/${
+                            nameSpace === NameSpaceEnum.Main ? "" : nameSpace
                         }${path}`
                     )
                     .catch((e) => e);
@@ -120,9 +121,7 @@ const PersonalityCreateSearch = ({
                         marginBottom: "5px",
                     }}
                 >
-                    <Label>
-                        {t("personalityCreateForm:name")}
-                    </Label>
+                    <Label>{t("personalityCreateForm:name")}</Label>
                 </FormLabel>
                 <InputSearch
                     placeholder={t("header:search_placeholder")}

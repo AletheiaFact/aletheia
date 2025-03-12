@@ -17,20 +17,20 @@ export const SelectInput = styled(Select)`
     padding: 10px;
 
     .MuiSelect-select {
-    background: none !important;
-    color: ${colors.blackSecondary};
-    padding: 0 !important;
-  }
+        background: none !important;
+        color: ${colors.blackSecondary};
+        padding: 0 !important;
+    }
 
     .MuiOutlinedInput-notchedOutline {
-    border: none !important;
-  }
+        border: none !important;
+    }
 
     ::placeholder {
         color: ${colors.blackSecondary};
     }
 
-     :focus .MuiOutlinedInput-notchedOutline {
+    :focus .MuiOutlinedInput-notchedOutline {
         border: none;
         box-shadow: 0px 2px 2px ${colors.shadow};
     }
@@ -94,31 +94,58 @@ const ClaimReviewSelect = ({
                     <MenuItem value="" disabled>
                         {placeholder}
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="not-fact">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="not-fact"
+                    >
                         <ClassificationText classification="not-fact" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="trustworthy"
+                    >
                         <ClassificationText classification="trustworthy" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy-but">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="trustworthy-but"
+                    >
                         <ClassificationText classification="trustworthy-but" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="arguable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="arguable"
+                    >
                         <ClassificationText classification="arguable" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="misleading">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="misleading"
+                    >
                         <ClassificationText classification="misleading" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="false">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="false"
+                    >
                         <ClassificationText classification="false" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unsustainable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="unsustainable"
+                    >
                         <ClassificationText classification="unsustainable" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="exaggerated">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="exaggerated"
+                    >
                         <ClassificationText classification="exaggerated" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unverifiable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="unverifiable"
+                    >
                         <ClassificationText classification="unverifiable" />
                     </MenuItem>
                 </SelectInput>

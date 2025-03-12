@@ -13,7 +13,8 @@ const AletheiaSocialMediaFooter = () => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     return (
-        <Grid container
+        <Grid
+            container
             justifyContent="center"
             style={{
                 padding: "10px 0",
@@ -48,7 +49,8 @@ const AletheiaSocialMediaFooter = () => {
                 )}
             </Grid>
             <Grid item style={{ width: "324px", margin: "30px auto" }}>
-                <Divider flexItem
+                <Divider
+                    flexItem
                     variant="fullWidth"
                     style={{
                         backgroundColor: colors.white,

@@ -46,11 +46,13 @@ const MainApp = ({ children }) => {
             }}
         >
             <Sidebar />
-            <Box sx={{
-                display: "grid",
-                minHeight: "100vh",
-                background: colors.white
-            }}>
+            <Box
+                sx={{
+                    display: "grid",
+                    minHeight: "100vh",
+                    background: colors.white,
+                }}
+            >
                 <Box>
                     <Header />
                     <DonationBanner />

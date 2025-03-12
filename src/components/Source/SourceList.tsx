@@ -26,7 +26,7 @@ const SourceList = ({ footer = false }) => {
                 showDividers={false}
                 grid={{
                     xs: 12,
-                    lg: 6
+                    lg: 6,
                 }}
                 skeleton={<SourceSkeleton />}
                 emptyFallback={<SourceCreateCTA />}

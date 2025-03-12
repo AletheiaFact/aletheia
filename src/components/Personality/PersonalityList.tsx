@@ -16,7 +16,8 @@ const PersonalityList = () => {
     const { i18n, t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const createPersonalityCTA = (
-        <Grid container
+        <Grid
+            container
             style={{
                 flexDirection: "column",
                 alignItems: "center",

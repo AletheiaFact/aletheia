@@ -26,6 +26,7 @@ env:
     GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
     GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
     MONGOMS_VERSION: 6.0.17
+    PERCY_ENABLED: false
 jobs:
     test-docker:
         runs-on: ubuntu-latest

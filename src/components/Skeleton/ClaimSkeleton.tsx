@@ -3,7 +3,8 @@ import React from "react";
 
 const ClaimSkeleton = () => {
     return (
-        <Grid item
+        <Grid
+            item
             sm={11}
             md={7}
             lg={6}
@@ -19,7 +20,8 @@ const ClaimSkeleton = () => {
             <Skeleton variant="text" width="100%" animation="wave" />
             <Skeleton variant="text" width="60%" animation="wave" />
 
-            <Grid item
+            <Grid
+                item
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -27,7 +29,12 @@ const ClaimSkeleton = () => {
                 }}
             >
                 <Skeleton variant="text" width="50%" animation="wave" />
-                <Skeleton variant="rectangular" width={60} height={30} animation="wave" />
+                <Skeleton
+                    variant="rectangular"
+                    width={60}
+                    height={30}
+                    animation="wave"
+                />
             </Grid>
         </Grid>
     );

@@ -21,7 +21,12 @@ const ReviewCarouselSkeleton = () => {
                     }}
                 >
                     <Skeleton variant="text" width="50%" animation="wave" />
-                    <Skeleton variant="rectangular" width={60} height={30} animation="wave" />
+                    <Skeleton
+                        variant="rectangular"
+                        width={60}
+                        height={30}
+                        animation="wave"
+                    />
                 </div>
             </div>
         </CardBase>

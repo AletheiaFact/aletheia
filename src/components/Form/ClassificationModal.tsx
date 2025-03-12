@@ -19,12 +19,12 @@ const ClassificationModal = ({
     };
 
     const StyledRadio = styled(Radio)`
-    padding: 4px;
-    transform: scale(0.8);
-`;
+        padding: 4px;
+        transform: scale(0.8);
+    `;
 
     const classificationTextStyle = {
-        fontFamily: 'Open Sans, sans-serif',
+        fontFamily: "Open Sans, sans-serif",
         fontWeight: "bold",
         fontSize: "14px",
     };
@@ -63,47 +63,92 @@ const ClassificationModal = ({
                 <FormControlLabel
                     value="not-fact"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="not-fact" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="not-fact"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="trustworthy"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="trustworthy" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="trustworthy"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="trustworthy-but"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="trustworthy-but" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="trustworthy-but"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="arguable"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="arguable" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="arguable"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="misleading"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="misleading" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="misleading"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="false"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="false" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="false"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="unsustainable"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="unsustainable" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="unsustainable"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="exaggerated"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="exaggerated" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="exaggerated"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
                 <FormControlLabel
                     value="unverifiable"
                     control={<StyledRadio />}
-                    label={<ClassificationText classification="unverifiable" style={classificationTextStyle} />}
+                    label={
+                        <ClassificationText
+                            classification="unverifiable"
+                            style={classificationTextStyle}
+                        />
+                    }
                 />
             </RadioGroup>
             <div

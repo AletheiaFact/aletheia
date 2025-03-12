@@ -65,7 +65,8 @@ const ImageUpload = ({
         );
 
         if (!isAllowedFormat) {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -73,7 +74,8 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
             );
         }
@@ -93,7 +95,11 @@ const ImageUpload = ({
     const uploadButton = (
         <AletheiaButton
             data-cy="testUploadImage"
-            startIcon={<FileUploadOutlined style={{ fontSize: "17px", margin: "0 5 4 0" }} />}
+            startIcon={
+                <FileUploadOutlined
+                    style={{ fontSize: "17px", margin: "0 5 4 0" }}
+                />
+            }
         >
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
@@ -112,7 +118,11 @@ const ImageUpload = ({
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
             {error && (
-                <Typography variant="body2" color="error" style={{ display: "block" }}>
+                <Typography
+                    variant="body2"
+                    color="error"
+                    style={{ display: "block" }}
+                >
                     {t("common:requiredFieldError")}
                 </Typography>
             )}

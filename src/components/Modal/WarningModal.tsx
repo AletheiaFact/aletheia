@@ -42,7 +42,8 @@ const WarningModal = ({
                 </Grid>
             }
         >
-            <Grid item
+            <Grid
+                item
                 style={{
                     marginTop: 16,
                     display: "flex",

@@ -27,7 +27,8 @@ const VerificationRequestResultList = ({ results }) => {
         <VerificationRequestResultListStyled>
             {results?.length > 0 &&
                 results.map((verificationRequest) => (
-                    <Grid item
+                    <Grid
+                        item
                         style={{ width: "300px" }}
                         key={verificationRequest._id}
                     >

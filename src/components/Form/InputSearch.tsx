@@ -9,7 +9,7 @@ const InputSearchStyled = styled(TextField)`
     }
     .MuiOutlinedInput-root {
         background: ${({ backgroundColor = colors.lightNeutral }) =>
-        backgroundColor};
+            backgroundColor};
         box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 4px;
         &:focus-within {
@@ -18,7 +18,7 @@ const InputSearchStyled = styled(TextField)`
     }
     .MuiOutlinedInput-input {
         background: ${({ backgroundColor = colors.lightNeutral }) =>
-        backgroundColor};
+            backgroundColor};
         color: ${colors.blackSecondary};
         &::placeholder {
             color: ${colors.blackSecondary};
@@ -51,10 +51,14 @@ const InputSearch = (props) => {
             onChange={(e) => doSearch(e)}
             InputProps={{
                 startAdornment: props.prefix ? (
-                    <InputAdornment position="start">{props.prefix}</InputAdornment>
+                    <InputAdornment position="start">
+                        {props.prefix}
+                    </InputAdornment>
                 ) : null,
                 endAdornment: props.suffix ? (
-                    <InputAdornment position="end">{props.suffix}</InputAdornment>
+                    <InputAdornment position="end">
+                        {props.suffix}
+                    </InputAdornment>
                 ) : null,
             }}
             data-cy={props["data-cy"] || "testInputSearchPersonality"}
