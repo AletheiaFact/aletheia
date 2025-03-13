@@ -30,11 +30,15 @@ Cypress.Commands.add("checkRecaptcha", () => {
     getIframeBody().find("#recaptcha-anchor").click();
 });
 
+Cypress.Commands.add("isPercyEnabled", () => {
+    return cy.wrap(Cypress.env("PERCY_ENABLED") === "true");
+});
 declare global {
     namespace Cypress {
         interface Chainable {
             login(): Chainable<Element>;
             checkRecaptcha(): Chainable<Element>;
+            isPercyEnabled(): Chainable<boolean>;
         }
     }
 }
