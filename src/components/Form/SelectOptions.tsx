@@ -71,17 +71,20 @@ function SelectOptions({
     }, [fetchOptions, fieldName, nameSpace, t]);
 
     return (
-        <StyledSelect multiple freeSolo
+        <StyledSelect 
+            multiple={mode}
             options={filteredOptions}
-            getOptionLabel={(option) => option ? option.label || option : ""}
+            getOptionLabel={(option) => option.label || ""}
             isOptionEqualToValue={(option, value) => option?.value === value?.value}
             loading={fetching ? <Loading /> : selectedValue}
             value={value || []}
             onChange={(_event, newValue) => {
+                setSelectedValue(newValue);
                 if (Array.isArray(newValue)) {
-                    setSelectedValue(newValue);
                     const selectedIds = newValue.map(item => item?.value);
                     onChange(selectedIds);
+                } else {
+                    onChange(newValue?.value);
                 }
             }}
             onInputChange={getOptions}
