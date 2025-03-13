@@ -124,7 +124,7 @@ const OryProfileView = ({ user }) => {
                         ]}
                         wrapperCol={{ sm: 24 }}
                     >
-                        <InputPassword />
+                        <InputPassword sx={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item
                         name="repeatedNewPassword"
@@ -154,7 +154,7 @@ const OryProfileView = ({ user }) => {
                         ]}
                         wrapperCol={{ sm: 24 }}
                     >
-                        <InputPassword />
+                        <InputPassword sx={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item>
                         <Button

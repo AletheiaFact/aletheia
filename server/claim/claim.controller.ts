@@ -363,8 +363,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -394,7 +392,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -468,8 +465,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -483,7 +478,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
         });
@@ -596,8 +590,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -611,7 +603,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -636,8 +627,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -654,7 +643,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot: enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -682,8 +670,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -716,7 +702,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
@@ -751,8 +736,6 @@ export class ClaimController {
             this.featureFlagService.isEnableCopilotChatBot();
         const enableEditorAnnotations =
             this.featureFlagService.isEnableEditorAnnotations();
-        const enableAddEditorSourcesWithoutSelecting =
-            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
         const enableReviewersUpdateReport =
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
@@ -770,7 +753,6 @@ export class ClaimController {
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot: enableCopilotChatBot,
-            enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport,
             enableViewReportPreview,
             websocketUrl: this.configService.get<string>("websocketUrl"),
