@@ -26,10 +26,6 @@ export const SelectInput = styled(Select)`
     border: none !important;
   }
 
-    ::placeholder {
-        color: ${colors.blackSecondary};
-    }
-
      :focus .MuiOutlinedInput-notchedOutline {
         border: none;
         box-shadow: 0px 2px 2px ${colors.shadow};
@@ -82,6 +78,7 @@ const ClaimReviewSelect = ({
         <>
             <FormControl fullWidth>
                 <SelectInput
+                    displayEmpty
                     type={type}
                     onChange={onChangeSelect}
                     onClick={handleOnClick}
