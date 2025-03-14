@@ -20,7 +20,7 @@ const AletheiaInfo = () => {
                     fontSize: "23px",
                     color: colors.white,
                     marginBottom: 0,
-                    marginTop: vw?.sm ? "64px" : "0",
+                    marginTop: vw?.xs ? "44px" : "0",
                     textAlign: "center",
                 }}
             >
