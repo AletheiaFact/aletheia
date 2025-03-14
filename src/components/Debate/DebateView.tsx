@@ -58,8 +58,12 @@ const DebateView = ({ claim }) => {
                     />
                     <Grid item
                         style={{
-                            padding: "30px 10%",
+                            padding: "30px 0",
                             width: "100%",
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
+
                         }}
                     >
                         <DebateTimelineWrapper
