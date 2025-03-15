@@ -1,5 +1,5 @@
-import { Box ,Grid , Typography} from "@mui/material"
-import React, { useEffect, useRef, useState } from "react";
+import { Grid, Typography } from "@mui/material"
+import React, { useEffect, useState } from "react";
 
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
@@ -16,10 +16,9 @@ import AdminToolBar from "../Toolbar/AdminToolBar";
 import claimApi from "../../api/claim";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
+import AffixAletheiaButton from "../Collaborative/Components/AffixAletheiaButton";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
-    const [isAffixed, setIsAffixed] = useState(false);
-    const ref = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
@@ -42,27 +41,6 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
             dispatch(actions.setSelectContent(claimContent));
         }
     }, [claim, claimContent, dispatch, isImage, personality, t]);
-
-    useEffect(() => {
-        if (!ref.current) return;
-        
-        const scrollableSpeech = ref.current.scrollHeight > window.innerHeight;
-        if (scrollableSpeech) {
-            setIsAffixed(true);
-        }
-
-        const handleScroll = () => {
-            const { bottom } = ref.current.getBoundingClientRect();
-            const isFixed = bottom > window.innerHeight;
-
-            if (isFixed) {
-                setIsAffixed(true);
-            } else {
-                setIsAffixed(false);
-            }
-        };
-        window.addEventListener("scroll", handleScroll);
-    }, []);
 
     return (
         <>
@@ -93,7 +71,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                 style={{ paddingBottom: "15px" }}
                                 justifyContent="center"
                             >
-                                <Grid ref={ref} item xs={12} md={11} lg={10}>
+                                <Grid item xs={12} md={11} lg={10}>
                                     <Typography
                                         variant="h1"
                                         style={{
@@ -116,23 +94,18 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         }
                                     />
                                 </Grid>
-                                <Box
-                                    style={{
-                                        position: isAffixed ? "fixed" : "relative",
-                                        bottom: isAffixed ? 15 : "auto",
-                                        textAlign: "center",
-                                        width: "100%",
-                                    }}
-                                >
-                                    <ToggleSection
-                                        defaultValue={showHighlights}
-                                        onChange={(e) => {
-                                            setShowHighlights(e.target.value);
-                                        }}
-                                        labelTrue={t("claim:showHighlightsButton")}
-                                        labelFalse={t("claim:hideHighlightsButton")}
-                                    />
-                                </Box>
+                                <AffixAletheiaButton
+                                    Children={
+                                        <ToggleSection
+                                            defaultValue={showHighlights}
+                                            onChange={(e) => {
+                                                setShowHighlights(e.target.value);
+                                            }}
+                                            labelTrue={t("claim:showHighlightsButton")}
+                                            labelFalse={t("claim:hideHighlightsButton")}
+                                        />
+                                    }
+                                />
                             </Grid>
                             {sources.length > 0 && (
                                 <>
