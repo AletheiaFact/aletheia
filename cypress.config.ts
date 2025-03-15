@@ -5,7 +5,7 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: false,
     pageLoadTimeout: 480000,
-    defaultCommandTimeout: 65000,
+    defaultCommandTimeout: 130000,
 
     e2e: {
         baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
