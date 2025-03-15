@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import AletheiaButton from "../../Button";
-import { Affix } from "antd";
+import AffixAletheiaButton from "./AffixAletheiaButton";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { useTranslation } from "next-i18next";
@@ -22,8 +22,7 @@ const AffixPreviewButton = ({ doc }) => {
     };
 
     return (
-        <Affix
-            offsetBottom={15}
+        <div
             style={{
                 width: "100%",
                 display: "flex",
@@ -31,15 +30,19 @@ const AffixPreviewButton = ({ doc }) => {
                 order: 5,
             }}
         >
-            <AletheiaButton
-                style={{ borderRadius: "50px", height: "fit-content" }}
-                onClick={handleOnClick}
-            >
-                {viewPreview
-                    ? t("claimReviewForm:hidePreview")
-                    : t("claimReviewForm:viewPreview")}
-            </AletheiaButton>
-        </Affix>
+            <AffixAletheiaButton
+                Children={
+                    <AletheiaButton
+                        style={{ borderRadius: "50px", height: "fit-content" }}
+                        onClick={handleOnClick}
+                    >
+                        {viewPreview
+                            ? t("claimReviewForm:hidePreview")
+                            : t("claimReviewForm:viewPreview")}
+                    </AletheiaButton>
+                }
+            />
+        </div>
     );
 };
 
