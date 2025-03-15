@@ -5,6 +5,8 @@ import { queries } from "../../../../styles/mediaQueries";
 export const EditorSourcesListStyle = styled.div`
     order: 4;
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 
     a {
         overflow-wrap: anywhere;
@@ -18,6 +20,7 @@ export const EditorSourcesListStyle = styled.div`
         background: ${colors.white};
         box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 8px;
+        width: 100%;
     }
 
     .source-card-header {
@@ -35,6 +38,7 @@ export const EditorSourcesListStyle = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 100%;
     }
 
     .empty-text {
