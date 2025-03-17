@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import AletheiaButton from "../../Button";
-import AffixAletheiaButton from "./AffixAletheiaButton";
+import AffixButtonV2 from "./AffixButtonV2";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { useTranslation } from "next-i18next";
@@ -30,7 +30,7 @@ const AffixPreviewButton = ({ doc }) => {
                 order: 5,
             }}
         >
-            <AffixAletheiaButton
+            <AffixButtonV2
                 Children={
                     <AletheiaButton
                         style={{ borderRadius: "50px", height: "fit-content" }}

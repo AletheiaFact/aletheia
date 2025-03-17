@@ -6,7 +6,7 @@ interface AffixAletheiaButtonProps {
   style?: React.CSSProperties;
 }
 
-const AffixAletheiaButton: React.FC<AffixAletheiaButtonProps> = ({ Children, ...style }) => {
+const AffixButtonV2: React.FC<AffixAletheiaButtonProps> = ({ Children, ...style }) => {
   const [isAffixed, setIsAffixed] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -54,4 +54,4 @@ const AffixAletheiaButton: React.FC<AffixAletheiaButtonProps> = ({ Children, ...
   );
 };
 
-export default AffixAletheiaButton;
+export default AffixButtonV2;

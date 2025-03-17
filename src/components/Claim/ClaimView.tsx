@@ -16,7 +16,7 @@ import AdminToolBar from "../Toolbar/AdminToolBar";
 import claimApi from "../../api/claim";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
-import AffixAletheiaButton from "../Collaborative/Components/AffixAletheiaButton";
+import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
@@ -75,7 +75,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                     <Typography
                                         variant="h1"
                                         style={{
-                                            fontFamily:"initial",
+                                            fontFamily: "initial",
                                             fontWeight: 700,
                                             margin: "20px 0",
                                             fontSize: 20,
@@ -94,7 +94,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         }
                                     />
                                 </Grid>
-                                <AffixAletheiaButton
+                                <AffixButtonV2
                                     Children={
                                         <ToggleSection
                                             defaultValue={showHighlights}
@@ -109,7 +109,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                             </Grid>
                             {sources.length > 0 && (
                                 <>
-                                    <Typography variant="h4" style={{fontSize: 24, fontFamily:"initial", fontWeight: 700}}>
+                                    <Typography variant="h4" style={{ fontSize: 24, fontFamily: "initial", fontWeight: 700 }}>
                                         {t("claim:sourceSectionTitle")}
                                     </Typography>
                                     <ClaimSourceList
