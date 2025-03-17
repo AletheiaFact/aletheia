@@ -10,6 +10,10 @@ import Paragraph from "../Paragraph";
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
 
+    const CenteredSubtitle = ({ children }) => (
+        <Subtitle style={{ textAlign: "center" }}>{children}</Subtitle>
+    );
+
     return (
         <Grid
             style={{
@@ -36,13 +40,13 @@ const PrivacyPolicy = () => {
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem1")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem1")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem2")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem2")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem3")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem3")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem4")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem4")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
             <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
             <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
@@ -105,17 +109,17 @@ const PrivacyPolicy = () => {
                     />
                 </AccordionDetails>
             </Accordion>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem6")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem6")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem7")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem7")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem8")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem8")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem9")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem9")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleItem10")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem10")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
-            <Subtitle style={{ textAlign: "center" }}>{t("privacyPolicy:subTitleContact")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleContact")}</CenteredSubtitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail") }}
