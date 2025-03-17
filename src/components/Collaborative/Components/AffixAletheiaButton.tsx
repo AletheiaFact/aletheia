@@ -11,6 +11,9 @@ const AffixAletheiaButton: React.FC<AffixAletheiaButtonProps> = ({ Children, ...
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const drawer = document.querySelector(".MuiDrawer-paper");
+    const scrollTarget = drawer || window;
+
     const handleScroll = () => {
       if (!ref.current) return;
 
@@ -31,8 +34,8 @@ const AffixAletheiaButton: React.FC<AffixAletheiaButtonProps> = ({ Children, ...
       }
     }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    scrollTarget.addEventListener("scroll", handleScroll);
+    return () => scrollTarget.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
