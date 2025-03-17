@@ -57,8 +57,8 @@ const DebateView = ({ claim }) => {
                         userRole={userRole}
                     />
                     <Grid item
+                        xs={10}
                         style={{
-                            padding: "30px 0",
                             width: "100%",
                             display: "flex",
                             justifyContent: "flex-start",
