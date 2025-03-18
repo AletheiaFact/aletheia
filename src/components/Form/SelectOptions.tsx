@@ -23,7 +23,7 @@ const StyledSelect = styled(Autocomplete)`
 function SelectOptions({
     fieldName = "",
     fetchOptions,
-    mode,
+    isMultiple,
     style,
     value,
     preloadedOptions = [],
@@ -71,13 +71,13 @@ function SelectOptions({
     }, [fetchOptions, fieldName, nameSpace, t]);
 
     return (
-        <StyledSelect 
-            multiple={mode}
+        <StyledSelect
+            multiple={isMultiple}
             options={filteredOptions}
             getOptionLabel={(option) => option.label || ""}
             isOptionEqualToValue={(option, value) => option?.value === value?.value}
             loading={fetching ? <Loading /> : selectedValue}
-            value={value || []}
+            value={isMultiple ? value || [] : selectedValue}
             onChange={(_event, newValue) => {
                 setSelectedValue(newValue);
                 if (Array.isArray(newValue)) {
