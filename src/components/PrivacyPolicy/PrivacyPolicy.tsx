@@ -6,16 +6,17 @@ import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
 import Subtitle from "../Subtitle";
 import Paragraph from "../Paragraph";
+import styled from "styled-components";
+
+const CenteredSubtitle = styled(Subtitle)`
+    text-align: center;
+`;
 
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
 
-    const CenteredSubtitle = ({ children }) => (
-        <Subtitle style={{ textAlign: "center" }}>{children}</Subtitle>
-    );
-
     return (
-        <Grid
+        <Grid container
             style={{
                 color: colors.primary,
                 justifyContent: "center",
