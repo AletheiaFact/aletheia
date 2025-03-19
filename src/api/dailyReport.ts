@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 import axios from "axios";
 
 const request = axios.create({
@@ -10,11 +10,11 @@ const sendDailyReportEmail = (topic, nameSpace, t) => {
     return request
         .post(`/topic/${topic}/send/${nameSpace}`)
         .then((response) => {
-            message.success(t("notification:sendDailyReportSuccess"));
+            MessageManager.showMessage("success", t("notification:sendDailyReportSuccess"));
             return response.data;
         })
         .catch((err) => {
-            message.error(t("notification:sendDailyReportError"));
+            MessageManager.showMessage("error",t("notification:sendDailyReportError"));
             throw err;
         });
 };

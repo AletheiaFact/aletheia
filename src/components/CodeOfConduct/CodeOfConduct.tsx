@@ -1,47 +1,61 @@
-import { Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material"
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import Paragraph from "../Paragraph";
+import styled from "styled-components";
 
-const { Title } = Typography;
+const CodeOfConductStyle = styled(Grid)`
+    color: ${colors.primary};
+    justify-content: "center";
+    width: "100%";
+    font-size: 1rem;
+    letter-Spacing: 1px;
+    font-weight: 600;
+    padding: 20px;
+
+    .title-conduct{
+        font-size: 32px;
+        margin: 20px 0;
+        font-Family: serif; 
+        font-Weight: 600;
+    }
+
+    .subtitle-conduct{
+        font-size: 25px;
+        margin: 20px 0;
+        font-Family: serif; 
+        font-Weight: 600;
+    }
+`;
 
 const CodeOfConduct = () => {
     const { t } = useTranslation();
     return (
-        <Row
-            style={{
-                color: colors.primary,
-                justifyContent: "center",
-                width: "100%",
-                fontSize: "1rem",
-                letterSpacing: "1px",
-                fontWeight: 600,
-                padding: "20px",
-            }}
-        >
-            <Title>{t("codeOfConduct:title")}</Title>
-
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+        <CodeOfConductStyle item>
+            <Typography style={{ fontSize:40,textAlign:"center", fontFamily: "initial", fontWeight:600}} variant="h1">
+                {t("codeOfConduct:title")}
+            </Typography>            
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:introductionSection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:introductionSectionFirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:principlesSection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:principlesSectionFirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:dutiesSection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:dutiesSectionFirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:methodologySection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:methodologySectionFirstParagraph")}
             </Paragraph>
@@ -59,68 +73,68 @@ const CodeOfConduct = () => {
             <Paragraph>
                 {t("codeOfConduct:methodologySectionSecondParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:expectedBehaviorSection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSectionFirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:expectedBehaviorSubSection1")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSubSection1FirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:expectedBehaviorSubSection2")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSubSection2FirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:unacceptableBehaviorSection")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t("codeOfConduct:unacceptableBehaviorSectionFirstParagraph")}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:unacceptableBehaviorSubSection1")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t(
                     "codeOfConduct:unacceptableBehaviorSubSection1FirstParagraph"
                 )}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:unacceptableBehaviorSubSection2")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t(
                     "codeOfConduct:unacceptableBehaviorSubSection2FirstParagraph"
                 )}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:unacceptableBehaviorSubSection3")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t(
                     "codeOfConduct:unacceptableBehaviorSubSection3FirstParagraph"
                 )}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={2}>
+            <Typography className="title-conduct" variant="h2">
                 {t("codeOfConduct:responsibilitiesSection")}
-            </Title>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            </Typography>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:responsibilitiesSectionSubSection1")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t(
                     "codeOfConduct:responsibilitiesSectionSubSection1FirstParagraph"
                 )}
             </Paragraph>
-            <Title style={{ width: "100%", marginTop: "10px" }} level={3}>
+            <Typography className="subtitle-conduct" variant="h3">
                 {t("codeOfConduct:responsibilitiesSectionSubSection2")}
-            </Title>
+            </Typography>
             <Paragraph>
                 {t(
                     "codeOfConduct:responsibilitiesSectionSubSection2FirstParagraph"
@@ -131,7 +145,7 @@ const CodeOfConduct = () => {
                     "codeOfConduct:responsibilitiesSectionSubSection2SecondParagraph"
                 )}
             </Paragraph>
-        </Row>
+        </CodeOfConductStyle>
     );
 };
 

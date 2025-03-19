@@ -1,6 +1,5 @@
-import { Col, Spin } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { LoadingOutlined } from "@ant-design/icons";
+import { CircularProgress, Grid } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditorSourcePopover from "./EditorSourcePopover";
 import colors from "../../../../styles/colors";
@@ -49,21 +48,9 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
     }, [href, isArchive]);
 
     return (
-        <Spin
-            spinning={isLoading}
-            indicator={
-                <LoadingOutlined
-                    style={{
-                        color:
-                            nameSpace === NameSpaceEnum.Main
-                                ? colors.primary
-                                : colors.secondary,
-                    }}
-                />
-            }
-        >
-            <Col className="source-card">
-                <Col className="source-card-header">
+        <>
+            <Grid item style={{ opacity: isLoading && "0.4" }} className="source-card">
+                <Grid item className="source-card-header">
                     <h3>
                         {sup}. {title}
                     </h3>
@@ -75,14 +62,38 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
                     >
                         <MoreVertIcon style={{ cursor: "pointer" }} />
                     </EditorSourcePopover>
-                </Col>
-                <Col className="source-card-content">
+                </Grid>
+                <Grid item className="source-card-content">
                     <a href={href} target="_blank" rel="noopener noreferrer">
                         {href}
                     </a>
-                </Col>
-            </Col>
-        </Spin>
+                </Grid>
+            </Grid>
+            {isLoading &&
+                <Grid item
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <CircularProgress
+                        size={35}
+                        style={{
+                            color:
+                                nameSpace === NameSpaceEnum.Main
+                                    ? colors.primary
+                                    : colors.secondary,
+                        }}
+                    />
+                </Grid >
+            }
+        </>
     );
 };
 

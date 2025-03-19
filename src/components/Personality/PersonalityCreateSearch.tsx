@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Row } from "antd";
+import { FormControl, FormLabel, Grid } from '@mui/material';
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
 import { useTranslation } from "next-i18next";
@@ -58,8 +58,7 @@ const PersonalityCreateSearch = ({
             } else {
                 router
                     .push(
-                        `/${
-                            nameSpace === NameSpaceEnum.Main ? "" : nameSpace
+                        `/${nameSpace === NameSpaceEnum.Main ? "" : nameSpace
                         }${path}`
                     )
                     .catch((e) => e);
@@ -106,28 +105,30 @@ const PersonalityCreateSearch = ({
     );
 
     return (
-        <Row style={{ marginTop: "10px" }}>
-            <Form
+        <Grid container style={{ gap: 15, margin: "15px 0" }}>
+            <FormControl
                 style={{
                     width: "100%",
                 }}
-                layout="vertical"
             >
-                <Form.Item
-                    label={<Label>{t("personalityCreateForm:name")}</Label>}
+                <FormLabel
                     style={{
                         width: "100%",
                         color: colors.blackSecondary,
                         fontSize: "14px",
                         lineHeight: "21px",
+                        marginBottom: "5px",
                     }}
                 >
-                    <InputSearch
-                        placeholder={t("header:search_placeholder")}
-                        callback={handleInputSearch}
-                    />
-                </Form.Item>
-            </Form>
+                    <Label>
+                        {t("personalityCreateForm:name")}
+                    </Label>
+                </FormLabel>
+                <InputSearch
+                    placeholder={t("header:search_placeholder")}
+                    callback={handleInputSearch}
+                />
+            </FormControl>
             {isLoading ? (
                 <Loading />
             ) : (
@@ -148,7 +149,7 @@ const PersonalityCreateSearch = ({
                     />
                 </>
             )}
-        </Row>
+        </Grid>
     );
 };
 

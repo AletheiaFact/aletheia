@@ -2,9 +2,9 @@ import { Content } from "../types/Content";
 import { ActionTypes } from "./types";
 
 const actions = {
-    isFetchingResults: () => ({
+    setResultsLoading: (isFetching) => ({
         type: ActionTypes.RESULTS_LOADING,
-        isFetching: true,
+        isFetching,
     }),
     openResultsOverlay: () => ({
         type: ActionTypes.RESULTS_OVERLAY_VISIBLE,
@@ -62,7 +62,6 @@ const actions = {
     }),
     setEditorEnvironment: (
         enableCollaborativeEdit,
-        enableAddEditorSourcesWithoutSelecting,
         enableEditorAnnotations,
         enableCopilotChatBot,
         autoSave,
@@ -72,7 +71,6 @@ const actions = {
         return {
             type: ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT,
             enableCollaborativeEdit,
-            enableAddEditorSourcesWithoutSelecting,
             enableEditorAnnotations,
             enableCopilotChatBot,
             autoSave,

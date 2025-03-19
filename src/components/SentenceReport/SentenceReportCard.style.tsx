@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 
-const SentenceReportCardStyle = styled(Row)`
+const SentenceReportCardStyle = styled(Grid)`
     padding-top: 32px;
 
     .sentence-card {

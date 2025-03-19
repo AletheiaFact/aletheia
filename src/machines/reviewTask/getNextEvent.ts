@@ -25,26 +25,14 @@ const getNextEvents = (
         [Events.assignRequest]: [Events.rejectRequest, Events.publish],
         [States.assignedRequest]: [Events.rejectRequest, Events.publish],
 
-        [Events.finishReport]: [
-            Events.goback,
+        [Events.finishReport]: 
             reportModel === ReportModelEnum.FactChecking
-                ? Events.selectedCrossChecking
-                : [],
+                ? [Events.goback ,Events.selectedCrossChecking, Events.selectedReview]
+                : [Events.goback, Events.publish],
+        [States.reported]:
             reportModel === ReportModelEnum.FactChecking
-                ? Events.selectedReview
-                : [],
-            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
-        ],
-        [States.reported]: [
-            Events.goback,
-            reportModel === ReportModelEnum.FactChecking
-                ? Events.selectedCrossChecking
-                : [],
-            reportModel === ReportModelEnum.FactChecking
-                ? Events.selectedReview
-                : [],
-            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
-        ],
+                ? [Events.goback,Events.selectedCrossChecking, Events.selectedReview]
+                : [Events.goback, Events.publish],
         [Events.submitCrossChecking]: [
             Events.goback,
             Events.selectedCrossChecking,

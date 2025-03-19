@@ -22,7 +22,6 @@ const KanbanPage: NextPage<{
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
-    enableAddEditorSourcesWithoutSelecting: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
     websocketUrl: string;
@@ -38,7 +37,6 @@ const KanbanPage: NextPage<{
     dispatch(
         actions.setEditorEnvironment(
             props.enableCollaborativeEditor,
-            props.enableAddEditorSourcesWithoutSelecting,
             props.enableEditorAnnotations,
             props.enableCopilotChatBot,
             false,
@@ -83,8 +81,6 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
-            enableAddEditorSourcesWithoutSelecting:
-                query?.enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query.websocketUrl,

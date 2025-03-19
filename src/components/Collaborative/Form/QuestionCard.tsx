@@ -1,8 +1,8 @@
 import React, { useCallback, useContext } from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import Button from "../../Button";
 import { useCommands } from "@remirror/react";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { reviewingSelector } from "../../../machines/reviewTask/selectors";
@@ -29,20 +29,21 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
         <EditorCard
             label={t("claimReviewForm:questionsLabel")}
             dataCy="testClaimReviewquestions0"
-            span={21}
+            span={11}
             forwardRef={forwardRef}
             inputSize={40}
             extra={
-                <Col span={3}>
+                <Grid item xs={1}
+                    style={{alignContent:"center"}}>
                     <Button
                         style={{ height: "40px", margin: "0 auto" }}
                         onClick={handleDelete}
                         disabled={editable}
                         data-cy="testClaimReviewquestionsRemove1"
                     >
-                        <DeleteOutlined />
+                        <DeleteOutlined fontSize="small"/>
                     </Button>
-                </Col>
+                </Grid>
             }
         />
     );

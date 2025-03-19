@@ -6,7 +6,7 @@ import {
     IsOptional,
     IsString,
 } from "class-validator";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { ApiProperty } from "@nestjs/swagger";
 

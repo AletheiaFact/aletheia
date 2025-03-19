@@ -1,28 +1,31 @@
-import { Row, Col, Skeleton } from "antd";
+import { Grid, Skeleton } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
-const SkeletonCol = styled(Col)`
-    .ant-skeleton-element {
-        width: 100%;
-        border-radius: "10px";
-    }
-`;
+const SkeletonGrid = styled(Grid)(() => ({
+    '& .MuiSkeleton-root': {
+        width: "100%",
+        borderRadius: "10px",
+    },
+}));
 
 const SourceSkeleton = () => {
     return (
-        <Row style={{ marginTop: 14, width: "100%" }}>
-            <SkeletonCol span={24}>
-                <Skeleton.Image
+        <Grid container style={{ marginTop: 14, width: "100%" }}>
+            <SkeletonGrid xs={12}>
+                <Skeleton
+                    variant="rectangular"
                     style={{
                         width: "100%",
                         height: "156px",
                         borderRadius: "10px 10px 0 0 ",
                     }}
                 />
-                <Skeleton active paragraph={{ rows: 2 }} />
-            </SkeletonCol>
-        </Row>
+                <Skeleton variant="text" width="30%" animation="wave" />
+                <Skeleton variant="text" width="100%" animation="wave" />
+                <Skeleton variant="text" width="60%" animation="wave" />
+            </SkeletonGrid>
+        </Grid>
     );
 };
 

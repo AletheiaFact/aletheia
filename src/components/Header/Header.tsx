@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout } from "antd";
+import { AppBar } from "@mui/material";
 import HeaderContent from "./HeaderContent";
 import colors from "../../styles/colors";
 import { useAtom } from "jotai";
@@ -13,14 +13,12 @@ const AletheiaHeader = () => {
     );
     useLayoutEffect(() => {
         setHeaderBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
     return (
-        <Layout.Header
+        <AppBar
             style={{
                 position: "sticky",
                 top: 0,
@@ -34,7 +32,7 @@ const AletheiaHeader = () => {
             }}
         >
             <HeaderContent />
-        </Layout.Header>
+        </AppBar>
     );
 };
 

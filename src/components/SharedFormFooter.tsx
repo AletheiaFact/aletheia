@@ -1,7 +1,7 @@
 // File: src/components/SharedFormFooter.js
 
 import React, { useRef } from "react";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import AletheiaCaptcha from "./AletheiaCaptcha";
@@ -15,7 +15,7 @@ const SharedFormFooter = ({ isLoading, setRecaptchaString, hasCaptcha }) => {
     return (
         <>
             <AletheiaCaptcha onChange={setRecaptchaString} ref={recaptchaRef} />
-            <Row
+            <Grid container
                 style={{
                     padding: "32px 0 0",
                     justifyContent: "space-evenly",
@@ -36,7 +36,7 @@ const SharedFormFooter = ({ isLoading, setRecaptchaString, hasCaptcha }) => {
                 >
                     {t("claimForm:saveButton")}
                 </AletheiaButton>
-            </Row>
+            </Grid>
         </>
     );
 };

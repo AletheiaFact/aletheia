@@ -1,4 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import { CircularProgress } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
@@ -17,11 +17,11 @@ const Loading = ({ style = {} }) => {
                 height: "50vh",
                 display: "grid",
                 placeContent: "center",
+                justifyItems: "center",
                 ...style,
             }}
         >
-            <LoadingOutlined
-                spin
+            <CircularProgress
                 style={{
                     fontSize: 48,
                     color:

@@ -4,12 +4,13 @@ import colors from "../../styles/colors";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 
 const AletheiaSocialMediaIcons = () => {
     const [nameSpace] = useAtom(currentNameSpace);
     return (
-        <Col span={24}>
+        <Grid container item xs={12}
+            style={{justifyContent:"center"}}>
             <SocialIcon
                 url="https://www.instagram.com/aletheiafact"
                 bgColor={
@@ -54,7 +55,7 @@ const AletheiaSocialMediaIcons = () => {
                 rel="noreferrer"
                 fgColor="white"
             />
-        </Col>
+        </Grid>
     )
 }
 

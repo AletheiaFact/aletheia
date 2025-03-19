@@ -1,9 +1,9 @@
-import { Col, Tag } from "antd";
+import { Chip, Grid } from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import router from "next/router";
-
 interface TagsListProps {
     tags: any[];
     editable?: boolean;
@@ -23,29 +23,29 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     };
 
     return (
-        <Col>
+        <Grid item padding={1}>
             {tags.length <= 0 && <span>{t("topics:noTopics")}</span>}
 
             {tags &&
                 tags.map((tag) => (
-                    <Tag
+                    <Chip
+                        label={(tag?.label || tag).toUpperCase()}
                         key={tag?.value || tag}
-                        color={colors.secondary}
-                        closable={editable}
-                        onClose={() => handleClose(tag?.value || tag)}
+                        onClick={() => handleTagClick(tag?.label || tag)}
+                        onDelete={editable ? () => handleClose(tag?.value || tag) : undefined}
+                        deleteIcon={<CloseOutlined style={{fontSize: 15, color: colors.white}}/>}
                         style={{
+                            backgroundColor: colors.secondary,
+                            color: colors.white,
                             borderRadius: 32,
                             padding: "4px 10px 2px",
                             marginTop: 4,
                             marginBottom: 4,
                             cursor: "pointer",
                         }}
-                        onClick={() => handleTagClick(tag?.label || tag)}
-                    >
-                        {(tag?.label || tag).toUpperCase()}
-                    </Tag>
+                    />
                 ))}
-        </Col>
+        </Grid>
     );
 };
 

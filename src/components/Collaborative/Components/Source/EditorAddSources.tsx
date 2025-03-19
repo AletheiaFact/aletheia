@@ -4,12 +4,11 @@ import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
-import { PlusOutlined } from "@ant-design/icons";
-import { URL_PATTERN } from "../../hooks/useFloatingLinkState";
+import AddIcon from '@mui/icons-material/Add';
+import { URL_PATTERN } from "../../../../utils/ValidateFloatingLink";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
 import { Node } from "@remirror/pm/model";
-import { useAppSelector } from "../../../../store/store";
 
 const EditorAddSources = ({
     nodeFromJSON,
@@ -18,9 +17,6 @@ const EditorAddSources = ({
     nodeFromJSON: (json: any) => Node;
     doc: Node;
 }) => {
-    const enableAddEditorSourcesWithoutSelecting = useAppSelector(
-        (state) => state?.enableAddEditorSourcesWithoutSelecting
-    );
     const command = useCommands();
     const { t } = useTranslation();
     const [href, setHref] = useState("https://");
@@ -92,23 +88,15 @@ const EditorAddSources = ({
             {!showDialog ? (
                 <>
                     <p className="empty-text">
-                        {t(
-                            `sourceForm:${
-                                enableAddEditorSourcesWithoutSelecting
-                                    ? "editorEmptySourcesWithButton"
-                                    : "editorEmptySources"
-                            }`
-                        )}
+                        {t("sourceForm:editorEmptySourcesWithButton")}
                     </p>
-                    {enableAddEditorSourcesWithoutSelecting && (
                         <AletheiaButton
                             type={ButtonType.gray}
                             onClick={() => setShowDialog(true)}
                             data-cy="testAddEditorSources"
                         >
-                            <PlusOutlined style={{ fontSize: "24px" }} />
+                            <AddIcon style={{ fontSize: "24px" }} />
                         </AletheiaButton>
-                    )}
                 </>
             ) : (
                 <SourceDialog

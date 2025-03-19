@@ -1,5 +1,5 @@
-import { FileTextOutlined } from "@ant-design/icons";
-import { Row } from "antd";
+import { DescriptionOutlined } from "@mui/icons-material";
+import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useAppSelector } from "../../store/store";
@@ -14,8 +14,8 @@ const FooterInfo = () => {
     const href = " https://github.com/AletheiaFact/aletheia";
 
     return (
-        <Row justify={vw?.sm ? "center" : "start"}>
-            <span style={{ textAlign: "justify", marginBottom: "16px" }}>
+        <Grid container style={{ justifyContent: vw?.sm ? "center" : "start" }}>
+            <span style={{ fontSize: "14px", textAlign: "justify", marginBottom: "16px" }}>
                 {t("about:alertInfo")}
                 <a
                     style={{
@@ -32,17 +32,16 @@ const FooterInfo = () => {
             </span>
             {localConfig.footer.showStatuteButton.show ? (
                 <AletheiaButton
+                    style={{gap:"5px"}}
                     type={ButtonType.whiteBlue}
                     href={t("footer:statuteUrlButton")}
                     target="_blank"
                     rel="noreferrer"
                 >
-                    <>
-                        {t("about:labelButton")} <FileTextOutlined />
-                    </>
+                    {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
                 </AletheiaButton>
             ) : null}
-        </Row>
+        </Grid>
     );
 };
 

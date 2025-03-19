@@ -1,4 +1,4 @@
-import { Col, Divider, Typography } from "antd";
+import { Grid, Divider, Typography } from "@mui/material";
 
 import React, { useContext } from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
@@ -10,7 +10,6 @@ import { useSelector } from "@xstate/react";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 
-const { Paragraph } = Typography;
 const SentenceReportContent = ({
     context,
     classification,
@@ -32,36 +31,35 @@ const SentenceReportContent = ({
     return (
         <SentenceReportContentStyle>
             {showClassification && classification && (
-                <Col span={24}>
-                    <Paragraph className="title">
+                <Grid item xs={12}>
+                    <Typography variant="body1" className="title">
                         {t(`claimReview:title${reviewTaskType}Review`)}
-                    </Paragraph>
-                    <Paragraph className="paragraph">
+                    </Typography>
+                    <Typography variant="body1" className="paragraph">
                         <ClassificationText classification={classification} />
-                    </Paragraph>
-                    <Divider />
-                </Col>
+                    </Typography>
+                    <Divider className="report-Divider" />
+                </Grid>
             )}
             {summary && (
-                <Col span={24}>
-                    <Paragraph className="title">
+                <Grid item xs={12}>
+                    <Typography variant="body1" className="title">
                         {t("claimReview:summarySectionTitle")}
-                    </Paragraph>
-                    <Paragraph className="paragraph">
-                        <p
-                            dangerouslySetInnerHTML={{
-                                __html: sanitizer(summary),
-                            }}
-                        />
-                    </Paragraph>
-                    <Divider />
-                </Col>
+                    </Typography>
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: sanitizer(summary),
+                        }}
+                        className="paragraph"
+                    />
+                    <Divider className="report-Divider" />
+                </Grid>
             )}
             {questions && questions.length > 0 && (
-                <Col span={24}>
-                    <Paragraph className="title">
+                <Grid item xs={12}>
+                    <Typography variant="body1" className="title">
                         {t("claimReview:questionsSectionTitle")}
-                    </Paragraph>
+                    </Typography>
                     {questions.map((item) => {
                         return (
                             <li
@@ -73,41 +71,41 @@ const SentenceReportContent = ({
                             />
                         );
                     })}
-                    <Divider />
-                </Col>
+                    <Divider className="report-Divider" />
+                </Grid>
             )}
             {report && (
-                <Col span={24}>
-                    <Paragraph className="title">
+                <Grid item xs={12}>
+                    <Typography variant="body1" className="title">
                         {t("claimReview:verificationSectionTitle")}
-                    </Paragraph>
+                    </Typography>
                     <p
                         dangerouslySetInnerHTML={{ __html: sanitizer(report) }}
                         className="paragraph"
                     />
-                    <Divider />
-                </Col>
+                    <Divider className="report-Divider" />
+                </Grid>
             )}
             {verification && (
-                <Col span={24}>
-                    <Paragraph className="title">
+                <Grid item xs={12}>
+                    <Typography variant="body1" className="title">
                         {t("claimReview:howSectionTitle")}
-                    </Paragraph>
+                    </Typography>
                     <p
                         dangerouslySetInnerHTML={{
                             __html: sanitizer(verification),
                         }}
                         className="paragraph"
                     />
-                    <Divider />
-                </Col>
+                    <Divider className="report-Divider" />
+                </Grid>
             )}
-            <Col span={24}>
+            <Grid item xs={12}>
                 {sources && sources?.length > 0 && (
                     <>
-                        <Typography.Title level={4}>
+                        <Typography className="title" variant="h4">
                             {t("claim:sourceSectionTitle")}
-                        </Typography.Title>
+                        </Typography>
                         <ClaimSourceList
                             sources={sortedSources}
                             seeMoreHref={`${href}/sources`}
@@ -115,7 +113,7 @@ const SentenceReportContent = ({
                         />
                     </>
                 )}
-            </Col>
+            </Grid>
         </SentenceReportContentStyle>
     );
 };

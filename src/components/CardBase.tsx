@@ -1,9 +1,9 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import colors from "../styles/colors";
 
 const CardBase = ({ children, style = {} }) => {
     return (
-        <Row style={{
+        <Grid container style={{
             background: colors.white,
             border: `1px solid ${colors.lightNeutralSecondary}`,
             boxSizing: "border-box",
@@ -13,7 +13,7 @@ const CardBase = ({ children, style = {} }) => {
             ...style
         }}>
             {children}
-        </Row>
+        </Grid>
     )
 }
 

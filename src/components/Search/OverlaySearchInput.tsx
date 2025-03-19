@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -23,7 +23,7 @@ const OverlaySearchInput = () => {
     });
 
     const handleInputSearch = async (name) => {
-        dispatch(actions.isFetchingResults());
+        dispatch(actions.setResultsLoading(true));
         dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SET_SEARCH_OVERLAY_NAME,
@@ -38,6 +38,7 @@ const OverlaySearchInput = () => {
                 nameSpace: nameSpace,
             });
 
+        dispatch(actions.setResultsLoading(false));
         dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SEARCH_OVERLAY_RESULTS,
@@ -47,6 +48,7 @@ const OverlaySearchInput = () => {
 
     return (
         <InputSearch
+            size="small"
             placeholder={t("header:search_placeholder")}
             callback={handleInputSearch}
             suffix={<SearchOutlined />}

@@ -1,5 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Col, List, Row } from "antd";
+import { CircularProgress, Button, Grid, List, ListItem } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
@@ -36,8 +35,7 @@ const BaseList = ({
     const [nameSpace] = useAtom(currentNameSpace);
 
     const loadingIcon = (
-        <LoadingOutlined
-            spin
+        <CircularProgress
             style={{
                 fontSize: 48,
                 color:
@@ -104,63 +102,87 @@ const BaseList = ({
 
     const loadMoreButton =
         totalPages > query.page ? (
-            <div
+            <Button
+                variant="outlined"
+                onClick={loadMoreData}
                 style={{
-                    textAlign: "center",
-                    marginTop: 12,
-                    height: 32,
-                    lineHeight: "32px",
+                    color: colors.primary,
+                    fontSize: 14
                 }}
             >
-                <Button onClick={loadMoreData}>
-                    {t("list:loadMoreButton")}
-                </Button>
-            </div>
+                {t("list:loadMoreButton")}
+            </Button>
         ) : null;
 
     if (items && Array.isArray(items) && (items.length > 0 || !emptyFallback)) {
         return (
             <>
-                <List
-                    itemLayout="horizontal"
-                    grid={grid}
-                    split={showDividers}
-                    header={
-                        <Row align="middle" justify="space-between">
-                            <Col>
-                                <h2
-                                    style={{
-                                        fontSize: "24px",
-                                        lineHeight: "32px",
-                                        color: bluePrimary
-                                            ? colors.primary
-                                            : colors.black,
-                                        marginBottom: 0,
-                                    }}
-                                >
-                                    {title}
-                                </h2>
-
-                                {t("list:totalItems", {
-                                    total: totalItems,
-                                })}
-                            </Col>
-                            <Col>
-                                <SortByButton
-                                    refreshListItems={refreshListItems}
-                                />
-                            </Col>
-                        </Row>
-                    }
-                    style={style || {}}
-                    loadMore={loadMoreButton}
-                    loading={loading && loadingProps}
-                    dataSource={items}
-                    renderItem={(item) => {
-                        return <List.Item>{renderItem(item)}</List.Item>;
+                <Grid container
+                    style={{
+                        alignContent: "middle",
+                        justifyContent: "space-between",
+                        padding: "12px 0",
+                        borderBottom: "1px solid #eee"
                     }}
-                />
-                <Row
+                >
+                    <Grid item>
+                        <h2
+                            style={{
+                                fontSize: "24px",
+                                lineHeight: "32px",
+                                color: bluePrimary
+                                    ? colors.primary
+                                    : colors.black,
+                                marginBottom: 0,
+                            }}
+                        >
+                            {title}
+                        </h2>
+                        <p
+                            style={{
+                                fontSize: "14px",
+                                marginBottom: 0,
+                            }}
+                        >
+                            {t("list:totalItems", {
+                                total: totalItems,
+                            })}
+                        </p>
+                    </Grid>
+                    <Grid item>
+                        <SortByButton
+                            refreshListItems={refreshListItems}
+                        />
+                    </Grid>
+                </Grid>
+                <List
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        padding: 0,
+                    }}
+                >
+                    {loading && loadingProps ? (
+                        <Grid container style={{ display: "flex", justifyContent: "center", padding: 2 }}>
+                            {loadingIcon}
+                        </Grid>
+                    ) : (
+                        items.map((item) => (
+                            <Grid container item {...grid}>
+                                <ListItem key={item} style={{ borderBottom: showDividers ? "1px solid #eee" : "none", padding: "0 10px", ...style }}>
+                                    {renderItem(item)}
+                                </ListItem>
+                            </Grid>
+                        ))
+                    )}
+                    {loadMoreButton && (
+                        <Grid item style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                            {loadMoreButton}
+                        </Grid>
+                    )}
+                </List >
+                <Grid container
                     style={{
                         textAlign: "center",
                         display: "block",
@@ -173,7 +195,7 @@ const BaseList = ({
                     {t("list:totalItems", {
                         total: totalItems,
                     })}
-                </Row>
+                </Grid>
                 {footer}
             </>
         );

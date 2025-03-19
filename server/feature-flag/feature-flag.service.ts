@@ -31,16 +31,6 @@ export class FeatureFlagService {
             : false;
     }
 
-    isEnableAddEditorSourcesWithoutSelecting() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled(
-                  "enable_add_editor_sources_without_selecting"
-              )
-            : false;
-    }
-
     isEnableReviewersUpdateReport() {
         const config = this.configService.get<string>("feature_flag");
 

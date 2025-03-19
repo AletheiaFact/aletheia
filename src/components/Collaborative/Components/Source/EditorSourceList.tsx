@@ -1,4 +1,4 @@
-import { List } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { EditorSourcesListStyle } from "./EditorSouceList.style";
 import EditorSourceListItem from "./EditorSourceListItem";
@@ -19,33 +19,27 @@ const EditorSourcesList = ({
     return (
         <EditorSourcesListStyle>
             {sources.length > 0 ? (
-                <List
-                    dataSource={sources}
-                    grid={{
-                        xs: 1,
-                        sm: 2,
-                        md: 2,
-                        lg: 2,
-                        xl: 3,
-                        xxl: 3,
-                    }}
-                    renderItem={(source, index) => {
-                        if (typeof source === "object") {
-                            return (
-                                <EditorSourceListItem
-                                    node={node}
-                                    key={index}
-                                    sup={index + 1}
-                                    source={source}
-                                />
-                            );
-                        } else {
-                            return <></>;
-                        }
-                    }}
-                >
+                <>
+                    {sources.map((source, index) => (
+                        <Grid container
+                            direction="row"
+                            position="relative"
+                            key={source._id}
+                            xs={12}
+                            sm={6}
+                            lg={4}
+                        >
+                            <EditorSourceListItem
+                                node={node}
+                                key={source._id}
+                                sup={index + 1}
+                                source={source}
+                            />
+                        </Grid>
+                    ))
+                    }
                     <EditorAddSources nodeFromJSON={nodeFromJSON} doc={node} />
-                </List>
+                </>
             ) : (
                 <EditorAddSources nodeFromJSON={nodeFromJSON} doc={node} />
             )}

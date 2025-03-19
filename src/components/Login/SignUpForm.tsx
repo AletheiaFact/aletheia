@@ -74,7 +74,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         },
                     ]}
                 >
-                    <InputPassword />
+                    <InputPassword sx={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item
                     name="repeatPassword"
@@ -105,7 +105,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         width: "100%",
                     }}
                 >
-                    <InputPassword />
+                    <InputPassword sx={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item>
                     <div

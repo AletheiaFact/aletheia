@@ -172,8 +172,6 @@ const reducer = (state, action) => {
         case ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT:
             return {
                 ...state,
-                enableAddEditorSourcesWithoutSelecting:
-                    action.enableAddEditorSourcesWithoutSelecting,
                 enableEditorAnnotations: action.enableEditorAnnotations,
                 enableCopilotChatBot: action.enableCopilotChatBot,
                 enableCollaborativeEdit: action.enableCollaborativeEdit,

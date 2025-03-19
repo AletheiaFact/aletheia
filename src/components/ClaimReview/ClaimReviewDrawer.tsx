@@ -1,8 +1,5 @@
-import {
-    ArrowLeftOutlined,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { Col, Row } from "antd";
+import { ArrowBackOutlined, ErrorOutlineOutlined } from "@mui/icons-material";
+import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -62,18 +59,20 @@ const ClaimReviewDrawer = () => {
                     }
                 >
                     <VisualEditorProvider data_hash={data_hash}>
-                        <Row
-                            justify="space-between"
+                        <Grid container
                             style={{
                                 width: "100%",
                                 padding: "1rem",
                                 display: "flex",
                                 flexDirection: "column",
+                                justifyContent: "space-between"
                             }}
                         >
-                            <Col style={{ display: "flex", gap: 32 }}>
+                            <Grid item style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
-                                    icon={<ArrowLeftOutlined />}
+                                    startIcon={
+                                        <ArrowBackOutlined style={{ marginRight: "10px" }} fontSize="small" />
+                                    }
                                     onClick={() =>
                                         dispatch(actions.closeReviewDrawer())
                                     }
@@ -82,7 +81,7 @@ const ClaimReviewDrawer = () => {
                                 >
                                     {t("common:back_button")}
                                 </AletheiaButton>
-                                <Col span={vw?.xs ? 8 : 14}>
+                                <Grid item xs={vw?.xs ? 4 : 7}>
                                     <AletheiaButton
                                         href={generateReviewContentPath(
                                             nameSpace,
@@ -102,18 +101,19 @@ const ClaimReviewDrawer = () => {
                                     >
                                         {t("reviewTask:seeFullPage")}
                                     </AletheiaButton>
-                                </Col>
-                            </Col>
+                                </Grid>
+                            </Grid>
                             {enableCopilotChatBot && (
-                                <Col
+                                <Grid item
                                     style={{
                                         display: "flex",
                                         justifyContent: "center",
                                         gap: 8,
                                         alignItems: "center",
+                                        marginTop: "10px"
                                     }}
                                 >
-                                    <ExclamationCircleOutlined
+                                    <ErrorOutlineOutlined
                                         style={{
                                             fontSize: 16,
                                             color: colors.secondary,
@@ -128,9 +128,9 @@ const ClaimReviewDrawer = () => {
                                     >
                                         {t("copilotChatBot:copilotWarning")}
                                     </span>
-                                </Col>
+                                </Grid>
                             )}
-                        </Row>
+                        </Grid>
                         <ClaimReviewView
                             personality={personality}
                             target={target}

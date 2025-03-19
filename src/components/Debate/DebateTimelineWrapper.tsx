@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { Timeline } from "antd";
+import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, timelineItemClasses } from "@mui/lab";
 import DebateClaimCardWrapper from "./DebateClaimCardWrapper";
-
 import { useAtom } from "jotai";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
+
 const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(speeches);
     const [state] = useAtom(callbackTimerAtom);
@@ -22,32 +22,48 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     return (
         <>
             <Timeline
-                style={{
-                    padding: "10px",
+                sx={{
+                    [`& .${timelineItemClasses.root}:before`]: {
+                        flex: 0,
+                        padding: 0,
+                    },
                     width: "100%",
+                    padding: "10px",
                 }}
-                pending={isLive && t("debates:liveLabel")}
-                reverse={true}
             >
-                {Array.isArray(timelineData) &&
-                    timelineData.map((timelineItem) => {
-                        const { personality, _id: speechId } = timelineItem;
-                        return (
-                            personality &&
-                            speechId && (
-                                <Timeline.Item key={speechId}>
-                                    <DebateClaimCardWrapper
-                                        personalityId={personality}
-                                        speech={timelineItem}
-                                    />
-                                </Timeline.Item>
-                            )
-                        );
-                    })}
-                {!isLive && (
-                    <Timeline.Item color="red">
-                        {t("debates:isEnded")}
-                    </Timeline.Item>
+                {[...(timelineData || [])].reverse().map((timelineItem) => {
+                    const { personality, _id: speechId } = timelineItem;
+                    return (
+                        personality &&
+                        speechId && (
+                            <TimelineItem key={speechId}>
+                                <TimelineSeparator>
+                                    <TimelineDot variant="outlined" color="primary" />
+                                    <TimelineConnector />
+                                </TimelineSeparator>
+                                <TimelineContent>
+                                    <DebateClaimCardWrapper personalityId={personality} speech={timelineItem} />
+                                </TimelineContent>
+                            </TimelineItem>
+                        )
+                    );
+                })}
+                {isLive ? (
+                    <TimelineItem>
+                        <TimelineSeparator>
+                            <TimelineDot variant="outlined" color="secondary" />
+                        </TimelineSeparator>
+                        <TimelineContent>{t("debates:liveLabel")}</TimelineContent>
+                    </TimelineItem>
+                ) : (
+                    <TimelineItem>
+                        <TimelineSeparator>
+                            <TimelineDot variant="outlined" color="error" />
+                        </TimelineSeparator>
+                        <TimelineContent>
+                            {t("debates:isEnded")}
+                        </TimelineContent>
+                    </TimelineItem>
                 )}
             </Timeline>
         </>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Radio, Space } from "antd";
+import { Radio, RadioGroup, FormControlLabel, Stack } from "@mui/material"
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
@@ -10,21 +10,22 @@ import { currentNameSpace } from "../../atoms/namespace";
 const RadioInput = styled(Radio)`
     margin: 10px 0 0 0;
 
-    .ant-radio-checked .ant-radio-inner {
-        border: 2px solid
-            ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main
-            ? colors.primary
-            : colors.secondary};
+    &.Mui-checked {
+    border: 2px solid
+        color: ${({ namespace }) =>
+        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
+    }
+
+    &.MuiRadio-root {
+    color: ${({ namespace }) =>
+        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
         width: 25px;
         height: 25px;
     }
 
-    .ant-radio-checked .ant-radio-inner:after {
+    &.Mui-checked::after {
         background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main
-            ? colors.primary
-            : colors.secondary};
+        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
         position: relative;
         top: 3px;
         left: 3px;
@@ -32,14 +33,8 @@ const RadioInput = styled(Radio)`
         height: 31px;
     }
 
-    span .ant-radio-inner {
+    &.MuiRadio-root::before {
         box-shadow: 0px 0px 6px ${colors.shadow};
-        width: 25px;
-        height: 25px;
-    }
-
-    .ant-radio-wrapper-checked > span:nth-child(2) {
-        font-weight: 700;
     }
 `;
 //TODO: order by checked input label isn't bold
@@ -58,36 +53,31 @@ const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
     };
 
     return (
-        <RadioInput.Group
-            namespace={nameSpace}
+        <RadioGroup
             onChange={onChangeRadio}
             value={value}
         >
-            <Space style={{ marginTop: 10 }} direction="vertical">
-                <RadioInput value="asc">
-                    <span
-                        style={{
-                            fontSize: 18,
-                            marginLeft: 10,
-                            color: colors.blackSecondary,
-                        }}
-                    >
-                        {t("orderModal:radioAsc")}
-                    </span>
-                </RadioInput>
-                <RadioInput value="desc">
-                    <span
-                        style={{
-                            fontSize: 18,
-                            marginLeft: 10,
-                            color: colors.blackSecondary,
-                        }}
-                    >
-                        {t("orderModal:radioDesc")}
-                    </span>
-                </RadioInput>
-            </Space>
-        </RadioInput.Group>
+            <Stack sx={{ marginTop: "30px" }} spacing={2}>
+                <FormControlLabel
+                    value="asc"
+                    control={<RadioInput namespace={nameSpace} />}
+                    label={
+                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
+                            {t("orderModal:radioAsc")}
+                        </span>
+                    }
+                />
+                <FormControlLabel
+                    value="desc"
+                    control={<RadioInput namespace={nameSpace} />}
+                    label={
+                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
+                            {t("orderModal:radioDesc")}
+                        </span>
+                    }
+                />
+            </Stack>
+        </RadioGroup>
     );
 };
 

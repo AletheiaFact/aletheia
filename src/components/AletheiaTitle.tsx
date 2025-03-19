@@ -1,11 +1,10 @@
 import colors from "../styles/colors"
-import { Typography } from "antd";
+import Typography  from "@mui/material/Typography"
 
-const { Title } = Typography
 const AletheiaTitle = (props) => {
     return (
-        <Title
-            level={props.level}
+        <Typography
+            variant={props.variant}
             style={{
                 fontSize: 14,
                 color: colors.white,
@@ -15,7 +14,7 @@ const AletheiaTitle = (props) => {
             }}
         >
             {props.children}
-        </Title>
+        </Typography>
     )
 }
 
