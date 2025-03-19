@@ -31,23 +31,6 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                     padding: "10px",
                 }}
             >
-                {[...(timelineData || [])].reverse().map((timelineItem) => {
-                    const { personality, _id: speechId } = timelineItem;
-                    return (
-                        personality &&
-                        speechId && (
-                            <TimelineItem key={speechId}>
-                                <TimelineSeparator>
-                                    <TimelineDot variant="outlined" color="primary" />
-                                    <TimelineConnector />
-                                </TimelineSeparator>
-                                <TimelineContent>
-                                    <DebateClaimCardWrapper personalityId={personality} speech={timelineItem} />
-                                </TimelineContent>
-                            </TimelineItem>
-                        )
-                    );
-                })}
                 {isLive ? (
                     <TimelineItem>
                         <TimelineSeparator>
@@ -65,6 +48,23 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                         </TimelineContent>
                     </TimelineItem>
                 )}
+                {[...(timelineData || [])].reverse().map((timelineItem) => {
+                    const { personality, _id: speechId } = timelineItem;
+                    return (
+                        personality &&
+                        speechId && (
+                            <TimelineItem key={speechId}>
+                                <TimelineSeparator>
+                                    <TimelineDot variant="outlined" color="primary" />
+                                    <TimelineConnector />
+                                </TimelineSeparator>
+                                <TimelineContent>
+                                    <DebateClaimCardWrapper personalityId={personality} speech={timelineItem} />
+                                </TimelineContent>
+                            </TimelineItem>
+                        )
+                    );
+                })}
             </Timeline>
         </>
     );
