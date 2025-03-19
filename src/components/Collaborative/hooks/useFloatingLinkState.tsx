@@ -18,9 +18,11 @@ import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 import { validateFloatingLink } from "../../../utils/ValidateFloatingLink";
+import { useTranslation } from "react-i18next";
 
 function useFloatingLinkState() {
     const { editorSources, setEditorSources } = useContext(VisualEditorContext);
+    const [t] = useTranslation();
 
     const [error, setError] = useState(null);
     const chain = useChainedCommands();
@@ -82,7 +84,7 @@ function useFloatingLinkState() {
                 },
             };
 
-            validateFloatingLink();
+            validateFloatingLink(href, t);
             setEditorSources((sources) => {
                 if (!sources) {
                     return [newSource];
