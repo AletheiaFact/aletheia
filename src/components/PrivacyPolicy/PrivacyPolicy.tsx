@@ -25,6 +25,7 @@ const PrivacyPolicy = () => {
                 letterSpacing: "1px",
                 fontWeight: 600,
                 padding: "20px",
+                textAlign: "justify",
             }}
         >
             <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontWeight: "bold" }}>{t("privacyPolicy:title")}</Typography>
