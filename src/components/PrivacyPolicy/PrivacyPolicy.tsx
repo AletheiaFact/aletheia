@@ -1,17 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable jsx-a11y/heading-has-content */
-import { Collapse, Row, Typography } from "antd";
+import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
 import Subtitle from "../Subtitle";
 import Paragraph from "../Paragraph";
+import styled from "styled-components";
 
-const { Title } = Typography;
+const CenteredSubtitle = styled(Subtitle)`
+    text-align: center;
+`;
 
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
+
     return (
-        <Row
+        <Grid container
             style={{
                 color: colors.primary,
                 justifyContent: "center",
@@ -20,9 +25,10 @@ const PrivacyPolicy = () => {
                 letterSpacing: "1px",
                 fontWeight: 600,
                 padding: "20px",
+                textAlign: "justify",
             }}
         >
-            <Title level={1}>{t("privacyPolicy:title")}</Title>
+            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontWeight: "bold" }}>{t("privacyPolicy:title")}</Typography>
             <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
@@ -36,28 +42,21 @@ const PrivacyPolicy = () => {
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Subtitle>{t("privacyPolicy:subTitleItem1")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem1")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem2")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem2")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem3")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem3")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem4")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem4")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
             <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
             <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
-            <Collapse
-                style={{
-                    width: "100%",
-                    margin: "15px 0px",
-                }}
-            >
-                <Collapse.Panel
-                    header={t(
-                        "privacyPolicy:trackingToolsPanelRecaptchaHeader"
-                    )}
-                    key={1}
-                >
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelRecaptchaHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
                     <Trans
                         i18nKey={
                             "privacyPolicy:trackingToolsPanelReCaptchaContent"
@@ -77,19 +76,26 @@ const PrivacyPolicy = () => {
                             ></a>,
                         ]}
                     />
-                </Collapse.Panel>
-                <Collapse.Panel
-                    header={t(
-                        "privacyPolicy:trackingToolsPanelSessionCookiesHeader"
-                    )}
-                    key={2}
-                >
-                    {t("privacyPolicy:trackingToolsPanelSessionCookiesContent")}
-                </Collapse.Panel>
-                <Collapse.Panel
-                    header={t("privacyPolicy:trackingToolsPanelUmamiHeader")}
-                    key={3}
-                >
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelSessionCookiesHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Trans
+                        i18nKey={"privacyPolicy:trackingToolsPanelSessionCookiesContent"}
+                    />
+                </AccordionDetails>
+            </Accordion>
+
+
+            <Accordion sx={{ marginBottom: "20px" }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelUmamiHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelUmamiContent"}
                         components={[
@@ -103,32 +109,32 @@ const PrivacyPolicy = () => {
                             <h3 style={{ marginTop: "10px" }}></h3>,
                         ]}
                     />
-                </Collapse.Panel>
-            </Collapse>
-            <Subtitle>{t("privacyPolicy:subTitleItem6")}</Subtitle>
+                </AccordionDetails>
+            </Accordion>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem6")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem7")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem7")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem8")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem8")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem9")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem9")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem10")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleItem10")}</CenteredSubtitle>
             <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleContact")}</Subtitle>
+            <CenteredSubtitle>{t("privacyPolicy:subTitleContact")}</CenteredSubtitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail") }}
                 components={[
                     <a
-                        style={{ whiteSpace: "pre-wrap" }}
+                        style={{ whiteSpace: "pre-wrap", display: "block", textAlign: "center" }}
                         href={`mailto:${t("common:contactEmail")}`}
                         target="_blank"
                         rel="noreferrer"
                     ></a>,
                 ]}
             />
-        </Row>
+        </Grid >
     );
 };
 
