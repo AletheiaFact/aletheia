@@ -34,8 +34,7 @@ describe("Create source and source review", () => {
             .click();
         cy.get(locators.claimReview.INPUT_USER)
             .should("exist")
-            .type(review.username, { delay: 200 });
-        cy.get(".ant-select-item-option-active").click();
+            .type(`${review.username}{downarrow}{enter}`, { delay: 200 })
         cy.get('[title="reCAPTCHA"]').should("exist");
         cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
         cy.checkRecaptcha();
@@ -73,9 +72,8 @@ describe("Create source and source review", () => {
             .click();
         cy.get(locators.claimReview.INPUT_REVIEWER)
             .should("exist")
-            .type(review.username, { delay: 200 });
-        cy.get(".ant-select-item-option-active").click();
-        cy.checkRecaptcha();
+            .type(`${review.username}{downarrow}{enter}`, { delay: 200 })
+            cy.checkRecaptcha();
         cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
         cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
     });
