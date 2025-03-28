@@ -1,6 +1,6 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 
@@ -8,14 +8,14 @@ const MetricsOverview = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <Row>
-            <Col
+        <Grid container justifyContent="center">
+            <Grid
+                item
                 style={{
                     width: "100%",
                     color: colors.blackTertiary,
                 }}
-                offset={2}
-                span={18}
+                xs={9}
             >
                 {stats?.reviews && stats?.reviews.length > 0 ? (
                     <div>
@@ -45,8 +45,8 @@ const MetricsOverview = ({ stats }) => {
                     t("metrics:empytOverview")
                 )}
                 <ReviewStats stats={stats} countInTitle={true} type="line" />
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 
