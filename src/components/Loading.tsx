@@ -17,6 +17,7 @@ const Loading = ({ style = {} }) => {
                 height: "50vh",
                 display: "grid",
                 placeContent: "center",
+                justifyItems: "center",
                 ...style,
             }}
         >

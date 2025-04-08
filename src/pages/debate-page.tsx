@@ -18,7 +18,6 @@ const DebatePage: NextPage<any> = ({
     enableCollaborativeEditor,
     enableCopilotChatBot,
     enableEditorAnnotations,
-    enableAddEditorSourcesWithoutSelecting,
     enableReviewersUpdateReport,
     enableViewReportPreview,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): any => {
@@ -29,7 +28,6 @@ const DebatePage: NextPage<any> = ({
     dispatch(
         actions.setEditorEnvironment(
             enableCollaborativeEditor,
-            enableAddEditorSourcesWithoutSelecting,
             enableEditorAnnotations,
             enableCopilotChatBot,
             false,
@@ -58,8 +56,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
-            enableAddEditorSourcesWithoutSelecting:
-                query?.enableAddEditorSourcesWithoutSelecting,
             enableViewReportPreview: query?.enableViewReportPreview,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
         },

@@ -7,7 +7,6 @@
     "extra": "We accept news website URLs, link to academic papers, online official documents, and social media posts created by the personality themselves.",
     "sourceModalHeader": "Add new source",
     "editorEmptySourcesWithButton": "Add sources by selecting the desire text or clicking in the button.",
-    "editorEmptySources": "Add sources by selecting the desire text.",
     "intertArchiveTooltip": "Internet Archive prevents your source may your source never cease to exist",
     "deleteSourceButton": "Delete",
     "sourceLabel": "Source",

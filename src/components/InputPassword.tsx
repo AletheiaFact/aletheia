@@ -1,34 +1,59 @@
-import { Input } from "antd";
+import { TextField, IconButton, InputAdornment } from "@mui/material";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styled from "styled-components";
 import colors from "../styles/colors";
 
-const InputPassword = styled(Input.Password)`
+const StyledTextField = styled(TextField)`
     background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
     box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
-    border: none;
-    height: 40px;
+    
+    & .MuiOutlinedInput-root {
+        border-radius: 4px;
+        background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
+        
+        & fieldset {
+            border: none !important;
+        }
 
-    input {
-        background: ${colors.lightNeutral};
+        &:hover fieldset,
+        &:focus-within fieldset {
+            border: none !important;
+        }
     }
 
-    ::placeholder {
-        color: ${colors.blackSecondary};
+    & .MuiOutlinedInput-input {
+        padding: 10px !important;
     }
 
-    :focus {
-        border: none;
-        box-shadow: 0px 2px 2px ${colors.shadow};
+    & .MuiInputBase-root {
+        box-shadow: none !important;
     }
 
-    :active {
-        border: none;
-    }
-
-    :hover {
-        border: none;
+    & .MuiOutlinedInput-notchedOutline {
+        display: none !important;
     }
 `;
+
+const InputPassword = (props) => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    return (
+        <StyledTextField
+            {...props}
+            type={showPassword ? "text" : "password"}
+            InputProps={{
+                endAdornment: (
+                    <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                    </InputAdornment>
+                ),
+            }}
+        />
+    );
+};
 
 export default InputPassword;

@@ -18,6 +18,7 @@ const LargeDrawer = ({
             variant="temporary"
             keepMounted={false}
             sx={{
+                zIndex: 1000,
                 "& .MuiDrawer-paper": {
                     width: vw?.sm ? "100%" : "60%",
                     height: vw?.sm ? "85%" : "100%",

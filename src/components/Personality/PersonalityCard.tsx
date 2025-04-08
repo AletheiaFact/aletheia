@@ -208,10 +208,7 @@ const PersonalityCard = ({
                             <ReviewStats
                                 stats={personality.stats}
                                 type="circle"
-                                format="count"
-                                width={summarized && 30}
-                                showInfo={!summarized}
-                                strokeWidth="16"
+                                size={summarized ? 30 : 80}
                             />
                         </Grid>
                     </Grid>

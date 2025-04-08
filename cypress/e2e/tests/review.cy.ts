@@ -9,6 +9,7 @@ import locators from "../../support/locators";
 const goToClaimReviewPage = () => {
     cy.get(`${locators.personality.SELECT_PERSONALITY} > *`)
         .should("be.visible")
+        .first()
         .click();
     cy.url().should(
         "contains",
@@ -27,8 +28,7 @@ const assignUser = () => {
     cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
-        .type(review.username, { delay: 200 });
-    cy.get(".ant-select-item-option-active").click();
+        .type(`${review.username}{downarrow}{enter}`, { delay: 200 })
     cy.get('[title="reCAPTCHA"]').should("exist");
     cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
     cy.checkRecaptcha();
@@ -41,8 +41,7 @@ const blockAssignedUserReview = () => {
     cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_REVIEWER)
         .should("exist")
-        .type(review.username, { delay: 200 });
-    cy.get(".ant-select-item-option-active").click();
+        .type(`${review.username}{downarrow}{downarrow}{enter}`, { delay: 200 })
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");

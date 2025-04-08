@@ -27,7 +27,9 @@ const SearchResult = ({
                 padding: "10px 5%",
                 cursor: "pointer",
                 width: "100%",
-                alignContent:"middle"
+                alignContent: "middle",
+                flexWrap: "nowrap",
+                gap: "10px",
             }}
             onClick={handleOnClick}
         >
@@ -39,7 +41,7 @@ const SearchResult = ({
                         marginBottom: 0,
                         fontSize: "14px",
                         whiteSpace: "nowrap",
-                        overflow: "hidden",    
+                        overflow: "hidden",
                         textOverflow: "ellipsis",
                     }}
                 >

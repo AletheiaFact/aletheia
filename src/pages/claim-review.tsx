@@ -29,7 +29,6 @@ export interface ClaimReviewPageProps {
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
-    enableAddEditorSourcesWithoutSelecting: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
     websocketUrl: string;
@@ -50,7 +49,6 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
-        enableAddEditorSourcesWithoutSelecting,
         enableReviewersUpdateReport,
         enableViewReportPreview,
         hideDescriptions,
@@ -62,7 +60,6 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     dispatch(
         actions.setEditorEnvironment(
             enableCollaborativeEditor,
-            enableAddEditorSourcesWithoutSelecting,
             enableEditorAnnotations,
             enableCopilotChatBot,
             false,
@@ -163,8 +160,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
-            enableAddEditorSourcesWithoutSelecting:
-                query?.enableAddEditorSourcesWithoutSelecting,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query?.websocketUrl,

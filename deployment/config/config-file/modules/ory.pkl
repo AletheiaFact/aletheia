@@ -4,6 +4,6 @@ admin_endpoint: String
 access_token = read("env:ORY_ACCESS_TOKEN")
 schema_id = read("env:ALETHEIA_SCHEMA_ID")
 hydra = new {
-    url: read("env:ORY_SDK_URL")
-    admin_endpoint: String
+    url = read("env:ORY_SDK_URL")
+    admin_endpoint = String
 }

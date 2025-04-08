@@ -8,9 +8,9 @@ import {
     CardActions,
     Typography,
     Button,
+    Grid,
 } from "@mui/material";
 import { useAtom } from "jotai";
-import { Row, Typography as AntdTypography } from "antd";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
@@ -42,11 +42,18 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
     return (
         <>
             <Seo title={t("materials:title")} />
-            <Row style={{ width: "100%", textAlign: "center" }}>
-                <AntdTypography.Title style={{ width: "100%" }}>
+            <Grid container style={{ width: "100%", textAlign: "center" }}>
+                <Typography
+                    variant="h1"
+                    style={{
+                        width: "100%",
+                        fontSize: "40px",
+                        marginTop: "20px",
+                        fontWeight: "bold",
+                    }}>
                     {t("materials:title")}
-                </AntdTypography.Title>
-            </Row>
+                </Typography>
+            </Grid>
             <div
                 style={{
                     display: "flex",

@@ -35,7 +35,7 @@ const Footer = () => {
             }}
         >
             <Grid container spacing={3} justifyContent="center">
-                <Grid item lg={4} md={5} sm={12}>
+                <Grid item md={4} sm={6} xs={12}>
                     <AletheiaSocialMediaFooter />
                     <Box
                         sx={{
@@ -79,9 +79,9 @@ const Footer = () => {
                 </Grid>
                 <Grid
                     item
-                    lg={4}
-                    md={5}
-                    sm={12}
+                    md={4}
+                    sm={6}
+                    xs={12}
                     sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -89,7 +89,7 @@ const Footer = () => {
                     }}
                 >
                     <FooterInfo />
-                    <Box sx={{ mt: vw?.sm ? 8 : 0 }}>
+                    <Box sx={{ mt: vw?.xs ? 8 : 0 }}>
                         <Typography
                             variant="h6"
                             sx={{
@@ -105,7 +105,7 @@ const Footer = () => {
                         </Typography>
                     </Box>
                 </Grid>
-                <Grid item lg={4} md={5} sm={12}>
+                <Grid item md={4} sm={6} xs={12}>
                     <AletheiaInfo />
                 </Grid>
             </Grid>

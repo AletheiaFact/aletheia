@@ -9,7 +9,6 @@ import { URL_PATTERN } from "../../../../utils/ValidateFloatingLink";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
 import { Node } from "@remirror/pm/model";
-import { useAppSelector } from "../../../../store/store";
 
 const EditorAddSources = ({
     nodeFromJSON,
@@ -18,9 +17,6 @@ const EditorAddSources = ({
     nodeFromJSON: (json: any) => Node;
     doc: Node;
 }) => {
-    const enableAddEditorSourcesWithoutSelecting = useAppSelector(
-        (state) => state?.enableAddEditorSourcesWithoutSelecting
-    );
     const command = useCommands();
     const { t } = useTranslation();
     const [href, setHref] = useState("https://");
@@ -92,15 +88,8 @@ const EditorAddSources = ({
             {!showDialog ? (
                 <>
                     <p className="empty-text">
-                        {t(
-                            `sourceForm:${
-                                enableAddEditorSourcesWithoutSelecting
-                                    ? "editorEmptySourcesWithButton"
-                                    : "editorEmptySources"
-                            }`
-                        )}
+                        {t("sourceForm:editorEmptySourcesWithButton")}
                     </p>
-                    {enableAddEditorSourcesWithoutSelecting && (
                         <AletheiaButton
                             type={ButtonType.gray}
                             onClick={() => setShowDialog(true)}
@@ -108,7 +97,6 @@ const EditorAddSources = ({
                         >
                             <AddIcon style={{ fontSize: "24px" }} />
                         </AletheiaButton>
-                    )}
                 </>
             ) : (
                 <SourceDialog

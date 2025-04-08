@@ -18,14 +18,7 @@ const DebateGrid = ({ debates }) => {
         <GridList
             title={"Debates"}
             dataSource={debates}
-            loggedInMaxColumns={1}
-            gridLayout={{
-                gutter: 10,
-                xs: 1,
-                sm: 1,
-                md: 1,
-                lg: 1,
-            }}
+            loggedInMaxColumns={6}
             disableSeeMoreButton={true}
             renderItem={(debateClaim) => {
                 return (
@@ -63,7 +56,7 @@ const DebateGrid = ({ debates }) => {
                             >
                                 {debateClaim.personalities.map((p) => {
                                     return (
-                                        <Grid item key={p._id} xs={12} md={5.5}>
+                                        <Grid item key={p._id} xs={12} sm={5.5}>
                                             <PersonalityMinimalCard
                                                 personality={p}
                                             />
