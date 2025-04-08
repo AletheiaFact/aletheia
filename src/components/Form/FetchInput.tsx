@@ -9,7 +9,7 @@ interface FetchInputProps {
     onChange: any;
     dataCy: string;
     dataLoader: any;
-    mode?: string;
+    isMultiple?: boolean;
     style?: {};
     value?: any;
     preloadedOptions?: string[];
@@ -21,7 +21,7 @@ const FetchInput = ({
     onChange,
     dataCy,
     dataLoader,
-    mode = "multiple",
+    isMultiple = true,
     style = {},
     value = null,
     preloadedOptions = [],
@@ -73,7 +73,7 @@ const FetchInput = ({
             onChange={onChange}
             data-cy={dataCy}
             style={{ width: "100%", ...style }}
-            mode={mode}
+            isMultiple={isMultiple}
             value={treatedValue}
             preloadedTopics={preloadedOptions}
             loading={isLoading}

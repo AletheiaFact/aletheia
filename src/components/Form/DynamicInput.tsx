@@ -51,7 +51,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     dataCy={props["data-cy"]}
                     dataLoader={props.extraProps.dataLoader}
                     value={props.value}
-                    mode={props.extraProps.mode}
+                    isMultiple={props.extraProps.mode}
                     preloadedOptions={props.extraProps.preloadedOptions}
                 />
             );
