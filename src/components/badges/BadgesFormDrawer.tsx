@@ -232,11 +232,6 @@ const BadgesFormDrawer = () => {
                                     />
                                 )}
                             />
-                            {imageError && (
-                                <Typography variant="caption" color="error">
-                                    {t("common:requiredFieldError")}
-                                </Typography>
-                            )}
                         </Grid>
                         <Grid item mb={2}>
                             <Autocomplete
