@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Grid } from "@mui/material"
-import { UploadFile } from "antd/lib/upload/interface";
+import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -16,18 +15,19 @@ import BaseClaimForm from "./BaseClaimForm";
 const ClaimUploadImage = () => {
     const { t } = useTranslation();
     const router = useRouter();
-    const formData = new FormData();
-
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [imageError, setImageError] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [, send] = useAtom(createClaimMachineAtom);
 
-    const handleSubmit = (values) => {
+    const formData = new FormData();
+    const [fileList, setFileList] = useState<File[]>([]);
+    const [imageError, setImageError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = (values: any) => {
         if (fileList.length > 0) {
             setIsLoading(true);
+
             fileList.forEach((file) => {
-                formData.append("files", file.originFileObj);
+                formData.append("files", file);
             });
 
             ImageApi.uploadImage(formData, t)
@@ -48,7 +48,7 @@ const ClaimUploadImage = () => {
                 })
                 .catch((err) => {
                     setIsLoading(false);
-                    if (err.response.status === 303) {
+                    if (err.response?.status === 303) {
                         const seeOtherTarget = err.response.data.target;
                         if (seeOtherTarget) {
                             router.push(seeOtherTarget);
@@ -59,7 +59,8 @@ const ClaimUploadImage = () => {
             setImageError(true);
         }
     };
-    const handleAntdChange = (newFileList) => {
+
+    const handleFileChange = (newFileList: File[]) => {
         setFileList(newFileList);
     };
 
@@ -88,6 +89,7 @@ const ClaimUploadImage = () => {
                     {t("claimForm:uploadImageText")}
                 </p>
             </div>
+
             <BaseClaimForm
                 disableFutureDates
                 handleSubmit={handleSubmit}
@@ -97,8 +99,9 @@ const ClaimUploadImage = () => {
                     <Grid container style={{ marginBottom: 24 }}>
                         <Label required>{t("claimForm:fileInputButton")}</Label>
                         <ImageUpload
-                            onChange={handleAntdChange}
+                            onChange={handleFileChange}
                             error={imageError}
+                            defaultFileList={[]}
                         />
                     </Grid>
                 }
