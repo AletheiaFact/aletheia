@@ -8,8 +8,8 @@ import FetchInput from "./FetchInput";
 import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
-import { Checkbox } from "antd";
 import DatePickerInput from "./DatePickerInput";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -88,14 +88,18 @@ const DynamicInput = (props: DynamicInputProps) => {
             );
         case "textbox":
             return (
-                <Checkbox
-                    data-cy={props["data-cy"]}
-                    defaultChecked={!!props.defaultValue}
-                    onChange={(value) => props.onChange(value)}
-                    checked={!!props.value}
-                >
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            data-cy={props["data-cy"]}
+                            defaultChecked={!!props.defaultValue}
+                            onChange={(value) => props.onChange(value)}
+                            checked={!!props.value}
+                        />
+                    }
+                    label=
                     {t(`claimReviewForm:${props.fieldName}`)}
-                </Checkbox>
+                />
             );
         case "visualEditor":
             if (isFetchingEditor) {
