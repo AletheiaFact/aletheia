@@ -68,7 +68,7 @@ export class UsersService {
                 });
         }
 
-        pipeline.project(project || { _id: 1, name: 1, role: 1 });
+        pipeline.project(project || { _id: 1, name: 1, role: 1, badges: 1 });
 
         return await pipeline.exec();
     }
