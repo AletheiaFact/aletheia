@@ -86,8 +86,7 @@ const ImageUpload = ({
 
         const newFiles: LocalUploadFile[] = [];
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+        for (const file of files) {
             if (validateBeforeUpload(file)) {
                 const preview = await getBase64(file);
                 newFiles.push({
