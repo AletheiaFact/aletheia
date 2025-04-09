@@ -1,4 +1,4 @@
-import { Menu } from "antd";
+import { List, ListItemButton } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -31,146 +31,152 @@ const AletheiaMenu = () => {
     const [role] = useAtom(currentUserRole);
 
     return (
-        <Menu
-            mode="inline"
-            theme="light"
+        <List
             style={{
                 backgroundColor: colors.lightNeutral,
                 color: colors.black,
                 fontSize: "16px",
                 padding: "0px 24px",
             }}
-            selectable={false}
         >
-            <Menu.Item
-                key={
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/personality`
-                        : "/personality"
-                }
-                onClick={handleClick}
+            <ListItemButton
+                onClick={() => handleClick({
+                    key:
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/personality`
+                            : "/personality"
+                })}
                 data-cy={"testPersonalitytItem"}
             >
                 {t("menu:personalityItem")}
-            </Menu.Item>
-            <Menu.Item
-                key={
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/claim`
-                        : "/claim"
-                }
-                onClick={handleClick}
+            </ListItemButton>
+            <ListItemButton
+                onClick={() => handleClick({
+                    key:
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/claim`
+                            : "/claim"
+                })}
                 data-cy={"testClaimtItem"}
             >
                 {t("menu:claimItem")}
-            </Menu.Item>
+            </ListItemButton>
 
-            <Menu.Item
-                key={
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/source`
-                        : "/source"
-                }
-                onClick={handleClick}
+            <ListItemButton
+                onClick={() => handleClick({
+                    key:
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/source`
+                            : "/source"
+                })}
                 data-cy={"testSourcetItem"}
             >
                 {t("menu:sourcesItem")}
-            </Menu.Item>
+            </ListItemButton>
 
-            <Menu.Item
-                key={
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/verification-request`
-                        : "/verification-request"
-                }
-                onClick={handleClick}
+            <ListItemButton
+                onClick={() => handleClick({
+                    key:
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/verification-request`
+                            : "/verification-request"
+                })}
                 data-cy={"testVerificationRequestItem"}
             >
                 {t("menu:verificationRequestItem")}
-            </Menu.Item>
+            </ListItemButton>
 
             {role !== Roles.Regular && (
-                <Menu.Item
-                    key={
-                        nameSpace !== NameSpaceEnum.Main
-                            ? `/${nameSpace}/kanban`
-                            : "/kanban"
-                    }
-                    onClick={handleClick}
+                <ListItemButton
+                    onClick={() => handleClick({
+                        key:
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/kanban`
+                                : "/kanban"
+                    })}
                     data-cy={"testKanbantItem"}
                 >
                     {t("menu:kanbanItem")}
-                </Menu.Item>
+                </ListItemButton>
             )}
             {(role === Roles.Admin || role === Roles.SuperAdmin) && (
                 <>
-                    <Menu.Item
-                        key={
-                            nameSpace !== NameSpaceEnum.Main
-                                ? `/${nameSpace}/admin`
-                                : "/admin"
-                        }
+                    <ListItemButton
                         data-cy={"testadminItem"}
-                        onClick={handleClick}
+                        onClick={() => handleClick({
+                            key:
+                                nameSpace !== NameSpaceEnum.Main
+                                    ? `/${nameSpace}/admin`
+                                    : "/admin"
+                        })}
                     >
                         {t("menu:adminItem")}
-                    </Menu.Item>
-                    <Menu.Item
-                        key={
-                            nameSpace !== NameSpaceEnum.Main
-                                ? `/${nameSpace}/admin/badges`
-                                : "/admin/badges"
-                        }
+                    </ListItemButton>
+                    <ListItemButton
                         data-cy={"testadminBadgeItem"}
-                        onClick={handleClick}
+                        onClick={() => handleClick({
+                            key:
+                                nameSpace !== NameSpaceEnum.Main
+                                    ? `/${nameSpace}/admin/badges`
+                                    : "/admin/badges"
+                        })}
                     >
                         {t("menu:Badges")}
-                    </Menu.Item>
-                    <Menu.Item
-                        key="/admin/name-spaces"
+                    </ListItemButton>
+                    <ListItemButton
                         data-cy={"testadminNameSpaceItem"}
-                        onClick={handleClick}
+                        onClick={() => handleClick({
+                            key: "/admin/name-spaces"
+                        })}
                     >
                         {t("menu:nameSpaceItem")}
-                    </Menu.Item>
+                    </ListItemButton>
                 </>
             )}
-            <Menu.Item
-                key="/about"
+            <ListItemButton
                 data-cy={"testAboutItem"}
-                onClick={handleClick}
+                onClick={() => handleClick({
+                    key: "/about",
+                })}
             >
                 {t("menu:aboutItem")}
-            </Menu.Item>
-            <Menu.Item
-                key="/privacy-policy"
+            </ListItemButton>
+            <ListItemButton
                 data-cy={"testPrivacyPolicyItem"}
-                onClick={handleClick}
+                onClick={() => handleClick({
+                    key: "/privacy-policy",
+                })}
             >
                 {t("menu:privacyPolicyItem")}
-            </Menu.Item>
-            <Menu.Item
-                key="/code-of-conduct"
+            </ListItemButton>
+            <ListItemButton
                 data-cy={"testCodeOfConductItem"}
-                onClick={handleClick}
+                onClick={() => handleClick({
+                    key: "/code-of-conduct",
+                })}
             >
                 {t("menu:codeOfConductItem")}
-            </Menu.Item>
-            <Menu.Item
-                key="/supportive-materials"
+            </ListItemButton>
+            <ListItemButton
                 data-cy={"testSupportiveMaterialsItem"}
-                onClick={handleClick}
+                onClick={() => handleClick({
+                    key: "/supportive-materials",
+                })}
             >
                 {t("menu:supportiveMaterials")}
-            </Menu.Item>
+            </ListItemButton>
 
             {localConfig.header.donateButton.show
                 ?
-                <Menu.Item key="/donate" onClick={handleClick}>
+                <ListItemButton
+                    onClick={() => handleClick({
+                        key: "/donate",
+                    })}
+                >
                     {t("header:donateButton")}
-                </Menu.Item>
+                </ListItemButton>
                 : null}
-        </Menu>
+        </List>
     );
 };
 
