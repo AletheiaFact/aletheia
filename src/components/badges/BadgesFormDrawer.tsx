@@ -131,7 +131,7 @@ const BadgesFormDrawer = () => {
 
         const newFiles = image
             .filter((f) => f.originFileObj)
-            .map((f) => f.originFileObj!);
+            .map((f) => f.originFileObj);
 
         if (newFiles.length > 0) {
             const formData = new FormData();
