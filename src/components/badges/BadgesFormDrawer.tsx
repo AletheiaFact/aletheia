@@ -29,7 +29,7 @@ import { User } from "../../types/User";
 import colors from "../../styles/colors";
 import AletheiaInput from "../AletheiaInput";
 import Button from "../Button";
-import ImageUpload from "../ImageUpload";
+import ImageUpload, { UploadFile } from "../ImageUpload";
 import Label from "../Label";
 import LargeDrawer from "../LargeDrawer";
 
@@ -43,9 +43,20 @@ const BadgesFormDrawer = () => {
     const [userList] = useAtom(atomUserList);
     const [userId] = useAtom(currentUserId);
 
-    const userListFiltered = userList.filter((user) => canEdit(user, userId));
+    const userListFiltered = userList.filter((u) => canEdit(u, userId));
     const isEdit = !!badgeEdited;
-    const oldImage = badgeEdited?.image;
+
+    let initialFileList: UploadFile[] = [];
+    if (badgeEdited?.image) {
+        initialFileList = [
+            {
+                uid: badgeEdited.image._id,
+                name: badgeEdited.name || "Existing Badge Image",
+                status: "done",
+                url: badgeEdited.image.content,
+            },
+        ];
+    }
 
     const {
         register,
@@ -53,12 +64,17 @@ const BadgesFormDrawer = () => {
         formState: { errors },
         control,
         reset,
-    } = useForm({
+    } = useForm<{
+        name: string;
+        description: string;
+        image: UploadFile[];
+        users: string[];
+    }>({
         defaultValues: {
-            name: badgeEdited?.name ?? "",
-            description: badgeEdited?.description ?? "",
-            image: [] as File[],
-            users: badgeEdited?.users?.map((u) => u._id) ?? [],
+            name: badgeEdited?.name || "",
+            description: badgeEdited?.description || "",
+            image: initialFileList,
+            users: badgeEdited?.users?.map((u) => u._id) || [],
         },
     });
 
@@ -73,10 +89,11 @@ const BadgesFormDrawer = () => {
                 userIds.includes(u._id)
             );
             setUsers(found);
+
             reset({
                 name: badgeEdited.name,
                 description: badgeEdited.description,
-                image: [],
+                image: initialFileList,
                 users: userIds,
             });
         }
@@ -99,35 +116,38 @@ const BadgesFormDrawer = () => {
         setIsLoading(false);
     };
 
-    const onSubmit = (data: {
+    const onSubmit = async (data: {
         name: string;
         description: string;
-        image: File[];
+        image: UploadFile[];
         users: string[];
     }) => {
-        const { name, description, image: newFiles } = data;
-        if (newFiles.length === 0 && !oldImage) {
+        const { name, description, image } = data;
+        if (image.length === 0 && !badgeEdited?.image) {
             setImageError(true);
             return;
         }
         setIsLoading(true);
+
+        const newFiles = image
+            .filter((f) => !!f.originFileObj)
+            .map((f) => f.originFileObj as File);
+
         if (newFiles.length > 0) {
             const formData = new FormData();
-            newFiles.forEach((file) => formData.append("files", file));
-            ImageApi.uploadImage(formData, t)
-                .then((imagesUploaded) => {
-                    setImageError(false);
-                    handleBadgeSave({
-                        name,
-                        description,
-                        image: imagesUploaded[0],
-                    });
-                })
-                .catch(() => {
-                    setIsLoading(false);
-                });
+            newFiles.forEach((file) => {
+                formData.append("files", file);
+            });
+            try {
+                const imagesUploaded = await ImageApi.uploadImage(formData, t);
+                setImageError(false);
+                const newImage = imagesUploaded[0];
+                handleBadgeSave({ name, description, image: newImage });
+            } catch (err) {
+                setIsLoading(false);
+            }
         } else {
-            handleBadgeSave({ name, description, image: oldImage });
+            handleBadgeSave({ name, description, image: badgeEdited?.image });
         }
     };
 
@@ -221,9 +241,11 @@ const BadgesFormDrawer = () => {
                                 rules={{ required: false }}
                                 render={({ field }) => (
                                     <ImageUpload
-                                        onChange={(files: File[]) => {
-                                            field.onChange(files);
-                                            if (files.length > 0) {
+                                        onChange={(
+                                            uploadFiles: UploadFile[]
+                                        ) => {
+                                            field.onChange(uploadFiles);
+                                            if (uploadFiles.length > 0) {
                                                 setImageError(false);
                                             }
                                         }}
@@ -232,25 +254,28 @@ const BadgesFormDrawer = () => {
                                     />
                                 )}
                             />
+                            {imageError && (
+                                <Typography variant="caption" color="error">
+                                    {t("common:requiredFieldError")}
+                                </Typography>
+                            )}
                         </Grid>
+
                         <Grid item mb={2}>
                             <Autocomplete
                                 multiple
-                                id="badge-users"
                                 options={userListFiltered}
                                 getOptionLabel={(option: User) => option.name}
                                 disableCloseOnSelect
                                 limitTags={3}
+                                value={users}
+                                onChange={(_e, newValue) => setUsers(newValue)}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         placeholder="Users"
                                     />
                                 )}
-                                value={users}
-                                onChange={(_event, newValue) => {
-                                    setUsers(newValue);
-                                }}
                             />
                         </Grid>
                         <Button
