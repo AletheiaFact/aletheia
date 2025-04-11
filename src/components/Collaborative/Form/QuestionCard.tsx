@@ -40,6 +40,8 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         onClick={handleDelete}
                         disabled={editable}
                         data-cy="testClaimReviewquestionsRemove1"
+                        contentEditable={false} 
+                        suppressContentEditableWarning
                     >
                         <DeleteOutlined fontSize="small"/>
                     </Button>
