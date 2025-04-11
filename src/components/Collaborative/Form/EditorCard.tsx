@@ -1,6 +1,6 @@
 import React from "react";
 import { uniqueId } from "remirror";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import CardStyle from "./CardStyle";
 
 interface EditorCardProps {
@@ -22,7 +22,9 @@ const EditorCard = ({
 }: EditorCardProps) => {
     return (
         <CardStyle container>
-            <label>{label}</label>
+            <Typography variant="subtitle1" component="span" contentEditable={false} suppressContentEditableWarning>
+                {label}
+            </Typography>
             <Grid item xs={span} className="card-container">
                 <div
                     className="card-content"
