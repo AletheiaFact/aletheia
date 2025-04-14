@@ -56,7 +56,7 @@ const ClaimCreate = () => {
                     }}
                 >
                     <TextArea
-                        rows={4}
+                        multiline
                         value={content || ""}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder={t("claimForm:contentFieldPlaceholder")}

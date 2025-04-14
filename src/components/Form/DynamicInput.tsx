@@ -34,7 +34,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "textArea":
             return (
                 <TextArea
-                    rows={4}
+                    multiline
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}

@@ -81,6 +81,7 @@ const UnhideContentModal = ({
                             style={{ marginBottom: 16 }}
                         >
                             <TextArea
+                                multiline
                                 white="white"
                                 placeholder={t(
                                     "claimReview:descriptionInputPlaceholder"
