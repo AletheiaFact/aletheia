@@ -48,10 +48,7 @@ describe("Create personality and claim", () => {
             .type(claim.content);
 
         cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.get(locators.claim.INPUT_DATA_TODAY)
-            .contains("Today")
-            .should("be.visible")
-            .click();
+        cy.get(locators.claim.INPUT_DATA_TODAY).should("be.visible").click();
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
@@ -82,10 +79,7 @@ describe("Create personality and claim", () => {
             .should("be.visible")
             .type(claim.imageTitle);
         cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.get(locators.claim.INPUT_DATA_TODAY)
-            .contains("Today")
-            .should("be.visible")
-            .click();
+        cy.get(locators.claim.INPUT_DATA_TODAY).should("be.visible").click();
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
             .type(claim.source);
