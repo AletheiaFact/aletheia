@@ -48,6 +48,8 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         height: 40,
         paddingBottom: 0,
         borderRadius: props.rounded ? "30px" : "4px",
+        fontSize: "14px",
+        lineHeight: "normal",
         ...props.style,
     };
     switch (props.type) {

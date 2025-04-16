@@ -17,7 +17,7 @@ const SourceSummaryDisplay = ({ href }) => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ width: "fit-content" }}
+                style={{ width: "fit-content", whiteSpace: "nowrap" }}
             >
                 {t("sources:sourceCardButton")}
             </AletheiaButton>
