@@ -22,6 +22,7 @@ import verificationRequestApi from "../../../api/verificationRequestApi";
 import { useTranslation } from "next-i18next";
 import VerificationRequestDrawer from "../../VerificationRequest/VerificationRequestDrawer";
 import ManageVerificationRequestGroup from "../../VerificationRequest/ManageVerificationRequestGroup";
+import ClaimCreateStyle from "./ClaimCreate.style";
 
 const CreateClaimView = () => {
     const { t } = useTranslation();
@@ -77,7 +78,7 @@ const CreateClaimView = () => {
     };
 
     return (
-        <Grid container style={{justifyContent:"center"}}>
+        <ClaimCreateStyle container>
             <Grid item xs={9} style={{ marginTop: 32 }}>
                 {!isLoading &&
                     claimData?.group &&
@@ -110,7 +111,7 @@ const CreateClaimView = () => {
                 onCloseDrawer={onCloseDrawer}
                 onRemove={onRemove}
             />
-        </Grid>
+        </ClaimCreateStyle>
     );
 };
 
