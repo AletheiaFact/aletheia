@@ -34,19 +34,17 @@ const About = () => {
             <AletheiaAlert
                 type="info"
                 message={
-                    <>
-                        <p style={{ fontWeight: 600 }}>
-                            {t("about:alertInfo")}{" "}
-                            <a
-                                style={{ whiteSpace: "pre-wrap" }}
-                                href="https://github.com/AletheiaFact/aletheia"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                https://github.com/AletheiaFact/aletheia
-                            </a>
-                        </p>
-                    </>
+                    <p style={{ fontWeight: 600 }}>
+                        {t("about:alertInfo")}{" "}
+                        <a
+                            style={{ whiteSpace: "pre-wrap" }}
+                            href="https://github.com/AletheiaFact/aletheia"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            https://github.com/AletheiaFact/aletheia
+                        </a>
+                    </p>
                 }
                 action={
                     <Button
