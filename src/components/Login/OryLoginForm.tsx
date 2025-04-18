@@ -1,4 +1,5 @@
-import { Alert, Form, Row } from "antd";
+import { Form, Row } from "antd";
+import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
@@ -18,9 +19,10 @@ const OryLoginForm = ({
 
     return (
         <>
-            {flow.refresh && (
+            {true && (
                 <Row style={{ paddingBottom: "10px" }}>
-                    <Alert
+                    <AletheiaAlert
+                        style={{ padding: "0 15px", margin: "0px" }}
                         message={t("login:refreshLoginMessage")}
                         type="warning"
                     />
