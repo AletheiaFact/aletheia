@@ -3,7 +3,8 @@ import {
     SettingsFlowState,
     UpdateSettingsFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
-import { Alert, Form, FormInstance, Typography } from "antd";
+import { Form, FormInstance, Typography } from "antd";
+import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
@@ -106,13 +107,13 @@ const OryProfileView = ({ user }) => {
                 </Typography.Title>
 
                 {!user.firstPasswordChanged && (
-                    <Alert
-                        style={{ marginBottom: "1rem" }}
+                    <AletheiaAlert
+                        style={{ padding: "0 10px", margin: 0 }}
                         message={t("profile:warningMessage")}
                         type="warning"
                     />
                 )}
-                <Form ref={formRef} onFinish={onFinish}>
+                <Form ref={formRef} onFinish={onFinish} style={{ marginTop: "20px" }}>
                     <Form.Item
                         name="newPassword"
                         label={t("profile:newPasswordLabel")}
