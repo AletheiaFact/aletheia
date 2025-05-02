@@ -14,15 +14,6 @@ services:
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
       - "${MONGODB_PORT:-27017}:27017"
-  ferretdb:
-    container_name: ferretdb
-    image: ferretdb/ferretdb:2.0
-    restart: unless-stopped
-    environment:
-      - FERRETDB_HANDLER=sqlite
-      - FERRETDB_SQLITE_URL=file:/tmp/ferretdb
-    ports:
-      - "27018:27017"
   localstack:
     container_name: aletheia-localstack
     image: localstack/localstack:3.7.2

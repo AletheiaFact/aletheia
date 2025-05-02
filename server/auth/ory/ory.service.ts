@@ -21,13 +21,21 @@ export default class OryService {
     ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
+        const app_affiliation =
+            this.configService.get<string>("app_affiliation");
         const credentials = password
             ? {
-                  password: {
-                      config: { password },
-                  },
-              }
+                password: {
+                    config: { password },
+                },
+            }
             : {};
+        console.log({
+            email: user.email,
+            user_id: user._id,
+            app_affiliation,
+            ...traits,
+        })
         return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
             body: JSON.stringify({
@@ -35,6 +43,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
+                    app_affiliation,
                     ...traits,
                 },
                 credentials,
@@ -97,6 +106,7 @@ export default class OryService {
             this.configService.get("ory");
         const app_affiliation =
             this.configService.get<string>("app_affiliation");
+        console.log("app_affiliation", app_affiliation)
 
         return fetch(`${this.adminUrl}/identities`, {
             method: "post",

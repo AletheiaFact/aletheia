@@ -20,7 +20,7 @@ export class UsersService {
         @InjectModel(User.name) private UserModel: Model<UserDocument>,
         private oryService: OryService,
         private notificationService: NotificationService
-    ) {}
+    ) { }
 
     async findAll(userQuery: GetUsersDTO): Promise<UserDocument[]> {
         const {
@@ -36,15 +36,15 @@ export class UsersService {
 
         const matchCondition = canAssignUsers
             ? {
-                  name: { $regex: searchName || "", $options: "i" },
-                  [`role.${nameSpaceSlug}`]: {
-                      $nin: [...(filterOutRoles || []), null],
-                  },
-                  ...(badges ? { badges } : {}),
-              }
+                name: { $regex: searchName || "", $options: "i" },
+                [`role.${nameSpaceSlug}`]: {
+                    $nin: [...(filterOutRoles || []), null],
+                },
+                ...(badges ? { badges } : {}),
+            }
             : {
-                  _id: Types.ObjectId(userId),
-              };
+                _id: Types.ObjectId(userId),
+            };
 
         pipeline.match(matchCondition);
 
@@ -101,11 +101,12 @@ export class UsersService {
         } else {
             const existingUser = await this.getByOryId(newUser.oryId);
             this.logger.log("User id provided, updating an ory identity");
-            await this.oryService.updateIdentity(
+            const test = await this.oryService.updateIdentity(
                 existingUser || newUser,
                 user.password,
-                user.role
+                { role: user.role }
             );
+            console.log(await test.json())
         }
         return await newUser.save();
     }
