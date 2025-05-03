@@ -23,32 +23,35 @@ interface BaseClaimFormProps {
         title?: string;
         date?: string;
         sources?: string[];
-      };
-      clearError?: (field: "content" | "title" | "date" | "sources") => void;
-      setRecaptcha: (captchaString: string) => void;
-      setTitle: (title: string) => void;
-      setDate: (date: string) => void;
-      setSources: (sources: string[]) => void;
-      title: string;
-      sources: string[];
-      onFinish: () => void;
+    };
+    clearError?: (field: "content" | "title" | "date" | "sources") => void;
+    recaptcha: string;
+    setRecaptcha: (captchaString: string) => void;
+    setTitle: (title: string) => void;
+    date: string;
+    setDate: (date: string) => void;
+    setSources: (sources: string[]) => void;
+    title: string;
+    sources: string[];
 }
 
 const BaseClaimForm = ({
     content,
+    handleSubmit,
     disableFutureDates,
     isLoading,
     disclaimer,
     dateExtraText,
     errors,
     clearError,
+    recaptcha,
     setRecaptcha,
     setTitle,
+    date,
     setDate,
     setSources,
     title,
     sources,
-    onFinish,
 }: BaseClaimFormProps) => {
     const { t } = useTranslation();
     const router = useRouter();
@@ -62,6 +65,16 @@ const BaseClaimForm = ({
         setRecaptcha(captchaString);
         const hasRecaptcha = !!captchaString;
         setDisableSubmit(!hasRecaptcha);
+    };
+
+    const onFinish = () => {
+        const values = {
+            title,
+            date,
+            sources,
+            recaptcha,
+        };
+        handleSubmit(values);
     };
 
     return (
