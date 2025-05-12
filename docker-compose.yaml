@@ -14,6 +14,34 @@ services:
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
       - "${MONGODB_PORT:-27017}:27017"
+  postgres-documentdb:
+    container_name: postgres-documentdb
+    image: ghcr.io/ferretdb/postgres-documentdb:17-0.102.0-ferretdb-2.1.0
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=ferretdb
+      - POSTGRES_PASSWORD=ferretdb
+      - POSTGRES_DB=postgres
+    volumes:
+      - ${DATA_PATH}/postgres-documentdb:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - intranet
+
+  ferretdb:
+    container_name: ferretdb
+    image: ghcr.io/ferretdb/ferretdb:2.1.0
+    restart: unless-stopped
+    environment:
+      - FERRETDB_HANDLER=postgresql
+      - FERRETDB_POSTGRESQL_URL=postgres://ferretdb:ferretdb@postgres-documentdb:5432/postgres
+    ports:
+      - "27018:27017"
+    depends_on:
+      - postgres-documentdb
+    networks:
+      - intranet
   localstack:
     container_name: aletheia-localstack
     image: localstack/localstack:3.7.2
