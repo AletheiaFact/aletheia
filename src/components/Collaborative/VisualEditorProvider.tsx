@@ -8,6 +8,7 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import { EditorConfig } from "./utils/getEditorConfig";
 import {
     crossCheckingSelector,
+    addCommentCrossCheckingSelector,
     reportSelector,
     reviewingSelector,
 } from "../../machines/reviewTask/selectors";
@@ -58,10 +59,17 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isReported = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const readonly =
-        isReported ||
-        isCrossChecking ||
-        (isReviewing && !enableReviewersUpdateReport);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
+
+    const readonly = (() => {
+        if (isReported) return true;
+        if (isCrossChecking && !isAddCommentCrossChecking) return true;
+        if (isReviewing && !enableReviewersUpdateReport) return true;
+        return false;
+    })();
 
     useEffect(() => {
         const params = { reportModel, reviewTaskType };

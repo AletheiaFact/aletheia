@@ -17,10 +17,11 @@ const reportSelector = (state) => {
 };
 
 const crossCheckingSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.crossChecking) ||
-        state.matches(ReviewTaskStates.addCommentCrossChecking)
-    );
+    return state.matches(ReviewTaskStates.crossChecking);
+};
+
+const addCommentCrossCheckingSelector = (state) => {
+    return state.matches(ReviewTaskStates.addCommentCrossChecking);
 };
 
 const reviewingSelector = (state) => {
@@ -41,6 +42,7 @@ const reviewDataSelector = (state) => {
 export {
     publishedSelector,
     crossCheckingSelector,
+    addCommentCrossCheckingSelector,
     reviewingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
