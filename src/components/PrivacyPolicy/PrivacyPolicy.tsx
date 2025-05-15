@@ -4,31 +4,35 @@ import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
-import Subtitle from "../Subtitle";
 import Paragraph from "../Paragraph";
 import styled from "styled-components";
 
-const CenteredSubtitle = styled(Subtitle)`
-    text-align: center;
+const PrivacyPolicyStyle = styled(Grid)`
+    color: ${colors.primary};
+    justify-content: "center";
+    width: 100%;
+    font-size: 1rem;
+    letter-Spacing: "1px";
+    font-weight: 600;
+    padding: 20px;
+    text-align: "justify";
+
+    .subtitle-privacyPolicy{
+        font-size: 25px;
+        margin: 20px 0;
+        font-Family: serif; 
+        font-Weight: 600;
+    }
 `;
 
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
 
     return (
-        <Grid container
-            style={{
-                color: colors.primary,
-                justifyContent: "center",
-                width: "100%",
-                fontSize: "1rem",
-                letterSpacing: "1px",
-                fontWeight: 600,
-                padding: "20px",
-                textAlign: "justify",
-            }}
-        >
-            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontWeight: "bold" }}>{t("privacyPolicy:title")}</Typography>
+        <PrivacyPolicyStyle item>
+            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontFamily: "initial", fontWeight: 600, padding: "10px 0" }}>
+                {t("privacyPolicy:title")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
@@ -42,15 +46,15 @@ const PrivacyPolicy = () => {
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem1")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem1")}</Typography>
             <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem2")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem2")}</Typography>
             <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem3")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem3")}</Typography>
             <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem4")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem4")}</Typography>
             <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem5")}</Typography>
             <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -111,17 +115,17 @@ const PrivacyPolicy = () => {
                     />
                 </AccordionDetails>
             </Accordion>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem6")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem6")}</Typography>
             <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem7")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem7")}</Typography>
             <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem8")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem8")}</Typography>
             <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem9")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem9")}</Typography>
             <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleItem10")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem10")}</Typography>
             <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
-            <CenteredSubtitle>{t("privacyPolicy:subTitleContact")}</CenteredSubtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleContact")}</Typography>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail") }}
@@ -134,7 +138,7 @@ const PrivacyPolicy = () => {
                     ></a>,
                 ]}
             />
-        </Grid >
+        </PrivacyPolicyStyle >
     );
 };
 
