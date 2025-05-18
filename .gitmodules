@@ -1,3 +1,0 @@
-[submodule "ory_infra/hydra"]
-	path = ory_infra/hydra
-	url = https://github.com/ory/hydra.git
