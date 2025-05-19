@@ -95,7 +95,9 @@ export class UsersService {
             const oryUser = await this.oryService.createIdentity(
                 newUser,
                 user.password,
-                user.role
+                {
+                    role: user.role,
+                }
             );
             newUser.oryId = oryUser.id;
         } else {
@@ -104,7 +106,9 @@ export class UsersService {
             await this.oryService.updateIdentity(
                 existingUser || newUser,
                 user.password,
-                user.role
+                {
+                    role: user.role,
+                }
             );
         }
         return await newUser.save();
