@@ -1,35 +1,39 @@
-import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-
-import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
-import { CreateClaimEvents } from "../../../machines/createClaim/types";
+import React from "react";
 import BaseClaimForm from "./BaseClaimForm";
+import { useBaseClaimForm } from "./UseBaseClaimForm";
 
 const ClaimCreateDebate = () => {
     const { t } = useTranslation();
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [_, send] = useAtom(createClaimMachineAtom);
-
-    const handleSubmit = (values) => {
-        if (!isLoading) {
-            setIsLoading(true);
-            send({
-                type: CreateClaimEvents.persist,
-                claimData: values,
-                t,
-                router,
-            });
-            setIsLoading(false);
-        }
-    };
+    const {
+        handleSubmit,
+        title,
+        setTitle,
+        recaptcha,
+        setRecaptcha,
+        date,
+        setDate,
+        setSources,
+        sources,
+        isLoading,
+        errors,
+        clearError,
+    } = useBaseClaimForm({ shouldValidateContent: false });
 
     return (
         <BaseClaimForm
             handleSubmit={handleSubmit}
             isLoading={isLoading}
+            errors={errors}
+            clearError={clearError}
+            recaptcha={recaptcha}
+            setRecaptcha={setRecaptcha}
+            title={title}
+            setTitle={setTitle}
+            date={date}
+            setDate={setDate}
+            sources={sources}
+            setSources={setSources}
             dateExtraText={t("claimForm:dateFieldHelpDebate")}
         />
     );

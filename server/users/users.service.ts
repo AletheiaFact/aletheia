@@ -11,16 +11,18 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { GetUsersDTO } from "./dto/get-users.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UsersService {
     private readonly logger = new Logger("UserService");
     constructor(
+        private configService: ConfigService,
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(User.name) private UserModel: Model<UserDocument>,
         private oryService: OryService,
         private notificationService: NotificationService
-    ) { }
+    ) {}
 
     async findAll(userQuery: GetUsersDTO): Promise<UserDocument[]> {
         const {
@@ -36,15 +38,15 @@ export class UsersService {
 
         const matchCondition = canAssignUsers
             ? {
-                name: { $regex: searchName || "", $options: "i" },
-                [`role.${nameSpaceSlug}`]: {
-                    $nin: [...(filterOutRoles || []), null],
-                },
-                ...(badges ? { badges } : {}),
-            }
+                  name: { $regex: searchName || "", $options: "i" },
+                  [`role.${nameSpaceSlug}`]: {
+                      $nin: [...(filterOutRoles || []), null],
+                  },
+                  ...(badges ? { badges } : {}),
+              }
             : {
-                _id: Types.ObjectId(userId),
-            };
+                  _id: Types.ObjectId(userId),
+              };
 
         pipeline.match(matchCondition);
 
@@ -100,13 +102,17 @@ export class UsersService {
             newUser.oryId = oryUser.id;
         } else {
             const existingUser = await this.getByOryId(newUser.oryId);
+            console.log("existingUser", existingUser);
+            const app_affiliation =
+                this.configService.get<string>("app_affiliation");
+            console.log("app_affiliation", app_affiliation);
             this.logger.log("User id provided, updating an ory identity");
             const test = await this.oryService.updateIdentity(
                 existingUser || newUser,
                 user.password,
-                { role: user.role }
+                { role: user.role, app_affiliation }
             );
-            console.log(await test.json())
+            console.log(await test.json());
         }
         return await newUser.save();
     }

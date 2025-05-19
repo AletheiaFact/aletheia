@@ -76,6 +76,7 @@ jobs:
       - run: yarn test
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
+          CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
       # sonarcloud:
       #   runs-on: ubuntu-latest
       #   strategy:
@@ -87,6 +88,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   cypress-run:
     needs: build
     runs-on: ubuntu-22.04
@@ -147,7 +149,7 @@ jobs:
         image: ghcr.io/ferretdb/ferretdb:2.1.0
         env:
           FERRETDB_HANDLER: postgresql
-          FERRETDB_POSTGRESQL_URL: postgres://ferretdb:ferretdb@localhost:5432/postgres
+          FERRETDB_POSTGRESQL_URL: postgres://ferretdb:ferretdb@postgres:5432/postgres
           # FERRETDB_AUTH: false
         ports:
           - 27018:27017
@@ -170,4 +172,4 @@ jobs:
           wait-on: "http://localhost:3000"
         env:
           CI: true
-          CI_MONGODB_URI: mongodb://127.0.0.1:27018/Aletheia
+          CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"
