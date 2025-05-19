@@ -1,16 +1,25 @@
-/* eslint-disable @next/next/no-img-element */
-import { FileUploadOutlined } from "@mui/icons-material";
-import { Upload } from "antd";
-import { Grid, Typography } from "@mui/material";
-import { MessageManager } from "../components/Messages";
-import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
+import React, { useRef, useState } from "react";
+import {
+    Grid,
+    Box,
+    Typography,
+    Dialog,
+    DialogTitle,
+    IconButton,
+} from "@mui/material";
+import { FileUploadOutlined, DeleteOutline } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import React, { useState } from "react";
-
 import AletheiaButton from "./Button";
-import { AletheiaModal } from "./Modal/AletheiaModal.style";
+import { MessageManager } from "../components/Messages";
 
-import type { UploadFile } from "antd/lib/upload/interface";
+export interface UploadFile {
+    uid: string;
+    name: string;
+    status?: string;
+    url?: string;
+    originFileObj?: File;
+    preview?: string;
+}
 
 interface ImageUploadProps {
     onChange: (fileList: UploadFile[]) => void;
@@ -21,24 +30,24 @@ interface ImageUploadProps {
 const ImageUpload = ({
     onChange,
     error = false,
-    defaultFileList,
+    defaultFileList = [],
 }: ImageUploadProps) => {
     const { t } = useTranslation();
-    const UPLOAD_LIMIT = 1;
-    const ONE_MB = 1048576;
-    const ALLOWED_MB = 10;
-    const MAX_SIZE = ALLOWED_MB * ONE_MB;
-    const ALLOWED_FORMATS = ["image"];
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const [fileList, setFileList] = useState<UploadFile[]>(defaultFileList);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
-    const [fileList, setFileList] = useState<UploadFile[]>(
-        defaultFileList || []
-    );
 
-    const getBase64 = (file: RcFile): Promise<string> => {
-        return new Promise((resolve, reject) => {
+    const UPLOAD_LIMIT = 1;
+    const ALLOWED_FORMATS = ["image"];
+    const ONE_MB = 1048576;
+    const ALLOWED_MB = 10;
+    const MAX_SIZE = ALLOWED_MB * ONE_MB;
+
+    const getBase64 = (file: File) => {
+        return new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result as string);
@@ -46,26 +55,13 @@ const ImageUpload = ({
         });
     };
 
-    const handleCancel = () => setPreviewOpen(false);
-
-    const handlePreview = async (file: UploadFile) => {
-        if (!file.preview) {
-            file.preview = file.originFileObj
-                ? await getBase64(file.originFileObj)
-                : file.url;
-        }
-        setPreviewImage(file.preview);
-        setPreviewOpen(true);
-        setPreviewTitle(file.name);
-    };
-
-    const validateBeforeUpload = (file: RcFile) => {
+    const validateBeforeUpload = (file: File) => {
         const isAllowedFormat = ALLOWED_FORMATS.includes(
             file.type.split("/")[0]
         );
-
         if (!isAllowedFormat) {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -73,27 +69,64 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            MessageManager.showMessage("error",
-                t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
+            MessageManager.showMessage(
+                "error",
+                t("claimForm:fileSizeError", {
+                    size: `${ALLOWED_MB}MB`,
+                })
             );
         }
         return isAllowedFormat && isAllowedSize;
     };
 
-    const handleChange: UploadProps["onChange"] = async ({
-        file,
-        fileList,
-    }: UploadChangeParam<UploadFile>) => {
-        if (file.originFileObj && validateBeforeUpload(file.originFileObj)) {
-            setFileList(fileList);
-            onChange(fileList);
-        } else setFileList([]);
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const rawFile = e.target.files[0];
+        if (!validateBeforeUpload(rawFile)) {
+            e.target.value = "";
+            return;
+        }
+        const preview = await getBase64(rawFile);
+        const newItem: UploadFile = {
+            uid: `${rawFile.name}-${Date.now()}`,
+            name: rawFile.name,
+            originFileObj: rawFile,
+            status: "done",
+            preview,
+        };
+        const newFileList = [newItem];
+        setFileList(newFileList);
+        onChange(newFileList);
+        e.target.value = "";
+    };
+
+    const handleRemove = (file: UploadFile) => {
+        const updatedList = fileList.filter((f) => f.uid !== file.uid);
+        setFileList(updatedList);
+        onChange(updatedList);
+    };
+
+    const handleOpenPreview = (file: UploadFile) => {
+        if (file.preview) {
+            setPreviewImage(file.preview);
+        } else if (file.url) {
+            setPreviewImage(file.url);
+        }
+        setPreviewTitle(file.name);
+        setPreviewOpen(true);
+    };
+
+    const handleClosePreview = () => {
+        setPreviewOpen(false);
     };
 
     const uploadButton = (
         <AletheiaButton
             data-cy="testUploadImage"
-            startIcon={<FileUploadOutlined style={{ fontSize: "17px", margin: "0 5 4 0" }} />}
+            startIcon={
+                <FileUploadOutlined style={{ fontSize: 17, marginRight: 5 }} />
+            }
+            onClick={() => fileInputRef.current?.click()}
         >
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
@@ -101,48 +134,88 @@ const ImageUpload = ({
 
     return (
         <Grid item xs={12}>
-            <Upload
-                listType="picture"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-                beforeUpload={validateBeforeUpload}
-                defaultFileList={defaultFileList || []}
-            >
-                {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
-            </Upload>
-            {error && (
-                <Typography variant="body2" color="error" style={{ display: "block" }}>
-                    {t("common:requiredFieldError")}
-                </Typography>
-            )}
-            <AletheiaModal
-                open={previewOpen}
-                onCancel={handleCancel}
-                width={"fit-content"}
-                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
-                title={
-                    <h2
-                        style={{
-                            fontFamily: "open sans, sans-serif",
-                            fontWeight: 700,
-                            fontSize: 14,
-                            textAlign: "center",
-                            textTransform: "uppercase",
-                            padding: "0 34px",
-                        }}
-                    >
-                        {previewTitle}
-                    </h2>
-                }
-            >
-                <img
-                    alt={`preview uploaded file ${previewTitle}`}
-                    width="auto"
-                    style={{ maxWidth: "100%", maxHeight: "400px" }}
-                    src={previewImage}
+            <Box display="flex" flexDirection="column" alignItems="flex-start">
+                {fileList.map((file) => {
+                    const imageSrc = file.preview || file.url;
+                    return (
+                        <Box
+                            key={file.uid}
+                            display="flex"
+                            alignItems="center"
+                            sx={{ mt: 1 }}
+                        >
+                            {imageSrc && (
+                                <Box
+                                    sx={{ cursor: "pointer", mr: 1 }}
+                                    onClick={() => handleOpenPreview(file)}
+                                >
+                                    <img
+                                        src={imageSrc}
+                                        alt={file.name}
+                                        style={{
+                                            width: 80,
+                                            height: 80,
+                                            objectFit: "cover",
+                                            borderRadius: 8,
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                            <Typography
+                                variant="body2"
+                                sx={{ cursor: "pointer", mr: 1 }}
+                                onClick={() => handleOpenPreview(file)}
+                            >
+                                {file.name}
+                            </Typography>
+                            <IconButton
+                                size="small"
+                                onClick={() => handleRemove(file)}
+                            >
+                                <DeleteOutline />
+                            </IconButton>
+                        </Box>
+                    );
+                })}
+                {fileList.length < UPLOAD_LIMIT && uploadButton}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    onChange={handleFileChange}
                 />
-            </AletheiaModal>
+                {error && (
+                    <Typography variant="body2" color="error" mt={1}>
+                        {t("common:requiredFieldError")}
+                    </Typography>
+                )}
+            </Box>
+
+            <Dialog
+                open={previewOpen}
+                onClose={handleClosePreview}
+                maxWidth="md"
+            >
+                <DialogTitle
+                    sx={{
+                        textAlign: "center",
+                        textTransform: "uppercase",
+                        fontSize: 14,
+                    }}
+                >
+                    {previewTitle}
+                </DialogTitle>
+                <Box p={2} display="flex" justifyContent="center">
+                    {previewImage && (
+                        <img
+                            alt={`preview of ${previewTitle}`}
+                            style={{ maxWidth: "100%", maxHeight: "80vh" }}
+                            src={previewImage}
+                        />
+                    )}
+                </Box>
+            </Dialog>
         </Grid>
     );
 };

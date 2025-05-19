@@ -10,5 +10,6 @@
     "reviewPublished": "Your review has been published",
     "dailyReportButton": "Send Daily Report",
     "sendDailyReportSuccess": "Report sent successfully",
-    "sendDailyReportError": "Error while sending report"
+    "sendDailyReportError": "Error while sending report",
+    "noNotification": "No notifications"
 }

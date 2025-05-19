@@ -1,28 +1,38 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable jsx-a11y/heading-has-content */
-import { Collapse, Row, Typography } from "antd";
+import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
-import Subtitle from "../Subtitle";
 import Paragraph from "../Paragraph";
+import styled from "styled-components";
 
-const { Title } = Typography;
+const PrivacyPolicyStyle = styled(Grid)`
+    color: ${colors.primary};
+    justify-content: "center";
+    width: 100%;
+    font-size: 1rem;
+    letter-Spacing: "1px";
+    font-weight: 600;
+    padding: 20px;
+    text-align: "justify";
+
+    .subtitle-privacyPolicy{
+        font-size: 25px;
+        margin: 20px 0;
+        font-Family: serif; 
+        font-Weight: 600;
+    }
+`;
 
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
+
     return (
-        <Row
-            style={{
-                color: colors.primary,
-                justifyContent: "center",
-                width: "100%",
-                fontSize: "1rem",
-                letterSpacing: "1px",
-                fontWeight: 600,
-                padding: "20px",
-            }}
-        >
-            <Title level={1}>{t("privacyPolicy:title")}</Title>
+        <PrivacyPolicyStyle item>
+            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontFamily: "initial", fontWeight: 600, padding: "10px 0" }}>
+                {t("privacyPolicy:title")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
@@ -36,28 +46,21 @@ const PrivacyPolicy = () => {
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Subtitle>{t("privacyPolicy:subTitleItem1")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem1")}</Typography>
             <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem2")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem2")}</Typography>
             <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem3")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem3")}</Typography>
             <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem4")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem4")}</Typography>
             <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem5")}</Typography>
             <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
-            <Collapse
-                style={{
-                    width: "100%",
-                    margin: "15px 0px",
-                }}
-            >
-                <Collapse.Panel
-                    header={t(
-                        "privacyPolicy:trackingToolsPanelRecaptchaHeader"
-                    )}
-                    key={1}
-                >
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelRecaptchaHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
                     <Trans
                         i18nKey={
                             "privacyPolicy:trackingToolsPanelReCaptchaContent"
@@ -77,19 +80,26 @@ const PrivacyPolicy = () => {
                             ></a>,
                         ]}
                     />
-                </Collapse.Panel>
-                <Collapse.Panel
-                    header={t(
-                        "privacyPolicy:trackingToolsPanelSessionCookiesHeader"
-                    )}
-                    key={2}
-                >
-                    {t("privacyPolicy:trackingToolsPanelSessionCookiesContent")}
-                </Collapse.Panel>
-                <Collapse.Panel
-                    header={t("privacyPolicy:trackingToolsPanelUmamiHeader")}
-                    key={3}
-                >
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelSessionCookiesHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Trans
+                        i18nKey={"privacyPolicy:trackingToolsPanelSessionCookiesContent"}
+                    />
+                </AccordionDetails>
+            </Accordion>
+
+
+            <Accordion sx={{ marginBottom: "20px" }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t("privacyPolicy:trackingToolsPanelUmamiHeader")}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelUmamiContent"}
                         components={[
@@ -103,32 +113,32 @@ const PrivacyPolicy = () => {
                             <h3 style={{ marginTop: "10px" }}></h3>,
                         ]}
                     />
-                </Collapse.Panel>
-            </Collapse>
-            <Subtitle>{t("privacyPolicy:subTitleItem6")}</Subtitle>
+                </AccordionDetails>
+            </Accordion>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem6")}</Typography>
             <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem7")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem7")}</Typography>
             <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem8")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem8")}</Typography>
             <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem9")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem9")}</Typography>
             <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleItem10")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem10")}</Typography>
             <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
-            <Subtitle>{t("privacyPolicy:subTitleContact")}</Subtitle>
+            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleContact")}</Typography>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail") }}
                 components={[
                     <a
-                        style={{ whiteSpace: "pre-wrap" }}
+                        style={{ whiteSpace: "pre-wrap", display: "block", textAlign: "center" }}
                         href={`mailto:${t("common:contactEmail")}`}
                         target="_blank"
                         rel="noreferrer"
                     ></a>,
                 ]}
             />
-        </Row>
+        </PrivacyPolicyStyle >
     );
 };
 
