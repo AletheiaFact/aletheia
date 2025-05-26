@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
 import localConfig from "../../../../config/localConfig";
+import ForumButton from "../../Home/ForumButton";
 
 const CTASectionButtons = () => {
     const { t } = useTranslation();
@@ -44,6 +45,14 @@ const CTASectionButtons = () => {
                     </Button>
                 </Grid>
             )}
+
+            {isLoggedIn && !smallDevice && (
+                <Grid item xs={5.5}>
+                    <ForumButton
+                        style={{ fontSize: mediumDevice ? "12px" : "14px" }} />
+                </Grid>
+            )}
+
             {!smallDevice && (
                 <Grid item xs={5.5}>
                     {localConfig.header.donateButton.show ? (
