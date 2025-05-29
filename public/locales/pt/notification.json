@@ -10,5 +10,6 @@
     "reviewPublished": "Sua revisão foi publicada",
     "dailyReportButton": "Enviar Relatório diario",
     "sendDailyReportSuccess": "Relatorio enviado com sucesso",
-    "sendDailyReportError": "Erro ao enviar o relatorio"
+    "sendDailyReportError": "Erro ao enviar o relatorio",
+    "noNotification": "Não há notificações"
 }

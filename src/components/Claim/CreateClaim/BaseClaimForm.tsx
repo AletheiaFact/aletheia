@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Checkbox, Form, Row } from "antd";
+import { FormControl, FormLabel, Checkbox, Grid, FormHelperText } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -18,6 +18,21 @@ interface BaseClaimFormProps {
     isLoading: boolean;
     disclaimer?: string;
     dateExtraText: string;
+    errors?: {
+        content?: string;
+        title?: string;
+        date?: string;
+        sources?: string[];
+    };
+    clearError?: (field: "content" | "title" | "date" | "sources") => void;
+    recaptcha: string;
+    setRecaptcha: (captchaString: string) => void;
+    setTitle: (title: string) => void;
+    date: string;
+    setDate: (date: string) => void;
+    setSources: (sources: string[]) => void;
+    title: string;
+    sources: string[];
 }
 
 const BaseClaimForm = ({
@@ -27,14 +42,20 @@ const BaseClaimForm = ({
     isLoading,
     disclaimer,
     dateExtraText,
+    errors,
+    clearError,
+    recaptcha,
+    setRecaptcha,
+    setTitle,
+    date,
+    setDate,
+    setSources,
+    title,
+    sources,
 }: BaseClaimFormProps) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const [title, setTitle] = useState("");
-    const [date, setDate] = useState("");
     const [disableSubmit, setDisableSubmit] = useState(true);
-    const [sources, setSources] = useState([""]);
-    const [recaptcha, setRecaptcha] = useState("");
 
     const disabledDate = (current) => {
         return disableFutureDates && current && current > moment().endOf("day");
@@ -57,60 +78,70 @@ const BaseClaimForm = ({
     };
 
     return (
-        <Form
-            layout="vertical"
+        <FormControl
+            fullWidth
             id="createClaim"
-            onFinish={onFinish}
             style={{ padding: "32px 0" }}
         >
-            <Form.Item
-                name="title"
-                label={t("claimForm:titleField")}
-                rules={[
-                    {
-                        required: true,
-                        message: t("claimForm:titleFieldError"),
-                        whitespace: true,
-                    },
-                ]}
-                wrapperCol={{ sm: 24 }}
+            <FormLabel
                 style={{
                     width: "100%",
                 }}
             >
+                <div className="root-label">
+                    <span className="require-label">*</span>
+                    <p className="form-label">
+                        {t("claimForm:titleField")}
+                    </p>
+                </div>
                 <Input
                     value={title || ""}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => {
+                        setTitle(e.target.value);
+                        clearError("title");
+                    }}
                     placeholder={t("claimForm:titleFieldPlaceholder")}
                     data-cy={"testTitleClaimForm"}
                 />
-            </Form.Item>
+                {errors?.title && (
+                    <FormHelperText className="require-label">
+                        {errors.title}
+                    </FormHelperText>
+                )}
+            </FormLabel>
             {content}
-            <Form.Item
-                name="date"
-                label={t("claimForm:dateField")}
-                rules={[
-                    {
-                        required: true,
-                        message: t("claimForm:dateFieldError"),
-                    },
-                ]}
-                extra={dateExtraText}
-                wrapperCol={{ sm: 24 }}
+            <FormLabel
                 style={{
                     width: "100%",
-                    marginBottom: "24px",
                 }}
             >
+                <div className="root-label">
+                    <span className="require-label">*</span>
+                    <p className="form-label">
+                        {t("claimForm:dateField")}
+                    </p>
+                </div>
                 <DatePickerInput
                     placeholder={t("claimForm:dateFieldPlaceholder")}
-                    onChange={(value) => setDate(value)}
+                    onChange={(value) => {
+                        setDate(value);
+                        clearError("date");
+                    }}
                     data-cy={"testSelectDate"}
                     disabledDate={disabledDate}
                 />
-            </Form.Item>
+                {errors?.date && (
+                    <FormHelperText className="require-label">
+                        {errors.date}
+                    </FormHelperText>
+                )}
+                <p className="extra-label">
+                    {dateExtraText}
+                </p>
+            </FormLabel>
             <SourceInput
-                name="source"
+                errors={errors}
+                clearError={clearError}
                 label={t("sourceForm:label")}
                 onChange={(e, index) => {
                     setSources(
@@ -133,32 +164,23 @@ const BaseClaimForm = ({
                 sources={sources}
             />
             {disclaimer && (
-                <Form.Item
+                <FormLabel
+                    className="form-label"
                     style={{
                         color: colors.error,
                     }}
                 >
                     {disclaimer}
-                </Form.Item>
+                </FormLabel>
             )}
-            <Form.Item
-                name="accept_terms"
-                rules={[
-                    {
-                        required: true,
-                        message: t("claimForm:errorAcceptTerms"),
-                    },
-                ]}
-                valuePropName="checked"
-            >
-                <Checkbox data-cy={"testCheckboxAcceptTerms"}>
-                    {t("claimForm:checkboxAcceptTerms")}
-                </Checkbox>
-            </Form.Item>
-            <Form.Item>
+            <FormLabel style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+                <Checkbox data-cy={"testCheckboxAcceptTerms"} />
+                <p className="form-label">{t("claimForm:checkboxAcceptTerms")}</p>
+            </FormLabel>
+            <FormLabel>
                 <AletheiaCaptcha onChange={onChangeCaptcha} />
-            </Form.Item>
-            <Row
+            </FormLabel>
+            <Grid container
                 style={{
                     justifyContent: "space-evenly",
                     marginBottom: "20px",
@@ -168,6 +190,7 @@ const BaseClaimForm = ({
                     {t("claimForm:cancelButton")}
                 </Button>
                 <Button
+                    onClick={onFinish}
                     loading={isLoading}
                     type={ButtonType.blue}
                     htmlType="submit"
@@ -176,8 +199,8 @@ const BaseClaimForm = ({
                 >
                     {t("claimForm:saveButton")}
                 </Button>
-            </Row>
-        </Form>
+            </Grid>
+        </FormControl>
     );
 };
 

@@ -1,5 +1,5 @@
 import { TextField, IconButton, InputAdornment } from "@mui/material";
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styled from "styled-components";
 import colors from "../styles/colors";
@@ -36,12 +36,13 @@ const StyledTextField = styled(TextField)`
     }
 `;
 
-const InputPassword = (props) => {
+const InputPassword = forwardRef(({ ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <StyledTextField
             {...props}
+            inputRef={ref}
             type={showPassword ? "text" : "password"}
             InputProps={{
                 endAdornment: (
@@ -54,6 +55,6 @@ const InputPassword = (props) => {
             }}
         />
     );
-};
+});
 
 export default InputPassword;
