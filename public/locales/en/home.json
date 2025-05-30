@@ -14,5 +14,11 @@
     "sectionTitle1": "Personalities",
     "sectionTitle2": "Join the movement",
     "latestReviewsTitle": "Latest claim reviews",
-    "reviewsCarouselOpen": "Open"
+    "reviewsCarouselOpen": "Open",
+    "forumButton": "Participate in our forum",
+    "visitForum": "Visit our forum",
+    "forumTitle": "The Aletheia now has a forum!",
+    "forumDescription": "Participate in our community and share your doubts, discoveries and experiences with other users.",
+    "redirectTitle": "Your will be redirected to the forum",
+    "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen and log in with OpenID Connect."
 }

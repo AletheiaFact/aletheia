@@ -10,6 +10,7 @@ import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
+import CTAForumSection from "./CTAForumSection";
 
 const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
     const { results } = useAppSelector((state) => ({
@@ -48,7 +49,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                         xs={10}
                         sm={10}
                         md={9}
-                         style={{
+                        style={{
                             width: "100%",
                             paddingBottom: "32px",
                             justifyContent: "center",
@@ -69,6 +70,13 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                         <CTARegistration />
                     </Grid>
                 )}
+
+                {isLoggedIn && (
+                    <Grid item xs={12} lg={9} order={3}>
+                        <CTAForumSection />
+                    </Grid>
+                )}
+
                 <Grid item xs={12} order={4}>
                     <SocialMediaShare href={href} />
                 </Grid>
