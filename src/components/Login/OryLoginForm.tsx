@@ -1,4 +1,3 @@
-import { Form, Row } from "antd";
 import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -7,6 +6,10 @@ import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 import ForgotPasswordLink from "./ForgotPasswordLink";
+import { Grid } from "@mui/material";
+import Label from "../Label";
+import colors from "../../styles/colors";
+import { useForm } from "react-hook-form";
 
 const OryLoginForm = ({
     flow,
@@ -16,102 +19,134 @@ const OryLoginForm = ({
     onFinishTotp,
 }) => {
     const { t } = useTranslation();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
     return (
         <>
             {flow.refresh && (
-                <Row style={{ paddingBottom: "10px" }}>
+                <Grid container
+                    style={{ paddingBottom: "10px" }}
+                >
                     <AletheiaAlert
                         style={{ padding: "0 15px", margin: "0px" }}
                         message={t("login:refreshLoginMessage")}
                         type="warning"
                     />
-                </Row>
+                </Grid>
             )}
             {flow?.requested_aal !== "aal2" && (
                 <>
-                    <Row className="typo-grey typo-center">
+                    <Grid container className="typo-grey typo-center">
                         <h2>{t("login:formHeader")}</h2>
-                    </Row>
-                    <Form
-                        name="basic"
-                        initialValues={{ remember: true }}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
+                    </Grid>
+                    <form
+                        onSubmit={handleSubmit(onFinish)}
+                        onError={onFinishFailed}
                     >
-                        <Form.Item
-                            label={t("login:emailLabel")}
-                            name="email"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: t("login:emailErrorMessage"),
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label={t("login:passwordLabel")}
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: t("login:passwordErrorMessage"),
-                                },
-                            ]}
-                        >
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }}
-                            >
-                                <InputPassword />
-                                <ForgotPasswordLink t={t} />
-                            </div>
-                        </Form.Item>
-                        <Form.Item>
-                            <div
-                                style={{
-                                    justifyContent: "space-between",
-                                    display: "flex",
-                                }}
-                            >
-                                <Button
-                                    loading={isLoading}
-                                    type={ButtonType.blue}
-                                    htmlType="submit"
-                                    data-cy={"loginButton"}
+                        <Grid container>
+                            <Grid item xs={1}>
+                                <Label required
+                                    children={t("login:emailLabel") + " :"}
+                                />
+                            </Grid>
+                            <Grid item xs={11}>
+                                <Input
+                                    {...register("email", {
+                                        required: true
+                                    })}
+                                />
+                                <p
+                                    style={{
+                                        fontSize: 14,
+                                        color: colors.error,
+                                        visibility: errors.email ? "visible" : "hidden",
+                                    }}
                                 >
-                                    {t("login:submitButton")}
-                                </Button>
-                            </div>
-                        </Form.Item>
-                    </Form>
+                                    {t("login:emailErrorMessage")}
+                                </p>
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={1}>
+                                <Label required
+                                    children={t("login:passwordLabel") + " :"}
+                                />
+                            </Grid>
+                            <Grid item xs={11}>
+                                <InputPassword
+                                    {...register("password", {
+                                        required: true
+                                    })}
+                                />
+                                <ForgotPasswordLink t={t} />
+                                <p
+                                    style={{
+                                        fontSize: 14,
+                                        color: colors.error,
+                                        visibility: errors.password ? "visible" : "hidden",
+                                    }}
+                                >
+                                    {t("login:passwordErrorMessage")}
+                                </p>
+                            </Grid>
+                        </Grid>
+                        <div
+                            style={{
+                                justifyContent: "space-between",
+                                display: "flex",
+                            }}
+                        >
+                            <Button
+                                loading={isLoading}
+                                type={ButtonType.blue}
+                                htmlType="submit"
+                                data-cy={"loginButton"}
+                            >
+                                {t("login:submitButton")}
+                            </Button>
+                        </div>
+                    </form>
                 </>
             )}
             {flow?.requested_aal === "aal2" && (
                 <>
-                    <Row>
+                    <Grid container
+                        className="typo-grey typo-center"
+                        marginTop={2}
+                    >
                         <h2>{t("totp:formHeader")}</h2>
-                    </Row>
+                    </Grid>
                     <p>{t("totp:totpMessage")}</p>
-                    <Form name="basic" onFinish={onFinishTotp}>
-                        <Form.Item
-                            label={t("totp:inputLabel")}
-                            name="totp"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: t("totp:totpErrorMessage"),
-                                },
-                            ]}
-                        >
-                            <InputPassword />
-                        </Form.Item>
-                        <Form.Item>
+                    <form onSubmit={handleSubmit(onFinishTotp)}>
+                        <Grid container>
+                            <Grid item xs={2.5}>
+                                <Label required
+                                    children={t("totp:inputLabel") + " :"}
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <InputPassword
+                                    {...register("totp", {
+                                        required: true,
+                                    })}
+                                />
+                                {errors.totp &&
+                                    <p
+                                        style={{
+                                            color: colors.error,
+                                            marginTop: 4,
+                                        }}
+                                    >
+                                        {t("totp:totpErrorMessage")}
+                                    </p>
+                                }
+                            </Grid>
+                        </Grid>
+                        <Grid container>
                             <div
                                 style={{
                                     justifyContent: "space-between",
@@ -126,8 +161,8 @@ const OryLoginForm = ({
                                     {t("totp:submitButton")}
                                 </Button>
                             </div>
-                        </Form.Item>
-                    </Form>
+                        </Grid>
+                    </form>
                 </>
             )}
         </>
