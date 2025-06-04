@@ -26,7 +26,6 @@ export const Totp = ({ flow, setFlow }) => {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
     } = useForm();
 
     let flowValues: ValuesType = {
@@ -64,8 +63,7 @@ export const Totp = ({ flow, setFlow }) => {
         } catch {
             setShowForm(false);
         }
-        reset();
-    }, [flow, reset]);
+    }, [flow]);
 
     const onSubmitLink = (values: ValuesType) => {
         orySubmitTotp({ router, flow, setFlow, t, values })
@@ -131,7 +129,7 @@ export const Totp = ({ flow, setFlow }) => {
                     onSubmit={handleSubmit(onFinish)}
                     style={{ marginBottom: "20px" }}
                 >
-                    <div style={{ marginBottom: "20px" }}>
+                    <Grid item xs={12} style={{ marginBottom: "20px" }}>
                         <p>
                             <Trans
                                 i18nKey={"profile:totpSectionDescription"}
@@ -184,15 +182,15 @@ export const Totp = ({ flow, setFlow }) => {
                         >
                             {textSource}
                         </code>
-                    </div>
-                    <div style={{ marginBottom: "20px" }}>
+                    </Grid>
+                    <Grid item style={{ marginBottom: "20px" }}>
                         <Label required>
                             {t("profile:totpInputTittle")}
                         </Label>
-                        <div>
+                        <Grid item xs={3}>
                             <InputPassword
                                 {...register("totp", {
-                                    required: t("claimReview:descriptionInputError"),
+                                    required: true
                                 })}
                             />
                             {errors.totp &&
@@ -205,8 +203,8 @@ export const Totp = ({ flow, setFlow }) => {
                                     {t("common:requiredFieldError")}
                                 </p>
                             }
-                        </div>
-                    </div>
+                        </Grid>
+                    </Grid>
                     <AletheiaButton
                         type={ButtonType.blue}
                         htmlType="submit"
@@ -214,42 +212,44 @@ export const Totp = ({ flow, setFlow }) => {
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
-                </form>
+                </form >
             )}
-            {!showForm && (
-                <form
-                    onSubmit={handleSubmit(onFinishUnlink)}
-                >
-                    <AletheiaButton
-                        loading={isLoading}
-                        htmlType="submit"
-                        style={{
-                            width: "100%",
-                            marginTop: "21px",
-                            marginBottom: "21px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: "8px 15px",
-                            height: "max-content",
-                            whiteSpace: "normal",
-                        }}
-                        type={ButtonType.blue}
+            {
+                !showForm && (
+                    <form
+                        onSubmit={handleSubmit(onFinishUnlink)}
                     >
-                        <Typography
-                            variant="h4"
+                        <AletheiaButton
+                            loading={isLoading}
+                            htmlType="submit"
                             style={{
-                                fontSize: 14,
-                                color: colors.white,
-                                fontWeight: 400,
-                                margin: 0,
+                                width: "100%",
+                                marginTop: "21px",
+                                marginBottom: "21px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                padding: "8px 15px",
+                                height: "max-content",
+                                whiteSpace: "normal",
                             }}
+                            type={ButtonType.blue}
                         >
-                            {t("profile:totpUnLinkSubmit")}
-                        </Typography>
-                    </AletheiaButton>
-                </form>
-            )}
+                            <Typography
+                                variant="h4"
+                                style={{
+                                    fontSize: 14,
+                                    color: colors.white,
+                                    fontWeight: 400,
+                                    margin: 0,
+                                }}
+                            >
+                                {t("profile:totpUnLinkSubmit")}
+                            </Typography>
+                        </AletheiaButton>
+                    </form>
+                )
+            }
         </>
     );
 };
