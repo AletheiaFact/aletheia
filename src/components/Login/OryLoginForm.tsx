@@ -44,8 +44,7 @@ const OryLoginForm = ({
                         <h2>{t("login:formHeader")}</h2>
                     </Grid>
                     <form
-                        onSubmit={handleSubmit(onFinish)}
-                        onError={onFinishFailed}
+                        onSubmit={handleSubmit(onFinish, onFinishFailed)}
                     >
                         <Grid container>
                             <Grid item xs={1}>

@@ -1,13 +1,12 @@
-import { Avatar, Grid } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import {
     SettingsFlowState,
     UpdateSettingsFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
-import { Form, FormInstance, Typography } from "antd";
 import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, } from "react";
 
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import userApi from "../../api/userApi";
@@ -17,13 +16,22 @@ import InputPassword from "../InputPassword";
 import Label from "../Label";
 import Loading from "../Loading";
 import { Totp } from "./Totp";
+import { useForm } from "react-hook-form";
+import colors from "../../styles/colors";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SettingsFlowState>();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
-    const formRef = useRef<FormInstance>();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm();
+    const senha = watch("newPassword");
+
     useEffect(() => {
         oryGetSettingsFlow({ router, setFlow, t });
     }, []);
@@ -73,17 +81,17 @@ const OryProfileView = ({ user }) => {
             my={2}
         >
             <Grid item xs={7}>
-                <Typography.Title level={3}>
+                <Typography variant="h3" fontSize={24} fontWeight={600} fontFamily="initial" marginBottom="12px">
                     {t("profile:pageTitle")}
-                </Typography.Title>
+                </Typography>
 
-                <Typography>
+                <Typography variant="subtitle1" marginBottom="14px">
                     {t("profile:loggedInAs")}: <Label>{user.email}</Label>
                 </Typography>
 
-                <Typography.Title level={4}>
+                <Typography variant="h4" fontSize={20} fontWeight={600} fontFamily="initial" margin="24px 0px 10px">
                     {t("profile:badgesTitle")}
-                </Typography.Title>
+                </Typography>
 
                 {user.badges.length > 0 ? (
                     <Grid container spacing={1} mt={1} mb={3}>
@@ -97,14 +105,14 @@ const OryProfileView = ({ user }) => {
                         ))}
                     </Grid>
                 ) : (
-                    <Typography.Text>
+                    <Typography variant="subtitle1">
                         {t("profile:emptyBadges")}
-                    </Typography.Text>
+                    </Typography>
                 )}
 
-                <Typography.Title level={4}>
+                <Typography variant="h4" fontSize={20} fontWeight={600} fontFamily="initial" margin="24px 0px 10px">
                     {t("profile:changePasswordSectionTitle")}
-                </Typography.Title>
+                </Typography>
 
                 {!user.firstPasswordChanged && (
                     <AletheiaAlert
@@ -113,60 +121,62 @@ const OryProfileView = ({ user }) => {
                         type="warning"
                     />
                 )}
-                <Form ref={formRef} onFinish={onFinish} style={{ marginTop: "20px" }}>
-                    <Form.Item
-                        name="newPassword"
-                        label={t("profile:newPasswordLabel")}
-                        rules={[
-                            {
-                                required: true,
-                                message: t("common:requiredFieldError"),
-                            },
-                        ]}
-                        wrapperCol={{ sm: 24 }}
+                <form onSubmit={handleSubmit(onFinish)} style={{ margin: "20px 0px" }}>
+                    <Grid container>
+                        <Grid item xs={1.5}>
+                            <Label required children={t("profile:newPasswordLabel") + ":"} />
+                        </Grid>
+                        <Grid item xs={10.5}>
+                            <InputPassword
+                                {...register("newPassword", {
+                                    required: true
+                                })}
+                            />
+                            <p
+                                style={{
+                                    fontSize: 14,
+                                    color: "red",
+                                    visibility: errors.newPassword ? "visible" : "hidden",
+                                }}
+                            >
+                                {t("common:requiredFieldError")}
+                            </p>
+                        </Grid>
+                    </Grid>
+                    <Grid container>
+                        <Grid item xs={2}>
+                            <Label required children={t("profile:repeatedNewPasswordLabel") + ":"} />
+                        </Grid>
+                        <Grid item xs={10}>
+                            <InputPassword
+                                {...register("repeatedNewPassword", {
+                                    required: true,
+                                    validate: (value) =>
+                                        value === senha
+                                })}
+                            />
+                            {errors.repeatedNewPassword && (
+                                <p
+                                    style={{
+                                        fontSize: 14,
+                                        color: colors.error,
+                                    }}
+                                >
+                                    {errors.repeatedNewPassword.type === "required"
+                                        ? t("common:requiredFieldError")
+                                        : t("profile:passwordMatchErrorMessage")}
+                                </p>
+                            )}
+                        </Grid>
+                    </Grid>
+                    <Button
+                        loading={isLoading}
+                        type={ButtonType.blue}
+                        htmlType="submit"
                     >
-                        <InputPassword sx={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item
-                        name="repeatedNewPassword"
-                        label={t("profile:repeatedNewPasswordLabel")}
-                        rules={[
-                            {
-                                required: true,
-                                message: t("common:requiredFieldError"),
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (
-                                        !value ||
-                                        getFieldValue("newPassword") === value
-                                    ) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(
-                                        new Error(
-                                            t(
-                                                "profile:passwordMatchErrorMessage"
-                                            )
-                                        )
-                                    );
-                                },
-                            }),
-                        ]}
-                        wrapperCol={{ sm: 24 }}
-                    >
-                        <InputPassword sx={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button
-                            loading={isLoading}
-                            type={ButtonType.blue}
-                            htmlType="submit"
-                        >
-                            {t("login:submitButton")}
-                        </Button>
-                    </Form.Item>
-                </Form>
+                        {t("login:submitButton")}
+                    </Button>
+                </form>
                 <Totp flow={flow} setFlow={setFlow} />
             </Grid>
         </Grid>

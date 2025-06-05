@@ -38,8 +38,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
             />
             <h2>{t("login:signupFormHeader")}</h2>
             <form
-                onSubmit={handleSubmit(onFinish)}
-                onError={onFinishFailed}
+                onSubmit={handleSubmit(onFinish, onFinishFailed)}
             >
                 <Grid container>
                     <Grid item xs={3}>
@@ -136,7 +135,6 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                                 style={{
                                     fontSize: 14,
                                     color: colors.error,
-                                    visibility: "visible",
                                 }}
                             >
                                 {errors.repeatedPassword.type === "required"
