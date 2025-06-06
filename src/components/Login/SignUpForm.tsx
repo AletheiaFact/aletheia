@@ -8,7 +8,7 @@ import InputPassword from "../InputPassword";
 import { Grid } from "@mui/material";
 import { useForm } from "react-hook-form";
 import Label from "../Label";
-import colors from "../../styles/colors";
+import TextError from "../TextErrorForm";
 
 const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
     const { t } = useTranslation();
@@ -37,92 +37,67 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                 }
             />
             <h2>{t("login:signupFormHeader")}</h2>
-            <form
-                onSubmit={handleSubmit(onFinish, onFinishFailed)}
-            >
+            <form onSubmit={handleSubmit(onFinish, onFinishFailed)}>
                 <Grid container>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                         <Label required
                             children={t("login:nameLabel") + " :"}
                         />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} sm={9}>
                         <Input
                             {...register("nameDescription", {
                                 required: true
                             })}
                         />
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: colors.error,
-                                visibility: errors.nameDescription ? "visible" : "hidden",
-                            }}>
-                            {t("login:nameErrorMessage")}
-                        </p>
+                        <TextError
+                            stateError={errors.nameDescription}
+                            children={t("login:nameErrorMessage")}
+                        />
                     </Grid>
-                </Grid>
-                <Grid container>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                         <Label required
                             children={t("login:emailLabel") + " :"}
                         />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} sm={9}>
                         <Input
                             {...register("email", {
                                 required: true,
                                 pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
                             })}
                         />
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: colors.error,
-                                visibility: errors.email ? "visible" : "hidden",
-                            }}
-                        >
-                            {errors.email?.type === "pattern"
-                                ? t("login:invalidEmailErrorMessage")
-                                : t("login:emailErrorMessage")
+                        <TextError
+                            stateError={errors.email}
+                            children={
+                                errors.email?.type === "pattern"
+                                    ? t("login:invalidEmailErrorMessage")
+                                    : t("login:emailErrorMessage")
                             }
-                        </p>
+                        />
                     </Grid>
-                </Grid>
-                <Grid container>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                         <Label required
                             children={t("login:passwordLabel") + " :"}
                         />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} sm={9}>
                         <InputPassword
                             {...register("password", {
                                 required: true
                             })}
                         />
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: colors.error,
-                                visibility: errors.password ? "visible" : "hidden",
-                            }}
-                        >
-                            {t("login:passwordErrorMessage")}
-                        </p>
+                        <TextError
+                            stateError={errors.password}
+                            children={t("login:passwordErrorMessage")}
+                        />
                     </Grid>
-                </Grid>
-                <Grid container
-                    style={{
-                        width: "100%",
-                    }}
-                >
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                         <Label required
                             children={t("login:repeatPasswordLabel") + " :"}
                         />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} sm={9}>
                         <InputPassword
                             {...register("repeatedPassword", {
                                 required: true,
@@ -130,36 +105,24 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                                     value === senha
                             })}
                         />
-                        {errors.repeatedPassword && (
-                            <p
-                                style={{
-                                    fontSize: 14,
-                                    color: colors.error,
-                                }}
-                            >
-                                {errors.repeatedPassword.type === "required"
+                        <TextError
+                            stateError={errors.repeatedPassword}
+                            children={
+                                errors.repeatedPassword?.type === "required"
                                     ? t("common:requiredFieldError")
                                     : t("profile:passwordMatchErrorMessage")}
-                            </p>
-                        )}
+                        />
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Grid item
-                        style={{
-                            justifyContent: "space-between",
-                            display: "flex",
-                        }}
+                <Grid container>
+                    <Button
+                        loading={isLoading}
+                        type={ButtonType.blue}
+                        htmlType="submit"
+                        data-cy={"loginButton"}
                     >
-                        <Button
-                            loading={isLoading}
-                            type={ButtonType.blue}
-                            htmlType="submit"
-                            data-cy={"loginButton"}
-                        >
-                            {t("login:submitButton")}
-                        </Button>
-                    </Grid>
+                        {t("login:submitButton")}
+                    </Button>
                 </Grid>
             </form>
         </div>

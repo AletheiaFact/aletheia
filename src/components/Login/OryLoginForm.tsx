@@ -8,8 +8,8 @@ import InputPassword from "../InputPassword";
 import ForgotPasswordLink from "./ForgotPasswordLink";
 import { Grid } from "@mui/material";
 import Label from "../Label";
-import colors from "../../styles/colors";
 import { useForm } from "react-hook-form";
+import TextError from "../TextErrorForm";
 
 const OryLoginForm = ({
     flow,
@@ -39,66 +39,51 @@ const OryLoginForm = ({
                 </Grid>
             )}
             {flow?.requested_aal !== "aal2" && (
-                <>
-                    <Grid container className="typo-grey typo-center">
-                        <h2>{t("login:formHeader")}</h2>
-                    </Grid>
+                <Grid container
+                    direction="column"
+                >
+                    <h2>
+                        {t("login:formHeader")}
+                    </h2>
                     <form
                         onSubmit={handleSubmit(onFinish, onFinishFailed)}
                     >
-                        <Grid container>
-                            <Grid item xs={1}>
+                        <Grid container
+                            marginBottom={2}
+                        >
+                            <Grid item xs={12} sm={2.25} lg={1.25}>
                                 <Label required
                                     children={t("login:emailLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={11}>
+                            <Grid item xs={12} sm={9.75} lg={10.75}>
                                 <Input
                                     {...register("email", {
                                         required: true
                                     })}
                                 />
-                                <p
-                                    style={{
-                                        fontSize: 14,
-                                        color: colors.error,
-                                        visibility: errors.email ? "visible" : "hidden",
-                                    }}
-                                >
-                                    {t("login:emailErrorMessage")}
-                                </p>
+                                <TextError
+                                    stateError={errors.email}
+                                    children={t("login:emailErrorMessage")}
+                                />
                             </Grid>
-                        </Grid>
-                        <Grid container>
-                            <Grid item xs={1}>
+                            <Grid item xs={12} sm={2.25} lg={1.25}>
                                 <Label required
                                     children={t("login:passwordLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={11}>
+                            <Grid item xs={12} sm={9.75} lg={10.75} >
                                 <InputPassword
                                     {...register("password", {
                                         required: true
                                     })}
                                 />
                                 <ForgotPasswordLink t={t} />
-                                <p
-                                    style={{
-                                        fontSize: 14,
-                                        color: colors.error,
-                                        visibility: errors.password ? "visible" : "hidden",
-                                    }}
-                                >
-                                    {t("login:passwordErrorMessage")}
-                                </p>
+                                <TextError
+                                    stateError={errors.password}
+                                    children={t("login:passwordErrorMessage")}
+                                />
                             </Grid>
-                        </Grid>
-                        <div
-                            style={{
-                                justifyContent: "space-between",
-                                display: "flex",
-                            }}
-                        >
                             <Button
                                 loading={isLoading}
                                 type={ButtonType.blue}
@@ -107,62 +92,50 @@ const OryLoginForm = ({
                             >
                                 {t("login:submitButton")}
                             </Button>
-                        </div>
+                        </Grid>
                     </form>
-                </>
+                </Grid>
             )}
             {flow?.requested_aal === "aal2" && (
-                <>
-                    <Grid container
-                        className="typo-grey typo-center"
-                        marginTop={2}
+                <Grid container direction="column">
+                    <h2>
+                        {t("totp:formHeader")}
+                    </h2>
+                    <p>
+                        {t("totp:totpMessage")}
+                    </p>
+                    <form
+                        onSubmit={handleSubmit(onFinishTotp)}
                     >
-                        <h2>{t("totp:formHeader")}</h2>
-                    </Grid>
-                    <p>{t("totp:totpMessage")}</p>
-                    <form onSubmit={handleSubmit(onFinishTotp)}>
-                        <Grid container>
-                            <Grid item xs={2.5}>
+                        <Grid container display="flex">
+                            <Grid item xs={12} md={5} lg={3}>
                                 <Label required
                                     children={t("totp:inputLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={8} md={5} lg={3}>
                                 <InputPassword
                                     {...register("totp", {
                                         required: true,
                                     })}
                                 />
-                                {errors.totp &&
-                                    <p
-                                        style={{
-                                            color: colors.error,
-                                            marginTop: 4,
-                                        }}
-                                    >
-                                        {t("totp:totpErrorMessage")}
-                                    </p>
-                                }
+                                <TextError
+                                    stateError={errors.totp}
+                                    children={t("totp:totpErrorMessage")}
+                                />
                             </Grid>
                         </Grid>
                         <Grid container>
-                            <div
-                                style={{
-                                    justifyContent: "space-between",
-                                    display: "flex",
-                                }}
+                            <Button
+                                loading={isLoading}
+                                type={ButtonType.blue}
+                                htmlType="submit"
                             >
-                                <Button
-                                    loading={isLoading}
-                                    type={ButtonType.blue}
-                                    htmlType="submit"
-                                >
-                                    {t("totp:submitButton")}
-                                </Button>
-                            </div>
+                                {t("totp:submitButton")}
+                            </Button>
                         </Grid>
                     </form>
-                </>
+                </Grid>
             )}
         </>
     );

@@ -17,7 +17,8 @@ import Label from "../Label";
 import Loading from "../Loading";
 import { Totp } from "./Totp";
 import { useForm } from "react-hook-form";
-import colors from "../../styles/colors";
+import OryProfileGrid from "./OryProfileView.style";
+import TextError from "../TextErrorForm";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SettingsFlowState>();
@@ -73,15 +74,9 @@ const OryProfileView = ({ user }) => {
     }
 
     return (
-        <Grid
-            container
-            justifyContent="center"
-            alignItems="stretch"
-            spacing={1}
-            my={2}
-        >
+        <OryProfileGrid container spacing={2} my={2}>
             <Grid item xs={7}>
-                <Typography variant="h3" fontSize={24} fontWeight={600} fontFamily="initial" marginBottom="12px">
+                <Typography variant="h3" className="title">
                     {t("profile:pageTitle")}
                 </Typography>
 
@@ -89,7 +84,7 @@ const OryProfileView = ({ user }) => {
                     {t("profile:loggedInAs")}: <Label>{user.email}</Label>
                 </Typography>
 
-                <Typography variant="h4" fontSize={20} fontWeight={600} fontFamily="initial" margin="24px 0px 10px">
+                <Typography variant="h4" className="subtitle">
                     {t("profile:badgesTitle")}
                 </Typography>
 
@@ -110,7 +105,7 @@ const OryProfileView = ({ user }) => {
                     </Typography>
                 )}
 
-                <Typography variant="h4" fontSize={20} fontWeight={600} fontFamily="initial" margin="24px 0px 10px">
+                <Typography variant="h4" className="subtitle">
                     {t("profile:changePasswordSectionTitle")}
                 </Typography>
 
@@ -121,33 +116,29 @@ const OryProfileView = ({ user }) => {
                         type="warning"
                     />
                 )}
-                <form onSubmit={handleSubmit(onFinish)} style={{ margin: "20px 0px" }}>
+                <form
+                    onSubmit={handleSubmit(onFinish)}
+                    style={{ margin: "20px 0px" }}
+                >
                     <Grid container>
-                        <Grid item xs={1.5}>
+                        <Grid item xs={12} sm={3} md={2} lg={1.5} xl={1.25}>
                             <Label required children={t("profile:newPasswordLabel") + ":"} />
                         </Grid>
-                        <Grid item xs={10.5}>
+                        <Grid item xs={12} sm={9} md={10} lg={10.5} xl={10.75}>
                             <InputPassword
                                 {...register("newPassword", {
                                     required: true
                                 })}
                             />
-                            <p
-                                style={{
-                                    fontSize: 14,
-                                    color: "red",
-                                    visibility: errors.newPassword ? "visible" : "hidden",
-                                }}
-                            >
-                                {t("common:requiredFieldError")}
-                            </p>
+                            <TextError
+                                stateError={errors.newPassword}
+                                children={t("common:requiredFieldError")}
+                            />
                         </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={4.5} md={3.25} lg={2.5} xl={2}>
                             <Label required children={t("profile:repeatedNewPasswordLabel") + ":"} />
                         </Grid>
-                        <Grid item xs={10}>
+                        <Grid item xs={12} sm={7.5} md={8.75} lg={9.5} xl={10}>
                             <InputPassword
                                 {...register("repeatedNewPassword", {
                                     required: true,
@@ -155,18 +146,14 @@ const OryProfileView = ({ user }) => {
                                         value === senha
                                 })}
                             />
-                            {errors.repeatedNewPassword && (
-                                <p
-                                    style={{
-                                        fontSize: 14,
-                                        color: colors.error,
-                                    }}
-                                >
-                                    {errors.repeatedNewPassword.type === "required"
+                            <TextError
+                                stateError={errors.repeatedNewPassword}
+                                children={
+                                    errors.repeatedNewPassword?.type === "required"
                                         ? t("common:requiredFieldError")
-                                        : t("profile:passwordMatchErrorMessage")}
-                                </p>
-                            )}
+                                        : t("profile:passwordMatchErrorMessage")
+                                }
+                            />
                         </Grid>
                     </Grid>
                     <Button
@@ -179,7 +166,7 @@ const OryProfileView = ({ user }) => {
                 </form>
                 <Totp flow={flow} setFlow={setFlow} />
             </Grid>
-        </Grid>
+        </OryProfileGrid>
     );
 };
 

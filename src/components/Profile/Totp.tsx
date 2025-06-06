@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
+import TextError from "../TextErrorForm";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
@@ -120,7 +121,7 @@ export const Totp = ({ flow, setFlow }) => {
     return (
         <>
             <Grid container>
-                <Typography variant="h4" fontSize={20} fontWeight={600}>
+                <Typography variant="h4" className="subtitle">
                     {t("profile:totpSectionTittle")}
                 </Typography>
             </Grid>
@@ -187,22 +188,16 @@ export const Totp = ({ flow, setFlow }) => {
                         <Label required>
                             {t("profile:totpInputTittle")}
                         </Label>
-                        <Grid item xs={3}>
+                        <Grid item xs={7} sm={5} md={4} lg={3}>
                             <InputPassword
                                 {...register("totp", {
                                     required: true
                                 })}
                             />
-                            {errors.totp &&
-                                <p
-                                    style={{
-                                        color: colors.error,
-                                        marginTop: 4
-                                    }}
-                                >
-                                    {t("common:requiredFieldError")}
-                                </p>
-                            }
+                            <TextError
+                                stateError={errors.totp}
+                                children={t("common:requiredFieldError")}
+                            />
                         </Grid>
                     </Grid>
                     <AletheiaButton
@@ -214,42 +209,40 @@ export const Totp = ({ flow, setFlow }) => {
                     </AletheiaButton>
                 </form >
             )}
-            {
-                !showForm && (
-                    <form
-                        onSubmit={handleSubmit(onFinishUnlink)}
+            {!showForm && (
+                <form
+                    onSubmit={handleSubmit(onFinishUnlink)}
+                >
+                    <AletheiaButton
+                        loading={isLoading}
+                        htmlType="submit"
+                        style={{
+                            width: "100%",
+                            marginTop: "21px",
+                            marginBottom: "21px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: "8px 15px",
+                            height: "max-content",
+                            whiteSpace: "normal",
+                        }}
+                        type={ButtonType.blue}
                     >
-                        <AletheiaButton
-                            loading={isLoading}
-                            htmlType="submit"
+                        <Typography
+                            variant="h4"
                             style={{
-                                width: "100%",
-                                marginTop: "21px",
-                                marginBottom: "21px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                padding: "8px 15px",
-                                height: "max-content",
-                                whiteSpace: "normal",
+                                fontSize: 14,
+                                color: colors.white,
+                                fontWeight: 400,
+                                margin: 0,
                             }}
-                            type={ButtonType.blue}
                         >
-                            <Typography
-                                variant="h4"
-                                style={{
-                                    fontSize: 14,
-                                    color: colors.white,
-                                    fontWeight: 400,
-                                    margin: 0,
-                                }}
-                            >
-                                {t("profile:totpUnLinkSubmit")}
-                            </Typography>
-                        </AletheiaButton>
-                    </form>
-                )
-            }
+                            {t("profile:totpUnLinkSubmit")}
+                        </Typography>
+                    </AletheiaButton>
+                </form>
+            )}
         </>
     );
 };
