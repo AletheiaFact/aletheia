@@ -1,18 +1,20 @@
 import { TextField, IconButton, InputAdornment } from "@mui/material";
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styled from "styled-components";
 import colors from "../styles/colors";
 
 const StyledTextField = styled(TextField)`
-    background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
+    background: ${(props) =>
+        props.white ? colors.white : colors.lightNeutral};
     box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
-    
+
     & .MuiOutlinedInput-root {
         border-radius: 4px;
-        background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
-        
+        background: ${(props) =>
+            props.white ? colors.white : colors.lightNeutral};
+
         & fieldset {
             border: none !important;
         }
@@ -36,17 +38,21 @@ const StyledTextField = styled(TextField)`
     }
 `;
 
-const InputPassword = (props) => {
+const InputPassword = forwardRef(({ ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <StyledTextField
             {...props}
+            inputRef={ref}
             type={showPassword ? "text" : "password"}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end">
-                        <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                        <IconButton
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            edge="end"
+                        >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                     </InputAdornment>
@@ -54,6 +60,6 @@ const InputPassword = (props) => {
             }}
         />
     );
-};
+});
 
 export default InputPassword;

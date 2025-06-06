@@ -9,7 +9,11 @@ const SourceSummaryDisplay = ({ href }) => {
 
     return (
         <SentenceReportSummary item>
-            <Typography variant="body1" className="sentence-content">
+            <Typography
+                variant="body1"
+                className="sentence-content"
+                style={{ wordBreak: "break-all" }}
+            >
                 <cite>{href}</cite>
             </Typography>
 
@@ -17,7 +21,7 @@ const SourceSummaryDisplay = ({ href }) => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ width: "fit-content" }}
+                style={{ minWidth: "fit-content" }}
             >
                 {t("sources:sourceCardButton")}
             </AletheiaButton>

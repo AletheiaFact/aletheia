@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element  */
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
-import { Form } from "antd";
+import { useForm } from "react-hook-form";
+import Label from "../Label";
 import { MessageManager } from "../Messages";
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
@@ -21,6 +22,12 @@ export const Totp = ({ flow, setFlow }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+    } = useForm();
 
     let flowValues: ValuesType = {
         csrf_token: "",
@@ -57,7 +64,8 @@ export const Totp = ({ flow, setFlow }) => {
         } catch {
             setShowForm(false);
         }
-    }, [flow]);
+        reset();
+    }, [flow, reset]);
 
     const onSubmitLink = (values: ValuesType) => {
         orySubmitTotp({ router, flow, setFlow, t, values })
@@ -68,7 +76,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpIncorectCodeMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -84,7 +95,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpUnLinkErrorMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -119,8 +133,11 @@ export const Totp = ({ flow, setFlow }) => {
                 </Typography>
             </Grid>
             {showForm && (
-                <Form onFinish={onFinish} style={{ marginBottom: "20px" }}>
-                    <Form.Item>
+                <form
+                    onSubmit={handleSubmit(onFinish)}
+                    style={{ marginBottom: "20px" }}
+                >
+                    <div style={{ marginBottom: "20px" }}>
                         <p>
                             <Trans
                                 i18nKey={"profile:totpSectionDescription"}
@@ -173,23 +190,29 @@ export const Totp = ({ flow, setFlow }) => {
                         >
                             {textSource}
                         </code>
-                    </Form.Item>
-                    <Form.Item
-                        name="totp"
-                        label={t("profile:totpInputTittle")}
-                        wrapperCol={{ sm: 24 }}
-                        style={{
-                            width: "100%",
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: t("common:requiredFieldError"),
-                            },
-                        ]}
-                    >
-                        <InputPassword />
-                    </Form.Item>
+                    </div>
+                    <div style={{ marginBottom: "20px" }}>
+                        <Label required>{t("profile:totpInputTittle")}</Label>
+                        <div>
+                            <InputPassword
+                                {...register("totp", {
+                                    required: t(
+                                        "claimReview:descriptionInputError"
+                                    ),
+                                })}
+                            />
+                            {errors.totp && (
+                                <p
+                                    style={{
+                                        color: colors.error,
+                                        marginTop: 4,
+                                    }}
+                                >
+                                    {t("common:requiredFieldError")}
+                                </p>
+                            )}
+                        </div>
+                    </div>
                     <AletheiaButton
                         type={ButtonType.blue}
                         htmlType="submit"
@@ -197,10 +220,10 @@ export const Totp = ({ flow, setFlow }) => {
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
-                </Form>
+                </form>
             )}
             {!showForm && (
-                <Form onFinish={onFinishUnlink}>
+                <form onSubmit={handleSubmit(onFinishUnlink)}>
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"
@@ -229,7 +252,7 @@ export const Totp = ({ flow, setFlow }) => {
                             {t("profile:totpUnLinkSubmit")}
                         </Typography>
                     </AletheiaButton>
-                </Form>
+                </form>
             )}
         </>
     );
