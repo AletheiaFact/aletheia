@@ -32,7 +32,12 @@ Fixes # (issue)
 
 ### Tests
 - [ ] All existing unit and end to end tests pass across all services     
-- [ ] Unit and end to end tests have been added to ensure backend APIs behave as expected     
+- [ ] Unit and end to end tests have been added to ensure backend APIs behave as expected
+
+### Test IDs
+- [ ] Include the test ID when adding new tasks or components.
+- [ ] Check that test IDs are present in the modified components.
+     
 
 # Merge Request Review Checklist 
 - [ ] An issue is linked to this PR and these changes meet the requirements outlined in the linked issue(s)     
