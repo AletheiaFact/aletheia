@@ -1,6 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable jsx-a11y/heading-has-content */
-import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from "@mui/material";
+import {
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Grid,
+    Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
@@ -12,16 +18,16 @@ const PrivacyPolicyStyle = styled(Grid)`
     justify-content: "center";
     width: 100%;
     font-size: 1rem;
-    letter-Spacing: "1px";
+    letter-spacing: "1px";
     font-weight: 600;
     padding: 20px;
     text-align: "justify";
 
-    .subtitle-privacyPolicy{
+    .subtitle-privacyPolicy {
         font-size: 25px;
         margin: 20px 0;
-        font-Family: serif; 
-        font-Weight: 600;
+        font-family: serif;
+        font-weight: 600;
     }
 `;
 
@@ -30,7 +36,16 @@ const PrivacyPolicy = () => {
 
     return (
         <PrivacyPolicyStyle item>
-            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", fontFamily: "initial", fontWeight: 600, padding: "10px 0" }}>
+            <Typography
+                variant="h1"
+                sx={{
+                    fontSize: 40,
+                    textAlign: "center",
+                    fontFamily: "initial",
+                    fontWeight: 600,
+                    padding: "10px 0",
+                }}
+            >
                 {t("privacyPolicy:title")}
             </Typography>
             <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
@@ -46,19 +61,31 @@ const PrivacyPolicy = () => {
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem1")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem1")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem2")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem2")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem3")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem3")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem4")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem4")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem5")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem5")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{t("privacyPolicy:trackingToolsPanelRecaptchaHeader")}</Typography>
+                    <Typography>
+                        {t("privacyPolicy:trackingToolsPanelRecaptchaHeader")}
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Trans
@@ -85,19 +112,26 @@ const PrivacyPolicy = () => {
 
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{t("privacyPolicy:trackingToolsPanelSessionCookiesHeader")}</Typography>
+                    <Typography>
+                        {t(
+                            "privacyPolicy:trackingToolsPanelSessionCookiesHeader"
+                        )}
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Trans
-                        i18nKey={"privacyPolicy:trackingToolsPanelSessionCookiesContent"}
+                        i18nKey={
+                            "privacyPolicy:trackingToolsPanelSessionCookiesContent"
+                        }
                     />
                 </AccordionDetails>
             </Accordion>
 
-
             <Accordion sx={{ marginBottom: "20px" }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{t("privacyPolicy:trackingToolsPanelUmamiHeader")}</Typography>
+                    <Typography>
+                        {t("privacyPolicy:trackingToolsPanelUmamiHeader")}
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Trans
@@ -115,30 +149,46 @@ const PrivacyPolicy = () => {
                     />
                 </AccordionDetails>
             </Accordion>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem6")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem6")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem7")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem7")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem8")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem8")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem9")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem9")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleItem10")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleItem10")}
+            </Typography>
             <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
-            <Typography variant="h2" className="subtitle-privacyPolicy">{t("privacyPolicy:subTitleContact")}</Typography>
+            <Typography variant="h2" className="subtitle-privacyPolicy">
+                {t("privacyPolicy:subTitleContact")}
+            </Typography>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail") }}
                 components={[
                     <a
-                        style={{ whiteSpace: "pre-wrap", display: "block", textAlign: "center" }}
+                        style={{
+                            whiteSpace: "pre-wrap",
+                            display: "block",
+                            textAlign: "center",
+                        }}
                         href={`mailto:${t("common:contactEmail")}`}
                         target="_blank"
                         rel="noreferrer"
                     ></a>,
                 ]}
             />
-        </PrivacyPolicyStyle >
+        </PrivacyPolicyStyle>
     );
 };
 

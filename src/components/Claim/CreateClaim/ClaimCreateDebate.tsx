@@ -6,7 +6,18 @@ import { useBaseClaimForm } from "./UseBaseClaimForm";
 const ClaimCreateDebate = () => {
     const { t } = useTranslation();
     const {
-        handleSubmit, title, setTitle, recaptcha, setRecaptcha, date, setDate, setSources, sources, isLoading, errors, clearError
+        handleSubmit,
+        title,
+        setTitle,
+        recaptcha,
+        setRecaptcha,
+        date,
+        setDate,
+        setSources,
+        sources,
+        isLoading,
+        errors,
+        clearError,
     } = useBaseClaimForm({ shouldValidateContent: false });
 
     return (

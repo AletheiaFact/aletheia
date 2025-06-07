@@ -20,7 +20,22 @@ const ClaimUploadImage = () => {
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const {
-        title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, setIsLoading, errors, setErrors, imageError, setImageError, clearError, validateFields
+        title,
+        setTitle,
+        date,
+        setDate,
+        sources,
+        setSources,
+        recaptcha,
+        setRecaptcha,
+        isLoading,
+        setIsLoading,
+        errors,
+        setErrors,
+        imageError,
+        setImageError,
+        clearError,
+        validateFields,
     } = useBaseClaimForm({ shouldValidateContent: false });
 
     const handleSubmit = (values: any) => {

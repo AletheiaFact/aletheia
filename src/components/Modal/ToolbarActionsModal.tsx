@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ErrorOutlineOutlined, WarningAmberOutlined} from "@mui/icons-material";
+import {
+    ErrorOutlineOutlined,
+    WarningAmberOutlined,
+} from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
@@ -50,18 +53,19 @@ const UnhideContentModal = ({
             width={vw?.xs || vw?.xl ? "100%" : "70%"}
             style={{
                 alignSelf: "flex-start",
-                paddingTop: "10vh"
+                paddingTop: "10vh",
             }}
             title={
                 <Grid item xs={12}>
                     <h2
-                        className={`${updatingHideStatus ? "hide-modal" : "delete-modal"
-                            }`}
+                        className={`${
+                            updatingHideStatus ? "hide-modal" : "delete-modal"
+                        }`}
                         style={{
                             display: "flex",
                             alignItems: "center",
                             gap: 10,
-                            fontSize: 24
+                            fontSize: 24,
                         }}
                     >
                         {updatingHideStatus ? (
@@ -72,7 +76,6 @@ const UnhideContentModal = ({
                         {contentTitle}
                     </h2>
                     <p style={{ marginTop: 8 }}>{contentBody}</p>
-
                 </Grid>
             }
         >
@@ -82,9 +85,7 @@ const UnhideContentModal = ({
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     {hasDescription && (
-                        <div
-                            style={{ marginBottom: 16 }}
-                        >
+                        <div style={{ marginBottom: 16 }}>
                             <TextArea
                                 multiline
                                 white="white"
@@ -92,13 +93,16 @@ const UnhideContentModal = ({
                                     "claimReview:descriptionInputPlaceholder"
                                 )}
                                 {...register("description", {
-                                    required: t("claimReview:descriptionInputError"),
+                                    required: t(
+                                        "claimReview:descriptionInputError"
+                                    ),
                                 })}
                             />
                             {errors.description && (
                                 <p
                                     style={{
-                                        color: colors.error, marginTop: 4
+                                        color: colors.error,
+                                        marginTop: 4,
                                     }}
                                 >
                                     {t("claimReview:descriptionInputError")}

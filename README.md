@@ -44,8 +44,8 @@ docker compose up ferretdb postgres-documentdb
 Then change the MongoDB connection string in your config.yaml with:
 
 ```yaml
-   database:
-     connection_uri: mongodb://ferretdb:ferretdb@localhost:27018
+   db:
+     connection_uri: mongodb://ferretdb:ferretdb@localhost:27018/Aletheia
 ```
 
 ### Configuration

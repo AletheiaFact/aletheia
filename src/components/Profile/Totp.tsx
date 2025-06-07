@@ -4,7 +4,7 @@ import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
 import { useForm } from "react-hook-form";
 import Label from "../Label";
 import { MessageManager } from "../Messages";
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
@@ -76,7 +76,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpIncorectCodeMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -92,7 +95,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpUnLinkErrorMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -186,25 +192,25 @@ export const Totp = ({ flow, setFlow }) => {
                         </code>
                     </div>
                     <div style={{ marginBottom: "20px" }}>
-                        <Label required>
-                            {t("profile:totpInputTittle")}
-                        </Label>
+                        <Label required>{t("profile:totpInputTittle")}</Label>
                         <div>
                             <InputPassword
                                 {...register("totp", {
-                                    required: t("claimReview:descriptionInputError"),
+                                    required: t(
+                                        "claimReview:descriptionInputError"
+                                    ),
                                 })}
                             />
-                            {errors.totp &&
+                            {errors.totp && (
                                 <p
                                     style={{
                                         color: colors.error,
-                                        marginTop: 4
+                                        marginTop: 4,
                                     }}
                                 >
                                     {t("common:requiredFieldError")}
                                 </p>
-                            }
+                            )}
                         </div>
                     </div>
                     <AletheiaButton
@@ -217,9 +223,7 @@ export const Totp = ({ flow, setFlow }) => {
                 </form>
             )}
             {!showForm && (
-                <form
-                    onSubmit={handleSubmit(onFinishUnlink)}
-                >
+                <form onSubmit={handleSubmit(onFinishUnlink)}>
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"
