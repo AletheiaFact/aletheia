@@ -2,8 +2,8 @@ import personality from "../fixtures/personality";
 
 const locators = {
     login: {
-        USER: "#basic_email",
-        PASSWORD: "#basic_password",
+        USER: "[data-cy=emailFormLogin]",
+        PASSWORD: "[data-cy=passwordFormLogin]",
         BTN_LOGIN: "[data-cy=loginButton]",
     },
 

@@ -126,6 +126,7 @@ const OryProfileView = ({ user }) => {
                         </Grid>
                         <Grid item xs={12} sm={9} md={10} lg={10.5} xl={10.75}>
                             <InputPassword
+                                data-cy="newPasswordInput"
                                 {...register("newPassword", {
                                     required: true
                                 })}
@@ -140,6 +141,7 @@ const OryProfileView = ({ user }) => {
                         </Grid>
                         <Grid item xs={12} sm={7.5} md={8.75} lg={9.5} xl={10}>
                             <InputPassword
+                                data-cy="repeatedNewPasswordInput"
                                 {...register("repeatedNewPassword", {
                                     required: true,
                                     validate: (value) =>
@@ -160,6 +162,7 @@ const OryProfileView = ({ user }) => {
                         loading={isLoading}
                         type={ButtonType.blue}
                         htmlType="submit"
+                        data-cy="submitChangePasswordButton"
                     >
                         {t("login:submitButton")}
                     </Button>

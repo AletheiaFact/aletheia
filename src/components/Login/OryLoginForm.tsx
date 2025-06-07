@@ -58,6 +58,7 @@ const OryLoginForm = ({
                             </Grid>
                             <Grid item xs={12} sm={9.75} lg={10.75}>
                                 <Input
+                                    data-cy="emailFormLogin"
                                     {...register("email", {
                                         required: true
                                     })}
@@ -74,6 +75,7 @@ const OryLoginForm = ({
                             </Grid>
                             <Grid item xs={12} sm={9.75} lg={10.75} >
                                 <InputPassword
+                                    data-cy="passwordFormLogin"
                                     {...register("password", {
                                         required: true
                                     })}
@@ -115,6 +117,7 @@ const OryLoginForm = ({
                             </Grid>
                             <Grid item xs={8} md={5} lg={3}>
                                 <InputPassword
+                                    data-cy="totpFormLogin"
                                     {...register("totp", {
                                         required: true,
                                     })}
@@ -130,6 +133,7 @@ const OryLoginForm = ({
                                 loading={isLoading}
                                 type={ButtonType.blue}
                                 htmlType="submit"
+                                data-cy="totpSubmitButton"
                             >
                                 {t("totp:submitButton")}
                             </Button>

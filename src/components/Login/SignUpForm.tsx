@@ -46,6 +46,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <Input
+                            data-cy="nameInputCreateAccount"
                             {...register("nameDescription", {
                                 required: true
                             })}
@@ -62,6 +63,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <Input
+                            data-cy="emailInputCreateAccount"
                             {...register("email", {
                                 required: true,
                                 pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -83,6 +85,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <InputPassword
+                            data-cy="passwordInputCreateAccount"
                             {...register("password", {
                                 required: true
                             })}
@@ -99,6 +102,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <InputPassword
+                            data-cy="repeatedPasswordInputCreateAccount"
                             {...register("repeatedPassword", {
                                 required: true,
                                 validate: (value) =>
@@ -119,7 +123,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         loading={isLoading}
                         type={ButtonType.blue}
                         htmlType="submit"
-                        data-cy={"loginButton"}
+                        data-cy="loginButton"
                     >
                         {t("login:submitButton")}
                     </Button>
