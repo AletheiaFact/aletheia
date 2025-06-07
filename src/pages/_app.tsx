@@ -1,7 +1,6 @@
 import React from "react";
 import Head from "next/head";
 import "../styles/app.css";
-import "antd/dist/antd.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
 import { GlobalMessage } from "../components/Messages";
