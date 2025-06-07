@@ -38,7 +38,6 @@ const PersonalityMinimalCardStyle = styled(Grid)`
 
     @media ${queries.sm} {
         max-width: 100%;
-        justify-content: start;
         align-items: center;
         padding-bottom: 10px;
 
@@ -47,7 +46,7 @@ const PersonalityMinimalCardStyle = styled(Grid)`
             justify-content: flex-start;
         }
 
-        .personality .ant-col {
+        .personality {
             width: 100%;
         }
 
