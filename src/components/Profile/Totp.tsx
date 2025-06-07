@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
+import TextError from "../TextErrorForm";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
@@ -26,7 +27,6 @@ export const Totp = ({ flow, setFlow }) => {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
     } = useForm();
 
     let flowValues: ValuesType = {
@@ -64,8 +64,7 @@ export const Totp = ({ flow, setFlow }) => {
         } catch {
             setShowForm(false);
         }
-        reset();
-    }, [flow, reset]);
+    }, [flow]);
 
     const onSubmitLink = (values: ValuesType) => {
         orySubmitTotp({ router, flow, setFlow, t, values })
@@ -122,7 +121,7 @@ export const Totp = ({ flow, setFlow }) => {
     return (
         <>
             <Grid container>
-                <Typography variant="h4" fontSize={20} fontWeight={600}>
+                <Typography variant="h4" className="subtitle">
                     {t("profile:totpSectionTittle")}
                 </Typography>
             </Grid>
@@ -131,7 +130,7 @@ export const Totp = ({ flow, setFlow }) => {
                     onSubmit={handleSubmit(onFinish)}
                     style={{ marginBottom: "20px" }}
                 >
-                    <div style={{ marginBottom: "20px" }}>
+                    <Grid item xs={12} style={{ marginBottom: "20px" }}>
                         <p>
                             <Trans
                                 i18nKey={"profile:totpSectionDescription"}
@@ -184,29 +183,23 @@ export const Totp = ({ flow, setFlow }) => {
                         >
                             {textSource}
                         </code>
-                    </div>
-                    <div style={{ marginBottom: "20px" }}>
+                    </Grid>
+                    <Grid item style={{ marginBottom: "20px" }}>
                         <Label required>
                             {t("profile:totpInputTittle")}
                         </Label>
-                        <div>
+                        <Grid item xs={7} sm={5} md={4} lg={3}>
                             <InputPassword
                                 {...register("totp", {
-                                    required: t("claimReview:descriptionInputError"),
+                                    required: true
                                 })}
                             />
-                            {errors.totp &&
-                                <p
-                                    style={{
-                                        color: colors.error,
-                                        marginTop: 4
-                                    }}
-                                >
-                                    {t("common:requiredFieldError")}
-                                </p>
-                            }
-                        </div>
-                    </div>
+                            <TextError
+                                stateError={errors.totp}
+                                children={t("common:requiredFieldError")}
+                            />
+                        </Grid>
+                    </Grid>
                     <AletheiaButton
                         type={ButtonType.blue}
                         htmlType="submit"
@@ -214,7 +207,7 @@ export const Totp = ({ flow, setFlow }) => {
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
-                </form>
+                </form >
             )}
             {!showForm && (
                 <form
