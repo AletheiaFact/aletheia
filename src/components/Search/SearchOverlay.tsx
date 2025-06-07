@@ -16,28 +16,12 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { useRouter } from "next/router";
 
 const OverlayGrid = styled(Grid)`
-    .ant-input-lg {
-        font-weight: 600;
-    }
-
-    .ant-input::placeholder {
-        font-style: italic;
-        font-weight: 300;
-        font-size: 14px;
-        line-height: 20px;
-        color: ${colors.blackSecondary};
-    }
-
     .input-container {
         width: 100%;
         display: flex;
         align-items: center;
         max-width: 320px;
         padding-left: 15px;
-
-        .ant-input-affix-wrapper {
-            height: 32px;
-        }
 
         @media ${queries.xs} {
             display: none;
@@ -48,9 +32,9 @@ const OverlayGrid = styled(Grid)`
 
     .overlay {
         background-color: ${({ namespace }) =>
-            namespace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary};
+        namespace === NameSpaceEnum.Main
+            ? colors.primary
+            : colors.secondary};
         position: fixed;
         z-index: 3;
         width: 100vw;
@@ -81,9 +65,8 @@ const SearchOverlay = () => {
         <OverlayGrid container item namespace={nameSpaceProp} xs={0.5} sm={4} md={5}>
             {!router.pathname.includes("/home-page") && (
                 <div
-                    className={`input-container ${
-                        vw?.xs && isOpen ? "overlay" : ""
-                    }`}
+                    className={`input-container ${vw?.xs && isOpen ? "overlay" : ""
+                        }`}
                 >
                     {vw?.xs && isOpen && (
                         <AletheiaButton
