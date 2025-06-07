@@ -7,6 +7,7 @@
     "nameLabel": "Nome",
     "submitButton": "Enviar",
     "emailErrorMessage": "Por favor, insira seu e-mail",
+    "invalidEmailErrorMessage": "E-mail inválido",
     "nameErrorMessage": "Por favor, insira seu nome",
     "passwordErrorMessage": "Por favor, insira sua senha",
     "loginFailedMessage": "Erro ao fazer login",
