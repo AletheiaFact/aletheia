@@ -42,6 +42,6 @@ Fixes # (issue)
 # Merge Request Review Checklist 
 - [ ] An issue is linked to this PR and these changes meet the requirements outlined in the linked issue(s)     
 - [ ] High risk and core workflows have been tested and verified in a local environment.     
-- [ ] Enhancements or opportunities to improve performance, stability, security or code readability have been noted and documented in JIRA issues if not being addressed.     
+- [ ] Enhancements or opportunities to improve performance, stability, security or code readability have been noted and documented in Project do Github issues if not being addressed.     
 - [ ] Any dependent changes have been merged and published in downstream modules     
 - [ ] Changes to multiple services can be deployed in parallel and independently. If not, changes should be broken out into separate merge requests and deployed in order.
