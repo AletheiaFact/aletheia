@@ -15,10 +15,6 @@ const StyledColumn = styled.div`
     width: 400px;
     background-color: ${colors.lightNeutralSecondary};
     border-radius: 4px;
-
-    .ant-list-item {
-        padding: 6px 0;
-    }
 `;
 
 interface KanbanColProps {
