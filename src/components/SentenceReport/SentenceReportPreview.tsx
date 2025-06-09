@@ -12,7 +12,7 @@ const SentenceReportPreview = ({
     href,
     componentStyle,
 }) => {
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    // const [isLoggedIn] = useAtom(isUserLoggedIn);
     return (
         <Grid item xs={componentStyle.span}>
             {canShowReportPreview && (
@@ -24,7 +24,8 @@ const SentenceReportPreview = ({
                 showClassification={canShowReportPreview}
                 href={href}
             />
-            {!isLoggedIn && <CTARegistration />}
+            {/* {!isLoggedIn &&  */}
+            <CTARegistration />
         </Grid>
     );
 };

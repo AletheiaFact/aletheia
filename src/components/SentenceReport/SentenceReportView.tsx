@@ -30,7 +30,7 @@ const SentenceReportView = ({
     href,
     componentStyle,
 }) => {
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    // const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
     const { machineService, publishedReview, reviewTaskType } = useContext(
@@ -78,7 +78,8 @@ const SentenceReportView = ({
                         }
                         href={href}
                     />
-                    {!isLoggedIn && <CTARegistration />}
+                    {/* {!isLoggedIn &&  */}
+                    <CTARegistration />
                 </Grid>
             </Grid>
         )

@@ -65,17 +65,17 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                     />
                 </Grid>
 
-                {!isLoggedIn && (
-                    <Grid item xs={12} lg={9} order={3}>
-                        <CTARegistration />
-                    </Grid>
-                )}
 
-                {isLoggedIn && (
+                <Grid item xs={12} lg={9} order={3}>
+                    <CTARegistration />
+                </Grid>
+
+
+                {/* {isLoggedIn && (
                     <Grid item xs={12} lg={9} order={3}>
                         <CTAForumSection />
                     </Grid>
-                )}
+                )} */}
 
                 <Grid item xs={12} order={4}>
                     <SocialMediaShare href={href} />
