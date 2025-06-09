@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Badge, Spin } from "antd";
-import colors from "../../styles/colors";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Badge } from "@mui/material";
 import { DraftsOutlined, MailOutlineOutlined } from "@mui/icons-material";
 import NotificationCardActions from "./NotificationCardActions";
 import NotificationCardTime from "./NotificationCardTime";
@@ -27,15 +25,29 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
     };
 
     return (
-        <Spin
-            indicator={<CircularProgress />}
-            spinning={isLoading}
-            style={{ fontSize: 48, color: colors.primary, display: "flex" }}
-        >
+        isLoading ? (
+            <CircularProgress
+                size={48}
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginLeft: "-24px",
+                    marginTop: "-24px",
+                }}
+            />
+        ) : (
             <NotificationCardStyle isSeen={isSeen} namespace={nameSpace}>
                 <div className="container" onClick={handleContainerClick}>
                     <div className="notification-avatar">
-                        {!isSeen && <Badge status="processing" />}
+                        {!isSeen && (
+                            <Badge
+                                overlap="circular"
+                                variant="dot"
+                                color="secondary"
+                                sx={{ marginRight: 2 }}
+                            />
+                        )}
 
                         {!isSeen ? (
                             <MailOutlineOutlined className="notification-avatar-icon" />
@@ -56,7 +68,7 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
                     setIsLoading={setIsLoading}
                 />
             </NotificationCardStyle>
-        </Spin>
+        )
     );
 };
 

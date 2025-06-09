@@ -1,5 +1,6 @@
-import { Alert } from "antd";
+import { Alert, useTheme, Grid, AlertTitle } from "@mui/material";
 import React from "react";
+import colors from "../styles/colors";
 
 const AletheiaAlert = ({
     type,
@@ -7,21 +8,44 @@ const AletheiaAlert = ({
     description = null,
     action = null,
     showIcon = false,
+    style = {},
     ...props
 }) => {
+    const theme = useTheme();
+    const colorMap = {
+        success: theme.palette.success.main,
+        info: theme.palette.info.main,
+        warning: theme.palette.warning.main,
+        error: theme.palette.error.main,
+    };
+
     return (
         <Alert
-            type={type}
+            severity={type}
+            icon={showIcon && undefined}
             style={{
                 marginBottom: "15px",
-                padding: "50px 25px 50px 25px",
+                padding: "25px",
+                color: colors.blackTertiary,
+                border: `1px solid ${colorMap[type]}`,
+                ...style,
             }}
-            message={message}
-            description={description}
-            action={action}
-            showIcon={showIcon}
             {...props}
-        />
+        >
+            <AlertTitle style={{ fontSize: "14px", ...style }}>
+                {message}
+            </AlertTitle>
+            {description && (
+                <p style={{ fontSize: "12px" }}>
+                    {description}
+                </p>
+            )}
+            {action && (
+                <Grid item xs={12}>
+                    {action}
+                </Grid>
+            )}
+        </Alert>
     );
 };
 

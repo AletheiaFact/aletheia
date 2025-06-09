@@ -2,8 +2,8 @@ import personality from "../fixtures/personality";
 
 const locators = {
     login: {
-        USER: "#basic_email",
-        PASSWORD: "#basic_password",
+        USER: "[data-cy=emailFormLogin]",
+        PASSWORD: "[data-cy=passwordFormLogin]",
         BTN_LOGIN: "[data-cy=loginButton]",
     },
 
@@ -26,7 +26,7 @@ const locators = {
         BTN_SUBMIT_CLAIM: "[data-cy=testSaveButton]",
         INPUT_TITLE: "[data-cy=testTitleClaimForm]",
         INPUT_DATA: "[data-cy=testSelectDate]",
-        INPUT_DATA_TODAY: "a.ant-picker-today-btn",
+        INPUT_DATA_TODAY: ".MuiPickersDay-today",
         INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
