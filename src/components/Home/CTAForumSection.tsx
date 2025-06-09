@@ -1,11 +1,11 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
-import ForumButton from "./ForumButton";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import CTARegistrationStyle from "./CTARegistration.style";
+import CTAButton from "./CTAButton";
 
 function CTAForumSection() {
     const { t } = useTranslation();
@@ -61,15 +61,8 @@ function CTAForumSection() {
             >
                 {t("home:forumDescription")}
             </p>
-            <ForumButton
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "40px",
-                    padding: "0 15px",
-                    fontWeight: 700,
-                    justifySelf: "center"
-                }}
+            <CTAButton
+                isLoggedIn={true}
             />
         </CTARegistrationStyle>
     )
