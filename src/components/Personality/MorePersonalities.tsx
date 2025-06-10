@@ -33,8 +33,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 xs={isLoggedIn || vw?.lg ? 11 : 3}
                 style={{ paddingLeft: vw?.lg ? 0 : 20 }}
             >
-                {/* {!isLoggedIn && (
-                    <> */}
+
                 {!vw?.md && (
                     <SectionTitle>
                         {t("home:sectionTitle2")}
@@ -44,8 +43,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 <Grid container id="create_account">
                     <CTARegistration />
                 </Grid>
-                {/* </>
-                )} */}
+
                 <SocialMediaShare href={href} />
             </Grid>
         </Grid>
