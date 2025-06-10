@@ -1,15 +1,12 @@
 import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
 import Button, { ButtonType } from "../Button";
-import { AletheiaModal } from "../Modal/AletheiaModal.style";
-import colors from "../../styles/colors";
 import { useState } from "react";
-import AletheiaButton from "../Button";
+import ForumAlertModal from "../Modal/ForumAlertModal";
 
 interface CTAButtonProps {
     type?: string;
     isLoggedIn?: boolean;
-    smallDevice?: boolean;
     mediumDevice?: boolean;
 }
 
@@ -54,55 +51,12 @@ const CTAButton: React.FC<CTAButtonProps> = ({
                 {!isLoggedIn ? t("home:createAccountButton") : t("home:forumButton")}
             </Button>
 
-            <AletheiaModal
-                open={isModalVisible}
-                onCancel={handleHideModal}
-                title={
-                    <h2
-                        style={{
-                            fontFamily: "open sans, sans-serif",
-                            fontWeight: 700,
-                            fontSize: 14,
-                            textAlign: "center",
-                            textTransform: "uppercase",
-                            padding: "0 34px"
-                        }}>
-                        {t("home:redirectTitle")}
-                    </h2>
-                }
-            >
-                <p
-                    style={{
-                        fontWeight: 600,
-                        width: "100%",
-                        textAlign: "center",
-                        color: colors.blackSecondary,
-                    }}
-                >
-                    {t("home:descriptionAlert")}
-                </p>
-
-                <div
-                    style={{
-                        marginTop: 24,
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}
-                >
-                    <AletheiaButton
-                        type={ButtonType.blue}
-                        onClick={handleHideModal}
-                        href={"https://forum.aletheiafact.org/"}
-                        target="_blank"
-                        data-cy={"testButtonTutorialOk"}
-                    >
-                        {t("tutorial:okButton")}
-                    </AletheiaButton>
-                </div>
-            </AletheiaModal>
+            {isModalVisible && (
+                <ForumAlertModal open={isModalVisible} onCancel={handleHideModal} />
+            )
+            }
         </>
-    );
-};
+    )
+}
 
 export default CTAButton;
