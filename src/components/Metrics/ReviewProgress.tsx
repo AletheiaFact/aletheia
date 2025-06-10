@@ -75,9 +75,6 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                             style={{
                                 fontSize: statsProps.size === 30 ? "10px" : "14px",
                                 position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
                             }}
                         >
                             {review.count}

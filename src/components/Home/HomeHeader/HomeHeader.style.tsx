@@ -10,7 +10,7 @@ const HomeHeaderStyle = styled(Grid)`
     padding: 64px 0;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 32px;
+    gap: 1px;
 
     .home-header-content {
         display: flex;
