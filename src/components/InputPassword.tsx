@@ -9,6 +9,7 @@ const StyledTextField = styled(TextField)`
         props.white ? colors.white : colors.lightNeutral};
     box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
+    width: 100%;
 
     & .MuiOutlinedInput-root {
         border-radius: 4px;
