@@ -40,7 +40,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
             <form onSubmit={handleSubmit(onFinish, onFinishFailed)}>
                 <Grid container>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:nameLabel") + " :"}
                         />
                     </Grid>
@@ -48,7 +49,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <Input
                             data-cy="nameInputCreateAccount"
                             {...register("nameDescription", {
-                                required: true
+                                required: true,
                             })}
                         />
                         <TextError
@@ -57,7 +58,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:emailLabel") + " :"}
                         />
                     </Grid>
@@ -66,7 +68,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             data-cy="emailInputCreateAccount"
                             {...register("email", {
                                 required: true,
-                                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+                                pattern:
+                                    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                             })}
                         />
                         <TextError
@@ -79,7 +82,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:passwordLabel") + " :"}
                         />
                     </Grid>
@@ -87,7 +91,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <InputPassword
                             data-cy="passwordInputCreateAccount"
                             {...register("password", {
-                                required: true
+                                required: true,
                             })}
                         />
                         <TextError
@@ -96,7 +100,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:repeatPasswordLabel") + " :"}
                         />
                     </Grid>
@@ -105,8 +110,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             data-cy="repeatedPasswordInputCreateAccount"
                             {...register("repeatedPassword", {
                                 required: true,
-                                validate: (value) =>
-                                    value === senha
+                                validate: (value) => value === senha,
                             })}
                         />
                         <TextError
@@ -114,7 +118,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             children={
                                 errors.repeatedPassword?.type === "required"
                                     ? t("common:requiredFieldError")
-                                    : t("profile:passwordMatchErrorMessage")}
+                                    : t("profile:passwordMatchErrorMessage")
+                            }
                         />
                     </Grid>
                 </Grid>

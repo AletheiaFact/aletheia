@@ -1,0 +1,144 @@
+version: "3"
+services:
+  sqlite:
+    image: busybox
+    volumes:
+      - hydra-sqlite:/mnt/sqlite
+    command: "chmod -R 777 /mnt/sqlite"
+  mongodb:
+    container_name: mongodb
+    image: mongo:6.0.17
+    restart: unless-stopped
+    volumes:
+      - ${DATA_PATH}/mongodb:/data:delegated
+      - ${DATA_PATH}/mongodb/db:/data/db:delegated
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+  localstack:
+    container_name: aletheia-localstack
+    image: localstack/localstack:3.7.2
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559" # external service port range
+      - "127.0.0.1:4566:4566" # LocalStack Edge Proxy
+    environment:
+      - SERVICES=s3,iam
+      - DEBUG=1
+      - DATA_DIR=${DATA_DIR:-/data/localstack}
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${DATA_DIR:-/data/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  kratos-migrate:
+    image: oryd/kratos:v0.13.0
+    environment:
+      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
+    volumes:
+      - type: volume
+        source: kratos-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - intranet
+  kratos-selfservice-ui-node:
+    image: oryd/kratos-selfservice-ui-node:v0.13.0
+    ports:
+      - "4455:4455"
+    environment:
+      - PORT=4455
+      - SECURITY_MODE=
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+    networks:
+      - intranet
+    restart: on-failure
+  kratos:
+    depends_on:
+      - kratos-migrate
+    image: oryd/kratos:v0.13.0
+    ports:
+      - "4433:4433" # public
+      - "4434:4434" # admin
+    restart: unless-stopped
+    environment:
+      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
+      - LOG_LEVEL=trace
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    volumes:
+      - type: volume
+        source: kratos-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/kratos
+    networks:
+      - intranet
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - "4436:4436"
+      - "4437:4437"
+    networks:
+      - intranet
+  hydra:
+    image: oryd/hydra:v2.3.0
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile-local-build
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command: serve -c /etc/config/hydra/hydra.yml all --dev
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/hydra
+    pull_policy: missing
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+      - sqlite
+    networks:
+      - intranet
+  hydra-migrate:
+    image: oryd/hydra:v2.3.0
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile-local-build
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    command: migrate -c /etc/config/hydra/hydra.yml sql up -e --yes
+    pull_policy: missing
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./ory_config
+        target: /etc/config/hydra
+    restart: on-failure
+    networks:
+      - intranet
+    depends_on:
+      - sqlite
+  consent:
+    environment:
+      - HYDRA_ADMIN_URL=http://hydra:4445
+    image: oryd/hydra-login-consent-node:v2.3.0
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - intranet
+networks:
+  intranet:
+volumes:
+  kratos-sqlite:
+  hydra-sqlite:

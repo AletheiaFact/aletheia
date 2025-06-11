@@ -13,7 +13,8 @@ export default class OryService {
             this.configService.get("ory");
         this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
-        this.app_affiliation = this.configService.get<string>("app_affiliation");
+        this.app_affiliation =
+            this.configService.get<string>("app_affiliation");
     }
 
     async updateIdentity(
@@ -30,6 +31,7 @@ export default class OryService {
                   },
               }
             : {};
+
         return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
             body: JSON.stringify({
@@ -95,9 +97,16 @@ export default class OryService {
         });
     }
 
-    async createIdentity(user, password, traits?: { role?: any }): Promise<any> {
+    async createIdentity(
+        user,
+        password,
+        traits?: { role?: any }
+    ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
+        const app_affiliation =
+            this.configService.get<string>("app_affiliation");
+        console.log("app_affiliation", app_affiliation);
 
         return fetch(`${this.adminUrl}/identities`, {
             method: "post",
