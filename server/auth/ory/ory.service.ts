@@ -31,7 +31,6 @@ export default class OryService {
                   },
               }
             : {};
-        console.log(JSON.stringify(traits), "traits");
 
         return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
