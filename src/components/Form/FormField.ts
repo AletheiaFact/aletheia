@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Node } from "@remirror/pm/model";
 import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
@@ -103,6 +104,10 @@ const validateSchema = (
 const fieldValidation = (value, validationFunction) => {
     if (value?._isAMomentObject) {
         return true;
+    }
+
+    if (dayjs.isDayjs(value)) {
+        return dayjs(value).isValid() && dayjs(value).isBefore(dayjs());
     }
 
     if (value instanceof Node) {
