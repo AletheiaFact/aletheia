@@ -66,7 +66,7 @@ function CTARegistration() {
                     >
                         {t("CTARegistration:footer")}
                     </p>
-                    <CTAButton isLoggedIn={false} type={ButtonType.white} />
+                    <CTAButton isLoggedIn={isLoggedIn} type={ButtonType.white} />
                 </>
             ) : (
                 <>
@@ -106,7 +106,7 @@ function CTARegistration() {
                     >
                         {t("home:forumDescription")}
                     </p>
-                    <CTAButton isLoggedIn={true} type={ButtonType.white} />
+                    <CTAButton isLoggedIn={isLoggedIn} type={ButtonType.white} />
                 </>
             )}
 
