@@ -53,7 +53,7 @@ function ForumAlertModal({ open, onCancel }: ForumAlertModalProps) {
                     onClick={onCancel}
                     href={"https://forum.aletheiafact.org/"}
                     target="_blank"
-                    data-cy={"testButtonTutorialOk"}
+                    data-cy={"testAlertModalButton"}
                 >
                     {t("tutorial:okButton")}
                 </AletheiaButton>
