@@ -22,10 +22,11 @@ const CTAButton: React.FC<CTAButtonProps> = ({
     };
 
     const handleClick = () => {
-        trackUmamiEvent("cta-registration-button", "registration");
-
         if (isLoggedIn) {
             setIsModalVisible(true);
+            trackUmamiEvent("cta-forum-button", "forum");
+        } else {
+            trackUmamiEvent("cta-signup-button", "registration");
         }
     };
 
@@ -36,6 +37,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
                 type={ButtonType.white}
                 href={!isLoggedIn ? "/sign-up" : undefined}
                 className="CTA-registration-button"
+                data-cy={"testCTAButton"}
                 style={{
                     display: "flex",
                     alignItems: "center",
