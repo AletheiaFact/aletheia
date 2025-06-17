@@ -42,9 +42,16 @@ const LocalConfigSchema = z.object({
         donateButton: z.object({
             show: z.boolean(),
         }),
+        ctaButton: z.object({
+            show: z.boolean(),
+        }),
     }),
     home: z.object({
         affixCTA: z.boolean(),
+        folderRedirectForum: z.object({
+            show: z.boolean(),
+            ctaButton: z.boolean(),
+        }),
     }),
 });
 
