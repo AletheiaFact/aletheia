@@ -86,6 +86,12 @@ export class NameSpaceController {
     }
 
     @ApiTags("name-space")
+    @Get("api/name-space/")
+    async findAll() {
+        return await this.nameSpaceService.findAll();
+    }
+
+    @ApiTags("name-space")
     @Get("admin/name-spaces")
     public async adminNameSpaces(@Req() req: Request, @Res() res: Response) {
         const nameSpaces = await this.nameSpaceService.listAll();
