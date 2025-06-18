@@ -17,6 +17,10 @@ export class NameSpaceService {
         return this.NameSpaceModel.find().populate("users");
     }
 
+    async findAll(): Promise<NameSpace[]> {
+        return this.NameSpaceModel.find().exec();
+    }
+
     async create(nameSpace) {
         const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
 
