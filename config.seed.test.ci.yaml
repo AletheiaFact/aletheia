@@ -16,6 +16,8 @@ services:
           password: {env(CI_ORY_USER_PASSWORD)}
           sendAuthDetails: false
           isTestUser: true
+          # If running locally and the seed fails, 
+          # check the user's oryId at the link below. http://localhost:4434/admin/identities
           # oryId: {env(CI_ORY_USERID)}
           role: {
             main: super-admin
