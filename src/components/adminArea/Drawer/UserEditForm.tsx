@@ -39,21 +39,17 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 const namespaces = await NameSpacesApi.getNameSpaces();
                 setOptions(namespaces);
 
-                const userNamespaceKeys = Object.keys(currentUser?.role || {});
+                const userNamespaceKeys = Object.keys(currentUser?.role ?? {});
                 const selected = namespaces.filter((ns) =>
                     userNamespaceKeys.includes(ns.slug)
                 );
                 setSelectedNamespaces(selected);
-
             } catch (err) {
-                console.error("Erro ao buscar namespaces:", err);
+                console.error(err);
             }
         };
-        if (currentUser?.role) {
-            fetchNamespaces();
-        }
-    }, [currentUser]);
-
+        fetchNamespaces();
+    }, [setOptions, currentUser?.role]);
 
     useEffect(() => {
         // this was necessery because the select was not recognizing the
@@ -84,9 +80,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             });
 
             selectedSlugs.forEach((slug) => {
-                if (!updatedRole[slug]) {
-                    updatedRole[slug] = Roles.Regular;
-                }
+                updatedRole[slug] ??= Roles.Regular;
             });
 
             await userApi.update(
@@ -118,6 +112,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 />
             </Grid>
             <Grid item xs={10} mt={2}>
+                <Label>{t("menu:nameSpaceItem")}</Label>
                 <Autocomplete
                     disabled={!shouldEdit}
                     multiple
