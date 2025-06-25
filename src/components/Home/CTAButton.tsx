@@ -8,11 +8,13 @@ interface CTAButtonProps {
     type?: string;
     isLoggedIn?: boolean;
     mediumDevice?: boolean;
+    location?: "header" | "folder";
 }
 
 const CTAButton: React.FC<CTAButtonProps> = ({
     isLoggedIn,
     mediumDevice = false,
+    location,
 }) => {
     const { t } = useTranslation();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,10 +25,18 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
     const handleClick = () => {
         if (isLoggedIn) {
+            const eventName = location === "header"
+                ? "cta-header-forum-button"
+                : "cta-folder-forum-button";
+
             setIsModalVisible(true);
-            trackUmamiEvent("cta-forum-button", "forum");
+            trackUmamiEvent(eventName, "forum");
         } else {
-            trackUmamiEvent("cta-signup-button", "registration");
+            const eventName = location === "header"
+                ? "cta-header-registration-button"
+                : "cta-registration-button";
+
+            trackUmamiEvent(eventName, "registration");
         }
     };
 
