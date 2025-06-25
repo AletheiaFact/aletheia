@@ -86,9 +86,11 @@ export class NameSpaceController {
     }
 
     @ApiTags("name-space")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     @Get("api/name-space/")
     async findAll() {
-        return await this.nameSpaceService.findAll();
+        return await this.nameSpaceService.listAll();
     }
 
     @ApiTags("name-space")
