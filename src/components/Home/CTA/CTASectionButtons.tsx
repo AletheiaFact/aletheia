@@ -30,6 +30,7 @@ const CTASectionButtons = () => {
                 <Grid item xs={6}>
                     {localConfig.header.ctaButton.show && (
                         <CTAButton
+                            location="header"
                             isLoggedIn={isLoggedIn}
                             mediumDevice={mediumDevice}
                         />
