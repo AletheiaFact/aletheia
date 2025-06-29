@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps }) {
                         async
                         defer
                         data-website-id={umamiConfig?.UMAMI_SITE_ID}
-                        src="https://analytics.aletheiafact.org/umami.js"
+                        src="https://analytics.aletheiafact.org/script.js"
                     ></script>
                 )}
             </Head>
