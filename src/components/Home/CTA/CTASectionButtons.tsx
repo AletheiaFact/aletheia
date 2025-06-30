@@ -9,7 +9,6 @@ import localConfig from "../../../../config/localConfig";
 import CTAButton from "../CTAButton";
 
 const CTASectionButtons = () => {
-    const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
