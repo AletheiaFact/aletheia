@@ -11,7 +11,7 @@ import {
     reportSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
-import CTARegistration from "../Home/CTARegistration";
+import CTARegistration from "../Home/CTAFolder";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
 import {

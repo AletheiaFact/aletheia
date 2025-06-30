@@ -1,5 +1,5 @@
 import React from "react";
-import CTARegistration from "./CTARegistration";
+import CTARegistration from "./CTAFolder";
 import { Grid } from "@mui/material"
 import SocialMediaShare from "../SocialMediaShare";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";

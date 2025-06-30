@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import CTARegistrationStyle from "./CTARegistration.style";
+import CTAFolderStyle from "./CTAFolder.style";
 import colors from "../../styles/colors";
 import CTAButton from "./CTAButton";
 import { ButtonType } from "../Button";
@@ -10,14 +10,14 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import localConfig from "../../../config/localConfig";
 
-function CTARegistration() {
+function CTAFolder() {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
         localConfig.home.folderRedirectForum && (
-            <CTARegistrationStyle
+            <CTAFolderStyle
                 style={{
                     backgroundColor:
                         nameSpace === NameSpaceEnum.Main
@@ -70,10 +70,10 @@ function CTARegistration() {
                     <CTAButton location="folder" isLoggedIn={isLoggedIn} type={ButtonType.white} />
                 }
 
-            </CTARegistrationStyle>
+            </CTAFolderStyle>
         )
     );
 }
 
 
-export default CTARegistration;
+export default CTAFolder;
