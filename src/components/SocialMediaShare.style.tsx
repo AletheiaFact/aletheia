@@ -5,10 +5,13 @@ const SocialMediaShareStyle = styled.div`
     margin-bottom: 32px;
     display: flex;
     border-radius: 0;
+    flex-direction: column;
 
     .social-media-container {
         margin-left: 32px;
         height: 39px;
+        margin: 0 auto;
+        margin-top: 16px;
     }
 
     .social-media-list {

@@ -1,6 +1,6 @@
 import React from "react";
 import colors from "../../styles/colors";
-import { Badge } from "antd";
+import { Badge } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AletheiaButton from "../Button";
 
@@ -11,9 +11,9 @@ const NotificationIcon = ({ unseenCount }) => {
             data-cy="testNotificationIcon"
         >
             <Badge
-                style={{ boxShadow: "none" }}
-                size="small"
-                count={unseenCount}
+                color="error"
+                overlap="circular"
+                badgeContent={unseenCount}
             >
                 <NotificationsIcon
                     style={{ color: colors.white, cursor: "pointer" }}

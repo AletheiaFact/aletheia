@@ -16,7 +16,6 @@ env:
     ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
     CI_ORY_USERID: ${{ secrets.CI_ORY_USERID }}
     CI_ORY_USER_PASSWORD: ${{ secrets.CI_ORY_USER_PASSWORD }}
-    CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
     TEST_RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
     TEST_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
     NEXT_PUBLIC_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
@@ -77,6 +76,7 @@ jobs:
             - run: yarn test
               env:
                   NODE_OPTIONS: "--max_old_space_size=4096"
+                  CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
             # sonarcloud:
             #   runs-on: ubuntu-latest
             #   strategy:
@@ -88,6 +88,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     cypress-run:
         needs: build
         runs-on: ubuntu-22.04
@@ -110,6 +111,7 @@ jobs:
                   wait-on: "http://localhost:3000"
               env:
                   CI: true
+                  CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
     cypress-run-component:
         needs: build
         runs-on: ubuntu-22.04
@@ -129,3 +131,45 @@ jobs:
               run: yarn cypress run --component
               env:
                   CI: true
+
+    cypress-run-ferretdb:
+        needs: build
+        runs-on: ubuntu-22.04
+        services:
+            postgres:
+                image: ghcr.io/ferretdb/postgres-documentdb:17-0.102.0-ferretdb-2.1.0
+                env:
+                    POSTGRES_USER: ferretdb
+                    POSTGRES_PASSWORD: ferretdb
+                    POSTGRES_DB: postgres
+                ports:
+                    - 5432:5432
+
+            ferretdb:
+                image: ghcr.io/ferretdb/ferretdb:2.1.0
+                env:
+                    FERRETDB_HANDLER: postgresql
+                    FERRETDB_POSTGRESQL_URL: postgres://ferretdb:ferretdb@postgres:5432/postgres
+                    # FERRETDB_AUTH: false
+                ports:
+                    - 27018:27017
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - uses: actions/download-artifact@v4
+              with:
+                  name: aletheia-dist
+                  path: dist
+            - run: |
+                  echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
+                  yarn install
+            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - run: yarn build
+            - name: Cypress run with FerretDB
+              uses: cypress-io/github-action@v6
+              with:
+                  start: yarn test:e2e:cy-ferretdb
+                  wait-on: "http://localhost:3000"
+              env:
+                  CI: true
+                  CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"

@@ -5,10 +5,13 @@ import {
     PopoverNotificationCenter,
 } from "@novu/notification-center";
 import NotificationCard from "../Notification/NotificationCard";
-import { Empty } from "antd";
 import Cookies from "js-cookie";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsApi from "../../api/notificationsApi";
+import { SvgIcon } from "@mui/material";
+import { NotificationsOff } from "@mui/icons-material";
+import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 
 const notificationStyles: INotificationCenterStyles = {
     popover: {
@@ -38,6 +41,7 @@ const NotificationMenu = ({ hasSession, user }) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         NotificationsApi.getTokens(user?._id).then(
@@ -78,10 +82,27 @@ const NotificationMenu = ({ hasSession, user }) => {
                     )}
                     footer={() => <></>}
                     emptyState={
-                        <Empty
-                            style={{ marginTop: "100px" }}
-                            description={false}
-                        />
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                marginTop: "100px",
+                            }}
+                        >
+                            <SvgIcon
+                                component={NotificationsOff}
+                                sx={{ fontSize: 50, color: colors.neutralSecondary }}
+                            />
+                            <p
+                                style={{
+                                    color: colors.neutralSecondary,
+                                    marginTop: "16px"
+                                }}
+                            >
+                                {t("notification:noNotification")}
+                            </p>
+                        </div>
                     }
                 >
                     {({ unseenCount }) => (

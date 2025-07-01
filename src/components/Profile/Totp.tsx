@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element  */
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
-import { Form } from "antd";
+import { useForm } from "react-hook-form";
+import Label from "../Label";
 import { MessageManager } from "../Messages";
 import { Grid, Typography } from "@mui/material"
 import { Trans, useTranslation } from "next-i18next";
@@ -13,6 +14,7 @@ import { useRouter } from "next/router";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
+import TextError from "../TextErrorForm";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
@@ -21,6 +23,11 @@ export const Totp = ({ flow, setFlow }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
     let flowValues: ValuesType = {
         csrf_token: "",
@@ -114,13 +121,16 @@ export const Totp = ({ flow, setFlow }) => {
     return (
         <>
             <Grid container>
-                <Typography variant="h4" fontSize={20} fontWeight={600}>
+                <Typography variant="h4" className="subtitle">
                     {t("profile:totpSectionTittle")}
                 </Typography>
             </Grid>
             {showForm && (
-                <Form onFinish={onFinish} style={{ marginBottom: "20px" }}>
-                    <Form.Item>
+                <form
+                    onSubmit={handleSubmit(onFinish)}
+                    style={{ marginBottom: "20px" }}
+                >
+                    <Grid item xs={12} style={{ marginBottom: "20px" }}>
                         <p>
                             <Trans
                                 i18nKey={"profile:totpSectionDescription"}
@@ -173,23 +183,23 @@ export const Totp = ({ flow, setFlow }) => {
                         >
                             {textSource}
                         </code>
-                    </Form.Item>
-                    <Form.Item
-                        name="totp"
-                        label={t("profile:totpInputTittle")}
-                        wrapperCol={{ sm: 24 }}
-                        style={{
-                            width: "100%",
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: t("common:requiredFieldError"),
-                            },
-                        ]}
-                    >
-                        <InputPassword />
-                    </Form.Item>
+                    </Grid>
+                    <Grid item style={{ marginBottom: "20px" }}>
+                        <Label required>
+                            {t("profile:totpInputTittle")}
+                        </Label>
+                        <Grid item xs={7} sm={5} md={4} lg={3}>
+                            <InputPassword
+                                {...register("totp", {
+                                    required: true
+                                })}
+                            />
+                            <TextError
+                                stateError={errors.totp}
+                                children={t("common:requiredFieldError")}
+                            />
+                        </Grid>
+                    </Grid>
                     <AletheiaButton
                         type={ButtonType.blue}
                         htmlType="submit"
@@ -197,10 +207,12 @@ export const Totp = ({ flow, setFlow }) => {
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
-                </Form>
+                </form >
             )}
             {!showForm && (
-                <Form onFinish={onFinishUnlink}>
+                <form
+                    onSubmit={handleSubmit(onFinishUnlink)}
+                >
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"
@@ -229,7 +241,7 @@ export const Totp = ({ flow, setFlow }) => {
                             {t("profile:totpUnLinkSubmit")}
                         </Typography>
                     </AletheiaButton>
-                </Form>
+                </form>
             )}
         </>
     );

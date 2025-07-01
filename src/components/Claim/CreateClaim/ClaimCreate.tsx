@@ -1,34 +1,12 @@
-import React, { useState } from "react";
-import { Form } from "antd";
-import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-
-import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
-import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import TextArea from "../../TextArea";
 import BaseClaimForm from "./BaseClaimForm";
+import { FormControl, FormHelperText } from "@mui/material";
+import { useBaseClaimForm } from "./UseBaseClaimForm";
 
 const ClaimCreate = () => {
-    const { t } = useTranslation();
-    const router = useRouter();
-    const [content, setContent] = useState("");
-    const [_, send] = useAtom(createClaimMachineAtom);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleSubmit = (values) => {
-        if (!isLoading) {
-            setIsLoading(true);
-            const claim = { ...values, content };
-            send({
-                type: CreateClaimEvents.persist,
-                claimData: claim,
-                t,
-                router,
-            });
-            setIsLoading(false);
-        }
-    };
+    const {
+        t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError
+    } = useBaseClaimForm();
 
     return (
         <BaseClaimForm
@@ -37,32 +15,44 @@ const ClaimCreate = () => {
             isLoading={isLoading}
             disclaimer={t("claimForm:disclaimer")}
             dateExtraText={t("claimForm:dateFieldHelp")}
+            errors={errors}
+            clearError={clearError}
+            recaptcha={recaptcha}
+            setRecaptcha={setRecaptcha}
+            setTitle={setTitle}
+            date={date}
+            setDate={setDate}
+            setSources={setSources}
+            title={title}
+            sources={sources}
             content={
-                <Form.Item
-                    name="content"
-                    label={t("claimForm:contentField")}
-                    rules={[
-                        {
-                            required: true,
-                            whitespace: true,
-                            message: t("claimForm:contentFieldError"),
-                        },
-                    ]}
-                    extra={t("claimForm:contentFieldHelp")}
-                    wrapperCol={{ sm: 24 }}
+                <FormControl
                     style={{
                         width: "100%",
-                        marginBottom: "24px",
+                        marginTop: "24px",
                     }}
                 >
+                    <div className="root-label">
+                        <span className="require-label">*</span>
+                        <p className="form-label">{t("claimForm:contentField")}</p>
+                    </div>
                     <TextArea
-                        rows={4}
+                        multiline
                         value={content || ""}
-                        onChange={(e) => setContent(e.target.value)}
+                        onChange={(e) => {
+                            setContent(e.target.value);
+                            clearError("content");
+                        }}
                         placeholder={t("claimForm:contentFieldPlaceholder")}
                         data-cy={"testContentClaim"}
                     />
-                </Form.Item>
+                    {errors.content && (
+                        <FormHelperText className="require-label">
+                            {errors.content}
+                        </FormHelperText>
+                    )}
+                    <p className="extra-label">{t("claimForm:contentFieldHelp")}</p>
+                </FormControl>
             }
         />
     );

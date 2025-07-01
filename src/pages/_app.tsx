@@ -1,7 +1,6 @@
 import React from "react";
 import Head from "next/head";
 import "../styles/app.css";
-import "antd/dist/antd.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
 import { GlobalMessage } from "../components/Messages";
@@ -58,7 +57,7 @@ function MyApp({ Component, pageProps }) {
                         async
                         defer
                         data-website-id={umamiConfig?.UMAMI_SITE_ID}
-                        src="https://analytics.aletheiafact.org/umami.js"
+                        src="https://analytics.aletheiafact.org/script.js"
                     ></script>
                 )}
             </Head>

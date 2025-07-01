@@ -6,18 +6,20 @@ import { Roles } from "../../auth/ability/ability.factory";
 export default class OryService {
     private adminUrl: string;
     private url: string;
+    private app_affiliation: string;
 
     constructor(private configService: ConfigService) {
         const { admin_url, admin_endpoint, url } =
             this.configService.get("ory");
         this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
+        this.app_affiliation = this.configService.get<string>("app_affiliation");
     }
 
     async updateIdentity(
         user,
         password,
-        traits?: { role?: any; app_affiliation?: string }
+        traits?: { role?: any }
     ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
@@ -35,6 +37,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
+                    app_affiliation: this.app_affiliation,
                     ...traits,
                 },
                 credentials,
@@ -92,11 +95,9 @@ export default class OryService {
         });
     }
 
-    async createIdentity(user, password, role?): Promise<any> {
+    async createIdentity(user, password, traits?: { role?: any }): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
-        const app_affiliation =
-            this.configService.get<string>("app_affiliation");
 
         return fetch(`${this.adminUrl}/identities`, {
             method: "post",
@@ -105,8 +106,8 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    app_affiliation,
-                    role: role || { main: Roles.Regular },
+                    app_affiliation: this.app_affiliation,
+                    role: traits?.role || { main: Roles.Regular },
                 },
                 credentials: {
                     password: {

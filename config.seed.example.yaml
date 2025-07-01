@@ -1,6 +1,7 @@
 services:
   - name: service-aletheia
     conf:
+      app_affiliation: aletheia
       web_url: https://test.aletheiafact.org
       smtp_host: {env(SMTP_CLIENT_HOST)}
       smtp_port: {env(SMTP_CLIENT_PORT)}
@@ -8,6 +9,7 @@ services:
       smtp_email_user: {env(SMTP_EMAIL_USER)}
       db:
         connection_uri: MONGODB_URI
+        type: mongodb
         options:
           useUnifiedTopology: true
           useNewUrlParser: true

@@ -1,5 +1,5 @@
 import React from "react";
-import { Rate } from "antd";
+import { Rating } from "@mui/material";
 import colors from "../../styles/colors";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "react-i18next";
@@ -31,7 +31,7 @@ const CopilotFeedback = ({ setShowButtons }) => {
             <span style={{ fontSize: 12 }}>
                 {t("copilotChatBot:rateQuestion")}
             </span>
-            <Rate
+            <Rating
                 style={{ fontSize: 24, width: "fit-content" }}
                 value={0}
                 onChange={handleChange}
