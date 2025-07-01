@@ -17,6 +17,10 @@ export class NameSpaceService {
         return this.NameSpaceModel.find().populate("users");
     }
 
+    findBySlugs(slugs: string[]) {
+        return this.NameSpaceModel.find({ slug: { $in: slugs } }).exec();
+    }
+
     async create(nameSpace) {
         const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
 
