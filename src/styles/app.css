@@ -127,6 +127,11 @@ h4,
 h5,
 h6 {
     font-family: "Noticia Text", serif;
+    font-weight: 500;
+}
+
+a {
+    text-decoration: none;
 }
 
 
