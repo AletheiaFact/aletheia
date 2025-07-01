@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import CTARegistration from '../../components/Home/CTARegistration';
+import CTARegistration from '../../components/Home/CTAFolder';
 
 export default {
     title: 'Components/CTARegistration',
