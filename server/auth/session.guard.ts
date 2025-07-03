@@ -4,7 +4,7 @@ import { Roles } from "./ability/ability.factory";
 import { Logger } from "@nestjs/common";
 import { BaseGuard } from "./base.guard";
 import { Reflector } from "@nestjs/core";
-import { UsersService } from "users/users.service";
+import { UsersService } from "../../server/users/users.service";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
