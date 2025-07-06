@@ -5,6 +5,7 @@ import {
     Req,
     Header,
     Query,
+    Param,
 } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { parse } from "url";
@@ -16,7 +17,7 @@ import { ApiTags } from "@nestjs/swagger";
 export class ViewController {
     constructor(
         private viewService: ViewService,
-    ) {}
+    ) { }
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -35,6 +36,21 @@ export class ViewController {
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         await this.viewService.render(req, res, "/about-page", parsedUrl.query);
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("about/:person")
+    @Header("Cache-Control", "max-age=86400")
+    public async showPersonAboutPage(
+        @Param("person") person: string,
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        // For now, redirect to the main about page
+        // In the future, this will render person-specific about pages
+        // The person parameter will be used to fetch specific person data
+        res.redirect(302, "/about");
     }
 
     @IsPublic()
