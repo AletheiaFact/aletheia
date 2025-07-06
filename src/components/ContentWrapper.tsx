@@ -8,7 +8,6 @@ const ContentWrapper = ({ children }) => {
     // TODO: we can remove this when we have desktop layout for all the pages
     const desktopUnReadyPages = [
         "404-page",
-        "about-page",
         "access-denied-page",
         "code-of-conduct",
         "privacy-policy",
