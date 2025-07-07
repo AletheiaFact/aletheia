@@ -1,5 +1,5 @@
 import React from "react";
-import CTARegistration from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder";
 import { Grid } from "@mui/material";
 import SentenceReportComments from "./SentenceReportComments";
 import SentenceReportContent from "./SentenceReportContent";
@@ -22,7 +22,7 @@ const SentenceReportPreview = ({
                 href={href}
             />
 
-            <CTARegistration />
+            <CTAFolder />
         </Grid>
     );
 };

@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "./PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
-import CTARegistration from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 
@@ -41,7 +41,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 )}
 
                 <Grid container id="create_account">
-                    <CTARegistration />
+                    <CTAFolder />
                 </Grid>
 
                 <SocialMediaShare href={href} />

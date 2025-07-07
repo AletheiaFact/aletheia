@@ -1,5 +1,5 @@
 import React from "react";
-import CTARegistration from "./CTAFolder";
+import CTAFolder from "./CTAFolder";
 import { Grid } from "@mui/material"
 import SocialMediaShare from "../SocialMediaShare";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
@@ -62,7 +62,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
 
 
                 <Grid item xs={12} lg={9} order={3}>
-                    <CTARegistration />
+                    <CTAFolder />
                 </Grid>
 
                 <Grid item xs={12} order={4}>

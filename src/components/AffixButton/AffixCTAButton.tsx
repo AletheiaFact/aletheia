@@ -108,7 +108,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                                 padding: "0 30px",
                             }}
                         >
-                            {t("NewCTARegistration:body")}
+                            {t("NewCTAFolder:body")}
                         </h2>
                     </div>
                 }

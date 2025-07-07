@@ -40,7 +40,7 @@ function CTAFolder() {
                         marginBottom: 0,
                     }}
                 >
-                    {!isLoggedIn ? t("CTARegistration:title") : t("home:visitForum")}
+                    {!isLoggedIn ? t("CTAFolder:title") : t("home:visitForum")}
                 </p>
                 <p
                     style={{
@@ -52,7 +52,7 @@ function CTAFolder() {
                         margin: "32px 0 13px 0",
                     }}
                 >
-                    {!isLoggedIn ? t("CTARegistration:body") : t("home:forumTitle")}
+                    {!isLoggedIn ? t("CTAFolder:body") : t("home:forumTitle")}
                 </p>
                 <p
                     style={{
@@ -64,10 +64,14 @@ function CTAFolder() {
                         marginBottom: "32px",
                     }}
                 >
-                    {!isLoggedIn ? t("CTARegistration:footer") : t("home:forumDescription")}
+                    {!isLoggedIn ? t("CTAFolder:footer") : t("home:forumDescription")}
                 </p>
                 {localConfig.home.folderRedirectForum.ctaButton &&
-                    <CTAButton location="folder" isLoggedIn={isLoggedIn} type={ButtonType.white} />
+                    <CTAButton
+                        location="folder"
+                        isLoggedIn={isLoggedIn}
+                        type={ButtonType.white}
+                        textWhenLoggedOut={t("CTAFolder:button")} />
                 }
 
             </CTAFolderStyle>
