@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Star, ArrowUpward as ArrowForward } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 
 export default function AwardsSection() {
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export default function AwardsSection() {
               component="a"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackUmamiEvent("about-awards-learn-wsis", "external_link")}
             >
               {t("about:learnAboutWSIS")}
             </Button>
@@ -66,6 +68,7 @@ export default function AwardsSection() {
               component="a"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackUmamiEvent("about-awards-view-nomination", "external_link")}
             >
               {t("about:viewNomination")}
             </Button>

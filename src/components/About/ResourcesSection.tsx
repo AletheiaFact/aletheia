@@ -17,6 +17,7 @@ import {
   Language,
 } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 
 export default function ResourcesSection() {
   const theme = useTheme();
@@ -95,6 +96,11 @@ export default function ResourcesSection() {
                   component="a"
                   target={index === 2 ? "_blank" : undefined}
                   rel={index === 2 ? "noopener noreferrer" : undefined}
+                  onClick={() => {
+                    const eventNames = ["about-download-methodology", "about-download-toolkit", "about-access-docs"];
+                    const eventGroups = ["download", "download", "navigation"];
+                    trackUmamiEvent(eventNames[index], eventGroups[index]);
+                  }}
                 >
                   {index === 0 ? t("about:downloadPDF") : index === 1 ? t("about:downloadKit") : t("about:accessDocs")}
                 </Button>

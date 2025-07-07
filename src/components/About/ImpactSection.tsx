@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Download } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 
 export default function ImpactSection() {
   const { t } = useTranslation();
@@ -81,6 +82,7 @@ export default function ImpactSection() {
             href="/supportive-materials"
             component="a"
             target="_blank"
+            onClick={() => trackUmamiEvent("about-impact-download-reports", "download")}
           >
             {t("about:downloadReports")}
           </Button>

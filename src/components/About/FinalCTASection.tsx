@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { ArrowUpward as ArrowForward } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 
 export default function FinalCTASection() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export default function FinalCTASection() {
             sx={{ bgcolor: "white", color: "primary.main", "&:hover": { bgcolor: "grey.100" } }}
             href="/"
             component="a"
+            onClick={() => trackUmamiEvent("about-final-cta-access-platform", "navigation")}
           >
             {t("about:accessPlatform")}
           </Button>
@@ -45,6 +47,7 @@ export default function FinalCTASection() {
             sx={{ borderColor: "white", color: "white", "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             href="mailto:contact@aletheiafact.org"
             component="a"
+            onClick={() => trackUmamiEvent("about-final-cta-get-training", "contact")}
           >
             {t("about:getTraining")}
           </Button>
