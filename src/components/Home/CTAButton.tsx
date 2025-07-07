@@ -5,16 +5,20 @@ import { useState } from "react";
 import ForumAlertModal from "../Modal/ForumAlertModal";
 
 interface CTAButtonProps {
-    type?: string;
+    type?: ButtonType;
     isLoggedIn?: boolean;
     mediumDevice?: boolean;
     location?: "header" | "folder";
+    textWhenLoggedOut?: string;
+    style?: React.CSSProperties;
 }
 
 const CTAButton: React.FC<CTAButtonProps> = ({
+    type,
     isLoggedIn,
     mediumDevice = false,
     location,
+    textWhenLoggedOut,
 }) => {
     const { t } = useTranslation();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,7 +48,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
         <>
             <Button
                 onClick={handleClick}
-                type={ButtonType.white}
+                type={type || ButtonType.white}
                 href={!isLoggedIn ? "/sign-up" : undefined}
                 className="CTA-registration-button"
                 data-cy={"testCTAButton"}
@@ -60,7 +64,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
                     fontSize: mediumDevice ? "12px" : "14px",
                 }}
             >
-                {!isLoggedIn ? t("home:createAccountButton") : t("home:forumButton")}
+                {!isLoggedIn ? textWhenLoggedOut || t("home:createAccountButton") : t("home:forumButton")}
             </Button>
 
             {isModalVisible && (

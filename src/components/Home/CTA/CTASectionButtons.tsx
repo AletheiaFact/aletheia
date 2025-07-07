@@ -2,11 +2,11 @@ import React from "react";
 import { Grid } from "@mui/material";
 import DonateButton from "../../Header/DonateButton";
 import { useAppSelector } from "../../../store/store";
-import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
 import localConfig from "../../../../config/localConfig";
 import CTAButton from "../CTAButton";
+import { ButtonType } from "../../Button";
 
 const CTASectionButtons = () => {
     const { vw } = useAppSelector((state) => state);
@@ -29,6 +29,7 @@ const CTASectionButtons = () => {
                 <Grid item xs={6}>
                     {localConfig.header.ctaButton.show && (
                         <CTAButton
+                            type={ButtonType.white}
                             location="header"
                             isLoggedIn={isLoggedIn}
                             mediumDevice={mediumDevice}
