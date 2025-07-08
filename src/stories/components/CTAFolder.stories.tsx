@@ -1,11 +1,11 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import CTAFolder from '../../components/Home/CTAFolder';
 
 export default {
     title: 'Components/CTAFolder',
     component: CTAFolder,
-} as ComponentMeta<typeof CTAFolder>;
+} as Meta<typeof CTAFolder>;
 
-export const Default: ComponentStory<typeof CTAFolder> = () => (
-    <CTAFolder />
-);
+export const Default: StoryObj<typeof CTAFolder> = {
+    render: () => <CTAFolder />,
+};
