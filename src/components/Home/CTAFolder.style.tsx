@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 
-const CTARegistrationStyle = styled.div`
+const CTAFolderStyle = styled.div`
     border-radius: 4px;
     padding: 32px;
     margin-bottom: 45px;
@@ -15,4 +15,4 @@ const CTARegistrationStyle = styled.div`
     }
 `;
 
-export default CTARegistrationStyle;
+export default CTAFolderStyle;
