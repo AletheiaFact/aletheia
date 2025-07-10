@@ -38,7 +38,8 @@ jobs:
                   yarn install
 
             - name: Build Static Website
-              run: |
+                run: |
+                  cp config/localConfig.example.ts config/localConfig.ts
                   yarn run build-storybook
                   npx compodoc -p tsconfig.json -d ./docs/compodoc
 
