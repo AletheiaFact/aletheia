@@ -8,8 +8,8 @@ import {
     Body,
 } from "@nestjs/common";
 import { AiTaskService } from "./ai-task.service";
-import { CreateAiTaskDto } from "./dto/create-ai-task.dto";
-import { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
+import type { CreateAiTaskDto } from "./dto/create-ai-task.dto";
+import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { AiTask } from "./schemas/ai-task.schema";
 
 @Controller("ai-tasks")
