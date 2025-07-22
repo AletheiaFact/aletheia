@@ -8,6 +8,7 @@ import {
     reviewNotStartedSelector,
     crossCheckingSelector,
     reviewDataSelector,
+    addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useAtom } from "jotai";
@@ -32,6 +33,10 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     const reviewData = useSelector(machineService, reviewDataSelector);
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
     const isReviewing = useSelector(machineService, reviewingSelector);
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
@@ -79,7 +84,10 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
             return alertTypes.hiddenReport;
         }
         if (!isPublished) {
-            if (isCrossChecking && (!userIsAdmin || !userHasPermission)) {
+            if (
+                (isCrossChecking || isAddCommentCrossChecking) &&
+                (!userIsAdmin || !userHasPermission)
+            ) {
                 return alertTypes.crossChecking;
             }
             if (isReviewing && (!userIsAdmin || !userHasPermission)) {
