@@ -9,6 +9,7 @@ import {
     publishedSelector,
     crossCheckingSelector,
     reportSelector,
+    addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
@@ -40,6 +41,10 @@ const SentenceReportView = ({
     const userIsAssignee = context.usersId.includes(userId);
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isPublished =
         useSelector(machineService, publishedSelector) ||
@@ -47,7 +52,8 @@ const SentenceReportView = ({
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
 
     const canShowClassificationAndCrossChecking =
-        (isCrossChecking && (userIsAdmin || userIsCrossChecker)) ||
+        ((isCrossChecking || isAddCommentCrossChecking) &&
+            (userIsAdmin || userIsCrossChecker)) ||
         (isReviewing && (userIsAdmin || userIsReviewer)) ||
         (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
 
@@ -58,10 +64,11 @@ const SentenceReportView = ({
     return (
         canShowReport &&
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
-            <Grid container
+            <Grid
+                container
                 justifyContent="center"
                 style={
-                    (isCrossChecking || isReport || isReviewing)
+                    isCrossChecking || isReport || isReviewing
                         ? { backgroundColor: colors.lightNeutral }
                         : undefined
                 }
