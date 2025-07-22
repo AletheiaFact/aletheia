@@ -5,6 +5,7 @@ import {
     reviewDataSelector,
     crossCheckingSelector,
     reportSelector,
+    addCommentCrossCheckingSelector,
 } from "../../../machines/reviewTask/selectors";
 
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -12,7 +13,7 @@ import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import colors from "../../../styles/colors";
 import {
     isUserLoggedIn,
@@ -43,6 +44,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
     const isReported = useSelector(machineService, reportSelector);
     const { comments } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -118,9 +123,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                !reviewData.usersId.includes(data.crossCheckerId)
+                  !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                !reviewData.usersId.includes(data.reviewerId);
+                  !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -207,7 +212,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         ) {
             return false;
         }
-        if (isCrossChecking) {
+        if (isCrossChecking || isAddCommentCrossChecking) {
             return userIsCrossChecker || userIsAdmin;
         }
         if (isReviewing) {
@@ -230,7 +235,11 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                     />
                     <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
-                            <Typography variant="body1" style={{ color: colors.error, fontSize: 16 }} data-cy="testReviewerError">
+                            <Typography
+                                variant="body1"
+                                style={{ color: colors.error, fontSize: 16 }}
+                                data-cy="testReviewerError"
+                            >
                                 {t("reviewTask:invalidReviewerMessage")}
                             </Typography>
                         )}
@@ -244,11 +253,12 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                 </>
             )}
             {showButtons && (
-                <Grid container
+                <Grid
+                    container
                     style={{
                         padding: "32px 0 0",
                         justifyContent: "space-evenly",
-                        gap: "10px"
+                        gap: "10px",
                     }}
                 >
                     {events?.map((event) => {

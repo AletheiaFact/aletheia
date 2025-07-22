@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -10,6 +10,7 @@ import {
     crossCheckingSelector,
     reportSelector,
     assignedSelector,
+    addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import { useAtom } from "jotai";
@@ -63,6 +64,10 @@ const SentenceReportPreviewView = ({
     } = useContext(ReviewTaskMachineContext);
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
     const isAssigned = useSelector(machineService, assignedSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isPublished =
@@ -73,7 +78,8 @@ const SentenceReportPreviewView = ({
     const userIsAssignee = context.usersId.includes(userId);
 
     const isCrossCheckingAndUserHasPermission =
-        isCrossChecking && (userIsAdmin || userIsCrossChecker);
+        (isCrossChecking || isAddCommentCrossChecking) &&
+        (userIsAdmin || userIsCrossChecker);
     const isReviewingAndUserHasPermission =
         isReviewing && (userIsAdmin || userIsReviewer);
     const isAssignedAndUserHasPermission =
@@ -91,10 +97,11 @@ const SentenceReportPreviewView = ({
 
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
-            <Grid container
+            <Grid
+                container
                 justifyContent="center"
                 style={
-                    (isCrossChecking || isReport || isReviewing)
+                    isCrossChecking || isReport || isReviewing
                         ? { backgroundColor: colors.error }
                         : undefined
                 }
@@ -113,7 +120,8 @@ const SentenceReportPreviewView = ({
                         onClose={handleClickViewPreview}
                         open={viewPreview}
                     >
-                        <Grid item
+                        <Grid
+                            item
                             style={{
                                 height: "100%",
                                 display: "flex",
