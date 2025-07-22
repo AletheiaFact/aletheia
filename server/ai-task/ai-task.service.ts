@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, FilterQuery } from "mongoose";
 import { AiTaskDocument, AiTaskName, AiTask } from "./schemas/ai-task.schema";
-import { CreateAiTaskDto } from "./dto/create-ai-task.dto";
-import { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
+import type { CreateAiTaskDto } from "./dto/create-ai-task.dto";
+import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispatcher.service";
 
 @Injectable()
