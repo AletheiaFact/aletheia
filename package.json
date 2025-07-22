@@ -273,7 +273,8 @@
         "braces": "3.0.3",
         "ws": "8.17.1",
         "prosemirror-model": "1.9.1",
-        "glob": "^9.0.0"
+        "glob": "^9.0.0",
+        "tldjs": "2.3.1"
     },
     "packageManager": "yarn@3.6.3"
 }
