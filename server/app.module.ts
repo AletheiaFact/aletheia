@@ -3,6 +3,7 @@ import {
     MiddlewareConsumer,
     Module,
     NestModule,
+    Scope,
 } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
@@ -172,6 +173,16 @@ export class AppModule implements NestModule {
                 {
                     provide: APP_GUARD,
                     useExisting: NameSpaceGuard,
+                },
+                {
+                    provide: APP_GUARD,
+                    useClass: SessionOrM2MGuard,
+                    scope: Scope.REQUEST,
+                },
+                {
+                    provide: APP_GUARD,
+                    useClass: NameSpaceGuard,
+                    scope: Scope.REQUEST,
                 },
                 NameSpaceGuard,
                 SessionOrM2MGuard,
