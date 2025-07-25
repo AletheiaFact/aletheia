@@ -47,12 +47,12 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     <Grid item xs={12} sm={9}>
                         <Input
                             data-cy="nameInputCreateAccount"
-                            {...register("nameDescription", {
+                            {...register("name", {
                                 required: true
                             })}
                         />
                         <TextError
-                            stateError={errors.nameDescription}
+                            stateError={errors.name}
                             children={t("login:nameErrorMessage")}
                         />
                     </Grid>
