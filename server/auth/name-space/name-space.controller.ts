@@ -5,6 +5,7 @@ import {
     Param,
     Post,
     Put,
+    Query,
     Req,
     Res,
     UseGuards,
@@ -89,8 +90,14 @@ export class NameSpaceController {
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     @Get("api/name-space/")
-    async findAll() {
-        return await this.nameSpaceService.listAll();
+    async findAllOrFiltered(
+        @Query("userId") userId?: object,
+    ) {
+        if (userId) {
+            return this.nameSpaceService.findByUser(userId);
+        }
+
+        return this.nameSpaceService.listAll();
     }
 
     @ApiTags("name-space")

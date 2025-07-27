@@ -1,4 +1,4 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { NameSpace, NameSpaceSchema } from "./schemas/name-space.schema";
 import { NameSpaceController } from "./name-space.controller";
@@ -19,7 +19,7 @@ const NameSpaceModel = MongooseModule.forFeature([
 @Module({
     imports: [
         NameSpaceModel,
-        forwardRef(() => UsersModule),
+        UsersModule,
         ViewModule,
         AbilityModule,
         ConfigModule,

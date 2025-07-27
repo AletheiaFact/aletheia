@@ -32,12 +32,16 @@ const updateNameSpace = (nameSpace, t) => {
         });
 };
 
-const getNameSpaces = () => {
+const getNameSpaces = (param?: string) => {
+    const params: Record<string, string> = {};
+
+    if (typeof param === "object" && param !== null) {
+        params.userId = param;
+    }
+
     return request
-        .get(`/`)
-        .then((response) => {
-            return response.data;
-        })
+        .get(`/`, { params })
+        .then((response) => response.data)
         .catch((err) => {
             MessageManager.showMessage("error", err.response.data?.message);
             throw err;

@@ -44,9 +44,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     userNamespaceKeys.includes(ns.slug)
                 );
                 setSelectedNamespaces(selected);
-            } catch (err) {
-                console.error(err);
-            }
+            } catch {}
         };
         fetchNamespaces();
     }, [setOptions, currentUser?.role]);
@@ -72,6 +70,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             const sendBadges = badges.map((badge) => badge._id);
             const selectedSlugs = selectedNamespaces.map(ns => ns.slug);
             const updatedRole = { ...role };
+            const currentNamespacesUser = await NameSpacesApi.getNameSpaces(currentUser);
+            const currentIds = currentNamespacesUser.map(ns => ns._id);
+            const selectedIds = selectedNamespaces.map(ns => ns._id);
 
             Object.keys(updatedRole).forEach((key) => {
                 if (key !== "main" && !selectedSlugs.includes(key)) {
@@ -82,6 +83,38 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             selectedSlugs.forEach((slug) => {
                 updatedRole[slug] ??= Roles.Regular;
             });
+
+            for (const ns of selectedNamespaces) {
+                const { id, __v, ...rest } = ns as any;
+                const userAlreadyExist = ns.users.some(user => user._id === currentUser._id);
+
+                const updatedNamespaces = {
+                    ...rest,
+                    users: userAlreadyExist
+                        ? ns.users
+                        : [...ns.users, currentUser],
+                };
+
+                if (!currentIds.includes(ns._id)) {
+                    await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
+                }
+            }
+
+            for (const ns of currentNamespacesUser) {
+                if (!selectedIds.includes(ns._id)) {
+                    const updatedUser = ns.users
+                    .filter(user => String(user._id || user) !== String(currentUser._id))
+                    .map(user => (typeof user === 'string' ? { _id: user } : user));
+
+                    const { id, __v, ...rest } = ns as any;
+
+                    const updatedNamespaces = {
+                        ...rest,
+                        users: updatedUser,
+                    };
+                    await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
+                }
+            }
 
             await userApi.update(
                 currentUser?._id,

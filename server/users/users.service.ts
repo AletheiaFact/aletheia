@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger, Scope } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Status } from "../auth/ability/ability.factory";
 import { Model, Aggregate, Types } from "mongoose";
@@ -7,11 +7,10 @@ import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
-import { NameSpace, NameSpaceDocument, NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { GetUsersDTO } from "./dto/get-users.dto";
-import { NameSpaceService } from "../auth/name-space/name-space.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UsersService {
@@ -19,10 +18,6 @@ export class UsersService {
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(User.name) private UserModel: Model<UserDocument>,
-        @Inject(forwardRef(() => NameSpaceService))
-        private readonly nameSpaceService: NameSpaceService,
-        @InjectModel(NameSpace.name)
-        private readonly NameSpaceModel: Model<NameSpaceDocument>,
         private oryService: OryService,
         private notificationService: NotificationService
     ) {}
@@ -41,15 +36,15 @@ export class UsersService {
 
         const matchCondition = canAssignUsers
             ? {
-                name: { $regex: searchName || "", $options: "i" },
-                [`role.${nameSpaceSlug}`]: {
-                    $nin: [...(filterOutRoles || []), null],
-                },
-                ...(badges ? { badges } : {}),
-            }
+                  name: { $regex: searchName || "", $options: "i" },
+                  [`role.${nameSpaceSlug}`]: {
+                      $nin: [...(filterOutRoles || []), null],
+                  },
+                  ...(badges ? { badges } : {}),
+              }
             : {
-                _id: Types.ObjectId(userId),
-            };
+                  _id: Types.ObjectId(userId),
+              };
 
         pipeline.match(matchCondition);
 
@@ -149,36 +144,11 @@ export class UsersService {
     ) {
         const user = await this.getById(userId);
 
-        const namespaceSlugs = Object.keys(updates.role || {}).filter(slug => slug !== 'main');
-        const newNamespaces = await this.nameSpaceService.findBySlugs(namespaceSlugs);
-        const currentNamespace = await this.NameSpaceModel.find({ users: user._id });
-
         if (updates.state) {
             await this.oryService.updateUserState(user, updates.state);
         }
         if (updates.role) {
             await this.oryService.updateUserRole(user, updates.role);
-            
-            const newIds = newNamespaces.map(ns => ns._id);
-            const currentId = currentNamespace.map(ns => ns._id);
-    
-            for (const ns of newNamespaces) {
-                if (!currentId.includes(ns._id)) {
-                    await this.NameSpaceModel.updateOne(
-                        { _id: ns._id },
-                        { $addToSet: { users: user._id } }
-                    );
-                }
-            }
-    
-            for (const ns of currentNamespace) {
-                if (!namespaceSlugs.includes(ns.slug) && !newIds.includes(ns._id)) {
-                    await this.NameSpaceModel.updateOne(
-                        { _id: ns._id },
-                        { $pull: { users: user._id } }
-                    );
-                }
-            }
         }
 
         const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
