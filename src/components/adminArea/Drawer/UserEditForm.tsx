@@ -70,7 +70,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             const sendBadges = badges.map((badge) => badge._id);
             const selectedSlugs = selectedNamespaces.map(ns => ns.slug);
             const updatedRole = { ...role };
-            const currentNamespacesUser = await NameSpacesApi.getNameSpaces(currentUser);
+            const currentNamespacesUser = await NameSpacesApi.getNameSpaces(currentUser._id);
             const currentIds = currentNamespacesUser.map(ns => ns._id);
             const selectedIds = selectedNamespaces.map(ns => ns._id);
 
