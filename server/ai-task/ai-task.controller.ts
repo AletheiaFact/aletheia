@@ -11,6 +11,7 @@ import { AiTaskService } from "./ai-task.service";
 import type { CreateAiTaskDto } from "./dto/create-ai-task.dto";
 import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { AiTask } from "./schemas/ai-task.schema";
+import { AiTaskState } from "./constants/ai-task.constants";
 
 @Controller("ai-tasks")
 export class AiTaskController {
@@ -23,7 +24,7 @@ export class AiTaskController {
 
     @Get("pending")
     getPending() {
-        return this.aiTaskService.findAll("pending");
+        return this.aiTaskService.findAll(AiTaskState.Pending);
     }
 
     @Get()
