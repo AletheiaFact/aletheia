@@ -35,7 +35,7 @@ const updateNameSpace = (nameSpace, t) => {
 const getNameSpaces = (param?: string) => {
     const params: Record<string, string> = {};
 
-    if (typeof param === "object" && param !== null) {
+    if (typeof param === "string" && param !== null) {
         params.userId = param;
     }
 

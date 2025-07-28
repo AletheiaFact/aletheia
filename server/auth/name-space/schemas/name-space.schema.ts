@@ -24,7 +24,7 @@ export class NameSpace {
             },
         ],
     })
-    users: (mongoose.Types.ObjectId | User)[];
+    users: User[];
 
     // TODO: Add logo and description field
 }

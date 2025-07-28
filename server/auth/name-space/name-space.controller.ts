@@ -91,10 +91,10 @@ export class NameSpaceController {
     @CheckAbilities(new AdminUserAbility())
     @Get("api/name-space/")
     async findAllOrFiltered(
-        @Query("userId") userId?: object,
+        @Query("userId") userId?: string,
     ) {
         if (userId) {
-            return this.nameSpaceService.findByUser(userId);
+            return this.nameSpaceService.findByUser(new Types.ObjectId(userId));
         }
 
         return this.nameSpaceService.listAll();

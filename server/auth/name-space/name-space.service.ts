@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { Model } from "mongoose";
 import { NameSpaceDocument, NameSpace } from "./schemas/name-space.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
@@ -17,14 +17,8 @@ export class NameSpaceService {
         return this.NameSpaceModel.find().populate("users");
     }
 
-    findByUser(userId: string) {
-        if (!Types.ObjectId.isValid(userId)) {
-            return Promise.resolve([]);
-        }
-
-        const objectId = new Types.ObjectId(userId);
-        
-        return this.NameSpaceModel.find({ users: objectId }).exec();
+    findByUser(userId: object) {
+        return this.NameSpaceModel.find({ users: userId }).exec();
     }
 
     async create(nameSpace) {
