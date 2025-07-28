@@ -25,7 +25,7 @@ const createVerificationRequest = (
     return request
         .post("/", verificationRequest)
         .then((response) => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage("success",
                 t("verificationRequest:verificationRequestCreateSuccess")
             );
             router.push(
@@ -47,7 +47,7 @@ const get = (options: SearchOptions, dispatch = null) => {
     const params = {
         contentFilters: options.filtersUsed || [],
         page: options.page ? options.page - 1 : 0,
-        order: options.order || "asc",
+        order: options.order || "desc",
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
     };
@@ -113,7 +113,7 @@ const updateVerificationRequest = (id, params, t) => {
     return request
         .put(`/${id}`, params)
         .then((response) => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage("success",
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
@@ -128,7 +128,7 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
         .put(`/${id}/group`, params)
         .then((response) => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage("success",
                 t("verificationRequest:removeVerificationRequestSuccess")
             );
             return response.data;
