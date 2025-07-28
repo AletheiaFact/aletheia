@@ -2,10 +2,11 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import * as mongoose from "mongoose";
 import { z } from "zod";
+import { AiTaskStates, AiTaskState } from "../constants/ai-task.constants";
 
 export const AiTaskZodSchema = z.object({
     type: z.string(),
-    state: z.enum(["pending", "in_progress", "succeeded", "failed"]),
+    state: z.nativeEnum(AiTaskState),
     content: z.any(),
     callbackRoute: z.string(),
     callbackParams: z.object({
@@ -24,11 +25,11 @@ export class AiTaskClass {
 
     @Prop({
         type: String,
-        enum: ["pending", "in_progress", "succeeded", "failed"],
-        default: "pending",
+        enum: AiTaskStates,
+        default: AiTaskState.Pending,
         required: true,
     })
-    state: "pending" | "in_progress" | "succeeded" | "failed";
+    state: AiTaskState;
 
     @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
     content: any;
@@ -36,10 +37,7 @@ export class AiTaskClass {
     @Prop({ required: true })
     callbackRoute: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.Mixed,
-        required: true,
-    })
+    @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
     callbackParams: Record<string, any>;
 }
 

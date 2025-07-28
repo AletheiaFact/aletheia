@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-type CallbackHandler = (params: any, result: any) => Promise<void>;
+type CallbackHandler = (params: any, result: any) => Promise<unknown>;
 
 @Injectable()
 export class CallbackDispatcherService {
