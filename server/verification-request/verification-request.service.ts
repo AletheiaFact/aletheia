@@ -10,7 +10,7 @@ import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { AiTaskService } from "../ai-task/ai-task.service";
-import { CreateAiTaskDto } from "ai-task/dto/create-ai-task.dto";
+import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 const md5 = require("md5");
 
 @Injectable()
