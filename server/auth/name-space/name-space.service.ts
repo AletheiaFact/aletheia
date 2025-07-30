@@ -4,6 +4,7 @@ import { NameSpaceDocument, NameSpace } from "./schemas/name-space.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
 import { NotificationService } from "../../notifications/notifications.service";
+const ObjectId = require("mongodb").ObjectID;
 
 @Injectable()
 export class NameSpaceService {
@@ -15,6 +16,10 @@ export class NameSpaceService {
 
     listAll() {
         return this.NameSpaceModel.find().populate("users");
+    }
+
+    findByUser(userId: string) {
+        return this.NameSpaceModel.find({ users: ObjectId(userId) }).exec();
     }
 
     async create(nameSpace) {
