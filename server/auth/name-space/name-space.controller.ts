@@ -94,7 +94,7 @@ export class NameSpaceController {
         @Query("userId") userId?: string,
     ) {
         if (userId) {
-            return this.nameSpaceService.findByUser(new Types.ObjectId(userId));
+            return this.nameSpaceService.findByUser(userId);
         }
 
         return this.nameSpaceService.listAll();

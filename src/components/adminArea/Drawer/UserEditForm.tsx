@@ -13,7 +13,7 @@ import Button from "../../Button";
 import { currentUserId } from "../../../atoms/currentUser";
 import { canEdit } from "../../../utils/GetUserPermission";
 import UserEditRoles from "./UserEditRoles";
-import { NameSpace } from "../../../types/Namespace";
+import { NameSpace, NameSpaceEnum } from "../../../types/Namespace";
 import NameSpacesApi from "../../../api/namespace";
 
 const UserEditForm = ({ currentUser, setIsLoading }) => {
@@ -75,7 +75,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             const selectedIds = selectedNamespaces.map(ns => ns._id);
 
             Object.keys(updatedRole).forEach((key) => {
-                if (key !== "main" && !selectedSlugs.includes(key)) {
+                if (key !== NameSpaceEnum.Main && !selectedSlugs.includes(key)) {
                     delete updatedRole[key];
                 }
             });
