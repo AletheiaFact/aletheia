@@ -1,8 +1,4 @@
-import {
-    ExecutionContext,
-    Injectable,
-    UnauthorizedException,
-} from "@nestjs/common";
+import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Configuration, FrontendApi } from "@ory/client";
 import { Roles } from "./ability/ability.factory";
 import { Logger } from "@nestjs/common";
@@ -10,6 +6,7 @@ import { BaseGuard } from "./base.guard";
 import { Reflector } from "@nestjs/core";
 import { UsersService } from "../../server/users/users.service";
 import { ConfigService } from "@nestjs/config";
+import { URL } from "url";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
@@ -18,7 +15,7 @@ export class SessionGuard extends BaseGuard {
     constructor(
         protected configService: ConfigService,
         protected reflector: Reflector,
-        private usersService: UsersService
+        private readonly usersService: UsersService
     ) {
         super(configService, reflector);
     }
@@ -50,10 +47,16 @@ export class SessionGuard extends BaseGuard {
         const request = httpContext.getRequest();
         const response = httpContext.getResponse();
         const type = this.configService.get<string>("authentication_type");
+        const baseUrl = `http://${request.headers.host}`;
+        const fullUrl = new URL(request.url, baseUrl);
+
+        if (fullUrl.pathname === "/signup-invite") {
+            this.logger.log("Skipping authentication for signup-invite page");
+            return true;
+        }
 
         try {
             if (type === "ory") {
-                console.log("Vai parmera");
                 const oryConfig = new Configuration({
                     basePath: this.configService.get<string>("ory.url"),
                     accessToken:
@@ -81,23 +84,12 @@ export class SessionGuard extends BaseGuard {
                 }
 
                 const mongoUserId = session?.identity?.traits?.user_id;
-                console.log("MongouserId", mongoUserId);
                 try {
                     await this.usersService.getById(mongoUserId);
                 } catch (e) {
                     this.logger.error(`User not found for ID: ${mongoUserId}`);
                     await this.logoutUser(ory, request);
-                    return this.checkAndRedirect(
-                        request,
-                        response,
-                        // response.redirect("/unauthorized");
-                        // response.status(401).send({ message: "Unauthorized" });
-                        // throw new UnauthorizedException(
-                        //     "User not found in the database"
-                        // );
-                        isPublic,
-                        "/unauthorized"
-                    );
+                    return false;
                 }
 
                 request.user = {
