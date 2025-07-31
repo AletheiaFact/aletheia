@@ -50,7 +50,9 @@ export class ViewController {
             "/signup-invite",
             parsedUrl.query
         );
-
+        
+    @IsPublic()
+    @ApiTags("pages")
     @Get("about/:person")
     @Header("Cache-Control", "max-age=86400")
     public async showPersonAboutPage(
