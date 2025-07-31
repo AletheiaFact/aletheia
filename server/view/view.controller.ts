@@ -50,6 +50,7 @@ export class ViewController {
             "/signup-invite",
             parsedUrl.query
         );
+    };
         
     @IsPublic()
     @ApiTags("pages")
