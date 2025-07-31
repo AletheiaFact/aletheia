@@ -42,8 +42,9 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
                 .catch((err: AxiosError) => {
                     switch (err.response?.status) {
                         case 403:
-                        // This is a legacy error code thrown. See code 422 for
-                        // more details.
+                            // This is a legacy error code thrown. See code 422 for
+                            // more details.
+                            return router.push("/signup-invite");
                         case 422:
                             // This status code is returned when we are trying to
                             // validate a session which has not yet completed
@@ -59,10 +60,16 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
                 });
         })
         .then(() => {
-            MessageManager.showMessage("success", `${t("login:loginSuccessfulMessage")}`);
+            MessageManager.showMessage(
+                "success",
+                `${t("login:loginSuccessfulMessage")}`
+            );
             if (flow?.return_to) {
                 window.location.href = flow?.return_to;
-                MessageManager.showMessage("success", t("profile:changesSaved"));
+                MessageManager.showMessage(
+                    "success",
+                    t("profile:changesSaved")
+                );
                 return;
             }
             if (shouldGoBack) {
@@ -73,7 +80,10 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
         })
         .catch(handleFlowError(router, "login", setFlow, t))
         .catch(() => {
-            MessageManager.showMessage("error", `${t("login:loginFailedMessage")}`);
+            MessageManager.showMessage(
+                "error",
+                `${t("login:loginFailedMessage")}`
+            );
         });
 };
 
@@ -94,7 +104,10 @@ const orySubmitSettings = ({ router, flow, setFlow, t, values }) => {
         })
         .then(() => {
             router.push("/");
-            MessageManager.showMessage("success", `${t("profile:changesSaved")}`);
+            MessageManager.showMessage(
+                "success",
+                `${t("profile:changesSaved")}`
+            );
         })
         .catch(handleFlowError(router, "settings", setFlow, t));
 };
@@ -107,7 +120,10 @@ const orySubmitTotp = ({ router, flow, setFlow, t, values }) => {
         })
         .then(({ data }) => {
             setFlow(data);
-            MessageManager.showMessage("success", `${t("profile:changesSaved")}`);
+            MessageManager.showMessage(
+                "success",
+                `${t("profile:changesSaved")}`
+            );
         })
         .catch(handleFlowError(router, "settings", setFlow, t));
 };
