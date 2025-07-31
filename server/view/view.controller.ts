@@ -66,6 +66,8 @@ export class ViewController {
 
     }
 
+    @IsPublic()
+    @ApiTags("pages")
     @Get("signup-invite")
     @Header("Cache-Control", "max-age=86400")
     public async signupInvite(@Req() req: Request, @Res() res: Response) {
