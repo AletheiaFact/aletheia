@@ -174,7 +174,9 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                         <Grid container className="typo-grey typo-center">
                             <h2>{t("login:signUpHeader")}</h2>
                         </Grid>
-                        <CTAButton type={ButtonType.blue} />
+                        <CTAButton
+                            type={ButtonType.blue}
+                            textWhenLoggedOut={t("CTAFolder:button")} />
                     </>
                 )}
             </Grid>
