@@ -62,6 +62,8 @@ import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
 import { GroupModule } from "./group/group.module";
 import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
 import { M2MGuard } from "./auth/m2m.guard";
+import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
+import { AiTaskModule } from "./ai-task/ai-task.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -110,6 +112,7 @@ export class AppModule implements NestModule {
                     limit: options.throttle.limit,
                 }),
                 UsersModule,
+                CallbackDispatcherModule,
                 WikidataModule,
                 PersonalityModule.register(),
                 ClaimModule,
@@ -149,6 +152,7 @@ export class AppModule implements NestModule {
                 VerificationRequestModule,
                 FeatureFlagModule,
                 GroupModule,
+                AiTaskModule,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],
