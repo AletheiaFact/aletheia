@@ -102,7 +102,7 @@ export class VerificationRequestService {
                 href: data.source,
                 targetId: vr.id,
             });
-            vr.source = new Types.ObjectId(src.id);
+            vr.source = Types.ObjectId.createFromHexString(src.id);
             await vr.save();
         }
 
