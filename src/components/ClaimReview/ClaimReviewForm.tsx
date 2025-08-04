@@ -1,10 +1,11 @@
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import {
     reviewingSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
     crossCheckingSelector,
+    addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import {
     currentUserId,
@@ -37,6 +38,10 @@ const ClaimReviewForm = ({
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAddCommentCrossChecking = useSelector(
+        machineService,
+        addCommentCrossCheckingSelector
+    );
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const userIsCrossChecker = reviewData.crossCheckerId === userId;
@@ -52,7 +57,11 @@ const ClaimReviewForm = ({
             if (userIsAdmin) return true;
             if (userIsAssignee && !isReviewing) return true;
             if (isReviewing && userIsReviewer) return true;
-            if (isCrossChecking && userIsCrossChecker) return true;
+            if (
+                (isCrossChecking || isAddCommentCrossChecking) &&
+                userIsCrossChecker
+            )
+                return true;
             return false;
         };
 
@@ -72,11 +81,12 @@ const ClaimReviewForm = ({
     }, [isUnassigned]);
 
     return (
-        <Grid container
+        <Grid
+            container
             style={{
                 background: colors.lightNeutral,
                 padding: "20px 15px",
-                justifyContent:"center"
+                justifyContent: "center",
             }}
         >
             <Grid item xs={componentStyle.span}>
