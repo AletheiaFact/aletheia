@@ -23,8 +23,11 @@ export class AiTaskService {
         return this.aiTaskModel.create(createDto);
     }
 
-    async findAll(state?: AiTask["state"]): Promise<AiTaskDocument[]> {
-        const filter: FilterQuery<AiTaskDocument> = state ? { state } : {};
+    async findAll(state?: AiTaskState): Promise<AiTaskDocument[]> {
+        const filter: FilterQuery<AiTaskDocument> = {};
+        if (state && Object.values(AiTaskState).includes(state)) {
+            filter.state = state;
+        }
         return this.aiTaskModel.find(filter).exec();
     }
 
@@ -34,6 +37,14 @@ export class AiTaskService {
     ): Promise<AiTaskDocument> {
         if (!isValidObjectId(id)) {
             throw new BadRequestException(`Invalid task id: ${id}`);
+        }
+
+        if (!Object.values(AiTaskState).includes(updateDto.state)) {
+            throw new BadRequestException(
+                `Invalid state: ${
+                    updateDto.state
+                }. Must be one of ${Object.values(AiTaskState).join(", ")}`
+            );
         }
 
         const task = await this.aiTaskModel
