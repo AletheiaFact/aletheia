@@ -11,6 +11,10 @@ import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
+import {
+    AiTaskType,
+    CallbackRoute,
+} from "../ai-task/constants/ai-task.constants";
 const md5 = require("md5");
 
 @Injectable()
@@ -107,9 +111,9 @@ export class VerificationRequestService {
         }
 
         const taskDto: CreateAiTaskDto = {
-            type: "text-embedding",
+            type: AiTaskType.TextEmbedding,
             content: data.content,
-            callbackRoute: "verification.updateEmbedding",
+            callbackRoute: CallbackRoute.VerificationUpdateEmbedding,
             callbackParams: {
                 targetId: vr.id,
                 field: "embedding",
