@@ -2,13 +2,20 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import * as mongoose from "mongoose";
 import { z } from "zod";
-import { AiTaskStates, AiTaskState } from "../constants/ai-task.constants";
+import {
+    AiTaskStates,
+    AiTaskState,
+    AiTaskTypes,
+    AiTaskType,
+    CallbackRoutes,
+    CallbackRoute,
+} from "../constants/ai-task.constants";
 
 export const AiTaskZodSchema = z.object({
-    type: z.string(),
+    type: z.nativeEnum(AiTaskType),
     state: z.nativeEnum(AiTaskState),
     content: z.any(),
-    callbackRoute: z.string(),
+    callbackRoute: z.nativeEnum(CallbackRoute),
     callbackParams: z.object({
         targetId: z.string(),
         field: z.string(),
@@ -20,8 +27,12 @@ export type AiTaskDocument = AiTask & Document;
 
 @Schema({ timestamps: true })
 export class AiTaskClass {
-    @Prop({ required: true })
-    type: string;
+    @Prop({
+        type: String,
+        enum: AiTaskTypes,
+        required: true,
+    })
+    type: AiTaskType;
 
     @Prop({
         type: String,
@@ -34,8 +45,12 @@ export class AiTaskClass {
     @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
     content: any;
 
-    @Prop({ required: true })
-    callbackRoute: string;
+    @Prop({
+        type: String,
+        enum: CallbackRoutes,
+        required: true,
+    })
+    callbackRoute: CallbackRoute;
 
     @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
     callbackParams: Record<string, any>;
