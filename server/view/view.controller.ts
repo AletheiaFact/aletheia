@@ -48,8 +48,8 @@ export class ViewController {
             "/signup-invite",
             parsedUrl.query
         );
-    };
-        
+    }
+
     @IsPublic()
     @ApiTags("pages")
     @Get("about/:person")
@@ -63,21 +63,6 @@ export class ViewController {
         // In the future, this will render person-specific about pages
         // The person parameter will be used to fetch specific person data
         res.redirect(302, "/about");
-
-    }
-
-    @IsPublic()
-    @ApiTags("pages")
-    @Get("signup-invite")
-    @Header("Cache-Control", "max-age=86400")
-    public async signupInvite(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        await this.viewService.render(
-            req,
-            res,
-            "/signup-invite",
-            parsedUrl.query
-        );
     }
 
     @IsPublic()
