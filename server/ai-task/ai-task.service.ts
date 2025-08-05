@@ -25,9 +25,18 @@ export class AiTaskService {
 
     async findAll(state?: AiTaskState): Promise<AiTaskDocument[]> {
         const filter: FilterQuery<AiTaskDocument> = {};
-        if (state && Object.values(AiTaskState).includes(state)) {
-            filter.state = state;
+
+        if (state) {
+            if (!Object.values(AiTaskState).includes(state)) {
+                throw new BadRequestException(
+                    `Invalid state: ${state}. Must be one of ${Object.values(
+                        AiTaskState
+                    ).join(", ")}`
+                );
+            }
+            filter.state = { $eq: state };
         }
+
         return this.aiTaskModel.find(filter).exec();
     }
 
@@ -48,7 +57,11 @@ export class AiTaskService {
         }
 
         const task = await this.aiTaskModel
-            .findByIdAndUpdate(id, { state: updateDto.state }, { new: true })
+            .findByIdAndUpdate(
+                id,
+                { $set: { state: updateDto.state } },
+                { new: true }
+            )
             .exec();
 
         if (!task) {
