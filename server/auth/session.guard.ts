@@ -6,7 +6,6 @@ import { BaseGuard } from "./base.guard";
 import { Reflector } from "@nestjs/core";
 import { UsersService } from "../../server/users/users.service";
 import { ConfigService } from "@nestjs/config";
-import { URL } from "url";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
@@ -47,13 +46,6 @@ export class SessionGuard extends BaseGuard {
         const request = httpContext.getRequest();
         const response = httpContext.getResponse();
         const type = this.configService.get<string>("authentication_type");
-        const baseUrl = `http://${request.headers.host}`;
-        const fullUrl = new URL(request.url, baseUrl);
-
-        if (fullUrl.pathname === "/signup-invite") {
-            this.logger.log("Skipping authentication for signup-invite page");
-            return true;
-        }
 
         try {
             if (type === "ory") {
@@ -66,6 +58,22 @@ export class SessionGuard extends BaseGuard {
                 const { data: session } = await ory.toSession({
                     cookie: request.header("Cookie"),
                 });
+
+                const mongoUserId = session?.identity?.traits?.user_id;
+                try {
+                    await this.usersService.getById(mongoUserId);
+                } catch (e) {
+                    this.logger.error(`User not found for ID: ${mongoUserId}`);
+                    this.logger.error(e);
+                    await this.logoutUser(ory, request);
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/signup-invite"
+                    );
+                }
+
                 const expectedAffiliation =
                     this.configService.get<string>("app_affiliation");
                 const appAffiliation =
@@ -81,15 +89,6 @@ export class SessionGuard extends BaseGuard {
                         isPublic,
                         "/unauthorized"
                     );
-                }
-
-                const mongoUserId = session?.identity?.traits?.user_id;
-                try {
-                    await this.usersService.getById(mongoUserId);
-                } catch (e) {
-                    this.logger.error(`User not found for ID: ${mongoUserId}`);
-                    await this.logoutUser(ory, request);
-                    return false;
                 }
 
                 request.user = {

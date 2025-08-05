@@ -42,9 +42,8 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
                 .catch((err: AxiosError) => {
                     switch (err.response?.status) {
                         case 403:
-                            // This is a legacy error code thrown. See code 422 for
-                            // more details.
-                            return router.push("/signup-invite");
+                        // This is a legacy error code thrown. See code 422 for
+                        // more details.
                         case 422:
                             // This status code is returned when we are trying to
                             // validate a session which has not yet completed
@@ -52,7 +51,7 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
                             return router.push("/login?aal=aal2");
                         case 401:
                             // do nothing, the user is not logged in
-                            return;
+                            return router.push("/signup-invite");
                     }
 
                     // Something else happened!
