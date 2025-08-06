@@ -36,7 +36,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
     useEffect(() => {
         const fetchNamespaces = async () => {
             try {
-                const namespaces = await NameSpacesApi.getNameSpaces();
+                const namespaces = await NameSpacesApi.getAllNameSpaces();
                 setOptions(namespaces);
 
                 const userNamespaceKeys = Object.keys(currentUser?.role ?? {});
@@ -44,7 +44,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     userNamespaceKeys.includes(ns.slug)
                 );
                 setSelectedNamespaces(selected);
-            } catch {}
+            } catch (err) {
+                console.error(err);
+            }
         };
         fetchNamespaces();
     }, [setOptions, currentUser?.role]);
@@ -70,13 +72,13 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             const sendBadges = badges.map((badge) => badge._id);
             const selectedSlugs = selectedNamespaces.map(ns => ns.slug);
             const updatedRole = { ...role };
-            const currentNamespacesUser = await NameSpacesApi.getNameSpaces(currentUser._id);
+            const currentNamespacesUser = await NameSpacesApi.getNameSpacesById(currentUser._id);
             const currentIds = currentNamespacesUser.map(ns => ns._id);
             const selectedIds = selectedNamespaces.map(ns => ns._id);
 
-            Object.keys(updatedRole).forEach((key) => {
-                if (key !== NameSpaceEnum.Main && !selectedSlugs.includes(key)) {
-                    delete updatedRole[key];
+            Object.keys(updatedRole).forEach((role) => {
+                if (role !== NameSpaceEnum.Main && !selectedSlugs.includes(role)) {
+                    delete updatedRole[role];
                 }
             });
 

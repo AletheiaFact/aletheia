@@ -89,7 +89,7 @@ export class NameSpaceController {
     @ApiTags("name-space")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    @Get("api/name-space/")
+    @Get("api/name-space")
     async findAllOrFiltered(
         @Query("userId") userId?: string,
     ) {

@@ -32,15 +32,21 @@ const updateNameSpace = (nameSpace, t) => {
         });
 };
 
-const getNameSpaces = (param?: string) => {
-    const params: Record<string, string> = {};
-
-    if (typeof param === "string" && param !== null) {
-        params.userId = param;
-    }
-
+const getAllNameSpaces = () => {
     return request
-        .get(`/`, { params })
+        .get(`/`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            MessageManager.showMessage("error", err.response.data?.message);
+            throw err;
+        });
+};
+
+const getNameSpacesById = (userId) => {
+    return request
+        .get(`/`, { params: { userId } })
         .then((response) => response.data)
         .catch((err) => {
             MessageManager.showMessage("error", err.response.data?.message);
@@ -51,7 +57,8 @@ const getNameSpaces = (param?: string) => {
 const NameSpacesApi = {
     createNameSpace,
     updateNameSpace,
-    getNameSpaces,
+    getAllNameSpaces,
+    getNameSpacesById,
 };
 
 export default NameSpacesApi;
