@@ -15,7 +15,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
-    constructor(private viewService: ViewService) {}
+    constructor(private readonly viewService: ViewService) {}
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);

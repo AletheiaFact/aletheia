@@ -3,7 +3,6 @@ import {
     MiddlewareConsumer,
     Module,
     NestModule,
-    Scope,
 } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
