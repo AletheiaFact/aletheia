@@ -105,10 +105,10 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             for (const ns of currentNamespacesUser) {
                 if (!selectedIds.includes(ns._id)) {
                     const updatedUser = ns.users
-                    .filter(user => String(user._id || user) !== String(currentUser._id))
-                    .map(user => (typeof user === 'string' ? { _id: user } : user));
+                        .filter(user => String(user._id || user) !== String(currentUser._id))
+                        .map(user => (typeof user === 'string' ? { _id: user } : user));
 
-                    const { id, __v, ...rest } = ns as any;
+                    const { id, __v, ...rest } = ns;
 
                     const updatedNamespaces = {
                         ...rest,
