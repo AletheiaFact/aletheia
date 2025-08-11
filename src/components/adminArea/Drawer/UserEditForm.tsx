@@ -13,6 +13,8 @@ import Button from "../../Button";
 import { currentUserId } from "../../../atoms/currentUser";
 import { canEdit } from "../../../utils/GetUserPermission";
 import UserEditRoles from "./UserEditRoles";
+import { NameSpace, NameSpaceEnum } from "../../../types/Namespace";
+import NameSpacesApi from "../../../api/namespace";
 
 const UserEditForm = ({ currentUser, setIsLoading }) => {
     const { t } = useTranslation();
@@ -21,10 +23,33 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
     const [role, setUserRole] = useState(currentUser?.role || Roles.Regular);
     const [badgesList] = useAtom(atomBadgesList);
     const [userId] = useAtom(currentUserId);
+    const [options, setOptions] = useState<NameSpace[]>([]);
+    const [selectedNamespaces, setSelectedNamespaces] = useState<NameSpace[]>([]);
 
     const handleChangeBadges = (_event, newValue: Badge[]) => {
         setBadges(newValue);
     };
+
+    const handleChangeNameSpaces = (_event, newValue: NameSpace[]) => {
+        setSelectedNamespaces(newValue);
+    };
+    useEffect(() => {
+        const fetchNamespaces = async () => {
+            try {
+                const namespaces = await NameSpacesApi.getAllNameSpaces();
+                setOptions(namespaces);
+
+                const userNamespaceKeys = Object.keys(currentUser?.role ?? {});
+                const selected = namespaces.filter((ns) =>
+                    userNamespaceKeys.includes(ns.slug)
+                );
+                setSelectedNamespaces(selected);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchNamespaces();
+    }, [setOptions, currentUser?.role]);
 
     useEffect(() => {
         // this was necessery because the select was not recognizing the
@@ -45,14 +70,62 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
         try {
             setIsLoading(true);
             const sendBadges = badges.map((badge) => badge._id);
+            const selectedSlugs = selectedNamespaces.map(ns => ns.slug);
+            const updatedRole = { ...role };
+            const currentNamespacesUser = await NameSpacesApi.getNameSpacesById(currentUser._id);
+            const currentIds = currentNamespacesUser.map(ns => ns._id);
+            const selectedIds = selectedNamespaces.map(ns => ns._id);
+
+            Object.keys(updatedRole).forEach((role) => {
+                if (role !== NameSpaceEnum.Main && !selectedSlugs.includes(role)) {
+                    delete updatedRole[role];
+                }
+            });
+
+            selectedSlugs.forEach((slug) => {
+                updatedRole[slug] ??= Roles.Regular;
+            });
+
+            for (const ns of selectedNamespaces) {
+                const { id, __v, ...rest } = ns as any;
+                const userAlreadyExist = ns.users.some(user => user._id === currentUser._id);
+
+                const updatedNamespaces = {
+                    ...rest,
+                    users: userAlreadyExist
+                        ? ns.users
+                        : [...ns.users, currentUser],
+                };
+
+                if (!currentIds.includes(ns._id)) {
+                    await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
+                }
+            }
+
+            for (const ns of currentNamespacesUser) {
+                if (!selectedIds.includes(ns._id)) {
+                    const updatedUser = ns.users
+                        .filter(user => String(user._id || user) !== String(currentUser._id))
+                        .map(user => (typeof user === 'string' ? { _id: user } : user));
+
+                    const { id, __v, ...rest } = ns;
+
+                    const updatedNamespaces = {
+                        ...rest,
+                        users: updatedUser,
+                    };
+                    await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
+                }
+            }
+
             await userApi.update(
                 currentUser?._id,
-                { role, badges: sendBadges },
+                { role: updatedRole, badges: sendBadges },
                 t
             );
 
             finishEditing({
-                newItem: { ...currentUser, role, badges },
+                newItem: { ...currentUser, role: updatedRole, badges },
                 listAtom: atomUserList,
                 closeDrawer: true,
             });
@@ -71,6 +144,27 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     role={role}
                     setUserRole={setUserRole}
                     shouldEdit={shouldEdit}
+                />
+            </Grid>
+            <Grid item xs={10} mt={2}>
+                <Label>{t("menu:nameSpaceItem")}</Label>
+                <Autocomplete
+                    disabled={!shouldEdit}
+                    multiple
+                    id="namespaces"
+                    options={options}
+                    getOptionLabel={(option) => option.name}
+                    value={selectedNamespaces}
+                    onChange={handleChangeNameSpaces}
+                    disableCloseOnSelect
+                    renderInput={(params) => (
+                        <TextField {...params} placeholder={"Selecione os namespaces"} />
+                    )}
+                    renderOption={(props, option) => (
+                        <Box component={"li"} {...props}>
+                            {option.name}
+                        </Box>
+                    )}
                 />
             </Grid>
             <Grid item xs={10} mt={2}>

@@ -32,7 +32,7 @@ const updateNameSpace = (nameSpace, t) => {
         });
 };
 
-const getNameSpaces = () => {
+const getAllNameSpaces = () => {
     return request
         .get(`/`)
         .then((response) => {
@@ -44,10 +44,21 @@ const getNameSpaces = () => {
         });
 };
 
+const getNameSpacesById = (userId) => {
+    return request
+        .get(`/`, { params: { userId } })
+        .then((response) => response.data)
+        .catch((err) => {
+            MessageManager.showMessage("error", err.response.data?.message);
+            throw err;
+        });
+};
+
 const NameSpacesApi = {
     createNameSpace,
     updateNameSpace,
-    getNameSpaces,
+    getAllNameSpaces,
+    getNameSpacesById,
 };
 
 export default NameSpacesApi;
