@@ -3,13 +3,14 @@ import {
     ExecutionContext,
     Injectable,
     NotFoundException,
+    Scope,
     UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Configuration, FrontendApi } from "@ory/client";
 import { NameSpaceService } from "./name-space.service";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class NameSpaceGuard implements CanActivate {
     constructor(
         private configService: ConfigService,

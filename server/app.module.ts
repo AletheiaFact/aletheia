@@ -167,11 +167,11 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useExisting: SessionOrM2MGuard,
+                    useClass: SessionOrM2MGuard,
                 },
                 {
                     provide: APP_GUARD,
-                    useExisting: NameSpaceGuard,
+                    useClass: NameSpaceGuard,
                 },
                 NameSpaceGuard,
                 SessionOrM2MGuard,
