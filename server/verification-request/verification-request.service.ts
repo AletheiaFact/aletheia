@@ -372,17 +372,19 @@ export class VerificationRequestService {
 
     /**
      * Find similar verification requests related to the embedding content
-     * @param content verification request content
+     * @param queryEmbedding embedding array to find similarities for
      * @param filter verification requests IDs to filter, does not recommend verification requests those are part of the same group
      * @param pageSize limit of documents
-     * @returns Verification requests with the similarity score greater than 0.80
+     * @returns Verification requests with the similarity score greater than 0.80, or empty array if embedding is null/empty
      */
     async findSimilarRequests(
-        content,
+        queryEmbedding: number[],
         filter,
         pageSize
     ): Promise<VerificationRequest[]> {
-        const queryEmbedding = await this.createEmbedContent(content);
+        if (!queryEmbedding || queryEmbedding.length === 0) {
+            return [];
+        }
         const filterIds = filter.map((verificationRequestId) =>
             Types.ObjectId(verificationRequestId)
         );
