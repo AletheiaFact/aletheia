@@ -69,7 +69,7 @@ export class AiTaskService {
         }
 
         if (
-            updateDto.state === AiTaskState.Succeeded &&
+            updateDto.state === AiTaskState.SUCCEEDED &&
             updateDto.result !== undefined
         ) {
             await this.dispatcher.dispatch(

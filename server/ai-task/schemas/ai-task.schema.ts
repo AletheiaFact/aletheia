@@ -37,7 +37,7 @@ export class AiTaskClass {
     @Prop({
         type: String,
         enum: AiTaskStates,
-        default: AiTaskState.Pending,
+        default: AiTaskState.PENDING,
         required: true,
     })
     state: AiTaskState;

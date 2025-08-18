@@ -1,16 +1,16 @@
 export enum AiTaskState {
-    Pending = "pending",
-    InProgress = "in_progress",
-    Succeeded = "succeeded",
-    Failed = "failed",
+    PENDING = "pending",
+    IN_PROGRESS = "in_progress",
+    SUCCEEDED = "succeeded",
+    FAILED = "failed",
 }
 
 export enum AiTaskType {
-    TextEmbedding = "text-embedding",
+    TEXT_EMBEDDING = "text_embedding",
 }
 
 export enum CallbackRoute {
-    VerificationUpdateEmbedding = "verification.updateEmbedding",
+    VERIFICATION_UPDATE_EMBEDDING = "verification_update_embedding",
 }
 
 export const AiTaskStates = Object.values(AiTaskState) as AiTaskState[];

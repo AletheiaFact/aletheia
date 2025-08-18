@@ -16,6 +16,7 @@ import { CaptchaModule } from "../captcha/captcha.module";
 import { AiTaskModule } from "../ai-task/ai-task.module";
 import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispatcher.service";
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
+import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -49,7 +50,7 @@ export class VerificationRequestModule implements OnModuleInit {
 
     onModuleInit() {
         this.dispatcher.register(
-            "verification.updateEmbedding",
+            CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             (params, result) =>
                 this.verificationService.updateEmbedding(params, result)
         );

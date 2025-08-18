@@ -111,9 +111,9 @@ export class VerificationRequestService {
         }
 
         const taskDto: CreateAiTaskDto = {
-            type: AiTaskType.TextEmbedding,
+            type: AiTaskType.TEXT_EMBEDDING,
             content: data.content,
-            callbackRoute: CallbackRoute.VerificationUpdateEmbedding,
+            callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             callbackParams: {
                 targetId: vr.id,
                 field: "embedding",

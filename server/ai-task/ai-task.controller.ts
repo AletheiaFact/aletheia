@@ -28,7 +28,7 @@ export class AiTaskController {
     @ApiOperation({ summary: "Get all pending AI tasks" })
     @Get("pending")
     getPending() {
-        return this.aiTaskService.findAll(AiTaskState.Pending);
+        return this.aiTaskService.findAll(AiTaskState.PENDING);
     }
 
     @ApiOperation({ summary: "Get AI tasks by state" })
