@@ -56,10 +56,9 @@ export class CallbackDispatcherService {
                 throw new BadRequestException("Invalid callback parameters");
             }
 
-            const isProduction = process.env.NODE_ENV === "production";
             this.logger.error(
                 `Error dispatching callback for key: ${routeKey}`,
-                isProduction ? err.message : err.stack
+                err.message
             );
             throw err;
         }
