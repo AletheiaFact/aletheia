@@ -11,14 +11,30 @@ import {
     CallbackRoute,
 } from "../constants/ai-task.constants";
 
+const TextEmbeddingContentSchema = z.object({
+    text: z.string().min(1).max(100000),
+    model: z.string().optional(),
+});
+
+const AiTaskContentSchema = z.discriminatedUnion("type", [
+    z.object({
+        type: z.literal(AiTaskType.TEXT_EMBEDDING),
+        data: TextEmbeddingContentSchema,
+    }),
+]);
+export const validateTaskContent = (type: AiTaskType, content: unknown) => {
+    const wrappedContent = { type, data: content };
+    return AiTaskContentSchema.parse(wrappedContent);
+};
+
 export const AiTaskZodSchema = z.object({
     type: z.nativeEnum(AiTaskType),
     state: z.nativeEnum(AiTaskState),
-    content: z.any(),
+    content: z.unknown(),
     callbackRoute: z.nativeEnum(CallbackRoute),
     callbackParams: z.object({
-        targetId: z.string(),
-        field: z.string(),
+        targetId: z.string().min(1),
+        field: z.string().min(1),
     }),
 });
 

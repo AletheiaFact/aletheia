@@ -13,6 +13,7 @@ import type { CreateAiTaskDto } from "./dto/create-ai-task.dto";
 import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { AiTask } from "./schemas/ai-task.schema";
 import { AiTaskState } from "./constants/ai-task.constants";
+import { ObjectIdValidationPipe } from "./pipes/objectid-validation.pipe";
 
 @ApiTags("ai-tasks")
 @Controller("api/ai-tasks")
@@ -43,7 +44,7 @@ export class AiTaskController {
     })
     @Patch(":id")
     update(
-        @Param("id") id: string,
+        @Param("id", ObjectIdValidationPipe) id: string,
         @Body() updateDto: UpdateAiTaskDto & { result?: any }
     ) {
         return this.aiTaskService.updateState(id, updateDto);

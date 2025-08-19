@@ -34,7 +34,7 @@ export class AiTaskService {
                     ).join(", ")}`
                 );
             }
-            filter.state = { $eq: state };
+            filter.state = state;
         }
 
         return this.aiTaskModel.find(filter).exec();
