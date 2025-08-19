@@ -38,7 +38,6 @@ export class CallbackDispatcherService {
         }
 
         try {
-            // Validate params
             const validatedParams = CallbackParamsSchema.parse(
                 params
             ) as CallbackParams;
