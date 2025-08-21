@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, FilterQuery, isValidObjectId } from "mongoose";
-import { AiTaskDocument, AiTaskName, AiTask } from "./schemas/ai-task.schema";
+import { AiTaskDocument, AiTaskName } from "./schemas/ai-task.schema";
 import type { CreateAiTaskDto } from "./dto/create-ai-task.dto";
 import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispatcher.service";

@@ -24,7 +24,7 @@ export class VerificationRequestService {
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         private sourceService: SourceService,
-        private groupService: GroupService,
+        private readonly groupService: GroupService,
         private readonly aiTaskService: AiTaskService
     ) {}
 
