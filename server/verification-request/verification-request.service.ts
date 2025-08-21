@@ -14,6 +14,7 @@ import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import {
     AiTaskType,
     CallbackRoute,
+    DEFAULT_EMBEDDING_MODEL,
 } from "../ai-task/constants/ai-task.constants";
 const md5 = require("md5");
 
@@ -112,7 +113,10 @@ export class VerificationRequestService {
 
         const taskDto: CreateAiTaskDto = {
             type: AiTaskType.TEXT_EMBEDDING,
-            content: data.content,
+            content: {
+                text: data.content,
+                model: DEFAULT_EMBEDDING_MODEL,
+            },
             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             callbackParams: {
                 targetId: vr.id,

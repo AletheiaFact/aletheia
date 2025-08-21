@@ -13,7 +13,7 @@ import {
 
 const TextEmbeddingContentSchema = z.object({
     text: z.string().min(1).max(100000),
-    model: z.string().optional(),
+    model: z.string().min(1),
 });
 
 const AiTaskContentSchema = z.discriminatedUnion("type", [
