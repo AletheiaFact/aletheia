@@ -38,7 +38,8 @@ WORKDIR /app
 RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
 RUN corepack enable
-RUN yarn install --production
+ENV SKIP_OPTIONAL=true
+RUN yarn install --mode=skip-build || yarn install
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
