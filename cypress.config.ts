@@ -22,4 +22,10 @@ export default defineConfig({
             bundler: "webpack",
         },
     },
+    env: {
+        ENVIRONMENT: process.env.CYPRESS_BASE_URL?.includes("test.")
+            ? "test"
+            : "production",
+        PERCY_ENABLED: process.env.CI ? false : true, // Percy only runs locally, never on CI/CD
+    },
 });
