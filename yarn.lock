@@ -5596,26 +5596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:>0.2.0 <0.3.0, @langchain/core@npm:^0.2.31":
-  version: 0.2.36
-  resolution: "@langchain/core@npm:0.2.36"
-  dependencies:
-    ansi-styles: ^5.0.0
-    camelcase: 6
-    decamelize: 1.2.0
-    js-tiktoken: ^1.0.12
-    langsmith: ^0.1.56-rc.1
-    mustache: ^4.2.0
-    p-queue: ^6.6.2
-    p-retry: 4
-    uuid: ^10.0.0
-    zod: ^3.22.4
-    zod-to-json-schema: ^3.22.3
-  checksum: 963aca44a8422dbbe8259d063e65867bc1ad0735e805c7b46048d48e12822ae669f64f46f077a31dd5a9aa0c43b2f1ed7a5e57369392902e8d419dd9fa3611f3
-  languageName: node
-  linkType: hard
-
-"@langchain/core@npm:~0.1.13":
+"@langchain/core@npm:0.1.63":
   version: 0.1.63
   resolution: "@langchain/core@npm:0.1.63"
   dependencies:
@@ -5632,26 +5613,6 @@ __metadata:
     zod: ^3.22.4
     zod-to-json-schema: ^3.22.3
   checksum: 0aa18f55e5e5cab2c609a6c0d37bcfe9a36b574658acaeb7857f6a0e23dd9ad5617d40988a48f6f00c461a33a5abee983d2ed8b311b92c60b641002b42f0ab26
-  languageName: node
-  linkType: hard
-
-"@langchain/core@npm:~0.1.56, @langchain/core@npm:~0.1.60":
-  version: 0.1.61
-  resolution: "@langchain/core@npm:0.1.61"
-  dependencies:
-    ansi-styles: ^5.0.0
-    camelcase: 6
-    decamelize: 1.2.0
-    js-tiktoken: ^1.0.8
-    langsmith: ~0.1.7
-    ml-distance: ^4.0.0
-    mustache: ^4.2.0
-    p-queue: ^6.6.2
-    p-retry: 4
-    uuid: ^9.0.0
-    zod: ^3.22.4
-    zod-to-json-schema: ^3.22.3
-  checksum: f3eadae482f05e2b48c9cbac063460b0282c19ed42939d82736615e8ad1163a498916513261ea49efa2bfbe7c6b716071e437ac76586bd7a4864ed2c869e7cfd
   languageName: node
   linkType: hard
 
@@ -12578,13 +12539,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@types/uuid@npm:10.0.0"
-  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
-  languageName: node
-  linkType: hard
-
 "@types/uuid@npm:^9.0.1":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
@@ -13597,6 +13551,7 @@ __metadata:
     "@nestjs/testing": ^9.3.12
     "@nestjs/throttler": ^2.0.0
     "@nestjs/websockets": ^10.4.20
+    "@newrelic/native-metrics": ^10.0.0
     "@next/eslint-plugin-next": ^12.3.7
     "@novu/headless": ^0.19.0
     "@novu/node": ^0.19.0
@@ -13718,6 +13673,9 @@ __metadata:
     xstate: ^4.32.1
     y-websocket: ^1.5.0
     yjs: ^13.5.23
+  dependenciesMeta:
+    "@newrelic/native-metrics":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -22618,7 +22576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tiktoken@npm:^1.0.7, js-tiktoken@npm:^1.0.8":
+"js-tiktoken@npm:^1.0.7":
   version: 1.0.11
   resolution: "js-tiktoken@npm:1.0.11"
   dependencies:
@@ -23207,25 +23165,6 @@ __metadata:
   version: 0.0.11
   resolution: "langchainhub@npm:0.0.11"
   checksum: 511371a6d9f277ddb0425b830afe41b029cf101becfa8ac55c3e7bf3dba2191d13772130b3c3d99f39d25f3bb22345808e0e8ce956296f49c728f8713072ce0b
-  languageName: node
-  linkType: hard
-
-"langsmith@npm:^0.1.56-rc.1":
-  version: 0.1.68
-  resolution: "langsmith@npm:0.1.68"
-  dependencies:
-    "@types/uuid": ^10.0.0
-    commander: ^10.0.1
-    p-queue: ^6.6.2
-    p-retry: 4
-    semver: ^7.6.3
-    uuid: ^10.0.0
-  peerDependencies:
-    openai: "*"
-  peerDependenciesMeta:
-    openai:
-      optional: true
-  checksum: b5422f9d52d22992b928089704233d7c67581744058f141f78dc9e7e0b789bf0b7cd7e0a964a23d7777d9d5bc55e3a0f2f86f760d6b23844817b2ad80367d704
   languageName: node
   linkType: hard
 

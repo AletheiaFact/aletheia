@@ -250,6 +250,9 @@
             "eslint --fix"
         ]
     },
+    "optionalDependencies": {
+        "@newrelic/native-metrics": "^10.0.0"
+    },
     "resolutions": {
         "@types/mime": "3.0.4",
         "@types/react": "^18.3.23",
@@ -264,7 +267,8 @@
         "braces": "3.0.3",
         "ws": "8.18.0",
         "prosemirror-model": "1.23.0",
-        "glob": "^9.3.5"
+        "glob": "^9.3.5",
+        "@langchain/core": "0.1.63"
     },
     "engines": {
         "node": ">=20.18.0"
