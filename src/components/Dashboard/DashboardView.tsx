@@ -11,9 +11,12 @@ import ClaimCard from "../Claim/ClaimCard";
 import claimReviewApi from "../../api/claimReviewApi";
 import DashboardViewStyle from "./DashboardView.style";
 import ReviewCard from "../ClaimReview/ReviewCard";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const DashboardView = () => {
     const { t, i18n } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         <DashboardViewStyle container>
@@ -47,6 +50,7 @@ const DashboardView = () => {
                     filter={{
                         i18n,
                         isHidden: true,
+                        nameSpace,
                     }}
                     showDividers={false}
                     emptyFallback={<></>}
@@ -67,7 +71,10 @@ const DashboardView = () => {
                 <BaseList
                     title={t("admin:dashboardHiddenReviews")}
                     apiCall={claimReviewApi.get}
-                    filter={{ isHidden: true }}
+                    filter={{
+                        isHidden: true,
+                        nameSpace,
+                    }}
                     showDividers={false}
                     emptyFallback={<></>}
                     renderItem={(review) =>
