@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
-import lottie from "lottie-web";
 import { generateLottie } from "../lottiefiles/generateLottie";
 import { ClassificationEnum } from "../types/enums";
 
@@ -14,6 +13,7 @@ const ReviewedImage = ({
     classification?: keyof typeof ClassificationEnum;
 }) => {
     const [animation, setAnimation] = useState<any>(null);
+    const [lottieInstance, setLottieInstance] = useState<any>(null);
     const container = useRef(null);
     const getImageMeta = (url) =>
         new Promise((resolve, reject) => {
@@ -65,33 +65,43 @@ const ReviewedImage = ({
     }, []);
 
     useEffect(() => {
-        if (classification) {
-            lottie.loadAnimation({
-                container: container.current,
-                renderer: "svg",
-                loop: false,
-                autoplay: false,
-                animationData: animation,
-                rendererSettings: {
-                    preserveAspectRatio: "xMinYMin meet",
-                    viewBoxSize: "10 10",
-                },
+        if (classification && animation && typeof window !== 'undefined') {
+            // Dynamic import to avoid SSR issues
+            import('lottie-web').then((lottie) => {
+                const animationInstance = lottie.default.loadAnimation({
+                    container: container.current,
+                    renderer: "svg",
+                    loop: false,
+                    autoplay: false,
+                    animationData: animation,
+                    rendererSettings: {
+                        preserveAspectRatio: "xMinYMin meet",
+                        viewBoxSize: "10 10",
+                    },
+                });
+                setLottieInstance({ lottie: lottie.default, animation: animationInstance });
+                lottie.default.setSpeed(1.5);
             });
-            lottie.setSpeed(1.5);
         }
         return () => {
-            lottie.destroy();
+            if (lottieInstance?.animation) {
+                lottieInstance.animation.destroy();
+            }
         };
     }, [animation, classification]);
 
     const handleMouseEnter = () => {
-        lottie.setDirection(1);
-        lottie.play();
+        if (lottieInstance?.lottie) {
+            lottieInstance.lottie.setDirection(1);
+            lottieInstance.lottie.play();
+        }
     };
 
     const handleMouseLeave = () => {
-        lottie.setDirection(-1);
-        lottie.play();
+        if (lottieInstance?.lottie) {
+            lottieInstance.lottie.setDirection(-1);
+            lottieInstance.lottie.play();
+        }
     };
     return (
         <>
