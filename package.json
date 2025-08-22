@@ -101,6 +101,8 @@
         "@remirror/extension-yjs": "^4.0.2",
         "@remirror/pm": "^3.0.1",
         "@remirror/react": "^3.0.3",
+        "@remirror/react-ui": "^1.0.1",
+        "@remirror/styles": "^3.0.0",
         "@typescript-eslint/eslint-plugin": "^4.29.0",
         "@xstate/react": "^3.0.0",
         "accept-language-parser": "^1.5.0",
@@ -260,7 +262,7 @@
         "braces": "3.0.3",
         "ws": "8.18.0",
         "prosemirror-model": "1.23.0",
-        "glob": "^11.0.0"
+        "glob": "^9.3.5"
     },
     "packageManager": "yarn@3.6.3"
 }
