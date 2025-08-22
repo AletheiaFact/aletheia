@@ -24,6 +24,7 @@ COPY server/jest.config.json /app/jest.config.json
 COPY ./next.config.js /app/next.config.js
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
+COPY ./.yarn /app/.yarn
 COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
@@ -38,6 +39,9 @@ WORKDIR /app
 RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
 RUN corepack enable
+# Skip building optional native modules that fail in Alpine
+ENV SKIP_OPTIONAL_BUILD=true
+ENV DISABLE_NATIVE_METRICS=true
 RUN yarn install
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
