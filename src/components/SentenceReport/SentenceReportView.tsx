@@ -12,14 +12,10 @@ import {
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
-import CTARegistration from "../Home/CTARegistration";
+import CTAFolder from "../Home/CTAFolder";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
-import {
-    currentUserId,
-    currentUserRole,
-    isUserLoggedIn,
-} from "../../atoms/currentUser";
+import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 
@@ -31,7 +27,6 @@ const SentenceReportView = ({
     href,
     componentStyle,
 }) => {
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
     const { machineService, publishedReview, reviewTaskType } = useContext(
@@ -85,7 +80,7 @@ const SentenceReportView = ({
                         }
                         href={href}
                     />
-                    {!isLoggedIn && <CTARegistration />}
+                    <CTAFolder />
                 </Grid>
             </Grid>
         )

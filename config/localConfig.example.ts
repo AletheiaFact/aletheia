@@ -13,9 +13,16 @@ const localConfig: LocalConfig = {
         donateButton: {
             show: true,
         },
+        ctaButton: {
+            show: true,
+        },
     },
     home: {
         affixCTA: true,
+        folderRedirectForum: {
+            show: true,
+            ctaButton: true,
+        },
     },
 };
 

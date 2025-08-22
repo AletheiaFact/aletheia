@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "./PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
-import CTARegistration from "../Home/CTARegistration";
+import CTAFolder from "../Home/CTAFolder";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 
@@ -31,21 +31,19 @@ const MorePersonalities = ({ personalities, href, title }) => {
 
             <Grid item
                 xs={isLoggedIn || vw?.lg ? 11 : 3}
-                style={{    paddingLeft: vw?.lg ? 0 : 20}} 
+                style={{ paddingLeft: vw?.lg ? 0 : 20 }}
             >
-                {!isLoggedIn && (
-                    <>
-                        {!vw?.md && (
-                            <SectionTitle>
-                                {t("home:sectionTitle2")}
-                            </SectionTitle>
-                        )}
 
-                        <Grid container id="create_account">
-                            <CTARegistration />
-                        </Grid>
-                    </>
+                {!vw?.md && (
+                    <SectionTitle>
+                        {t("home:sectionTitle2")}
+                    </SectionTitle>
                 )}
+
+                <Grid container id="create_account">
+                    <CTAFolder />
+                </Grid>
+
                 <SocialMediaShare href={href} />
             </Grid>
         </Grid>

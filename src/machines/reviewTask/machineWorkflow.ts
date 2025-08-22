@@ -14,7 +14,8 @@ export const isSameLabel = (context, event) =>
     event?.reviewData?.crossCheckingClassification;
 
 const isDifferentLabel = (context, event) =>
-    context?.classification !== event?.reviewData?.crossCheckingClassification;
+    context?.reviewData?.classification !==
+    event?.reviewData?.crossCheckingClassification;
 
 const draftSubStates = {
     initial: CompoundStates.undraft,

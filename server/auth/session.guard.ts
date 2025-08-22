@@ -3,10 +3,35 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { Roles } from "./ability/ability.factory";
 import { Logger } from "@nestjs/common";
 import { BaseGuard } from "./base.guard";
+import { Reflector } from "@nestjs/core";
+import { UsersService } from "../../server/users/users.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
     private readonly logger = new Logger(SessionGuard.name);
+
+    constructor(
+        protected configService: ConfigService,
+        protected reflector: Reflector,
+        private readonly usersService: UsersService
+    ) {
+        super(configService, reflector);
+    }
+
+    private async logoutUser(ory: FrontendApi, request: any): Promise<void> {
+        try {
+            const { data } = await ory.createBrowserLogoutFlow({
+                cookie: request.header("Cookie"),
+            });
+            await ory.updateLogoutFlow({
+                cookie: request.header("Cookie"),
+                token: data.logout_token,
+            });
+        } catch (e) {
+            this.logger.error("Error during logout flow", e);
+        }
+    }
 
     // @ts-ignore
     async canActivate(
@@ -34,6 +59,21 @@ export class SessionGuard extends BaseGuard {
                     cookie: request.header("Cookie"),
                 });
 
+                const mongoUserId = session?.identity?.traits?.user_id;
+                try {
+                    await this.usersService.getById(mongoUserId);
+                } catch (e) {
+                    this.logger.error(`User not found for ID: ${mongoUserId}`);
+                    this.logger.error(e);
+                    await this.logoutUser(ory, request);
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/signup-invite"
+                    );
+                }
+
                 const expectedAffiliation =
                     this.configService.get<string>("app_affiliation");
                 const appAffiliation =
@@ -42,17 +82,7 @@ export class SessionGuard extends BaseGuard {
                     this.logger.error(
                         `Affiliation mismatch: expected ${expectedAffiliation}, got ${appAffiliation}`
                     );
-                    try {
-                        const { data } = await ory.createBrowserLogoutFlow({
-                            cookie: request.header("Cookie"),
-                        });
-                        await ory.updateLogoutFlow({
-                            cookie: request.header("Cookie"),
-                            token: data.logout_token,
-                        });
-                    } catch (e) {
-                        this.logger.error("Error during logout flow", e);
-                    }
+                    await this.logoutUser(ory, request);
                     return this.checkAndRedirect(
                         request,
                         response,
@@ -60,6 +90,7 @@ export class SessionGuard extends BaseGuard {
                         "/unauthorized"
                     );
                 }
+
                 request.user = {
                     isM2M: false,
                     _id: session?.identity?.traits?.user_id,
@@ -68,6 +99,7 @@ export class SessionGuard extends BaseGuard {
                     role: session?.identity?.traits?.role,
                     status: session?.identity.state,
                 };
+
                 const overridePublicRoutes =
                     session?.identity?.traits?.role.main === Roles.Regular &&
                     this.configService.get<string>("override_public_routes");

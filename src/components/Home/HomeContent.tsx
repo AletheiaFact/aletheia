@@ -1,9 +1,7 @@
 import React from "react";
-import CTARegistration from "./CTARegistration";
+import CTAFolder from "./CTAFolder";
 import { Grid } from "@mui/material"
 import SocialMediaShare from "../SocialMediaShare";
-import { isUserLoggedIn } from "../../atoms/currentUser";
-import { useAtom } from "jotai";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import { useTranslation } from "next-i18next";
@@ -19,8 +17,6 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
             state?.search?.searchResults?.sentences || [],
         ],
     }));
-
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const { t } = useTranslation();
 
@@ -48,7 +44,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                         xs={10}
                         sm={10}
                         md={9}
-                         style={{
+                        style={{
                             width: "100%",
                             paddingBottom: "32px",
                             justifyContent: "center",
@@ -64,11 +60,11 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                     />
                 </Grid>
 
-                {!isLoggedIn && (
-                    <Grid item xs={12} lg={9} order={3}>
-                        <CTARegistration />
-                    </Grid>
-                )}
+
+                <Grid item xs={12} lg={9} order={3}>
+                    <CTAFolder />
+                </Grid>
+
                 <Grid item xs={12} order={4}>
                     <SocialMediaShare href={href} />
                 </Grid>

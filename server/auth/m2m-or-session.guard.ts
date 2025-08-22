@@ -1,8 +1,13 @@
-import { Injectable, ExecutionContext, CanActivate } from "@nestjs/common";
+import {
+    Injectable,
+    ExecutionContext,
+    CanActivate,
+    Scope,
+} from "@nestjs/common";
 import { SessionGuard } from "./session.guard";
 import { M2MGuard } from "./m2m.guard";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class SessionOrM2MGuard implements CanActivate {
     constructor(
         private readonly sessionGuard: SessionGuard,

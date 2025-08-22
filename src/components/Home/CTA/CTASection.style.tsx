@@ -13,7 +13,7 @@ const CTASectionStyle = styled(Grid)`
         font-size: 16px;
         line-height: 20px;
         color: ${colors.white};
-        margin-bottom: 0;
+        margin: 0;
     }
 
     .CTA-button-container {
