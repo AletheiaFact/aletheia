@@ -5005,7 +5005,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/community@npm:^0.0.54, @langchain/community@npm:~0.0.47":
+"@langchain/community@npm:^0.0.54":
   version: 0.0.54
   resolution: "@langchain/community@npm:0.0.54"
   dependencies:
@@ -5299,7 +5299,343 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:~0.1, @langchain/core@npm:~0.1.56, @langchain/core@npm:~0.1.60":
+"@langchain/community@npm:~0.0.47":
+  version: 0.0.57
+  resolution: "@langchain/community@npm:0.0.57"
+  dependencies:
+    "@langchain/core": ~0.1.60
+    "@langchain/openai": ~0.0.28
+    expr-eval: ^2.0.2
+    flat: ^5.0.2
+    langsmith: ~0.1.1
+    uuid: ^9.0.0
+    zod: ^3.22.3
+    zod-to-json-schema: ^3.22.5
+  peerDependencies:
+    "@aws-crypto/sha256-js": ^5.0.0
+    "@aws-sdk/client-bedrock-agent-runtime": ^3.485.0
+    "@aws-sdk/client-bedrock-runtime": ^3.422.0
+    "@aws-sdk/client-dynamodb": ^3.310.0
+    "@aws-sdk/client-kendra": ^3.352.0
+    "@aws-sdk/client-lambda": ^3.310.0
+    "@aws-sdk/client-sagemaker-runtime": ^3.310.0
+    "@aws-sdk/client-sfn": ^3.310.0
+    "@aws-sdk/credential-provider-node": ^3.388.0
+    "@azure/search-documents": ^12.0.0
+    "@clickhouse/client": ^0.2.5
+    "@cloudflare/ai": "*"
+    "@datastax/astra-db-ts": ^1.0.0
+    "@elastic/elasticsearch": ^8.4.0
+    "@getmetal/metal-sdk": "*"
+    "@getzep/zep-js": ^0.9.0
+    "@gomomento/sdk": ^1.51.1
+    "@gomomento/sdk-core": ^1.51.1
+    "@google-ai/generativelanguage": ^0.2.1
+    "@gradientai/nodejs-sdk": ^1.2.0
+    "@huggingface/inference": ^2.6.4
+    "@mlc-ai/web-llm": ^0.2.35
+    "@mozilla/readability": "*"
+    "@neondatabase/serverless": "*"
+    "@opensearch-project/opensearch": "*"
+    "@pinecone-database/pinecone": "*"
+    "@planetscale/database": ^1.8.0
+    "@premai/prem-sdk": ^0.3.25
+    "@qdrant/js-client-rest": ^1.8.2
+    "@raycast/api": ^1.55.2
+    "@rockset/client": ^0.9.1
+    "@smithy/eventstream-codec": ^2.0.5
+    "@smithy/protocol-http": ^3.0.6
+    "@smithy/signature-v4": ^2.0.10
+    "@smithy/util-utf8": ^2.0.0
+    "@supabase/postgrest-js": ^1.1.1
+    "@supabase/supabase-js": ^2.10.0
+    "@tensorflow-models/universal-sentence-encoder": "*"
+    "@tensorflow/tfjs-converter": "*"
+    "@tensorflow/tfjs-core": "*"
+    "@upstash/redis": ^1.20.6
+    "@upstash/vector": ^1.0.7
+    "@vercel/kv": ^0.2.3
+    "@vercel/postgres": ^0.5.0
+    "@writerai/writer-sdk": ^0.40.2
+    "@xata.io/client": ^0.28.0
+    "@xenova/transformers": ^2.5.4
+    "@zilliz/milvus2-sdk-node": ">=2.2.7"
+    better-sqlite3: ^9.4.0
+    cassandra-driver: ^4.7.2
+    cborg: ^4.1.1
+    chromadb: "*"
+    closevector-common: 0.1.3
+    closevector-node: 0.1.6
+    closevector-web: 0.1.6
+    cohere-ai: "*"
+    convex: ^1.3.1
+    couchbase: ^4.3.0
+    discord.js: ^14.14.1
+    dria: ^0.0.3
+    duck-duck-scrape: ^2.2.5
+    faiss-node: ^0.5.1
+    firebase-admin: ^11.9.0 || ^12.0.0
+    google-auth-library: ^8.9.0
+    googleapis: ^126.0.1
+    hnswlib-node: ^3.0.0
+    html-to-text: ^9.0.5
+    interface-datastore: ^8.2.11
+    ioredis: ^5.3.2
+    it-all: ^3.0.4
+    jsdom: "*"
+    jsonwebtoken: ^9.0.2
+    llmonitor: ^0.5.9
+    lodash: ^4.17.21
+    lunary: ^0.6.11
+    mongodb: ">=5.2.0"
+    mysql2: ^3.3.3
+    neo4j-driver: "*"
+    node-llama-cpp: "*"
+    pg: ^8.11.0
+    pg-copy-streams: ^6.0.5
+    pickleparser: ^0.2.1
+    portkey-ai: ^0.1.11
+    redis: "*"
+    replicate: ^0.18.0
+    typeorm: ^0.3.12
+    typesense: ^1.5.3
+    usearch: ^1.1.1
+    vectordb: ^0.1.4
+    voy-search: 0.6.2
+    weaviate-ts-client: "*"
+    web-auth-library: ^1.0.3
+    ws: ^8.14.2
+  peerDependenciesMeta:
+    "@aws-crypto/sha256-js":
+      optional: true
+    "@aws-sdk/client-bedrock-agent-runtime":
+      optional: true
+    "@aws-sdk/client-bedrock-runtime":
+      optional: true
+    "@aws-sdk/client-dynamodb":
+      optional: true
+    "@aws-sdk/client-kendra":
+      optional: true
+    "@aws-sdk/client-lambda":
+      optional: true
+    "@aws-sdk/client-sagemaker-runtime":
+      optional: true
+    "@aws-sdk/client-sfn":
+      optional: true
+    "@aws-sdk/credential-provider-node":
+      optional: true
+    "@azure/search-documents":
+      optional: true
+    "@clickhouse/client":
+      optional: true
+    "@cloudflare/ai":
+      optional: true
+    "@datastax/astra-db-ts":
+      optional: true
+    "@elastic/elasticsearch":
+      optional: true
+    "@getmetal/metal-sdk":
+      optional: true
+    "@getzep/zep-js":
+      optional: true
+    "@gomomento/sdk":
+      optional: true
+    "@gomomento/sdk-core":
+      optional: true
+    "@google-ai/generativelanguage":
+      optional: true
+    "@gradientai/nodejs-sdk":
+      optional: true
+    "@huggingface/inference":
+      optional: true
+    "@mlc-ai/web-llm":
+      optional: true
+    "@mozilla/readability":
+      optional: true
+    "@neondatabase/serverless":
+      optional: true
+    "@opensearch-project/opensearch":
+      optional: true
+    "@pinecone-database/pinecone":
+      optional: true
+    "@planetscale/database":
+      optional: true
+    "@premai/prem-sdk":
+      optional: true
+    "@qdrant/js-client-rest":
+      optional: true
+    "@raycast/api":
+      optional: true
+    "@rockset/client":
+      optional: true
+    "@smithy/eventstream-codec":
+      optional: true
+    "@smithy/protocol-http":
+      optional: true
+    "@smithy/signature-v4":
+      optional: true
+    "@smithy/util-utf8":
+      optional: true
+    "@supabase/postgrest-js":
+      optional: true
+    "@supabase/supabase-js":
+      optional: true
+    "@tensorflow-models/universal-sentence-encoder":
+      optional: true
+    "@tensorflow/tfjs-converter":
+      optional: true
+    "@tensorflow/tfjs-core":
+      optional: true
+    "@upstash/redis":
+      optional: true
+    "@upstash/vector":
+      optional: true
+    "@vercel/kv":
+      optional: true
+    "@vercel/postgres":
+      optional: true
+    "@writerai/writer-sdk":
+      optional: true
+    "@xata.io/client":
+      optional: true
+    "@xenova/transformers":
+      optional: true
+    "@zilliz/milvus2-sdk-node":
+      optional: true
+    better-sqlite3:
+      optional: true
+    cassandra-driver:
+      optional: true
+    cborg:
+      optional: true
+    chromadb:
+      optional: true
+    closevector-common:
+      optional: true
+    closevector-node:
+      optional: true
+    closevector-web:
+      optional: true
+    cohere-ai:
+      optional: true
+    convex:
+      optional: true
+    couchbase:
+      optional: true
+    discord.js:
+      optional: true
+    dria:
+      optional: true
+    duck-duck-scrape:
+      optional: true
+    faiss-node:
+      optional: true
+    firebase-admin:
+      optional: true
+    google-auth-library:
+      optional: true
+    googleapis:
+      optional: true
+    hnswlib-node:
+      optional: true
+    html-to-text:
+      optional: true
+    interface-datastore:
+      optional: true
+    ioredis:
+      optional: true
+    it-all:
+      optional: true
+    jsdom:
+      optional: true
+    jsonwebtoken:
+      optional: true
+    llmonitor:
+      optional: true
+    lodash:
+      optional: true
+    lunary:
+      optional: true
+    mongodb:
+      optional: true
+    mysql2:
+      optional: true
+    neo4j-driver:
+      optional: true
+    node-llama-cpp:
+      optional: true
+    pg:
+      optional: true
+    pg-copy-streams:
+      optional: true
+    pickleparser:
+      optional: true
+    portkey-ai:
+      optional: true
+    redis:
+      optional: true
+    replicate:
+      optional: true
+    typeorm:
+      optional: true
+    typesense:
+      optional: true
+    usearch:
+      optional: true
+    vectordb:
+      optional: true
+    voy-search:
+      optional: true
+    weaviate-ts-client:
+      optional: true
+    web-auth-library:
+      optional: true
+    ws:
+      optional: true
+  checksum: 9a9f8396af0571bad920c0871329953f74a2907c5cdbab544f94269db2eff3de475c07e25c69dcf1e3b014f21ab9fc9f3cf79717ed44a7878bf780e58f11da87
+  languageName: node
+  linkType: hard
+
+"@langchain/core@npm:>0.2.0 <0.3.0, @langchain/core@npm:^0.2.31":
+  version: 0.2.36
+  resolution: "@langchain/core@npm:0.2.36"
+  dependencies:
+    ansi-styles: ^5.0.0
+    camelcase: 6
+    decamelize: 1.2.0
+    js-tiktoken: ^1.0.12
+    langsmith: ^0.1.56-rc.1
+    mustache: ^4.2.0
+    p-queue: ^6.6.2
+    p-retry: 4
+    uuid: ^10.0.0
+    zod: ^3.22.4
+    zod-to-json-schema: ^3.22.3
+  checksum: 963aca44a8422dbbe8259d063e65867bc1ad0735e805c7b46048d48e12822ae669f64f46f077a31dd5a9aa0c43b2f1ed7a5e57369392902e8d419dd9fa3611f3
+  languageName: node
+  linkType: hard
+
+"@langchain/core@npm:~0.1.13":
+  version: 0.1.63
+  resolution: "@langchain/core@npm:0.1.63"
+  dependencies:
+    ansi-styles: ^5.0.0
+    camelcase: 6
+    decamelize: 1.2.0
+    js-tiktoken: ^1.0.12
+    langsmith: ~0.1.7
+    ml-distance: ^4.0.0
+    mustache: ^4.2.0
+    p-queue: ^6.6.2
+    p-retry: 4
+    uuid: ^9.0.0
+    zod: ^3.22.4
+    zod-to-json-schema: ^3.22.3
+  checksum: 0aa18f55e5e5cab2c609a6c0d37bcfe9a36b574658acaeb7857f6a0e23dd9ad5617d40988a48f6f00c461a33a5abee983d2ed8b311b92c60b641002b42f0ab26
+  languageName: node
+  linkType: hard
+
+"@langchain/core@npm:~0.1.56, @langchain/core@npm:~0.1.60":
   version: 0.1.61
   resolution: "@langchain/core@npm:0.1.61"
   dependencies:
@@ -5319,7 +5655,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/openai@npm:^0.0.28, @langchain/openai@npm:~0.0.28":
+"@langchain/openai@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@langchain/openai@npm:0.0.14"
+  dependencies:
+    "@langchain/core": ~0.1.13
+    js-tiktoken: ^1.0.7
+    openai: ^4.26.0
+    zod: ^3.22.4
+    zod-to-json-schema: ^3.22.3
+  checksum: bfaf344580d493e8296344da63d9227bf896d3755d36cb8c29ac6c9ac087f1de83e2520078d32f24f7a95bf78ff64c338e411423c734382106d90676ae035b7f
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:~0.0.28":
   version: 0.0.28
   resolution: "@langchain/openai@npm:0.0.28"
   dependencies:
@@ -5333,12 +5682,12 @@ __metadata:
   linkType: hard
 
 "@langchain/textsplitters@npm:~0.0.0":
-  version: 0.0.0
-  resolution: "@langchain/textsplitters@npm:0.0.0"
+  version: 0.0.3
+  resolution: "@langchain/textsplitters@npm:0.0.3"
   dependencies:
-    "@langchain/core": ~0.1
-    js-tiktoken: ^1.0.11
-  checksum: 13034a309943adb484bea46015b51744a424f7645fe00401899eb0536c1a94ecd15dd0f144a279131fae7c054f1b4eb3a35c3a9dac05ef641263c1f6f27d4538
+    "@langchain/core": ">0.2.0 <0.3.0"
+    js-tiktoken: ^1.0.12
+  checksum: f0b32d65c863a280ce7104bff4d367734b8f76f2ec42b741fb690fbc20737bb4a3a412b82d8ba308a524441b6084ecd59cf61c3ce13cbb9639fbd02241c341d1
   languageName: node
   linkType: hard
 
@@ -5475,6 +5824,15 @@ __metadata:
   dependencies:
     sparse-bitfield: ^3.0.3
   checksum: 6f13983e41c9fbd5273eeae9135e47e5b7a19125a63287bea69e33a618f8e034cfcf2258c77d0f5d6dcf386dfe2bb520bc01613afd1528c52f82c71172629242
+  languageName: node
+  linkType: hard
+
+"@mongodb-js/saslprep@npm:^1.1.9":
+  version: 1.3.0
+  resolution: "@mongodb-js/saslprep@npm:1.3.0"
+  dependencies:
+    sparse-bitfield: ^3.0.3
+  checksum: 0003ab0a943220df74f8ffcf076c4e4fc4105b20d6b1610d802231d2a6d3b74ad0fa9d26e3d828cb07daabe511ffb2760c347f7a4c0f985d8a7770f7d95190a3
   languageName: node
   linkType: hard
 
@@ -12220,6 +12578,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
+  languageName: node
+  linkType: hard
+
 "@types/uuid@npm:^9.0.1":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
@@ -13208,7 +13573,8 @@ __metadata:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.1
     "@langchain/community": ^0.0.54
-    "@langchain/openai": ^0.0.28
+    "@langchain/core": ^0.2.31
+    "@langchain/openai": ^0.0.14
     "@mui/icons-material": ^5.18.0
     "@mui/joy": ^5.0.0-beta.48
     "@mui/lab": ^6.0.0-beta.30
@@ -13311,6 +13677,7 @@ __metadata:
     md5: ^2.3.0
     migrate-mongo-ts: ^1.1.4
     moment: ^2.30.1
+    mongodb: ^6.18.0
     mongodb-memory-server: ^10.0.0
     mongoose: ^5.13.15
     mongoose-softdelete-typescript: ^0.0.3
@@ -14871,6 +15238,13 @@ __metadata:
   version: 1.1.6
   resolution: "bson@npm:1.1.6"
   checksum: 75762c9b7e0b3156cb0f38c7eb9ffcade53f0b04ac87dece9cba38f6dc570d9af91251de6a8988b294063cfaa21894c60ac9e85c34176accb3674acb092d66a7
+  languageName: node
+  linkType: hard
+
+"bson@npm:^6.10.4":
+  version: 6.10.4
+  resolution: "bson@npm:6.10.4"
+  checksum: 5b0b625ac9b3661497aa1baec58c8e8979cc501a5c490a5740001b3cc415d0d5d51f16bf9da433b28ffd1303b6f98c1427e8192cf4220b13b09a9a4184bfceb2
   languageName: node
   linkType: hard
 
@@ -22235,7 +22609,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tiktoken@npm:^1.0.11, js-tiktoken@npm:^1.0.7, js-tiktoken@npm:^1.0.8":
+"js-tiktoken@npm:^1.0.12":
+  version: 1.0.21
+  resolution: "js-tiktoken@npm:1.0.21"
+  dependencies:
+    base64-js: ^1.5.1
+  checksum: 9d79d31b7c253724141fab00457f1311fe32dfa6c681121538ff88e75ec8d3dc14b311a195ad24f9d31f9f44324f0a4443dd1300505cd965feeb67a9fb68e935
+  languageName: node
+  linkType: hard
+
+"js-tiktoken@npm:^1.0.7, js-tiktoken@npm:^1.0.8":
   version: 1.0.11
   resolution: "js-tiktoken@npm:1.0.11"
   dependencies:
@@ -22635,8 +23018,8 @@ __metadata:
   linkType: hard
 
 "langchain@npm:^0.1.36":
-  version: 0.1.36
-  resolution: "langchain@npm:0.1.36"
+  version: 0.1.37
+  resolution: "langchain@npm:0.1.37"
   dependencies:
     "@anthropic-ai/sdk": ^0.9.1
     "@langchain/community": ~0.0.47
@@ -22662,6 +23045,7 @@ __metadata:
     "@aws-sdk/client-sfn": ^3.310.0
     "@aws-sdk/credential-provider-node": ^3.388.0
     "@azure/storage-blob": ^12.15.0
+    "@browserbasehq/sdk": "*"
     "@gomomento/sdk": ^1.51.1
     "@gomomento/sdk-core": ^1.51.1
     "@gomomento/sdk-web": ^1.51.1
@@ -22718,6 +23102,8 @@ __metadata:
     "@aws-sdk/credential-provider-node":
       optional: true
     "@azure/storage-blob":
+      optional: true
+    "@browserbasehq/sdk":
       optional: true
     "@gomomento/sdk":
       optional: true
@@ -22813,14 +23199,33 @@ __metadata:
       optional: true
     youtubei.js:
       optional: true
-  checksum: 0027c3ae02c3a16bd8a5669b9fba723f9b0657480492cba13a5732ff78378b6e007c8f23c9192d857be046e0b8e18c3aafd75ee9f5768f0637dba9b0e2263b99
+  checksum: 6c1106d02c7198db973f0714cd71fb4c11a28a6630818f39ec07c2e0af573af64118bef49d7eb4cea3e2b2b701a2644fb95021377f75b8a9862e6faf9fa8a93a
   languageName: node
   linkType: hard
 
 "langchainhub@npm:~0.0.8":
-  version: 0.0.10
-  resolution: "langchainhub@npm:0.0.10"
-  checksum: 9bce1ec7eb8c86e7990e59d0484897d04c25792091bf6a1263eb2fc1af48efaaf7f85111dec58f2b3aa07aaa4bf4a62530cebd6ca198e3c27deff0522bfdd3c7
+  version: 0.0.11
+  resolution: "langchainhub@npm:0.0.11"
+  checksum: 511371a6d9f277ddb0425b830afe41b029cf101becfa8ac55c3e7bf3dba2191d13772130b3c3d99f39d25f3bb22345808e0e8ce956296f49c728f8713072ce0b
+  languageName: node
+  linkType: hard
+
+"langsmith@npm:^0.1.56-rc.1":
+  version: 0.1.68
+  resolution: "langsmith@npm:0.1.68"
+  dependencies:
+    "@types/uuid": ^10.0.0
+    commander: ^10.0.1
+    p-queue: ^6.6.2
+    p-retry: 4
+    semver: ^7.6.3
+    uuid: ^10.0.0
+  peerDependencies:
+    openai: "*"
+  peerDependenciesMeta:
+    openai:
+      optional: true
+  checksum: b5422f9d52d22992b928089704233d7c67581744058f141f78dc9e7e0b789bf0b7cd7e0a964a23d7777d9d5bc55e3a0f2f86f760d6b23844817b2ad80367d704
   languageName: node
   linkType: hard
 
@@ -24240,6 +24645,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mongodb@npm:^6.18.0":
+  version: 6.18.0
+  resolution: "mongodb@npm:6.18.0"
+  dependencies:
+    "@mongodb-js/saslprep": ^1.1.9
+    bson: ^6.10.4
+    mongodb-connection-string-url: ^3.0.0
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.188.0
+    "@mongodb-js/zstd": ^1.1.0 || ^2.0.0
+    gcp-metadata: ^5.2.0
+    kerberos: ^2.0.1
+    mongodb-client-encryption: ">=6.0.0 <7"
+    snappy: ^7.2.2
+    socks: ^2.7.1
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: 2bb06653a86ed92090594e870f7e9c7effb4f4bb4ea0a923574c2e97711fd88714d7bfed889782c2116bedbd8d4809da3f42176bca6cd5382a389f6260125922
+  languageName: node
+  linkType: hard
+
 "mongodb@npm:^6.7.0":
   version: 6.8.0
   resolution: "mongodb@npm:6.8.0"
@@ -25354,6 +25793,31 @@ __metadata:
     is-docker: ^2.1.1
     is-wsl: ^2.2.0
   checksum: 6388bfff21b40cb9bd8f913f9130d107f2ed4724ea81a8fd29798ee322b361ca31fa2cdfb491a5c31e43a3996cfe9566741238c7a741ada8d7af1cb78d85cf26
+  languageName: node
+  linkType: hard
+
+"openai@npm:^4.26.0":
+  version: 4.104.0
+  resolution: "openai@npm:4.104.0"
+  dependencies:
+    "@types/node": ^18.11.18
+    "@types/node-fetch": ^2.6.4
+    abort-controller: ^3.0.0
+    agentkeepalive: ^4.2.1
+    form-data-encoder: 1.7.2
+    formdata-node: ^4.3.2
+    node-fetch: ^2.6.7
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 2bd3ba14a37a3421703d9108bdb61be38d2555fbefbfb491c890d3c47cef72f5c9fefada78f33923f86e5d2ada86bcb3a3c04662f16e85f735a2c1ecd0fa031e
   languageName: node
   linkType: hard
 
@@ -32134,11 +32598,11 @@ __metadata:
   linkType: hard
 
 "yaml@npm:^2.2.1":
-  version: 2.4.2
-  resolution: "yaml@npm:2.4.2"
+  version: 2.8.1
+  resolution: "yaml@npm:2.8.1"
   bin:
     yaml: bin.mjs
-  checksum: 90dda4485de04367251face9abb5c36927c94e44078f4e958e6468a07e74e7e92f89be20fc49860b6268c51ee5a5fc79ef89197d3f874bf24ef8921cc4ba9013
+  checksum: 35b46150d48bc1da2fd5b1521a48a4fa36d68deaabe496f3c3fa9646d5796b6b974f3930a02c4b5aee6c85c860d7d7f79009416724465e835f40b87898c36de4
   languageName: node
   linkType: hard
 
