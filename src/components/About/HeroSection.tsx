@@ -16,6 +16,7 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 
 export default function HeroSection() {
   const theme = useTheme();
@@ -66,6 +67,7 @@ export default function HeroSection() {
                 sx={{ bgcolor: "grey.900", "&:hover": { bgcolor: "grey.800" }, px: 3, py: 1.5 }}
                 href="/"
                 component="a"
+                onClick={() => trackUmamiEvent("about-hero-access-platform", "navigation")}
               >
                 {t("about:accessPlatform")}
               </Button>
@@ -76,6 +78,7 @@ export default function HeroSection() {
                 sx={{ px: 3, py: 1.5 }}
                 href="/supportive-materials"
                 component="a"
+                onClick={() => trackUmamiEvent("about-hero-download-manual", "download")}
               >
                 {t("about:downloadManual")}
               </Button>

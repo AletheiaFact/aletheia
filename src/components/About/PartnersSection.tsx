@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { ArrowUpward as ArrowForward } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { trackUmamiEvent } from "../../lib/umami";
 import STFLogo from "./PartnerLogos/STFLogo";
 import AlumiaLogo from "./PartnerLogos/AlumiaLogo";
 import VerificaRSLogo from "./PartnerLogos/VerificaRSLogo";
@@ -98,6 +99,7 @@ export default function PartnersSection() {
             sx={{ bgcolor: "grey.900", "&:hover": { bgcolor: "grey.800" } }}
             href="mailto:contact@aletheiafact.org"
             component="a"
+            onClick={() => trackUmamiEvent("about-partners-propose-collaboration", "contact")}
           >
             {t("about:proposeCollaboration")}
           </Button>
