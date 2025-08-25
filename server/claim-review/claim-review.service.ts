@@ -305,7 +305,7 @@ export class ClaimReviewService {
         const claimReview = await this.ClaimReviewModel.findOne({
             personality: match.personality,
             target: match.claim,
-            targetModel: "Claim",
+            targetModel: TargetModel.Claim,
             data_hash: match.data_hash,
         }).lean();
 
