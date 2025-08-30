@@ -36,9 +36,9 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
 ## Technical Architecture
 
 ### Backend
-- **Framework**: NestJS (Node.js)
+- **Framework**: NestJS (Node.js 20.18.0+)
 - **Database**: MongoDB with Mongoose ODM
-- **Authentication**: Ory Kratos
+- **Authentication**: Ory Kratos with enhanced session validation
 - **Real-time**: WebSocket with Yjs
 
 ### Frontend
@@ -46,9 +46,11 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
 - **UI Library**: Material-UI
 - **State Management**: Jotai, XState
 - **Styling**: Styled-components
+- **Analytics**: Umami v2 with enhanced event tracking
 
 ### Infrastructure
 - **Containerization**: Docker
 - **Monitoring**: New Relic
 - **Analytics**: Umami v2
 - **Testing**: Jest, Cypress
+- **Package Management**: Yarn with workspace tools plugin
