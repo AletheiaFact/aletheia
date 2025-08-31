@@ -24,8 +24,6 @@ export class AiTaskService {
     }
 
     async findAll(state?: AiTaskState): Promise<AiTaskDocument[]> {
-        const filter: FilterQuery<AiTaskDocument> = {};
-
         if (state) {
             if (!Object.values(AiTaskState).includes(state)) {
                 throw new BadRequestException(
@@ -34,10 +32,10 @@ export class AiTaskService {
                     ).join(", ")}`
                 );
             }
-            filter.state = state;
+            return this.aiTaskModel.find({ state }).exec();
         }
 
-        return this.aiTaskModel.find(filter).exec();
+        return this.aiTaskModel.find({}).exec();
     }
 
     async updateState(
