@@ -21,7 +21,7 @@ export class NameSpaceGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const oryConfig = new Configuration({
             basePath: this.configService.get<string>("ory.url"),
-            accessToken: this.configService.get<string>("access_token"),
+            accessToken: this.configService.get<string>("ory.access_token"),
         });
 
         const namespaceSlug = request.params.namespace;
