@@ -38,11 +38,11 @@ export const AiTaskZodSchema = z.object({
     }),
 });
 
-export type AiTask = z.infer<typeof AiTaskZodSchema>;
-export type AiTaskDocument = AiTask & Document;
+export type AiTaskZod = z.infer<typeof AiTaskZodSchema>;
+export type AiTaskDocument = AiTaskZod & Document;
 
 @Schema({ timestamps: true })
-export class AiTaskClass {
+export class AiTask {
     @Prop({
         type: String,
         enum: AiTaskTypes,
@@ -72,6 +72,6 @@ export class AiTaskClass {
     callbackParams: Record<string, any>;
 }
 
-export const AiTaskSchema = SchemaFactory.createForClass(AiTaskClass);
+export const AiTaskSchema = SchemaFactory.createForClass(AiTask);
 AiTaskSchema.index({ state: 1, createdAt: 1 });
-export const AiTaskName = AiTaskClass.name;
+export const AiTaskName = AiTask.name;
