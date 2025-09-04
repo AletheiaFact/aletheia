@@ -5,11 +5,10 @@ import {
     CanActivate,
     ExecutionContext,
     UnauthorizedException,
-    SetMetadata,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ForbiddenError } from "@casl/ability";
-import { AbilityFactory } from "../ability/ability.factory";
+import { AbilityFactory, Roles } from "../ability/ability.factory";
 import {
     CHECK_ABILITY,
     RequiredRule,
@@ -17,14 +16,13 @@ import {
 } from "../ability/ability.decorator";
 import { NameSpaceEnum } from "../name-space/schemas/name-space.schema";
 import { User } from "../../entities/user.entity";
-import { Roles } from "../ability/ability.factory";
 import { M2M } from "../../entities/m2m.entity";
 
 @Injectable()
 export class M2MOrAbilitiesGuard implements CanActivate {
     constructor(
-        private reflector: Reflector,
-        private caslAbilityFactory: AbilityFactory
+        private readonly reflector: Reflector,
+        private readonly caslAbilityFactory: AbilityFactory
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
