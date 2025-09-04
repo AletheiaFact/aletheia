@@ -70,7 +70,7 @@ export class M2MOrAbilitiesGuard implements CanActivate {
     }
 }
 
-export const M2MOrAdmin = (...requirements: RequiredRule[]) => {
+export const M2MOrAbilities = (...requirements: RequiredRule[]) => {
     return applyDecorators(
         UseGuards(M2MOrAbilitiesGuard),
         CheckAbilities(...requirements)
