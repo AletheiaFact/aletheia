@@ -1,18 +1,25 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Novu, TriggerRecipientsTypeEnum } from "@novu/node";
 import { InjectNovu } from "./novu.provider";
 import { createHmac } from "crypto";
 import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class NotificationService {
+    private readonly logger = new Logger("NotificationService");
+    
     constructor(
         @InjectNovu()
-        private readonly novu: Novu,
+        private readonly novu: Novu | null,
         private configService: ConfigService
-    ) {}
+    ) {
+        if (!this.novu) {
+            this.logger.warn("Novu is not configured - notifications will be disabled");
+        }
+    }
 
     novuIsConfigured(): boolean {
-        if (this.configService.get<string>("novu.api_key")) return true;
+        // Check both API key and Novu instance
+        if (this.novu && this.configService.get<string>("novu.api_key")) return true;
         return false;
     }
 

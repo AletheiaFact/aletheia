@@ -26,8 +26,13 @@ async function initApp() {
                 logger.log(`${userData.email} seeded`);
                 return user;
             })
-            .catch((e) => {
-                logger.error("error", e);
+            .catch(async (e) => {
+                if (e && e.json) {
+                    const errorBody = await e.json();
+                    logger.error("Ory error response:", errorBody);
+                } else {
+                    logger.error("error", e);
+                }
                 logger.log(`Error while seeding ${userData.email}`);
                 return null;
             });
