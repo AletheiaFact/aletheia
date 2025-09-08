@@ -70,6 +70,7 @@ export class VerificationRequestService {
     async findAll(verifiedRequestQuery: {
         searchContent: string;
     }): Promise<VerificationRequest[]> {
+        console.log('iM ON FIND ALL')
         return this.VerificationRequestModel.find(
             {
                 content: {

@@ -187,6 +187,9 @@ export class VerificationRequestController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        // TODO: considering a different speech, we need improve the filter for recommendations
+        // As example, if the personality is different, or if the topic could be similar or happenend in the same event
+
         const parsedUrl = parse(req.url, true);
         const { dataHash } = req.params;
 
