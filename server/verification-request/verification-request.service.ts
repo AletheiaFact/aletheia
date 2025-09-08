@@ -54,6 +54,7 @@ export class VerificationRequestService {
     async findAll(verifiedRequestQuery: {
         searchContent: string;
     }): Promise<VerificationRequest[]> {
+        console.log('iM ON FIND ALL')
         return this.VerificationRequestModel.find(
             {
                 content: {
@@ -106,7 +107,10 @@ export class VerificationRequestService {
                 newVerificationRequest.source = null;
             }
 
-            return newVerificationRequest.save();
+            const newData = await newVerificationRequest.save();
+            // TODO: trigger the new event of state machine to validate information
+
+            return newData;
         } catch (e) {
             console.error("Failed to create verification request", e);
             throw new Error(e);

@@ -38,6 +38,8 @@ export const VerificationRequestProvider = ({
             group?.content?.filter((v) => v._id !== verificationRequest._id) ||
             [];
 
+        console.log(';groupContent', groupContent)
+
         await verificationRequestApi.updateVerificationRequest(
             verificationRequest._id,
             {
