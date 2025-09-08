@@ -1,4 +1,4 @@
-FROM node:18.19.1-alpine AS package
+FROM node:20.18.0-alpine AS package
 
 ARG NEXT_PUBLIC_UMAMI_SITE_ID
 ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
@@ -37,7 +37,9 @@ WORKDIR /app
 
 RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
-RUN yarn install --production
+RUN corepack enable
+ENV SKIP_OPTIONAL=true
+RUN yarn install --mode=skip-build || yarn install
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
@@ -46,7 +48,7 @@ RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_ENABLE_BANNER_DONATION=$NEXT_PUBLIC_ENABLE_BANNER_DONATION \
     yarn build
 
-FROM node:18.19.1-alpine
+FROM node:20.18.0-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 

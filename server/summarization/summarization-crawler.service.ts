@@ -145,7 +145,9 @@ export class SummarizationCrawlerService {
         const llm = new ChatOpenAI({
             temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
             modelName: openAI.GPT_3_5_TURBO_1106.toString(),
-            apiKey: this.configService.get<string>("openai.api_key"),
+            configuration: {
+                apiKey: this.configService.get<string>("openai.api_key"),
+            },
         });
 
         const embeddings = new OpenAIEmbeddings();
