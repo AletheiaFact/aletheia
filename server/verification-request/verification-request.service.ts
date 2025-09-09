@@ -10,10 +10,9 @@ import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "types";
+import { BaseRequest } from "../types";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { TypeModel } from "../state-event/schema/state-event.schema";
 const md5 = require("md5");
 
 @Injectable()
