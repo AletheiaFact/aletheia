@@ -3,7 +3,9 @@ import { TextField, InputAdornment } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-const InputSearchStyled = styled(TextField)`
+const InputSearchStyled = styled(TextField).withConfig({
+    shouldForwardProp: (prop) => prop !== 'backgroundColor',
+})`
     .MuiInputAdornment-root {
         color: ${colors.primary};
     }
