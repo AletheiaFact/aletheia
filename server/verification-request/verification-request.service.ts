@@ -10,7 +10,7 @@ import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "types";
+import type { BaseRequest } from "../types";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TypeModel } from "../state-event/schema/state-event.schema";
@@ -21,7 +21,7 @@ export class VerificationRequestService {
     private readonly logger = new Logger(VerificationRequestService.name);
 
     constructor(
-        @Inject(REQUEST) private readonly req: BaseRequest,
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         // This is not yet used but it is necessary to properly initialize the module
