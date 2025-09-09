@@ -38,6 +38,7 @@ WORKDIR /app
 
 RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
+RUN corepack enable
 RUN yarn install --immutable --production
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
