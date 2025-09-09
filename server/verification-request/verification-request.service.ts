@@ -1,10 +1,4 @@
-import {
-    BadRequestException,
-    Injectable,
-    Inject,
-    forwardRef,
-    Logger,
-} from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -16,14 +10,10 @@ import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "../types";
+import { BaseRequest } from "types";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-
-import { AiTaskService } from "../ai-task/ai-task.service";
-import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-
+import { TypeModel } from "../state-event/schema/state-event.schema";
 const md5 = require("md5");
 
 @Injectable({ scope: Scope.REQUEST })
@@ -38,9 +28,8 @@ export class VerificationRequestService {
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
-        private readonly groupService: GroupService,
-        private readonly historyService: HistoryService,
-        private readonly aiTaskService: AiTaskService
+        private groupService: GroupService,
+        private historyService: HistoryService
     ) {}
 
     async listAll({
@@ -139,22 +128,19 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
-                vr._id,
+                newVerificationRequest._id,
                 TargetModel.VerificationRequest,
-                currentUser,
+                user,
                 HistoryType.Create,
-                vr
+                newVerificationRequest
             );
 
             await this.historyService.createHistory(history);
 
-            this.logger.log(
-                `Verification request created successfully: ${vr._id}`
-            );
-            return vr;
+            return newVerificationRequest.save();
         } catch (e) {
             this.logger.error("Failed to create verification request", e.stack);
 
@@ -342,15 +328,18 @@ export class VerificationRequestService {
                     );
             }
 
+            const newVerificationRequest = new this.VerificationRequestModel(
+                verificationRequest
+            );
+
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
-                verificationRequest._id,
+                newVerificationRequest._id,
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Update,
-                updatedVerificationRequestData,
-                latestVerificationRequest
+                newVerificationRequest
             );
 
             await this.historyService.createHistory(history);
@@ -564,12 +553,11 @@ export class VerificationRequestService {
         const user = this.req.user;
 
         const history = this.historyService.getHistoryParams(
-            verificationRequest._id,
+            newVerificationRequest._id,
             TargetModel.VerificationRequest,
             user,
             HistoryType.Update,
-            newVerificationRequest,
-            latestVerificationRequest
+            newVerificationRequest
         );
 
         await this.historyService.createHistory(history);
