@@ -18,12 +18,12 @@ const md5 = require("md5");
 @Injectable()
 export class VerificationRequestService {
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         private sourceService: SourceService,
-        private groupService: GroupService,
-        private historyService: HistoryService
+        private readonly groupService: GroupService,
+        private readonly historyService: HistoryService
     ) {}
 
     async listAll({
