@@ -10,11 +10,11 @@ const WikidataCacheModel = MongooseModule.forFeatureAsync([
             const wikidataCacheSchema = WikidataCacheSchema;
             wikidataCacheSchema.index(
                 { wikidataId: 1, language: 1 },
-                { unique: true }
+                { unique: true } as any
             );
             wikidataCacheSchema.index(
                 { createdAt: 1 },
-                { expireAfterSeconds: 86400 }
+                { expireAfterSeconds: 86400 } as any
             );
             return wikidataCacheSchema;
         },
