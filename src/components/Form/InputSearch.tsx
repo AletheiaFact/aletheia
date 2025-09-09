@@ -42,23 +42,26 @@ const InputSearch = (props) => {
         }
     };
 
+    // Extract non-TextField props
+    const { callback, prefix, suffix, backgroundColor, ...textFieldProps } = props;
+
     return (
         <InputSearchStyled
             variant="outlined"
             placeholder={props.placeholder || ""}
             size="large"
-            loading={loading}
             onChange={(e) => doSearch(e)}
             InputProps={{
-                startAdornment: props.prefix ? (
-                    <InputAdornment position="start">{props.prefix}</InputAdornment>
+                startAdornment: prefix ? (
+                    <InputAdornment position="start">{prefix}</InputAdornment>
                 ) : null,
-                endAdornment: props.suffix ? (
-                    <InputAdornment position="end">{props.suffix}</InputAdornment>
+                endAdornment: suffix ? (
+                    <InputAdornment position="end">{suffix}</InputAdornment>
                 ) : null,
             }}
             data-cy={props["data-cy"] || "testInputSearchPersonality"}
-            {...props}
+            backgroundColor={backgroundColor}
+            {...textFieldProps}
         />
     );
 };
