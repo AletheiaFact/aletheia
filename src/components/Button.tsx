@@ -26,7 +26,7 @@ interface IAletheiaButtonProps extends AletheiaButtonProps {
 }
 
 const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
-    const { children, type, rounded, htmlType, style, ...restProps } = props;
+    const { children, type, rounded, htmlType, style, loading, ...restProps } = props;
 
     const [nameSpace] = useAtom(currentNameSpace);
 
