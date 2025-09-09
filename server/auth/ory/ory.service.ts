@@ -16,13 +16,27 @@ export default class OryService {
         this.app_affiliation = this.configService.get<string>("app_affiliation");
     }
 
+    private getHeaders(includeAuth = true): HeadersInit {
+        const headers: HeadersInit = {
+            "Content-Type": "application/json",
+        };
+        
+        if (includeAuth) {
+            const { access_token: token } = this.configService.get("ory");
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+        }
+        
+        return headers;
+    }
+
     async updateIdentity(
         user,
         password,
         traits?: { role?: any }
     ): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
+        const { schema_id } = this.configService.get("ory");
         const credentials = password
             ? {
                   password: {
@@ -43,15 +57,13 @@ export default class OryService {
                 credentials,
             }),
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                ...this.getHeaders(),
             },
         });
     }
 
     async updateUserState(user, state): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
+        const { schema_id } = this.configService.get("ory");
 
         return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
@@ -64,15 +76,13 @@ export default class OryService {
                 },
             }),
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                ...this.getHeaders(),
             },
         });
     }
 
     async updateUserRole(user, role): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
+        const { schema_id } = this.configService.get("ory");
         const app_affiliation =
             this.configService.get<string>("app_affiliation");
 
@@ -89,15 +99,13 @@ export default class OryService {
                 },
             }),
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                ...this.getHeaders(),
             },
         });
     }
 
     async createIdentity(user, password, traits?: { role?: any }): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
+        const { schema_id } = this.configService.get("ory");
 
         return fetch(`${this.adminUrl}/identities`, {
             method: "post",
@@ -116,8 +124,7 @@ export default class OryService {
                 },
             }),
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                ...this.getHeaders(),
             },
             credentials: "omit",
         }).then((response) => {
@@ -129,10 +136,14 @@ export default class OryService {
     }
 
     deleteIdentity(identityId): Promise<any> {
+        const headers: HeadersInit = {};
         const { access_token: token } = this.configService.get("ory");
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
         return fetch(`${this.adminUrl}/identities/${identityId}`, {
             method: "delete",
-            headers: { Authorization: `Bearer ${token}` },
+            headers,
         });
     }
 

@@ -8,7 +8,13 @@ export const NovuProvider: Provider = {
     provide: NOVU_PROVIDER_TOKEN,
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => {
-        return new Novu(configService.get<string>("novu.api_key"));
+        const apiKey = configService.get<string>("novu.api_key");
+        if (!apiKey) {
+            // Return null if no API key is configured
+            // This allows the app to run without Novu in local environments
+            return null;
+        }
+        return new Novu(apiKey);
     },
 };
 
