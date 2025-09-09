@@ -12,6 +12,17 @@ type ClaimReviewSchemaType = {
 
 type ReviewSchemaType = ClaimReviewSchemaType;
 
+// Type safety for internal content processing
+type TextFragment = string;
+type ParagraphContent = string;
+type MultiParagraphContent = string; // Content with \n separators representing multiple paragraphs
+
+// Internal processing result types
+interface ContentProcessingResult {
+    content: MultiParagraphContent;
+    sources: any[];
+}
+
 const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
     if (!reportModel) {
         return [];
@@ -73,6 +84,38 @@ export class EditorParser {
         return sources?.length > 0;
     }
 
+    /**
+     * Converts MultiParagraphContent (with \n separators) to HTML with <br> tags
+     */
+    private convertLineBreaksToHtml(content: MultiParagraphContent): string {
+        return content.replace(/\n/g, '<br>');
+    }
+
+    /**
+     * Checks if content contains multiple paragraphs
+     */
+    private isMultiParagraphContent(content: string): content is MultiParagraphContent {
+        return typeof content === 'string' && content.includes('\n');
+    }
+
+    /**
+     * Converts MultiParagraphContent to RemirrorJSON paragraph nodes for the editor
+     */
+    private convertMultiParagraphToEditorNodes(content: MultiParagraphContent): RemirrorJSON[] {
+        return content.split('\n').map(line => this.createParagraphNode(line));
+    }
+
+    private createParagraphNode(line: string): RemirrorJSON {
+        if (!line.trim()) {
+            return { type: "paragraph", content: [] };
+        }
+
+        return {
+            type: "paragraph",
+            content: [this.getContentObject(line)],
+        };
+    }
+
     getSourceByProperty(sources, property) {
         //FIXME: Create migration
         return sources.filter(
@@ -84,10 +127,19 @@ export class EditorParser {
         content: string | object[]
     ): string | string[] {
         if (Array.isArray(content)) {
-            return content.map((c) => `<div><p>${c}</p></div>`);
+            return content.map((c) => this.buildSingleHtmlContent(String(c)));
         }
 
-        return `<div><p>${content}</p></div>`;
+        return this.buildSingleHtmlContent(String(content));
+    }
+
+    private buildSingleHtmlContent(contentStr: string): string {
+        if (this.isMultiParagraphContent(contentStr)) {
+            const htmlContent = this.convertLineBreaksToHtml(contentStr);
+            return `<div><p>${htmlContent}</p></div>`;
+        }
+
+        return `<div><p>${contentStr}</p></div>`;
     }
 
     extractHtmlContentFromRange({ props, content }, type = "text") {
@@ -126,7 +178,16 @@ export class EditorParser {
             return htmlContent.join("");
         }
 
-        return `<div><p>${htmlContent.join("")}</p></div>`;
+        return this.buildHtmlContentFromJoined(htmlContent.join(""));
+    }
+
+    private buildHtmlContentFromJoined(joinedContent: string): string {
+        if (this.isMultiParagraphContent(joinedContent)) {
+            const finalContent = this.convertLineBreaksToHtml(joinedContent);
+            return `<div><p>${finalContent}</p></div>`;
+        }
+
+        return `<div><p>${joinedContent}</p></div>`;
     }
 
     buildHtmlContent({ content, rawSourcesRanges, sourcesRanges, key }) {
@@ -252,9 +313,12 @@ export class EditorParser {
     getSchemaContentBasedOnType(
         schema,
         { type, content: cardContent }: RemirrorJSON
-    ) {
-        const sourceContent = [];
+    ): MultiParagraphContent {
+        const paragraphContents: ParagraphContent[] = [];
+        
         for (const { content } of cardContent) {
+            const textFragments: TextFragment[] = [];
+            
             if (content) {
                 for (const { text, marks } of content) {
                     if (marks) {
@@ -266,14 +330,20 @@ export class EditorParser {
                         );
 
                         // Pushing the text into content with markup based on its source id
-                        sourceContent.push(`{{${markId}|${text}}}`);
+                        textFragments.push(`{{${markId}|${text}}}`);
                     } else {
-                        sourceContent.push(text);
+                        textFragments.push(text);
                     }
                 }
             }
+            
+            // Combine all fragments within a paragraph into a single paragraph content
+            const paragraphContent: ParagraphContent = textFragments.join("");
+            paragraphContents.push(paragraphContent);
         }
-        return sourceContent.join("");
+        
+        // Join paragraphs with newlines to create multi-paragraph content
+        return paragraphContents.join("\n") as MultiParagraphContent;
     }
 
     getSourcesFromEditorMarks(text, field, marks) {
@@ -527,15 +597,25 @@ export class EditorParser {
 
         return contentArray.map((c) => ({
             type: key,
-            content: isEmpty
-                ? [{ type: "paragraph" }]
-                : [
-                      {
-                          type: "paragraph",
-                          content: [this.getContentObject(c)],
-                      },
-                  ],
+            content: this.buildEditorContentFromValue(c, isEmpty),
         }));
+    }
+
+    private buildEditorContentFromValue(c: any, isEmpty: boolean): RemirrorJSON[] {
+        if (isEmpty) {
+            return [{ type: "paragraph" }];
+        }
+
+        if (this.isMultiParagraphContent(c)) {
+            return this.convertMultiParagraphToEditorNodes(c);
+        }
+
+        return [
+            {
+                type: "paragraph",
+                content: [this.getContentObject(c)],
+            },
+        ];
     }
 
     buildContentFragments({
