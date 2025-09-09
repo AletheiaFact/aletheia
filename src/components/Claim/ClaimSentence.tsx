@@ -6,7 +6,7 @@ import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import InfoTooltip from "./InfoTooltip";
 import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 const Sentence = styled.a`
     color: ${colors.primary};
