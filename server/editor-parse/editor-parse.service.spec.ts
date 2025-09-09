@@ -299,4 +299,437 @@ describe("EditorParseService", () => {
             expect(schemaResult.report).toEqual(schemaContent.report);
         });
     });
+
+    describe("Line Break Preservation", () => {
+        const multiParagraphEditorContent: RemirrorJSON = {
+            type: "doc",
+            content: [
+                {
+                    type: "summary",
+                    content: [
+                        {
+                            type: "paragraph",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: "First paragraph with important information.",
+                                },
+                            ],
+                        },
+                        {
+                            type: "paragraph",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: "Second paragraph after line break.",
+                                },
+                            ],
+                        },
+                        {
+                            type: "paragraph",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: "Third paragraph with conclusion.",
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedSchemaWithLineBreaks = {
+            summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+            sources: [],
+        };
+
+        const expectedHtmlWithLineBreaks = {
+            summary: "<div><p>First paragraph with important information.<br>Second paragraph after line break.<br>Third paragraph with conclusion.</p></div>",
+        };
+
+        it("Should preserve line breaks when converting from editor to schema", async () => {
+            const schemaResult = await editorParseService.editor2schema(
+                multiParagraphEditorContent
+            );
+
+            expect(schemaResult.summary).toEqual(expectedSchemaWithLineBreaks.summary);
+            expect(schemaResult.summary.includes('\n')).toBe(true);
+        });
+
+        it("Should convert line breaks to <br> tags in HTML output", async () => {
+            const schemaWithLineBreaks = {
+                summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+                sources: [],
+            };
+
+            const htmlResult = await editorParseService.schema2html(
+                schemaWithLineBreaks
+            );
+
+            expect(htmlResult.summary).toEqual(expectedHtmlWithLineBreaks.summary);
+            expect(htmlResult.summary.includes('<br>')).toBe(true);
+        });
+
+        it("Should convert schema with line breaks back to multiple paragraphs in editor", async () => {
+            const schemaWithLineBreaks = {
+                summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+                sources: [],
+            };
+
+            const editorResult = await editorParseService.schema2editor(
+                schemaWithLineBreaks
+            );
+
+            expect(editorResult.content).toHaveLength(1);
+            expect(editorResult.content[0].type).toBe("summary");
+            expect(editorResult.content[0].content).toHaveLength(3); // Should have 3 paragraphs
+            
+            // Verify each paragraph content
+            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph with important information.");
+            expect(editorResult.content[0].content[1].content[0].text).toBe("Second paragraph after line break.");
+            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph with conclusion.");
+        });
+
+        it("Should handle empty paragraphs (multiple consecutive line breaks)", async () => {
+            const schemaWithEmptyLines = {
+                summary: "First paragraph.\n\nThird paragraph after empty line.",
+                sources: [],
+            };
+
+            const editorResult = await editorParseService.schema2editor(
+                schemaWithEmptyLines
+            );
+
+            expect(editorResult.content[0].content).toHaveLength(3);
+            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph.");
+            expect(editorResult.content[0].content[1].content).toHaveLength(0); // Empty paragraph
+            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph after empty line.");
+        });
+
+        it("Should maintain backward compatibility with single paragraph content", async () => {
+            const singleParagraphSchema = {
+                summary: "Single paragraph without line breaks.",
+                sources: [],
+            };
+
+            const editorResult = await editorParseService.schema2editor(
+                singleParagraphSchema
+            );
+            
+            expect(editorResult.content[0].content).toHaveLength(1);
+            expect(editorResult.content[0].content[0].content[0].text).toBe("Single paragraph without line breaks.");
+        });
+
+        it("Should preserve line breaks with sources (marked content)", async () => {
+            const multiParagraphWithSource: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "report",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "First paragraph with ",
+                                    },
+                                    {
+                                        type: "text",
+                                        text: "source",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "sourceId",
+                                                    href: "https://example.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Second paragraph continues here.",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const schemaResult = await editorParseService.editor2schema(
+                multiParagraphWithSource
+            );
+
+            expect(schemaResult.report).toContain('\n');
+            expect(schemaResult.report).toEqual("First paragraph with {{sourceId|source}}\nSecond paragraph continues here.");
+        });
+    });
+
+    describe("Source Annotation with Line Breaks", () => {
+        it("Should correctly calculate text ranges with line breaks in content", async () => {
+            const multiParagraphWithMultipleSources: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "report",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "First paragraph with ",
+                                    },
+                                    {
+                                        type: "text",
+                                        text: "first source",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "source1",
+                                                    href: "https://source1.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "text",
+                                        text: " and more text.",
+                                    },
+                                ],
+                            },
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Second paragraph has ",
+                                    },
+                                    {
+                                        type: "text",
+                                        text: "second source",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "source2",
+                                                    href: "https://source2.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "text",
+                                        text: " here.",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const schemaResult = await editorParseService.editor2schema(
+                multiParagraphWithMultipleSources
+            );
+
+            // Verify content structure
+            expect(schemaResult.report).toEqual("First paragraph with {{source1|first source}} and more text.\nSecond paragraph has {{source2|second source}} here.");
+            
+            // Verify both sources are captured
+            expect(schemaResult.sources).toHaveLength(2);
+            
+            // Verify first source
+            expect(schemaResult.sources[0]).toMatchObject({
+                href: "https://source1.com",
+                props: expect.objectContaining({
+                    field: "report",
+                    targetText: "first source",
+                    id: "source1",
+                })
+            });
+            
+            // Verify second source
+            expect(schemaResult.sources[1]).toMatchObject({
+                href: "https://source2.com",
+                props: expect.objectContaining({
+                    field: "report",
+                    targetText: "second source",
+                    id: "source2",
+                })
+            });
+        });
+
+        it("Should generate correct HTML with line breaks (sources remain as markup)", async () => {
+            const schemaWithLineBreaks = {
+                report: "First paragraph with some text.\nSecond paragraph with more text.",
+                sources: [],
+            };
+
+            const htmlResult = await editorParseService.schema2html(
+                schemaWithLineBreaks
+            );
+
+            expect(htmlResult.report).toContain('<br>');
+            expect(htmlResult.report).toBe('<div><p>First paragraph with some text.<br>Second paragraph with more text.</p></div>');
+        });
+
+        it("Should handle empty paragraphs in editor conversion", async () => {
+            const schemaWithEmptyParagraph = {
+                summary: "First paragraph text.\n\nThird paragraph after empty line.",
+                sources: [],
+            };
+
+            const editorResult = await editorParseService.schema2editor(
+                schemaWithEmptyParagraph
+            );
+
+            // Should have 3 paragraphs: content, empty, content
+            expect(editorResult.content[0].content).toHaveLength(3);
+            
+            // First paragraph should have content
+            expect(editorResult.content[0].content[0].content).toHaveLength(1);
+            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph text.");
+            
+            // Second paragraph should be empty
+            expect(editorResult.content[0].content[1].content).toHaveLength(0);
+            
+            // Third paragraph should have content
+            expect(editorResult.content[0].content[2].content).toHaveLength(1);
+            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph after empty line.");
+        });
+
+        it("Should preserve source text ranges when converting back from schema with line breaks", async () => {
+            const originalSchemaWithSources = {
+                report: "Paragraph one with {{sourceA|marked text}}.\nParagraph two continues here.",
+                sources: [
+                    {
+                        href: "https://test.com",
+                        props: {
+                            field: "report",
+                            textRange: [19, 43],
+                            targetText: "marked text", 
+                            sup: 1,
+                            id: "sourceA",
+                        },
+                    },
+                ],
+            };
+
+            // Convert to editor and back to schema
+            const editorResult = await editorParseService.schema2editor(originalSchemaWithSources);
+            const roundTripSchema = await editorParseService.editor2schema(editorResult);
+
+            // Content should be preserved with line breaks
+            expect(roundTripSchema.report).toContain('\n');
+            expect(roundTripSchema.report).toContain('{{sourceA|marked text}}');
+            
+            // Source should be preserved
+            expect(roundTripSchema.sources).toHaveLength(1);
+            expect((roundTripSchema.sources[0] as any).props.targetText).toBe("marked text");
+        });
+
+        it("Should handle source annotations across paragraph boundaries correctly", async () => {
+            const editorWithSourcesAcrossParagraphs: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "summary",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Start of summary with ",
+                                    },
+                                    {
+                                        type: "text",
+                                        text: "important source",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "imp-source",
+                                                    href: "https://important.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Second paragraph without sources.",
+                                    },
+                                ],
+                            },
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Third paragraph with ",
+                                    },
+                                    {
+                                        type: "text",
+                                        text: "another source",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "another-source",
+                                                    href: "https://another.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "text",
+                                        text: " at end.",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const schemaResult = await editorParseService.editor2schema(
+                editorWithSourcesAcrossParagraphs
+            );
+
+            // Verify structure with line breaks
+            expect(schemaResult.summary).toBe("Start of summary with {{imp-source|important source}}\nSecond paragraph without sources.\nThird paragraph with {{another-source|another source}} at end.");
+            
+            // Should have exactly 2 sources
+            expect(schemaResult.sources).toHaveLength(2);
+            
+            // Both sources should be properly indexed
+            expect((schemaResult.sources[0] as any).props.targetText).toBe("important source");
+            expect((schemaResult.sources[1] as any).props.targetText).toBe("another source");
+        });
+    });
 });
