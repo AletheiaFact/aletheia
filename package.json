@@ -69,7 +69,7 @@
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
         "@casl/ability": "^6.0.0",
-        "@compodoc/compodoc": "^1.1.21",
+        "@compodoc/compodoc": "1.1.21",
         "@cypress/react": "^9.0.0",
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@emotion/react": "^11.10.4",
@@ -274,7 +274,8 @@
         "ws": "8.17.1",
         "prosemirror-model": "1.9.1",
         "glob": "^9.0.0",
-        "tldjs": "2.3.1"
+        "tldjs": "2.3.1",
+        "@compodoc/compodoc": "1.1.21"
     },
     "packageManager": "yarn@3.6.3"
 }

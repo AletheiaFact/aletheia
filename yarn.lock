@@ -2420,7 +2420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@compodoc/compodoc@npm:^1.1.21":
+"@compodoc/compodoc@npm:1.1.21":
   version: 1.1.21
   resolution: "@compodoc/compodoc@npm:1.1.21"
   dependencies:
@@ -11534,7 +11534,7 @@ __metadata:
     "@babel/preset-env": ^7.22.20
     "@babel/preset-react": ^7.14.5
     "@casl/ability": ^6.0.0
-    "@compodoc/compodoc": ^1.1.21
+    "@compodoc/compodoc": 1.1.21
     "@cypress/react": ^9.0.0
     "@dhaiwat10/react-link-preview": ^1.9.1
     "@emotion/react": ^11.10.4
