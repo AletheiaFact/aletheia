@@ -21,15 +21,15 @@ export class VerificationRequestService {
     private readonly logger = new Logger(VerificationRequestService.name);
 
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         // This is not yet used but it is necessary to properly initialize the module
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
-        private groupService: GroupService,
-        private historyService: HistoryService
+        private readonly groupService: GroupService,
+        private readonly historyService: HistoryService
     ) {}
 
     async listAll({
