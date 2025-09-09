@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -9,15 +9,22 @@ import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "types";
+import { HistoryService } from "../history/history.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { TypeModel } from "../state-event/schema/state-event.schema";
 const md5 = require("md5");
 
 @Injectable()
 export class VerificationRequestService {
     constructor(
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         private sourceService: SourceService,
-        private groupService: GroupService
+        private groupService: GroupService,
+        private historyService: HistoryService
     ) {}
 
     async listAll({
@@ -105,6 +112,18 @@ export class VerificationRequestService {
             } else {
                 newVerificationRequest.source = null;
             }
+
+            const user = this.req.user;
+
+            const history = this.historyService.getHistoryParams(
+                newVerificationRequest._id,
+                TargetModel.VerificationRequest,
+                user,
+                HistoryType.Create,
+                newVerificationRequest
+            );
+
+            await this.historyService.createHistory(history);
 
             return newVerificationRequest.save();
         } catch (e) {
@@ -217,6 +236,22 @@ export class VerificationRequestService {
                         updatedVerificationRequestData
                     );
             }
+
+            const newVerificationRequest = new this.VerificationRequestModel(
+                verificationRequest
+            );
+
+            const user = this.req.user;
+
+            const history = this.historyService.getHistoryParams(
+                newVerificationRequest._id,
+                TargetModel.VerificationRequest,
+                user,
+                HistoryType.Update,
+                newVerificationRequest
+            );
+
+            await this.historyService.createHistory(history);
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
@@ -425,6 +460,19 @@ export class VerificationRequestService {
             ...verificationRequest.toObject(),
             topics,
         };
+
+        const user = this.req.user;
+
+        const history = this.historyService.getHistoryParams(
+            newVerificationRequest._id,
+            TargetModel.VerificationRequest,
+            user,
+            HistoryType.Update,
+            newVerificationRequest
+        );
+
+        await this.historyService.createHistory(history);
+
         return this.VerificationRequestModel.updateOne(
             { _id: verificationRequest._id },
             newVerificationRequest
