@@ -24,6 +24,7 @@ COPY server/jest.config.json /app/jest.config.json
 COPY ./next.config.js /app/next.config.js
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
+COPY ./.yarnrc.yml /app/.yarnrc.yml
 COPY ./.yarn /app/.yarn
 COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
