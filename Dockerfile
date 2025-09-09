@@ -37,7 +37,7 @@ WORKDIR /app
 
 RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
-RUN yarn install --frozen-lockfile --production
+RUN yarn install --immutable --production
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
