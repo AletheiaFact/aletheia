@@ -141,7 +141,7 @@
         "migrate-mongo-ts": "^1.1.4",
         "moment": "^2.30.1",
         "mongodb-memory-server": "^10.0.0",
-        "mongoose": "^  5.13.15",
+        "mongoose": "^5.13.15",
         "mongoose-softdelete-typescript": "^0.0.3",
         "nestjs-unleash": "^2.2.3",
         "newrelic": "^11.5.0",
