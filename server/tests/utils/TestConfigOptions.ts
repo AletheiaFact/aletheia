@@ -16,7 +16,7 @@ export const TestConfigOptions = {
             schema_id: process.env.ALETHEIA_SCHEMA_ID,
         },
         db: {
-            connection_uri: process.env.CI_MONGODB_URI,
+            connection_uri: process.env.CI_MONGODB_URI || "mongodb://127.0.0.1:35025/Aletheia",
             type: "mongodb",
             options: {
                 useUnifiedTopology: true,
