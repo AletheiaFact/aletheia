@@ -345,7 +345,7 @@ describe("EditorParseService", () => {
         };
 
         const expectedHtmlWithLineBreaks = {
-            summary: "<div><p>First paragraph with important information.<br>Second paragraph after line break.<br>Third paragraph with conclusion.</p></div>",
+            summary: "<div><p>First paragraph with important information.</p><p>Second paragraph after line break.</p><p>Third paragraph with conclusion.</p></div>",
         };
 
         it("Should preserve line breaks when converting from editor to schema", async () => {
@@ -357,7 +357,7 @@ describe("EditorParseService", () => {
             expect(schemaResult.summary.includes('\n')).toBe(true);
         });
 
-        it("Should convert line breaks to <br> tags in HTML output", async () => {
+        it("Should convert line breaks to separate <p> elements in HTML output for semantic HTML", async () => {
             const schemaWithLineBreaks = {
                 summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
                 sources: [],
@@ -368,7 +368,8 @@ describe("EditorParseService", () => {
             );
 
             expect(htmlResult.summary).toEqual(expectedHtmlWithLineBreaks.summary);
-            expect(htmlResult.summary.includes('<br>')).toBe(true);
+            expect(htmlResult.summary.includes('<p>')).toBe(true);
+            expect(htmlResult.summary.split('<p>').length - 1).toBe(3); // Should have 3 paragraphs
         });
 
         it("Should convert schema with line breaks back to multiple paragraphs in editor", async () => {
@@ -585,8 +586,22 @@ describe("EditorParseService", () => {
                 schemaWithLineBreaks
             );
 
+            expect(htmlResult.report).toContain('<p>');
+            expect(htmlResult.report).toBe('<div><p>First paragraph with some text.</p><p>Second paragraph with more text.</p></div>');
+        });
+
+        it("Should use <br> tags for content with empty lines (visual spacing)", async () => {
+            const schemaWithEmptyLines = {
+                report: "First paragraph with content.\n\nThird paragraph after empty line.",
+                sources: [],
+            };
+
+            const htmlResult = await editorParseService.schema2html(
+                schemaWithEmptyLines
+            );
+
             expect(htmlResult.report).toContain('<br>');
-            expect(htmlResult.report).toBe('<div><p>First paragraph with some text.<br>Second paragraph with more text.</p></div>');
+            expect(htmlResult.report).toBe('<div><p>First paragraph with content.<br><br>Third paragraph after empty line.</p></div>');
         });
 
         it("Should handle empty paragraphs in editor conversion", async () => {

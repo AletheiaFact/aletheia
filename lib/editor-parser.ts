@@ -12,12 +12,10 @@ type ClaimReviewSchemaType = {
 
 type ReviewSchemaType = ClaimReviewSchemaType;
 
-// Type safety for internal content processing
 type TextFragment = string;
 type ParagraphContent = string;
-type MultiParagraphContent = string; // Content with \n separators representing multiple paragraphs
+type MultiParagraphContent = string;
 
-// Internal processing result types
 interface ContentProcessingResult {
     content: MultiParagraphContent;
     sources: any[];
@@ -92,6 +90,28 @@ export class EditorParser {
     }
 
     /**
+     * Converts MultiParagraphContent to semantic HTML with appropriate paragraph handling
+     * - Content lines only: separate <p> elements for semantic HTML
+     * - Content with empty lines: <br> tags for visual spacing
+     */
+    private convertToParagraphElements(content: MultiParagraphContent): string {
+        const lines = content.split('\n');
+        
+        // Check if there are any empty lines (for visual spacing)
+        const hasEmptyLines = lines.some(line => line.trim() === '');
+        
+        if (hasEmptyLines) {
+            // Use <br> approach for content with intentional empty lines/spacing
+            return this.convertLineBreaksToHtml(content);
+        } else {
+            // Use separate <p> elements for semantic HTML when no empty lines
+            return lines
+                .map(line => `<p>${line}</p>`)
+                .join('');
+        }
+    }
+
+    /**
      * Checks if content contains multiple paragraphs
      */
     private isMultiParagraphContent(content: string): content is MultiParagraphContent {
@@ -135,8 +155,18 @@ export class EditorParser {
 
     private buildSingleHtmlContent(contentStr: string): string {
         if (this.isMultiParagraphContent(contentStr)) {
-            const htmlContent = this.convertLineBreaksToHtml(contentStr);
-            return `<div><p>${htmlContent}</p></div>`;
+            const lines = contentStr.split('\n');
+            const hasEmptyLines = lines.some(line => line.trim() === '');
+            
+            if (hasEmptyLines) {
+                // Use <br> approach for content with intentional empty lines/spacing
+                const htmlContent = this.convertLineBreaksToHtml(contentStr);
+                return `<div><p>${htmlContent}</p></div>`;
+            } else {
+                // Use separate <p> elements for semantic HTML when no empty lines
+                const htmlContent = lines.map(line => `<p>${line}</p>`).join('');
+                return `<div>${htmlContent}</div>`;
+            }
         }
 
         return `<div><p>${contentStr}</p></div>`;
@@ -183,8 +213,18 @@ export class EditorParser {
 
     private buildHtmlContentFromJoined(joinedContent: string): string {
         if (this.isMultiParagraphContent(joinedContent)) {
-            const finalContent = this.convertLineBreaksToHtml(joinedContent);
-            return `<div><p>${finalContent}</p></div>`;
+            const lines = joinedContent.split('\n');
+            const hasEmptyLines = lines.some(line => line.trim() === '');
+            
+            if (hasEmptyLines) {
+                // Use <br> approach for content with intentional empty lines/spacing
+                const finalContent = this.convertLineBreaksToHtml(joinedContent);
+                return `<div><p>${finalContent}</p></div>`;
+            } else {
+                // Use separate <p> elements for semantic HTML when no empty lines
+                const finalContent = lines.map(line => `<p>${line}</p>`).join('');
+                return `<div>${finalContent}</div>`;
+            }
         }
 
         return `<div><p>${joinedContent}</p></div>`;
