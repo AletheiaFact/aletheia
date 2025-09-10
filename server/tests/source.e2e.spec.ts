@@ -28,12 +28,12 @@ describe("SourceController (e2e)", () => {
         const user = await SeedTestUser(
             TestConfigOptions.config.db.connection_uri
         );
-        userId = user.insertedId;
+        userId = user.insertedId.toString();
 
         const { insertedIds } = await SeedTestPersonality(
             TestConfigOptions.config.db.connection_uri
         );
-        personalitiesId = [insertedIds["0"], insertedIds["1"]];
+        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
 
         const claimRevisionId = new ObjectId();
         const claim = await SeedTestClaim(
@@ -41,7 +41,7 @@ describe("SourceController (e2e)", () => {
             personalitiesId,
             claimRevisionId
         );
-        claimId = claim.insertedId;
+        claimId = claim.insertedId.toString();
 
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule.register(TestConfigOptions.config)],

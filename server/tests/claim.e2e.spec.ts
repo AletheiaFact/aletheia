@@ -31,7 +31,7 @@ describe("ClaimController (e2e)", () => {
         const { insertedIds } = await SeedTestPersonality(
             TestConfigOptions.config.db.connection_uri
         );
-        personalitiesId = [insertedIds["0"], insertedIds["1"]];
+        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
 
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule.register(TestConfigOptions.config)],

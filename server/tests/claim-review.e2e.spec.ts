@@ -40,38 +40,38 @@ describe("ClaimReviewController (e2e)", () => {
         const user = await SeedTestUser(
             TestConfigOptions.config.db.connection_uri
         );
-        userId = user.insertedId;
+        userId = user.insertedId.toString();
         const { insertedIds } = await SeedTestPersonality(
             TestConfigOptions.config.db.connection_uri
         );
-        personalitiesId = [insertedIds["0"], insertedIds["1"]];
+        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
 
         const report = await SeedTestReport(
             TestConfigOptions.config.db.connection_uri,
             userId
         );
-        reportId = report.insertedId;
+        reportId = report.insertedId.toString();
         const sentence = await SeedTestSentence(
             TestConfigOptions.config.db.connection_uri
         );
-        sentenceId = sentence.insertedId;
+        sentenceId = sentence.insertedId.toString();
         const paragraph = await SeedTestParagraph(
             TestConfigOptions.config.db.connection_uri,
             sentenceId
         );
-        paragraphId = paragraph.insertedId;
+        paragraphId = paragraph.insertedId.toString();
         const speeche = await SeedTestSpeech(
             TestConfigOptions.config.db.connection_uri,
             paragraphId
         );
-        speecheId = speeche.insertedId;
+        speecheId = speeche.insertedId.toString();
         const claimRevisionId = new ObjectId();
         const claim = await SeedTestClaim(
             TestConfigOptions.config.db.connection_uri,
             personalitiesId,
             claimRevisionId
         );
-        claimId = claim.insertedId;
+        claimId = claim.insertedId.toString();
 
         await SeedTestClaimRevision(
             TestConfigOptions.config.db.connection_uri,
