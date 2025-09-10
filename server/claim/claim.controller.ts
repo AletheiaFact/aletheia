@@ -932,7 +932,6 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Redirect()
     @ApiTags("pages")
     @Get("claim/:claimSlug/sentence/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -951,9 +950,17 @@ export class ClaimController {
             undefined,
             false
         );
-        this.redirectBasedOnPersonality(res, claim, namespace, data_hash);
+        
+        // Check if we need to redirect based on personality
+        const shouldRedirect = this.redirectBasedOnPersonality(res, claim, namespace, data_hash);
+        
+        // If we redirected, don't continue processing
+        if (shouldRedirect) {
+            return;
+        }
+        
+        // Only render if we didn't redirect
         const sentence = await this.sentenceService.getByDataHash(data_hash);
-
         await this.returnClaimReviewPage(data_hash, req, res, claim, sentence);
     }
 
@@ -962,10 +969,10 @@ export class ClaimController {
         claim,
         namespace,
         data_hash = null
-    ) {
+    ): boolean {
         const { personalities, slug } = claim;
         if (personalities.length <= 0) {
-            return;
+            return false; // No redirect performed
         }
 
         const personalitySlug = slugify(personalities[0].name, {
@@ -982,6 +989,7 @@ export class ClaimController {
             redirectUrl += `/sentence/${data_hash}`;
         }
 
-        return res.redirect(redirectUrl);
+        res.redirect(redirectUrl);
+        return true; // Redirect was performed
     }
 }

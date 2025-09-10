@@ -31,7 +31,18 @@ export class UsersService {
             nameSpaceSlug = NameSpaceEnum.Main,
             canAssignUsers = true,
         } = userQuery;
-        const { _id: userId } = this.req.user;
+        
+        // Get current user ID if available, but don't fail if not authenticated
+        const userId = this.req?.user?._id;
+        
+        this.logger.log(`Finding users with query: ${JSON.stringify({
+            searchName,
+            filterOutRoles,
+            nameSpaceSlug,
+            canAssignUsers,
+            userId: userId || 'no user'
+        })}`);
+        
         const pipeline: Aggregate<any[]> = this.UserModel.aggregate();
 
         const matchCondition = canAssignUsers
@@ -42,8 +53,13 @@ export class UsersService {
                   },
                   ...(badges ? { badges } : {}),
               }
-            : {
+            : userId
+            ? {
                   _id: Types.ObjectId(userId),
+              }
+            : {
+                  // If no user ID and canAssignUsers is false, return empty result
+                  _id: { $exists: false },
               };
 
         pipeline.match(matchCondition);
@@ -70,7 +86,14 @@ export class UsersService {
 
         pipeline.project(project || { _id: 1, name: 1, role: 1, badges: 1 });
 
-        return await pipeline.exec();
+        try {
+            const result = await pipeline.exec();
+            this.logger.log(`Found ${result.length} users`);
+            return result;
+        } catch (error) {
+            this.logger.error(`Error finding users: ${error.message}`, error.stack);
+            throw error;
+        }
     }
     /**
      * Retrieves all users from the database.
