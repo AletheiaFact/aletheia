@@ -160,7 +160,7 @@ export class ClaimService {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
         }
 
-        newClaim.save();
+        await newClaim.save();
         return {
             ...newClaimRevision.toObject(),
             ...newClaim.toObject(),

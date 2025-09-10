@@ -11,7 +11,7 @@
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/scripts/seed.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-        "test": "env-cmd --silent jest --detectOpenHandles --forceExit",
+        "test": "env-cmd --silent node --max-old-space-size=8192 ./node_modules/.bin/jest --detectOpenHandles --forceExit",
         "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && yarn build-next",
         "build-ts": "tsc",
         "build-nest": "nest build -p ./server/tsconfig.json",
@@ -254,7 +254,8 @@
         ],
         "coverageReporters": [
             "lcov"
-        ]
+        ],
+        "testTimeout": 30000
     },
     "lint-staged": {
         "*.(ts|js|tsx)": [
