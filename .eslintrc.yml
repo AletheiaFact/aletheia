@@ -15,6 +15,7 @@ rules:
         "no-unused-expressions": 0,
         "no-restricted-syntax": 0,
         "no-unused-vars": 0,
+        "@typescript-eslint/no-unused-vars": 0,
         "one-var": 0,
         "operator-linebreak": 0,
         "space-before-function-paren": 0,
