@@ -41,8 +41,8 @@ const StyledSwitch = styled(Switch)`
 
   .MuiSwitch-track {
     border-radius: 22px;
-    background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main ? colors.secondary : colors.primary};
+    background-color: ${(props) =>
+        props['data-namespace'] === NameSpaceEnum.Main ? colors.secondary : colors.primary};
     opacity: 1;
     height: 18px;
   }
@@ -76,13 +76,10 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
         <>
             {!vw?.xs && (
                 <SelectInput
-                    bordered={false}
-                    showArrow={true}
                     value={language}
                     onChange={(e) => setDefaultLanguage(e.target.value as string)}
-                    onSelect={setDefaultLanguage}
                     data-cy={props.dataCy}
-                    loading={switchLoading}
+                    disabled={switchLoading}
                 >
                     <MenuItem value="pt" data-cy="testLanguagePt">
                         <ReactCountryFlag
@@ -113,7 +110,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     <StyledSwitch
                         checked={language === "pt"}
                         onChange={(e) => onChangeSwitch(e.target.checked)}
-                        namespace={nameSpaceProp}
+                        data-namespace={nameSpaceProp}
                         icon={
                             <ReactCountryFlag
                                 countryCode="GB"

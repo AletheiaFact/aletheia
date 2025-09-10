@@ -5,6 +5,11 @@ module.exports = {
     distDir: "./dist/.next",
     i18n,
     webpack(config) {
+        // Fix Yjs duplicate import issue
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            'yjs': require.resolve('yjs')
+        };
         return config;
     },
     images: {

@@ -7,7 +7,7 @@ import ClaimListView from "../components/Claim/ClaimListView";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import AffixButton from "../components/AffixButton/AffixButton";
 
 const ImageClaimsPage: NextPage<any> = (props) => {
