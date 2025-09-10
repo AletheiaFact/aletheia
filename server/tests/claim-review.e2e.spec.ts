@@ -18,7 +18,7 @@ import { SeedTestSpeech } from "./utils/SeedTestSpeech";
 import { SeedTestClaimRevision } from "./utils/SeedTestClaimRevision";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
 import { ValidationPipe } from "@nestjs/common";
-const ObjectId = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 
 jest.setTimeout(10000);
 

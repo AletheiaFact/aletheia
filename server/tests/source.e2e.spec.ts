@@ -11,7 +11,7 @@ import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { SeedTestPersonality } from "./utils/SeedTestPersonality";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
-const ObjectId = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 
 jest.setTimeout(10000);
 
@@ -77,7 +77,7 @@ describe("SourceController (e2e)", () => {
                 summary: "mock_summary",
                 classification: "mock_classification",
             },
-            user: ObjectId(userId),
+            user: new ObjectId(userId),
             nameSpace: NameSpaceEnum.Main,
             targetId: claimId,
             recaptcha: "valid_recaptcha_token",
