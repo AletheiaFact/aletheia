@@ -1,9 +1,9 @@
-const ObjectId = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 
 export const ReportMock = (userId) => ({
     sources: ["https://https://www.lipsum.com/"],
     questions: ["Lorem Ipsum is simply dummy"],
-    usersId: [ObjectId(userId)],
+    usersId: [new ObjectId(userId)],
     summary:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     report: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
