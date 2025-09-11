@@ -19,6 +19,8 @@ export enum VerificationRequestStatus {
 }
 
 export enum VerificationRequestStateMachineStates {
+    REQUESTING = 'requesting',
+    CREATING = 'creating',
     EMBEDDING = 'embedding',
     IDENTIFYING_DATA = 'identifyingData',
     IDENTIFYING_PERSONALITY = 'identifyingPersonality',
@@ -32,34 +34,27 @@ export enum VerificationRequestStateMachineStates {
 }
 
 export enum VerificationRequestStateMachineEvents {
+    REQUEST = 'request',
+    PRE_TRIAGE = 'preTriage',
     CREATE = 'create',
-}
-  
+    EMBED = 'embed',
+    IDENTIFY_DATA = 'identifyData',
+    DEFINE_TOPICS = 'defineTopics',
+    DEFINE_IMPACT_AREA = 'defineImpactArea',
+    DEFINE_SEVERITY = 'defineSeverity',
+} 
 
 export const VerificationRequestMessages = {
     DESCRIPTIONS: {
-        REQUESTING: 'Encounter is being requested',
-        REQUESTED: 'Encounter has been requested',
-        SCREENING_PATIENT: 'Encounter patient data is being screened',
-        REQUESTING_REVIEW: 'Encounter is being set for requiring review',
-        WAITING_REVIEW: 'Encounter needs review before being assigned a provider',
-        REVIEWING: 'Encounter is being reviewed.',
-        ASSIGNING_PROVIDER: 'Provider is being assigned to the encounter',
-        AUTO_ASSIGNING_PROVIDER: 'Provider is being auto assigned',
-        PLANNING:
-        'Encounter has been requested to be planned.\n\nRequest a creation for a encounter on the encounter service database',
-        PLANNED: 'Encounter has been planned.',
-        UPDATING: 'Updating encounter. Currently used for signing and cancelling. Keeping for backwards compatibility.',
-        EDITING: 'Editing encounter. This updates the non required fields available of the encounter.',
-        DELETING: 'Encounter is being deleted.\n\n deleted value will be set to true',
-        ACKNOWLEDGED: 'Encounter has been acknowledged.',
-        ACKNOWLEDGING: 'Encounter is being acknowledged. Status changes to Acknowledged',
-        STARTING: 'Encounter is being started. Status changes to In progress.',
-        IN_PROGRESS: 'Encounter is in progress.',
-        SIGNING: 'Encounter is being signed. Status changes to Finished.',
-        FINISHED: 'Encounter has been finished.',
-        CANCELLING: 'Encounter is being cancelled. Status changes to Cancelled.',
-        CANCELLED: 'Encounter has been cancelled.',
+        DEFAULT: 'default',
+        CREATING: 'Verification is being created on the database',
+        REQUESTING: 'Verification is being requested',
+        REQUESTED: 'Verification has been requested',
+        EMBED: 'Verification is being embedded',
+        REVIEWING: 'Verification is being reviewed.',
+        FINISHED: 'Verification has been finished.',
+        CANCELLING: 'Verification is being cancelled. Status changes to Cancelled.',
+        CANCELLED: 'Verification has been cancelled.',
         ERROR:
         'An unhandled error occurred on any of the steps of the request process.\n\nShould notify all entities associated and to inner channels.',
     },

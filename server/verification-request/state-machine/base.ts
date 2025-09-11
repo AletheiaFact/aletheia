@@ -1,4 +1,4 @@
-import { createMachine, interpret, MachineConfig } from 'xstate'
+import { createMachine, interpret, MachineConfig, assign, AnyEventObject } from 'xstate'
 import { waitFor } from 'xstate/lib/waitFor'
 import { Logger } from '@nestjs/common'
 
@@ -25,18 +25,18 @@ export class StateMachineBase<Context extends StateMachineContext> {
 
   async createMachineAndWaitForResult(context: Context, triggerEvent?: string): Promise<any> {
     const stateMachine = createMachine(
-      {
-        ...this.stateMachineConfig(this.stateMachineService),
-        initial: await this.getEntityCurrentState(context),
-        context: context,
-      },
-      {
-        actions: {
-          logInvalidEvent: (cont, event) => {
-            this.logger.error(`Invalid event '${event.type}' in state '${JSON.stringify(cont)}'`)
-          },
+        {
+            ...this.stateMachineConfig(this.stateMachineService),
+            initial: await this.getEntityCurrentState(context),
+            context: context,
         },
-      },
+        {
+            actions: {
+                logInvalidEvent: (cont, event) => {
+                    this.logger.error(`Invalid event '${event.type}' in state '${JSON.stringify(cont)}'`)
+                },
+            },
+        },
     )
     return this.interpretMachineAndWaitForResult(stateMachine, triggerEvent)
   }
@@ -76,5 +76,27 @@ export class StateMachineBase<Context extends StateMachineContext> {
 
   protected getEntityCurrentState(context: Context): string | Promise<string> {
     return CommonStateMachineStates.REHYDRATE
+  }
+}
+
+export const getOnDoneAction = () => {
+  return {
+    target: CommonStateMachineStates.WRAP_UP_EXECUTION,
+    actions: assign({
+      result: (context, event: AnyEventObject) => {
+        return event.data
+      },
+    }),
+  }
+}
+
+export const getOnErrorAction = () => {
+  return {
+    target: CommonStateMachineStates.ERROR,
+    actions: assign({
+      error: (context, event: AnyEventObject) => {
+        return event.data
+      },
+    }),
   }
 }

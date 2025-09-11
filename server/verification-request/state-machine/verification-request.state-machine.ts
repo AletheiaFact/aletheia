@@ -1,12 +1,12 @@
 import { CommonStateMachineStates, StateMachineBase } from './base'
 import { VerificationRequestStateMachineContext } from './verification-request.state-machine.interface'
 import { VerificationRequestService } from '../verification-request.service'
-import { VerificationRequestStateMachineStates, VerificationRequestStatus } from 'verification-request/dto/types'
+import { VerificationRequestStateMachineStates, VerificationRequestStatus } from '../dto/types'
 import { getVerificationRequestStateMachineConfig } from './verification-request.state-machine.config'
 
 type StatusToStateMap = Record<VerificationRequestStatus, VerificationRequestStateMachineStates>
 
-export class EncounterStateMachine extends StateMachineBase<VerificationRequestStateMachineContext> {
+export class VerificationRequestStateMachine extends StateMachineBase<VerificationRequestStateMachineContext> {
   protected stateMachineConfig = getVerificationRequestStateMachineConfig
   private getVerificationRequestService: () => VerificationRequestService
 
@@ -21,12 +21,13 @@ export class EncounterStateMachine extends StateMachineBase<VerificationRequestS
       return CommonStateMachineStates.REHYDRATE
     }
     const statusMap: StatusToStateMap = {
-        [VerificationRequestStatus.PRE_TRIAGE]: VerificationRequestStateMachineStates.EMBEDDING,
+        [VerificationRequestStatus.PRE_TRIAGE]: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
         [VerificationRequestStatus.IN_TRIAGE]: VerificationRequestStateMachineStates.EMBEDDING,
         [VerificationRequestStatus.POSTED]: VerificationRequestStateMachineStates.EMBEDDING,
         [VerificationRequestStatus.DECLINED]: VerificationRequestStateMachineStates.EMBEDDING
     }
-    const encounter = await this.getVerificationRequestService().getById(context.verificationRequest?.id)
-    return statusMap[encounter?.status] || CommonStateMachineStates.REHYDRATE
+    const verificationRequest = await this.getVerificationRequestService().getById(context.verificationRequest?.id)
+    console.log('verificationRequest', statusMap[verificationRequest?.status] || CommonStateMachineStates.REHYDRATE)
+    return statusMap[verificationRequest?.status] || CommonStateMachineStates.REHYDRATE
   }
 }

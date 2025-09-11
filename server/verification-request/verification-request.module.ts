@@ -13,6 +13,7 @@ import { ReviewTaskModule } from "../review-task/review-task.module";
 import { HistoryModule } from "../history/history.module";
 import { GroupModule } from "../group/group.module";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -32,8 +33,8 @@ const VerificationRequestModel = MongooseModule.forFeature([
         GroupModule,
         CaptchaModule,
     ],
-    exports: [VerificationRequestService],
-    providers: [VerificationRequestService],
+    exports: [VerificationRequestService, VerificationRequestStateMachineService],
+    providers: [VerificationRequestService, VerificationRequestStateMachineService],
     controllers: [VerificationRequestController],
 })
 export class VerificationRequestModule {}

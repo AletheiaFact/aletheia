@@ -86,10 +86,6 @@ export class VerificationRequestService {
      */
     async create(verificationRequest): Promise<VerificationRequestDocument> {
         try {
-            verificationRequest.data_hash = md5(verificationRequest.content);
-            verificationRequest.embedding = await this.createEmbedContent(
-                verificationRequest.content
-            );
             const newVerificationRequest = new this.VerificationRequestModel(
                 verificationRequest
             );
@@ -115,6 +111,12 @@ export class VerificationRequestService {
             console.error("Failed to create verification request", e);
             throw new Error(e);
         }
+    }
+
+    async embeddingContent(content: string): Promise<{ data_hash: string, embedding: number[] }> {
+        let data_hash = md5(content);
+        let embedding = await this.createEmbedContent(content);
+        return { data_hash, embedding };
     }
 
     /**
