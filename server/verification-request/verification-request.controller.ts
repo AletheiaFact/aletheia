@@ -23,6 +23,7 @@ import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -31,7 +32,8 @@ export class VerificationRequestController {
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private verificationRequestStateMachineService: VerificationRequestStateMachineService
     ) {}
 
     @ApiTags("verification-request")
@@ -97,8 +99,18 @@ export class VerificationRequestController {
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.verificationRequestService.create(verificationRequestBody);
+        return this.verificationRequestStateMachineService.request(verificationRequestBody);
     }
+
+
+    // Not working, todo
+    // @ApiTags("verification-request")
+    // @Post("api/verification-request/pre-triage/:id")
+    // async preTriage(
+    //     @Param("id") verificationRequestId: string,
+    // ) {
+    //     return this.verificationRequestStateMachineService.preTriage(verificationRequestId);
+    // }
 
     @ApiTags("pages")
     @Get("verification-request/create")
