@@ -27,7 +27,7 @@ export class VerificationRequestStateMachine extends StateMachineBase<Verificati
         [VerificationRequestStatus.DECLINED]: VerificationRequestStateMachineStates.EMBEDDING
     }
     const verificationRequest = await this.getVerificationRequestService().getById(context.verificationRequest?.id)
-    console.log('verificationRequest', statusMap[verificationRequest?.status] || CommonStateMachineStates.REHYDRATE)
+
     return statusMap[verificationRequest?.status] || CommonStateMachineStates.REHYDRATE
   }
 }

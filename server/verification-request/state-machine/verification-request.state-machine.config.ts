@@ -25,7 +25,6 @@ const getStateInvokeSrc = (
     switch (eventName) {
         case VerificationRequestStateMachineEvents.CREATE:
             return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                console.log('create data: ', context)
                 return getVerificationRequestService().create(context.verificationRequest)
             }
         case VerificationRequestStateMachineEvents.EMBED:
@@ -47,7 +46,6 @@ const getStateInvoke = (
   stateMachineService: VerificationRequestStateMachineService,
 ): InvokeConfig<any, any> => {
     const getVerificationRequestService = () => stateMachineService.verificationRequestService
-    console.log('eventName getStateInvoke', eventName)
     switch (eventName) {
         case VerificationRequestStateMachineEvents.EMBED:
             return {
@@ -79,7 +77,6 @@ const getStateInvoke = (
 }
 
 const getStateTransitions = (originState: VerificationRequestStateMachineStates | CommonStateMachineStates) => {
-    console.log('originState getStateTransitions', originState)
     switch (originState) {
         case CommonStateMachineStates.REHYDRATE:
             return {
@@ -110,7 +107,6 @@ const getStateTransitions = (originState: VerificationRequestStateMachineStates 
 }
 
 export const getVerificationRequestStateMachineConfig = (stateMachineService: VerificationRequestStateMachineService) => {
-    console.log('stateMachineService getVerificationRequestStateMachineConfig', stateMachineService)
     return {
         id: 'verificationRequest',
         initial: CommonStateMachineStates.REHYDRATE,
