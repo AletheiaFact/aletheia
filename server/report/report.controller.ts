@@ -1,6 +1,7 @@
 import { Controller, Param, Get } from "@nestjs/common";
 import { ReportService } from "./report.service";
 import { ApiTags } from "@nestjs/swagger";
+
 @Controller()
 export class ReportController {
     constructor(private reportService: ReportService) {}
