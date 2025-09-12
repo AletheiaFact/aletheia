@@ -22,7 +22,7 @@ export class SimplePasteFilter extends PlainExtension {
 
                     let plainText = clipboardData.getData("text/plain");
 
-                    if (!plainText || !plainText.trim()) return false;
+                    if (!plainText?.trim()) return false;
                     if (plainText.length > SimplePasteFilter.MAX_PASTE_LENGTH) {
                         console.warn(
                             "Paste content too large, truncating to 1MB"
@@ -80,10 +80,10 @@ export class SimplePasteFilter extends PlainExtension {
         const nodes = [];
         const paragraphParts = [];
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+        for (const line of lines) {
+            const trimmedLine = line.trim();
 
-            if (line === "") {
+            if (trimmedLine === "") {
                 if (paragraphParts.length > 0) {
                     const cleanParagraph = paragraphParts
                         .join(" ")
@@ -100,7 +100,7 @@ export class SimplePasteFilter extends PlainExtension {
 
                 nodes.push(schema.nodes.paragraph.create());
             } else {
-                paragraphParts.push(line);
+                paragraphParts.push(trimmedLine);
             }
         }
 
