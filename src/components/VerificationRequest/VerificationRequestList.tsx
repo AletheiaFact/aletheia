@@ -171,6 +171,27 @@ const VerificationRequestList = () => {
                 ),
             },
             {
+                field: "reportType",
+                headerName: t(
+                    "verificationRequest:verificationRequestTagReportType"),
+                flex: 1,
+                valueGetter: (value, row) => row.reportType,
+                renderCell: (params) => (
+                    <span>{truncateWithEllipsis(params.value, 50)}</span>
+                ),
+            },
+            {
+                field: "impactArea",
+                headerName: t(
+                    "verificationRequest:verificationRequestTagImpactArea"
+                ),
+                flex: 1,
+                valueGetter: (value, row) => row.impactArea,
+                renderCell: (params) => (
+                    <span>{truncateWithEllipsis(params.value, 50)}</span>
+                ),
+            },
+            {
                 field: "heardFrom",
                 headerName: t(
                     "verificationRequest:verificationRequestTagHeardFrom"

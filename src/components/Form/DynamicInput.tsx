@@ -10,6 +10,8 @@ import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/VerificationRequestFormSelect";
+import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/VerificationRequestFormImpactArea";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -83,6 +85,23 @@ const DynamicInput = (props: DynamicInputProps) => {
                     type="select"
                     onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
+                    placeholder={t(props.placeholder)}
+                />
+            );
+        case "selectReportType":
+            return (
+                <ReportTypeSelect
+                    defaultValue={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    placeholder={t(props.placeholder)}
+
+                />
+            );
+        case "selectImpactArea":
+            return (
+                <ImpactAreaSelect
+                    defaultValue={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                 />
             );

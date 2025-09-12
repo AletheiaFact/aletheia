@@ -1,10 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsOptional, IsString } from "class-validator";
+import { IsArray, IsDate, IsEnum, IsOptional, IsString } from "class-validator";
+import { ContentModelEnum, ReceptionChannelEnum } from "../../types/enums";
 
 export class CreateVerificationRequestDTO {
     @IsString()
     @ApiProperty()
     content: string;
+
+
+    @IsEnum(ReceptionChannelEnum)
+    @ApiProperty()
+    receptionChannel: ReceptionChannelEnum;
+
+    @IsEnum(ContentModelEnum)
+    @ApiProperty()
+    reportType: ContentModelEnum;
+
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    impactArea: string;
 
     @IsString()
     @ApiProperty()

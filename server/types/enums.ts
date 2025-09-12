@@ -17,4 +17,10 @@ enum ReviewTaskTypeEnum {
     VerificationRequest = "VerificationRequest",
 }
 
-export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum };
+enum ReceptionChannelEnum {
+    Web = "Web",
+    Instagram = "Instagram",
+    Whatsapp = "Whatsapp",
+}
+
+export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum, ReceptionChannelEnum };
