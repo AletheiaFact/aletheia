@@ -81,8 +81,10 @@ export class ChatbotService {
     }
 
     public async sendMessage(message): Promise<Observable<AxiosResponse<any>>> {
-        const { api_url, api_token } = this.configService.get("zenvia");
+        const { api_base_url, api_token } = this.configService.get("zenvia");
         const { from, to, channel, contents } = message;
+
+        const api_url = `${api_base_url}/${channel}/messages`;
 
         const chatbotState = await this.getOrCreateChatBotMachine(
             from,
