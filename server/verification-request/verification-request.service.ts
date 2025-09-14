@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -9,6 +9,13 @@ import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
+import { AiTaskService } from "../ai-task/ai-task.service";
+import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
+import {
+    AiTaskType,
+    CallbackRoute,
+    DEFAULT_EMBEDDING_MODEL,
+} from "../ai-task/constants/ai-task.constants";
 const md5 = require("md5");
 
 @Injectable()
@@ -17,7 +24,8 @@ export class VerificationRequestService {
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         private sourceService: SourceService,
-        private groupService: GroupService
+        private readonly groupService: GroupService,
+        private readonly aiTaskService: AiTaskService
     ) {}
 
     async listAll({
@@ -83,34 +91,59 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(verificationRequest): Promise<VerificationRequestDocument> {
-        try {
-            verificationRequest.data_hash = md5(verificationRequest.content);
-            verificationRequest.embedding = await this.createEmbedContent(
-                verificationRequest.content
-            );
-            const newVerificationRequest = new this.VerificationRequestModel(
-                verificationRequest
-            );
+    async create(data: {
+        content: string;
+        source?: string;
+    }): Promise<VerificationRequestDocument> {
+        const vr = await this.VerificationRequestModel.create({
+            ...data,
+            data_hash: md5(data.content),
+            embedding: null,
+            source: null,
+        });
 
-            if (
-                verificationRequest.source &&
-                verificationRequest.source.trim() !== ""
-            ) {
-                const newSource = await this.sourceService.create({
-                    href: verificationRequest.source,
-                    targetId: newVerificationRequest.id,
-                });
-                newVerificationRequest.source = Types.ObjectId(newSource.id);
-            } else {
-                newVerificationRequest.source = null;
-            }
-
-            return newVerificationRequest.save();
-        } catch (e) {
-            console.error("Failed to create verification request", e);
-            throw new Error(e);
+        if (data.source?.trim()) {
+            const src = await this.sourceService.create({
+                href: data.source,
+                targetId: vr.id,
+            });
+            vr.source = Types.ObjectId(src.id);
+            await vr.save();
         }
+
+        const taskDto: CreateAiTaskDto = {
+            type: AiTaskType.TEXT_EMBEDDING,
+            content: {
+                text: data.content,
+                model: DEFAULT_EMBEDDING_MODEL,
+            },
+            callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
+            callbackParams: {
+                targetId: vr.id,
+                field: "embedding",
+            },
+        };
+        await this.aiTaskService.create(taskDto);
+
+        return vr;
+    }
+
+    async updateEmbedding(
+        params: { targetId: string; field: string },
+        embedding: number[]
+    ) {
+        const { targetId, field } = params;
+        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
+            targetId,
+            { [field]: embedding },
+            { new: true }
+        ).exec();
+        if (!updated) {
+            throw new BadRequestException(
+                `VerificationRequest ${targetId} not found`
+            );
+        }
+        return updated;
     }
 
     /**
@@ -343,17 +376,19 @@ export class VerificationRequestService {
 
     /**
      * Find similar verification requests related to the embedding content
-     * @param content verification request content
+     * @param queryEmbedding embedding array to find similarities for
      * @param filter verification requests IDs to filter, does not recommend verification requests those are part of the same group
      * @param pageSize limit of documents
-     * @returns Verification requests with the similarity score greater than 0.80
+     * @returns Verification requests with the similarity score greater than 0.80, or empty array if embedding is null/empty
      */
     async findSimilarRequests(
-        content,
+        queryEmbedding: number[],
         filter,
         pageSize
     ): Promise<VerificationRequest[]> {
-        const queryEmbedding = await this.createEmbedContent(content);
+        if (!queryEmbedding || queryEmbedding.length === 0) {
+            return [];
+        }
         const filterIds = filter.map((verificationRequestId) =>
             Types.ObjectId(verificationRequestId)
         );
