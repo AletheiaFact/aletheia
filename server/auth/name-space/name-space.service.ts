@@ -83,12 +83,10 @@ export class NameSpaceService {
     }
 
     getById(_id: string) {
-        // Input validation
         if (!_id || typeof _id !== "string") {
             throw new BadRequestException("ID must be a non-empty string");
         }
 
-        // Validate ObjectId format to prevent injection
         if (!isValidObjectId(_id)) {
             throw new BadRequestException("Invalid ID format");
         }
