@@ -1,10 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { Model, isValidObjectId } from "mongoose";
 import { NameSpaceDocument, NameSpace } from "./schemas/name-space.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
 import { NotificationService } from "../../notifications/notifications.service";
-const ObjectId = require("mongodb").ObjectID;
 
 @Injectable()
 export class NameSpaceService {
@@ -19,7 +18,15 @@ export class NameSpaceService {
     }
 
     findByUser(userId: string) {
-        return this.NameSpaceModel.find({ users: ObjectId(userId) }).exec();
+        if (!userId || typeof userId !== "string") {
+            throw new BadRequestException("User ID must be a non-empty string");
+        }
+
+        if (!isValidObjectId(userId)) {
+            throw new BadRequestException("Invalid user ID format");
+        }
+
+        return this.NameSpaceModel.find({ users: userId }).exec();
     }
 
     async create(nameSpace) {
@@ -75,7 +82,17 @@ export class NameSpaceService {
         return this.NameSpaceModel.findOne(match);
     }
 
-    getById(_id) {
+    getById(_id: string) {
+        // Input validation
+        if (!_id || typeof _id !== "string") {
+            throw new BadRequestException("ID must be a non-empty string");
+        }
+
+        // Validate ObjectId format to prevent injection
+        if (!isValidObjectId(_id)) {
+            throw new BadRequestException("Invalid ID format");
+        }
+
         return this.NameSpaceModel.findById(_id);
     }
 }
