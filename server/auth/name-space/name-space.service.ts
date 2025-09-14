@@ -18,14 +18,7 @@ export class NameSpaceService {
     }
 
     findByUser(userId: string) {
-        if (!userId || typeof userId !== "string") {
-            throw new BadRequestException("User ID must be a non-empty string");
-        }
-
-        if (!isValidObjectId(userId)) {
-            throw new BadRequestException("Invalid user ID format");
-        }
-
+        this.validateObjectId(userId, "User ID");
         return this.NameSpaceModel.find({ users: userId }).exec();
     }
 
@@ -83,14 +76,21 @@ export class NameSpaceService {
     }
 
     getById(_id: string) {
-        if (!_id || typeof _id !== "string") {
-            throw new BadRequestException("ID must be a non-empty string");
-        }
-
-        if (!isValidObjectId(_id)) {
-            throw new BadRequestException("Invalid ID format");
-        }
-
+        this.validateObjectId(_id, "ID");
         return this.NameSpaceModel.findById(_id);
+    }
+
+    private validateObjectId(id: string, fieldName: string): void {
+        if (!id || typeof id !== "string") {
+            throw new BadRequestException(
+                `${fieldName} must be a non-empty string`
+            );
+        }
+
+        if (!isValidObjectId(id)) {
+            throw new BadRequestException(
+                `Invalid ${fieldName.toLowerCase()} format`
+            );
+        }
     }
 }
