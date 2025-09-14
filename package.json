@@ -11,7 +11,7 @@
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/scripts/seed.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-        "test": "env-cmd --silent jest --detectOpenHandles --forceExit",
+        "test": "env-cmd --silent node --max-old-space-size=8192 ./node_modules/.bin/jest --detectOpenHandles --forceExit",
         "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && yarn build-next",
         "build-ts": "tsc",
         "build-nest": "nest build -p ./server/tsconfig.json",
@@ -27,7 +27,6 @@
         "serve-debug": "nodemon --inspect dist/server/main.js  --signal SIGTERM",
         "clean": "rimraf **/{node_modules,dist}",
         "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
-        "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build -o ./docs/storybook",
         "migrate:create": "env-cmd sh -c 'ts-node node_modules/.bin/migrate-mongo-ts create $0 -f migrate-mongo-config.ts' ",
@@ -69,12 +68,13 @@
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
         "@casl/ability": "^6.0.0",
-        "@compodoc/compodoc": "^1.1.21",
+        "@compodoc/compodoc": "1.1.21",
         "@cypress/react": "^9.0.0",
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
         "@langchain/community": "^0.0.54",
+        "@langchain/core": "^0.1.63",
         "@langchain/openai": "^0.0.28",
         "@mui/icons-material": "^5.10.9",
         "@mui/joy": "^5.0.0-beta.48",
@@ -100,7 +100,7 @@
         "@novu/node": "^0.19.0",
         "@novu/notification-center": "^0.19.0",
         "@ory/client": "1.6.2",
-        "@ory/integrations": "^1.1.5",
+        "@ory/integrations": "1.1.5",
         "@remirror/core": "^3.0.1",
         "@remirror/extension-yjs": "^4.0.1",
         "@remirror/pm": "^3.0.0",
@@ -116,6 +116,7 @@
         "axios": "^1.7.4",
         "babel-jest": "^29.7.0",
         "babel-plugin-styled-components": "^1.13.2",
+        "body-parser": "^1.20.2",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "compromise": "^13.11.4",
@@ -140,6 +141,7 @@
         "md5": "^2.3.0",
         "migrate-mongo-ts": "^1.1.4",
         "moment": "^2.30.1",
+        "mongodb": "^6.8.0",
         "mongodb-memory-server": "^10.0.0",
         "mongoose": "^  5.13.15",
         "mongoose-softdelete-typescript": "^0.0.3",
@@ -178,7 +180,8 @@
         "y-protocols": "^1.0.5",
         "y-webrtc": "^10.2.5",
         "y-websocket": "^1.5.0",
-        "yjs": "^13.5.23"
+        "yjs": "^13.5.23",
+        "zod": "^3.21.4"
     },
     "devDependencies": {
         "@babel/core": "^7.15.0",
@@ -187,7 +190,6 @@
         "@nestjs/schematics": "9.0.3",
         "@nestjs/testing": "^9.3.12",
         "@next/eslint-plugin-next": "^12.0.10",
-        "@ory/cli": "^0.1.24",
         "@shelf/jest-mongodb": "^2.2.0",
         "@storybook/addon-actions": "^7.4.5",
         "@storybook/addon-essentials": "^7.4.5",
@@ -208,6 +210,7 @@
         "babel-loader": "^8.2.5",
         "concurrently": "^8.2.1",
         "cypress": "13.17.0",
+        "dotenv": "^16.4.5",
         "env-cmd": "^10.1.0",
         "eslint": "7.0.0",
         "eslint-config-next": "^12.0.10",
@@ -251,7 +254,8 @@
         ],
         "coverageReporters": [
             "lcov"
-        ]
+        ],
+        "testTimeout": 30000
     },
     "lint-staged": {
         "*.(ts|js|tsx)": [
@@ -274,7 +278,9 @@
         "ws": "8.17.1",
         "prosemirror-model": "1.9.1",
         "glob": "^9.0.0",
-        "tldjs": "2.3.1"
+        "tldjs": "2.3.1",
+        "@compodoc/compodoc": "1.1.21",
+        "cheerio": "1.0.0-rc.12"
     },
     "packageManager": "yarn@3.6.3"
 }

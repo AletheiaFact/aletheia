@@ -1,15 +1,11 @@
-import { Grid } from "@mui/material";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import FormControl from "@mui/joy/FormControl";
-import Autocomplete from "@mui/joy/Autocomplete";
-import CircularProgress from "@mui/joy/CircularProgress";
+import { Autocomplete, FormControl, CircularProgress, TextField, Grid } from '@mui/material';
 import AletheiaButton from "../Button";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import { ContentModelEnum } from "../../types/enums";
-import { CssVarsProvider } from "@mui/joy/styles";
 
 interface ITopicForm {
     contentModel: ContentModelEnum;
@@ -102,42 +98,50 @@ const TopicForm = ({
                         validate: validateDuplication,
                     }}
                     render={({ field: { onChange, value } }) => (
-                        <CssVarsProvider>
-                            <FormControl sx={{ width: "100%" }}>
-                                <Autocomplete
-                                    freeSolo
-                                    multiple
-                                    placeholder={t("topics:placeholder")}
-                                    options={options}
-                                    onInputChange={(_, inputValue) =>
-                                        fetchOptions(inputValue)
-                                    }
-                                    onChange={(_, selectedValues) => {
-                                        onChange(selectedValues);
-                                        setInputValue(selectedValues);
-                                    }}
-                                    getOptionLabel={(option) =>
-                                        option.label || ""
-                                    }
-                                    isOptionEqualToValue={(option, value) =>
-                                        option.value === value.value
-                                    }
-                                    loading={isLoading}
-                                    endDecorator={
-                                        isLoading ? (
-                                            <CircularProgress size="sm" />
-                                        ) : null
-                                    }
-                                />
-                            </FormControl>
-                        </CssVarsProvider>
+                        <FormControl sx={{ width: "100%" }}>
+                            <Autocomplete
+                                freeSolo
+                                multiple
+                                size="small"
+                                options={options}
+                                onInputChange={(_, inputValue) =>
+                                    fetchOptions(inputValue)
+                                }
+                                onChange={(_, selectedValues) => {
+                                    onChange(selectedValues);
+                                    setInputValue(selectedValues);
+                                }}
+                                getOptionLabel={(option) =>
+                                    option.label || ""
+                                }
+                                isOptionEqualToValue={(option, value) =>
+                                    option.value === value.value
+                                }
+                                loading={isLoading}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder={t("topics:placeholder")}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
+                        </FormControl>
                     )}
                 />
                 <AletheiaButton
                     htmlType="submit"
                     loading={isLoading}
                     style={{
-                        height: 35,
+                        height: 40,
                         borderRadius: 4,
                         borderTopRightRadius: 4,
                         borderBottomRightRadius: 4,

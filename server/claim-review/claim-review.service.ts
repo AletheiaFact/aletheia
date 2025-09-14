@@ -302,8 +302,14 @@ export class ClaimReviewService {
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {
-        const claimReview = await this.ClaimReviewModel.findOne(match).lean();
-        return claimReview.report;
+        const claimReview = await this.ClaimReviewModel.findOne({
+            personality: match.personality,
+            target: match.claim,
+            targetModel: TargetModel.Claim,
+            data_hash: match.data_hash,
+        }).lean();
+
+        return claimReview?.report;
     }
 
     /**
@@ -372,7 +378,7 @@ export class ClaimReviewService {
             date: review.target.latestRevision.date,
             slug: review.target.latestRevision.slug,
             title: review.target.latestRevision.title,
-            claimId: review.target.latestRevision.claimId
+            claimId: review.target.latestRevision.claimId,
         };
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;

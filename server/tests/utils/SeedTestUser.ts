@@ -7,7 +7,7 @@ export const SeedTestUser = async (uri) => {
 
     try {
         return await client
-            .db("Aletheia")
+            .db("test")
             .collection("users")
             .insertOne(AdminUserMock);
     } finally {

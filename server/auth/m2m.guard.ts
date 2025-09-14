@@ -21,7 +21,7 @@ export class M2MGuard extends BaseGuard {
             const hydraBasePath =
                 this.configService.get<string>("ory.hydra.url");
             const introspectionToken =
-                this.configService.get<string>("access_token");
+                this.configService.get<string>("ory.access_token");
 
             const hydraConfig = new Configuration({
                 basePath: hydraBasePath,

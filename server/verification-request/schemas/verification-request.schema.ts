@@ -46,7 +46,7 @@ export class VerificationRequest {
     @Prop({ required: false, type: Boolean })
     isSensitive: boolean;
 
-    @Prop({ required: true, type: [Number] })
+    @Prop({ required: false, type: [Number] })
     embedding: number[];
 
     @Prop({ type: Array, required: false })

@@ -13,22 +13,24 @@ The User Management System handles all aspects of user authentication, authoriza
 ## Key Capabilities
 - Multi-factor authentication
 - Role-based access control (RBAC)
-- Session management
-- Organization namespaces
-- User analytics
+- Enhanced session management with user validation
+- Organization namespaces with advanced filtering
+- User analytics with Umami event tracking
+- Registration invite system for controlled onboarding
 
 ## Features
 
 ### Authentication
 - [Login System](./features/login-system.md) - Email/password authentication
 - [Two-Factor Auth](./features/two-factor-auth.md) - TOTP support
-- [Session Management](./features/session-management.md) - Secure sessions
+- [Session Management](./features/session-management.md) - Enhanced secure sessions with MongoDB user validation
 - [Password Recovery](./features/password-recovery.md) - Reset flows
+- [Registration Invite](./features/registration-invite.md) - Controlled user onboarding system
 
 ### Authorization
 - [Role Management](./features/role-management.md) - User roles and permissions
 - [CASL Integration](./features/casl-integration.md) - Ability-based access
-- [Namespace System](./features/namespace-system.md) - Organization support
+- [Namespace System](./features/namespace-system.md) - Enhanced organization support with user filtering
 - [API Authentication](./features/api-authentication.md) - M2M auth
 
 ### User Features

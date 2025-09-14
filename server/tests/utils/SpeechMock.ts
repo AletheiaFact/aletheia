@@ -1,7 +1,7 @@
-const ObjectId = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 
 export const SpeechMock = (paragraphId) => ({
-    content: [ObjectId(paragraphId)],
+    content: [new ObjectId(paragraphId)],
     type: "speech",
     personality: null,
 });

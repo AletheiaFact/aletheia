@@ -1,11 +1,11 @@
-const ObjectId = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 
 export const ClaimMock = (personalitiesId, claimRevisionId) => ({
     nameSpace: "main",
     isHidden: false,
-    personalities: [ObjectId(personalitiesId[0])],
+    personalities: [new ObjectId(personalitiesId[0])],
     isDeleted: false,
     deletedAt: null,
-    latestRevision: ObjectId(claimRevisionId),
+    latestRevision: new ObjectId(claimRevisionId),
     slug: "test",
 });

@@ -13,7 +13,7 @@ export const SeedTestClaimRevision = async (
 
     try {
         return await client
-            .db("Aletheia")
+            .db("test")
             .collection("claimrevisions")
             .insertOne(
                 ClaimRevisionMock(
