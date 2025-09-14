@@ -19,7 +19,7 @@ export class NameSpaceService {
 
     findByUser(userId: string) {
         this.validateObjectId(userId, "User ID");
-        return this.NameSpaceModel.find({ users: userId }).exec();
+        return this.NameSpaceModel.find({ users: { $eq: userId } }).exec();
     }
 
     async create(nameSpace) {
