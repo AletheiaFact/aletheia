@@ -12,7 +12,7 @@ import {
 } from "../constants/ai-task.constants";
 
 const TextEmbeddingContentSchema = z.object({
-    text: z.string().min(1).max(100000),
+    text: z.string().min(1).max(10000),
     model: z.string().min(1),
 });
 
