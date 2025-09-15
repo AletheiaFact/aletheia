@@ -38,6 +38,15 @@ export class SourceService {
         }
         data.data_hash = md5(data.href);
         data.user = Types.ObjectId(data.user);
+
+        const existingSource = await this.SourceModel.findOne({
+            data_hash: data.data_hash,
+        });
+
+        if (existingSource) {
+            return existingSource;
+        }
+
         //TODO: don't create duplicate sources in one claim review task
         return await new this.SourceModel(data).save();
     }
