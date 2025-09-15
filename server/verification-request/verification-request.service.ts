@@ -335,11 +335,12 @@ export class VerificationRequestService {
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
-                newVerificationRequest._id,
+                verificationRequest._id,
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Update,
-                newVerificationRequest
+                newVerificationRequest,
+                latestVerificationRequest
             );
 
             await this.historyService.createHistory(history);
@@ -553,11 +554,12 @@ export class VerificationRequestService {
         const user = this.req.user;
 
         const history = this.historyService.getHistoryParams(
-            newVerificationRequest._id,
+            verificationRequest._id,
             TargetModel.VerificationRequest,
             user,
             HistoryType.Update,
-            newVerificationRequest
+            newVerificationRequest,
+            latestVerificationRequest
         );
 
         await this.historyService.createHistory(history);
