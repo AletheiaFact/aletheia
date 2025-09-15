@@ -52,13 +52,14 @@ export class SourceService {
         data.user = Types.ObjectId(data.user);
 
         const existingSource = await this.SourceModel.findOne({
-            data_hash: { $eq: data.data_hash },
+            data_hash: data.data_hash,
         });
 
         if (existingSource) {
             return existingSource;
         }
 
+        //TODO: don't create duplicate sources in one claim review task
         return await new this.SourceModel(data).save();
     }
 
