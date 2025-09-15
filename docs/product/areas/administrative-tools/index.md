@@ -20,10 +20,10 @@ Administrative Tools provide platform administrators and moderators with compreh
 ## Features
 
 ### User Administration
-- [User Management](./features/user-management.md) - Account administration
+- [User Management](./features/user-management.md) - Enhanced account administration with namespace assignment
 - [Role Assignment](./features/role-assignment.md) - Permission management
 - [User Status](./features/user-status.md) - Account states
-- [Namespace Admin](./features/namespace-admin.md) - Organization management
+- [Namespace Admin](./features/namespace-admin.md) - Advanced organization management with user filtering
 
 ### Content Moderation
 - [Content Review](./features/content-review.md) - Moderation queue

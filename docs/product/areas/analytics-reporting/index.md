@@ -24,6 +24,7 @@ The Analytics & Reporting System provides comprehensive insights into platform u
 - [Performance Metrics](./features/performance-metrics.md) - System performance
 - [Quality Metrics](./features/quality-metrics.md) - Fact-checking quality
 - [Engagement Analytics](./features/engagement-analytics.md) - User activity
+- [Umami Tracking](./features/umami-tracking.md) - Enhanced event tracking
 
 ### Reporting Tools
 - [Dashboard Overview](./features/dashboard-overview.md) - Executive dashboards

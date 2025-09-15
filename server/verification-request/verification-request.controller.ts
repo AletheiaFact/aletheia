@@ -203,7 +203,7 @@ export class VerificationRequestController {
 
         const recommendations =
             await this.verificationRequestService.findSimilarRequests(
-                verificationRequest.content,
+                verificationRequest.embedding,
                 recommendationFilter,
                 5
             );
