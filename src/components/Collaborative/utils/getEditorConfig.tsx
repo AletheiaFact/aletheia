@@ -12,6 +12,7 @@ import { YjsExtension } from "@remirror/extension-yjs";
 import SourceReviewEditor from "../Components/SourceReviewEditor";
 import ClaimReviewEditor from "../Components/ClaimReviewEditor";
 import { MarkExtension, NodeExtension, PlainExtension } from "remirror";
+import { SimplePasteFilter } from "../extensions/SimplePasteFilter";
 
 export class EditorConfig {
     getExtensions(
@@ -22,6 +23,7 @@ export class EditorConfig {
         const baseExtensions: Partial<
             NodeExtension | PlainExtension | LinkExtension
         >[] = [
+            new SimplePasteFilter(),
             new SummaryExtension({ disableExtraAttributes: true }),
             new TrailingNodeExtension(),
             new LinkExtension({
