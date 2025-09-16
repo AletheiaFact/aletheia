@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceDocument, Source } from "./schemas/source.schema";
 import { InjectModel } from "@nestjs/mongoose";
+import validator from "validator";
 const md5 = require("md5");
 
 @Injectable()
@@ -36,6 +41,13 @@ export class SourceService {
         if (data?.props?.date) {
             data.props.date = new Date(data.props.date);
         }
+        if (
+            !data.href ||
+            !validator.isURL(data.href, { require_protocol: true })
+        ) {
+            throw new BadRequestException("Invalid URL");
+        }
+
         data.data_hash = md5(data.href);
         data.user = Types.ObjectId(data.user);
 
