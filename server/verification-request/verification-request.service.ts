@@ -96,16 +96,11 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(
-        data: {
-            content: string;
-            source?: Array<{ href: string }>;
-        },
-        user?: any
-    ): Promise<VerificationRequestDocument> {
+    async create(data: {
+        content: string;
+        source?: string;
+    }): Promise<VerificationRequestDocument> {
         try {
-            this.logger.debug("Creating verification request", { data });
-
             const vr = await this.VerificationRequestModel.create({
                 ...data,
                 data_hash: md5(data.content),
@@ -113,36 +108,46 @@ export class VerificationRequestService {
                 source: null,
             });
 
-            if (data.source?.length) {
-                const srcId = await Promise.all(
-                    data.source.map(async (source) => {
-                        const src = await this.sourceService.create({
-                            href: source.href,
-                            targetId: vr.id,
-                        });
-                        return src._id;
-                    })
-                );
-
-                vr.source = srcId;
+            if (data.source?.trim()) {
+                const src = await this.sourceService.create({
+                    href: data.source,
+                    targetId: vr.id,
+                });
+                vr.source = Types.ObjectId(src.id);
                 await vr.save();
             }
 
+            const taskDto: CreateAiTaskDto = {
+                type: AiTaskType.TEXT_EMBEDDING,
+                content: {
+                    text: data.content,
+                    model: DEFAULT_EMBEDDING_MODEL,
+                },
+                callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
+                callbackParams: {
+                    targetId: vr.id,
+                    field: "embedding",
+                },
+            };
+            await this.aiTaskService.create(taskDto);
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
-                newVerificationRequest._id,
+                vr._id,
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Create,
-                newVerificationRequest
+                vr
             );
 
             await this.historyService.createHistory(history);
 
-            return newVerificationRequest.save();
+            return vr;
         } catch (e) {
-            this.logger.error("Failed to create verification request", e.stack);
+            console.error("Failed to create verification request", e);
+            throw new Error(e);
+        }
+    }
 
             if (e.name === "ValidationError") {
                 const fields = Object.keys(e.errors).join(", ");
