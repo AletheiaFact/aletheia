@@ -51,12 +51,12 @@ const OryLoginForm = ({
                         <Grid container
                             marginBottom={2}
                         >
-                            <Grid item xs={12} sm={2.25} lg={1.25}>
+                            <Grid item xs={12} sm={3} lg={2}>
                                 <Label required
                                     children={t("login:emailLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={9.75} lg={10.75}>
+                            <Grid item xs={12} sm={9} lg={10}>
                                 <Input
                                     data-cy="emailFormLogin"
                                     {...register("email", {
@@ -68,12 +68,12 @@ const OryLoginForm = ({
                                     children={t("login:emailErrorMessage")}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={2.25} lg={1.25}>
+                            <Grid item xs={12} sm={3} lg={2}>
                                 <Label required
                                     children={t("login:passwordLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={9.75} lg={10.75} >
+                            <Grid item xs={12} sm={9} lg={10} >
                                 <InputPassword
                                     data-cy="passwordFormLogin"
                                     {...register("password", {
