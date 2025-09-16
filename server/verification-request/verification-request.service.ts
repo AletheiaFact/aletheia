@@ -103,56 +103,54 @@ export class VerificationRequestService {
         content: string;
         source?: string;
     }): Promise<VerificationRequestDocument> {
-        const vr = await this.VerificationRequestModel.create({
-            ...data,
-            data_hash: md5(data.content),
-            embedding: null,
-            source: null,
-        });
-
-        if (data.source?.trim()) {
-            const src = await this.sourceService.create({
-                href: data.source,
-                targetId: vr.id,
+        try {
+            const vr = await this.VerificationRequestModel.create({
+                ...data,
+                data_hash: md5(data.content),
+                embedding: null,
+                source: null,
             });
-            vr.source = Types.ObjectId(src.id);
-            await vr.save();
-        }
 
-        const taskDto: CreateAiTaskDto = {
-            type: AiTaskType.TEXT_EMBEDDING,
-            content: {
-                text: data.content,
-                model: DEFAULT_EMBEDDING_MODEL,
-            },
-            callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            callbackParams: {
-                targetId: vr.id,
-                field: "embedding",
-            },
-        };
-        await this.aiTaskService.create(taskDto);
+            if (data.source?.trim()) {
+                const src = await this.sourceService.create({
+                    href: data.source,
+                    targetId: vr.id,
+                });
+                vr.source = Types.ObjectId(src.id);
+                await vr.save();
+            }
 
-        return vr;
-    }
-
-
+            const taskDto: CreateAiTaskDto = {
+                type: AiTaskType.TEXT_EMBEDDING,
+                content: {
+                    text: data.content,
+                    model: DEFAULT_EMBEDDING_MODEL,
+                },
+                callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
+                callbackParams: {
+                    targetId: vr.id,
+                    field: "embedding",
+                },
+            };
+            await this.aiTaskService.create(taskDto);
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
-                newVerificationRequest._id,
+                vr._id,
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Create,
-                newVerificationRequest
+                vr
             );
 
             await this.historyService.createHistory(history);
 
-            return newVerificationRequest.save();
+            return vr;
         } catch (e) {
             console.error("Failed to create verification request", e);
             throw new Error(e);
+        }
+    }
 
     async updateEmbedding(
         params: { targetId: string; field: string },
@@ -168,7 +166,6 @@ export class VerificationRequestService {
             throw new BadRequestException(
                 `VerificationRequest ${targetId} not found`
             );
-
         }
         return updated;
     }
