@@ -83,6 +83,44 @@ const VerificationRequestCard = ({
 
     const getTags = (verificationRequest) => {
         const tags = [];
+        if (verificationRequest.reportType) {
+            tags.push(
+                <CustomTag
+                    style={{ backgroundColor: colors.secondary, color: colors.white }}
+                    key={`${verificationRequest._id}|reportType`}
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagReportType"
+                                )}
+                                :
+                            </strong>{" "}
+                            {verificationRequest.reportType}
+                        </div>
+                    }
+                />
+            );
+        }
+        if (verificationRequest.impactArea) {
+            tags.push(
+                <CustomTag
+                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
+                    key={`${verificationRequest._id}|impactArea`}
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagImpactArea"
+                                )}
+                                :
+                            </strong>{" "}
+                            {verificationRequest.impactArea}
+                        </div>
+                    }
+                />
+            );
+        }
         if (verificationRequest.publicationDate) {
             const publicationDate = new Date(
                 verificationRequest.publicationDate
@@ -92,7 +130,7 @@ const VerificationRequestCard = ({
 
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.secondary, color: colors.white }}
+                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
                     key={`${verificationRequest._id}|publicationDate`}
                     label={
                         <div>
@@ -115,7 +153,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.date) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
+                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
                     key={`${verificationRequest._id}|date`}
                     label={
                         <div>
@@ -131,7 +169,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
+                    style={{ backgroundColor: colors.quartiary, color: colors.white }}
                     key={`${verificationRequest._id}|heardFrom`}
                     label={
                         <div>
@@ -150,7 +188,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.source) {
             tags.push(
                 <CustomTag
-                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
+                    style={{ backgroundColor: colors.lightSecondary, color: colors.white }}
                     key={`${verificationRequest._id}|source`}
                     label={
                         <div>

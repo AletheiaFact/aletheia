@@ -8,6 +8,20 @@ const createVerificationRequestForm: FormField[] = [
         i18nNamespace: "verificationRequest",
     }),
     createFormField({
+        fieldName: "reportType",
+        type: "selectReportType",
+        defaultValue: "",
+        i18nNamespace: "verificationRequest",
+
+    }),
+    createFormField({
+        fieldName: "impactArea",
+        type: "selectImpactArea",
+        defaultValue: "",
+        i18nNamespace: "verificationRequest",
+
+    }),
+    createFormField({
         fieldName: "heardFrom",
         type: "text",
         defaultValue: "",
