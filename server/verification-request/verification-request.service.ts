@@ -147,8 +147,9 @@ export class VerificationRequestService {
 
             return vr;
         } catch (e) {
-            console.error("Failed to create verification request", e);
-            throw new Error(e);
+            throw new BadRequestException(
+                "Failed to create verification request"
+            );
         }
     }
 
@@ -277,10 +278,6 @@ export class VerificationRequestService {
                     );
             }
 
-            const newVerificationRequest = new this.VerificationRequestModel(
-                verificationRequest
-            );
-
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
@@ -288,7 +285,7 @@ export class VerificationRequestService {
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Update,
-                newVerificationRequest,
+                updatedVerificationRequestData,
                 latestVerificationRequest
             );
 
