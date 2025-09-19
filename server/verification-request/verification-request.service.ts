@@ -148,7 +148,8 @@ export class VerificationRequestService {
             return vr;
         } catch (e) {
             throw new BadRequestException(
-                "Failed to create verification request"
+                "Failed to create verification request",
+                e
             );
         }
     }
