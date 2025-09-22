@@ -22,6 +22,7 @@ import { CreateVerificationRequestDTO } from "./dto/create-verification-request-
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
+import { TargetModel } from "../history/schema/history.schema";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -222,5 +223,25 @@ export class VerificationRequestController {
             "/verification-request-review-page",
             queryObject
         );
+    }
+
+    @ApiTags("pages")
+    @Get("verification-request/:data_hash/history")
+    public async verificationRequestHistoryPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { data_hash } = req.params;
+
+        const verificationRequest =
+            await this.verificationRequestService.findByDataHash(data_hash);
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: verificationRequest._id,
+            targetModel: TargetModel.VerificationRequest,
+        });
+
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 }
