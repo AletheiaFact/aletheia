@@ -59,7 +59,6 @@ export class SourceService {
             return existingSource;
         }
 
-        //TODO: don't create duplicate sources in one claim review task
         return await new this.SourceModel(data).save();
     }
 
