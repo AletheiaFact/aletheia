@@ -16,11 +16,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import {
-    AiTaskType,
-    CallbackRoute,
-    DEFAULT_EMBEDDING_MODEL,
-} from "../ai-task/constants/ai-task.constants";
+import { AiTaskType, CallbackRoute, DEFAULT_EMBEDDING_MODEL } from "../ai-task/constants/ai-task.constants";
 
 const md5 = require("md5");
 
