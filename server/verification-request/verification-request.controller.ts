@@ -24,6 +24,7 @@ import { CreateVerificationRequestDTO } from "./dto/create-verification-request-
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -110,12 +111,18 @@ export class VerificationRequestController {
         } else {
             this.logger.log("M2M user request - skipping CAPTCHA validation");
         }
-
-        return this.verificationRequestStateMachineService.request(
-            verificationRequestBody,
-            req.user
-        );
+        return this.verificationRequestStateMachineService.request(verificationRequestBody);
     }
+
+
+    // Not working, todo
+    // @ApiTags("verification-request")
+    // @Post("api/verification-request/pre-triage/:id")
+    // async preTriage(
+    //     @Param("id") verificationRequestId: string,
+    // ) {
+    //     return this.verificationRequestStateMachineService.preTriage(verificationRequestId);
+    // }
 
     @ApiTags("pages")
     @Get("verification-request/create")
