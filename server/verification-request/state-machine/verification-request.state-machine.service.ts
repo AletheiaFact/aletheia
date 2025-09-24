@@ -27,7 +27,6 @@ export class VerificationRequestStateMachineService {
     }
 
     async preTriage(verificationRequestId: string): Promise<any> {
-        console.log('data sent by client', verificationRequestId)
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
                 verificationRequest: { id: verificationRequestId, status: VerificationRequestStatus.PRE_TRIAGE },
