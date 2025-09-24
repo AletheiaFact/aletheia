@@ -129,7 +129,9 @@ const getStateTransitions = (originState: VerificationRequestStateMachineStates 
             }
     }
 }
-
+/**
+ * TODO: after creation we need trigger other AI tasks to be executed
+ */
 export const getVerificationRequestStateMachineConfig = (stateMachineService: VerificationRequestStateMachineService) => {
     return {
         id: 'verificationRequest',
