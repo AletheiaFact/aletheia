@@ -16,11 +16,6 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import {
-    AiTaskType,
-    CallbackRoute,
-    DEFAULT_EMBEDDING_MODEL,
-} from "../ai-task/constants/ai-task.constants";
 
 const md5 = require("md5");
 
@@ -120,19 +115,6 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const taskDto: CreateAiTaskDto = {
-                type: AiTaskType.TEXT_EMBEDDING,
-                content: {
-                    text: data.content,
-                    model: DEFAULT_EMBEDDING_MODEL,
-                },
-                callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-                callbackParams: {
-                    targetId: vr.id,
-                    field: "embedding",
-                },
-            };
-            await this.aiTaskService.create(taskDto);
             const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
@@ -154,6 +136,19 @@ export class VerificationRequestService {
         }
     }
 
+    async createAiTask(taskDto: CreateAiTaskDto) {
+        await this.aiTaskService.create(taskDto);
+        return { success: true }
+    }
+
+    /**
+     * TODO: when updated the embedding we need add missing states triggered by machine
+     * to make sure the machine is in the correct state
+     * and we can follow to triage process
+     * @param params 
+     * @param embedding 
+     * @returns 
+     */
     async updateEmbedding(
         params: { targetId: string; field: string },
         embedding: number[]
