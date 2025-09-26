@@ -1,3 +1,20 @@
+// Polyfill for File constructor to fix undici compatibility issue
+if (typeof global.File === 'undefined') {
+    (global as any).File = class File {
+        name: string;
+        size: number;
+        type: string;
+        lastModified: number;
+        
+        constructor(blobParts: any, filename: string, options?: any) {
+            this.name = filename || '';
+            this.size = 0;
+            this.type = options?.type || '';
+            this.lastModified = options?.lastModified || Date.now();
+        }
+    };
+}
+
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";
@@ -47,7 +64,7 @@ async function initApp() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api", app, document);
 
-    mongoose.set("useCreateIndex", true);
+    // mongoose.set("useCreateIndex", true);
 
     app.useGlobalPipes(
         new ValidationPipe({
