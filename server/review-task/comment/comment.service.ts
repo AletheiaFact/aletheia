@@ -13,7 +13,7 @@ export class CommentService {
     ) {}
 
     async create(comment) {
-        comment.user = Types.ObjectId(comment.user);
+        comment.user = new Types.ObjectId(comment.user);
         const [user, newComment] = await Promise.all([
             this.usersService.getById(comment.user),
             new this.CommentModel(comment).save(),
@@ -37,7 +37,7 @@ export class CommentService {
             comment.user || existingComment.user
         );
         const replies = comment.replies
-            ? comment?.replies?.map((reply) => Types.ObjectId(reply?._id))
+            ? comment?.replies?.map((reply) => new Types.ObjectId(reply?._id))
             : existingComment.replies;
 
         const updatedComment = await this.CommentModel.findByIdAndUpdate(

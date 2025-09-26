@@ -20,7 +20,7 @@ export class EditorService {
 
     async updateByReference(reference, editorContentObject) {
         const editor = await this.EditorModel.updateOne(
-            { reference: Types.ObjectId(reference) },
+            { reference: new Types.ObjectId(reference) },
             { $set: { editorContentObject } }
         );
         return editor;

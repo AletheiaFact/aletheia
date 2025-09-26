@@ -47,7 +47,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = Types.ObjectId(query.personalities);
+            query.personalities = new Types.ObjectId(query.personalities);
         }
 
         const claims = await this.ClaimModel.find(query)
@@ -125,11 +125,11 @@ export class ClaimService {
      */
     async create(claim) {
         claim.personalities = claim.personalities.map((personality) => {
-            return Types.ObjectId(personality);
+            return new Types.ObjectId(personality);
         });
 
         if (claim.group) {
-            claim.group = Types.ObjectId(claim.group);
+            claim.group = new Types.ObjectId(claim.group);
         }
 
         const newClaim = new this.ClaimModel(claim);

@@ -70,7 +70,7 @@ export class GroupService {
 
         return this.GroupModel.findByIdAndUpdate(
             group._id,
-            { targetId: Types.ObjectId(targetId) },
+            { targetId: new Types.ObjectId(targetId) },
             { new: true }
         );
     }

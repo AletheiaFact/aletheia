@@ -66,7 +66,7 @@ export class ParserService {
         });
 
         if (personality) {
-            personality = Types.ObjectId(personality);
+            personality = new Types.ObjectId(personality);
         }
 
         return await Promise.all(result).then(

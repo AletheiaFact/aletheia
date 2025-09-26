@@ -1,4 +1,4 @@
-import { LeanDocument } from "mongoose";
+import { Document } from "mongoose";
 import {
     ICombinedListResult,
     IFindAllOptions,
@@ -21,7 +21,7 @@ export type IPersonalityService = {
     create(personality: any): Promise<IPersonality>;
     getDeletedPersonalityByWikidata(wikidata: string);
     getById(
-        personalityId: string | LeanDocument<IPersonality>,
+        personalityId: string | Document<IPersonality>,
         options?: { language?: string; nameSpace?: string }
     ): Promise<IPersonality>;
     getPersonalityBySlug(query: any, language?: string): Promise<IPersonality>;

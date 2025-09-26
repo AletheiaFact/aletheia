@@ -70,7 +70,7 @@ export class ClaimRevisionService {
             strict: true, // strip special characters except replacement, defaults to `false`
         });
         const newClaimRevision = new this.ClaimRevisionModel(claim);
-        const newclaimRevisionId = Types.ObjectId(newClaimRevision._id);
+        const newclaimRevisionId = new Types.ObjectId(newClaimRevision._id);
 
         newClaimRevision.contentId = await this._createContentModel(
             claim,

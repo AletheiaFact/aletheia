@@ -71,14 +71,14 @@ export class BadgeController {
 
         if (!rest.image._id) {
             const image = await this.imageService.create(rest.image);
-            rest.image = Types.ObjectId(image._id);
+            rest.image = new Types.ObjectId(image._id);
         }
 
         const updatedBadge = await this.badgeService.update(rest);
         updatedBadge.image = rest.image;
 
         const usersWithBadge = await this.usersService.findAll({
-            badges: Types.ObjectId(updatedBadge._id),
+            badges: new Types.ObjectId(updatedBadge._id),
         });
 
         // Remove badge from users that no longer have it
@@ -117,7 +117,7 @@ export class BadgeController {
                 if (
                     !user.badges?.some(
                         (userBadge) =>
-                            userBadge._id !== Types.ObjectId(updatedBadge._id)
+                            userBadge._id !== new Types.ObjectId(updatedBadge._id)
                     )
                 ) {
                     this.usersService.updateUser(user._id, {

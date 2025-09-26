@@ -87,7 +87,7 @@ export class ReviewTaskService {
             const value = filterUser[key];
             if (value === true || value === "true") {
                 const queryPath = this.fieldMap[key];
-                query[queryPath] = Types.ObjectId(this.req.user._id);
+                query[queryPath] = new Types.ObjectId(this.req.user._id);
             }
         });
 
@@ -327,7 +327,7 @@ export class ReviewTaskService {
         }
 
         const stateEvent = this.stateEventService.getStateEventParams(
-            Types.ObjectId(newReviewTask.machine.context.review.target),
+            new Types.ObjectId(newReviewTask.machine.context.review.target),
             typeModel || TypeModel.Published,
             draft,
             newReviewTask._id
@@ -369,7 +369,7 @@ export class ReviewTaskService {
     _returnObjectId(data): any {
         if (Array.isArray(data)) {
             return data.map((item) =>
-                item._id ? Types.ObjectId(item._id) || "" : Types.ObjectId(item)
+                item._id ? new Types.ObjectId(item._id) || "" : new Types.ObjectId(item)
             );
         }
     }
@@ -405,12 +405,12 @@ export class ReviewTaskService {
 
         if (reviewDataBody.reviewerId) {
             reviewTaskBody.machine.context.reviewData.reviewerId =
-                Types.ObjectId(reviewDataBody.reviewerId) || "";
+                new Types.ObjectId(reviewDataBody.reviewerId) || "";
         }
 
         if (reviewDataBody.crossCheckerId) {
             reviewTaskBody.machine.context.reviewData.crossCheckerId =
-                Types.ObjectId(reviewDataBody.crossCheckerId) || "";
+                new Types.ObjectId(reviewDataBody.crossCheckerId) || "";
         }
 
         if (reviewDataBody.reviewComments) {
@@ -683,7 +683,7 @@ export class ReviewTaskService {
             reviewData.reviewComments = [];
         }
 
-        reviewData.reviewComments.push(Types.ObjectId(newComment?._id));
+        reviewData.reviewComments.push(new Types.ObjectId(newComment?._id));
 
         const { machine } = await this.ReviewTaskModel.findOneAndUpdate(
             { _id: reviewTask._id },
@@ -698,7 +698,7 @@ export class ReviewTaskService {
     }
 
     async deleteComment(data_hash, commentId) {
-        const commentIdObject = Types.ObjectId(commentId);
+        const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         const reviewData = reviewTask.machine.context.reviewData;
         reviewData.reviewComments = reviewData.reviewComments.filter(

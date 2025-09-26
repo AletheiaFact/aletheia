@@ -128,7 +128,7 @@ export class ClaimController {
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
         try {
-            const claim = await this._createClaim(createClaimDTO);
+            const claim: any = await this._createClaim(createClaimDTO);
             const personality = await this.personalityService.getById(
                 claim.personalities[0]
             );
@@ -153,7 +153,7 @@ export class ClaimController {
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
         try {
-            const claim = await this._createClaim(createClaimDTO);
+            const claim: any = await this._createClaim(createClaimDTO);
 
             const personality = claim.personalities[0]
                 ? await this.personalityService.getById(claim.personalities[0])
@@ -229,10 +229,10 @@ export class ClaimController {
         let newSpeech;
 
         const claimRevision = await this.claimRevisionService.getByContentId(
-            Types.ObjectId(debateId)
+            new Types.ObjectId(debateId)
         );
 
-        const claimRevisionId = Types.ObjectId(claimRevision._id);
+        const claimRevisionId = new Types.ObjectId(claimRevision._id);
 
         if (content && personality) {
             newSpeech = await this.parserService.parse(

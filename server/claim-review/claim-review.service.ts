@@ -1,5 +1,5 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
-import { LeanDocument, Model, Types } from "mongoose";
+import { Document, Model, Types } from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -247,17 +247,17 @@ export class ClaimReviewService {
      */
     async create(claimReview, data_hash, reportModel) {
         if (claimReview.personality) {
-            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.personality = new Types.ObjectId(claimReview.personality);
         }
 
         if (claimReview.target) {
-            claimReview.target = Types.ObjectId(claimReview.target);
+            claimReview.target = new Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {
-            return Types.ObjectId(userId);
+            return new Types.ObjectId(userId);
         });
-        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.report = new Types.ObjectId(claimReview.report._id);
         claimReview.data_hash = data_hash;
         claimReview.reportModel = reportModel;
         claimReview.date = new Date();
@@ -286,7 +286,7 @@ export class ClaimReviewService {
 
     async getReviewByDataHash(
         data_hash: string
-    ): Promise<LeanDocument<ClaimReviewDocument>> {
+    ): Promise<Document<ClaimReviewDocument>> {
         const claimReview = await this.ClaimReviewModel.findOne({ data_hash })
             .populate("report")
             .lean();
@@ -301,7 +301,7 @@ export class ClaimReviewService {
         return claimReview;
     }
 
-    async getReport(match): Promise<LeanDocument<ReportDocument>> {
+    async getReport(match): Promise<Document<ReportDocument>> {
         const claimReview = await this.ClaimReviewModel.findOne({
             personality: match.personality,
             target: match.claim,
