@@ -1,3 +1,13 @@
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { join } from "path";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { ValidationPipe } from "@nestjs/common";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import loadConfig from "./configLoader";
+import * as dotenv from "dotenv";
+import { WinstonLogger } from "./winstonLogger";
+
 // Polyfill for File constructor to fix undici compatibility issue
 if (typeof global.File === 'undefined') {
     (global as any).File = class File {
@@ -15,17 +25,7 @@ if (typeof global.File === 'undefined') {
     };
 }
 
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { join } from "path";
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { ValidationPipe } from "@nestjs/common";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import loadConfig from "./configLoader";
-import * as dotenv from "dotenv";
-import { WinstonLogger } from "./winstonLogger";
 const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
 dotenv.config();
 
 const isLocal = process.env.ENV === "local";
