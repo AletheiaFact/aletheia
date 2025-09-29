@@ -55,7 +55,7 @@ export class TopicService {
             data_hash,
         }: {
             contentModel?: ContentModelEnum;
-            topics: { label: string; value: string }[] | string[];
+            topics: { label: string; value: string }[] | string[] | (string | { label: string; value: string })[];
             data_hash?: string;
         },
         language: string = "pt"

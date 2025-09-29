@@ -127,8 +127,7 @@ export class VerificationRequestService {
             }
 
             if (data.impactArea) {
-                const topicWikidataEntities = typeof data.impactArea === "string" ?
-                    [data.impactArea] : [data.impactArea];
+                const topicWikidataEntities = [data.impactArea];
 
                 const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
 
