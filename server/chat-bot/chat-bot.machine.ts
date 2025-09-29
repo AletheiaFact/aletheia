@@ -1,10 +1,14 @@
 import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { ContentModelEnum } from "../types/enums";
 
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
+    receptionChannel?: string;
+    reportType: ContentModelEnum;
+    impactArea?: string;
     source?: string;
     publicationDate?: string;
     heardFrom?: string;
@@ -23,6 +27,8 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
+                reportType: ContentModelEnum,
+                impactArea: "",
                 source: "",
                 publicationDate: "",
                 heardFrom: "",
@@ -90,10 +96,10 @@ export const createChatBotMachine = (
                 askingForVerificationRequest: {
                     on: {
                         RECEIVE_REPORT: {
-                            target: "askingForSource",
+                            target: "askingForReportType",
                             actions: [
                                 "saveVerificationRequest",
-                                "askForSource",
+                                "askForReportType",
                                 "setResponseMessage",
                             ],
                         },
@@ -101,6 +107,52 @@ export const createChatBotMachine = (
                             target: "askingForVerificationRequest",
                             actions: [
                                 "sendNoTextMessageAskForVerificationRequest",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForReportType: {
+                    on: {
+                        RECEIVE_REPORT_TYPE: {
+                            target: "askingForImpactArea",
+                            actions: [
+                                "saveReportType",
+                                "askForImpactArea",
+                                "setResponseMessage",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForReportType",
+                            actions: [
+                                "sendNoTextMessageAskForReportType",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForImpactArea: {
+                    on: {
+                        RECEIVE_IMPACT_AREA: {
+                            target: "askingForSource",
+                            actions: [
+                                "saveImpactArea",
+                                "askForSource",
+                                "setResponseMessage",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "askingForSource",
+                            actions: [
+                                "saveEmptyImpactArea",
+                                "askForSource",
+                                "setResponseMessage",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForImpactArea",
+                            actions: [
+                                "sendNoTextMessageAskForImpactArea",
                                 "setResponseMessage",
                             ],
                         },
@@ -244,9 +296,11 @@ export const createChatBotMachine = (
             actions: {
                 ...actions,
                 saveVerificationRequestToDB: (context) => {
-                    //to do: add parameters here
                     const verificationRequestBody = {
                         content: context.verificationRequest,
+                        receptionChannel: context.receptionChannel || "",
+                        reportType: context.reportType,
+                        impactArea: context.impactArea || "",
                         source: context.source || "",
                         publicationDate: context.publicationDate || "",
                         email: context.email || "",

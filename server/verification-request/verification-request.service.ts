@@ -16,6 +16,8 @@ import {
     CallbackRoute,
     DEFAULT_EMBEDDING_MODEL,
 } from "../ai-task/constants/ai-task.constants";
+import { TopicService } from "../topic/topic.service";
+import slugify from "slugify";
 const md5 = require("md5");
 
 @Injectable()
@@ -25,7 +27,8 @@ export class VerificationRequestService {
         private VerificationRequestModel: Model<VerificationRequestDocument>,
         private sourceService: SourceService,
         private readonly groupService: GroupService,
-        private readonly aiTaskService: AiTaskService
+        private readonly aiTaskService: AiTaskService,
+        private readonly topicService: TopicService
     ) {}
 
     async listAll({
@@ -48,6 +51,7 @@ export class VerificationRequestService {
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
+            .populate("impactArea")
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
@@ -94,12 +98,14 @@ export class VerificationRequestService {
     async create(data: {
         content: string;
         source?: string;
+        impactArea?: { label: string; value: string } | string;
     }): Promise<VerificationRequestDocument> {
         const vr = await this.VerificationRequestModel.create({
             ...data,
             data_hash: md5(data.content),
             embedding: null,
             source: null,
+            impactArea: null
         });
 
         if (data.source?.trim()) {
@@ -108,6 +114,23 @@ export class VerificationRequestService {
                 targetId: vr.id,
             });
             vr.source = Types.ObjectId(src.id);
+            await vr.save();
+        }
+
+        if (data.impactArea) {
+            const topicWikidataEntities = typeof data.impactArea === "string" ?
+                [data.impactArea] : [data.impactArea];
+
+            const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
+
+            const slug = slugify(createdTopic[0].label, {
+                lower: true,
+                strict: true,
+            });
+
+            const topicId = await this.topicService.getBySlug(slug);
+
+            vr.impactArea = Types.ObjectId(topicId._id);
             await vr.save();
         }
 
@@ -160,7 +183,8 @@ export class VerificationRequestService {
                 data_hash,
             })
                 .populate("group")
-                .populate("source");
+                .populate("source")
+                .populate("impactArea");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });

@@ -19,6 +19,7 @@ const createVerificationRequestForm: FormField[] = [
         type: "selectImpactArea",
         defaultValue: "",
         i18nNamespace: "verificationRequest",
+        required: false
 
     }),
     createFormField({

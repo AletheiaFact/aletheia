@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Group } from "../../group/schemas/group.schema";
 import { Topic } from "../../topic/schemas/topic.schema";
-import { ContentModelEnum, ReceptionChannelEnum } from "../../types/enums";
+import { ContentModelEnum } from "../../types/enums";
 
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
@@ -16,13 +16,17 @@ export class VerificationRequest {
     content: string;
 
     @Prop({ required: true, type: String })
-    receptionChannel: ReceptionChannelEnum;
+    receptionChannel: string;
 
     @Prop({ required: true, type: String })
     reportType: ContentModelEnum;
 
-    @Prop({ required: false, type: String })
-    impactArea: string;
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Topic",
+    })
+    impactArea: mongoose.Types.ObjectId;
 
     @Prop({ required: false, type: String })
     publicationDate: string;

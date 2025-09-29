@@ -91,12 +91,9 @@ const VerificationRequestCard = ({
                     label={
                         <div>
                             <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagReportType"
-                                )}
-                                :
+                                {t("verificationRequest:verificationRequestTagReportType")}:
                             </strong>{" "}
-                            {verificationRequest.reportType}
+                            {t(`claimForm:${verificationRequest.reportType}`)}
                         </div>
                     }
                 />
@@ -115,7 +112,7 @@ const VerificationRequestCard = ({
                                 )}
                                 :
                             </strong>{" "}
-                            {verificationRequest.impactArea}
+                            {verificationRequest.impactArea.name}
                         </div>
                     }
                 />

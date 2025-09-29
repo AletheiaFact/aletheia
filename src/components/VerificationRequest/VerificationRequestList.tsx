@@ -175,7 +175,7 @@ const VerificationRequestList = () => {
                 headerName: t(
                     "verificationRequest:verificationRequestTagReportType"),
                 flex: 1,
-                valueGetter: (value, row) => row.reportType,
+                valueGetter: (value, row) => t(`claimForm:${row.reportType}`),
                 renderCell: (params) => (
                     <span>{truncateWithEllipsis(params.value, 50)}</span>
                 ),
@@ -186,7 +186,7 @@ const VerificationRequestList = () => {
                     "verificationRequest:verificationRequestTagImpactArea"
                 ),
                 flex: 1,
-                valueGetter: (value, row) => row.impactArea,
+                valueGetter: (value, row) => row.impactArea?.name || "",
                 renderCell: (params) => (
                     <span>{truncateWithEllipsis(params.value, 50)}</span>
                 ),

@@ -7,16 +7,26 @@ import { createChatBotMachine } from "./chat-bot.machine";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
+import { ContentModelEnum } from "../types/enums";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
     sim: "RECEIVE_YES",
     nao: "RECEIVE_PAUSE_MACHINE",
 };
+const REPORT_TYPE_MAP: Record<string, ContentModelEnum> = {
+    "discurso": ContentModelEnum.Speech,
+    "imagem": ContentModelEnum.Image,
+    "debate": ContentModelEnum.Debate,
+    "informacao geral": ContentModelEnum.Unattributed,
+};
 
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
+    receptionChannel?: string;
+    reportType?: ContentModelEnum;
+    impactArea?: string;
     source?: string;
     publicationDate?: string;
     heardFrom?: string;
@@ -91,7 +101,10 @@ export class ChatbotService {
         const chatBotMachineService = createChatBotMachine(
             this.verificationService,
             chatbotState.machine.value,
-            chatbotState.machine.context
+            {
+                ...chatbotState.machine.context,
+                receptionChannel: channel,
+            }
         );
 
         chatBotMachineService.start(chatbotState.machine.value);
@@ -182,6 +195,13 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
+            case "askingForReportType":
+                this.handleMachineEventSend(
+                    parsedMessage,
+                    chatBotMachineService
+                );
+                break;
+            case "askingForImpactArea":
             case "askingForSource":
             case "askingForPublicationDate":
             case "askingForHeardFrom":
@@ -212,6 +232,7 @@ export class ChatbotService {
         return message
             .normalize("NFD")
             .replace(diacriticsRegex, "")
+            .replace(/ç/g, "c")
             .toLowerCase();
     }
 
@@ -219,9 +240,16 @@ export class ChatbotService {
         parsedMessage: string,
         chatBotMachineService
     ): void {
-        chatBotMachineService.send(
-            MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
-        );
+        if (chatBotMachineService.getSnapshot().value === "askingForReportType") {
+            chatBotMachineService.send({
+                type: REPORT_TYPE_MAP[parsedMessage] ? "RECEIVE_REPORT_TYPE" : "NON_TEXT_MESSAGE",
+                reportType: REPORT_TYPE_MAP[parsedMessage]
+            });
+        } else {
+            chatBotMachineService.send(
+                MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
+            );
+        }
     }
 
     private handlePausedMachineState(
@@ -255,6 +283,11 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
+            askingForImpactArea: {
+                receive: "RECEIVE_IMPACT_AREA",
+                empty: "RECEIVE_NO",
+                field: "impactArea",
+            },
             askingForSource: {
                 receive: "RECEIVE_SOURCE",
                 empty: "RECEIVE_NO",

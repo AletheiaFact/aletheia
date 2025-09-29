@@ -6,7 +6,6 @@ import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable()
@@ -16,7 +15,6 @@ export class TopicService {
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
         private imageService: ImageService,
-        private verificationRequestService: VerificationRequestService,
         private wikidataService: WikidataService
     ) {}
 
@@ -55,12 +53,10 @@ export class TopicService {
             contentModel,
             topics,
             data_hash,
-            reviewTaskType,
         }: {
-            contentModel: ContentModelEnum;
+            contentModel?: ContentModelEnum;
             topics: { label: string; value: string }[] | string[];
-            data_hash: string;
-            reviewTaskType: ReviewTaskTypeEnum;
+            data_hash?: string;
         },
         language: string = "pt"
     ) {
@@ -75,9 +71,9 @@ export class TopicService {
                 if (findedTopic) {
                     return findedTopic?.wikidataId
                         ? {
-                              label: findedTopic?.name,
-                              value: findedTopic?.wikidataId,
-                          }
+                            label: findedTopic?.name,
+                            value: findedTopic?.wikidataId,
+                        }
                         : findedTopic.slug;
                 } else {
                     const newTopic = {
@@ -98,19 +94,13 @@ export class TopicService {
             })
         );
 
-        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
-            return this.verificationRequestService.updateVerificationRequestWithTopics(
-                createdTopics,
-                data_hash
-            );
+        if (contentModel === ContentModelEnum.Image) {
+            return this.imageService.updateImageWithTopics(createdTopics, data_hash);
+        } else if (contentModel) {
+            return this.sentenceService.updateSentenceWithTopics(createdTopics, data_hash);
+        } else {
+            return createdTopics;
         }
-
-        return contentModel === ContentModelEnum.Image
-            ? this.imageService.updateImageWithTopics(createdTopics, data_hash)
-            : this.sentenceService.updateSentenceWithTopics(
-                  createdTopics,
-                  data_hash
-              );
     }
 
     /**

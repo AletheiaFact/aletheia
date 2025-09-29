@@ -17,6 +17,7 @@ import { AiTaskModule } from "../ai-task/ai-task.module";
 import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispatcher.service";
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
+import { TopicModule } from "../topic/topic.module";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -32,6 +33,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         ViewModule,
         ConfigModule,
         ReviewTaskModule,
+        TopicModule,
         HistoryModule,
         GroupModule,
         CaptchaModule,

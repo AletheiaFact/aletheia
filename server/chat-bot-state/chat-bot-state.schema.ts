@@ -8,9 +8,12 @@ export interface ChatBotMachineSnapshot {
     context: {
         verificationRequest?: string;
         responseMessage?: string;
-        link?: string;
+        receptionChannel?: string;
+        reportType?: string;
+        impactArea?: string;
         publicationDate?: string;
         sources?: string;
+        heardFrom?: string;
         email?: string;
     };
 }
