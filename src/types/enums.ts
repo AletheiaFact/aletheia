@@ -39,18 +39,6 @@ export enum TargetModel {
     Image = "Image",
 }
 
-export enum ImpactAreaEnum {
-    Health = "Health",
-    Politics = "Politics",
-    Economy = "Economy",
-    Environment = "Environment",
-    Education = "Education",
-    Science = "Science",
-    Technology = "Technology",
-    Culture = "Culture",
-    Sports = "Sports",
-}
-
 enum CommentEnum {
     crossChecking = "cross-checking",
     review = "review",
