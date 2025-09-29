@@ -246,7 +246,7 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
-                        source: context.source || "",
+                        source: context.source || [],
                         publicationDate: context.publicationDate || "",
                         email: context.email || "",
                         date: new Date(),
