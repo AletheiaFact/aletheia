@@ -26,6 +26,7 @@ interface ContextType {
     sentenceContent?: any;
     viewPreview?: boolean;
     handleClickViewPreview?: () => void;
+    reviewTask?: { data_hash: string };
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -191,6 +192,7 @@ export const ReviewTaskMachineProvider = (
                 sentenceContent: props.sentenceContent,
                 viewPreview,
                 handleClickViewPreview,
+                reviewTask: { data_hash: props.data_hash },
             }}
         >
             {loading && <Loading />}

@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, Scope, UnauthorizedException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -21,6 +21,7 @@ import {
     ReportModelEnum,
     ReviewTaskTypeEnum,
 } from "../types/enums";
+import { ReviewTaskStates } from "../../src/machines/reviewTask/enums";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
 import { CommentEnum } from "./comment/schema/comment.schema";
@@ -720,6 +721,99 @@ export class ReviewTaskService {
             ...htmlContent,
         };
     }
+
+    async resetToInitialState(
+        data_hash: string,
+        resetData: { reason: string }
+    ): Promise<ReviewTaskDocument> {
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        
+        if (!reviewTask) {
+            throw new Error('Review task not found');
+        }
+        
+        // Validate permissions
+        await this.validateResetPermission(reviewTask);
+        
+        // Note: History will be created automatically by _createReviewTaskHistory when the task is updated
+        
+        // Reset the state machine to assigned undraft state (initial working state)
+        // Preserve report contents and cross-checking data as per specification - only reset state and workflow comments
+        const resetMachine = {
+            ...reviewTask.machine,
+            value: { [ReviewTaskStates.assigned]: "undraft" },
+            context: {
+                ...reviewTask.machine.context,
+                reviewData: {
+                    ...reviewTask.machine.context.reviewData,
+                    // Reset workflow-related data but preserve report content and cross-checking data
+                    reviewerId: null,
+                    comments: [],
+                    reviewComments: []
+                    // Keep: report, classification, summary, questions, sources, crossCheckerId, crossCheckingComments
+                }
+            }
+        };
+        
+        // Update the review task
+        const updatedTask = await this.ReviewTaskModel.findOneAndUpdate(
+            { data_hash },
+            { 
+                machine: resetMachine as any, // Cast to any to handle compound state type
+                $inc: { __v: 1 }
+            },
+            { new: true }
+        );
+        
+        // Emit state change event
+        await this.stateEventService.createStateEvent(
+            this.stateEventService.getStateEventParams(
+                reviewTask._id,
+                'RESET_TO_INITIAL',
+                false,
+                reviewTask._id
+            )
+        );
+        
+        return updatedTask;
+    }
+
+    private async validateResetPermission(reviewTask: ReviewTaskDocument): Promise<void> {
+        const user = this.req.user;
+        const nameSpace = reviewTask.nameSpace || 'main';
+        
+        // Check if user is authenticated
+        if (!user) {
+            throw new UnauthorizedException('User not authenticated');
+        }
+        
+        // Check if user has a valid role in this namespace
+        if (!user.role || !user.role[nameSpace]) {
+            throw new ForbiddenException('User does not have access to this namespace');
+        }
+        
+        const userRole = user.role[nameSpace];
+        
+        // Admin and SuperAdmin users can reset any task
+        if (userRole === Roles.Admin || userRole === Roles.SuperAdmin) {
+            return; // Allow reset
+        }
+        
+        // FactCheckers and Reviewers can only reset tasks assigned to them
+        if (userRole === Roles.FactChecker || userRole === Roles.Reviewer) {
+            const assignedUserIds = reviewTask.machine.context.reviewData.usersId.map(u => u._id?.toString());
+            const isAssignedUser = assignedUserIds.includes(user._id.toString());
+            
+            if (!isAssignedUser) {
+                throw new ForbiddenException('You can only reset tasks that are assigned to you');
+            }
+            return; // Allow reset for assigned users
+        }
+        
+        // Regular users or any other roles are not allowed to reset
+        throw new ForbiddenException('You do not have permission to reset tasks');
+    }
+
 
     private _publishReviewTask(
         reviewTaskMachine,

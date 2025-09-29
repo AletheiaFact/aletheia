@@ -24,6 +24,7 @@ export enum HistoryType {
     Reported = "reported",
     Assigned = "assigned",
     Published = "published",
+    Reset = "reset",
 }
 
 export type Details = {

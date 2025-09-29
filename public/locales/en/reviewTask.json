@@ -29,8 +29,8 @@
     "GO_BACK_ERROR": "It was not possible to return",
     "REJECT_SUCCESS": "Successfully rejected verification request",
     "REJECT_ERROR": "It was not possible to reject",
-    "RESET_SUCCESS": "Successfully reset workflow",
-    "RESET_ERROR": "It was not possible to reset",
+    "RESET_SUCCESS": "Report reset to initial state successfully",
+    "RESET_ERROR": "Failed to reset report",
 
     "ADD_REJECTION_COMMENT": "Send comment",
     "ASSIGN_USER": "Assign",
@@ -67,6 +67,14 @@
     "hasStartedAlertTitle": "This review has started",
     "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
     "seeFullPage": "See full page",
+
+    "RESET_TOOLTIP": "Reset to Initial State",
+    "RESET_DIALOG_TITLE": "Reset Report to Initial State",
+    "RESET_WARNING_MESSAGE": "This action will reset the report to its initial state. All progress will be lost but the history will be preserved.",
+    "RESET_REASON_LABEL": "Reason for Reset (Required)",
+    "RESET_REASON_PLACEHOLDER": "Please provide a reason for resetting this report...",
+    "CONFIRM_RESET": "Confirm Reset",
+    "RESETTING": "Resetting...",
 
     "sentenceInfo": "This sentence is being checked by AletheiaFact."
 }

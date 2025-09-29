@@ -90,7 +90,7 @@ export const transitionHandler = (state) => {
         .catch((e) => {
             // TODO: Track errors with Sentry
         })
-        .finally(() => resetIsLoading());
+        .finally(() => resetIsLoading && resetIsLoading());
 
     sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
 };

@@ -19,7 +19,12 @@ export class RegularUserAbility implements RequiredRule {
 }
 
 export class FactCheckerUserAbility implements RequiredRule {
-    action = Action.Create || Action.Update;
+    action = Action.Create;
+    subject = User;
+}
+
+export class ReviewerUserAbility implements RequiredRule {
+    action = Action.Update;
     subject = User;
 }
 
