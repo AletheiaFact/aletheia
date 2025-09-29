@@ -30,6 +30,7 @@ import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
 import { Source } from "../source/schemas/source.schema";
 import { NotificationService } from "../notifications/notifications.service";
 import { ClaimService } from "../claim/claim.service";
+import { getTranslation } from "../utils/simple-i18n.util";
 
 interface IListAllQuery {
     value: any;
@@ -467,11 +468,17 @@ export class ReviewTaskService {
                 target
             );
 
+            // Get the locale from the request (set by GetLanguageMiddleware)
+            const locale = this.req.language || 'pt';
+
             const notifyUsers = async (userIds: string[], messageKey: string) => {
+                // Translate the message using our server-side i18n utility
+                const translatedMessage = getTranslation(locale, messageKey);
+                
                 for (const userId of userIds) {
                     if (userId && userId !== currentUserId) {
                         await this.notificationService.sendNotification(userId, {
-                            messageIdentifier: messageKey,
+                            messageIdentifier: translatedMessage,
                             redirectUrl
                         });
                     }
