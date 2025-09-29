@@ -3,6 +3,8 @@ import * as mongoose from "mongoose";
 import { Group } from "../../group/schemas/group.schema";
 import { Topic } from "../../topic/schemas/topic.schema";
 import { ContentModelEnum } from "../../types/enums";
+import { SeverityEnum, VerificationRequestStatus } from "../dto/types";
+
 
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
@@ -65,6 +67,18 @@ export class VerificationRequest {
 
     @Prop({ type: Array, required: false })
     topics: Topic[];
+
+    @Prop({
+        required: false,
+        enum: SeverityEnum,
+    })
+    severity: string;
+
+    @Prop({
+        required: true,
+        enum: VerificationRequestStatus,
+    })
+    status: string;
 }
 
 const VerificationRequestSchema =

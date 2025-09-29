@@ -12,6 +12,7 @@ export enum TargetModel {
     ReviewTask = "ReviewTask",
     Image = "Image",
     Source = "Source",
+    VerificationRequest = "VerificationRequest",
 }
 
 export enum HistoryType {
