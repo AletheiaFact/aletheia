@@ -28,6 +28,8 @@ import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
 import { Source } from "../source/schemas/source.schema";
+import { NotificationService } from "../notifications/notifications.service";
+import { ClaimService } from "../claim/claim.service";
 
 interface IListAllQuery {
     value: any;
@@ -71,7 +73,9 @@ export class ReviewTaskService {
         private sentenceService: SentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
-        private commentService: CommentService
+        private commentService: CommentService,
+        private notificationService: NotificationService,
+        private claimService: ClaimService
     ) {
         this.fieldMap = {
             assigned: "machine.context.reviewData.usersId",
@@ -385,6 +389,137 @@ export class ReviewTaskService {
         return this.commentService.create(newCrossCheckingComment);
     }
 
+    /**
+     * Generates the proper notification URL for review content
+     */
+    private async _generateNotificationUrl(
+        data_hash: string,
+        nameSpace: string,
+        reviewTaskType: string,
+        target: string
+    ): Promise<string> {
+        try {
+            const baseUrl = process.env.BASE_URL || 'https://aletheiafact.org';
+            const namespacePrefix = nameSpace && nameSpace !== 'Main' ? `/${nameSpace}` : '';
+            
+            if (reviewTaskType === ReviewTaskTypeEnum.Source) {
+                return `${baseUrl}${namespacePrefix}/source/${data_hash}`;
+            }
+            
+            if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+                return `${baseUrl}${namespacePrefix}/verification-request/${data_hash}`;
+            }
+            
+            // For claim-based content, use the target (claim slug) to generate the URL
+            // This creates the proper format: /claim/{slug}/sentence/{data_hash}
+            // instead of the wrong format: /kanban/sentence/{data_hash}
+            const path = `${namespacePrefix}/claim/${target}/sentence/${data_hash}`;
+            return `${baseUrl}${path}`;
+        } catch (error) {
+            console.error('Error generating notification URL:', error);
+            // Fallback URL
+            const baseUrl = process.env.BASE_URL || 'https://aletheiafact.org';
+            const namespacePrefix = nameSpace && nameSpace !== 'Main' ? `/${nameSpace}` : '';
+            return `${baseUrl}${namespacePrefix}/claim/${target}/sentence/${data_hash}`;
+        }
+    }
+
+    /**
+     * Gets content information by data hash for URL generation
+     */
+    private async _getContentByDataHash(data_hash: string, reviewTaskType: string) {
+        try {
+            if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
+                // For now, let's use a simpler approach that doesn't rely on populating relationships
+                // We'll use the target field which should contain the claim slug
+                return null;
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error getting content by data hash:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Sends notifications based on state transitions
+     */
+    private async _sendNotificationsForStateChange(
+        previousState: string,
+        newState: string,
+        reviewData: any,
+        data_hash: string,
+        nameSpace: string,
+        reviewTaskType: string,
+        target: string,
+        currentUserId?: string
+    ) {
+        if (!this.notificationService.novuIsConfigured()) {
+            return;
+        }
+
+        try {
+            const redirectUrl = await this._generateNotificationUrl(
+                data_hash,
+                nameSpace,
+                reviewTaskType,
+                target
+            );
+
+            const notifyUsers = async (userIds: string[], messageKey: string) => {
+                for (const userId of userIds) {
+                    if (userId && userId !== currentUserId) {
+                        await this.notificationService.sendNotification(userId, {
+                            messageIdentifier: messageKey,
+                            redirectUrl
+                        });
+                    }
+                }
+            };
+
+            // Handle state-based notifications
+            if (newState === 'assigned' && reviewData.usersId?.length) {
+                await notifyUsers(reviewData.usersId, 'notification:assignedUser');
+            }
+
+            if (newState === 'reported') {
+                const otherUsers = reviewData.usersId?.filter(id => id !== currentUserId) || [];
+                await notifyUsers(otherUsers, 'notification:reviewProgress');
+            }
+
+            if (newState === 'crossChecking') {
+                const otherUsers = reviewData.usersId?.filter(id => id !== currentUserId) || [];
+                await notifyUsers(otherUsers, 'notification:crossCheckingSubmit');
+                
+                if (reviewData.crossCheckerId) {
+                    await notifyUsers([reviewData.crossCheckerId], 'notification:crossChecker');
+                }
+            }
+
+            if (newState === 'review') {
+                const otherUsers = reviewData.usersId?.filter(id => id !== currentUserId) || [];
+                await notifyUsers(otherUsers, 'notification:reviewSubmit');
+                
+                if (reviewData.reviewerId) {
+                    await notifyUsers([reviewData.reviewerId], 'notification:reviewer');
+                }
+            }
+
+            if (newState === 'published') {
+                await notifyUsers(reviewData.usersId || [], 'notification:reviewPublished');
+            }
+
+            // Handle rejection comments
+            if (newState === 'addCommentCrossChecking') {
+                await notifyUsers(reviewData.usersId || [], 'notification:reviewRejected');
+            }
+
+        } catch (error) {
+            console.error('Error sending notifications:', error);
+        }
+    }
+
     async create(reviewTaskBody: CreateReviewTaskDTO) {
         const reviewDataBody = reviewTaskBody.machine.context.reviewData;
         const reviewTask = await this.getReviewTaskByDataHash(
@@ -438,17 +573,44 @@ export class ReviewTaskService {
         }
 
         if (reviewTask) {
-            return this.update(
+            const result = await this.update(
                 reviewTaskBody.data_hash,
                 reviewTaskBody,
                 reviewTaskBody.nameSpace,
                 reviewTask.reportModel
             );
+            
+            // Send notifications for state change
+            await this._sendNotificationsForStateChange(
+                reviewTask.machine?.value,
+                reviewTaskBody.machine?.value,
+                reviewTaskBody.machine.context.reviewData,
+                reviewTaskBody.data_hash,
+                reviewTaskBody.nameSpace,
+                reviewTaskBody.reviewTaskType,
+                reviewTaskBody.target,
+                this.req.user?._id
+            );
+            
+            return result;
         } else {
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
-            newReviewTask.save();
+            await newReviewTask.save();
             this._createReviewTaskHistory(newReviewTask);
             this._createStateEvent(newReviewTask);
+            
+            // Send notifications for new task creation
+            await this._sendNotificationsForStateChange(
+                null,
+                reviewTaskBody.machine?.value,
+                reviewTaskBody.machine.context.reviewData,
+                reviewTaskBody.data_hash,
+                reviewTaskBody.nameSpace,
+                reviewTaskBody.reviewTaskType,
+                reviewTaskBody.target,
+                this.req.user?._id
+            );
+            
             return newReviewTask;
         }
     }

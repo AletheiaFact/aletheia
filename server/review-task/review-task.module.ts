@@ -16,6 +16,8 @@ import { EditorParseModule } from "../editor-parse/editor-parse.module";
 import { CommentModule } from "./comment/comment.module";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { GroupModule } from "../group/group.module";
+import { NotificationModule } from "../notifications/notifications.module";
+import { ClaimModule } from "../claim/claim.module";
 
 export const ReviewTaskModel = MongooseModule.forFeature([
     {
@@ -40,6 +42,8 @@ export const ReviewTaskModel = MongooseModule.forFeature([
         CommentModule,
         FeatureFlagModule,
         GroupModule,
+        NotificationModule,
+        forwardRef(() => ClaimModule),
     ],
     providers: [ReviewTaskService],
     exports: [ReviewTaskService],

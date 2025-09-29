@@ -1,6 +1,8 @@
 import NotificationsApi from "../api/notificationsApi";
 import { ReviewTaskEvents as Events } from "../machines/reviewTask/enums";
 
+// DEPRECATED: This function will be removed in favor of server-side notifications
+// Notifications should be handled on the backend when state changes occur
 const sendReviewNotifications = (
     data_hash,
     event,
@@ -8,6 +10,10 @@ const sendReviewNotifications = (
     currentUserId,
     t
 ) => {
+    // TODO: Remove this function completely once server-side notifications are implemented
+    console.warn("sendReviewNotifications is deprecated. Notifications should be handled server-side.");
+    return;
+
     const payload = {
         messageIdentifier: "",
         redirectUrl: window.location.href.includes("/sentence")
