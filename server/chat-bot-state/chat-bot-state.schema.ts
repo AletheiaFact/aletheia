@@ -10,7 +10,7 @@ export interface ChatBotMachineSnapshot {
         responseMessage?: string;
         link?: string;
         publicationDate?: string;
-        sources?: string;
+        sources?: { href: string }[];
         email?: string;
     };
 }

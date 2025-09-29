@@ -6,7 +6,7 @@ interface VerificationRequestEvent extends EventObject {
 }
 
 interface SourceEvent extends EventObject {
-    source: { href: string }[];
+    source: string;
 }
 
 interface PublicationDateEvent extends EventObject {
@@ -126,7 +126,7 @@ export const saveVerificationRequest = assign<
 });
 
 export const saveSource = assign<ChatBotContext, SourceEvent>({
-    source: (context, event) => event.source,
+    source: (context, event) => [{ href: event.source }],
 });
 
 export const saveEmptySource = assign<ChatBotContext>({

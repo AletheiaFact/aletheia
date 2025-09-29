@@ -23,7 +23,7 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                source: "",
+                source: [],
                 publicationDate: "",
                 heardFrom: "",
                 email: "",
