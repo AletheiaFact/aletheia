@@ -5,7 +5,7 @@ import { VerificationRequestService } from "../verification-request/verification
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
-    source?: string;
+    source?: string[];
     publicationDate?: string;
     heardFrom?: string;
     email?: string;
