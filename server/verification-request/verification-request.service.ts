@@ -514,12 +514,6 @@ export class VerificationRequestService {
                 },
             },
             {
-                $unwind: {
-                    path: "$source",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
                 $project: {
                     embedding: 0,
                 },
