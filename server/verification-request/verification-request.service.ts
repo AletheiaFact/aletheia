@@ -299,8 +299,8 @@ export class VerificationRequestService {
 
                 updatedVerificationRequestData.source = Array.from(
                     new Set([
-                        ...(verificationRequest.source || []).map((s) =>
-                            s.toString()
+                        ...(verificationRequest.source || []).map((sourceId) =>
+                            sourceId.toString()
                         ),
                         ...newSourceIds.map((id) => id.toString()),
                     ])
