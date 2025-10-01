@@ -32,6 +32,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
 import { GetUsersDTO } from "./dto/get-users.dto";
 
+// TODO: check permissions for routes
 @Controller(":namespace?")
 export class UsersController {
     constructor(
@@ -201,6 +202,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Get("api/user/:id")
+    @UseGuards(AbilitiesGuard)
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getUser(@Param("id") userId) {
         const value = Types.ObjectId(userId);

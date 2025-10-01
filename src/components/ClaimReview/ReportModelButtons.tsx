@@ -27,12 +27,6 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
         recreateMachine(event.currentTarget.id);
     };
 
-    const addIcon = (
-        <AddIcon
-            style={{ marginBottom: "5px" }}
-        />
-    );
-
     return (
         <Grid container
             style={{
@@ -57,11 +51,11 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    startIcon={addIcon}
                                     data-cy={
                                         "testAddInformativeNewsReviewButton"
                                     }
                                     id={ReportModelEnum.InformativeNews}
+                                    icon={<AddIcon />}
                                 >
                                     {t(
                                         "claimReviewForm:addInformativeNewsButton"
@@ -70,9 +64,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    startIcon={addIcon}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
+                                    icon={<AddIcon />}
                                 >
                                     {t(
                                         "claimReviewForm:addFactCheckingReviewButton"
@@ -84,9 +78,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                startIcon={addIcon}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
+                                icon={<AddIcon />}
                             >
                                 {t("claimReviewForm:addSourceReviewButton")}
                             </Button>
@@ -95,11 +89,11 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                startIcon={addIcon}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }
                                 id={ReportModelEnum.Request}
+                                icon={<AddIcon />}
                             >
                                 {t(
                                     "claimReviewForm:addVerificationRequestButton"
