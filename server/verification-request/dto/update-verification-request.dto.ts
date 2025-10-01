@@ -4,6 +4,7 @@ import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Group } from "../../group/schemas/group.schema";
 import { Transform } from "class-transformer";
+import { Source } from "../../source/schemas/source.schema";
 
 export class UpdateVerificationRequestDTO extends PartialType(
     CreateVerificationRequestDTO
@@ -26,6 +27,11 @@ export class UpdateVerificationRequestDTO extends PartialType(
     @IsOptional()
     @ApiProperty()
     isSensitive: boolean;
+
+    @IsArray()
+    @ApiProperty()
+    @IsOptional()
+    source: Source[];
 
     @ApiProperty()
     @IsOptional()
