@@ -147,23 +147,27 @@ const VerificationRequestCard = ({
                 />
             );
         }
-        if (verificationRequest.source) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
-                    key={`${verificationRequest._id}|source`}
-                    label={
-                        <div>
-                            <strong>
-                                {t("verificationRequest:verificationRequestTagSource")}:
-                            </strong>
-                            <Link href={verificationRequest.source.href} passHref>
-                                <a>{truncateUrl(verificationRequest.source.href)}</a>
-                            </Link>
-                        </div>
-                    }
-                />
-            );
+        if (verificationRequest.source && verificationRequest.source.length > 0) {
+            verificationRequest.source.forEach((source, index) => {
+                if (source?.href) {
+                    tags.push(
+                        <CustomTag
+                            style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
+                            key={`${verificationRequest._id}|source|${index}`}
+                            label={
+                                <div>
+                                    <strong>
+                                        {t("verificationRequest:verificationRequestTagSource")}:
+                                    </strong>
+                                    <Link href={source.href} passHref>
+                                        <a>{truncateUrl(source.href)}</a>
+                                    </Link>
+                                </div>
+                            }
+                        />
+                    );
+                }
+            })
         }
         return tags;
     };
