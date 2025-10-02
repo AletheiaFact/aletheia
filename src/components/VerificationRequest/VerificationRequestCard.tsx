@@ -148,7 +148,7 @@ const VerificationRequestCard = ({
             );
         }
         if (verificationRequest.source && verificationRequest.source.length > 0) {
-            verificationRequest.source.forEach((source, index) => {
+            for (const [index, source] of verificationRequest.source.entries()) {
                 if (source?.href) {
                     tags.push(
                         <CustomTag
@@ -160,14 +160,14 @@ const VerificationRequestCard = ({
                                         {t("verificationRequest:verificationRequestTagSource")}:
                                     </strong>
                                     <Link href={source.href} passHref>
-                                        <a>{truncateUrl(source.href)}</a>
+                                        {truncateUrl(source.href)}
                                     </Link>
                                 </div>
                             }
                         />
                     );
                 }
-            })
+            }
         }
         return tags;
     };
