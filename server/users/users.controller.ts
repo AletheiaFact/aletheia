@@ -196,7 +196,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Get("api/user/:id")
-    @Auth()
+    @UseGuards(AbilitiesGuard)
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getUser(@Param("id") userId) {
         const value = Types.ObjectId(userId);
