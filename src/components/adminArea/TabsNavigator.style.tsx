@@ -4,7 +4,7 @@ import styled from "styled-components";
 const TabsNavigatorStyle = styled(Tabs)`
     display: flex;
     gap: 2rem;
-    padding: 0 10px;
+    padding: 0 8%;
 
     .tab-label {
         display: flex;
