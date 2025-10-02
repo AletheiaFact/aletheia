@@ -102,6 +102,19 @@ const deleteComment = (hash, commentId) => {
         });
 };
 
+const resetToInitialState = (dataHash, data, t) => {
+    return request
+        .put(`/${dataHash}/reset`, data)
+        .then((response) => {
+            MessageManager.showMessage("success", t("reviewTask:RESET_SUCCESS"));
+            return response.data;
+        })
+        .catch((error) => {
+            MessageManager.showMessage("error", t("reviewTask:RESET_ERROR"));
+            throw error;
+        });
+};
+
 const ReviewTaskApi = {
     getMachineByDataHash,
     createReviewTask,
@@ -110,6 +123,7 @@ const ReviewTaskApi = {
     getEditorContentObject,
     addComment,
     deleteComment,
+    resetToInitialState,
 };
 
 export default ReviewTaskApi;

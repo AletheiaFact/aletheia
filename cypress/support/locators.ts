@@ -69,6 +69,17 @@ const locators = {
             "[data-cy=testClaimReviewSourcesInput]",
         ADD_EDITOR_SOURCES_DIALOG_BUTTON:
             "[data-cy=testClaimReviewSourcesButton]",
+        // Reset functionality locators
+        BTN_RESET_TO_INITIAL: "[data-cy=testResetToInitialButton]",
+        RESET_CONFIRMATION_DIALOG: "[data-cy=testResetConfirmationDialog]",
+        RESET_DIALOG_TITLE: "[data-cy=testResetDialogTitle]",
+        RESET_REASON_INPUT: "[data-cy=testResetReasonInput]",
+        RESET_WARNING_MESSAGE: "[data-cy=testResetWarningMessage]",
+        RESET_CANCEL_BUTTON: "[data-cy=testResetCancelButton]",
+        RESET_CONFIRM_BUTTON: "[data-cy=testResetConfirmButton]",
+        VIEW_HISTORY: "[data-cy=testViewHistory]",
+        AUDIT_LOG: "[data-cy=testAuditLog]",
+        HISTORY_LIST: "[data-cy=testHistoryList]",
     },
 
     menu: {

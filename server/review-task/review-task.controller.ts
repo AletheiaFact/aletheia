@@ -9,6 +9,7 @@ import {
     Req,
     Res,
     Header,
+    UseGuards,
 } from "@nestjs/common";
 import { ReviewTaskService } from "./review-task.service";
 import { CreateReviewTaskDTO } from "./dto/create-review-task.dto";
@@ -22,6 +23,8 @@ import { ConfigService } from "@nestjs/config";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { ApiTags } from "@nestjs/swagger";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { CheckAbilities, AdminUserAbility } from "../auth/ability/ability.decorator";
 
 @Controller(":namespace?")
 export class ReviewTaskController {
@@ -156,6 +159,16 @@ export class ReviewTaskController {
     @Header("Cache-Control", "no-cache")
     async deleteComment(@Param("data_hash") data_hash: string, @Body() body) {
         return this.reviewTaskService.deleteComment(data_hash, body.commentId);
+    }
+
+    @ApiTags("review-task")
+    @Put("api/reviewtask/:data_hash/reset")
+    @Header("Cache-Control", "no-cache")
+    async resetToInitialState(
+        @Param("data_hash") data_hash: string,
+        @Body() body: { reason: string }
+    ) {
+        return this.reviewTaskService.resetToInitialState(data_hash, body);
     }
 
     @ApiTags("pages")
