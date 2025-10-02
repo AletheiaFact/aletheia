@@ -29,9 +29,7 @@ const DynamicVerificationRequestForm = () => {
         const newVerificationRequest = {
             nameSpace,
             content: data.content,
-            source: Array.isArray(data.source)
-                ? data.source.map((s) => ({ href: s }))
-                : [{ href: data.source }],
+            source: [{ href: data.source }],
             publicationDate: data.publicationDate,
             email: data.email,
             date: new Date(),
