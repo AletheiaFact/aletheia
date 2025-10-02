@@ -1,4 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    Inject,
+    forwardRef,
+} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -16,6 +21,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const md5 = require("md5");
 
@@ -141,16 +147,16 @@ export class VerificationRequestService {
 
     async createAiTask(taskDto: CreateAiTaskDto) {
         await this.aiTaskService.create(taskDto);
-        return { success: true }
+        return { success: true };
     }
 
     /**
      * TODO: when updated the embedding we need add missing states triggered by machine
      * to make sure the machine is in the correct state
      * and we can follow to triage process
-     * @param params 
-     * @param embedding 
-     * @returns 
+     * @param params
+     * @param embedding
+     * @returns
      */
     async updateEmbedding(
         params: { targetId: string; field: string },
