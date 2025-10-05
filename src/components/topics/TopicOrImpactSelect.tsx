@@ -10,27 +10,33 @@ const MultiSelectAutocomplete = ({ isMultiple = true, onChange, isLoading, place
   const dispatch = useDispatch();
   let timeout: NodeJS.Timeout;
 
-  const fetchTopicList = async (
-    topic: string
-  ) => new Promise<{ label: string; value: string }[]>((resolve) => {
+  const fetchFromApi = async (topic: string, t: any, dispatch: any) => {
+    const topicSearchResults = await TopicsApi.getTopics({ topicName: topic, t, dispatch });
+    return mapTopics(topicSearchResults);
+  };
+
+  const mapTopics = (topicSearchResults: any[]) =>
+  topicSearchResults?.map(({ name, wikidata }) => ({
+    label: name,
+    value: wikidata,
+  })) || [];
+
+
+const fetchTopicList = (
+  topic: string
+): Promise<{ label: string; value: string }[]> => {
+  return new Promise((resolve) => {
     if (timeout) clearTimeout(timeout);
     if (topic.length >= 3) {
       timeout = setTimeout(async () => {
-        const topicSearchResults = await TopicsApi.getTopics({
-          topicName: topic,
-          t,
-          dispatch,
-        });
-        resolve(
-          topicSearchResults?.map(({ name, wikidata }) => ({
-            label: name,
-            value: wikidata
-          })) || []
-        );
+        const topics = await fetchFromApi(topic, t, dispatch);
+        resolve(topics);
       }, 1000);
+    } else {
+      resolve([]);
     }
-    return [];
   });
+};
 
   const fetchOptions = async (inputValue: string) => {
     if (inputValue.length >= 3) {

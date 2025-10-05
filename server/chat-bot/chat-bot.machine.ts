@@ -7,7 +7,7 @@ export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
     receptionChannel?: string;
-    reportType: ContentModelEnum;
+    reportType: ContentModelEnum | string;
     impactArea?: string;
     source?: string;
     publicationDate?: string;
@@ -27,7 +27,7 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                reportType: ContentModelEnum,
+                reportType: ContentModelEnum || "",
                 impactArea: "",
                 source: "",
                 publicationDate: "",
@@ -118,6 +118,14 @@ export const createChatBotMachine = (
                             target: "askingForImpactArea",
                             actions: [
                                 "saveReportType",
+                                "askForImpactArea",
+                                "setResponseMessage",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "askingForImpactArea",
+                            actions: [
+                                "saveEmptyReportType",
                                 "askForImpactArea",
                                 "setResponseMessage",
                             ],
@@ -298,7 +306,7 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
-                        reportType: context.reportType,
+                        reportType: context.reportType || "",
                         impactArea: context.impactArea || "",
                         receptionChannel: context.receptionChannel || "",
                         source: context.source || "",

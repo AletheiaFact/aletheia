@@ -14,6 +14,7 @@ export class CreateVerificationRequestDTO {
 
     @IsEnum(ContentModelEnum)
     @ApiProperty()
+    @IsOptional()
     reportType: ContentModelEnum;
 
     @ApiProperty()

@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
+import { ContentModelEnum} from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
@@ -71,6 +71,7 @@ export class TopicService {
                 if (findedTopic) {
                     return findedTopic?.wikidataId
                         ? {
+                            id: findedTopic._id,
                             label: findedTopic?.name,
                             value: findedTopic?.wikidataId,
                         }
@@ -87,8 +88,9 @@ export class TopicService {
                     ).save();
 
                     return {
+                        id: createdTopic._id,
                         label: createdTopic.name,
-                        value: createdTopic?.wikidataId,
+                        value: createdTopic?.wikidataId
                     };
                 }
             })

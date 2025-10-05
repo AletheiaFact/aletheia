@@ -12,6 +12,7 @@ const createVerificationRequestForm: FormField[] = [
         type: "selectReportType",
         defaultValue: "",
         i18nNamespace: "verificationRequest",
+        required: false,
 
     }),
     createFormField({

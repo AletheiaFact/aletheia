@@ -20,7 +20,7 @@ export class VerificationRequest {
     @Prop({ required: true, type: String })
     receptionChannel: string;
 
-    @Prop({ required: true, type: String })
+    @Prop({ required: false, type: String })
     reportType: ContentModelEnum;
 
     @Prop({

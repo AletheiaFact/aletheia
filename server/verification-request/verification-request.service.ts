@@ -26,7 +26,6 @@ import {
     DEFAULT_EMBEDDING_MODEL,
 } from "../ai-task/constants/ai-task.constants";
 import { TopicService } from "../topic/topic.service";
-import slugify from "slugify";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const md5 = require("md5");
@@ -140,14 +139,7 @@ export class VerificationRequestService {
 
                 const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
 
-                const slug = slugify(createdTopic[0].label, {
-                    lower: true,
-                    strict: true,
-                });
-
-                const topicId = await this.topicService.getBySlug(slug);
-
-                vr.impactArea = Types.ObjectId(topicId._id);
+                vr.impactArea = Types.ObjectId(createdTopic[0].id);
                 await vr.save();
             }
 

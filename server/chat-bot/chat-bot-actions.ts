@@ -45,9 +45,9 @@ const MESSAGES = {
     noTextMessageAskForVerificationRequest:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPor favor, me conte com detalhes o que você gostaria de denunciar.\n\nPor favor, inclua todas as informações que considerar relevantes para que possamos verificar a denúncia de forma eficiente 👀",
     askForReportType:
-        "Qual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral",
+        "Qual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral.\n\nSe você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
     noTextMessageAskForReportType:
-        "Desculpe, no momento só temos esses tipos de denúncia. Por favor, envie sua mensagem em formato de texto sendo uma dessas opções para que possamos entender e verificar sua denúncia de forma eficiente.\n\nQual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral",
+        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nQual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral.\n\nSe você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
     askForImpactArea:
         "Qual a area de impacto que você acredita que essa fake news pode afetar? Se você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
     noTextMessageAskForImpactArea:
@@ -158,6 +158,10 @@ export const saveReportType = assign<
     ReportTypeEvent
 >({
     reportType: (context, event) => event.reportType,
+});
+
+export const saveEmptyReportType = assign<ChatBotContext>({
+    reportType: () => "",
 });
 
 export const saveImpactArea = assign<ChatBotContext, ImpactAreaEvent>({

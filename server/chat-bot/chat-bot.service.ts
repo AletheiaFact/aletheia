@@ -25,7 +25,7 @@ interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
     receptionChannel?: string;
-    reportType?: ContentModelEnum;
+    reportType?: ContentModelEnum | string;
     impactArea?: string;
     source?: string;
     publicationDate?: string;
@@ -196,11 +196,6 @@ export class ChatbotService {
                 });
                 break;
             case "askingForReportType":
-                this.handleMachineEventSend(
-                    parsedMessage,
-                    chatBotMachineService
-                );
-                break;
             case "askingForImpactArea":
             case "askingForSource":
             case "askingForPublicationDate":
@@ -240,16 +235,9 @@ export class ChatbotService {
         parsedMessage: string,
         chatBotMachineService
     ): void {
-        if (chatBotMachineService.getSnapshot().value === "askingForReportType") {
-            chatBotMachineService.send({
-                type: REPORT_TYPE_MAP[parsedMessage] ? "RECEIVE_REPORT_TYPE" : "NON_TEXT_MESSAGE",
-                reportType: REPORT_TYPE_MAP[parsedMessage]
-            });
-        } else {
-            chatBotMachineService.send(
-                MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
-            );
-        }
+        chatBotMachineService.send(
+            MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
+        );
     }
 
     private handlePausedMachineState(
@@ -283,6 +271,11 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
+            askingForReportType: {
+                receive: "RECEIVE_REPORT_TYPE",
+                empty: "RECEIVE_NO",
+                field: "reportType",
+            },
             askingForImpactArea: {
                 receive: "RECEIVE_IMPACT_AREA",
                 empty: "RECEIVE_NO",
@@ -312,9 +305,22 @@ export class ChatbotService {
 
         const { receive, empty, field } = stateMapping[currentState];
 
+        let value: any;
+        let type: string;
+
+        if (currentState === "askingForReportType" && parsedMessage !== "nao") {
+            const reportType =
+                REPORT_TYPE_MAP[parsedMessage]
+            type = reportType ? receive : empty
+            value = reportType || null;
+        } else {
+            type = parsedMessage === "nao" ? empty : receive
+            value = message;
+        }
+
         chatBotMachineService.send({
-            type: parsedMessage === "nao" ? empty : receive,
-            [field]: message,
+            type: type,
+            [field]: value,
         });
     }
 }
