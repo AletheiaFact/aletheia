@@ -111,9 +111,11 @@ export class VerificationRequestController {
         } else {
             this.logger.log("M2M user request - skipping CAPTCHA validation");
         }
-        return this.verificationRequestStateMachineService.request(verificationRequestBody);
+        return this.verificationRequestStateMachineService.request(
+            verificationRequestBody,
+            req.user
+        );
     }
-
 
     // Not working, todo
     // @ApiTags("verification-request")
