@@ -9,10 +9,9 @@ import styled from "styled-components";
 import CardBase from "../CardBase";
 import Link from "next/link";
 import colors from "../../styles/colors";
-import LocalizedDate from "../LocalizedDate";
-import { MetaChip } from "../MetaChip";
-import { ContentSourceInfo } from "../ContentSourceInfo";
-import { RequestDates } from "../RequestDates";
+import { MetaChip } from "./MetaChip";
+import { ContentVR } from "./VerificationRequestContent";
+import { RequestDates } from "./RequestDates";
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -91,17 +90,11 @@ const VerificationRequestCard = ({
 
                 <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
                     {verificationRequest.publicationDate && (() => {
-                        const publicationDate = new Date(verificationRequest.publicationDate);
-                        const isValidDate = !isNaN(publicationDate.getTime());
                         return (
                             <RequestDates
                                 icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
                                 label={t("verificationRequest:verificationRequestTagPublicationDate")}
-                                value={
-                                    isValidDate
-                                        ? <LocalizedDate date={publicationDate} />
-                                        : verificationRequest.publicationDate
-                                }
+                                value={verificationRequest.publicationDate}
                             />
                         );
                     })()}
@@ -110,13 +103,13 @@ const VerificationRequestCard = ({
                         <RequestDates
                             icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
                             label={t("verificationRequest:verificationRequestTagDate")}
-                            value={<LocalizedDate date={verificationRequest.date} />}
+                            value={verificationRequest.date}
                         />
                     )}
                 </Grid>
                 <Box mt={2}>
                     {verificationRequest.heardFrom && (
-                        <ContentSourceInfo
+                        <ContentVR
                             label={t("verificationRequest:verificationRequestTagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
                         />
@@ -124,7 +117,7 @@ const VerificationRequestCard = ({
                 </Box>
                 <Box mt={2}>
                     {verificationRequest.source && (
-                        <ContentSourceInfo
+                        <ContentVR
                             label={t("verificationRequest:verificationRequestTagSource")}
                             value={
                                 <Link href={verificationRequest.source.href} passHref>
@@ -142,7 +135,7 @@ const VerificationRequestCard = ({
                         <MetaChip
                             icon={<FilterIcon style={{ fontSize: 18 }} />}
                             label={t("verificationRequest:contentTypeLabel")}
-                            value="Imagem" // Dynamic Field: It must be populated with type Verification Request
+                            label_value="Imagem" // Dynamic Field: It must be populated with type Verification Request
                             color="primary"
                         />
                     </Grid>
@@ -151,7 +144,7 @@ const VerificationRequestCard = ({
                         <MetaChip
                             icon={<ShareIcon style={{ fontSize: 18 }} />}
                             label={t("verificationRequest:receptionChannelLabel")}
-                            value="Instagram" // Dynamic Field: It must be populated with the channel reception of the Verification Request
+                            label_value="Instagram" // Dynamic Field: It must be populated with the channel reception of the Verification Request
                             color="secondary"
                         />
                     </Grid>
@@ -160,7 +153,7 @@ const VerificationRequestCard = ({
                         <MetaChip
                             icon={<PublicIcon style={{ fontSize: 18 }} />}
                             label={t("verificationRequest:impactAreaLabel")}
-                            value="Meio ambiente" // Dynamic Field: It must be populated with the area of impact of the Verification Request
+                            label_value="Meio ambiente" // Dynamic Field: It must be populated with the area of impact of the Verification Request
                             color="success"
                         />
                     </Grid>
@@ -169,7 +162,7 @@ const VerificationRequestCard = ({
                         <MetaChip
                             icon={<WarningAmberIcon style={{ fontSize: 18 }} />}
                             label={t("verificationRequest:severityLabel")}
-                            value="Alta" // Dynamic Field: It must be populated with the severy of the Verification Request
+                            label_value="Alta" // Dynamic Field: It must be populated with the severy of the Verification Request
                             color="error"
                         />
                     </Grid>
