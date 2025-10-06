@@ -91,6 +91,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Post("api/verification-request")
     async create(
+        @Req() req: BaseRequest,
         @Body() verificationRequestBody: CreateVerificationRequestDTO
     ) {
         const validateCaptcha = await this.captchaService.validate(
@@ -99,9 +100,11 @@ export class VerificationRequestController {
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.verificationRequestStateMachineService.request(verificationRequestBody);
+        return this.verificationRequestStateMachineService.request(
+            verificationRequestBody,
+            req.user
+        );
     }
-
 
     // Not working, todo
     // @ApiTags("verification-request")
