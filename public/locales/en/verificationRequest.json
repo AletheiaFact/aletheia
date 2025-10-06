@@ -8,8 +8,8 @@
     "openVerificationRequestClaimLabel": "A claim created was related to this verification request",
     "openVerificationRequestClaimButton": "Open claim",
     "agroupVerificationRequest": "Related verification requests",
-    "verificationRequestTagPublicationDate": "Seen On",
-    "verificationRequestTagDate": "Reported On",
+    "verificationRequestTagPublicationDate": "Seen on:",
+    "verificationRequestTagDate": "Reported on:",
     "verificationRequestTagHeardFrom": "Received On",
     "verificationRequestTagSource": "Source",
     "openVerificationRequest": "Open",
@@ -51,5 +51,10 @@
     "contentFilterOption": "Content",
     "filterByContentLabel": "Filter by Content",
     "applyButtonLabel": "Apply",
-    "showText": "Show"
+    "showText": "Show",
+    "reportedContent": "Reported Content",
+    "contentTypeLabel": "Content Type",
+    "receptionChannelLabel": "Reception Channel",
+    "impactAreaLabel": "Impact Area",
+    "severityLabel": "Severity"
 }

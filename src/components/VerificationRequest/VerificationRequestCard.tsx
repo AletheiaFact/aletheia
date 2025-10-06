@@ -1,47 +1,30 @@
-import { Grid, Chip, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, Alert, AlertTitle, Box } from "@mui/material";
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import FilterIcon from '@mui/icons-material/Filter';
+import ShareIcon from '@mui/icons-material/Share';
+import PublicIcon from '@mui/icons-material/Public';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
 import Link from "next/link";
 import colors from "../../styles/colors";
 import LocalizedDate from "../LocalizedDate";
-
-const CustomTag = styled(Chip)`
-    border-radius: 4px;
-    font-size: 10px;
-    margin-bottom: 4px;
-    padding: 2px 4px;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    strong {
-        margin-right: 2px;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
-`;
-
-const TagContainer = styled.div`
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-`;
+import { MetaChip } from "../MetaChip";
+import { ContentSourceInfo } from "../ContentSourceInfo";
+import { RequestDates } from "../RequestDates";
 
 const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
     word-wrap: break-word;
     overflow: hidden;
-    width: 100%;
-
+    width: 50vw;
+    
     @media (max-width: 768px) {
         flex-direction: column;
+        width: 70vw;
+        flexWrap: "wrap",
     }
 `;
 
@@ -81,113 +64,119 @@ const VerificationRequestCard = ({
         }
     }, [verificationRequest.content]);
 
-    const getTags = (verificationRequest) => {
-        const tags = [];
-        if (verificationRequest.publicationDate) {
-            const publicationDate = new Date(
-                verificationRequest.publicationDate
-            );
-
-            const isValidDate = !isNaN(publicationDate.getTime());
-
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.secondary, color: colors.white }}
-                    key={`${verificationRequest._id}|publicationDate`}
-                    label={
-                        <div>
-                            <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagPublicationDate"
-                                )}
-                                :
-                            </strong>{" "}
-                            {isValidDate ? (
-                                <LocalizedDate date={publicationDate} />
-                            ) : (
-                                verificationRequest.publicationDate
-                            )}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.date) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
-                    key={`${verificationRequest._id}|date`}
-                    label={
-                        <div>
-                            <strong>
-                                {t("verificationRequest:verificationRequestTagDate")}:
-                            </strong>{" "}
-                            <LocalizedDate date={verificationRequest.date} />
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.heardFrom) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
-                    key={`${verificationRequest._id}|heardFrom`}
-                    label={
-                        <div>
-                            <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagHeardFrom"
-                                )}
-                                :
-                            </strong>{" "}
-                            {verificationRequest.heardFrom}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.source) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
-                    key={`${verificationRequest._id}|source`}
-                    label={
-                        <div>
-                            <strong>
-                                {t("verificationRequest:verificationRequestTagSource")}:
-                            </strong>
-                            <Link href={verificationRequest.source.href} passHref>
-                                <a>{truncateUrl(verificationRequest.source.href)}</a>
-                            </Link>
-                        </div>
-                    }
-                />
-            );
-        }
-        return tags;
-    };
-
     return (
         <CardBase style={{ padding: 32, ...style }}>
             <ContentWrapper>
-                <Typography
-                    ref={textRef}
-                    variant="body1"
-                    style={{
-                        color: colors.black,
-                        margin: 0,
-                        lineHeight: 1.6,
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        WebkitLineClamp: visible ? "none" : 3,
-                    }}
+                <Alert severity="info">
+                    <Typography variant="h2"
+                        style={{
+                            fontFamily: "initial",
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            marginBottom: 8,
+                        }}>
+                        {t("verificationRequest:reportedContent")}
+                    </Typography>
+                    <AlertTitle>
+                        <Typography
+                            variant="body1"
+                            style={{
+                                color: colors.black,
+                                fontSize: 14,
+                            }}>
+                            {verificationRequest.content}
+                        </Typography>
+                    </AlertTitle>
+                </Alert>
 
-                >
-                    {verificationRequest.content}
-                </Typography>
+                <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
+                    {verificationRequest.publicationDate && (() => {
+                        const publicationDate = new Date(verificationRequest.publicationDate);
+                        const isValidDate = !isNaN(publicationDate.getTime());
+                        return (
+                            <RequestDates
+                                icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
+                                label={t("verificationRequest:verificationRequestTagPublicationDate")}
+                                value={
+                                    isValidDate
+                                        ? <LocalizedDate date={publicationDate} />
+                                        : verificationRequest.publicationDate
+                                }
+                            />
+                        );
+                    })()}
+
+                    {verificationRequest.date && (
+                        <RequestDates
+                            icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
+                            label={t("verificationRequest:verificationRequestTagDate")}
+                            value={<LocalizedDate date={verificationRequest.date} />}
+                        />
+                    )}
+                </Grid>
+                <Box mt={2}>
+                    {verificationRequest.heardFrom && (
+                        <ContentSourceInfo
+                            label={t("verificationRequest:verificationRequestTagHeardFrom")}
+                            value={verificationRequest.heardFrom || " "}
+                        />
+                    )}
+                </Box>
+                <Box mt={2}>
+                    {verificationRequest.source && (
+                        <ContentSourceInfo
+                            label={t("verificationRequest:verificationRequestTagSource")}
+                            value={
+                                <Link href={verificationRequest.source.href} passHref>
+                                    <a target="_blank" rel="noopener noreferrer">
+                                        {truncateUrl(verificationRequest.source.href)}
+                                    </a>
+                                </Link>
+                            }
+                        />
+                    )}
+                </Box>
+
+                <Grid container style={{ display: "flex", justifyContent: "space-around", marginTop: "16px" }}>
+                    <Grid item style={{ display: "flex", alignItems: "center" }}>
+                        <MetaChip
+                            icon={<FilterIcon style={{ fontSize: 18 }} />}
+                            label={t("verificationRequest:contentTypeLabel")}
+                            value="Imagem" // Dynamic Field: It must be populated with type Verification Request
+                            color="primary"
+                        />
+                    </Grid>
+
+                    <Grid item style={{ display: "flex", alignItems: "center" }}>
+                        <MetaChip
+                            icon={<ShareIcon style={{ fontSize: 18 }} />}
+                            label={t("verificationRequest:receptionChannelLabel")}
+                            value="Instagram" // Dynamic Field: It must be populated with the channel reception of the Verification Request
+                            color="secondary"
+                        />
+                    </Grid>
+
+                    <Grid item style={{ display: "flex", alignItems: "center" }}>
+                        <MetaChip
+                            icon={<PublicIcon style={{ fontSize: 18 }} />}
+                            label={t("verificationRequest:impactAreaLabel")}
+                            value="Meio ambiente" // Dynamic Field: It must be populated with the area of impact of the Verification Request
+                            color="success"
+                        />
+                    </Grid>
+
+                    <Grid item style={{ display: "flex", alignItems: "center" }}>
+                        <MetaChip
+                            icon={<WarningAmberIcon style={{ fontSize: 18 }} />}
+                            label={t("verificationRequest:severityLabel")}
+                            value="Alta" // Dynamic Field: It must be populated with the severy of the Verification Request
+                            color="error"
+                        />
+                    </Grid>
+
+                </Grid>
+
+
                 {expandable && !visible && isOverflowing && (
                     <Button
                         variant="text"
@@ -197,7 +186,6 @@ const VerificationRequestCard = ({
                         {t("verificationRequest:showText")}
                     </Button>
                 )}
-                <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 
             <Grid item
@@ -213,7 +201,7 @@ const VerificationRequestCard = ({
             >
                 {actions ? actions.map((action) => action) : <></>}
             </Grid>
-        </CardBase>
+        </CardBase >
     );
 };
 
