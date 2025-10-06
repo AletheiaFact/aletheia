@@ -10,7 +10,7 @@ interface RequestDatesProps {
 
 export const RequestDates: React.FC<RequestDatesProps> = ({ icon, label, value }) => {
     const publicationDate = new Date(value);
-    const isValidDate = !isNaN(publicationDate.getTime());
+    const isValidDate = !Number.isNaN(publicationDate.getTime());
 
     return (
         <Box style={{
