@@ -286,7 +286,7 @@ export class VerificationRequestService {
                     );
             }
 
-            const user = this.req?.user;
+            const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -511,7 +511,7 @@ export class VerificationRequestService {
             topics,
         };
 
-        const user = this.req?.user;
+        const user = this.req.user;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
