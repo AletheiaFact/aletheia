@@ -4,11 +4,11 @@ import { Box, Typography, Chip } from "@mui/material"
 interface MetaChipProps {
     icon: React.ReactNode;
     label: string;
-    value: string;
+    label_value: string;
     color: "primary" | "secondary" | "success" | "error"
 }
 
-export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, value, color = "primary" }) => {
+export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, color = "primary" }) => {
     return (
         <Box
             sx={{
@@ -42,7 +42,7 @@ export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, value, color = 
                 </Typography>
 
                 <Chip
-                    label={value}
+                    label={label_value}
                     color={color}
                     size="small"
                 />
