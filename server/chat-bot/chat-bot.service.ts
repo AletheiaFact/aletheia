@@ -38,7 +38,7 @@ export class ChatbotService {
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
-        private verificationRequestStateMachineService: VerificationRequestStateMachineService,
+        private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private chatBotStateService: ChatBotStateService
     ) {}
 
