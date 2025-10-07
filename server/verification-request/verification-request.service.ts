@@ -111,11 +111,14 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(data: {
-        content: string;
-        source?: string;
-        impactArea?: { label: string; value: string } | string;
-    }): Promise<VerificationRequestDocument> {
+    async create(
+        data: {
+            content: string;
+            source?: string;
+            impactArea?: { label: string; value: string } | string;
+        },
+        user?: any
+    ): Promise<VerificationRequestDocument> {
         try {
             const vr = await this.VerificationRequestModel.create({
                 ...data,
@@ -143,12 +146,12 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const user = this.req.user;
+            const currentUser = user || this.req?.user;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
                 TargetModel.VerificationRequest,
-                user,
+                currentUser,
                 HistoryType.Create,
                 vr
             );
