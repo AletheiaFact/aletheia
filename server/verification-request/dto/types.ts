@@ -59,6 +59,7 @@ export const VerificationRequestMessages = {
         REQUESTING: 'Verification is being requested',
         REQUESTED: 'Verification has been requested',
         EMBED: 'Verification is being embedded',
+        IDENTIFY_DATA: 'Verification is being identified data',
         REVIEWING: 'Verification is being reviewed.',
         FINISHED: 'Verification has been finished.',
         CANCELLING: 'Verification is being cancelled. Status changes to Cancelled.',
