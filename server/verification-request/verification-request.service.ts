@@ -133,17 +133,17 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            // const user = this.req.user;
 
-            const history = this.historyService.getHistoryParams(
-                vr._id,
-                TargetModel.VerificationRequest,
-                currentUser,
-                HistoryType.Create,
-                vr
-            );
+            // const history = this.historyService.getHistoryParams(
+            //     vr._id,
+            //     TargetModel.VerificationRequest,
+            //     user,
+            //     HistoryType.Create,
+            //     vr
+            // );
 
-            await this.historyService.createHistory(history);
+            // await this.historyService.createHistory(history);
 
             return vr;
         } catch (e) {
@@ -154,6 +154,9 @@ export class VerificationRequestService {
         }
     }
 
+    /**
+     * Generic function to create AI TAsk based on the state machine
+     * */
     async createAiTask(taskDto: CreateAiTaskDto) {
         await this.aiTaskService.create(taskDto);
         return { success: true };
@@ -172,9 +175,10 @@ export class VerificationRequestService {
         embedding: number[]
     ) {
         const { targetId, field } = params;
+        const verificationRequest = await this.VerificationRequestModel.findById(targetId);
         const updated = await this.VerificationRequestModel.findByIdAndUpdate(
             targetId,
-            { [field]: embedding },
+            { [field]: embedding, statesExecuted: [...(verificationRequest.statesExecuted || []), 'embedding'] },
             { new: true }
         ).exec();
         if (!updated) {

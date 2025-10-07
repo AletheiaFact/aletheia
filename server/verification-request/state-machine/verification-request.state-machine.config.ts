@@ -1,5 +1,5 @@
-import { getOnDoneAction, getOnErrorAction } from "./base";
-import { AnyEventObject, assign, InvokeConfig } from "xstate";
+import { getOnDoneAction, getOnErrorAction } from './base'
+import { AnyEventObject, assign, InvokeConfig } from 'xstate'
 
 import { CommonStateMachineStates } from "./base";
 import {
@@ -16,6 +16,8 @@ import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
 import {
     AiTaskType,
     CallbackRoute,
+    OPENAI_EMBEDDING_MODEL,
+    OPENAI_IDENTIFY_DATA,
     DEFAULT_EMBEDDING_MODEL,
 } from "../../ai-task/constants/ai-task.constants";
 
@@ -47,16 +49,13 @@ const getStateInvokeSrc = (
                 );
             };
         case VerificationRequestStateMachineEvents.EMBED:
-            return async (
-                context: VerificationRequestStateMachineContext,
-                event,
-                meta
-            ) => {
+            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+                console.log('creating ai task')
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.TEXT_EMBEDDING,
                     content: {
                         text: context.verificationRequest.content,
-                        model: DEFAULT_EMBEDDING_MODEL,
+                        model: OPENAI_EMBEDDING_MODEL,
                     },
                     callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
                     callbackParams: {
@@ -64,9 +63,27 @@ const getStateInvokeSrc = (
                         field: "embedding",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto);
-                return context.result;
-            };
+                await getVerificationRequestService().createAiTask(taskDto)
+                return context.result
+            }
+        case VerificationRequestStateMachineEvents.IDENTIFY_DATA:
+            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+                console.log('create an ai task for identify data')
+                const taskDto: CreateAiTaskDto = {
+                    type: AiTaskType.IDENTIFYING_DATA,
+                    content: {
+                        text: context.verificationRequest.content,
+                        model: OPENAI_IDENTIFY_DATA,
+                    },
+                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IDENTIFIED_DATA,
+                    callbackParams: {
+                        targetId: context.verificationRequest.id,
+                        field: "data",
+                    },
+                };
+                await getVerificationRequestService().createAiTask(taskDto)
+                return context.result
+            }
         default:
             return async (
                 context: VerificationRequestStateMachineContext,
@@ -100,16 +117,23 @@ const getStateInvoke = (
                         target: VerificationRequestStateMachineStates.EMBEDDING,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data;
+                                console.log('embedding')
+                                return event.data
                             },
-                            verificationRequest: (
-                                context: any,
-                                event: AnyEventObject
-                            ) => {
-                                return {
-                                    id: event.data.id,
-                                    ...context.verificationRequest,
-                                };
+                            verificationRequest: (context: any, event: AnyEventObject) => {
+                                return { id: event.data.id, ...context.verificationRequest }
+                            },
+                        }),
+                    },
+                    {
+                        target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
+                        actions: assign({
+                            result: (context, event: AnyEventObject) => {
+                                console.log('create an ai task for identify data')
+                                return event.data
+                            },
+                            verificationRequest: (context: any, event: AnyEventObject) => {
+                                return { id: event.data.id, ...context.verificationRequest }
                             },
                         }),
                     },
@@ -143,28 +167,24 @@ const getStateTransitions = (
                 [VerificationRequestStateMachineEvents.EMBED]: {
                     target: VerificationRequestStateMachineStates.EMBEDDING,
                 },
-            };
+                [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
+                    target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
+                },
+            }
         case VerificationRequestStateMachineStates.EMBEDDING:
+            console.log('embedding get transaction')
             return {
                 [VerificationRequestStateMachineEvents.EMBED]: {
                     target: VerificationRequestStateMachineStates.EMBEDDING,
                 },
             };
         case VerificationRequestStateMachineStates.IDENTIFYING_DATA:
+            console.log('here')
             return {
                 [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
                     target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
                 },
-                [VerificationRequestStateMachineEvents.DEFINE_TOPICS]: {
-                    target: VerificationRequestStateMachineStates.DEFINING_TOPICS,
-                },
-                [VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA]: {
-                    target: VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA,
-                },
-                [VerificationRequestStateMachineEvents.DEFINE_SEVERITY]: {
-                    target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
-                },
-            };
+            }
         default:
             return {
                 on: {},
@@ -187,10 +207,7 @@ export const getVerificationRequestStateMachineConfig = (
                 on: getStateTransitions(CommonStateMachineStates.REHYDRATE),
             },
             [VerificationRequestStateMachineStates.IDENTIFYING_DATA]: {
-                invoke: getStateInvoke(
-                    VerificationRequestStateMachineEvents.IDENTIFY_DATA,
-                    stateMachineService
-                ),
+                invoke: getStateTransitions(VerificationRequestStateMachineStates.IDENTIFYING_DATA),
                 description: VerificationRequestMessages.DESCRIPTIONS.DEFAULT,
             },
             [VerificationRequestStateMachineStates.CREATING]: {
@@ -214,6 +231,10 @@ export const getVerificationRequestStateMachineConfig = (
                     stateMachineService
                 ),
                 description: VerificationRequestMessages.DESCRIPTIONS.EMBED,
+            },
+            [VerificationRequestStateMachineStates.IDENTIFYING_PERSONALITY]: {
+                invoke: getStateInvoke(VerificationRequestStateMachineEvents.IDENTIFY_DATA, stateMachineService),
+                description: VerificationRequestMessages.DESCRIPTIONS.IDENTIFY_DATA,
             },
             [CommonStateMachineStates.ERROR]: {
                 description: VerificationRequestMessages.DESCRIPTIONS.ERROR,
