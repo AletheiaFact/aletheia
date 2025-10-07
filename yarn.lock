@@ -5263,20 +5263,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ory/integrations@npm:1.3.1":
-  version: 1.3.1
-  resolution: "@ory/integrations@npm:1.3.1"
+"@ory/integrations@npm:1.1.5":
+  version: 1.1.5
+  resolution: "@ory/integrations@npm:1.1.5"
   dependencies:
-    "@types/tldjs": ~2.3.4
-    cookie: ~1.0.1
-    istextorbinary: ~9.5.0
+    "@types/tldjs": 2.3.1
+    cookie: 0.5.0
+    istextorbinary: 6.0.0
     next: ">=12.0.10"
-    set-cookie-parser: ~2.7.0
-    tldjs: ~2.3.1
+    ory-prettier-styles: 1.3.0
+    prettier: 2.3.2
+    request: 2.88.2
+    set-cookie-parser: 2.6.0
+    tldjs: 2.3.1
   peerDependencies:
     "@ory/client": ">1.1.38"
     next: ">=12.0.10"
-  checksum: 5cc6703886aea6e86451b4149962c7538083aee6a9b994b1710ac04fee4a7fb9ce21eb0b9da0ca1cf92c09eb4e343316d661e10878c7f74e1e80b51c15888df3
+  checksum: 43fe0d6b2cb0a10580d102fe999bd39facdbf525e98f8993b0ad35f6956aaaaab41a3a0dc8c490d9993d368ff6198cf8612052cccbd532b422655a22407f9213
   languageName: node
   linkType: hard
 
@@ -9628,10 +9631,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tldjs@npm:~2.3.4":
-  version: 2.3.4
-  resolution: "@types/tldjs@npm:2.3.4"
-  checksum: 1586fa4516449e7de0e2a78c012e8fedcb9b84fcb7788cfe9f15b52976901a760ba559d23306ff41af1e7045fc28af0043d9af840367ff8af8dc4df97b414b9f
+"@types/tldjs@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@types/tldjs@npm:2.3.1"
+  checksum: 3b796de8c41c2f108cc5e8cc888d4676964fe73bdbb9383ab7e0e6a69bdd845d0b186d0688bdbe751ba8ffb1694dd5c12c0785c4959b0ecdbcd031dfcc36887d
   languageName: node
   linkType: hard
 
@@ -10642,7 +10645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.4, ajv@npm:^6.12.5":
+"ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.3, ajv@npm:^6.12.4, ajv@npm:^6.12.5":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -10712,7 +10715,7 @@ __metadata:
     "@novu/node": ^0.19.0
     "@novu/notification-center": ^0.19.0
     "@ory/client": 1.6.2
-    "@ory/integrations": 1.3.1
+    "@ory/integrations": 1.1.5
     "@remirror/core": ^3.0.1
     "@remirror/extension-yjs": ^4.0.1
     "@remirror/pm": ^3.0.0
@@ -11799,12 +11802,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binaryextensions@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "binaryextensions@npm:6.11.0"
-  dependencies:
-    editions: ^6.21.0
-  checksum: c168d4436da7a31df2ca0af71751f714b6e731758cdf681fa18ca8ace6c3b2a334234acad5964a2e12b0c3c36772a6cc6e83b74456a8f7939081f626c8352dee
+"binaryextensions@npm:^4.18.0":
+  version: 4.19.0
+  resolution: "binaryextensions@npm:4.19.0"
+  checksum: 9a933ea920468895bbbdc48166c1b824693d8ca3687944d35488c6b6cd269902a6c7dff17f55b6b5a4fe7e299765166382bccb813687a5d862633a30c14d51af
   languageName: node
   linkType: hard
 
@@ -12901,7 +12902,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"combined-stream@npm:^1.0.8, combined-stream@npm:~1.0.6":
+"combined-stream@npm:^1.0.6, combined-stream@npm:^1.0.8, combined-stream@npm:~1.0.6":
   version: 1.0.8
   resolution: "combined-stream@npm:1.0.8"
   dependencies:
@@ -13229,13 +13230,6 @@ __metadata:
   version: 0.7.2
   resolution: "cookie@npm:0.7.2"
   checksum: 9bf8555e33530affd571ea37b615ccad9b9a34febbf2c950c86787088eb00a8973690833b0f8ebd6b69b753c62669ea60cec89178c1fb007bf0749abed74f93e
-  languageName: node
-  linkType: hard
-
-"cookie@npm:~1.0.1":
-  version: 1.0.2
-  resolution: "cookie@npm:1.0.2"
-  checksum: 2c5a6214147ffa7135ce41860c781de17e93128689b0d080d3116468274b3593b607bcd462ac210d3a61f081db3d3b09ae106e18d60b1f529580e95cf2db8a55
   languageName: node
   linkType: hard
 
@@ -14482,15 +14476,6 @@ __metadata:
   dependencies:
     safe-buffer: ^5.0.1
   checksum: 207f9ab1c2669b8e65540bce29506134613dd5f122cccf1e6a560f4d63f2732d427d938f8481df175505aad94583bcb32c688737bb39a6df0625f903d6d93c03
-  languageName: node
-  linkType: hard
-
-"editions@npm:^6.21.0":
-  version: 6.22.0
-  resolution: "editions@npm:6.22.0"
-  dependencies:
-    version-range: ^4.15.0
-  checksum: 994284f5bedaa34831c6a2f321488ecd0de70bd792c1f9376874a53c18d9b78001dec448da1f2f3c175a2e135caf538a7fc86bb0b139acc96088d4e47c5b9d11
   languageName: node
   linkType: hard
 
@@ -16387,6 +16372,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"form-data@npm:~2.3.2":
+  version: 2.3.3
+  resolution: "form-data@npm:2.3.3"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.6
+    mime-types: ^2.1.12
+  checksum: 10c1780fa13dbe1ff3100114c2ce1f9307f8be10b14bf16e103815356ff567b6be39d70fc4a40f8990b9660012dc24b0f5e1dde1b6426166eb23a445ba068ca3
+  languageName: node
+  linkType: hard
+
 "formdata-node@npm:^4.3.2":
   version: 4.4.1
   resolution: "formdata-node@npm:4.4.1"
@@ -16876,6 +16872,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"har-schema@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "har-schema@npm:2.0.0"
+  checksum: d8946348f333fb09e2bf24cc4c67eabb47c8e1d1aa1c14184c7ffec1140a49ec8aa78aa93677ae452d71d5fc0fdeec20f0c8c1237291fc2bcb3f502a5d204f9b
+  languageName: node
+  linkType: hard
+
+"har-validator@npm:~5.1.3":
+  version: 5.1.5
+  resolution: "har-validator@npm:5.1.5"
+  dependencies:
+    ajv: ^6.12.3
+    har-schema: ^2.0.0
+  checksum: b998a7269ca560d7f219eedc53e2c664cd87d487e428ae854a6af4573fc94f182fe9d2e3b92ab968249baec7ebaf9ead69cf975c931dc2ab282ec182ee988280
+  languageName: node
+  linkType: hard
+
 "has-bigints@npm:^1.0.2":
   version: 1.1.0
   resolution: "has-bigints@npm:1.1.0"
@@ -17305,6 +17318,17 @@ __metadata:
   dependencies:
     "@types/node": ^10.0.3
   checksum: 6cbdcb4ce7b27c9158a131b772c903ed54add2ba831e29cc165e91c3969fa6f8105ddf924aac5b954b534ad15a1ae697b693331b2be5281ee24d79aae20c3264
+  languageName: node
+  linkType: hard
+
+"http-signature@npm:~1.2.0":
+  version: 1.2.0
+  resolution: "http-signature@npm:1.2.0"
+  dependencies:
+    assert-plus: ^1.0.0
+    jsprim: ^1.2.2
+    sshpk: ^1.7.0
+  checksum: 3324598712266a9683585bb84a75dec4fd550567d5e0dd4a0fff6ff3f74348793404d3eeac4918fa0902c810eeee1a86419e4a2e92a164132dfe6b26743fb47c
   languageName: node
   linkType: hard
 
@@ -18357,14 +18381,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istextorbinary@npm:~9.5.0":
-  version: 9.5.0
-  resolution: "istextorbinary@npm:9.5.0"
+"istextorbinary@npm:6.0.0":
+  version: 6.0.0
+  resolution: "istextorbinary@npm:6.0.0"
   dependencies:
-    binaryextensions: ^6.11.0
-    editions: ^6.21.0
-    textextensions: ^6.11.0
-  checksum: 37100831caceab9f55f089e497d5020e6979598a60f3f2a64ef4a9f7b3c88dea3e75412a5ec9db271350c555505a6d90855f7d8b1e19c870a088b9cc49de8d2e
+    binaryextensions: ^4.18.0
+    textextensions: ^5.14.0
+  checksum: 7b9e159c7faf91c310bb1669c9a73de74d21e00425fb062bc93d6854bacb1ffc5c4b50bb2f9bbbc4c22efe0279a3f570b3dac706dba81280452af3e3ebbe862f
   languageName: node
   linkType: hard
 
@@ -19270,6 +19293,18 @@ __metadata:
     ms: ^2.1.1
     semver: ^7.5.4
   checksum: fc739a6a8b33f1974f9772dca7f8493ca8df4cc31c5a09dcfdb7cff77447dcf22f4236fb2774ef3fe50df0abeb8e1c6f4c41eba82f500a804ab101e2fbc9d61a
+  languageName: node
+  linkType: hard
+
+"jsprim@npm:^1.2.2":
+  version: 1.4.2
+  resolution: "jsprim@npm:1.4.2"
+  dependencies:
+    assert-plus: 1.0.0
+    extsprintf: 1.3.0
+    json-schema: 0.4.0
+    verror: 1.10.0
+  checksum: 2ad1b9fdcccae8b3d580fa6ced25de930eaa1ad154db21bbf8478a4d30bbbec7925b5f5ff29b933fba9412b16a17bd484a8da4fdb3663b5e27af95dd693bab2a
   languageName: node
   linkType: hard
 
@@ -22215,6 +22250,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oauth-sign@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "oauth-sign@npm:0.9.0"
+  checksum: 8f5497a127967866a3c67094c21efd295e46013a94e6e828573c62220e9af568cc1d2d04b16865ba583e430510fa168baf821ea78f355146d8ed7e350fc44c64
+  languageName: node
+  linkType: hard
+
 "object-assign@npm:^4, object-assign@npm:^4.1.1, object-assign@npm:latest":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
@@ -22507,6 +22549,13 @@ __metadata:
   version: 1.1.8
   resolution: "orderedmap@npm:1.1.8"
   checksum: fbf110e901fdbaf515caf0cba6c281c085e8fa3c9c1255d831f8ceecc925d4d945004d683c8a15a0d3049005a73a73f343831906c3516deef8dc8cd802235458
+  languageName: node
+  linkType: hard
+
+"ory-prettier-styles@npm:1.3.0":
+  version: 1.3.0
+  resolution: "ory-prettier-styles@npm:1.3.0"
+  checksum: 95398258a4f946c61ca17d510ff742c73463ecaffc9b7c212b3cae42be9283b37498a9dfae4e14b2e1b54e23b48521b672ebae1463d3120f240ef1492afcf3d2
   languageName: node
   linkType: hard
 
@@ -23726,6 +23775,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"psl@npm:^1.1.28":
+  version: 1.15.0
+  resolution: "psl@npm:1.15.0"
+  dependencies:
+    punycode: ^2.3.1
+  checksum: 6f777d82eecfe1c2406dadbc15e77467b186fec13202ec887a45d0209a2c6fca530af94a462a477c3c4a767ad892ec9ede7c482d98f61f653dd838b50e89dc15
+  languageName: node
+  linkType: hard
+
 "pstree.remy@npm:^1.1.8":
   version: 1.1.8
   resolution: "pstree.remy@npm:1.1.8"
@@ -23848,6 +23906,13 @@ __metadata:
   dependencies:
     side-channel: ^1.1.0
   checksum: 189b52ad4e9a0da1a16aff4c58b2a554a8dad9bd7e287c7da7446059b49ca2e33a49e570480e8be406b87fccebf134f51c373cbce36c8c83859efa0c9b71d635
+  languageName: node
+  linkType: hard
+
+"qs@npm:~6.5.2":
+  version: 6.5.3
+  resolution: "qs@npm:6.5.3"
+  checksum: 6f20bf08cabd90c458e50855559539a28d00b2f2e7dddcb66082b16a43188418cb3cb77cbd09268bcef6022935650f0534357b8af9eeb29bf0f27ccb17655692
   languageName: node
   linkType: hard
 
@@ -24780,6 +24845,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"request@npm:2.88.2":
+  version: 2.88.2
+  resolution: "request@npm:2.88.2"
+  dependencies:
+    aws-sign2: ~0.7.0
+    aws4: ^1.8.0
+    caseless: ~0.12.0
+    combined-stream: ~1.0.6
+    extend: ~3.0.2
+    forever-agent: ~0.6.1
+    form-data: ~2.3.2
+    har-validator: ~5.1.3
+    http-signature: ~1.2.0
+    is-typedarray: ~1.0.0
+    isstream: ~0.1.2
+    json-stringify-safe: ~5.0.1
+    mime-types: ~2.1.19
+    oauth-sign: ~0.9.0
+    performance-now: ^2.1.0
+    qs: ~6.5.2
+    safe-buffer: ^5.1.2
+    tough-cookie: ~2.5.0
+    tunnel-agent: ^0.6.0
+    uuid: ^3.3.2
+  checksum: 4e112c087f6eabe7327869da2417e9d28fcd0910419edd2eb17b6acfc4bfa1dad61954525949c228705805882d8a98a86a0ea12d7f739c01ee92af7062996983
+  languageName: node
+  linkType: hard
+
 "require-at@npm:^1.0.6":
   version: 1.0.6
   resolution: "require-at@npm:1.0.6"
@@ -25425,7 +25518,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"set-cookie-parser@npm:^2.4.8, set-cookie-parser@npm:~2.7.0":
+"set-cookie-parser@npm:2.6.0":
+  version: 2.6.0
+  resolution: "set-cookie-parser@npm:2.6.0"
+  checksum: bf11ebc594c53d84588f1b4c04f1b8ce14e0498b1c011b3d76b5c6d5aac481bbc3f7c5260ec4ce99bdc1d9aed19f9fc315e73166a36ca74d0f12349a73f6bdc9
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.4.8":
   version: 2.7.1
   resolution: "set-cookie-parser@npm:2.7.1"
   checksum: 2ef8b351094712f8f7df6d63ed4b10350b24a5b515772690e7dec227df85fcef5bc451c7765f484fd9f36694ece5438d1456407d017f237d0d3351d7dbbd3587
@@ -26059,7 +26159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sshpk@npm:^1.18.0":
+"sshpk@npm:^1.18.0, sshpk@npm:^1.7.0":
   version: 1.18.0
   resolution: "sshpk@npm:1.18.0"
   dependencies:
@@ -26963,12 +27063,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"textextensions@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "textextensions@npm:6.11.0"
-  dependencies:
-    editions: ^6.21.0
-  checksum: 6d24c675b352264d67d36fafce2212839ea968874ed58b92c679d860a849183aa87d6f7b120fcca390416095f9af66fbe4c825e7b26796ed4ef6ea5e632c81fc
+"textextensions@npm:^5.14.0":
+  version: 5.16.0
+  resolution: "textextensions@npm:5.16.0"
+  checksum: d2abd5c962760046aa85d9ca542bd8bdb451370fc0a5e5f807aa80dd2f50175ec10d5ce9d28ae96968aaf6a1b1bea254cf4715f24852d0dcf29c6a60af7f793c
   languageName: node
   linkType: hard
 
@@ -27189,6 +27287,16 @@ __metadata:
   dependencies:
     tldts: ^6.1.32
   checksum: 31c626a77ac247b881665851035773afe7eeac283b91ed8da3c297ed55480ea1dd1ba3f5bb1f94b653ac2d5b184f17ce4bf1cf6ca7c58ee7c321b4323c4f8024
+  languageName: node
+  linkType: hard
+
+"tough-cookie@npm:~2.5.0":
+  version: 2.5.0
+  resolution: "tough-cookie@npm:2.5.0"
+  dependencies:
+    psl: ^1.1.28
+    punycode: ^2.1.1
+  checksum: 16a8cd090224dd176eee23837cbe7573ca0fa297d7e468ab5e1c02d49a4e9a97bb05fef11320605eac516f91d54c57838a25864e8680e27b069a5231d8264977
   languageName: node
   linkType: hard
 
@@ -28263,6 +28371,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:^3.3.2":
+  version: 3.4.0
+  resolution: "uuid@npm:3.4.0"
+  bin:
+    uuid: ./bin/uuid
+  checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^9.0.0, uuid@npm:^9.0.1":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
@@ -28343,13 +28460,6 @@ __metadata:
     core-util-is: 1.0.2
     extsprintf: ^1.2.0
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
-  languageName: node
-  linkType: hard
-
-"version-range@npm:^4.15.0":
-  version: 4.15.0
-  resolution: "version-range@npm:4.15.0"
-  checksum: e92dfb0aeb7a504b9d064571f67bd5dcdb86173ebde9e7c08d3a426fb3bcd243af5902345751f99472f1c4b0f56a69208107775154c30f933a14816e3f1462b9
   languageName: node
   linkType: hard
 
