@@ -11,6 +11,7 @@ import { VerificationRequestModule } from "../verification-request/verification-
 import { ConfigModule } from "@nestjs/config";
 import { AuthZenviaWebHookMiddleware } from "../middleware/auth-zenvia-webhook.middleware";
 import { ChatBotStateModule } from "../chat-bot-state/chat-bot-state.module";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 @Module({
     imports: [
@@ -19,7 +20,7 @@ import { ChatBotStateModule } from "../chat-bot-state/chat-bot-state.module";
         ConfigModule,
         ChatBotStateModule,
     ],
-    providers: [ChatbotService],
+    providers: [ChatbotService, VerificationRequestStateMachineService],
     controllers: [ChatbotController],
 })
 export class ChatbotModule implements NestModule {

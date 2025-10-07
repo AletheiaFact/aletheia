@@ -1,7 +1,7 @@
 import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ContentModelEnum } from "../types/enums";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 export interface ChatBotContext {
     verificationRequest: string;
@@ -16,7 +16,7 @@ export interface ChatBotContext {
 }
 
 export const createChatBotMachine = (
-    verificationRequestService: VerificationRequestService,
+    verificationRequestStateMachineService: VerificationRequestStateMachineService,
     value?,
     context?
 ) => {
@@ -316,7 +316,7 @@ export const createChatBotMachine = (
                         heardFrom: context.heardFrom || "",
                     };
 
-                    verificationRequestService.create(verificationRequestBody);
+                    verificationRequestStateMachineService.request(verificationRequestBody)
                 },
             },
         }

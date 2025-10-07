@@ -4,10 +4,10 @@ import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { ContentModelEnum } from "../types/enums";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -38,7 +38,7 @@ export class ChatbotService {
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
-        private verificationService: VerificationRequestService,
+        private verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private chatBotStateService: ChatBotStateService
     ) {}
 
@@ -56,7 +56,7 @@ export class ChatbotService {
     }
 
     private async createNewChatBotState(id: string) {
-        const newMachine = createChatBotMachine(this.verificationService);
+        const newMachine = createChatBotMachine(this.verificationRequestStateMachineService);
         const snapshot = newMachine.getSnapshot();
         return await this.chatBotStateService.create(
             {
@@ -69,7 +69,7 @@ export class ChatbotService {
 
     private rehydrateChatBotState(chatbotState) {
         const rehydratedMachine = createChatBotMachine(
-            this.verificationService,
+            this.verificationRequestStateMachineService,
             chatbotState.machine.value,
             chatbotState.machine.context
         );
@@ -99,7 +99,7 @@ export class ChatbotService {
             channel
         );
         const chatBotMachineService = createChatBotMachine(
-            this.verificationService,
+            this.verificationRequestStateMachineService,
             chatbotState.machine.value,
             {
                 ...chatbotState.machine.context,
