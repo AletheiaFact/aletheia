@@ -177,6 +177,9 @@ export class VerificationRequestService {
         }
     }
 
+    /**
+     * Generic function to create AI TAsk based on the state machine
+     * */
     async createAiTask(taskDto: CreateAiTaskDto) {
         await this.aiTaskService.create(taskDto);
         return { success: true };
@@ -195,9 +198,10 @@ export class VerificationRequestService {
         embedding: number[]
     ) {
         const { targetId, field } = params;
+        const verificationRequest = await this.VerificationRequestModel.findById(targetId);
         const updated = await this.VerificationRequestModel.findByIdAndUpdate(
             targetId,
-            { [field]: embedding },
+            { [field]: embedding, statesExecuted: [...(verificationRequest.statesExecuted || []), 'embedding'] },
             { new: true }
         ).exec();
         if (!updated) {

@@ -81,6 +81,18 @@ export class VerificationRequest {
         enum: VerificationRequestStatus,
     })
     status: string;
+    
+    @Prop({
+        required: false,
+        type: [String],
+    })
+    statesExecuted: string[];
+
+    @Prop({
+        required: false,
+        type: String
+    })
+    data: string
 }
 
 const VerificationRequestSchema =
