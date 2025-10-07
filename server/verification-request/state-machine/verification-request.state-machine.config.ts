@@ -50,7 +50,6 @@ const getStateInvokeSrc = (
             };
         case VerificationRequestStateMachineEvents.EMBED:
             return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                console.log('creating ai task')
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.TEXT_EMBEDDING,
                     content: {
@@ -68,7 +67,6 @@ const getStateInvokeSrc = (
             }
         case VerificationRequestStateMachineEvents.IDENTIFY_DATA:
             return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                console.log('create an ai task for identify data')
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.IDENTIFYING_DATA,
                     content: {
@@ -78,7 +76,7 @@ const getStateInvokeSrc = (
                     callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IDENTIFIED_DATA,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
-                        field: "data",
+                        field: "identifiedData",
                     },
                 };
                 await getVerificationRequestService().createAiTask(taskDto)
@@ -117,7 +115,6 @@ const getStateInvoke = (
                         target: VerificationRequestStateMachineStates.EMBEDDING,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                console.log('embedding')
                                 return event.data
                             },
                             verificationRequest: (context: any, event: AnyEventObject) => {
@@ -125,15 +122,19 @@ const getStateInvoke = (
                             },
                         }),
                     },
+                ],
+                onError: getOnErrorAction(),
+            }
+        case VerificationRequestStateMachineEvents.EMBED:
+            return {
+                id: eventName,
+                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                onDone: [
                     {
                         target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                console.log('create an ai task for identify data')
                                 return event.data
-                            },
-                            verificationRequest: (context: any, event: AnyEventObject) => {
-                                return { id: event.data.id, ...context.verificationRequest }
                             },
                         }),
                     },
@@ -172,14 +173,15 @@ const getStateTransitions = (
                 },
             }
         case VerificationRequestStateMachineStates.EMBEDDING:
-            console.log('embedding get transaction')
             return {
                 [VerificationRequestStateMachineEvents.EMBED]: {
                     target: VerificationRequestStateMachineStates.EMBEDDING,
                 },
-            };
+                [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
+                    target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
+                },
+            }
         case VerificationRequestStateMachineStates.IDENTIFYING_DATA:
-            console.log('here')
             return {
                 [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
                     target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
@@ -207,7 +209,7 @@ export const getVerificationRequestStateMachineConfig = (
                 on: getStateTransitions(CommonStateMachineStates.REHYDRATE),
             },
             [VerificationRequestStateMachineStates.IDENTIFYING_DATA]: {
-                invoke: getStateTransitions(VerificationRequestStateMachineStates.IDENTIFYING_DATA),
+                invoke: getStateInvoke(VerificationRequestStateMachineEvents.IDENTIFY_DATA, stateMachineService),
                 description: VerificationRequestMessages.DESCRIPTIONS.DEFAULT,
             },
             [VerificationRequestStateMachineStates.CREATING]: {

@@ -158,6 +158,7 @@ export class VerificationRequestService {
      * Generic function to create AI TAsk based on the state machine
      * */
     async createAiTask(taskDto: CreateAiTaskDto) {
+        console.log('createAiTask', taskDto)
         await this.aiTaskService.create(taskDto);
         return { success: true };
     }
