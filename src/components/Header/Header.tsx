@@ -1,21 +1,12 @@
-import React, { useLayoutEffect, useState } from "react";
-import { AppBar } from "@mui/material";
+import React from "react";
+import { AppBar, useTheme } from "@mui/material";
 import HeaderContent from "./HeaderContent";
-import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { NameSpaceEnum } from "../../types/Namespace";
 
 const AletheiaHeader = () => {
     const [nameSpace] = useAtom(currentNameSpace);
-    const [headerBackgroundColor, setHeaderBackgroundColor] = useState(
-        colors.primary
-    );
-    useLayoutEffect(() => {
-        setHeaderBackgroundColor(
-            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
-        );
-    }, [nameSpace]);
+    const theme = useTheme()
 
     return (
         <AppBar
@@ -24,8 +15,8 @@ const AletheiaHeader = () => {
                 top: 0,
                 zIndex: 1000,
                 width: "100%",
-                background: headerBackgroundColor,
-                backgroundColor: headerBackgroundColor,
+                background: theme.palette.primary.main,
+                backgroundColor: theme.palette.primary.main,
                 height: "56px",
                 padding: 0,
                 minWidth: "265px",
