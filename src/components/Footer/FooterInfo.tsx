@@ -1,5 +1,5 @@
 import { DescriptionOutlined } from "@mui/icons-material";
-import { Grid } from "@mui/material"
+import { Box, Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useAppSelector } from "../../store/store";
@@ -31,15 +31,24 @@ const FooterInfo = () => {
                 </a>
             </span>
             {localConfig.footer.showStatuteButton.show ? (
-                <AletheiaButton
-                    style={{gap:"5px"}}
-                    type={ButtonType.whiteBlue}
-                    href={t("footer:statuteUrlButton")}
-                    target="_blank"
-                    rel="noreferrer"
+                <Box
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        width: "100%",
+                    }}
                 >
-                    {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
-                </AletheiaButton>
+                    <AletheiaButton
+                        style={{gap:"5px"}}
+                        type={ButtonType.whiteBlue}
+                        href={t("footer:statuteUrlButton")}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
+                    </AletheiaButton>
+                </Box>
             ) : null}
         </Grid>
     );
