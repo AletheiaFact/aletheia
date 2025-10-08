@@ -90,6 +90,12 @@ export class VerificationRequest {
 
     @Prop({
         required: false,
+        type: [String],
+    })
+    impactArea: string;
+
+    @Prop({
+        required: false,
         type: String
     })
     data: string
