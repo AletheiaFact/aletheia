@@ -16,10 +16,46 @@ const TextEmbeddingContentSchema = z.object({
     model: z.string().min(1),
 });
 
+const IdentifyingDataContentSchema = z.object({
+    text: z.string().min(1).max(10000),
+    model: z.string().min(1),
+});
+
+const DefiningTopicsContentSchema = z.object({
+    text: z.string().min(1).max(10000),
+    model: z.string().min(1),
+});
+
+const DefiningImpactAreaContentSchema = z.object({
+    text: z.string().min(1).max(10000),
+    model: z.string().min(1),
+});
+
+const DefiningSeverityContentSchema = z.object({
+    text: z.string().min(1).max(10000),
+    model: z.string().min(1),
+});
+
 const AiTaskContentSchema = z.discriminatedUnion("type", [
     z.object({
         type: z.literal(AiTaskType.TEXT_EMBEDDING),
         data: TextEmbeddingContentSchema,
+    }),
+    z.object({
+        type: z.literal(AiTaskType.IDENTIFYING_DATA),
+        data: IdentifyingDataContentSchema,
+    }),
+    z.object({
+        type: z.literal(AiTaskType.DEFINING_TOPICS),
+        data: DefiningTopicsContentSchema,
+    }),
+    z.object({
+        type: z.literal(AiTaskType.DEFINING_IMPACT_AREA),
+        data: DefiningImpactAreaContentSchema,
+    }),
+    z.object({
+        type: z.literal(AiTaskType.DEFINING_SEVERITY),
+        data: DefiningSeverityContentSchema,
     }),
 ]);
 export const validateTaskContent = (type: AiTaskType, content: unknown) => {
