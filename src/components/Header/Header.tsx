@@ -5,7 +5,6 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 
 const AletheiaHeader = () => {
-    const [nameSpace] = useAtom(currentNameSpace);
     const theme = useTheme()
 
     return (
