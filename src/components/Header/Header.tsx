@@ -1,8 +1,6 @@
 import React from "react";
 import { AppBar, useTheme } from "@mui/material";
 import HeaderContent from "./HeaderContent";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 
 const AletheiaHeader = () => {
     const theme = useTheme()
