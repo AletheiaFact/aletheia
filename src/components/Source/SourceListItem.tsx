@@ -21,7 +21,9 @@ const SourceListItem = ({ source }) => {
 
     return (
         <CardBase style={{ padding: "32px" }}>
-            <SourceListItemStyled container item
+            <SourceListItemStyled
+                container
+                item
                 xs={12}
                 classification={source.props.classification}
             >
@@ -35,7 +37,7 @@ const SourceListItem = ({ source }) => {
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 4,
                         textOverflow: "ellipsis",
-                        width: "100%"
+                        width: "100%",
                     }}
                 >
                     <cite style={{ fontStyle: "normal" }}>
@@ -56,7 +58,6 @@ const SourceListItem = ({ source }) => {
                             width: "fit-content",
                             textAlign: "center",
                             justifyContent: "center",
-                            lineHeight: "13px",
                             padding: "20px 8px",
                         }}
                     >
