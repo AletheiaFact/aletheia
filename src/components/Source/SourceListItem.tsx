@@ -58,7 +58,7 @@ const SourceListItem = ({ source }) => {
                             width: "fit-content",
                             textAlign: "center",
                             justifyContent: "center",
-                            padding: "8px 16px",
+                            padding: "20px 8px",
                         }}
                     >
                         {t("sources:sourceCardButton")}
