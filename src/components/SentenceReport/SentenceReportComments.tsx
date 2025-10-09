@@ -10,10 +10,7 @@ import { useTranslation } from "next-i18next";
 
 const SentenceReportComments = ({ context }) => {
     const { t } = useTranslation();
-    const crossCheckingComments =
-        context?.crossCheckingComments?.filter(
-            (comment) => !comment?.resolved
-        ) || [];
+    const crossCheckingComments = context?.crossCheckingComments || [];
 
     const getDate = (createdAt) => {
         const date = new Date(createdAt);
