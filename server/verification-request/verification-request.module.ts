@@ -63,5 +63,10 @@ export class VerificationRequestModule implements OnModuleInit {
             (params, result) =>
                 this.verificationService.updateEmbedding(params, result)
         );
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
+            (params, result) =>
+                this.verificationService.updateFieldByAiTask(params, result)
+        );
     }
 }

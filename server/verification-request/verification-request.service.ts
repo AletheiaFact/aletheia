@@ -3,6 +3,7 @@ import {
     Injectable,
     Inject,
     forwardRef,
+    Logger,
 } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
@@ -27,6 +28,8 @@ const md5 = require("md5");
 
 @Injectable()
 export class VerificationRequestService {
+    private readonly logger = new Logger(VerificationRequestService.name)
+
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
@@ -158,7 +161,7 @@ export class VerificationRequestService {
      * Generic function to create AI TAsk based on the state machine
      * */
     async createAiTask(taskDto: CreateAiTaskDto) {
-        console.log('createAiTask', taskDto)
+        this.logger.log(`Creating AI task: ${taskDto.type}`, { taskDto });
         await this.aiTaskService.create(taskDto);
         return { success: true };
     }
@@ -180,6 +183,37 @@ export class VerificationRequestService {
         const updated = await this.VerificationRequestModel.findByIdAndUpdate(
             targetId,
             { [field]: embedding, statesExecuted: [...(verificationRequest.statesExecuted || []), 'embedding'] },
+            { new: true }
+        ).exec();
+        if (!updated) {
+            throw new BadRequestException(
+                `VerificationRequest ${targetId} not found`
+            );
+        }
+        return updated;
+    }
+
+    async updateFieldByAiTask(
+        params: { targetId: string; field: string },
+        result: any
+    ) {
+        this.logger.log(`Updating VR ${params.targetId} by AI task: ${params.field}`, { params });
+        let valueToUpdate: any;
+        const { targetId, field } = params;
+        switch (field) {
+            case 'embedding':
+                valueToUpdate = result;
+                break;
+            case 'identifiedData':
+                valueToUpdate = result.personalities[0].name;
+            default:
+                throw new BadRequestException(`Invalid field: ${field}`);
+        }
+        const verificationRequest = await this.VerificationRequestModel.findById(targetId);
+
+        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
+            targetId,
+            { [field]: valueToUpdate, statesExecuted: [...(verificationRequest.statesExecuted || []), field] },
             { new: true }
         ).exec();
         if (!updated) {

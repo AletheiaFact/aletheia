@@ -81,7 +81,7 @@ export class VerificationRequest {
         required: false,
         type: String
     })
-    data: string
+    identifiedData: string
 }
 
 const VerificationRequestSchema =
