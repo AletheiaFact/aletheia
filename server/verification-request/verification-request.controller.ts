@@ -9,6 +9,7 @@ import {
     Query,
     Param,
     Put,
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
@@ -24,6 +25,11 @@ import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -137,6 +143,8 @@ export class VerificationRequestController {
         );
     }
 
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId")
     async updateVerificationRequest(
