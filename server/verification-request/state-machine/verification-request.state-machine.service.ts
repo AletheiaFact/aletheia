@@ -48,4 +48,77 @@ export class VerificationRequestStateMachineService {
             VerificationRequestStateMachineEvents.PRE_TRIAGE
         );
     }
+
+    async embed(verificationRequestId: string): Promise<any> {
+        const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+        return this.verificationRequestStateMachine.createMachineAndWaitForResult(
+            {
+                verificationRequest: {
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
+                    status: verificationRequest.status
+                },
+            },
+            VerificationRequestStateMachineEvents.EMBED,
+        )
+    }
+
+    async identifyData(verificationRequestId: string): Promise<any> {
+        const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+        return this.verificationRequestStateMachine.createMachineAndWaitForResult(
+            {
+                verificationRequest: {
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
+                    status: verificationRequest.status
+                },
+            },
+            VerificationRequestStateMachineEvents.IDENTIFY_DATA,
+        )
+    }
+
+    async defineTopics(verificationRequestId: string): Promise<any> {
+        const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+        return this.verificationRequestStateMachine.createMachineAndWaitForResult(
+            {
+                verificationRequest: {
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
+                    status: verificationRequest.status
+                },
+            },
+            VerificationRequestStateMachineEvents.DEFINE_TOPICS,
+        )
+    }
+
+    async defineImpactArea(verificationRequestId: string): Promise<any> {
+        const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+        return this.verificationRequestStateMachine.createMachineAndWaitForResult(
+            {
+                verificationRequest: {
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
+                    status: verificationRequest.status
+                },
+            },
+            VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA,
+        )
+    }
+
+    async defineSeverity(verificationRequestId: string): Promise<any> {
+        const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+        return this.verificationRequestStateMachine.createMachineAndWaitForResult(
+            {
+                verificationRequest: {
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
+                    status: verificationRequest.status,
+                    impactArea: verificationRequest.impactArea,
+                    topics: verificationRequest.topics,
+                    identifiedData: verificationRequest.identifiedData,
+                },
+            },
+            VerificationRequestStateMachineEvents.DEFINE_SEVERITY,
+        )
+    }
 }

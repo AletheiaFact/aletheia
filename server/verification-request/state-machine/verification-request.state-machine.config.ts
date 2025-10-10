@@ -73,7 +73,7 @@ const getStateInvokeSrc = (
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IDENTIFIED_DATA,
+                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
                         field: "identifiedData",
@@ -82,57 +82,57 @@ const getStateInvokeSrc = (
                 await getVerificationRequestService().createAiTask(taskDto)
                 return context.result
             }
-        case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                const taskDto: CreateAiTaskDto = {
-                    type: AiTaskType.DEFINING_TOPICS,
-                    content: {
-                        text: context.verificationRequest.content,
-                        model: OPENAI_IDENTIFY_DATA,
-                    },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_TOPICS,
-                    callbackParams: {
-                        targetId: context.verificationRequest.id,
-                        field: "topics",
-                    },
-                };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
-        case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                const taskDto: CreateAiTaskDto = {
-                    type: AiTaskType.DEFINING_IMPACT_AREA,
-                    content: {
-                        text: context.verificationRequest.content,
-                        model: OPENAI_IDENTIFY_DATA,
-                    },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IMPACT_AREA,
-                    callbackParams: {
-                        targetId: context.verificationRequest.id,
-                        field: "impactArea",
-                    },
-                };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
-        case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                const taskDto: CreateAiTaskDto = {
-                    type: AiTaskType.DEFINING_SEVERITY,
-                    content: {
-                        text: context.verificationRequest.content,
-                        model: OPENAI_IDENTIFY_DATA,
-                    },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_SEVERITY,
-                    callbackParams: {
-                        targetId: context.verificationRequest.id,
-                        field: "severity",
-                    },
-                };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+        // case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
+        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
+        //         const taskDto: CreateAiTaskDto = {
+        //             type: AiTaskType.DEFINING_TOPICS,
+        //             content: {
+        //                 text: context.verificationRequest.content,
+        //                 model: OPENAI_IDENTIFY_DATA,
+        //             },
+        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_TOPICS,
+        //             callbackParams: {
+        //                 targetId: context.verificationRequest.id,
+        //                 field: "topics",
+        //             },
+        //         };
+        //         await getVerificationRequestService().createAiTask(taskDto)
+        //         return context.result
+        //     }
+        // case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
+        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
+        //         const taskDto: CreateAiTaskDto = {
+        //             type: AiTaskType.DEFINING_IMPACT_AREA,
+        //             content: {
+        //                 text: context.verificationRequest.content,
+        //                 model: OPENAI_IDENTIFY_DATA,
+        //             },
+        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IMPACT_AREA,
+        //             callbackParams: {
+        //                 targetId: context.verificationRequest.id,
+        //                 field: "impactArea",
+        //             },
+        //         };
+        //         await getVerificationRequestService().createAiTask(taskDto)
+        //         return context.result
+        //     }
+        // case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
+        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
+        //         const taskDto: CreateAiTaskDto = {
+        //             type: AiTaskType.DEFINING_SEVERITY,
+        //             content: {
+        //                 text: context.verificationRequest.content,
+        //                 model: OPENAI_IDENTIFY_DATA,
+        //             },
+        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_SEVERITY,
+        //             callbackParams: {
+        //                 targetId: context.verificationRequest.id,
+        //                 field: "severity",
+        //             },
+        //         };
+        //         await getVerificationRequestService().createAiTask(taskDto)
+        //         return context.result
+        //     }
         default:
             return async (
                 context: VerificationRequestStateMachineContext,
@@ -153,12 +153,13 @@ const verificationRequestCanRunStep: ConditionalFunc = (context, event) => {
 }
 
 const canDefineSeverity: ConditionalFunc = (context, event) => {
-    // Check if impact area, topics, and personality are defined
+    // Check if impact area, topics, and identified data (personality) are all defined
     const hasImpactArea = context.verificationRequest?.impactArea
-    const hasTopics = context.verificationRequest?.topics
-    const hasPersonality = context.verificationRequest?.identifiedData?.personality
-    
-    return !!(hasImpactArea && hasTopics && hasPersonality)
+    const hasTopics = context.verificationRequest?.topics && context.verificationRequest?.topics.length > 0
+    const hasIdentifiedData = context.verificationRequest?.identifiedData
+
+    // All three must be present to proceed with severity definition
+    return !!(hasImpactArea && hasTopics && hasIdentifiedData)
 }
 
 const getStateInvoke = (
@@ -289,7 +290,32 @@ const getStateInvoke = (
                     },
                 ],
                 onError: getOnErrorAction(),
-            };
+            }
+        case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
+            return {
+                id: eventName,
+                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                onDone: [
+                    {
+                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
+                        actions: assign({
+                            result: (context, event: AnyEventObject) => {
+                                return event.data
+                            },
+                        }),
+                        cond: verificationRequestCanRunStep,
+                    },
+                    {
+                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
+                        actions: assign({
+                            result: (context, event: AnyEventObject) => {
+                                return event.data
+                            },
+                        }),
+                    },
+                ],
+                onError: getOnErrorAction(),
+            }
         default:
             return {
                 id: eventName,

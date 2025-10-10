@@ -24,6 +24,8 @@ import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { SeverityEnum, VerificationRequestStatus } from "./dto/types";
+import * as crypto from "crypto";
 
 const md5 = require("md5");
 
@@ -178,70 +180,217 @@ export class VerificationRequestService {
     }
 
     /**
-     * Generic function to create AI TAsk based on the state machine
+     * Generic function to create AI Task based on the state machine
+     * Prevents duplicate task creation by tracking pending tasks
      * */
     async createAiTask(taskDto: CreateAiTaskDto) {
-        this.logger.log(`Creating AI task: ${taskDto.type}`, { taskDto });
-        await this.aiTaskService.create(taskDto);
-        return { success: true };
-    }
+        const targetId = taskDto.callbackParams?.targetId;
+        const field = taskDto.callbackParams?.field;
 
-    /**
-     * TODO: when updated the embedding we need add missing states triggered by machine
-     * to make sure the machine is in the correct state
-     * and we can follow to triage process
-     * @param params
-     * @param embedding
-     * @returns
-     */
-    async updateEmbedding(
-        params: { targetId: string; field: string },
-        embedding: number[]
-    ) {
-        const { targetId, field } = params;
-        const verificationRequest = await this.VerificationRequestModel.findById(targetId);
-        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
-            targetId,
-            { [field]: embedding, statesExecuted: [...(verificationRequest.statesExecuted || []), 'embedding'] },
-            { new: true }
-        ).exec();
-        if (!updated) {
-            throw new BadRequestException(
-                `VerificationRequest ${targetId} not found`
-            );
+        if (!targetId || !field) {
+            this.logger.log(`Creating AI task without tracking: ${taskDto.type}`, { taskDto });
+            await this.aiTaskService.create(taskDto);
+            return { success: true };
         }
-        return updated;
+
+        // Check if this task is already pending
+        const vr = await this.VerificationRequestModel.findById(targetId);
+        if (!vr) {
+            throw new BadRequestException(`VerificationRequest ${targetId} not found`);
+        }
+
+        const existingTaskId = vr.pendingAiTasks?.get(field);
+        if (existingTaskId) {
+            this.logger.log(`AI task already exists for ${field} on VR ${targetId}: ${existingTaskId}. Skipping creation.`);
+            return { success: true, skipped: true, existingTaskId };
+        }
+
+        // Create the task
+        this.logger.log(`Creating AI task: ${taskDto.type} for VR ${targetId}`, { taskDto });
+        const task = await this.aiTaskService.create(taskDto);
+
+        // Track the pending task
+        await this.VerificationRequestModel.findByIdAndUpdate(targetId, {
+            $set: { [`pendingAiTasks.${field}`]: task._id.toString() }
+        });
+
+        this.logger.log(`Tracked AI task ${task._id} for field ${field} on VR ${targetId}`);
+
+        return { success: true, taskId: task._id };
     }
 
     async updateFieldByAiTask(
         params: { targetId: string; field: string },
         result: any
     ) {
-        this.logger.log(`Updating VR ${params.targetId} by AI task: ${params.field}`, { params });
-        let valueToUpdate: any;
+        const startTime = Date.now();
         const { targetId, field } = params;
-        switch (field) {
-            case 'embedding':
-                valueToUpdate = result;
-                break;
-            case 'identifiedData':
-                valueToUpdate = result.personalities[0].name;
-            default:
-                throw new BadRequestException(`Invalid field: ${field}`);
-        }
-        const verificationRequest = await this.VerificationRequestModel.findById(targetId);
 
-        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
-            targetId,
-            { [field]: valueToUpdate, statesExecuted: [...(verificationRequest.statesExecuted || []), field] },
-            { new: true }
-        ).exec();
-        if (!updated) {
-            throw new BadRequestException(
-                `VerificationRequest ${targetId} not found`
-            );
+        this.logger.log(`[updateFieldByAiTask] Updating VR ${targetId} for field: ${field}`);
+        this.logger.log(`[updateFieldByAiTask] Received result type: ${typeof result}, value:`, result);
+
+        try {
+            const verificationRequest = await this.VerificationRequestModel.findById(targetId);
+            if (!verificationRequest) {
+                throw new BadRequestException(`VerificationRequest ${targetId} not found`);
+            }
+
+            // Check idempotency
+            const resultHash = this.hashResult(result);
+            const existingHash = verificationRequest.stateFingerprints?.get(field);
+
+            if (existingHash === resultHash) {
+                this.logger.log(`Duplicate ${field} update detected for ${targetId}, skipping`);
+                return verificationRequest;
+            }
+
+            // Extract value based on field type
+            let valueToUpdate: any;
+            switch (field) {
+                case 'embedding':
+                    valueToUpdate = result;
+                    break;
+                case 'identifiedData':
+                    // Handle different result formats from AI
+                    if (typeof result === 'string') {
+                        valueToUpdate = result;
+                    } else if (result?.personalities && Array.isArray(result.personalities) && result.personalities.length > 0) {
+                        valueToUpdate = result.personalities[0]?.name || JSON.stringify(result.personalities[0]);
+                    } else if (result?.name) {
+                        valueToUpdate = result.name;
+                    } else {
+                        valueToUpdate = typeof result === 'object' ? JSON.stringify(result) : String(result);
+                    }
+                    this.logger.log(`Extracted identifiedData: ${valueToUpdate} from result:`, result);
+                    break;
+                case 'topics':
+                    valueToUpdate = result;
+                    break;
+                case 'impactArea':
+                    valueToUpdate = result;
+                    break;
+                case 'severity':
+                    valueToUpdate = result;
+                    break;
+                default:
+                    throw new BadRequestException(`Invalid field: ${field}`);
+            }
+
+            // Validate result
+            const validation = this.validateAiTaskResult(field, valueToUpdate);
+            if (!validation.valid) {
+                await this.handleInvalidResult(targetId, field, validation.error);
+                throw new BadRequestException(`Invalid ${field} result: ${validation.error}`);
+            }
+
+            // Use atomic operations to prevent race conditions
+            // $set for field updates, $addToSet for array (prevents duplicates), $unset for clearing
+            const updateData: any = {
+                $set: {
+                    [field]: valueToUpdate,
+                    [`stateFingerprints.${field}`]: resultHash
+                },
+                $addToSet: {
+                    statesExecuted: field  // Atomic array addition, no duplicates
+                },
+                $unset: {
+                    [`pendingAiTasks.${field}`]: ""  // Clear pending task
+                }
+            };
+
+            // If severity is being updated, transition status to IN_TRIAGE
+            if (field === 'severity') {
+                updateData.$set.status = 'In Triage';
+                this.logger.log(`Transitioning VR ${targetId} status to IN_TRIAGE after severity definition`);
+            }
+
+            // Use atomic update to prevent race conditions when multiple callbacks complete simultaneously
+            const updated = await this.VerificationRequestModel.findByIdAndUpdate(
+                targetId,
+                updateData,
+                { new: true }
+            ).exec();
+
+            this.logger.log(`Cleared pending AI task for ${field} on VR ${targetId}`);
+
+            // Track state transition
+            const duration = Date.now() - startTime;
+            const fromState = verificationRequest.statesExecuted?.slice(-1)[0] || 'initial';
+            await this.trackStateTransition(updated, fromState, field, duration);
+            await this.updateProgress(updated);
+
+            // Revalidate and trigger missing states (with parallel execution)
+            await this.revalidateAndRunMissingStatesWithParallel(updated);
+
+            return updated;
+        } catch (error) {
+            await this.handleStateError(targetId, field, error.message);
+            throw error;
         }
-        return updated;
+    }
+
+    /**
+     * Revalidates the verification request and triggers missing states
+     * based on what steps have already been executed
+     */
+    async revalidateAndRunMissingStates(verificationRequest: VerificationRequestDocument) {
+        const statesExecuted = verificationRequest.statesExecuted || [];
+        this.logger.log(`Revalidating VR ${verificationRequest.id}, states executed: ${statesExecuted.join(', ')}`);
+
+        // If severity is completed, we're done - status should be IN_TRIAGE
+        if (statesExecuted.includes('severity')) {
+            this.logger.log(`All states completed for VR ${verificationRequest.id}, status is IN_TRIAGE`);
+            return;
+        }
+
+        // Define the expected order of states
+        const expectedStates = ['embedding', 'identifiedData', 'topics', 'impactArea', 'severity'];
+
+        // Find the next missing state to execute
+        for (const state of expectedStates) {
+            if (!statesExecuted.includes(state)) {
+                this.logger.log(`Missing state found: ${state}, triggering state machine`);
+
+                // Trigger the state machine to continue from where it left off
+                await this.triggerStateMachineForMissingState(verificationRequest, state);
+
+                // Only trigger one missing state at a time
+                // The state machine will handle the rest sequentially
+                break;
+            }
+        }
+    }
+
+    /**
+     * Triggers the state machine to execute a specific missing state
+     */
+    async triggerStateMachineForMissingState(
+        verificationRequest: VerificationRequestDocument,
+        missingState: string
+    ) {
+        this.logger.log(`Triggering state machine for VR ${verificationRequest.id} to execute: ${missingState}`);
+
+        // Map field names to state machine events
+        const stateToEventMap = {
+            'embedding': 'embed',
+            'identifiedData': 'identifyData',
+            'topics': 'defineTopics',
+            'impactArea': 'defineImpactArea',
+            'severity': 'defineSeverity',
+        };
+
+        const event = stateToEventMap[missingState];
+        if (!event) {
+            this.logger.warn(`No event mapping found for state: ${missingState}`);
+            return;
+        }
+
+        try {
+            // Trigger the state machine with the appropriate event
+            await this.verificationRequestStateService[event](verificationRequest.id);
+        } catch (error) {
+            this.logger.error(`Failed to trigger state machine for ${missingState}: ${error.message}`, error.stack);
+        }
     }
 
     /**
@@ -654,5 +803,322 @@ export class VerificationRequestService {
             query.status = { $in: status };
         }
         return query;
+    }
+
+    /**
+     * Validates AI task results before updating
+     */
+    private validateAiTaskResult(field: string, result: any): {valid: boolean, error?: string} {
+        switch (field) {
+            case 'embedding':
+                if (!Array.isArray(result) || result.length === 0) {
+                    return { valid: false, error: 'Embedding must be a non-empty array' };
+                }
+                if (result.some(v => typeof v !== 'number')) {
+                    return { valid: false, error: 'Embedding must contain only numbers' };
+                }
+                break;
+            case 'topics':
+                if (!Array.isArray(result) || result.length === 0) {
+                    return { valid: false, error: 'Topics must be a non-empty array' };
+                }
+                break;
+            case 'identifiedData':
+                // Allow string or null/empty (AI might not identify anyone)
+                if (result !== null && result !== undefined && result !== '' && typeof result !== 'string') {
+                    return { valid: false, error: `Identified data must be a string, got: ${typeof result}` };
+                }
+                break;
+            case 'impactArea':
+                if (!result) {
+                    return { valid: false, error: 'Impact area is required' };
+                }
+                break;
+            case 'severity':
+                if (!Object.values(SeverityEnum).map(String).includes(String(result))) {
+                    return { valid: false, error: `Invalid severity value: ${result}` };
+                }
+                break;
+        }
+        return { valid: true };
+    }
+
+    /**
+     * Hash result for idempotency checks
+     */
+    private hashResult(result: any): string {
+        return crypto.createHash('sha256')
+            .update(JSON.stringify(result))
+            .digest('hex');
+    }
+
+    /**
+     * Handle invalid AI task result
+     */
+    private async handleInvalidResult(vrId: string, state: string, error: string) {
+        this.logger.error(`Invalid result for VR ${vrId}, state ${state}: ${error}`);
+
+        const retries = await this.incrementRetryCount(vrId, state);
+
+        if (retries >= MAX_RETRY_ATTEMPTS) {
+            await this.markForManualReview(vrId, state, error);
+        }
+    }
+
+    /**
+     * Increment retry count for a state
+     */
+    private async incrementRetryCount(vrId: string, state: string): Promise<number> {
+        const vr = await this.VerificationRequestModel.findById(vrId);
+        const retries = (vr.stateRetries?.get(state) || 0) + 1;
+
+        const stateRetries = new Map(Object.entries(vr.stateRetries || {}));
+        stateRetries.set(state, retries);
+
+        await this.VerificationRequestModel.findByIdAndUpdate(vrId, {
+            $set: { [`stateRetries.${state}`]: retries }
+        });
+
+        return retries;
+    }
+
+    /**
+     * Mark verification request for manual review
+     */
+    private async markForManualReview(vrId: string, state: string, reason: string) {
+        this.logger.warn(`Marking VR ${vrId} for manual review. State: ${state}, Reason: ${reason}`);
+
+        await this.VerificationRequestModel.findByIdAndUpdate(vrId, {
+            $push: {
+                auditLog: {
+                    action: 'manual_review_required',
+                    field: state,
+                    timestamp: new Date(),
+                    details: { reason, maxRetriesExceeded: true }
+                }
+            },
+            status: 'Manual Review Required'
+        });
+    }
+
+    /**
+     * Handle state error
+     */
+    private async handleStateError(vrId: string, state: string, error: string) {
+        this.logger.error(`Error in state ${state} for VR ${vrId}: ${error}`);
+
+        await this.VerificationRequestModel.findByIdAndUpdate(vrId, {
+            $push: {
+                stateErrors: {
+                    state,
+                    error,
+                    timestamp: new Date()
+                }
+            }
+        });
+    }
+
+    /**
+     * Track state transition
+     */
+    private async trackStateTransition(
+        vr: VerificationRequestDocument,
+        from: string,
+        to: string,
+        duration: number
+    ) {
+        await this.VerificationRequestModel.findByIdAndUpdate(vr._id, {
+            $push: {
+                stateTransitions: {
+                    from,
+                    to,
+                    timestamp: new Date(),
+                    duration
+                }
+            }
+        });
+
+        this.logger.log(`State transition: ${from} -> ${to} in ${duration}ms for VR ${vr.id}`);
+    }
+
+    /**
+     * Update progress tracking
+     */
+    private async updateProgress(vr: VerificationRequestDocument) {
+        const statesExecuted = vr.statesExecuted || [];
+        const totalStates = EXPECTED_STATES.length;
+        const completed = statesExecuted.length;
+        const percentage = (completed / totalStates) * 100;
+
+        const avgDuration = this.calculateAverageDuration(vr.stateTransitions || []);
+        const remainingStates = totalStates - completed;
+        const estimatedCompletion = avgDuration > 0
+            ? new Date(Date.now() + (avgDuration * remainingStates))
+            : undefined;
+
+        await this.VerificationRequestModel.findByIdAndUpdate(vr._id, {
+            progress: {
+                current: statesExecuted[statesExecuted.length - 1] || 'starting',
+                completed,
+                total: totalStates,
+                percentage,
+                estimatedCompletion
+            }
+        });
+    }
+
+    /**
+     * Calculate average duration from transitions
+     */
+    private calculateAverageDuration(transitions: any[]): number {
+        if (!transitions || transitions.length === 0) return 0;
+
+        const total = transitions.reduce((sum, t) => sum + (t.duration || 0), 0);
+        return total / transitions.length;
+    }
+
+    /**
+     * Revalidate and run missing states with parallel execution
+     */
+    private async revalidateAndRunMissingStatesWithParallel(verificationRequest: VerificationRequestDocument) {
+        const statesExecuted = verificationRequest.statesExecuted || [];
+        this.logger.log(`Revalidating VR ${verificationRequest.id}, states executed: ${statesExecuted.join(', ')}`);
+
+        // If severity is completed, we're done
+        if (statesExecuted.includes('severity')) {
+            this.logger.log(`All states completed for VR ${verificationRequest.id}, status is IN_TRIAGE`);
+            return;
+        }
+
+        // Run embedding → then parallel identifiedData + topics → then impactArea → then severity
+        if (statesExecuted.includes('embedding') &&
+            !statesExecuted.includes('identifiedData') &&
+            !statesExecuted.includes('topics')) {
+
+            this.logger.log(`Running identifiedData and topics in parallel for VR ${verificationRequest.id}`);
+
+            await Promise.allSettled([
+                this.verificationRequestStateService.identifyData(verificationRequest.id),
+                this.verificationRequestStateService.defineTopics(verificationRequest.id)
+            ]);
+
+            return; // Let callbacks handle next steps
+        }
+
+        // Fall back to sequential execution for other cases
+        await this.revalidateAndRunMissingStates(verificationRequest);
+    }
+
+    /**
+     * Check and retry stale AI tasks
+     */
+    async checkAndRetryStaleAiTasks() {
+        const staleRequests = await this.VerificationRequestModel.find({
+            status: VerificationRequestStatus.PRE_TRIAGE,
+            updatedAt: { $lt: new Date(Date.now() - AI_TASK_TIMEOUT) },
+            $expr: { $lt: [{ $size: { $ifNull: ['$statesExecuted', []] } }, EXPECTED_STATES.length] }
+        });
+
+        this.logger.log(`Found ${staleRequests.length} stale verification requests`);
+
+        for (const request of staleRequests) {
+            this.logger.log(`Retrying stale request: ${request.id}`);
+
+            // Clear stale pending tasks first
+            await this.clearStalePendingTasks(request);
+
+            // Then retry missing states
+            await this.revalidateAndRunMissingStates(request);
+        }
+    }
+
+    /**
+     * Clear pending AI tasks that have been stale for too long
+     * This allows the state machine to create new tasks for failed/abandoned tasks
+     */
+    private async clearStalePendingTasks(vr: VerificationRequestDocument) {
+        const pendingTasks = vr.pendingAiTasks;
+        if (!pendingTasks || pendingTasks.size === 0) {
+            return;
+        }
+
+        const tasksToClean: string[] = [];
+
+        for (const [field, _taskId] of Object.entries(pendingTasks)) {
+            // Check if the task actually completed but wasn't cleared
+            const stateCompleted = vr.statesExecuted?.includes(field);
+
+            if (stateCompleted) {
+                this.logger.log(`Cleaning completed but uncleared task for ${field} on VR ${vr.id}`);
+                tasksToClean.push(field);
+                continue;
+            }
+
+            // Check if task is truly stale (older than timeout)
+            const vrDocument = vr as any; // Cast to access updatedAt
+            const vrAge = Date.now() - new Date(vrDocument.updatedAt || vr.date).getTime();
+            if (vrAge > AI_TASK_TIMEOUT) {
+                this.logger.log(`Cleaning stale pending task for ${field} on VR ${vr.id} (age: ${vrAge}ms)`);
+                tasksToClean.push(field);
+            }
+        }
+
+        if (tasksToClean.length > 0) {
+            const unsetObj = {};
+            tasksToClean.forEach(field => {
+                unsetObj[`pendingAiTasks.${field}`] = "";
+            });
+
+            await this.VerificationRequestModel.findByIdAndUpdate(vr._id, {
+                $unset: unsetObj
+            });
+
+            this.logger.log(`Cleaned ${tasksToClean.length} stale pending tasks for VR ${vr.id}`);
+        }
+    }
+
+    /**
+     * Manual override for a specific field
+     */
+    async manualOverrideField(
+        vrId: string,
+        field: string,
+        value: any,
+        userId: string
+    ) {
+        this.logger.log(`Manual override: VR ${vrId}, field ${field} by user ${userId}`);
+
+        const vr = await this.VerificationRequestModel.findById(vrId);
+        if (!vr) {
+            throw new BadRequestException(`VerificationRequest ${vrId} not found`);
+        }
+
+        // Use atomic operations to prevent race conditions
+        const updatedVr = await this.VerificationRequestModel.findByIdAndUpdate(
+            vrId,
+            {
+                $set: {
+                    [field]: value
+                },
+                $addToSet: {
+                    statesExecuted: field  // Atomic array addition, no duplicates
+                },
+                $push: {
+                    auditLog: {
+                        action: 'manual_override',
+                        field,
+                        userId,
+                        timestamp: new Date(),
+                        details: { value }
+                    }
+                }
+            },
+            { new: true }
+        );
+
+        // Continue with next steps
+        await this.revalidateAndRunMissingStates(updatedVr);
+
+        return updatedVr;
     }
 }
