@@ -82,6 +82,72 @@ export class VerificationRequest {
         type: String
     })
     identifiedData: string
+
+    @Prop({
+        required: false,
+        type: Map,
+        of: Number,
+    })
+    stateRetries: Map<string, number>
+
+    @Prop({
+        required: false,
+        type: Array,
+    })
+    stateErrors: Array<{
+        state: string;
+        error: string;
+        timestamp: Date;
+    }>
+
+    @Prop({
+        required: false,
+        type: Array,
+    })
+    stateTransitions: Array<{
+        from: string;
+        to: string;
+        timestamp: Date;
+        duration: number;
+    }>
+
+    @Prop({
+        required: false,
+        type: Object,
+    })
+    progress: {
+        current: string;
+        completed: number;
+        total: number;
+        percentage: number;
+        estimatedCompletion?: Date;
+    }
+
+    @Prop({
+        required: false,
+        type: Map,
+        of: String,
+    })
+    stateFingerprints: Map<string, string>
+
+    @Prop({
+        required: false,
+        type: Array,
+    })
+    auditLog: Array<{
+        action: string;
+        field?: string;
+        userId?: string;
+        timestamp: Date;
+        details?: any;
+    }>
+
+    @Prop({
+        required: false,
+        type: Map,
+        of: String,
+    })
+    pendingAiTasks: Map<string, string>
 }
 
 const VerificationRequestSchema =

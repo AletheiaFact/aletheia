@@ -58,15 +58,49 @@ export class VerificationRequestModule implements OnModuleInit {
     ) {}
 
     onModuleInit() {
+        // Register callback for embedding updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            (params, result) =>
-                this.verificationService.updateEmbedding(params, result)
+            (params, result) => {
+                console.log(`[VerificationRequestModule] EMBEDDING callback invoked with params:`, params);
+                return this.verificationService.updateFieldByAiTask(params, result);
+            }
         );
+
+        // Register callback for identifying data updates (legacy, kept for compatibility)
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
-            (params, result) =>
-                this.verificationService.updateFieldByAiTask(params, result)
+            (params, result) => {
+                console.log(`[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`, params);
+                return this.verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for topics updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_TOPICS,
+            (params, result) => {
+                console.log(`[VerificationRequestModule] TOPICS callback invoked with params:`, params);
+                return this.verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for impact area updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_IMPACT_AREA,
+            (params, result) => {
+                console.log(`[VerificationRequestModule] IMPACT_AREA callback invoked with params:`, params);
+                return this.verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for severity updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_SEVERITY,
+            (params, result) => {
+                console.log(`[VerificationRequestModule] SEVERITY callback invoked with params:`, params);
+                return this.verificationService.updateFieldByAiTask(params, result);
+            }
         );
     }
 }
