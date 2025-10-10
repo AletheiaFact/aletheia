@@ -15,9 +15,6 @@ const AletheiaSocialMediaFooter = () => {
     return (
         <Grid container
             justifyContent="center"
-            style={{
-                padding: "10px 0",
-            }}
         >
             <Grid item xs={12}>
                 <h3 style={{ fontSize: "23px", color: colors.white }}>
@@ -47,7 +44,7 @@ const AletheiaSocialMediaFooter = () => {
                     <AletheiaSocialMediaIcons />
                 )}
             </Grid>
-            <Grid item style={{ width: "324px", margin: "30px auto" }}>
+            <Grid item style={{ width: "324px" }}>
                 <Divider flexItem
                     variant="fullWidth"
                     style={{
