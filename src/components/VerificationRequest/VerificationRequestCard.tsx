@@ -104,6 +104,97 @@ const VerificationRequestCard = ({
         }
     }, [verificationRequest.content]);
 
+    const getTags = (verificationRequest) => {
+        const tags = [];
+        if (verificationRequest.publicationDate) {
+            const publicationDate = new Date(
+                verificationRequest.publicationDate
+            );
+
+            const isValidDate = !isNaN(publicationDate.getTime());
+
+            tags.push(
+                <CustomTag
+                    style={{ backgroundColor: colors.secondary, color: colors.white }}
+                    key={`${verificationRequest._id}|publicationDate`}
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagPublicationDate"
+                                )}
+                                :
+                            </strong>{" "}
+                            {isValidDate ? (
+                                <LocalizedDate date={publicationDate} />
+                            ) : (
+                                verificationRequest.publicationDate
+                            )}
+                        </div>
+                    }
+                />
+            );
+        }
+        if (verificationRequest.date) {
+            tags.push(
+                <CustomTag
+                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
+                    key={`${verificationRequest._id}|date`}
+                    label={
+                        <div>
+                            <strong>
+                                {t("verificationRequest:verificationRequestTagDate")}:
+                            </strong>{" "}
+                            <LocalizedDate date={verificationRequest.date} />
+                        </div>
+                    }
+                />
+            );
+        }
+        if (verificationRequest.heardFrom) {
+            tags.push(
+                <CustomTag
+                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
+                    key={`${verificationRequest._id}|heardFrom`}
+                    label={
+                        <div>
+                            <strong>
+                                {t(
+                                    "verificationRequest:verificationRequestTagHeardFrom"
+                                )}
+                                :
+                            </strong>{" "}
+                            {verificationRequest.heardFrom}
+                        </div>
+                    }
+                />
+            );
+        }
+        if (verificationRequest.source && verificationRequest.source.length > 0) {
+            for (const [index, source] of verificationRequest.source.entries()) {
+                if (source?.href) {
+                    tags.push(
+                        <CustomTag
+                            style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
+                            key={`${verificationRequest._id}|source|${index}`}
+                            label={
+                                <div>
+                                    <strong>
+                                        {t("verificationRequest:verificationRequestTagSource")}:
+                                    </strong>
+                                    <Link href={source.href} passHref>
+                                        {truncateUrl(source.href)}
+                                    </Link>
+                                </div>
+                            }
+                        />
+                    );
+                }
+            }
+        }
+        return tags;
+    };
+
     return (
         <CardBase style={{ padding: "32px", ...style }}>
             <ContentWrapper>

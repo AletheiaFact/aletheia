@@ -18,6 +18,7 @@ import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispa
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { AbilityModule } from "../auth/ability/ability.module";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -49,8 +50,6 @@ const VerificationRequestModel = MongooseModule.forFeature([
         VerificationRequestService,
         VerificationRequestStateMachineService,
     ],
-    exports: [VerificationRequestService, VerificationRequestStateMachineService],
-    providers: [VerificationRequestService, VerificationRequestStateMachineService],
     controllers: [VerificationRequestController],
 })
 export class VerificationRequestModule implements OnModuleInit {
