@@ -82,13 +82,13 @@ export class VerificationRequestStateMachineService {
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
                 verificationRequest: {
-                    id: verificationRequestId,
-                    content: verificationRequest.content,
-                    status: verificationRequest.status
+                    ...verificationRequest,
+                    status: VerificationRequestStatus.PRE_TRIAGE,
                 },
+                // user: verificationRequest.user.id,
             },
-            VerificationRequestStateMachineEvents.DEFINE_TOPICS,
-        )
+            VerificationRequestStateMachineEvents.DEFINE_TOPICS
+        );
     }
 
     async defineImpactArea(verificationRequestId: string): Promise<any> {

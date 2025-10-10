@@ -22,21 +22,21 @@ import { ADMIN_USER_ABILITY } from "../auth/ability/abilities.constants";
 export class AiTaskController {
     constructor(private readonly aiTaskService: AiTaskService) {}
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    // @M2MOrAbilities(ADMIN_USER_ABILITY)
     @ApiOperation({ summary: "Enqueue a new AI task" })
     @Post()
     create(@Body() createDto: CreateAiTaskDto) {
         return this.aiTaskService.create(createDto);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    // @M2MOrAbilities(ADMIN_USER_ABILITY)
     @ApiOperation({ summary: "Get all pending AI tasks" })
     @Get("pending")
     getPending() {
         return this.aiTaskService.findAll(AiTaskState.PENDING);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    // @M2MOrAbilities(ADMIN_USER_ABILITY)
     @ApiOperation({ summary: "Get AI tasks by state" })
     @Get()
     findAll(@Query("state") state?: string) {
@@ -44,7 +44,7 @@ export class AiTaskController {
         return this.aiTaskService.findAll(typedState);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    // @M2MOrAbilities(ADMIN_USER_ABILITY)
     @ApiOperation({
         summary: "Update AI task state and optionally dispatch result",
     })

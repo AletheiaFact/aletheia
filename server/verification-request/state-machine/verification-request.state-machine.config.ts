@@ -18,7 +18,6 @@ import {
     CallbackRoute,
     OPENAI_EMBEDDING_MODEL,
     OPENAI_IDENTIFY_DATA,
-    DEFAULT_EMBEDDING_MODEL,
 } from "../../ai-task/constants/ai-task.constants";
 
 const verificationRequestStateMachineSchema = {
@@ -82,57 +81,60 @@ const getStateInvokeSrc = (
                 await getVerificationRequestService().createAiTask(taskDto)
                 return context.result
             }
-        // case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
-        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
-        //         const taskDto: CreateAiTaskDto = {
-        //             type: AiTaskType.DEFINING_TOPICS,
-        //             content: {
-        //                 text: context.verificationRequest.content,
-        //                 model: OPENAI_IDENTIFY_DATA,
-        //             },
-        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_TOPICS,
-        //             callbackParams: {
-        //                 targetId: context.verificationRequest.id,
-        //                 field: "topics",
-        //             },
-        //         };
-        //         await getVerificationRequestService().createAiTask(taskDto)
-        //         return context.result
-        //     }
-        // case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
-        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
-        //         const taskDto: CreateAiTaskDto = {
-        //             type: AiTaskType.DEFINING_IMPACT_AREA,
-        //             content: {
-        //                 text: context.verificationRequest.content,
-        //                 model: OPENAI_IDENTIFY_DATA,
-        //             },
-        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IMPACT_AREA,
-        //             callbackParams: {
-        //                 targetId: context.verificationRequest.id,
-        //                 field: "impactArea",
-        //             },
-        //         };
-        //         await getVerificationRequestService().createAiTask(taskDto)
-        //         return context.result
-        //     }
-        // case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
-        //     return async (context: VerificationRequestStateMachineContext, event, meta) => {
-        //         const taskDto: CreateAiTaskDto = {
-        //             type: AiTaskType.DEFINING_SEVERITY,
-        //             content: {
-        //                 text: context.verificationRequest.content,
-        //                 model: OPENAI_IDENTIFY_DATA,
-        //             },
-        //             callbackRoute: CallbackRoute.VERIFICATION_UPDATE_SEVERITY,
-        //             callbackParams: {
-        //                 targetId: context.verificationRequest.id,
-        //                 field: "severity",
-        //             },
-        //         };
-        //         await getVerificationRequestService().createAiTask(taskDto)
-        //         return context.result
-        //     }
+        case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
+            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+                
+                // TODO: Add more context for be used to recover the topics
+                const taskDto: CreateAiTaskDto = {
+                    type: AiTaskType.DEFINING_TOPICS,
+                    content: {
+                        text: context.verificationRequest.identifiedData,
+                        model: OPENAI_IDENTIFY_DATA,
+                    },
+                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
+                    callbackParams: {
+                        targetId: context.verificationRequest.id,
+                        field: "topics",
+                    },
+                };
+                await getVerificationRequestService().createAiTask(taskDto)
+                return context.result
+            }
+        case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
+            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+                // TODO: Add more context for be used to recover the impact area
+                const taskDto: CreateAiTaskDto = {
+                    type: AiTaskType.DEFINING_IMPACT_AREA,
+                    content: {
+                        text: context.verificationRequest.content,
+                        model: OPENAI_IDENTIFY_DATA,
+                    },
+                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
+                    callbackParams: {
+                        targetId: context.verificationRequest.id,
+                        field: "impactArea",
+                    },
+                };
+                await getVerificationRequestService().createAiTask(taskDto)
+                return context.result
+            }
+        case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
+            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+                const taskDto: CreateAiTaskDto = {
+                    type: AiTaskType.DEFINING_SEVERITY,
+                    content: {
+                        text: context.verificationRequest.content,
+                        model: OPENAI_IDENTIFY_DATA,
+                    },
+                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
+                    callbackParams: {
+                        targetId: context.verificationRequest.id,
+                        field: "severity",
+                    },
+                };
+                await getVerificationRequestService().createAiTask(taskDto)
+                return context.result
+            }
         default:
             return async (
                 context: VerificationRequestStateMachineContext,
@@ -150,6 +152,22 @@ const verificationRequestCanRunStep: ConditionalFunc = (context, event) => {
     const eventName = event.type.split('.')[2]
     const hasStateExecuted = context.verificationRequest?.statesExecuted?.includes(eventName)
     return !hasStateExecuted
+}
+
+const canDefineTopics: ConditionalFunc = (context, event) => {
+    // Topics can only run after identifiedData is populated
+    const hasIdentifiedData = context.verificationRequest?.identifiedData
+    const notAlreadyExecuted = !context.verificationRequest?.statesExecuted?.includes('topics')
+
+    return !!(hasIdentifiedData && notAlreadyExecuted)
+}
+
+const canDefineImpactArea: ConditionalFunc = (context, event) => {
+    // Impact area can only run after identifiedData is populated
+    const hasIdentifiedData = context.verificationRequest?.identifiedData
+    const notAlreadyExecuted = !context.verificationRequest?.statesExecuted?.includes('impactArea')
+
+    return !!(hasIdentifiedData && notAlreadyExecuted)
 }
 
 const canDefineSeverity: ConditionalFunc = (context, event) => {
@@ -228,7 +246,7 @@ const getStateInvoke = (
                                 return event.data
                             },
                         }),
-                        cond: verificationRequestCanRunStep,
+                        cond: canDefineTopics,
                     },
                     {
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
@@ -253,7 +271,7 @@ const getStateInvoke = (
                                 return event.data
                             },
                         }),
-                        cond: verificationRequestCanRunStep,
+                        cond: canDefineImpactArea,
                     },
                     {
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,

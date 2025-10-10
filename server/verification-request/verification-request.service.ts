@@ -979,10 +979,15 @@ export class VerificationRequestService {
 
     /**
      * Revalidate and run missing states with parallel execution
+     * IMPORTANT: Topics and Impact Area can only run AFTER identifiedData is populated
      */
+    // TODO: for some reason this is duplicating the already executed state
     private async revalidateAndRunMissingStatesWithParallel(verificationRequest: VerificationRequestDocument) {
         const statesExecuted = verificationRequest.statesExecuted || [];
-        this.logger.log(`Revalidating VR ${verificationRequest.id}, states executed: ${statesExecuted.join(', ')}`);
+        const hasIdentifiedData = !!verificationRequest.identifiedData;
+
+        console.log('verificationRequest on revalidateAndRunMissingStatesWithParallel', verificationRequest)
+        this.logger.log(`Revalidating VR ${verificationRequest.id}, states executed: ${statesExecuted.join(', ')}, identifiedData: ${hasIdentifiedData ? 'YES' : 'NO'}`);
 
         // If severity is completed, we're done
         if (statesExecuted.includes('severity')) {
@@ -990,16 +995,17 @@ export class VerificationRequestService {
             return;
         }
 
-        // Run embedding → then parallel identifiedData + topics → then impactArea → then severity
-        if (statesExecuted.includes('embedding') &&
-            !statesExecuted.includes('identifiedData') &&
-            !statesExecuted.includes('topics')) {
+        // After identifiedData is complete, run topics and impactArea in parallel
+        if (statesExecuted.includes('identifiedData') &&
+            hasIdentifiedData &&
+            !statesExecuted.includes('topics') &&
+            !statesExecuted.includes('impactArea')) {
 
-            this.logger.log(`Running identifiedData and topics in parallel for VR ${verificationRequest.id}`);
+            this.logger.log(`identifiedData populated, running topics and impactArea in parallel for VR ${verificationRequest.id}`);
 
             await Promise.allSettled([
-                this.verificationRequestStateService.identifyData(verificationRequest.id),
-                this.verificationRequestStateService.defineTopics(verificationRequest.id)
+                this.verificationRequestStateService.defineTopics(verificationRequest.id),
+                this.verificationRequestStateService.defineImpactArea(verificationRequest.id)
             ]);
 
             return; // Let callbacks handle next steps
