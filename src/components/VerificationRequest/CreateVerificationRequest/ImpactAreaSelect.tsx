@@ -16,7 +16,7 @@ const ImpactAreaSelect: React.FC<ImpactAreaSelectProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    onChange(value);
+    onChange(value || undefined);
   }, []);
   return (
     <MultiSelectAutocomplete

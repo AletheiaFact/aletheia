@@ -17,4 +17,4 @@ enum ReviewTaskTypeEnum {
     VerificationRequest = "VerificationRequest",
 }
 
-export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum};
+export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum };

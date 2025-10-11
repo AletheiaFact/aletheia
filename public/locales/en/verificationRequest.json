@@ -12,6 +12,7 @@
     "verificationRequestTagImpactArea": "Impact Area",
     "verificationRequestTagPublicationDate": "Seen On",
     "verificationRequestTagDate": "Reported On",
+    "verificationRequestTagReceptionChannel": "Reception Channel",
     "verificationRequestTagHeardFrom": "Received On",
     "verificationRequestTagSource": "Source",
     "openVerificationRequest": "Open",

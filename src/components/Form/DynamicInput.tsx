@@ -10,8 +10,8 @@ import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
-import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/VerificationRequestFormSelect";
-import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactDisplay";
+import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
+import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 

@@ -20,11 +20,6 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import {
-    AiTaskType,
-    CallbackRoute,
-    DEFAULT_EMBEDDING_MODEL,
-} from "../ai-task/constants/ai-task.constants";
 import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
@@ -41,10 +36,9 @@ export class VerificationRequestService {
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
         private readonly groupService: GroupService,
+        private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
-        private readonly topicService: TopicService,
-        private readonly historyService: HistoryService
-
+        private readonly topicService: TopicService
     ) {}
 
     async listAll({

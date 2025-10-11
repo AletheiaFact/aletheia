@@ -19,7 +19,7 @@ const ReportTypeSelect = ({
   };
 
   useEffect(() => {
-    onChange(value);
+    onChange(value || undefined);
   }, [value, onChange]);
 
   return (

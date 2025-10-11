@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsDate, IsEnum, IsOptional, IsString } from "class-validator";
 import { ContentModelEnum } from "../../types/enums";
-import { VerificationRequestStatus } from "./types";
 import { Source } from "../../source/schemas/source.schema";
 
 export class CreateVerificationRequestDTO {
@@ -9,7 +8,7 @@ export class CreateVerificationRequestDTO {
     @ApiProperty()
     content: string;
 
-    @IsArray()
+    @IsString()
     @ApiProperty()
     receptionChannel: string;
 
@@ -22,7 +21,7 @@ export class CreateVerificationRequestDTO {
     @IsOptional()
     impactArea: string | { label: string; value: string };
 
-    @IsString()
+    @IsArray()
     @ApiProperty()
     @IsOptional()
     source: Source[];
@@ -61,8 +60,4 @@ export class CreateVerificationRequestDTO {
     @IsArray()
     @ApiProperty()
     embedding?: number[];
-
-    @IsEnum(VerificationRequestStatus)
-    @ApiProperty()
-    status: VerificationRequestStatus;
 }

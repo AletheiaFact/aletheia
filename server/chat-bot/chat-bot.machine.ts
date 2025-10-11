@@ -27,7 +27,7 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                reportType: ContentModelEnum || "",
+                reportType: "" as ContentModelEnum | "",
                 impactArea: "",
                 source: [],
                 publicationDate: "",
