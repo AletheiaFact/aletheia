@@ -157,20 +157,6 @@ export class VerificationRequestService {
             );
             await this.historyService.createHistory(history);
 
-            const taskDto: CreateAiTaskDto = {
-                type: AiTaskType.TEXT_EMBEDDING,
-                content: {
-                    text: data.content,
-                    model: DEFAULT_EMBEDDING_MODEL,
-                },
-                callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-                callbackParams: {
-                    targetId: vr.id,
-                    field: "embedding",
-                },
-            };
-            await this.aiTaskService.create(taskDto);
-
             return vr;
         } catch (e) {
             throw new BadRequestException(

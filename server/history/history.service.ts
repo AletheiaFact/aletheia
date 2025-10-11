@@ -40,7 +40,7 @@ export class HistoryService {
         return {
             targetId: Types.ObjectId(dataId),
             targetModel,
-            user: user?._id || user || null,
+            user: user?._id || user || null, //I need to make it optional because we still need to do M2M for chatbot
             type,
             details: {
                 after: latestChange,
