@@ -9,7 +9,7 @@ export interface ChatBotContext {
     receptionChannel?: string;
     reportType: ContentModelEnum | string;
     impactArea?: string;
-    source?: string;
+    source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
     email?: string;
@@ -29,7 +29,7 @@ export const createChatBotMachine = (
                 responseMessage: "",
                 reportType: ContentModelEnum || "",
                 impactArea: "",
-                source: "",
+                source: [],
                 publicationDate: "",
                 heardFrom: "",
                 email: "",
@@ -309,7 +309,7 @@ export const createChatBotMachine = (
                         reportType: context.reportType || "",
                         impactArea: context.impactArea || "",
                         receptionChannel: context.receptionChannel || "",
-                        source: context.source || "",
+                        source: context.source || [],
                         publicationDate: context.publicationDate || "",
                         email: context.email || "",
                         date: new Date(),

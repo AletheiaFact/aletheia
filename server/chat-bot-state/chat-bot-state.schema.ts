@@ -12,8 +12,8 @@ export interface ChatBotMachineSnapshot {
         reportType?: string;
         impactArea?: string;
         publicationDate?: string;
-        sources?: string;
         heardFrom?: string;
+        sources?: { href: string }[];
         email?: string;
     };
 }

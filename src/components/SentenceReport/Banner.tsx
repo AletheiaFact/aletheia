@@ -31,7 +31,7 @@ function Banner() {
                         borderRadius: "10px",
                     }}
                 >
-                    <span>{t("CTARegistration:button")}</span>
+                    <span>{t("login:signup")}</span>
                 </Button>
             </Grid>
         </BannerStyle>

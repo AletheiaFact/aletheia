@@ -27,7 +27,7 @@ interface ChatBotContext {
     receptionChannel?: string;
     reportType?: ContentModelEnum | string;
     impactArea?: string;
-    source?: string;
+    source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
     email?: string;

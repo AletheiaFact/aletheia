@@ -111,11 +111,12 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
+
     async create(
         data: {
             content: string;
-            source?: string;
             impactArea?: { label: string; value: string } | string;
+            source?: Array<{ href: string }>;
         },
         user?: any
     ): Promise<VerificationRequestDocument> {
@@ -128,12 +129,18 @@ export class VerificationRequestService {
                 impactArea: null
             });
 
-            if (data.source?.trim()) {
-                const src = await this.sourceService.create({
-                    href: data.source,
-                    targetId: vr.id,
-                });
-                vr.source = Types.ObjectId(src.id);
+            if (data.source?.length) {
+                const srcId = await Promise.all(
+                    data.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: vr.id,
+                        });
+                        return src._id;
+                    })
+                );
+
+                vr.source = srcId;
                 await vr.save();
             }
 
@@ -292,7 +299,32 @@ export class VerificationRequestService {
             const updatedVerificationRequestData = {
                 ...latestVerificationRequest,
                 ...verificationRequestBodyUpdate,
+                publicationDate:
+                    verificationRequestBodyUpdate.publicationDate ??
+                    verificationRequest.publicationDate,
             };
+
+            if (verificationRequestBodyUpdate.source?.length) {
+                const newSourceIds = await Promise.all(
+                    verificationRequestBodyUpdate.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: verificationRequest.id,
+                        });
+
+                        return src._id;
+                    })
+                );
+
+                updatedVerificationRequestData.source = Array.from(
+                    new Set([
+                        ...(verificationRequest.source || []).map((sourceId) =>
+                            sourceId.toString()
+                        ),
+                        ...newSourceIds.map((id) => id.toString()),
+                    ])
+                ).map((id) => Types.ObjectId(id));
+            }
 
             if (
                 postProcess &&
@@ -498,12 +530,6 @@ export class VerificationRequestService {
                     localField: "source",
                     foreignField: "_id",
                     as: "source",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$source",
-                    preserveNullAndEmptyArrays: true,
                 },
             },
             {
