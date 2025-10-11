@@ -119,9 +119,11 @@ export class VerificationRequestService {
                 source: null,
             });
 
-            if (data.source?.length) {
+            const validSources = data.source?.filter(s => s?.href?.trim()) || [];
+
+            if (validSources.length) {
                 const srcId = await Promise.all(
-                    data.source.map(async (source) => {
+                    validSources.map(async (source) => {
                         const src = await this.sourceService.create({
                             href: source.href,
                             targetId: vr.id,
