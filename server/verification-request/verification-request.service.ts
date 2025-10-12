@@ -119,7 +119,7 @@ export class VerificationRequestService {
                 source: null,
             });
 
-            const validSources = data.source?.filter(s => s?.href?.trim()) || [];
+            const validSources = data.source?.filter(source => source?.href?.trim()) || [];
 
             if (validSources.length) {
                 const srcId = await Promise.all(
