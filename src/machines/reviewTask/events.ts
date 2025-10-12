@@ -26,6 +26,7 @@ type FactCheckingReviewData = {
     crossCheckingComments: any[];
     crossCheckingComment: string;
     crossCheckingClassification: string;
+    rejectionComment?: string;
 };
 
 type InformativeNewsReviewData = {

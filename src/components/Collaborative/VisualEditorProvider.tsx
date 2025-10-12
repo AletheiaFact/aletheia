@@ -13,13 +13,7 @@ import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
-import {
-    crossCheckingSelector,
-    addCommentCrossCheckingSelector,
-    reportSelector,
-    reviewingSelector,
-} from "../../machines/reviewTask/selectors";
-import { useSelector } from "@xstate/react";
+import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
 
 interface ContextType {
     editorConfiguration?: any;
@@ -30,6 +24,7 @@ interface ContextType {
     comments?: any[];
     setComments?: (data: any) => void;
     source?: string;
+    canShowEditor?: boolean;
 }
 
 export const VisualEditorContext = createContext<ContextType>({});
@@ -43,7 +38,8 @@ interface VisualEditorProviderProps {
 }
 
 export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
-    const { machineService, reportModel, reviewTaskType } = useContext(
+    const editorConfig = new EditorConfig();
+    const { machineService, reportModel, reviewTaskType, publishedReview } = useContext(
         ReviewTaskMachineContext
     );
     const {
@@ -64,20 +60,8 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     );
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
     const [comments, setComments] = useState(null);
-    const isReviewing = useSelector(machineService, reviewingSelector);
-    const isReported = useSelector(machineService, reportSelector);
-    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const isAddCommentCrossChecking = useSelector(
-        machineService,
-        addCommentCrossCheckingSelector
-    );
-
-    const readonly = (() => {
-        if (isReported) return true;
-        if (isCrossChecking && !isAddCommentCrossChecking) return true;
-        if (isReviewing && !enableReviewersUpdateReport) return true;
-        return false;
-    })();
+    // Use centralized permission system
+    const permissions = useReviewTaskPermissions();
 
     useEffect(() => {
         const params = { reportModel, reviewTaskType };
@@ -119,6 +103,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         [reviewTaskType, websocketProvider, enableEditorAnnotations]
     );
 
+<<<<<<< HEAD
     const editorConfiguration = useMemo(
         () => ({
             readonly,
@@ -132,6 +117,18 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         }),
         [readonly, getExtensions, isCollaborative, editorContentObject]
     );
+=======
+    const editorConfiguration = {
+        readonly: permissions.editorReadonly,
+        extensions,
+        isCollaborative,
+        core: { excludeExtensions: ["history"] },
+        stringHandler: "html",
+        content: isCollaborative
+            ? undefined
+            : (editorContentObject as RemirrorContentType),
+    };
+>>>>>>> c442371d (feat: implement centralized RBAC permission system with enhanced UX)
 
     const value = useMemo(
         () => ({
@@ -143,6 +140,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
             comments,
             setComments,
             source: props.source,
+            canShowEditor: permissions.canViewEditor,
         }),
         [
             editorConfiguration,
@@ -153,6 +151,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
             setComments,
             props.data_hash,
             props.source,
+            permissions.canViewEditor,
         ]
     );
 

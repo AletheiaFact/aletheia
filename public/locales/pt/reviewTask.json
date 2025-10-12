@@ -33,6 +33,7 @@
     "RESET_ERROR": "Não foi possível reiniciar o fluxo",
 
     "ADD_REJECTION_COMMENT": "Enviar comentário",
+    "CONFIRM_REJECTION": "Confirmar rejeição",
     "ASSIGN_USER": "Atribuir",
     "ASSIGN_REQUEST": "Atribuir",
     "FINISH_REPORT": "Concluir Relatório",

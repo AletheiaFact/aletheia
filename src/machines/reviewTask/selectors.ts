@@ -25,10 +25,11 @@ const addCommentCrossCheckingSelector = (state) => {
 };
 
 const reviewingSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.submitted) ||
-        state.matches(ReviewTaskStates.rejected)
-    );
+    return state.matches(ReviewTaskStates.submitted);
+};
+
+const rejectedSelector = (state) => {
+    return state.matches(ReviewTaskStates.rejected);
 };
 
 const reviewNotStartedSelector = (state) => {
@@ -44,6 +45,7 @@ export {
     crossCheckingSelector,
     addCommentCrossCheckingSelector,
     reviewingSelector,
+    rejectedSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
     reportSelector,
