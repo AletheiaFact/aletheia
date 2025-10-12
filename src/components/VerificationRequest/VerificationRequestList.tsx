@@ -5,7 +5,7 @@ import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
 import { Grid, IconButton, Button } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { FilterList, InfoOutlined } from "@mui/icons-material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../store/types";
 import debounce from "lodash.debounce";
 import AletheiaButton from "../Button";
+import InfoTooltip from "../Claim/InfoTooltip";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -175,9 +176,9 @@ const VerificationRequestList = () => {
                 headerName: t(
                     "verificationRequest:verificationRequestTagReportType"),
                 flex: 1,
-                valueGetter: (value, row) => t(`claimForm:${row.reportType}`),
+                valueGetter: (value, row) => row.reportType || "",
                 renderCell: (params) => (
-                    <span>{truncateWithEllipsis(params.value, 50)}</span>
+                    <span>{truncateWithEllipsis(t(`claimForm:${params.value}`), 50)}</span>
                 ),
             },
             {
@@ -215,14 +216,29 @@ const VerificationRequestList = () => {
             },
             {
                 field: "source",
-                headerName: t(
-                    "verificationRequest:verificationRequestTagSource"
-                ),
+                headerName: t("verificationRequest:verificationRequestTagSource"),
                 flex: 1,
-                valueGetter: (value, row) => row.source?.href || "",
-                renderCell: (params) => (
-                    <span>{truncateWithEllipsis(params.value, 30)}</span>
-                ),
+                valueGetter: (value, row) => row.source || [],
+                renderCell: (params) => {
+                    const firstSource = params.value[0]?.href;
+
+                    return (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <span style={{overflow: "hidden"}}>
+                                {truncateWithEllipsis(firstSource, 30)}
+                            </span>
+                            {params.value.length > 1 && (
+                                <InfoTooltip
+                                    placement="top"
+                                    content={t("verificationRequest:seeAllSources")}
+                                    useCustomStyle={false}
+                                >
+                                    <InfoOutlined style={{color: colors.neutralSecondary}} fontSize="inherit" />
+                                </InfoTooltip>
+                            )}
+                        </div>
+                    );
+                },
             },
             {
                 field: "date",
@@ -290,7 +306,7 @@ const VerificationRequestList = () => {
             >
                 <Grid item>
                     <IconButton onClick={handleFilterClick}>
-                        <FilterListIcon />
+                        <FilterList />
                     </IconButton>
                     <FilterPopover
                         anchorEl={anchorEl}

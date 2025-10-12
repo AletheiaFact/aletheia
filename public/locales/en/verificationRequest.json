@@ -15,6 +15,7 @@
     "verificationRequestTagReceptionChannel": "Reception Channel",
     "verificationRequestTagHeardFrom": "Received On",
     "verificationRequestTagSource": "Source",
+    "seeAllSources": "See all sources by opening the verification request",
     "openVerificationRequest": "Open",
     "recommendationTitle": "Recommedations",
     "addInGroupButton": "Add in group",
