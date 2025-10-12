@@ -67,12 +67,12 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
-    // Use centralized permission system
+    // Use centralized permission system as middleware only
     const permissions = useReviewTaskPermissions();
 
     const resetIsLoading = () => {
         const isLoading = {};
-        permissions.canSubmitActions?.forEach((eventName) => {
+        events?.forEach((eventName) => {
             isLoading[eventName] = false;
         });
         setIsLoading(isLoading);
@@ -88,7 +88,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
-    }, [permissions.canSubmitActions]);
+    }, [events]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
 
@@ -225,8 +225,16 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
     };
 
-    // Use centralized permission system for button visibility
-    const showButtons = permissions.canSubmitActions.length > 0;
+    // Check if user can perform any actions as middleware
+    const canUserInteractWithForm = () => {
+        // If no events from state machine, no buttons
+        if (!events || events.length === 0) return false;
+        
+        // Use permissions as middleware to check if user can perform any action
+        return permissions.showForm && canInteract;
+    };
+
+    const showButtons = canUserInteractWithForm();
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -249,7 +257,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
                             </Typography>
                         )}
                     </div>
-                    {permissions.canSubmitActions?.length > 0 && showButtons && (
+                    {events?.length > 0 && showButtons && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             ref={recaptchaRef}
@@ -266,7 +274,13 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
                         gap: "10px",
                     }}
                 >
-                    {permissions.canSubmitActions?.map((event) => {
+                    {events?.map((event) => {
+                        // Use permissions as middleware to check if user can perform this specific action
+                        const canPerformAction = permissions.canSubmitActions.includes(event);
+                        
+                        // Skip rendering button if user can't perform this action
+                        if (!canPerformAction) return null;
+                        
                         // Use standard label - confirmRejection event now has its own translation
                         const eventLabel = t(`reviewTask:${event}`);
                         
