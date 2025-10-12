@@ -33,6 +33,7 @@
     "RESET_ERROR": "It was not possible to reset",
 
     "ADD_REJECTION_COMMENT": "Send comment",
+    "CONFIRM_REJECTION": "Confirm rejection",
     "ASSIGN_USER": "Assign",
     "ASSIGN_REQUEST": "Assign",
     "FINISH_REPORT": "Finish Report",

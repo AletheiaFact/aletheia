@@ -67,10 +67,14 @@ const getNextEvents = (
         [States.submitted]: [Events.addRejectionComment, Events.publish],
         [Events.sendToReview]: [Events.addRejectionComment, Events.publish],
 
+        [States.rejected]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.confirmRejection]
+                : [Events.draft, Events.confirmRejection],
         [Events.addRejectionComment]:
             reportModel === ReportModelEnum.FactChecking
-                ? [...defaultEvents, Events.finishReport]
-                : [Events.draft, Events.finishReport],
+                ? [...defaultEvents, Events.confirmRejection]
+                : [Events.draft, Events.confirmRejection],
 
         [States.published]:
             reportModel === ReportModelEnum.Request ? [Events.reset] : [],

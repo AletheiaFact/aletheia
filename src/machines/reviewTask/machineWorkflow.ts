@@ -177,7 +177,7 @@ const factCheckingWorkflow: StatesConfig<
     [States.submitted]: {
         on: {
             [Events.addRejectionComment]: {
-                target: States.assigned,
+                target: States.rejected,
                 actions: [saveContext],
             },
             [Events.reAssignUser]: {
@@ -189,6 +189,24 @@ const factCheckingWorkflow: StatesConfig<
             },
             [Events.viewPreview]: {
                 target: States.submitted,
+                actions: [saveContext],
+            },
+        },
+    },
+    [States.rejected]: {
+        on: {
+            [Events.goback]: {
+                target: States.submitted,
+            },
+            [Events.reAssignUser]: {
+                target: States.unassigned,
+            },
+            [Events.confirmRejection]: {
+                target: States.assigned,
+                actions: [saveContext],
+            },
+            [Events.viewPreview]: {
+                target: States.rejected,
                 actions: [saveContext],
             },
         },

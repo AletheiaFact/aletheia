@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { uniqueId } from "remirror";
 import { Grid, Typography } from "@mui/material";
 import CardStyle from "./CardStyle";
+import { VisualEditorContext } from "../VisualEditorProvider";
 
 interface EditorCardProps {
     label?: string;
@@ -20,6 +21,9 @@ const EditorCard = ({
     span = 12,
     inputSize = 100,
 }: EditorCardProps) => {
+    const { editorConfiguration } = useContext(VisualEditorContext);
+    const isReadonly = editorConfiguration?.readonly;
+    
     return (
         <CardStyle container>
             <Typography variant="subtitle1" component="span" contentEditable={false} suppressContentEditableWarning>
@@ -29,7 +33,11 @@ const EditorCard = ({
                 <div
                     className="card-content"
                     data-cy={dataCy}
-                    style={{ minHeight: inputSize }}
+                    style={{ 
+                        minHeight: inputSize,
+                        backgroundColor: isReadonly ? 'rgba(0, 0, 0, 0.02)' : undefined,
+                        cursor: isReadonly ? 'not-allowed' : undefined
+                    }}
                 >
                     <p style={{ overflowY: "inherit" }} ref={forwardRef} />
                 </div>

@@ -26,6 +26,11 @@ export const fetchUserList = async (
 
 const unassignedForm: FormField[] = [
     createFormField({
+        fieldName: "visualEditor",
+        type: "visualEditor",
+        defaultValue: "",
+    }),
+    createFormField({
         fieldName: "usersId",
         type: "inputSearch",
         i18nKey: "assignUser",
