@@ -29,8 +29,9 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = true }) => {
     const {
         handleSubmit,
         control,
@@ -66,9 +67,12 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
+    // Use centralized permission system
+    const permissions = useReviewTaskPermissions();
+
     const resetIsLoading = () => {
         const isLoading = {};
-        events?.forEach((eventName) => {
+        permissions.canSubmitActions?.forEach((eventName) => {
             isLoading[eventName] = false;
         });
         setIsLoading(isLoading);
@@ -84,17 +88,40 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
-    }, [events]);
+    }, [permissions.canSubmitActions]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
+        
+        // Filter out visualEditor for events that don't need it (navigation, selection, and comment-only events)
+        const eventsWithoutVisualEditor = [
+            ReviewTaskEvents.addRejectionComment,
+            ReviewTaskEvents.confirmRejection,
+            ReviewTaskEvents.selectedCrossChecking,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.selectedReview,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.reAssignUser,
+            ReviewTaskEvents.viewPreview,
+            ReviewTaskEvents.addComment,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.submitComment, // Cross-checking comment submission uses separate form fields
+        ];
+        
+        const filteredFormData = eventsWithoutVisualEditor.includes(eventName)
+            ? Object.fromEntries(
+                Object.entries(formData).filter(([key]) => key !== 'visualEditor')
+              )
+            : formData;
+        
         const payload = {
             data_hash,
             reportModel,
             reviewData: {
-                ...formData,
+                ...filteredFormData,
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review
@@ -198,30 +225,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
     };
 
-    const checkIfUserCanSeeButtons = (): boolean => {
-        const userIsReviewer = reviewData.reviewerId === userId;
-        const userIsCrossChecker = reviewData.crossCheckerId === userId;
-        const userIsAssignee = reviewData.usersId.includes(userId);
-        const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
-
-        if (
-            isReported &&
-            !userIsAssignee &&
-            !userIsCrossChecker &&
-            !userIsAdmin
-        ) {
-            return false;
-        }
-        if (isCrossChecking || isAddCommentCrossChecking) {
-            return userIsCrossChecker || userIsAdmin;
-        }
-        if (isReviewing) {
-            return userIsReviewer || userIsAdmin;
-        }
-        return true;
-    };
-
-    const showButtons = checkIfUserCanSeeButtons();
+    // Use centralized permission system for button visibility
+    const showButtons = permissions.canSubmitActions.length > 0;
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -244,7 +249,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                             </Typography>
                         )}
                     </div>
-                    {events?.length > 0 && showButtons && (
+                    {permissions.canSubmitActions?.length > 0 && showButtons && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             ref={recaptchaRef}
@@ -261,7 +266,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                         gap: "10px",
                     }}
                 >
-                    {events?.map((event) => {
+                    {permissions.canSubmitActions?.map((event) => {
+                        // Use standard label - confirmRejection event now has its own translation
+                        const eventLabel = t(`reviewTask:${event}`);
+                        
                         return (
                             <AletheiaButton
                                 loading={isLoading[event]}
@@ -273,7 +281,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                                 disabled={!hasCaptcha}
                                 data-cy={`testClaimReview${event}`}
                             >
-                                {t(`reviewTask:${event}`)}
+                                {eventLabel}
                             </AletheiaButton>
                         );
                     })}

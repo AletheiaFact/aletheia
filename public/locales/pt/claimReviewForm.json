@@ -43,6 +43,7 @@
     "reviewerPlaceholder": "Selecione um usuário",
     "crossCheckerLabel": "Selecione um revisor para o cross-ckecking",
     "crossCheckerPlaceholder": "Selecione um usuário",
+    "viewOnlyMode": "Você está visualizando este relatório em modo somente leitura. O conteúdo está visível mas não pode ser editado.",
     "crossCheckingCommentLabel": "Comentário do cross-checking",
     "crossCheckingCommentPlaceholder": "Insira o comentário do cross-checking",
     "crossCheckingClassificationLabel": "Revise esse relatório",

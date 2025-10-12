@@ -10,8 +10,16 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
         const supportedEvents = [
             ReviewTaskEvents.finishReport,
             ReviewTaskEvents.draft,
-            ReviewTaskEvents.addRejectionComment,
             ReviewTaskEvents.viewPreview,
+            ReviewTaskEvents.submitComment,
+            ReviewTaskEvents.addComment,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.assignUser,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.selectedCrossChecking,
+            ReviewTaskEvents.selectedReview,
         ];
 
         if (

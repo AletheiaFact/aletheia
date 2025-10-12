@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import {
     reviewingSelector,
     reviewDataSelector,
@@ -7,11 +7,14 @@ import {
     crossCheckingSelector,
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
+import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
 import {
     currentUserId,
     currentUserRole,
     isUserLoggedIn,
 } from "../../atoms/currentUser";
+import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
+import FactCheckingInfo from "../SentenceReport/FactCheckingInfo";
 
 import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -35,6 +38,7 @@ const ClaimReviewForm = ({
     const { machineService, reportModel } = useContext(
         ReviewTaskMachineContext
     );
+    const { canShowEditor } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
@@ -43,42 +47,36 @@ const ClaimReviewForm = ({
         addCommentCrossCheckingSelector
     );
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
-    const userIsAssignee = reviewData.usersId.includes(userId);
-    const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const [formCollapsed, setFormCollapsed] = useState(
         isUnassigned && !reportModel
     );
-    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
-    const [showForm, setShowForm] = useState(false);
-
-    useEffect(() => {
-        const shouldShowForm = () => {
-            if (isUnassigned) return true;
-            if (userIsAdmin) return true;
-            if (userIsAssignee && !isReviewing) return true;
-            if (isReviewing && userIsReviewer) return true;
-            if (
-                (isCrossChecking || isAddCommentCrossChecking) &&
-                userIsCrossChecker
-            )
-                return true;
-            return false;
-        };
-
-        setShowForm(shouldShowForm());
-    }, [
-        isUnassigned,
-        userIsAdmin,
-        userIsAssignee,
-        isReviewing,
-        userIsReviewer,
-        isCrossChecking,
-        userIsCrossChecker,
-    ]);
+    
+    // Use centralized permission system
+    const permissions = useReviewTaskPermissions();
+    const showForm = permissions.showForm;
+    const canInteractWithForm = permissions.canSubmitActions.length > 0;
 
     useEffect(() => {
         setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
+
+    // If user can't see editor, show info banner instead
+    if (canShowEditor === false) {
+        return (
+            <Grid
+                container
+                style={{
+                    background: colors.lightNeutral,
+                    padding: "20px 15px",
+                    justifyContent: "center",
+                }}
+            >
+                <Grid item xs={componentStyle.span}>
+                    <FactCheckingInfo />
+                </Grid>
+            </Grid>
+        );
+    }
 
     return (
         <Grid
@@ -99,6 +97,7 @@ const ClaimReviewForm = ({
                         data_hash={dataHash}
                         personality={personalityId}
                         target={target?._id}
+                        canInteract={canInteractWithForm}
                     />
                 )}
             </Grid>

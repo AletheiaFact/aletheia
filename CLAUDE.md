@@ -126,6 +126,45 @@ The frontend uses Next.js with React:
 - Role-based access control (RBAC) with CASL
 - Support for TOTP 2FA
 
+## Permission System Architecture
+
+The application features a centralized Role-Based Access Control (RBAC) system for fact-checking workflows:
+
+### Centralized Permission System
+- **Location**: `src/machines/reviewTask/permissions.ts`
+- **Hook**: `useReviewTaskPermissions()` in `src/machines/reviewTask/usePermissions.ts`
+- **Purpose**: Single source of truth for all permission logic across review states
+
+### Permission Types
+- **State Access**: `canAccessState` - who can access each workflow state
+- **Editor Permissions**: `canViewEditor`, `canEditEditor`, `editorReadonly` - comprehensive editor control
+- **Form Permissions**: `canSubmitActions`, `canSelectUsers`, `formType` - dynamic form behavior
+- **UI Control**: `showForm`, `showSaveDraftButton`, `canSaveDraft` - fine-grained UI visibility
+
+### Debug Mode (Development Only)
+For testing different user scenarios without multiple accounts:
+
+```typescript
+// Enable in browser console or through debug tools
+debugInfo.set({
+  DEBUG_ROLE: Roles.FactChecker, // Override user role
+  DEBUG_ASSIGNMENT_TYPE: DebugAssignmentType.Assignee // Override assignment
+});
+```
+
+**Debug Assignment Types**:
+- `DebugAssignmentType.None` - Use natural assignments
+- `DebugAssignmentType.Assignee` - Test as assigned fact-checker
+- `DebugAssignmentType.Reviewer` - Test as assigned reviewer  
+- `DebugAssignmentType.CrossChecker` - Test as assigned cross-checker
+
+**Debug Roles**: Admin, SuperAdmin, FactChecker, Reviewer, Regular
+
+### State Machine Workflow
+Review tasks follow these states with proper RBAC enforcement:
+- `unassigned` → `assigned` → `reported` → `reviewing/crossChecking` → `published`
+- Each state has specific permissions for different user roles and assignments
+
 ## Key Technical Considerations
 
 1. **TypeScript**: The project uses TypeScript but with `strict: false`. Be cautious about type safety.

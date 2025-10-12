@@ -118,7 +118,7 @@ const fieldValidation = (value, validationFunction) => {
     if (typeof value === "string") {
         return validationFunction(value);
     }
-    if (typeof value === "object") {
+    if (Array.isArray(value)) {
         return value.every((v) => validationFunction(v));
     }
     return false;
