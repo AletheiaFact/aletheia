@@ -17,10 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
-    sourceChannel?: string;
-    source?: { href: string }[];
-    publicationDate?: string;
-    heardFrom?: string;
+    additionalInfo?: string;
     email?: string;
 }
 

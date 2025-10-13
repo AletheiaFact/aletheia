@@ -5,10 +5,7 @@ import { VerificationRequestStateMachineService } from "../verification-request/
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
-    sourceChannel?: string;
-    source?: { href: string }[];
-    publicationDate?: string;
-    heardFrom?: string;
+    additionalInfo?: string;
     email?: string;
 }
 
@@ -25,9 +22,7 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                source: [],
-                publicationDate: "",
-                heardFrom: "",
+                additionalInfo: "",
                 email: "",
             },
             states: {
@@ -194,9 +189,7 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
-                        sourceChannel: context.sourceChannel || "",
-                        source: context.source || [],
-                        publicationDate: context.publicationDate || "",
+                        additionalInfo: context.additionalInfo || "",
                         email: context.email || "",
                         date: new Date(),
                     };
