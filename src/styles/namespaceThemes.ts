@@ -9,9 +9,9 @@ const namespacePalette = {
         tertiary: colors.tertiary,
     },
     test: {
-        primary: colors.black,
-        secondary: colors.blackSecondary,
-        tertiary: colors.blackTertiary,
+        primary: colors.secondary,
+        secondary: colors.secondary,
+        tertiary: colors.secondary,
     },
 };
 
