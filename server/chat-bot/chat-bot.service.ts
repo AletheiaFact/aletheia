@@ -17,9 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
-    source?: { href: string }[];
-    publicationDate?: string;
-    heardFrom?: string;
+    additionalInfo?: string;
     email?: string;
 }
 
@@ -30,7 +28,7 @@ export class ChatbotService {
         private readonly httpService: HttpService,
         private verificationService: VerificationRequestService,
         private chatBotStateService: ChatBotStateService
-    ) {}
+    ) { }
 
     private async getOrCreateChatBotMachine(from: string, channel: string) {
         const id = `${channel}-${from}`;
@@ -182,9 +180,7 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
-            case "askingForSource":
-            case "askingForPublicationDate":
-            case "askingForHeardFrom":
+            case "askingForAdditionalInfo":
             case "askingForEmail":
                 this.handleOptionalInfoState(
                     parsedMessage,
@@ -255,20 +251,10 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
-            askingForSource: {
-                receive: "RECEIVE_SOURCE",
+            askingForAdditionalInfo: {
+                receive: "RECEIVE_ADDITIONAL_INFO",
                 empty: "RECEIVE_NO",
-                field: "source",
-            },
-            askingForPublicationDate: {
-                receive: "RECEIVE_PUBLICATION_DATE",
-                empty: "RECEIVE_NO",
-                field: "publicationDate",
-            },
-            askingForHeardFrom: {
-                receive: "RECEIVE_HEARD_FROM",
-                empty: "RECEIVE_NO",
-                field: "heardFrom",
+                field: "additionalInfo",
             },
             askingForEmail: {
                 receive: "RECEIVE_EMAIL",

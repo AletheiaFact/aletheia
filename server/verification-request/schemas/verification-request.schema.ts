@@ -16,6 +16,9 @@ export class VerificationRequest {
     content: string;
 
     @Prop({ required: false, type: String })
+    additionalInfo: string;
+
+    @Prop({ required: false, type: String })
     publicationDate: string;
 
     @Prop({ required: false, type: String })

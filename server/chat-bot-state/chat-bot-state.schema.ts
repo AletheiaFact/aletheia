@@ -8,9 +8,7 @@ export interface ChatBotMachineSnapshot {
     context: {
         verificationRequest?: string;
         responseMessage?: string;
-        link?: string;
-        publicationDate?: string;
-        sources?: { href: string }[];
+        additionalInfo?: string;
         email?: string;
     };
 }
