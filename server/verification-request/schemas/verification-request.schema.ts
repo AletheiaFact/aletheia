@@ -18,7 +18,7 @@ export class VerificationRequest {
     content: string;
 
     @Prop({ required: true, type: String })
-    receptionChannel: string;
+    sourceChannel: string;
 
     @Prop({ required: false, type: String })
     reportType: ContentModelEnum;

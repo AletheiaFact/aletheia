@@ -13,7 +13,7 @@
     "verificationRequestTagImpactArea": "Área de Impacto",
     "verificationRequestTagPublicationDate": "Visto Em",
     "verificationRequestTagDate": "Denunciado Em",
-    "verificationRequestTagReceptionChannel": "Canal de Recepção",
+    "verificationRequestTagSourceChannel": "Canal de origem",
     "verificationRequestTagHeardFrom": "Origem",
     "verificationRequestTagSource": "Fonte",
     "seeAllSources": "Veja todas as fontes abrindo a denúncia",

@@ -248,12 +248,12 @@ const VerificationRequestList = () => {
                     row.date ? new Date(row.date).toLocaleDateString() : "",
             },
             {
-                field: "receptionChannel",
+                field: "sourceChannel",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagReceptionChannel"
+                    "verificationRequest:verificationRequestTagSourceChannel"
                 ),
                 flex: 1,
-                valueGetter: (value, row) => row.receptionChannel || "",
+                valueGetter: (value, row) => row.sourceChannel || "",
             },
             {
                 field: "viewRequest",

@@ -6,6 +6,6 @@ export async function up(db: Db) {
     .collection("verificationrequests")
     .updateMany(
       {},
-      { $set: { receptionChannel: "instagram" } },
+      { $set: { sourceChannel: "instagram" } },
     );
 }

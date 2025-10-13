@@ -10,7 +10,7 @@ export class CreateVerificationRequestDTO {
 
     @IsString()
     @ApiProperty()
-    receptionChannel: string;
+    sourceChannel: string;
 
     @IsEnum(ContentModelEnum)
     @ApiProperty()

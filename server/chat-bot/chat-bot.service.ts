@@ -17,7 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
-    receptionChannel?: string;
+    sourceChannel?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
@@ -94,7 +94,7 @@ export class ChatbotService {
             chatbotState.machine.value,
             {
                 ...chatbotState.machine.context,
-                receptionChannel: channel,
+                sourceChannel: channel,
             }
         );
 
