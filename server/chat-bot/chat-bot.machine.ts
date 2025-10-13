@@ -1,14 +1,11 @@
 import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
-import { ContentModelEnum } from "../types/enums";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
     receptionChannel?: string;
-    reportType: ContentModelEnum | string;
-    impactArea?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
@@ -27,8 +24,6 @@ export const createChatBotMachine = (
             context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                reportType: "" as ContentModelEnum | "",
-                impactArea: "",
                 source: [],
                 publicationDate: "",
                 heardFrom: "",
@@ -96,10 +91,10 @@ export const createChatBotMachine = (
                 askingForVerificationRequest: {
                     on: {
                         RECEIVE_REPORT: {
-                            target: "askingForReportType",
+                            target: "askingForSource",
                             actions: [
                                 "saveVerificationRequest",
-                                "askForReportType",
+                                "askForSource",
                                 "setResponseMessage",
                             ],
                         },
@@ -107,60 +102,6 @@ export const createChatBotMachine = (
                             target: "askingForVerificationRequest",
                             actions: [
                                 "sendNoTextMessageAskForVerificationRequest",
-                                "setResponseMessage",
-                            ],
-                        },
-                    },
-                },
-                askingForReportType: {
-                    on: {
-                        RECEIVE_REPORT_TYPE: {
-                            target: "askingForImpactArea",
-                            actions: [
-                                "saveReportType",
-                                "askForImpactArea",
-                                "setResponseMessage",
-                            ],
-                        },
-                        RECEIVE_NO: {
-                            target: "askingForImpactArea",
-                            actions: [
-                                "saveEmptyReportType",
-                                "askForImpactArea",
-                                "setResponseMessage",
-                            ],
-                        },
-                        NON_TEXT_MESSAGE: {
-                            target: "askingForReportType",
-                            actions: [
-                                "sendNoTextMessageAskForReportType",
-                                "setResponseMessage",
-                            ],
-                        },
-                    },
-                },
-                askingForImpactArea: {
-                    on: {
-                        RECEIVE_IMPACT_AREA: {
-                            target: "askingForSource",
-                            actions: [
-                                "saveImpactArea",
-                                "askForSource",
-                                "setResponseMessage",
-                            ],
-                        },
-                        RECEIVE_NO: {
-                            target: "askingForSource",
-                            actions: [
-                                "saveEmptyImpactArea",
-                                "askForSource",
-                                "setResponseMessage",
-                            ],
-                        },
-                        NON_TEXT_MESSAGE: {
-                            target: "askingForImpactArea",
-                            actions: [
-                                "sendNoTextMessageAskForImpactArea",
                                 "setResponseMessage",
                             ],
                         },
@@ -306,8 +247,6 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
-                        reportType: context.reportType || "",
-                        impactArea: context.impactArea || "",
                         receptionChannel: context.receptionChannel || "",
                         source: context.source || [],
                         publicationDate: context.publicationDate || "",
@@ -316,7 +255,7 @@ export const createChatBotMachine = (
                         heardFrom: context.heardFrom || "",
                     };
 
-                    verificationRequestStateMachineService.request(verificationRequestBody)
+                    verificationRequestStateMachineService.request(verificationRequestBody);
                 },
             },
         }

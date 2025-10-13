@@ -6,7 +6,6 @@ import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
-import { ContentModelEnum } from "../types/enums";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
@@ -14,19 +13,11 @@ const MESSAGE_MAP = {
     sim: "RECEIVE_YES",
     nao: "RECEIVE_PAUSE_MACHINE",
 };
-const REPORT_TYPE_MAP: Record<string, ContentModelEnum> = {
-    "discurso": ContentModelEnum.Speech,
-    "imagem": ContentModelEnum.Image,
-    "debate": ContentModelEnum.Debate,
-    "informacao geral": ContentModelEnum.Unattributed,
-};
 
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
     receptionChannel?: string;
-    reportType?: ContentModelEnum | string;
-    impactArea?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
@@ -195,8 +186,6 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
-            case "askingForReportType":
-            case "askingForImpactArea":
             case "askingForSource":
             case "askingForPublicationDate":
             case "askingForHeardFrom":
@@ -227,7 +216,6 @@ export class ChatbotService {
         return message
             .normalize("NFD")
             .replace(diacriticsRegex, "")
-            .replace(/ç/g, "c")
             .toLowerCase();
     }
 
@@ -271,16 +259,6 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
-            askingForReportType: {
-                receive: "RECEIVE_REPORT_TYPE",
-                empty: "RECEIVE_NO",
-                field: "reportType",
-            },
-            askingForImpactArea: {
-                receive: "RECEIVE_IMPACT_AREA",
-                empty: "RECEIVE_NO",
-                field: "impactArea",
-            },
             askingForSource: {
                 receive: "RECEIVE_SOURCE",
                 empty: "RECEIVE_NO",
@@ -305,22 +283,9 @@ export class ChatbotService {
 
         const { receive, empty, field } = stateMapping[currentState];
 
-        let value: any;
-        let type: string;
-
-        if (currentState === "askingForReportType" && parsedMessage !== "nao") {
-            const reportType =
-                REPORT_TYPE_MAP[parsedMessage]
-            type = reportType ? receive : empty
-            value = reportType || null;
-        } else {
-            type = parsedMessage === "nao" ? empty : receive
-            value = message;
-        }
-
         chatBotMachineService.send({
-            type: type,
-            [field]: value,
+            type: parsedMessage === "nao" ? empty : receive,
+            [field]: message,
         });
     }
 }

@@ -9,8 +9,6 @@ export interface ChatBotMachineSnapshot {
         verificationRequest?: string;
         responseMessage?: string;
         receptionChannel?: string;
-        reportType?: string;
-        impactArea?: string;
         publicationDate?: string;
         heardFrom?: string;
         sources?: { href: string }[];

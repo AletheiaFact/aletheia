@@ -1,16 +1,8 @@
 import { EventObject, assign } from "xstate";
 import { ChatBotContext } from "./chat-bot.machine";
-import { ContentModelEnum } from "../types/enums";
 
 interface VerificationRequestEvent extends EventObject {
     verificationRequest: string;
-}
-interface ReportTypeEvent extends EventObject {
-    reportType: ContentModelEnum;
-}
-
-interface ImpactAreaEvent extends EventObject {
-    impactArea: string;
 }
 
 interface SourceEvent extends EventObject {
@@ -44,14 +36,6 @@ const MESSAGES = {
         "Por favor, me conte com detalhes o que você gostaria de denunciar.\n\nPor favor, inclua todas as informações que considerar relevantes para que possamos verificar a denúncia de forma eficiente 👀",
     noTextMessageAskForVerificationRequest:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPor favor, me conte com detalhes o que você gostaria de denunciar.\n\nPor favor, inclua todas as informações que considerar relevantes para que possamos verificar a denúncia de forma eficiente 👀",
-    askForReportType:
-        "Qual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral.\n\nSe você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
-    noTextMessageAskForReportType:
-        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nQual o tipo de conteúdo que você está denunciando? Por favor, responda com uma das opções abaixo:\n\n- Discurso\n- Imagem\n- Debate\n- Informação geral.\n\nSe você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
-    askForImpactArea:
-        "Qual a area de impacto que você acredita que essa fake news pode afetar? Se você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
-    noTextMessageAskForImpactArea:
-        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nQual a area de impacto que você acredita que essa fake news pode afetar?",
     askForSource:
         "A publicação que você está denunciando possui um link? Se sim, por favor, envie-o para nós. Se você não tem um link ou prefere não compartilhar, responda 'Não'.",
     noTextMessageAskForSource:
@@ -102,18 +86,6 @@ export const sendNoTextMessageAskForVerificationRequest =
         responseMessage: () => MESSAGES.noTextMessageAskForVerificationRequest,
     });
 
-export const askForReportType = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.askForReportType,
-});
-export const sendNoTextMessageAskForReportType = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noTextMessageAskForReportType,
-});
-export const askForImpactArea = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.askForImpactArea,
-});
-export const sendNoTextMessageAskForImpactArea = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noTextMessageAskForImpactArea,
-});
 export const askForSource = assign<ChatBotContext>({
     responseMessage: () => MESSAGES.askForSource,
 });
@@ -151,25 +123,6 @@ export const saveVerificationRequest = assign<
     VerificationRequestEvent
 >({
     verificationRequest: (context, event) => event.verificationRequest,
-});
-
-export const saveReportType = assign<
-    ChatBotContext,
-    ReportTypeEvent
->({
-    reportType: (context, event) => event.reportType,
-});
-
-export const saveEmptyReportType = assign<ChatBotContext>({
-    reportType: () => "",
-});
-
-export const saveImpactArea = assign<ChatBotContext, ImpactAreaEvent>({
-    impactArea: (context, event) => event.impactArea,
-});
-
-export const saveEmptyImpactArea = assign<ChatBotContext>({
-    impactArea: () => "",
 });
 
 export const saveSource = assign<ChatBotContext, SourceEvent>({
