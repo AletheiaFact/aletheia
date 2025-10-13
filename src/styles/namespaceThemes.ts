@@ -8,23 +8,27 @@ const namespacePalette = {
         secondary: colors.secondary,
         tertiary: colors.tertiary,
     },
-    test: {
+    otherNamespace: {
         primary: colors.secondary,
         secondary: colors.secondary,
         tertiary: colors.secondary,
     },
 };
 
-export const AletheiaThemeConfig = (namespace: keyof typeof namespacePalette) =>
-    createTheme({
+const defaultPalette = namespacePalette.otherNamespace;
+
+export const AletheiaThemeConfig = (namespace: string) => {
+    const theme = namespacePalette[namespace] || defaultPalette;
+
+    return createTheme({
         palette: {
             primary: {
-                main: namespacePalette[namespace].primary,
-                light: namespacePalette[namespace].secondary,
+                main: theme.primary,
+                light: theme.secondary,
             },
             secondary: {
-                main: namespacePalette[namespace].secondary,
-                light: namespacePalette[namespace].tertiary,
+                main: theme.secondary,
+                light: theme.tertiary,
             },
         },
         typography: {
@@ -36,3 +40,4 @@ export const AletheiaThemeConfig = (namespace: keyof typeof namespacePalette) =>
             },
         },
     });
+};
