@@ -11,26 +11,20 @@ import {
     Req,
     Res,
     UnprocessableEntityException,
-    UseGuards,
 } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
 import type { BaseRequest } from "../types";
 import { Types } from "mongoose";
 import { CreateUserDTO } from "./dto/create-user.dto";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    CheckAbilities,
-    AdminUserAbility,
-} from "../auth/ability/ability.decorator";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
 import { GetUsersDTO } from "./dto/get-users.dto";
+import { Public, AdminOnly, Auth } from "../auth/decorators/auth.decorator";
 
 // TODO: check permissions for routes
 @Controller(":namespace?")
@@ -42,9 +36,9 @@ export class UsersController {
         private util: UtilService
     ) {}
 
-    @IsPublic()
     @ApiTags("pages")
     @Get("login")
+    @Public()
     public async login(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const authType = this.configService.get<string>("authentication_type");
@@ -53,9 +47,9 @@ export class UsersController {
         await this.viewService.render(req, res, "/login", queryObject);
     }
 
-    @IsPublic()
     @ApiTags("pages")
     @Get("sign-up")
+    @Public()
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         await this.viewService.render(
@@ -66,9 +60,9 @@ export class UsersController {
         );
     }
 
-    @IsPublic()
     @ApiTags("user")
     @Post("api/user/register")
+    @Public()
     public async register(@Body() createUserDto: CreateUserDTO) {
         try {
             return await this.usersService.register(createUserDto);
@@ -85,8 +79,7 @@ export class UsersController {
 
     @ApiTags("admin")
     @Get("admin")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
+    @AdminOnly()
     public async admin(@Req() req: Request, @Res() res: Response) {
         const nameSpace = req.params.namespace;
         const parsedUrl = parse(req.url, true);
@@ -115,6 +108,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Put("api/user/password-change")
+    @Auth()
     async changePassword(@Req() req: BaseRequest, @Res() res) {
         try {
             this.usersService
@@ -135,8 +129,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Put("api/user/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
+    @AdminOnly()
     async updateUser(
         @Param("id") userId,
         @Body() updates: UpdateUserDTO,
@@ -172,6 +165,7 @@ export class UsersController {
 
     @ApiTags("pages")
     @Get("profile")
+    @Auth()
     public async profile(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
@@ -184,15 +178,15 @@ export class UsersController {
         await this.viewService.render(req, res, "/profile-page", queryObject);
     }
 
-    @IsPublic()
     @ApiTags("user")
     @Get("api/user")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
     public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("user")
     @Get("api/user/ory/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -202,7 +196,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Get("api/user/:id")
-    @UseGuards(AbilitiesGuard)
+    @Auth()
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getUser(@Param("id") userId) {
         const value = Types.ObjectId(userId);
