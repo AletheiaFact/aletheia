@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 
-interface ContentVRProps {
+interface VerificationRequestContentProps {
     label: string;
     value: React.ReactNode;
 }
 
-export const ContentVR: React.FC<ContentVRProps> = ({ label, value }) => {
+export const VerificationRequestContent: React.FC<VerificationRequestContentProps> = ({ label, value }) => {
     return (
         <Box style={{
             display: "flex",

@@ -41,18 +41,7 @@ const GridList = ({
                     }}
                 >
                     <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
-                        <span
-                            style={{
-                                display:"flex",
-                                alignItems:"center",
-                                gap:"5px",
-                                fontWeight: 400,
-                                fontSize: "16px",
-                                lineHeight: "24px",
-                            }}
-                        >
-                            {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small"/>
-                        </span>
+                        {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small"/>
                     </Button>
                 </Grid>
             )}

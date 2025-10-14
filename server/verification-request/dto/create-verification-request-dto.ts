@@ -1,15 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsDate, IsOptional, IsString } from "class-validator";
+import { Source } from "../../source/schemas/source.schema";
 
 export class CreateVerificationRequestDTO {
     @IsString()
     @ApiProperty()
     content: string;
 
-    @IsString()
+    @IsArray()
     @ApiProperty()
     @IsOptional()
-    source: string;
+    source: Source[];
 
     @IsString()
     @ApiProperty()

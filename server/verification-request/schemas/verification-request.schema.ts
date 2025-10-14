@@ -25,11 +25,11 @@ export class VerificationRequest {
     heardFrom: string;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         required: false,
         ref: "Source",
     })
-    source: mongoose.Types.ObjectId;
+    source: mongoose.Types.ObjectId[];
 
     @Prop({ required: true, default: new Date() })
     date: Date;

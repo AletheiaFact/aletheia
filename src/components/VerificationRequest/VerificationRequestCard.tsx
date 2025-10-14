@@ -7,11 +7,11 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
-import Link from "next/link";
 import colors from "../../styles/colors";
 import { MetaChip } from "./MetaChip";
-import { ContentVR } from "./VerificationRequestContent";
+import { VerificationRequestContent } from "./VerificationRequestContent";
 import { RequestDates } from "./RequestDates";
+import SourceList from "./SourceListVerificationRequest";
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -23,9 +23,18 @@ const ContentWrapper = styled.div`
     @media (max-width: 768px) {
         flex-direction: column;
         width: 70vw;
-        flexWrap: "wrap",
+        flex-wrap: "wrap";
     }
 `;
+
+const MetaChipContainer = styled(Grid)`
+    display: flex;
+    justify-content: space-around;
+    margin-top: 16px;
+    flex-wrap: wrap;
+`;
+
+const smallGreyIcon = { fontSize: 18, color: "grey" };
 
 const truncateUrl = (url) => {
     try {
@@ -52,6 +61,38 @@ const VerificationRequestCard = ({
     const [isOverflowing, setIsOverflowing] = useState(false);
     const textRef = useRef(null);
 
+    const metaChipData = [
+        {
+            icon: <FilterIcon style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|reportType`,
+            label: t("verificationRequest:contentTypeLabel"),
+            label_value: t(`claimForm:${verificationRequest.reportType}`),
+            style: { backgroundColor: colors.secondary, color: colors.white }
+        },
+        {
+            icon: <ShareIcon style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|receptionChannel`,
+            label: t("verificationRequest:receptionChannelLabel"),
+            label_value: verificationRequest.receptionChannel,
+            style: { backgroundColor: colors.primary, color: colors.white }
+        },
+        {
+            icon: <PublicIcon style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|impactArea`,
+            label: t("verificationRequest:impactAreaLabel"),
+            label_value: verificationRequest.impactArea,
+            style: { backgroundColor: colors.neutralSecondary, color: colors.white }
+        },
+        {
+            icon: <WarningAmberIcon style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|severity`,
+            label: t("verificationRequest:severityLabel"),
+            label_value: "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
+            style: { backgroundColor: colors.error, color: colors.white }
+        }
+    ]
+
+
     const handleToggle = () => {
         setVisible(true);
     };
@@ -64,16 +105,11 @@ const VerificationRequestCard = ({
     }, [verificationRequest.content]);
 
     return (
-        <CardBase style={{ padding: 32, ...style }}>
+        <CardBase style={{ padding: "32px", ...style }}>
             <ContentWrapper>
                 <Alert severity="info">
                     <Typography variant="h2"
-                        style={{
-                            fontFamily: "initial",
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            marginBottom: 8,
-                        }}>
+                        sx={{ fontFamily: "initial", fontSize: "18px", fontWeight: "bold", marginBottom: "2px" }}>
                         {t("verificationRequest:reportedContent")}
                     </Typography>
                     <AlertTitle>
@@ -81,7 +117,7 @@ const VerificationRequestCard = ({
                             variant="body1"
                             style={{
                                 color: colors.black,
-                                fontSize: 14,
+                                fontSize: "14px",
                             }}>
                             {verificationRequest.content}
                         </Typography>
@@ -89,19 +125,18 @@ const VerificationRequestCard = ({
                 </Alert>
 
                 <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
-                    {verificationRequest.publicationDate && (() => {
-                        return (
-                            <RequestDates
-                                icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
-                                label={t("verificationRequest:verificationRequestTagPublicationDate")}
-                                value={verificationRequest.publicationDate}
-                            />
-                        );
-                    })()}
+                    {verificationRequest.publicationDate && (
+                        <RequestDates
+                            icon={<DateRangeIcon style={smallGreyIcon} />}
+                            label={t("verificationRequest:verificationRequestTagPublicationDate")}
+                            value={verificationRequest.publicationDate}
+                        />
+                    )}
+
 
                     {verificationRequest.date && (
                         <RequestDates
-                            icon={<DateRangeIcon style={{ fontSize: 18, color: "grey" }} />}
+                            icon={<DateRangeIcon style={smallGreyIcon} />}
                             label={t("verificationRequest:verificationRequestTagDate")}
                             value={verificationRequest.date}
                         />
@@ -109,7 +144,7 @@ const VerificationRequestCard = ({
                 </Grid>
                 <Box mt={2}>
                     {verificationRequest.heardFrom && (
-                        <ContentVR
+                        <VerificationRequestContent
                             label={t("verificationRequest:verificationRequestTagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
                         />
@@ -117,58 +152,27 @@ const VerificationRequestCard = ({
                 </Box>
                 <Box mt={2}>
                     {verificationRequest.source && (
-                        <ContentVR
-                            label={t("verificationRequest:verificationRequestTagSource")}
-                            value={
-                                <Link href={verificationRequest.source.href} passHref>
-                                    <a target="_blank" rel="noopener noreferrer">
-                                        {truncateUrl(verificationRequest.source.href)}
-                                    </a>
-                                </Link>
-                            }
+                        <SourceList
+                            sources={verificationRequest.source}
+                            t={t}
+                            truncateUrl={truncateUrl}
+                            id={verificationRequest._id}
                         />
                     )}
                 </Box>
 
-                <Grid container style={{ display: "flex", justifyContent: "space-around", marginTop: "16px" }}>
-                    <Grid item style={{ display: "flex", alignItems: "center" }}>
-                        <MetaChip
-                            icon={<FilterIcon style={{ fontSize: 18 }} />}
-                            label={t("verificationRequest:contentTypeLabel")}
-                            label_value="Imagem" // Dynamic Field: It must be populated with type Verification Request
-                            color="primary"
-                        />
-                    </Grid>
-
-                    <Grid item style={{ display: "flex", alignItems: "center" }}>
-                        <MetaChip
-                            icon={<ShareIcon style={{ fontSize: 18 }} />}
-                            label={t("verificationRequest:receptionChannelLabel")}
-                            label_value="Instagram" // Dynamic Field: It must be populated with the channel reception of the Verification Request
-                            color="secondary"
-                        />
-                    </Grid>
-
-                    <Grid item style={{ display: "flex", alignItems: "center" }}>
-                        <MetaChip
-                            icon={<PublicIcon style={{ fontSize: 18 }} />}
-                            label={t("verificationRequest:impactAreaLabel")}
-                            label_value="Meio ambiente" // Dynamic Field: It must be populated with the area of impact of the Verification Request
-                            color="success"
-                        />
-                    </Grid>
-
-                    <Grid item style={{ display: "flex", alignItems: "center" }}>
-                        <MetaChip
-                            icon={<WarningAmberIcon style={{ fontSize: 18 }} />}
-                            label={t("verificationRequest:severityLabel")}
-                            label_value="Alta" // Dynamic Field: It must be populated with the severy of the Verification Request
-                            color="error"
-                        />
-                    </Grid>
-
-                </Grid>
-
+                <MetaChipContainer container>
+                    {metaChipData.map(({ icon, key, label, label_value, style }) => (
+                        <Grid item key={key} style={{ marginBottom: "8px" }}>
+                            <MetaChip
+                                icon={icon}
+                                label={label}
+                                label_value={label_value}
+                                style={style}
+                            />
+                        </Grid>
+                    ))}
+                </MetaChipContainer>
 
                 {expandable && !visible && isOverflowing && (
                     <Button

@@ -9,6 +9,7 @@ import {
     Query,
     Param,
     Put,
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
@@ -23,6 +24,11 @@ import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 @Controller(":namespace?")
@@ -91,6 +97,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Post("api/verification-request")
     async create(
+        @Req() req: BaseRequest,
         @Body() verificationRequestBody: CreateVerificationRequestDTO
     ) {
         const validateCaptcha = await this.captchaService.validate(
@@ -99,9 +106,11 @@ export class VerificationRequestController {
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.verificationRequestStateMachineService.request(verificationRequestBody);
+        return this.verificationRequestStateMachineService.request(
+            verificationRequestBody,
+            req.user
+        );
     }
-
 
     // Not working, todo
     // @ApiTags("verification-request")
@@ -134,6 +143,8 @@ export class VerificationRequestController {
         );
     }
 
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId")
     async updateVerificationRequest(

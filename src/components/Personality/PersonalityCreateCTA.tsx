@@ -13,8 +13,9 @@ const PersonalityCreateCTA = ({ href }) => {
                 type={ButtonType.blue}
                 href={href || `./create`}
                 data-cy="testButtonCreatePersonality"
+                icon={<AddIcon />}
             >
-                <AddIcon /> {t("personalityCTA:button")}
+                {t("personalityCTA:button")}
             </Button>
         </CreateCTAButton>
     );

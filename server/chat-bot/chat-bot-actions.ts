@@ -126,11 +126,11 @@ export const saveVerificationRequest = assign<
 });
 
 export const saveSource = assign<ChatBotContext, SourceEvent>({
-    source: (context, event) => event.source,
+    source: (context, event) => [{ href: event.source }],
 });
 
 export const saveEmptySource = assign<ChatBotContext>({
-    source: () => "",
+    source: () => [],
 });
 
 export const savePublicationDate = assign<ChatBotContext, PublicationDateEvent>(

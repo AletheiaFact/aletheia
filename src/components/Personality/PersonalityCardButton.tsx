@@ -33,7 +33,7 @@ const PersonalityCardButton = ({
                     justifyContent: "center",
                 }}
             >
-                <span style={{ marginTop: 4 }}>
+                <span>
                     {isCreatingClaim
                         ? t("claimForm:personalityFound")
                         : t("personality:profile_button")}

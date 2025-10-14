@@ -5,10 +5,10 @@ interface MetaChipProps {
     icon: React.ReactNode;
     label: string;
     label_value: string;
-    color: "primary" | "secondary" | "success" | "error"
+    style: React.CSSProperties;
 }
 
-export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, color = "primary" }) => {
+export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, style }) => {
     return (
         <Box
             sx={{
@@ -43,7 +43,7 @@ export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, co
 
                 <Chip
                     label={label_value}
-                    color={color}
+                    style={style}
                     size="small"
                 />
             </Box>

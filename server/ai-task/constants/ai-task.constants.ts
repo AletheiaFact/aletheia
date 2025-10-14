@@ -17,5 +17,5 @@ export const AiTaskStates = Object.values(AiTaskState) as AiTaskState[];
 export const AiTaskTypes = Object.values(AiTaskType) as AiTaskType[];
 export const CallbackRoutes = Object.values(CallbackRoute) as CallbackRoute[];
 
-export const DEFAULT_EMBEDDING_MODEL = "dengcao/Qwen3-Embedding-0.6B:Q8_0";
+export const DEFAULT_EMBEDDING_MODEL = "nomic-embed-text";
 export const OPENAI_EMBEDDING_MODEL = "text-embedding-3-small";

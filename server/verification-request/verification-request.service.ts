@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Inject } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    Inject,
+    forwardRef,
+} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -16,6 +21,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const md5 = require("md5");
 
@@ -25,6 +31,9 @@ export class VerificationRequestService {
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
+        // This is not yet used but it is necessary to properly initialize the module
+        @Inject(forwardRef(() => VerificationRequestStateMachineService))
+        private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
@@ -94,10 +103,13 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(data: {
-        content: string;
-        source?: string;
-    }): Promise<VerificationRequestDocument> {
+    async create(
+        data: {
+            content: string;
+            source?: Array<{ href: string }>;
+        },
+        user?: any
+    ): Promise<VerificationRequestDocument> {
         try {
             const vr = await this.VerificationRequestModel.create({
                 ...data,
@@ -106,21 +118,27 @@ export class VerificationRequestService {
                 source: null,
             });
 
-            if (data.source?.trim()) {
-                const src = await this.sourceService.create({
-                    href: data.source,
-                    targetId: vr.id,
-                });
-                vr.source = Types.ObjectId(src.id);
+            if (data.source?.length) {
+                const srcId = await Promise.all(
+                    data.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: vr.id,
+                        });
+                        return src._id;
+                    })
+                );
+
+                vr.source = srcId;
                 await vr.save();
             }
 
-            const user = this.req.user;
+            const currentUser = user || this.req?.user;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
                 TargetModel.VerificationRequest,
-                user,
+                currentUser,
                 HistoryType.Create,
                 vr
             );
@@ -138,16 +156,16 @@ export class VerificationRequestService {
 
     async createAiTask(taskDto: CreateAiTaskDto) {
         await this.aiTaskService.create(taskDto);
-        return { success: true }
+        return { success: true };
     }
 
     /**
      * TODO: when updated the embedding we need add missing states triggered by machine
      * to make sure the machine is in the correct state
      * and we can follow to triage process
-     * @param params 
-     * @param embedding 
-     * @returns 
+     * @param params
+     * @param embedding
+     * @returns
      */
     async updateEmbedding(
         params: { targetId: string; field: string },
@@ -261,7 +279,32 @@ export class VerificationRequestService {
             const updatedVerificationRequestData = {
                 ...latestVerificationRequest,
                 ...verificationRequestBodyUpdate,
+                publicationDate:
+                    verificationRequestBodyUpdate.publicationDate ??
+                    verificationRequest.publicationDate,
             };
+
+            if (verificationRequestBodyUpdate.source?.length) {
+                const newSourceIds = await Promise.all(
+                    verificationRequestBodyUpdate.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: verificationRequest.id,
+                        });
+
+                        return src._id;
+                    })
+                );
+
+                updatedVerificationRequestData.source = Array.from(
+                    new Set([
+                        ...(verificationRequest.source || []).map((sourceId) =>
+                            sourceId.toString()
+                        ),
+                        ...newSourceIds.map((id) => id.toString()),
+                    ])
+                ).map((id) => Types.ObjectId(id));
+            }
 
             if (
                 postProcess &&
@@ -467,12 +510,6 @@ export class VerificationRequestService {
                     localField: "source",
                     foreignField: "_id",
                     as: "source",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$source",
-                    preserveNullAndEmptyArrays: true,
                 },
             },
             {
