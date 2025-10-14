@@ -60,8 +60,9 @@ const ClaimReviewForm = ({
         setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
 
-    // If user can't see editor, show info banner instead
-    if (canShowEditor === false) {
+    // If user can't see editor and it's not unassigned state, show info banner
+    // For unassigned state, we want to show the assignment form instead
+    if (canShowEditor === false && !isUnassigned) {
         return (
             <Grid
                 container

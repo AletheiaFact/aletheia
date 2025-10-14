@@ -16,5 +16,6 @@
     "viewOnly": "View Only",
     "assignee": "Assignee",
     "reviewer": "Reviewer",
-    "crossChecker": "Cross-Checker"
+    "crossChecker": "Cross-Checker",
+    "unknownPersonality": "Unknown Person"
 }

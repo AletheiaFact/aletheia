@@ -29,6 +29,9 @@ const SentenceReportView = ({
     isHidden,
     href,
     componentStyle,
+    personality,
+    content,
+    claim,
 }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);

@@ -110,6 +110,9 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 isHidden={review?.isHidden}
                 href={href}
                 componentStyle={componentStyle}
+                personality={personality}
+                content={content}
+                claim={target}
             />
 
             {!review?.isPublished && (

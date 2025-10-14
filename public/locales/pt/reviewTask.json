@@ -54,10 +54,16 @@
     "RESET": "Resetar",
 
     "errorWhileFetching": "Erro ao buscar a máquina",
+    "unassigned": "Não atribuído",
     "assigned": "Usuário atribuído",
     "reported": "Sem revisor",
+    "selectReviewer": "Selecionar revisor",
+    "selectCrossChecker": "Selecionar cross-checker",
+    "cross-checking": "Cross-checking",
     "summarized": "Relatório parcial",
     "submitted": "Em revisão",
+    "rejected": "Rejeitado",
+    "addCommentCrossChecking": "Adicionar comentário para cross-checking",
     "published": "Publicado",
     "draft": "Rascunho",
     "assignedRequest": "Usuário atribuído",
@@ -68,6 +74,8 @@
     "hasStartedAlertTitle": "Essa revisão foi iniciada",
     "invalidReviewerMessage": "O revisor não pode ser um usuário atribuído a essa checagem.",
     "seeFullPage": "Ver página completa",
+    "stepCounter": "Etapa {{current}} de {{total}}",
+    "userAssigned": "Usuário atribuído",
 
     "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact."
 }

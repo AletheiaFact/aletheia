@@ -16,5 +16,6 @@
     "viewOnly": "Somente Visualização",
     "assignee": "Responsável",
     "reviewer": "Revisor",
-    "crossChecker": "Verificador Cruzado"
+    "crossChecker": "Verificador Cruzado",
+    "unknownPersonality": "Pessoa Desconhecida"
 }

@@ -127,8 +127,8 @@ function resolveUnassignedPermissions(
     if (isAdmin) {
         return {
             canAccessState: true,
-            canViewEditor: true,
-            canEditEditor: false, // Admin can see content but shouldn't edit during assignment
+            canViewEditor: false, // No editor in unassigned state - focus on task assignment
+            canEditEditor: false,
             canSaveDraft: false,
             canSubmitActions: availableEvents,
             canSelectUsers: true,

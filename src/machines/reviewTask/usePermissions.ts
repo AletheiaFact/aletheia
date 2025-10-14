@@ -1,7 +1,7 @@
 import { useMemo, useContext } from "react";
 import { useSelector } from "@xstate/react";
 import { useAtom } from "jotai";
-import { currentUserId, currentUserRole, debugInfo, DebugAssignmentType } from "../../atoms/currentUser";
+import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import { ReviewTaskMachineContext } from "./ReviewTaskMachineProvider";
 import { reviewDataSelector } from "./selectors";
@@ -15,7 +15,6 @@ export function useReviewTaskPermissions(): PermissionContext {
     const { machineService, events, reportModel } = useContext(ReviewTaskMachineContext);
     const [userId] = useAtom(currentUserId);
     const [role] = useAtom(currentUserRole);
-    const [debug] = useAtom(debugInfo);
     
     // Get current state and review data
     const currentState = useSelector(machineService, (state) => state.value as string);
@@ -23,41 +22,26 @@ export function useReviewTaskPermissions(): PermissionContext {
     
     // Determine user assignments
     const userAssignments: UserAssignments = useMemo(() => {
-        const baseAssignments = {
+        return {
             isAssignee: reviewData?.usersId?.includes(userId) || false,
             isReviewer: reviewData?.reviewerId === userId,
             isCrossChecker: reviewData?.crossCheckerId === userId,
             isAdmin: role === Roles.Admin || role === Roles.SuperAdmin
         };
-        
-        // Apply debug overrides if enabled
-        if (debug?.DEBUG_ASSIGNMENT_TYPE && debug.DEBUG_ASSIGNMENT_TYPE !== DebugAssignmentType.None) {
-            return {
-                ...baseAssignments,
-                isAssignee: debug.DEBUG_ASSIGNMENT_TYPE === DebugAssignmentType.Assignee,
-                isReviewer: debug.DEBUG_ASSIGNMENT_TYPE === DebugAssignmentType.Reviewer,
-                isCrossChecker: debug.DEBUG_ASSIGNMENT_TYPE === DebugAssignmentType.CrossChecker
-            };
-        }
-        
-        return baseAssignments;
-    }, [userId, role, reviewData, debug]);
-    
-    // Apply debug role override if enabled
-    const effectiveRole = debug?.DEBUG_ROLE || role;
+    }, [userId, role, reviewData]);
     
     // Resolve permissions using centralized system
     const permissions = useMemo(() => {
         const input: PermissionInput = {
             state: currentState as any,
-            userRole: effectiveRole,
+            userRole: role,
             userAssignments,
             reportModel,
             availableEvents: events || []
         };
         
         return resolvePermissions(input);
-    }, [currentState, effectiveRole, userAssignments, reportModel, events]);
+    }, [currentState, role, userAssignments, reportModel, events]);
     
     return permissions;
 }

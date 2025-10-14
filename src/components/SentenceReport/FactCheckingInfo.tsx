@@ -40,7 +40,7 @@ const FactCheckingInfo = () => {
                             marginBottom: "4px"
                         }}
                     >
-                        {t("claimReview:factCheckingInProgress") || "Fact-checking in progress"}
+                        {t("claimReview:factCheckingInProgress")}
                     </Typography>
                     <Typography 
                         variant="body2" 
@@ -49,8 +49,7 @@ const FactCheckingInfo = () => {
                             lineHeight: 1.5 
                         }}
                     >
-                        {t("claimReview:factCheckingInfoMessage") || 
-                         "This content is currently being fact-checked by our team. The report will be available once the review process is complete."}
+                        {t("claimReview:factCheckingInfoMessage")}
                     </Typography>
                 </div>
             </Box>

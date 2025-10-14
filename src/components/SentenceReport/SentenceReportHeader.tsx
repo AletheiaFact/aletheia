@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Box, Chip, Tooltip } from "@mui/material";
+import { Box, Chip, Tooltip, Typography } from "@mui/material";
+import { Schedule as ClockIcon } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import userApi from "../../api/userApi";
@@ -24,6 +25,53 @@ const SentenceReportHeader: React.FC<SentenceReportHeaderProps> = ({
 }) => {
     const { t } = useTranslation();
     const [userNames, setUserNames] = useState<Record<string, string>>({});
+
+
+    // Main workflow progression - derived from state machine definition
+    // This represents the simplified linear view for UI progress indicator
+    const getMainWorkflowSteps = useMemo(() => {
+        const mainStates = [
+            ReviewTaskStates.unassigned,
+            ReviewTaskStates.assigned, 
+            ReviewTaskStates.reported,
+            ReviewTaskStates.crossChecking, // represents reviewing/crossChecking phase
+            ReviewTaskStates.published
+        ];
+        
+        return mainStates.map(state => ({
+            key: state,
+            label: t(`reviewTask:${state}`)
+        }));
+    }, [t]);
+
+    const workflowSteps = getMainWorkflowSteps;
+
+    // Map complex state machine states to simplified workflow view
+    const mapStateToWorkflowStep = (state: string) => {
+        // States that map to the reviewing/crossChecking phase
+        const reviewingStates = [
+            ReviewTaskStates.selectReviewer,
+            ReviewTaskStates.selectCrossChecker,
+            ReviewTaskStates.crossChecking,
+            ReviewTaskStates.addCommentCrossChecking,
+            ReviewTaskStates.submitted,
+            ReviewTaskStates.rejected
+        ];
+        
+        if (reviewingStates.includes(state as any)) {
+            return ReviewTaskStates.crossChecking;
+        }
+        
+        return state;
+    };
+
+    const normalizedCurrentState = mapStateToWorkflowStep(currentState);
+    const currentStepIndex = workflowSteps.findIndex(step => step.key === normalizedCurrentState);
+    const stepStatuses = workflowSteps.map((step, index) => {
+        if (index < currentStepIndex) return "complete";
+        if (index === currentStepIndex) return "current";
+        return "upcoming";
+    });
 
     // Get assigned fact-checker info
     const assignedFactChecker: AssignedFactChecker | null = useMemo(() => {
@@ -88,60 +136,131 @@ const SentenceReportHeader: React.FC<SentenceReportHeaderProps> = ({
     };
 
     return (
-        <Box 
-            style={{ 
-                padding: '16px 20px',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                flexWrap: 'wrap',
-                backgroundColor: 'rgba(245, 245, 245, 0.5)',
-                borderRadius: '8px'
-            }}
-        >
-            {/* State chip */}
-            <Chip
-                label={t(`reviewTask:${currentState}`)}
-                color={getStateColor(currentState)}
-                variant="filled"
-                size="medium"
-                style={{ fontWeight: 600, fontSize: '0.875rem' }}
-            />
-            
-            {/* Assigned fact-checker chip */}
-            {assignedFactChecker && (
-                <Chip
-                    label={`${t(`common:${assignedFactChecker.type}`)}: ${userNames[assignedFactChecker.id] || assignedFactChecker.id}`}
-                    color="primary"
-                    variant="outlined"
-                    size="medium"
-                    style={{ fontWeight: 500, fontSize: '0.875rem' }}
-                />
-            )}
-            
-            {/* View Only indicator */}
-            {editorConfiguration?.readonly && (
-                <Tooltip 
-                    title={t('claimReviewForm:viewOnlyMode')}
-                    arrow
-                    placement="top"
-                >
+        <Box>
+            {/* Enhanced Workflow Status */}
+            <Box sx={{ py: 3 }}>
+                {/* Current State and Step Counter */}
+                <Box sx={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center",
+                    mb: 1.5
+                }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <ClockIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                        <Typography variant="body2" fontWeight="600">
+                            {t(`reviewTask:${currentState}`)}
+                        </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">
+                        {t("reviewTask:stepCounter", { 
+                            current: Math.max(currentStepIndex + 1, 1), 
+                            total: workflowSteps.length 
+                        })}
+                    </Typography>
+                </Box>
+
+                {/* Progress Indicator with Dots */}
+                <Box sx={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    mb: 2,
+                    gap: 0
+                }}>
+                    {workflowSteps.map((step, index) => (
+                        <React.Fragment key={step.key}>
+                            {/* Step Dot */}
+                            <Box
+                                sx={{
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: "50%",
+                                    backgroundColor: stepStatuses[index] === "complete" 
+                                        ? "primary.main"
+                                        : stepStatuses[index] === "current"
+                                            ? "primary.main"
+                                            : "grey.300",
+                                    border: stepStatuses[index] === "current" 
+                                        ? "2px solid rgba(25, 118, 210, 0.2)"
+                                        : "none",
+                                    boxShadow: stepStatuses[index] === "current"
+                                        ? "0 0 0 2px rgba(25, 118, 210, 0.2)"
+                                        : "none",
+                                    flexShrink: 0
+                                }}
+                            />
+                            
+                            {/* Connecting Line */}
+                            {index < workflowSteps.length - 1 && (
+                                <Box
+                                    sx={{
+                                        height: 2,
+                                        flex: 1,
+                                        backgroundColor: stepStatuses[index] === "complete" 
+                                            ? "primary.main" 
+                                            : "grey.300",
+                                        mx: 0.5
+                                    }}
+                                />
+                            )}
+                        </React.Fragment>
+                    ))}
+                </Box>
+
+                {/* Status Badges */}
+                <Box sx={{ 
+                    display: "flex", 
+                    flexWrap: "wrap", 
+                    gap: 1,
+                    alignItems: "center"
+                }}>
                     <Chip
-                        label={t('common:viewOnly')}
-                        color="warning"
-                        variant="outlined"
-                        size="medium"
-                        style={{ 
-                            backgroundColor: 'rgba(255, 193, 7, 0.1)', 
-                            cursor: 'help',
-                            fontWeight: 500,
-                            fontSize: '0.875rem'
+                        label={t("reviewTask:userAssigned")}
+                        variant="filled"
+                        color="default"
+                        size="small"
+                        sx={{ 
+                            height: 20,
+                            fontSize: "0.75rem"
                         }}
                     />
-                </Tooltip>
-            )}
+                    
+                    {assignedFactChecker && (
+                        <Chip
+                            label={`${t(`common:${assignedFactChecker.type}`)}: ${userNames[assignedFactChecker.id] || assignedFactChecker.id}`}
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            sx={{ 
+                                height: 20,
+                                fontSize: "0.75rem"
+                            }}
+                        />
+                    )}
+
+                    {/* View Only indicator */}
+                    {editorConfiguration?.readonly && (
+                        <Tooltip 
+                            title={t('claimReviewForm:viewOnlyMode')}
+                            arrow
+                            placement="top"
+                        >
+                            <Chip
+                                label={t('common:viewOnly')}
+                                color="warning"
+                                variant="outlined"
+                                size="small"
+                                sx={{ 
+                                    backgroundColor: 'rgba(255, 193, 7, 0.1)', 
+                                    cursor: 'help',
+                                    height: 20,
+                                    fontSize: "0.75rem"
+                                }}
+                            />
+                        </Tooltip>
+                    )}
+                </Box>
+            </Box>
         </Box>
     );
 };
