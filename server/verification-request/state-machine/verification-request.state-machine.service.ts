@@ -79,13 +79,15 @@ export class VerificationRequestStateMachineService {
 
     async defineTopics(verificationRequestId: string): Promise<any> {
         const verificationRequest = await this.verificationRequestService.getById(verificationRequestId);
+
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
                 verificationRequest: {
-                    ...verificationRequest,
+                    id: verificationRequestId,
+                    content: verificationRequest.content,
                     status: VerificationRequestStatus.PRE_TRIAGE,
+                    identifiedData: verificationRequest.identifiedData // Need this for the AI task
                 },
-                // user: verificationRequest.user.id,
             },
             VerificationRequestStateMachineEvents.DEFINE_TOPICS
         );
@@ -111,11 +113,7 @@ export class VerificationRequestStateMachineService {
             {
                 verificationRequest: {
                     id: verificationRequestId,
-                    content: verificationRequest.content,
-                    status: verificationRequest.status,
-                    impactArea: verificationRequest.impactArea,
-                    topics: verificationRequest.topics,
-                    identifiedData: verificationRequest.identifiedData,
+                    ...verificationRequest,
                 },
             },
             VerificationRequestStateMachineEvents.DEFINE_SEVERITY,
