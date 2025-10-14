@@ -30,11 +30,6 @@ import {
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
