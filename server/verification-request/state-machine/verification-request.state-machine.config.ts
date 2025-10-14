@@ -83,7 +83,6 @@ const getStateInvokeSrc = (
             }
         case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
             return async (context: VerificationRequestStateMachineContext, event, meta) => {
-                
                 // TODO: Add more context for be used to recover the topics
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_TOPICS,
@@ -215,20 +214,12 @@ const getStateInvoke = (
                 src: getStateInvokeSrc(eventName, getVerificationRequestService),
                 onDone: [
                     {
-                        target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
+                        // Don't auto-transition - let callbacks handle orchestration
+                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
                                 return event.data
                             },
-                        }),
-                        cond: verificationRequestCanRunStep,
-                    },
-                    {
-                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
-                        actions: assign({
-                          result: (context, event: AnyEventObject) => {
-                            return event.data
-                          },
                         }),
                     },
                 ],
@@ -240,20 +231,12 @@ const getStateInvoke = (
                 src: getStateInvokeSrc(eventName, getVerificationRequestService),
                 onDone: [
                     {
-                        target: VerificationRequestStateMachineStates.DEFINING_TOPICS,
+                        // Don't auto-transition to DEFINING_TOPICS - let callbacks handle orchestration
+                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
                                 return event.data
                             },
-                        }),
-                        cond: canDefineTopics,
-                    },
-                    {
-                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
-                        actions: assign({
-                          result: (context, event: AnyEventObject) => {
-                            return event.data
-                          },
                         }),
                     },
                 ],
@@ -265,20 +248,12 @@ const getStateInvoke = (
                 src: getStateInvokeSrc(eventName, getVerificationRequestService),
                 onDone: [
                     {
-                        target: VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA,
+                        // Don't auto-transition - let callbacks handle orchestration
+                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
                                 return event.data
                             },
-                        }),
-                        cond: canDefineImpactArea,
-                    },
-                    {
-                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
-                        actions: assign({
-                          result: (context, event: AnyEventObject) => {
-                            return event.data
-                          },
                         }),
                     },
                 ],
@@ -290,15 +265,7 @@ const getStateInvoke = (
                 src: getStateInvokeSrc(eventName, getVerificationRequestService),
                 onDone: [
                     {
-                        target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
-                        actions: assign({
-                            result: (context, event: AnyEventObject) => {
-                                return event.data
-                            },
-                        }),
-                        cond: canDefineSeverity,
-                    },
-                    {
+                        // Don't auto-transition - let callbacks handle orchestration
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
@@ -321,16 +288,7 @@ const getStateInvoke = (
                                 return event.data
                             },
                         }),
-                        cond: verificationRequestCanRunStep,
-                    },
-                    {
-                        target: CommonStateMachineStates.WRAP_UP_EXECUTION,
-                        actions: assign({
-                            result: (context, event: AnyEventObject) => {
-                                return event.data
-                            },
-                        }),
-                    },
+                    }
                 ],
                 onError: getOnErrorAction(),
             }
@@ -396,10 +354,7 @@ const getStateTransitions = (
             return {
                 [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
                     target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
-                },
-                [VerificationRequestStateMachineEvents.DEFINE_TOPICS]: {
-                    target: VerificationRequestStateMachineStates.DEFINING_TOPICS,
-                },
+                }
             }
         case VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA:
             return {
