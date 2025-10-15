@@ -141,15 +141,16 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
                 TargetModel.VerificationRequest,
-                currentUser,
+                user,
                 HistoryType.Create,
                 vr
             );
+
             await this.historyService.createHistory(history);
 
             this.logger.log(
@@ -999,7 +1000,6 @@ export class VerificationRequestService {
         const hasIdentifiedData = !!verificationRequest.identifiedData;
         const pendingTasks = verificationRequest.pendingAiTasks || new Map();
 
-        console.log('verificationRequest on revalidateAndRunMissingStatesWithParallel', verificationRequest)
         this.logger.log(`Revalidating VR ${verificationRequest.id}, states executed: ${statesExecuted.join(', ')}, identifiedData: ${hasIdentifiedData ? 'YES' : 'NO'}`);
 
         // If severity is completed, we're done
@@ -1014,7 +1014,6 @@ export class VerificationRequestService {
         const topicsPending = pendingTasks.has('topics') || pendingTasks.get('topics');
         const impactAreaPending = pendingTasks.has('impactArea') || pendingTasks.get('impactArea');
 
-        console.log('statesExecuted', statesExecuted);
         // After identifiedData is complete, run topics and impactArea in parallel
         // Only trigger if BOTH are not completed AND not pending
         if (statesExecuted.includes('identifiedData') &&
