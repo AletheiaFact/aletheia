@@ -25,8 +25,6 @@ const PersonalityCardButton = ({
                 {...personalityFoundProps}
                 {...buttonProps}
                 style={{
-                    fontSize: "12px",
-                    lineHeight: "16px",
                     height: "auto",
                     padding: "4px 12px",
                     textAlign: "center",
