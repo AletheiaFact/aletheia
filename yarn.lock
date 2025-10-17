@@ -10782,7 +10782,7 @@ __metadata:
     next: ^12.1.0
     next-i18next: ^10.2.0
     next-seo: ^5.4.0
-    nodemailer: ^6.9.9
+    nodemailer: ^7.0.7
     nodemon: ^2.0.12
     prettier: 2.3.2
     react: ^18.3.1
@@ -22046,10 +22046,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^6.9.9":
-  version: 6.10.1
-  resolution: "nodemailer@npm:6.10.1"
-  checksum: 39e9208e13c40b58c59242205bce855e74def25d953070ab6a5b1c23b0bf37df0725b3c6dea52d4220e2e60dd1fffcd486a697dece79afdf98842aae6395d393
+"nodemailer@npm:^7.0.7":
+  version: 7.0.9
+  resolution: "nodemailer@npm:7.0.9"
+  checksum: b912ad8bafcf6c58ccc5b158a5794f13e6178d8473d167078412ec2a6d90dac52125c9cc9c4722d6f05c91c7f20303ce885af4aa37b4ca10c99e763a58b9feb5
   languageName: node
   linkType: hard
 
