@@ -17,8 +17,8 @@ import { AiTaskModule } from "../ai-task/ai-task.module";
 import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispatcher.service";
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import { AbilityModule } from "../auth/ability/ability.module";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {

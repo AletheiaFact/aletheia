@@ -24,12 +24,12 @@ import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
