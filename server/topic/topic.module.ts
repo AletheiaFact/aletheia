@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { Topic, TopicSchema } from "./schemas/topic.schema";
@@ -18,7 +18,7 @@ const TopicModel = MongooseModule.forFeature([
     imports: [
         TopicModel,
         SentenceModule,
-        ImageModule,
+        forwardRef(() => ImageModule),
         WikidataModule,
     ],
     controllers: [TopicController],

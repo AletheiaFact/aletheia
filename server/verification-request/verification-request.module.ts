@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from "@nestjs/common";
+import { Module, OnModuleInit, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
     VerificationRequestSchema,
@@ -42,6 +42,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
+        forwardRef(() => TopicModule),
     ],
     exports: [
         VerificationRequestService,
@@ -64,8 +65,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             (params, result) => {
-                console.log(`[VerificationRequestModule] EMBEDDING callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] EMBEDDING callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -73,8 +80,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
             (params, result) => {
-                console.log(`[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -82,8 +95,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
             (params, result) => {
-                console.log(`[VerificationRequestModule] TOPICS callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] TOPICS callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -91,8 +110,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
             (params, result) => {
-                console.log(`[VerificationRequestModule] IMPACT_AREA callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] IMPACT_AREA callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -100,8 +125,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
             (params, result) => {
-                console.log(`[VerificationRequestModule] SEVERITY callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] SEVERITY callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
     }
