@@ -105,7 +105,6 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-
     async create(
         data: {
             content: string;

@@ -62,10 +62,10 @@ const TopicDisplay = ({
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
             : await SentenceApi.deleteSentenceTopic(
-                newTopicsArray,
-                data_hash,
-                t
-            );
+                  newTopicsArray,
+                  data_hash,
+                  t
+              );
     };
 
     return (

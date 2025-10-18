@@ -5,7 +5,6 @@ import { Topic } from "../../topic/schemas/topic.schema";
 import { ContentModelEnum } from "../../types/enums";
 import { SeverityEnum, VerificationRequestStatus } from "../dto/types";
 
-
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
 
