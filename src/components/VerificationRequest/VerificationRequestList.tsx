@@ -163,7 +163,7 @@ const VerificationRequestList = () => {
             {
                 field: "content",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagContent"
+                    "verificationRequest:tagReportedContent"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.content,
@@ -174,7 +174,7 @@ const VerificationRequestList = () => {
             {
                 field: "reportType",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagReportType"),
+                    "verificationRequest:tagReportType"),
                 flex: 1,
                 valueGetter: (value, row) => row.reportType || "",
                 renderCell: (params) => (
@@ -184,7 +184,7 @@ const VerificationRequestList = () => {
             {
                 field: "impactArea",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagImpactArea"
+                    "verificationRequest:tagImpactArea"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.impactArea?.name || "",
@@ -195,7 +195,7 @@ const VerificationRequestList = () => {
             {
                 field: "heardFrom",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagHeardFrom"
+                    "verificationRequest:tagHeardFrom"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.heardFrom || "",
@@ -206,7 +206,7 @@ const VerificationRequestList = () => {
             {
                 field: "publicationDate",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagPublicationDate"
+                    "verificationRequest:tagPublicationDate"
                 ),
                 flex: 1,
                 valueGetter: (value, row) =>
@@ -216,7 +216,7 @@ const VerificationRequestList = () => {
             },
             {
                 field: "source",
-                headerName: t("verificationRequest:verificationRequestTagSource"),
+                headerName: t("verificationRequest:tagSource"),
                 flex: 1,
                 valueGetter: (value, row) => row.source || [],
                 renderCell: (params) => {
@@ -242,7 +242,7 @@ const VerificationRequestList = () => {
             },
             {
                 field: "date",
-                headerName: t("verificationRequest:verificationRequestTagDate"),
+                headerName: t("verificationRequest:tagDate"),
                 flex: 1,
                 valueGetter: (value, row) =>
                     row.date ? new Date(row.date).toLocaleDateString() : "",
@@ -250,10 +250,18 @@ const VerificationRequestList = () => {
             {
                 field: "sourceChannel",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagSourceChannel"
+                    "verificationRequest:tagSourceChannel"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.sourceChannel || "",
+            },
+            {
+                field: "severity",
+                headerName: t(
+                    "verificationRequest:tagSeverity"
+                ),
+                flex: 1,
+                valueGetter: (value, row) => row.severity || "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
             },
             {
                 field: "viewRequest",

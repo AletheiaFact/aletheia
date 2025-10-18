@@ -1,49 +1,36 @@
-import { Grid, Chip, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, Alert, AlertTitle, Box } from "@mui/material";
+import { WarningAmber, Public, DateRange, Filter, Share } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
-import Link from "next/link";
 import colors from "../../styles/colors";
-import LocalizedDate from "../LocalizedDate";
-
-const CustomTag = styled(Chip)`
-    border-radius: 4px;
-    font-size: 10px;
-    margin-bottom: 4px;
-    padding: 2px 4px;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    strong {
-        margin-right: 2px;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
-`;
-
-const TagContainer = styled.div`
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-`;
+import { MetaChip } from "./MetaChip";
+import { VerificationRequestContent } from "./VerificationRequestContent";
+import { RequestDates } from "./RequestDates";
+import SourceList from "./SourceListVerificationRequest";
 
 const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
     word-wrap: break-word;
     overflow: hidden;
-    width: 100%;
-
+    width: 50vw;
+    
     @media (max-width: 768px) {
         flex-direction: column;
+        width: 70vw;
+        flex-wrap: "wrap";
     }
 `;
+
+const MetaChipContainer = styled(Grid)`
+    display: flex;
+    justify-content: space-around;
+    margin-top: 16px;
+    flex-wrap: wrap;
+`;
+
+const smallGreyIcon = { fontSize: 18, color: "grey" };
 
 const truncateUrl = (url) => {
     try {
@@ -70,6 +57,37 @@ const VerificationRequestCard = ({
     const [isOverflowing, setIsOverflowing] = useState(false);
     const textRef = useRef(null);
 
+    const metaChipData = [
+        {
+            icon: <Filter style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|reportType`,
+            label: t("verificationRequest:tagReportType"),
+            label_value: t(`claimForm:${verificationRequest.reportType}`),
+            style: { backgroundColor: colors.secondary, color: colors.white }
+        },
+        {
+            icon: <Share style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|receptionChannel`,
+            label: t("verificationRequest:tagSourceChannel"),
+            label_value: verificationRequest.sourceChannel,
+            style: { backgroundColor: colors.primary, color: colors.white }
+        },
+        {
+            icon: <Public style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|impactArea`,
+            label: t("verificationRequest:tagImpactArea"),
+            label_value: verificationRequest.impactArea.name,
+            style: { backgroundColor: colors.neutralSecondary, color: colors.white }
+        },
+        {
+            icon: <WarningAmber style={{ fontSize: 18 }} />,
+            key: `${verificationRequest._id}|severity`,
+            label: t("verificationRequest:tagSeverity"),
+            label_value: "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
+            style: { backgroundColor: colors.error, color: colors.white }
+        }
+    ]
+
     const handleToggle = () => {
         setVisible(true);
     };
@@ -81,152 +99,76 @@ const VerificationRequestCard = ({
         }
     }, [verificationRequest.content]);
 
-    const getTags = (verificationRequest) => {
-        const tags = [];
-        if (verificationRequest.reportType) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.secondary, color: colors.white }}
-                    key={`${verificationRequest._id}|reportType`}
-                    label={
-                        <div>
-                            <strong>
-                                {t("verificationRequest:verificationRequestTagReportType")}:
-                            </strong>{" "}
-                            {t(`claimForm:${verificationRequest.reportType}`)}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.impactArea) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.neutralSecondary, color: colors.white }}
-                    key={`${verificationRequest._id}|impactArea`}
-                    label={
-                        <div>
-                            <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagImpactArea"
-                                )}
-                                :
-                            </strong>{" "}
-                            {verificationRequest.impactArea.name}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.publicationDate) {
-            const publicationDate = new Date(
-                verificationRequest.publicationDate
-            );
-
-            const isValidDate = !isNaN(publicationDate.getTime());
-
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.tertiary, color: colors.white }}
-                    key={`${verificationRequest._id}|publicationDate`}
-                    label={
-                        <div>
-                            <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagPublicationDate"
-                                )}
-                                :
-                            </strong>{" "}
-                            {isValidDate ? (
-                                <LocalizedDate date={publicationDate} />
-                            ) : (
-                                verificationRequest.publicationDate
-                            )}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.date) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.lightPrimary, color: colors.white }}
-                    key={`${verificationRequest._id}|date`}
-                    label={
-                        <div>
-                            <strong>
-                                {t("verificationRequest:verificationRequestTagDate")}:
-                            </strong>{" "}
-                            <LocalizedDate date={verificationRequest.date} />
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.heardFrom) {
-            tags.push(
-                <CustomTag
-                    style={{ backgroundColor: colors.quartiary, color: colors.white }}
-                    key={`${verificationRequest._id}|heardFrom`}
-                    label={
-                        <div>
-                            <strong>
-                                {t(
-                                    "verificationRequest:verificationRequestTagHeardFrom"
-                                )}
-                                :
-                            </strong>{" "}
-                            {verificationRequest.heardFrom}
-                        </div>
-                    }
-                />
-            );
-        }
-        if (verificationRequest.source && verificationRequest.source.length > 0) {
-            for (const [index, source] of verificationRequest.source.entries()) {
-                if (source?.href) {
-                    tags.push(
-                        <CustomTag
-                            style={{ backgroundColor: colors.lightSecondary, color: colors.white }}
-                            key={`${verificationRequest._id}|source|${index}`}
-                            label={
-                                <div>
-                                    <strong>
-                                        {t("verificationRequest:verificationRequestTagSource")}:
-                                    </strong>
-                                    <Link href={source.href} passHref>
-                                        {truncateUrl(source.href)}
-                                    </Link>
-                                </div>
-                            }
-                        />
-                    );
-                }
-            }
-        }
-        return tags;
-    };
-
     return (
-        <CardBase style={{ padding: 32, ...style }}>
+        <CardBase style={{ padding: "32px", ...style }}>
             <ContentWrapper>
-                <Typography
-                    ref={textRef}
-                    variant="body1"
-                    style={{
-                        color: colors.black,
-                        margin: 0,
-                        lineHeight: 1.6,
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        WebkitLineClamp: visible ? "none" : 3,
-                    }}
+                <Alert severity="info">
+                    <Typography variant="h2"
+                        sx={{ fontFamily: "initial", fontSize: "18px", fontWeight: "bold", marginBottom: "2px" }}>
+                        {t("verificationRequest:tagReportedContent")}
+                    </Typography>
+                    <AlertTitle>
+                        <Typography
+                            variant="body1"
+                            style={{
+                                color: colors.black,
+                                fontSize: "14px",
+                            }}>
+                            {verificationRequest.content}
+                        </Typography>
+                    </AlertTitle>
+                </Alert>
 
-                >
-                    {verificationRequest.content}
-                </Typography>
+                <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
+                    {verificationRequest.publicationDate && (
+                        <RequestDates
+                            icon={<DateRange style={smallGreyIcon} />}
+                            label={t("verificationRequest:tagPublicationDate")}
+                            value={verificationRequest.publicationDate}
+                        />
+                    )}
+
+
+                    {verificationRequest.date && (
+                        <RequestDates
+                            icon={<DateRange style={smallGreyIcon} />}
+                            label={t("verificationRequest:tagDate")}
+                            value={verificationRequest.date}
+                        />
+                    )}
+                </Grid>
+                <Box mt={2}>
+                    {verificationRequest.heardFrom && (
+                        <VerificationRequestContent
+                            label={t("verificationRequest:tagHeardFrom")}
+                            value={verificationRequest.heardFrom || " "}
+                        />
+                    )}
+                </Box>
+                <Box mt={2}>
+                    {verificationRequest.source && (
+                        <SourceList
+                            sources={verificationRequest.source}
+                            t={t}
+                            truncateUrl={truncateUrl}
+                            id={verificationRequest._id}
+                        />
+                    )}
+                </Box>
+
+                <MetaChipContainer container>
+                    {metaChipData.map(({ icon, key, label, label_value, style }) => (
+                        <Grid item key={key} style={{ marginBottom: "8px" }}>
+                            <MetaChip
+                                icon={icon}
+                                label={label}
+                                label_value={label_value}
+                                style={style}
+                            />
+                        </Grid>
+                    ))}
+                </MetaChipContainer>
+
                 {expandable && !visible && isOverflowing && (
                     <Button
                         variant="text"
@@ -236,7 +178,6 @@ const VerificationRequestCard = ({
                         {t("verificationRequest:showText")}
                     </Button>
                 )}
-                <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 
             <Grid item
