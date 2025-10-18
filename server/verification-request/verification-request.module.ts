@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from "@nestjs/common";
+import { Module, OnModuleInit, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
     VerificationRequestSchema,
@@ -18,7 +18,11 @@ import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispa
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 import { AbilityModule } from "../auth/ability/ability.module";
+<<<<<<< HEAD
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+=======
+import { TopicModule } from "../topic/topic.module";
+>>>>>>> 07ee68d5 (feat: impact area creation for verification request from ai tasks)
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -40,6 +44,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
+        forwardRef(() => TopicModule),
     ],
     exports: [
         VerificationRequestService,
@@ -62,8 +67,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             (params, result) => {
-                console.log(`[VerificationRequestModule] EMBEDDING callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] EMBEDDING callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -71,8 +82,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
             (params, result) => {
-                console.log(`[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -80,8 +97,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
             (params, result) => {
-                console.log(`[VerificationRequestModule] TOPICS callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] TOPICS callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -89,8 +112,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
             (params, result) => {
-                console.log(`[VerificationRequestModule] IMPACT_AREA callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] IMPACT_AREA callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
 
@@ -98,8 +127,14 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
             (params, result) => {
-                console.log(`[VerificationRequestModule] SEVERITY callback invoked with params:`, params);
-                return this.verificationService.updateFieldByAiTask(params, result);
+                console.log(
+                    `[VerificationRequestModule] SEVERITY callback invoked with params:`,
+                    params
+                );
+                return this.verificationService.updateFieldByAiTask(
+                    params,
+                    result
+                );
             }
         );
     }

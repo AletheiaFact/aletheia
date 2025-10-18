@@ -1,22 +1,22 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, forwardRef, Logger } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
+import { ContentModelEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable()
 export class TopicService {
+    private readonly logger = new Logger(TopicService.name);
     constructor(
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
+        @Inject(forwardRef(() => ImageService))
         private imageService: ImageService,
-        private verificationRequestService: VerificationRequestService,
         private wikidataService: WikidataService
     ) {}
 
@@ -55,62 +55,74 @@ export class TopicService {
             contentModel,
             topics,
             data_hash,
-            reviewTaskType,
         }: {
-            contentModel: ContentModelEnum;
-            topics: { label: string; value: string }[] | string[];
-            data_hash: string;
-            reviewTaskType: ReviewTaskTypeEnum;
+            contentModel?: ContentModelEnum;
+            topics:
+                | { label: string; value: string }[]
+                | string[]
+                | (string | { label: string; value: string })[];
+            data_hash?: string;
         },
         language: string = "pt"
     ) {
-        const createdTopics = await Promise.all(
-            topics.map(async (topic) => {
-                const slug = slugify(topic?.label || topic, {
-                    lower: true,
-                    strict: true,
-                });
-                const findedTopic = await this.getBySlug(slug);
+        try {
+            const createdTopics = await Promise.all(
+                topics.map(async (topic) => {
+                    const slug = slugify(topic?.label || topic, {
+                        lower: true,
+                        strict: true,
+                    });
+                    const findedTopic = await this.getBySlug(slug);
 
-                if (findedTopic) {
-                    return findedTopic?.wikidataId
-                        ? {
-                              label: findedTopic?.name,
-                              value: findedTopic?.wikidataId,
-                          }
-                        : findedTopic.slug;
-                } else {
-                    const newTopic = {
-                        name: topic?.label || topic,
-                        wikidataId: topic?.value,
-                        slug,
-                        language,
-                    };
-                    const createdTopic = await new this.TopicModel(
-                        newTopic
-                    ).save();
+                    if (findedTopic) {
+                        return findedTopic?.wikidataId
+                            ? {
+                                  id: findedTopic._id,
+                                  label: findedTopic?.name,
+                                  value: findedTopic?.wikidataId,
+                              }
+                            : findedTopic.slug;
+                    } else {
+                        const newTopic = {
+                            name: topic?.label || topic,
+                            wikidataId: topic?.value,
+                            slug,
+                            language,
+                        };
 
-                    return {
-                        label: createdTopic.name,
-                        value: createdTopic?.wikidataId,
-                    };
-                }
-            })
-        );
+                        const createdTopic = await new this.TopicModel(
+                            newTopic
+                        ).save();
 
-        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
-            return this.verificationRequestService.updateVerificationRequestWithTopics(
-                createdTopics,
-                data_hash
+                        return {
+                            id: createdTopic._id,
+                            label: createdTopic.name,
+                            value: createdTopic?.wikidataId,
+                        };
+                    }
+                })
             );
-        }
 
-        return contentModel === ContentModelEnum.Image
-            ? this.imageService.updateImageWithTopics(createdTopics, data_hash)
-            : this.sentenceService.updateSentenceWithTopics(
-                  createdTopics,
-                  data_hash
-              );
+            if (contentModel === ContentModelEnum.Image) {
+                return this.imageService.updateImageWithTopics(
+                    createdTopics,
+                    data_hash
+                );
+            } else if (contentModel) {
+                return this.sentenceService.updateSentenceWithTopics(
+                    createdTopics,
+                    data_hash
+                );
+            } else {
+                return createdTopics;
+            }
+        } catch (error) {
+            this.logger.error(
+                `Failed to create topics or update related content: ${error.message}`,
+                error.stack
+            );
+            throw error;
+        }
     }
 
     /**
@@ -120,5 +132,48 @@ export class TopicService {
      */
     getBySlug(slug) {
         return this.TopicModel.findOne({ slug });
+    }
+
+    /**
+     * Find or create a Topic for impact area
+     * Used by verification request AI task callback
+     * @param topicData object with { slug?, name, wikidataId?, language?, description? }
+     * @returns the existing or newly created topic document
+     */
+    async findOrCreateTopic(topicData: {
+        slug?: string;
+        name: string;
+        wikidataId?: string;
+        language?: string;
+        description?: string; // Future use
+    }): Promise<Topic> {
+        try {
+            const slug = topicData.slug
+                ? slugify(topicData.slug, { lower: true, strict: true })
+                : slugify(topicData.name, { lower: true, strict: true });
+
+            const existingTopic = await this.TopicModel.findOne({ slug });
+
+            if (existingTopic) {
+                return existingTopic;
+            }
+
+            const newTopic = {
+                name: topicData.name,
+                slug,
+                language: topicData.language || "pt",
+                wikidataId: topicData.wikidataId || undefined,
+            };
+
+            const createdTopic = await new this.TopicModel(newTopic).save();
+
+            return createdTopic;
+        } catch (error) {
+            this.logger.error(
+                `Failed to find or create topic for "${topicData.name}": ${error.message}`,
+                error.stack
+            );
+            throw error;
+        }
     }
 }

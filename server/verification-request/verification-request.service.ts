@@ -25,6 +25,7 @@ import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import { SeverityEnum, VerificationRequestStatus } from "./dto/types";
 import * as crypto from "crypto";
+import { TopicService } from "../topic/topic.service";
 
 const md5 = require("md5");
 
@@ -47,13 +48,14 @@ export class VerificationRequestService {
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
-        // This is not yet used but it is necessary to properly initialize the module
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
-        private readonly aiTaskService: AiTaskService
+        private readonly aiTaskService: AiTaskService,
+        @Inject(forwardRef(() => TopicService))
+        private readonly topicService: TopicService
     ) {}
 
     async listAll({
@@ -296,7 +298,17 @@ export class VerificationRequestService {
                     valueToUpdate = result;
                     break;
                 case "impactArea":
-                    valueToUpdate = result;
+                    this.logger.log(
+                        `Creating/finding topic for impact area:`,
+                        result
+                    );
+                    const topic = await this.topicService.findOrCreateTopic(
+                        result
+                    );
+                    valueToUpdate = (topic as any)._id;
+                    this.logger.log(
+                        `Impact area topic created/found with ID: ${valueToUpdate}`
+                    );
                     break;
                 case "severity":
                     valueToUpdate = result;

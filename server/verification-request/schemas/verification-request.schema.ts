@@ -64,7 +64,7 @@ export class VerificationRequest {
         enum: VerificationRequestStatus,
     })
     status: string;
-    
+
     @Prop({
         required: false,
         type: [String],
@@ -72,23 +72,24 @@ export class VerificationRequest {
     statesExecuted: string[];
 
     @Prop({
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
-        type: [String],
+        ref: "Topic",
     })
-    impactArea: string;
+    impactArea: Topic;
 
     @Prop({
         required: false,
-        type: String
+        type: String,
     })
-    identifiedData: string
+    identifiedData: string;
 
     @Prop({
         required: false,
         type: Map,
         of: Number,
     })
-    stateRetries: Map<string, number>
+    stateRetries: Map<string, number>;
 
     @Prop({
         required: false,
@@ -98,7 +99,7 @@ export class VerificationRequest {
         state: string;
         error: string;
         timestamp: Date;
-    }>
+    }>;
 
     @Prop({
         required: false,
@@ -109,7 +110,7 @@ export class VerificationRequest {
         to: string;
         timestamp: Date;
         duration: number;
-    }>
+    }>;
 
     @Prop({
         required: false,
@@ -121,14 +122,14 @@ export class VerificationRequest {
         total: number;
         percentage: number;
         estimatedCompletion?: Date;
-    }
+    };
 
     @Prop({
         required: false,
         type: Map,
         of: String,
     })
-    stateFingerprints: Map<string, string>
+    stateFingerprints: Map<string, string>;
 
     @Prop({
         required: false,
@@ -140,14 +141,14 @@ export class VerificationRequest {
         userId?: string;
         timestamp: Date;
         details?: any;
-    }>
+    }>;
 
     @Prop({
         required: false,
         type: Map,
         of: String,
     })
-    pendingAiTasks: Map<string, string>
+    pendingAiTasks: Map<string, string>;
 }
 
 const VerificationRequestSchema =

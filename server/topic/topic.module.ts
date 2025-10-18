@@ -1,11 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { Topic, TopicSchema } from "./schemas/topic.schema";
 import { TopicController } from "./topic.controller";
 import { TopicService } from "./topic.service";
 import { ImageModule } from "../claim/types/image/image.module";
-import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { WikidataModule } from "../wikidata/wikidata.module";
 
 const TopicModel = MongooseModule.forFeature([
@@ -19,8 +18,7 @@ const TopicModel = MongooseModule.forFeature([
     imports: [
         TopicModel,
         SentenceModule,
-        ImageModule,
-        VerificationRequestModule,
+        forwardRef(() => ImageModule),
         WikidataModule,
     ],
     controllers: [TopicController],
