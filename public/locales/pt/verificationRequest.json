@@ -9,8 +9,8 @@
     "openVerificationRequestClaimButton": "Abrir afirmação",
     "agroupVerificationRequest": "Denúncias relacionadas",
     "openVerificationRequest": "Abrir",
-    "verificationRequestTagPublicationDate": "Visto Em",
-    "verificationRequestTagDate": "Denunciado Em",
+    "verificationRequestTagPublicationDate": "Visto em:",
+    "verificationRequestTagDate": "Denunciado em:",
     "verificationRequestTagHeardFrom": "Origem",
     "verificationRequestTagSource": "Fonte",
     "recommendationTitle": "Recomendações",
@@ -51,5 +51,10 @@
     "contentFilterOption": "Conteudo",
     "filterByContentLabel": "Filtrar por Conteudo",
     "applyButtonLabel": "Aplicar",
-    "showText": "Mostrar"
+    "showText": "Mostrar",
+    "reportedContent": "Conteúdo Reportado",
+    "contentTypeLabel": "Tipo de Conteúdo",
+    "receptionChannelLabel": "Canal de Recepção",
+    "impactAreaLabel": "Área de impacto",
+    "severityLabel": "Prioridade"
 }

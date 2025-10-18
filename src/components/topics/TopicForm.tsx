@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Autocomplete, FormControl, CircularProgress, TextField, Grid } from '@mui/material';
+import {
+    Autocomplete,
+    FormControl,
+    CircularProgress,
+    TextField,
+    Grid,
+} from "@mui/material";
 import AletheiaButton from "../Button";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
@@ -111,9 +117,7 @@ const TopicForm = ({
                                     onChange(selectedValues);
                                     setInputValue(selectedValues);
                                 }}
-                                getOptionLabel={(option) =>
-                                    option.label || ""
-                                }
+                                getOptionLabel={(option) => option.label || ""}
                                 isOptionEqualToValue={(option, value) =>
                                     option.value === value.value
                                 }
@@ -126,8 +130,16 @@ const TopicForm = ({
                                             ...params.InputProps,
                                             endAdornment: (
                                                 <>
-                                                    {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                                                    {params.InputProps.endAdornment}
+                                                    {isLoading ? (
+                                                        <CircularProgress
+                                                            color="inherit"
+                                                            size={20}
+                                                        />
+                                                    ) : null}
+                                                    {
+                                                        params.InputProps
+                                                            .endAdornment
+                                                    }
                                                 </>
                                             ),
                                         }}
@@ -150,7 +162,6 @@ const TopicForm = ({
                         marginLeft: 5,
                         textAlign: "center",
                         justifyContent: "center",
-                        lineHeight: "13px",
                     }}
                 >
                     {t("topics:addTopicsButton")}

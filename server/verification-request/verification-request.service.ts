@@ -103,7 +103,6 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-
     async create(
         data: {
             content: string;
@@ -119,11 +118,9 @@ export class VerificationRequestService {
                 source: null,
             });
 
-            const validSources = data.source?.filter(source => source?.href?.trim()) || [];
-
-            if (validSources.length) {
+            if (data.source?.length) {
                 const srcId = await Promise.all(
-                    validSources.map(async (source) => {
+                    data.source.map(async (source) => {
                         const src = await this.sourceService.create({
                             href: source.href,
                             targetId: vr.id,
