@@ -8,10 +8,10 @@ export class TrackingController {
   constructor(private readonly trackingService: TrackingService) { }
 
   @ApiTags("tracking")
-  @Get("api/tracking/:targetId")
+  @Get("api/tracking/:verificationRequestId")
   async getTracking(
-    @Param("targetId") targetId: string
+    @Param("verificationRequestId") verificationRequestId: string
   ) {
-    return this.trackingService.getTrackingStatus(targetId);
+    return this.trackingService.getTrackingStatus(verificationRequestId);
   }
 }

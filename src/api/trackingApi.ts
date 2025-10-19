@@ -5,9 +5,9 @@ const request = axios.create({
   baseURL: `/api/tracking`,
 });
 
-const getTrackingByTarget = (targetId: string) => {
+const getTrackingById = (verificationRequestId: string) => {
   return request
-  .get(`/${targetId}`)
+  .get(`/${verificationRequestId}`)
   .then(response => response.data)
   .catch((err)=>{
     console.error(err)
@@ -16,7 +16,7 @@ const getTrackingByTarget = (targetId: string) => {
 };
 
 const TrackingApi = {
-  getTrackingByTarget,
+  getTrackingById,
 };
 
 export default TrackingApi;

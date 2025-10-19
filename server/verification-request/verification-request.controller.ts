@@ -307,7 +307,7 @@ export class VerificationRequestController {
             await this.verificationRequestService.findByDataHash(data_hash);
 
         const queryObject = Object.assign(parsedUrl.query, {
-            targetId: verificationRequest._id,
+            verificationRequestId: verificationRequest._id,
         });
 
         await this.viewService.render(req, res, "/tracking-page", queryObject);

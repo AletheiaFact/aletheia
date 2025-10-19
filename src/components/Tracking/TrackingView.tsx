@@ -3,21 +3,22 @@ import TrackingApi from "../../api/trackingApi";
 import LocalizedDate from "../LocalizedDate";
 
 interface TrackingViewProps {
-  targetId: string;
+  verificationRequestId: string;
 }
 
 interface TrackingItem {
+  id: string;
   status: string;
   date: string;
 }
 
-const TrackingView = ({ targetId }: TrackingViewProps) => {
+const TrackingView = ({ verificationRequestId }: TrackingViewProps) => {
   const [trackingTimeline, setTrackingTimeline] = useState<TrackingItem[]>([]);
 
   useEffect(() => {
     const fetchTracking = async () => {
       try {
-        const trackingData = await TrackingApi.getTrackingByTarget(targetId);
+        const trackingData = await TrackingApi.getTrackingById(verificationRequestId);
 
         setTrackingTimeline(trackingData);
       } catch (error) {
@@ -25,15 +26,15 @@ const TrackingView = ({ targetId }: TrackingViewProps) => {
       }
     };
 
-    if (targetId) fetchTracking();
-  }, [targetId]);
+    if (verificationRequestId) fetchTracking();
+  }, [verificationRequestId]);
 
   return (
     <div style={{ fontSize: 14, display: "grid", justifyContent: "center" }}>
       <h1>Tracking Timeline</h1>
       <ul>
-        {trackingTimeline.map((item, index) => (
-          <li style={{ fontSize: 14 }}>
+        {trackingTimeline.map((item) => (
+          <li key={item.id} style={{ fontSize: 14 }}>
             <LocalizedDate date={new Date(item.date)} showTime />{` - `}
             <strong>Status:</strong> {item.status} <br />
           </li>

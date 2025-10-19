@@ -11,14 +11,14 @@ export class TrackingService {
   ) {}
 
   /**
-   * Returns the history of status changes (tracking) for a specific target.
+   * Returns the history of status changes (tracking) for a specific verification request.
    * Searches for "create" and "update" type histories and extracts only status transitions.
-   * @param targetId The id of the target.
-   * @returns Array of objects { status: string, date: Date }.
+   * @param verificationRequestId The id of the verification request.
+   * @returns Array of objects { id: string ,status: string, date: Date }.
   */
-  async getTrackingStatus(targetId) {
+  async getTrackingStatus(verificationRequestId) {
     const histories = await this.historyService.getByTargetIdModelAndType(
-      targetId,
+      verificationRequestId,
       TargetModel.VerificationRequest,
       0,
       1000,
@@ -29,6 +29,7 @@ export class TrackingService {
     const tracking = histories
       .filter(h => h.details?.after?.status && h.details?.before?.status !== h.details?.after?.status)
       .map(h => ({
+        id: h._id,
         status: h.details.after.status,
         date: h.date,
       }));

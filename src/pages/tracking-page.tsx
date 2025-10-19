@@ -7,13 +7,13 @@ import { currentNameSpace } from "../atoms/namespace";
 import TrackingView from "../components/Tracking/TrackingView";
 
 const TrackingPage: NextPage<{
-  targetId: string;
+  verificationRequestId: string;
   nameSpace: NameSpaceEnum;
-}> = ({ targetId, nameSpace }) => {
+}> = ({ verificationRequestId, nameSpace }) => {
   const setCurrentNameSpace = useSetAtom(currentNameSpace);
   setCurrentNameSpace(nameSpace);
 
-  return <TrackingView targetId={targetId} />;
+  return <TrackingView verificationRequestId={verificationRequestId} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -22,7 +22,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
   return {
     props: {
       ...(await serverSideTranslations(locale)),
-      targetId: JSON.parse(JSON.stringify(query.targetId)),
+      verificationRequestId: query.verificationRequestId,
       href: req.protocol + "://" + req.get("host") + req.originalUrl,
       nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
     },
