@@ -1,5 +1,6 @@
 import { Module, OnModuleInit, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ModuleRef } from "@nestjs/core";
 import {
     VerificationRequestSchema,
     VerificationRequest,
@@ -42,7 +43,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
-        forwardRef(() => TopicModule),
+        TopicModule,
     ],
     exports: [
         VerificationRequestService,
@@ -57,82 +58,82 @@ const VerificationRequestModel = MongooseModule.forFeature([
 export class VerificationRequestModule implements OnModuleInit {
     constructor(
         private readonly dispatcher: CallbackDispatcherService,
-        private readonly verificationService: VerificationRequestService
+        private readonly moduleRef: ModuleRef
     ) {}
 
     onModuleInit() {
         // Register callback for embedding updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            (params, result) => {
+            async (params, result) => {
                 console.log(
                     `[VerificationRequestModule] EMBEDDING callback invoked with params:`,
                     params
                 );
-                return this.verificationService.updateFieldByAiTask(
-                    params,
-                    result
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
                 );
+                return verificationService.updateFieldByAiTask(params, result);
             }
         );
 
         // Register callback for identifying data updates (legacy, kept for compatibility)
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
-            (params, result) => {
+            async (params, result) => {
                 console.log(
                     `[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`,
                     params
                 );
-                return this.verificationService.updateFieldByAiTask(
-                    params,
-                    result
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
                 );
+                return verificationService.updateFieldByAiTask(params, result);
             }
         );
 
         // Register callback for topics updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
-            (params, result) => {
+            async (params, result) => {
                 console.log(
                     `[VerificationRequestModule] TOPICS callback invoked with params:`,
                     params
                 );
-                return this.verificationService.updateFieldByAiTask(
-                    params,
-                    result
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
                 );
+                return verificationService.updateFieldByAiTask(params, result);
             }
         );
 
         // Register callback for impact area updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
-            (params, result) => {
+            async (params, result) => {
                 console.log(
                     `[VerificationRequestModule] IMPACT_AREA callback invoked with params:`,
                     params
                 );
-                return this.verificationService.updateFieldByAiTask(
-                    params,
-                    result
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
                 );
+                return verificationService.updateFieldByAiTask(params, result);
             }
         );
 
         // Register callback for severity updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
-            (params, result) => {
+            async (params, result) => {
                 console.log(
                     `[VerificationRequestModule] SEVERITY callback invoked with params:`,
                     params
                 );
-                return this.verificationService.updateFieldByAiTask(
-                    params,
-                    result
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
                 );
+                return verificationService.updateFieldByAiTask(params, result);
             }
         );
     }

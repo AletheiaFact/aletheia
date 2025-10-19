@@ -5,8 +5,9 @@ import {
     forwardRef,
     Scope,
     Logger,
+    Scope,
 } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { isValidObjectId, Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
     VerificationRequest,
@@ -50,7 +51,6 @@ export class VerificationRequestService {
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
-        @Inject(forwardRef(() => TopicService))
         private readonly topicService: TopicService
     ) {}
 
@@ -307,7 +307,31 @@ export class VerificationRequestService {
                     );
                     break;
                 case "topics":
-                    valueToUpdate = result;
+                    this.logger.log(
+                        `Creating/finding topics for topics array:`,
+                        result
+                    );
+
+                    if (!Array.isArray(result)) {
+                        throw new BadRequestException(
+                            `Topics must be an array, got: ${typeof result}`
+                        );
+                    }
+
+                    const topicIds = await Promise.all(
+                        result.map(async (topicData) => {
+                            const topic =
+                                await this.topicService.findOrCreateTopic(
+                                    topicData
+                                );
+                            return (topic as any)._id;
+                        })
+                    );
+
+                    valueToUpdate = topicIds;
+                    this.logger.log(
+                        `Topics created/found with IDs: ${topicIds.join(", ")}`
+                    );
                     break;
                 case "impactArea":
                     this.logger.log(
@@ -946,6 +970,13 @@ export class VerificationRequestService {
                     return {
                         valid: false,
                         error: "Topics must be a non-empty array",
+                    };
+                }
+                const allValidIds = result.every((id) => isValidObjectId(id));
+                if (!allValidIds) {
+                    return {
+                        valid: false,
+                        error: "All topics must be valid ObjectIds",
                     };
                 }
                 break;

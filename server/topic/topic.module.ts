@@ -1,4 +1,4 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { Topic, TopicSchema } from "./schemas/topic.schema";
@@ -15,12 +15,7 @@ const TopicModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [
-        TopicModel,
-        SentenceModule,
-        forwardRef(() => ImageModule),
-        WikidataModule,
-    ],
+    imports: [TopicModel, SentenceModule, ImageModule, WikidataModule],
     controllers: [TopicController],
     providers: [TopicService],
     exports: [TopicService],
