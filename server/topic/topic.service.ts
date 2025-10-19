@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, Logger } from "@nestjs/common";
+import { Injectable, Logger, Scope } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
@@ -8,14 +8,13 @@ import { ContentModelEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TopicService {
     private readonly logger = new Logger(TopicService.name);
     constructor(
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
-        @Inject(forwardRef(() => ImageService))
         private imageService: ImageService,
         private wikidataService: WikidataService
     ) {}
