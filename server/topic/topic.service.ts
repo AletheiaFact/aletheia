@@ -159,16 +159,13 @@ export class TopicService {
      * @returns the existing or newly created topic document
      */
     async findOrCreateTopic(topicData: {
-        slug?: string;
         name: string;
         wikidataId?: string;
         language?: string;
         description?: string; // Future use
     }): Promise<Topic> {
         try {
-            const slug = topicData.slug
-                ? slugify(topicData.slug, { lower: true, strict: true })
-                : slugify(topicData.name, { lower: true, strict: true });
+            const slug = slugify(topicData.name, { lower: true, strict: true });
 
             const existingTopic = await this.TopicModel.findOne({ slug });
 
