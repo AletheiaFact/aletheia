@@ -1,11 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
-export interface TrackingItem {
-    id: string; 
-    status: string;
-    date: Date; 
-}
+import { TrackingResponseDTO } from "./interfaces/tracking.interfaces";
 
 @Injectable()
 export class TrackingService {
@@ -21,7 +17,7 @@ export class TrackingService {
   */
   async getTrackingStatus(
     verificationRequestId: string
-  ): Promise<TrackingItem[]> {
+  ): Promise<TrackingResponseDTO> {
     const histories = await this.historyService.getByTargetIdModelAndType(
       verificationRequestId,
       TargetModel.VerificationRequest,
@@ -42,6 +38,14 @@ export class TrackingService {
         status: h.details.after.status,
         date: (h.date as unknown) as Date,
       }));
-    return tracking;
+
+    const latestStatus = tracking.length > 0
+      ? tracking.at(-1)?.status
+      : null;
+
+    return {
+      currentStatus: latestStatus,
+      historyEvents: tracking,
+    };
   }
 }
