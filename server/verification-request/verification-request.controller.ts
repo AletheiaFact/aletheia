@@ -292,4 +292,24 @@ export class VerificationRequestController {
 
         await this.viewService.render(req, res, "/history-page", queryObject);
     }
+
+    @ApiTags("pages")
+    //To DO: set decorator to public
+    @Get("verification-request/:data_hash/tracking")
+    public async verificationRequestTrackingPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { data_hash } = req.params;
+
+        const verificationRequest =
+            await this.verificationRequestService.findByDataHash(data_hash);
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: verificationRequest._id,
+        });
+
+        await this.viewService.render(req, res, "/tracking-page", queryObject);
+    }
 }

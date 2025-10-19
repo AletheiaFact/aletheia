@@ -2,6 +2,11 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
+interface HistoryQuery {
+    targetId: Types.ObjectId;
+    targetModel: string;
+    type?: string | { $in: string[] };
+}
 
 @Injectable()
 export class HistoryService {
@@ -70,25 +75,20 @@ export class HistoryService {
      * @returns The paginated history of a target.
      */
     async getByTargetIdModelAndType(
-        targetId,
-        targetModel,
-        page,
-        pageSize,
-        order = "asc",
-        type = ""
+        targetId: string,
+        targetModel: string,
+        page: number,
+        pageSize: number,
+        order: "asc" | "desc",
+        type: string | string[] = ""
     ) {
-        let query;
+        const query: HistoryQuery = {
+            targetId: Types.ObjectId(targetId),
+            targetModel,
+        };
+
         if (type) {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-                type,
-            };
-        } else {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-            };
+            query.type = Array.isArray(type) ? { $in: type } : type;
         }
         return this.HistoryModel.find(query)
             .populate("user", "_id name")
