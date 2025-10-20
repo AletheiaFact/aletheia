@@ -56,5 +56,7 @@
     "contentTypeLabel": "Tipo de Conteúdo",
     "receptionChannelLabel": "Canal de Recepção",
     "impactAreaLabel": "Área de impacto",
-    "severityLabel": "Prioridade"
+    "severityLabel": "Prioridade",
+    "editVerificationRequestSuccess": "Denúncia editada com sucesso",
+    "editVerificationRequestError": "Erro ao editar a denúncia"
 }

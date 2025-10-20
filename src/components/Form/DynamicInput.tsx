@@ -24,6 +24,7 @@ interface DynamicInputProps {
     "data-cy": string;
     extraProps: any;
     disabledDate?: any;
+    disabled?: boolean;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -63,6 +64,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     data-cy={props["data-cy"]}
                     white="true"
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? "#f0f0f0" : "white" }}
                 />
             );
         case "textList":
@@ -123,6 +126,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     data-cy={"testSelectDate"}
                     disabledDate={props.disabledDate}
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? "#f0f0f0" : "white" }}
                 />
             );
         case "email":

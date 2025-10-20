@@ -56,5 +56,7 @@
     "contentTypeLabel": "Content Type",
     "receptionChannelLabel": "Reception Channel",
     "impactAreaLabel": "Impact Area",
-    "severityLabel": "Severity"
+    "severityLabel": "Severity",
+    "editVerificationRequestSuccess": "Verification Request edited successfully",
+    "editVerificationRequestError": "Error while editing the Verification Request"
 }

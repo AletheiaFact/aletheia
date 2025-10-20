@@ -3,6 +3,7 @@ import {
     Injectable,
     Inject,
     forwardRef,
+    Scope,
 } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
@@ -25,7 +26,7 @@ import { VerificationRequestStateMachineService } from "./state-machine/verifica
 
 const md5 = require("md5");
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class VerificationRequestService {
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
@@ -334,7 +335,7 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            );
+            ).populate("source");
         } catch (error) {
             console.error("Failed to update verification request:", error);
             throw error;
