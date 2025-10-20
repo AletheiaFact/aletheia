@@ -5,10 +5,16 @@ import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
 import { SessionGuard } from "../auth/session.guard";
 import { SessionGuardMock } from "./mocks/SessionGuardMock";
+import { SessionOrM2MGuard } from "../auth/m2m-or-session.guard";
+import { SessionOrM2MGuardMock } from "./mocks/SessionOrM2MGuardMock";
+import { M2MGuard } from "../auth/m2m.guard";
+import { M2MGuardMock } from "./mocks/M2MGuardMock";
 import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
+import { HistoryService } from "../history/history.service";
+import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { SeedTestPersonality } from "./utils/SeedTestPersonality";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
@@ -75,10 +81,16 @@ describe("SourceController (e2e)", () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule.register(testConfig)],
         })
-            .overrideProvider(SessionGuard)
+            .overrideGuard(SessionGuard)
             .useValue(SessionGuardMock)
+            .overrideGuard(SessionOrM2MGuard)
+            .useValue(SessionOrM2MGuardMock)
+            .overrideGuard(M2MGuard)
+            .useValue(M2MGuardMock)
             .overrideGuard(AbilitiesGuard)
             .useValue(AbilitiesGuardMock)
+            .overrideProvider(HistoryService)
+            .useValue(HistoryServiceMock)
             .compile();
 
         app = moduleFixture.createNestApplication();

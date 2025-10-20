@@ -5,6 +5,12 @@ import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Types } from "mongoose";
 import { AppModule } from "../../app.module";
+import { SessionGuard } from "../../auth/session.guard";
+import { SessionGuardMock } from "../../tests/mocks/SessionGuardMock";
+import { SessionOrM2MGuard } from "../../auth/m2m-or-session.guard";
+import { SessionOrM2MGuardMock } from "../../tests/mocks/SessionOrM2MGuardMock";
+import { M2MGuard } from "../../auth/m2m.guard";
+import { M2MGuardMock } from "../../tests/mocks/M2MGuardMock";
 
 /**
  * ParserService Unit Test Suite
@@ -49,7 +55,14 @@ describe("ParserService", () => {
 
         moduleFixture = await Test.createTestingModule({
             imports: [AppModule.register(testConfig)],
-        }).compile();
+        })
+            .overrideGuard(SessionGuard)
+            .useValue(SessionGuardMock)
+            .overrideGuard(SessionOrM2MGuard)
+            .useValue(SessionOrM2MGuardMock)
+            .overrideGuard(M2MGuard)
+            .useValue(M2MGuardMock)
+            .compile();
 
         parserService = moduleFixture.get<ParserService>(ParserService);
     });

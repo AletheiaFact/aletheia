@@ -10,6 +10,25 @@ export interface RequiredRule {
 
 export const CHECK_ABILITY = "check_ability";
 
+/**
+ * @deprecated When used with @UseGuards(AbilitiesGuard), use @Auth({ abilities: [...] }) instead
+ *
+ * This decorator is deprecated when used directly in controllers.
+ * It's still used internally by the unified Auth decorator.
+ *
+ * Migration:
+ * ```typescript
+ * // Before:
+ * @UseGuards(AbilitiesGuard)
+ * @CheckAbilities(new AdminUserAbility())
+ *
+ * // After:
+ * import { AdminOnly } from "../auth/decorators/auth.decorator";
+ * @AdminOnly()
+ * ```
+ *
+ * See: server/auth/AUTH_DECORATOR_MIGRATION.md for full migration guide
+ */
 export const CheckAbilities = (...requirements: RequiredRule[]) =>
     SetMetadata(CHECK_ABILITY, requirements);
 

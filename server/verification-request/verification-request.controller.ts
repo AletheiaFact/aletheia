@@ -21,15 +21,16 @@ import type { Response } from "express";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
+
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -45,6 +46,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
     public async listAll(@Query() getVerificationRequest) {
         const {
             pageSize,
@@ -112,15 +114,6 @@ export class VerificationRequestController {
         );
     }
 
-    // Not working, todo
-    // @ApiTags("verification-request")
-    // @Post("api/verification-request/pre-triage/:id")
-    // async preTriage(
-    //     @Param("id") verificationRequestId: string,
-    // ) {
-    //     return this.verificationRequestStateMachineService.preTriage(verificationRequestId);
-    // }
-
     @ApiTags("pages")
     @Get("verification-request/create")
     public async VerificationRequestCreatePage(
@@ -143,10 +136,9 @@ export class VerificationRequestController {
         );
     }
 
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId")
+    @AdminOnly()
     async updateVerificationRequest(
         @Param("verificationRequestId") verificationRequestId: string,
         @Body() updateVerificationRequestDto: UpdateVerificationRequestDTO
@@ -181,10 +173,10 @@ export class VerificationRequestController {
         );
     }
 
-    @IsPublic()
     @ApiTags("pages")
     @Get("verification-request")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
     public async verificationRequestPage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -202,7 +194,7 @@ export class VerificationRequestController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("verification-request/:dataHash")
     @Header("Cache-Control", "max-age=60, must-revalidate")

@@ -9,6 +9,8 @@ import { ConfigModule } from "@nestjs/config";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { UtilService } from "../util";
 import { NotificationModule } from "../notifications/notifications.module";
+import { SessionGuard } from "../auth/session.guard";
+import { M2MGuard } from "../auth/m2m.guard";
 
 const UserModel = MongooseModule.forFeature([
     {
@@ -24,10 +26,10 @@ const UserModel = MongooseModule.forFeature([
         OryModule,
         ConfigModule,
         AbilityModule,
-        NotificationModule,
+        NotificationModule
     ],
     exports: [UsersService, UserModel],
     controllers: [UsersController],
-    providers: [UsersService, UtilService],
+    providers: [UsersService, UtilService, SessionGuard, M2MGuard],
 })
 export class UsersModule {}
