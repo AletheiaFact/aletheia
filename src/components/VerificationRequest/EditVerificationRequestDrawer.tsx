@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import { VerificationRequest } from "../../types/VerificationRequest";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import createVerificationRequestForm from "./CreateVerificationRequest/fieldLists/CreateVerificationRequestForm";
 import DynamicForm from "../Form/DynamicForm";
 import AletheiaButton, { ButtonType } from "../Button";
-import { Box, Grid } from "@mui/material";
+import { Box, Divider, Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import AletheiaInput from "../AletheiaInput";
+import LargeDrawer from "../LargeDrawer";
 
-interface EditVerificationRequestModalProps {
+interface EditVerificationRequestDrawerProps {
     open: boolean;
     onClose: () => void;
     verificationRequest;
@@ -35,7 +35,7 @@ const useExtraSources = (initialSources: string[] = []) => {
     return { extraSources, addSource, removeSource, updateSource };
 }
 
-const EditVerificationRequestModal: React.FC<EditVerificationRequestModalProps> = ({
+const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps> = ({
     open,
     onClose,
     verificationRequest,
@@ -140,12 +140,14 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestModalProps> 
     } : {};
 
     return (
-        <Grid container justifyContent="center" alignItems="center">
-            <AletheiaModal
-                open={open}
-                onCancel={onClose}
-                width="40vw"
-            >
+        <LargeDrawer open={open} onClose={onClose}>
+            <Grid container style={{ padding: "20px" }}>
+                <Grid item>
+                    <h2>
+                        {t("verificationRequest:titleEditVerificationRequest")}
+                    </h2>
+                    <Divider />
+                </Grid>
                 <form
                     onSubmit={handleSubmit(onSubmit)}
                     style={{
@@ -211,8 +213,8 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestModalProps> 
                         </AletheiaButton>
                     </Box>
                 </form>
-            </AletheiaModal>
-        </Grid>
+            </Grid>
+        </LargeDrawer>
     )
 };
 
