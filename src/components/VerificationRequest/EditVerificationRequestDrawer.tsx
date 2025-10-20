@@ -106,9 +106,7 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps>
             const validSources = allSources.filter(src => src.href?.trim());
 
             const updateData = {
-                publicationDate: data.publicationDate && data.publicationDate.toISOString
-                    ? data.publicationDate.toISOString()
-                    : data.publicationDate,
+                publicationDate: data.publicationDate,
                 source: validSources,
             };
 
