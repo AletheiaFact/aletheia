@@ -67,7 +67,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     data-cy={props["data-cy"]}
                     white="true"
                     disabled={props.disabled}
-                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
+                    style={{ backgroundColor: props.disabled ? "#f0f0f0" : "white" }}
                 />
             );
         case "textList":
@@ -145,7 +145,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     data-cy={"testSelectDate"}
                     disabledDate={props.disabledDate}
                     disabled={props.disabled}
-                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
+                    style={{ backgroundColor: props.disabled ? "#f0f0f0" : "white" }}
                 />
             );
         case "email":

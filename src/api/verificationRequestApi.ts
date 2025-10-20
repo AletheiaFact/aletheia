@@ -128,30 +128,34 @@ const updateVerificationRequest = (id, params, t, operationType = "update") => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(messages[operationType].success)
+                t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t(messages[operationType].error)
+                t("verificationRequest:addVerificationRequestError")
             );
             console.error("error while updating verification request", e);
         });
 };
 
-const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
+const editingVerificationRequest = (id, params, t) => {
     return request
-        .put(`/${data_hash}/topics`, topics)
+        .put(`/${id}`, params)
         .then((response) => {
-            MessageManager.showMessage("success",
-                t("verificationRequest:addVerificationRequestSuccess")
+            MessageManager.showMessage(
+                "success",
+                t("verificationRequest:editVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:editVerificationRequestError")
+            );
             console.error("error while updating verification request", e);
         });
 };
@@ -209,7 +213,7 @@ const verificationRequestApi = {
     getVerificationRequests,
     getById,
     updateVerificationRequest,
-    updateVerificationRequestWithTopics,
+    editingVerificationRequest,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
 };

@@ -61,5 +61,12 @@
     "contentFilterOption": "Content",
     "filterByContentLabel": "Filter by Content",
     "applyButtonLabel": "Apply",
-    "showText": "Show"
+    "showText": "Show",
+    "reportedContent": "Reported Content",
+    "contentTypeLabel": "Content Type",
+    "receptionChannelLabel": "Reception Channel",
+    "impactAreaLabel": "Impact Area",
+    "severityLabel": "Severity",
+    "editVerificationRequestSuccess": "Verification Request edited successfully",
+    "editVerificationRequestError": "Error while editing the Verification Request"
 }

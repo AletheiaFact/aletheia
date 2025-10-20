@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import EditIcon from '@mui/icons-material/Edit';
-import EditVerificationRequestDrawer from "./EditVerificationRequestDrawer";
+import EditVerificationRequestModal from "./EditVerificationRequestModal";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,
@@ -18,13 +18,13 @@ const VerificationRequestMainContent = ({
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
     const { vw } = useAppSelector((state) => state);
-    const [openEditDrawer, setOpenEditDrawer] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
 
     const [currentRequest, setCurrentRequest] = useState(content);
 
     const handleSave = (updateRequest) => {
         setCurrentRequest(updateRequest)
-        setOpenEditDrawer(false);
+        setOpenEditModal(false);
     };
 
     return (
@@ -34,20 +34,20 @@ const VerificationRequestMainContent = ({
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
 
-                {role == Roles.Admin && (
+                {role !== Roles.Regular && (
                     <IconButton size="small">
                         <EditIcon
                             style={{ fontSize: 18 }}
                             color="primary"
-                            onClick={() => setOpenEditDrawer(true)} />
+                            onClick={() => setOpenEditModal(true)} />
                     </IconButton>
                 )}
             </Box>
 
-            {openEditDrawer && (
-                <EditVerificationRequestDrawer
-                    open={openEditDrawer}
-                    onClose={() => setOpenEditDrawer(false)}
+            {openEditModal && (
+                <EditVerificationRequestModal
+                    open={openEditModal}
+                    onClose={() => setOpenEditModal(false)}
                     verificationRequest={currentRequest}
                     onSave={handleSave}
                 />
