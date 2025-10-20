@@ -68,14 +68,14 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps>
     }, [open, verificationRequest, reset]);
 
     const getEditableFields = (verificationRequest) => {
-        const editableFields = ["publicationDate", "source"];
+        const editableFields = new Set(["publicationDate", "source"]);
 
         return createVerificationRequestForm.map((field) => {
             if (field.fieldName === "source") {
                 const hasExistingSource = verificationRequest?.source?.length > 0;
                 return { ...field, disabled: hasExistingSource, rules: {} };
             }
-            return { ...field, disabled: !editableFields.includes(field.fieldName) };
+            return { ...field, disabled: !editableFields.has(field.fieldName) };
         }).filter(field => field.fieldName !== "email");
     };
 
@@ -91,7 +91,7 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps>
                     }
                     return null;
                 })
-                .filter(src => src !== null && src.href)
+                .filter(src => src?.href)
             : [];
 
     const formatNewSources = (sources: string[]) =>
