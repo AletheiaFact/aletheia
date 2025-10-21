@@ -110,10 +110,11 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps>
                 source: validSources,
             };
 
-            const response = await verificationRequestApi.editingVerificationRequest(
+            const response = await verificationRequestApi.updateVerificationRequest(
                 verificationRequest._id,
                 updateData,
-                t
+                t,
+                'update'
             );
 
             if (response) {
