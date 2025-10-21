@@ -14,13 +14,13 @@ export class HistoryController {
         const { page, order } = getHistory;
         const pageSize = parseInt(getHistory.pageSize, 10);
         return this.historyService
-            .getByTargetIdModelAndType(
-                targetId,
-                targetModel,
-                page,
-                pageSize,
-                order
-            )
+            .getByTargetIdModelAndType({
+                targetId: targetId,
+                targetModel: targetModel,
+                page: page,
+                pageSize: pageSize,
+                order: order
+            })
             .then((history) => {
                 const totalChanges = history.length;
                 const totalPages = Math.ceil(totalChanges / pageSize);

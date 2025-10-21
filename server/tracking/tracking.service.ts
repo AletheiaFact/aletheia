@@ -18,14 +18,14 @@ export class TrackingService {
   async getTrackingStatus(
     verificationRequestId: string
   ): Promise<TrackingResponseDTO> {
-    const histories = await this.historyService.getByTargetIdModelAndType(
-      verificationRequestId,
-      TargetModel.VerificationRequest,
-      0,
-      1000,
-      "asc",
-      ["create", "update"]
-    );
+    const histories = await this.historyService.getByTargetIdModelAndType({
+      targetId: verificationRequestId,
+      targetModel: TargetModel.VerificationRequest,
+      page: 0,
+      pageSize: 1000,
+      order: "asc",
+      type: ["create", "update"]
+    });
 
     if (histories.length === 0) {
       throw new NotFoundException(`Verification request history for ID "${verificationRequestId}" not found.`);
