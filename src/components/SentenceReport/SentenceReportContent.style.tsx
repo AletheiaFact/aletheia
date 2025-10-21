@@ -16,6 +16,7 @@ const SentenceReportContentStyle = styled.div`
 
     .paragraph {
         font-size: 18px;
+        overflow-wrap: break-word;
     }
 `;
 
