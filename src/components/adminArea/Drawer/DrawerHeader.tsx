@@ -53,7 +53,6 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginBottom: 8,
                     flexWrap: "wrap",
                 }}
             >
@@ -70,7 +69,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                         />
                     )}
                     {" | "}
-                    <h3 style={{ marginBottom: 0, wordBreak: "break-all" }}>
+                    <h3 style={{ wordBreak: "break-all" }}>
                         {currentUser?.name} - {currentUser?.email}
                     </h3>
                 </div>

@@ -9,6 +9,7 @@ import {
     Query,
     Param,
     Put,
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
@@ -20,8 +21,16 @@ import type { Response } from "express";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
+import { TargetModel } from "../history/schema/history.schema";
+
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -30,12 +39,14 @@ export class VerificationRequestController {
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private verificationRequestStateMachineService: VerificationRequestStateMachineService
     ) {}
 
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
     public async listAll(@Query() getVerificationRequest) {
         const {
             pageSize,
@@ -88,6 +99,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Post("api/verification-request")
     async create(
+        @Req() req: BaseRequest,
         @Body() verificationRequestBody: CreateVerificationRequestDTO
     ) {
         const validateCaptcha = await this.captchaService.validate(
@@ -96,7 +108,10 @@ export class VerificationRequestController {
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.verificationRequestService.create(verificationRequestBody);
+        return this.verificationRequestStateMachineService.request(
+            verificationRequestBody,
+            req.user
+        );
     }
 
     @ApiTags("pages")
@@ -123,6 +138,7 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId")
+    @AdminOnly()
     async updateVerificationRequest(
         @Param("verificationRequestId") verificationRequestId: string,
         @Body() updateVerificationRequestDto: UpdateVerificationRequestDTO
@@ -157,10 +173,10 @@ export class VerificationRequestController {
         );
     }
 
-    @IsPublic()
     @ApiTags("pages")
     @Get("verification-request")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
     public async verificationRequestPage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -178,7 +194,7 @@ export class VerificationRequestController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("verification-request/:dataHash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -186,6 +202,9 @@ export class VerificationRequestController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        // TODO: considering a different speech, we need improve the filter for recommendations
+        // As example, if the personality is different, or if the topic could be similar or happenend in the same event
+
         const parsedUrl = parse(req.url, true);
         const { dataHash } = req.params;
 
@@ -222,5 +241,25 @@ export class VerificationRequestController {
             "/verification-request-review-page",
             queryObject
         );
+    }
+
+    @ApiTags("pages")
+    @Get("verification-request/:data_hash/history")
+    public async verificationRequestHistoryPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { data_hash } = req.params;
+
+        const verificationRequest =
+            await this.verificationRequestService.findByDataHash(data_hash);
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: verificationRequest._id,
+            targetModel: TargetModel.VerificationRequest,
+        });
+
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 }

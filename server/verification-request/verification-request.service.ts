@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    Inject,
+    forwardRef,
+} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -9,22 +14,29 @@ import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
+import { REQUEST } from "@nestjs/core";
+import type { BaseRequest } from "../types";
+import { HistoryService } from "../history/history.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import {
-    AiTaskType,
-    CallbackRoute,
-    DEFAULT_EMBEDDING_MODEL,
-} from "../ai-task/constants/ai-task.constants";
+import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+
 const md5 = require("md5");
 
 @Injectable()
 export class VerificationRequestService {
     constructor(
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private VerificationRequestModel: Model<VerificationRequestDocument>,
+        // This is not yet used but it is necessary to properly initialize the module
+        @Inject(forwardRef(() => VerificationRequestStateMachineService))
+        private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
         private readonly groupService: GroupService,
+        private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService
     ) {}
 
@@ -91,43 +103,70 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(data: {
-        content: string;
-        source?: string;
-    }): Promise<VerificationRequestDocument> {
-        const vr = await this.VerificationRequestModel.create({
-            ...data,
-            data_hash: md5(data.content),
-            embedding: null,
-            source: null,
-        });
-
-        if (data.source?.trim()) {
-            const src = await this.sourceService.create({
-                href: data.source,
-                targetId: vr.id,
+    async create(
+        data: {
+            content: string;
+            source?: Array<{ href: string }>;
+        },
+        user?: any
+    ): Promise<VerificationRequestDocument> {
+        try {
+            const vr = await this.VerificationRequestModel.create({
+                ...data,
+                data_hash: md5(data.content),
+                embedding: null,
+                source: null,
             });
-            vr.source = Types.ObjectId(src.id);
-            await vr.save();
+
+            if (data.source?.length) {
+                const srcId = await Promise.all(
+                    data.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: vr.id,
+                        });
+                        return src._id;
+                    })
+                );
+
+                vr.source = srcId;
+                await vr.save();
+            }
+
+            const currentUser = user || this.req?.user;
+
+            const history = this.historyService.getHistoryParams(
+                vr._id,
+                TargetModel.VerificationRequest,
+                currentUser,
+                HistoryType.Create,
+                vr
+            );
+
+            await this.historyService.createHistory(history);
+
+            return vr;
+        } catch (e) {
+            throw new BadRequestException(
+                "Failed to create verification request",
+                e
+            );
         }
-
-        const taskDto: CreateAiTaskDto = {
-            type: AiTaskType.TEXT_EMBEDDING,
-            content: {
-                text: data.content,
-                model: DEFAULT_EMBEDDING_MODEL,
-            },
-            callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            callbackParams: {
-                targetId: vr.id,
-                field: "embedding",
-            },
-        };
-        await this.aiTaskService.create(taskDto);
-
-        return vr;
     }
 
+    async createAiTask(taskDto: CreateAiTaskDto) {
+        await this.aiTaskService.create(taskDto);
+        return { success: true };
+    }
+
+    /**
+     * TODO: when updated the embedding we need add missing states triggered by machine
+     * to make sure the machine is in the correct state
+     * and we can follow to triage process
+     * @param params
+     * @param embedding
+     * @returns
+     */
     async updateEmbedding(
         params: { targetId: string; field: string },
         embedding: number[]
@@ -235,10 +274,37 @@ export class VerificationRequestService {
                 throw new Error("Verification request not found");
             }
 
+            const latestVerificationRequest = verificationRequest.toObject();
+
             const updatedVerificationRequestData = {
-                ...verificationRequest.toObject(),
+                ...latestVerificationRequest,
                 ...verificationRequestBodyUpdate,
+                publicationDate:
+                    verificationRequestBodyUpdate.publicationDate ??
+                    verificationRequest.publicationDate,
             };
+
+            if (verificationRequestBodyUpdate.source?.length) {
+                const newSourceIds = await Promise.all(
+                    verificationRequestBodyUpdate.source.map(async (source) => {
+                        const src = await this.sourceService.create({
+                            href: source.href,
+                            targetId: verificationRequest.id,
+                        });
+
+                        return src._id;
+                    })
+                );
+
+                updatedVerificationRequestData.source = Array.from(
+                    new Set([
+                        ...(verificationRequest.source || []).map((sourceId) =>
+                            sourceId.toString()
+                        ),
+                        ...newSourceIds.map((id) => id.toString()),
+                    ])
+                ).map((id) => Types.ObjectId(id));
+            }
 
             if (
                 postProcess &&
@@ -250,6 +316,19 @@ export class VerificationRequestService {
                         updatedVerificationRequestData
                     );
             }
+
+            const user = this.req.user;
+
+            const history = this.historyService.getHistoryParams(
+                verificationRequest._id,
+                TargetModel.VerificationRequest,
+                user,
+                HistoryType.Update,
+                updatedVerificationRequestData,
+                latestVerificationRequest
+            );
+
+            await this.historyService.createHistory(history);
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
@@ -434,12 +513,6 @@ export class VerificationRequestService {
                 },
             },
             {
-                $unwind: {
-                    path: "$source",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
                 $project: {
                     embedding: 0,
                 },
@@ -456,10 +529,26 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
 
+        const latestVerificationRequest = verificationRequest.toObject();
+
         const newVerificationRequest = {
-            ...verificationRequest.toObject(),
+            ...latestVerificationRequest,
             topics,
         };
+
+        const user = this.req.user;
+
+        const history = this.historyService.getHistoryParams(
+            verificationRequest._id,
+            TargetModel.VerificationRequest,
+            user,
+            HistoryType.Update,
+            newVerificationRequest,
+            latestVerificationRequest
+        );
+
+        await this.historyService.createHistory(history);
+
         return this.VerificationRequestModel.updateOne(
             { _id: verificationRequest._id },
             newVerificationRequest

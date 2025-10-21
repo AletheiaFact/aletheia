@@ -34,9 +34,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
 
     useLayoutEffect(() => {
         setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.primary
-                : colors.secondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 
@@ -46,8 +44,9 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         justifyContent: "center",
         alignItems: "center",
         height: 40,
-        paddingBottom: 0,
         borderRadius: props.rounded ? "30px" : "4px",
+        fontSize: "12px",
+        lineHeight: "16px",
         ...props.style,
     };
     switch (props.type) {
@@ -103,8 +102,34 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     }
 
     return (
-        <Button type={htmlType || "button"} variant="outlined" style={buttonStyle} {...restProps}>
-            {children}
+        <Button
+            type={htmlType || "button"}
+            variant="outlined"
+            style={buttonStyle}
+            {...restProps}
+        >
+            {props.icon && (
+                <span
+                    style={{
+                        alignItems: "center",
+                        marginRight: "4px",
+                        display: "flex",
+                        justifyContent: "center",
+                    }}
+                >
+                    {props.icon}
+                </span>
+            )}
+            <span
+                style={{
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "3px",
+                }}
+            >
+                {children}
+            </span>
         </Button>
     );
 };

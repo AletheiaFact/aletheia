@@ -17,7 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
-    source?: string;
+    source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
     email?: string;
@@ -84,6 +84,8 @@ export class ChatbotService {
         const { api_url, api_token } = this.configService.get("zenvia");
         const { from, to, channel, contents } = message;
 
+        const channel_api_url = `${api_url}/${channel}/messages`;
+
         const chatbotState = await this.getOrCreateChatBotMachine(
             from,
             channel
@@ -113,7 +115,7 @@ export class ChatbotService {
 
         const body = this.createResponseBody(to, from, responseMessage);
 
-        return this.sendHttpPost(api_url, api_token, body);
+        return this.sendHttpPost(channel_api_url, api_token, body);
     }
 
     private shouldPauseMachine(chatbotState, snapshot) {
@@ -132,12 +134,12 @@ export class ChatbotService {
     }
 
     private sendHttpPost(
-        api_url,
+        channel_api_url,
         api_token,
         body
     ): Observable<AxiosResponse<any>> {
         return this.httpService
-            .post(api_url, body, {
+            .post(channel_api_url, body, {
                 headers: { "X-API-TOKEN": api_token },
             })
             .pipe(

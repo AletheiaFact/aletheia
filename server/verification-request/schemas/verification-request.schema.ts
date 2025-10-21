@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Group } from "../../group/schemas/group.schema";
 import { Topic } from "../../topic/schemas/topic.schema";
+import { SeverityEnum, VerificationRequestStatus } from "../dto/types";
 
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
@@ -24,11 +25,11 @@ export class VerificationRequest {
     heardFrom: string;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         required: false,
         ref: "Source",
     })
-    source: mongoose.Types.ObjectId;
+    source: mongoose.Types.ObjectId[];
 
     @Prop({ required: true, default: new Date() })
     date: Date;
@@ -51,6 +52,18 @@ export class VerificationRequest {
 
     @Prop({ type: Array, required: false })
     topics: Topic[];
+
+    @Prop({
+        required: false,
+        enum: SeverityEnum,
+    })
+    severity: string;
+
+    @Prop({
+        required: true,
+        enum: VerificationRequestStatus,
+    })
+    status: string;
 }
 
 const VerificationRequestSchema =

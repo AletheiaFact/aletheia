@@ -6,6 +6,7 @@ const ReviewContentStyled = styled.div`
     flex-direction: column;
     font-size: 16px;
     flex-wrap: wrap;
+    word-break: break-word;
 
     p {
         color: ${colors.blackSecondary};

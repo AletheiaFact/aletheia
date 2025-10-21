@@ -70,6 +70,23 @@ export class M2MOrAbilitiesGuard implements CanActivate {
     }
 }
 
+/**
+ * @deprecated Use @Auth({ abilities: [...], allowM2M: true }) or @AdminOnly({ allowM2M: true }) instead
+ *
+ * This decorator is deprecated in favor of the unified Auth decorator pattern.
+ *
+ * Migration:
+ * ```typescript
+ * // Before:
+ * @M2MOrAbilities(new AdminUserAbility())
+ *
+ * // After:
+ * import { AdminOnly } from "../auth/decorators/auth.decorator";
+ * @AdminOnly({ allowM2M: true })
+ * ```
+ *
+ * See: server/auth/AUTH_DECORATOR_MIGRATION.md for full migration guide
+ */
 export const M2MOrAbilities = (...requirements: RequiredRule[]) => {
     return applyDecorators(
         UseGuards(M2MOrAbilitiesGuard),
