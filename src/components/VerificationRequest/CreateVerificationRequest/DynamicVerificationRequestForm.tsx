@@ -29,9 +29,6 @@ const DynamicVerificationRequestForm = () => {
         const newVerificationRequest = {
             nameSpace,
             content: data.content,
-            reportType: data.reportType,
-            impactArea: data.impactArea,
-            sourceChannel: "Web",
             source: [{ href: data.source }],
             publicationDate: data.publicationDate,
             email: data.email,

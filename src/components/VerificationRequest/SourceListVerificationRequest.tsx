@@ -1,6 +1,6 @@
-import React from "react";
-import Link from "next/link";
-import { VerificationRequestContent } from "./VerificationRequestContent";
+import React from 'react';
+import Link from 'next/link';
+import { VerificationRequestContent } from './VerificationRequestContent';
 
 interface SourceListProps {
     sources: Array<{ href?: string }>;
@@ -23,7 +23,7 @@ const SourceList: React.FC<SourceListProps> = ({ sources, t, truncateUrl, id }) 
                     key={`${id}-source-${index}`}
                     label={
                         index === 0
-                            ? t("verificationRequest:tagSource")
+                            ? t("verificationRequest:verificationRequestTagSource")
                             : ""
                     }
                     value={

@@ -10,7 +10,6 @@ import {
     Param,
     Put,
     UseGuards,
-    Logger,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
@@ -32,7 +31,6 @@ import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
-import { Roles } from "../auth/ability/ability.factory";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -119,7 +117,6 @@ export class VerificationRequestController {
         } else {
             this.logger.log("M2M user request - skipping CAPTCHA validation");
         }
-
         return this.verificationRequestStateMachineService.request(
             verificationRequestBody,
             req.user

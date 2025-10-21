@@ -42,7 +42,7 @@ const Footer = () => {
             <Box
                 sx={{
                     textAlign: "center",
-                    background: theme.palette.primary.main,
+                    background: backgroundColor,
                     color: colors.white,
                     padding: "32px",
                     alignSelf: "flex-end"
@@ -57,7 +57,7 @@ const Footer = () => {
                                 textAlign: "center",
                                 display: "flex",
                                 flexDirection: "column",
-
+                                
                             }}
                         >
                             <Box sx={{ mb: 2 }}>

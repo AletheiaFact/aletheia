@@ -93,12 +93,30 @@ export const saveVerificationRequest = assign<
     verificationRequest: (context, event) => event.verificationRequest,
 });
 
-export const saveAdditionalInfo = assign<ChatBotContext, AdditionalInfoEvent>({
-    additionalInfo: (context, event) => event.AdditionalInfo,
+export const saveSource = assign<ChatBotContext, SourceEvent>({
+    source: (context, event) => [{ href: event.source }],
 });
 
-export const saveEmptyAdditionalInfo = assign<ChatBotContext>({
-    additionalInfo: () => "",
+export const saveEmptySource = assign<ChatBotContext>({
+    source: () => [],
+});
+
+export const savePublicationDate = assign<ChatBotContext, PublicationDateEvent>(
+    {
+        publicationDate: (context, event) => event.publicationDate,
+    }
+);
+
+export const saveEmptyPublicationDate = assign<ChatBotContext>({
+    publicationDate: () => "",
+});
+
+export const saveHeardFrom = assign<ChatBotContext, HeardFromEvent>({
+    heardFrom: (context, event) => event.heardFrom,
+});
+
+export const saveEmptyHeardFrom = assign<ChatBotContext>({
+    heardFrom: () => "",
 });
 
 export const saveEmail = assign<ChatBotContext, EmailEvent>({

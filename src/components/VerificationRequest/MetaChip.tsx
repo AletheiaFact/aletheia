@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Chip } from "@mui/material"
-import { useTranslation } from "next-i18next";
+
 interface MetaChipProps {
     icon: React.ReactNode;
     label: string;
@@ -9,35 +9,44 @@ interface MetaChipProps {
 }
 
 export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, style }) => {
-    const { t } = useTranslation();
     return (
         <Box
             sx={{
                 display: "flex",
-                flexDirection: "column",
-                gap: "4px",
+                alignItems: "flex-start",
+                gap: 1.2,
             }}
         >
             <Box
                 sx={{
                     display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "text.secondary",
+                    mt: 0.4,
+                }}
+            >
+                {icon}
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
                     gap: "4px",
                 }}
             >
-                <Box color="text.secondary">
-                    {icon}
-                </Box>
                 <Typography
                     variant="body2"
                 >
                     {label}
                 </Typography>
+
+                <Chip
+                    label={label_value}
+                    style={style}
+                    size="small"
+                />
             </Box>
-            <Chip
-                label={label_value || t("claimForm:undefined")}
-                style={style}
-                size="small"
-            />
         </Box>
     );
 };

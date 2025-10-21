@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Grid } from "@mui/material";
+import {
+    Autocomplete,
+    FormControl,
+    CircularProgress,
+    TextField,
+    Grid,
+} from "@mui/material";
 import AletheiaButton from "../Button";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
@@ -87,13 +93,49 @@ const TopicForm = ({
                         validate: validateDuplication,
                     }}
                     render={({ field: { onChange, value } }) => (
-                        <MultiSelectAutocomplete
-                            placeholder={t("topics:placeholder")}
-                            onChange={onChange}
-                            setIsLoading={setIsLoading}
-                            isLoading={isLoading}
-                            setInputValue={setInputValue}
-                        />
+                        <FormControl sx={{ width: "100%" }}>
+                            <Autocomplete
+                                freeSolo
+                                multiple
+                                size="small"
+                                options={options}
+                                onInputChange={(_, inputValue) =>
+                                    fetchOptions(inputValue)
+                                }
+                                onChange={(_, selectedValues) => {
+                                    onChange(selectedValues);
+                                    setInputValue(selectedValues);
+                                }}
+                                getOptionLabel={(option) => option.label || ""}
+                                isOptionEqualToValue={(option, value) =>
+                                    option.value === value.value
+                                }
+                                loading={isLoading}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder={t("topics:placeholder")}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {isLoading ? (
+                                                        <CircularProgress
+                                                            color="inherit"
+                                                            size={20}
+                                                        />
+                                                    ) : null}
+                                                    {
+                                                        params.InputProps
+                                                            .endAdornment
+                                                    }
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
+                        </FormControl>
                     )}
                 />
                 <AletheiaButton

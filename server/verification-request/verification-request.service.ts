@@ -3,8 +3,6 @@ import {
     Injectable,
     Inject,
     forwardRef,
-    Scope,
-    Logger,
 } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
@@ -20,9 +18,9 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const md5 = require("md5");
@@ -41,8 +39,7 @@ export class VerificationRequestService {
         private sourceService: SourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
-        private readonly aiTaskService: AiTaskService,
-        private readonly topicService: TopicService
+        private readonly aiTaskService: AiTaskService
     ) {}
 
     async listAll({
@@ -112,28 +109,21 @@ export class VerificationRequestService {
     async create(
         data: {
             content: string;
-            impactArea?: { label: string; value: string } | string;
             source?: Array<{ href: string }>;
         },
         user?: any
     ): Promise<VerificationRequestDocument> {
         try {
-            this.logger.debug("Creating verification request", { data });
-
             const vr = await this.VerificationRequestModel.create({
                 ...data,
                 data_hash: md5(data.content),
                 embedding: null,
                 source: null,
-                impactArea: null,
             });
 
-            const validSources =
-                data.source?.filter((source) => source?.href?.trim()) || [];
-
-            if (validSources.length) {
+            if (data.source?.length) {
                 const srcId = await Promise.all(
-                    validSources.map(async (source) => {
+                    data.source.map(async (source) => {
                         const src = await this.sourceService.create({
                             href: source.href,
                             targetId: vr.id,
@@ -146,16 +136,6 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            if (data.impactArea) {
-                const topicWikidataEntities = [data.impactArea];
-                const createdTopic = await this.topicService.create({
-                    topics: topicWikidataEntities,
-                });
-
-                vr.impactArea = Types.ObjectId(createdTopic[0].id);
-                await vr.save();
-            }
-
             const currentUser = user || this.req?.user;
 
             const history = this.historyService.getHistoryParams(
@@ -165,31 +145,14 @@ export class VerificationRequestService {
                 HistoryType.Create,
                 vr
             );
+
             await this.historyService.createHistory(history);
 
-            this.logger.log(
-                `Verification request created successfully: ${vr._id}`
-            );
             return vr;
         } catch (e) {
-            this.logger.error("Failed to create verification request", e.stack);
-
-            if (e.name === "ValidationError") {
-                const fields = Object.keys(e.errors).join(", ");
-                throw new BadRequestException(
-                    `Validation failed: ${fields} are invalid or missing`
-                );
-            }
-
-            if (e.code === 11000) {
-                const field = Object.keys(e.keyPattern)[0];
-                throw new BadRequestException(
-                    `Duplicate value for field: ${field}`
-                );
-            }
-
             throw new BadRequestException(
-                "Failed to create verification request"
+                "Failed to create verification request",
+                e
             );
         }
     }

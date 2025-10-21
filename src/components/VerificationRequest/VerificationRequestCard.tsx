@@ -1,5 +1,9 @@
 import { Grid, Typography, Button, Alert, AlertTitle, Box } from "@mui/material";
-import { WarningAmber, Public, DateRange, Filter, Share } from "@mui/icons-material";
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import FilterIcon from '@mui/icons-material/Filter';
+import ShareIcon from '@mui/icons-material/Share';
+import PublicIcon from '@mui/icons-material/Public';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
@@ -59,34 +63,35 @@ const VerificationRequestCard = ({
 
     const metaChipData = [
         {
-            icon: <Filter style={{ fontSize: 18 }} />,
+            icon: <FilterIcon style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|reportType`,
-            label: t("verificationRequest:tagReportType"),
-            label_value: t(`claimForm:${verificationRequest.reportType || "undefined"}`),
+            label: t("verificationRequest:contentTypeLabel"),
+            label_value: t(`claimForm:${verificationRequest.reportType}`),
             style: { backgroundColor: colors.secondary, color: colors.white }
         },
         {
-            icon: <Share style={{ fontSize: 18 }} />,
+            icon: <ShareIcon style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|receptionChannel`,
-            label: t("verificationRequest:tagSourceChannel"),
-            label_value: verificationRequest.sourceChannel,
+            label: t("verificationRequest:receptionChannelLabel"),
+            label_value: verificationRequest.receptionChannel,
             style: { backgroundColor: colors.primary, color: colors.white }
         },
         {
-            icon: <Public style={{ fontSize: 18 }} />,
+            icon: <PublicIcon style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|impactArea`,
-            label: t("verificationRequest:tagImpactArea"),
-            label_value: verificationRequest.impactArea?.name,
+            label: t("verificationRequest:impactAreaLabel"),
+            label_value: verificationRequest.impactArea,
             style: { backgroundColor: colors.neutralSecondary, color: colors.white }
         },
         {
-            icon: <WarningAmber style={{ fontSize: 18 }} />,
+            icon: <WarningAmberIcon style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
-            label: t("verificationRequest:tagSeverity"),
-            label_value: verificationRequest.severity,
+            label: t("verificationRequest:severityLabel"),
+            label_value: "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
             style: { backgroundColor: colors.error, color: colors.white }
         }
     ]
+
 
     const handleToggle = () => {
         setVisible(true);
@@ -105,7 +110,7 @@ const VerificationRequestCard = ({
                 <Alert severity="info">
                     <Typography variant="h2"
                         sx={{ fontFamily: "initial", fontSize: "18px", fontWeight: "bold", marginBottom: "2px" }}>
-                        {t("verificationRequest:tagReportedContent")}
+                        {t("verificationRequest:reportedContent")}
                     </Typography>
                     <AlertTitle>
                         <Typography
@@ -122,8 +127,8 @@ const VerificationRequestCard = ({
                 <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
                     {verificationRequest.publicationDate && (
                         <RequestDates
-                            icon={<DateRange style={smallGreyIcon} />}
-                            label={t("verificationRequest:tagPublicationDate")}
+                            icon={<DateRangeIcon style={smallGreyIcon} />}
+                            label={t("verificationRequest:verificationRequestTagPublicationDate")}
                             value={verificationRequest.publicationDate}
                         />
                     )}
@@ -131,8 +136,8 @@ const VerificationRequestCard = ({
 
                     {verificationRequest.date && (
                         <RequestDates
-                            icon={<DateRange style={smallGreyIcon} />}
-                            label={t("verificationRequest:tagDate")}
+                            icon={<DateRangeIcon style={smallGreyIcon} />}
+                            label={t("verificationRequest:verificationRequestTagDate")}
                             value={verificationRequest.date}
                         />
                     )}
@@ -140,7 +145,7 @@ const VerificationRequestCard = ({
                 <Box mt={2}>
                     {verificationRequest.heardFrom && (
                         <VerificationRequestContent
-                            label={t("verificationRequest:tagHeardFrom")}
+                            label={t("verificationRequest:verificationRequestTagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
                         />
                     )}
@@ -193,7 +198,7 @@ const VerificationRequestCard = ({
             >
                 {actions ? actions.map((action) => action) : <></>}
             </Grid>
-        </CardBase>
+        </CardBase >
     );
 };
 
