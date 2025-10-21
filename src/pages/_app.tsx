@@ -29,7 +29,9 @@ function MyApp({ Component, pageProps }) {
     const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
     const setCurrentUserId = useSetAtom(currentUserId);
     const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
+
     const [nameSpace] = useAtom(currentNameSpace);
+    const safeNamespace = nameSpace || "main";
 
     GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);
@@ -64,7 +66,7 @@ function MyApp({ Component, pageProps }) {
                 )}
             </Head>
             <Provider store={store}>
-                <ThemeProvider theme={AletheiaThemeConfig(nameSpace)}>
+                <ThemeProvider theme={AletheiaThemeConfig(safeNamespace)}>
                     <GlobalMessage />
                     <CssBaseline />
                     <MainApp>
