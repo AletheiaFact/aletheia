@@ -18,7 +18,7 @@ const namespacePalette = {
 const defaultPalette = namespacePalette.otherNamespace;
 
 export const AletheiaThemeConfig = (namespace: string) => {
-    const theme = namespacePalette[namespace] || defaultPalette;
+    const theme = namespacePalette[namespace] ?? defaultPalette;
 
     return createTheme({
         palette: {
