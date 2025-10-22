@@ -36,7 +36,6 @@ const VerificationRequestModel = MongooseModule.forFeature([
         ViewModule,
         ConfigModule,
         ReviewTaskModule,
-        TopicModule,
         HistoryModule,
         GroupModule,
         CaptchaModule,
