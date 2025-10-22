@@ -19,11 +19,8 @@ import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispa
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 import { AbilityModule } from "../auth/ability/ability.module";
-<<<<<<< HEAD
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-=======
 import { TopicModule } from "../topic/topic.module";
->>>>>>> 07ee68d5 (feat: impact area creation for verification request from ai tasks)
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
