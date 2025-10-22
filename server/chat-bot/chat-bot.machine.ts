@@ -1,10 +1,11 @@
 import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
+    sourceChannel?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
@@ -12,7 +13,7 @@ export interface ChatBotContext {
 }
 
 export const createChatBotMachine = (
-    verificationRequestService: VerificationRequestService,
+    verificationRequestStateMachineService: VerificationRequestStateMachineService,
     value?,
     context?
 ) => {
@@ -246,6 +247,7 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
+                        sourceChannel: context.sourceChannel || "",
                         source: context.source || [],
                         publicationDate: context.publicationDate || "",
                         email: context.email || "",
@@ -253,7 +255,7 @@ export const createChatBotMachine = (
                         heardFrom: context.heardFrom || "",
                     };
 
-                    verificationRequestService.create(verificationRequestBody);
+                    verificationRequestStateMachineService.request(verificationRequestBody);
                 },
             },
         }

@@ -5,7 +5,6 @@ import { Topic, TopicSchema } from "./schemas/topic.schema";
 import { TopicController } from "./topic.controller";
 import { TopicService } from "./topic.service";
 import { ImageModule } from "../claim/types/image/image.module";
-import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { WikidataModule } from "../wikidata/wikidata.module";
 
 const TopicModel = MongooseModule.forFeature([
@@ -20,7 +19,6 @@ const TopicModel = MongooseModule.forFeature([
         TopicModel,
         SentenceModule,
         ImageModule,
-        VerificationRequestModule,
         WikidataModule,
     ],
     controllers: [TopicController],
