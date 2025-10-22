@@ -5,7 +5,7 @@ import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
 import { Grid, IconButton, Button } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { FilterList, InfoOutlined } from "@mui/icons-material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../store/types";
 import debounce from "lodash.debounce";
 import AletheiaButton from "../Button";
+import InfoTooltip from "../Claim/InfoTooltip";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -162,7 +163,7 @@ const VerificationRequestList = () => {
             {
                 field: "content",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagContent"
+                    "verificationRequest:tagReportedContent"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.content,
@@ -171,9 +172,30 @@ const VerificationRequestList = () => {
                 ),
             },
             {
+                field: "reportType",
+                headerName: t(
+                    "verificationRequest:tagReportType"),
+                flex: 1,
+                valueGetter: (value, row) => row.reportType || "",
+                renderCell: (params) => (
+                    <span>{truncateWithEllipsis(t(`claimForm:${params.value}`), 50)}</span>
+                ),
+            },
+            {
+                field: "impactArea",
+                headerName: t(
+                    "verificationRequest:tagImpactArea"
+                ),
+                flex: 1,
+                valueGetter: (value, row) => row.impactArea?.name || "",
+                renderCell: (params) => (
+                    <span>{truncateWithEllipsis(params.value, 50)}</span>
+                ),
+            },
+            {
                 field: "heardFrom",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagHeardFrom"
+                    "verificationRequest:tagHeardFrom"
                 ),
                 flex: 1,
                 valueGetter: (value, row) => row.heardFrom || "",
@@ -184,7 +206,7 @@ const VerificationRequestList = () => {
             {
                 field: "publicationDate",
                 headerName: t(
-                    "verificationRequest:verificationRequestTagPublicationDate"
+                    "verificationRequest:tagPublicationDate"
                 ),
                 flex: 1,
                 valueGetter: (value, row) =>
@@ -194,21 +216,52 @@ const VerificationRequestList = () => {
             },
             {
                 field: "source",
-                headerName: t(
-                    "verificationRequest:verificationRequestTagSource"
-                ),
+                headerName: t("verificationRequest:tagSource"),
                 flex: 1,
-                valueGetter: (value, row) => row.source?.href || "",
-                renderCell: (params) => (
-                    <span>{truncateWithEllipsis(params.value, 30)}</span>
-                ),
+                valueGetter: (value, row) => row.source || [],
+                renderCell: (params) => {
+                    const firstSource = params.value[0]?.href;
+
+                    return (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <span style={{overflow: "hidden"}}>
+                                {truncateWithEllipsis(firstSource, 30)}
+                            </span>
+                            {params.value.length > 1 && (
+                                <InfoTooltip
+                                    placement="top"
+                                    content={t("verificationRequest:seeAllSources")}
+                                    useCustomStyle={false}
+                                >
+                                    <InfoOutlined style={{color: colors.neutralSecondary}} fontSize="inherit" />
+                                </InfoTooltip>
+                            )}
+                        </div>
+                    );
+                },
             },
             {
                 field: "date",
-                headerName: t("verificationRequest:verificationRequestTagDate"),
+                headerName: t("verificationRequest:tagDate"),
                 flex: 1,
                 valueGetter: (value, row) =>
                     row.date ? new Date(row.date).toLocaleDateString() : "",
+            },
+            {
+                field: "sourceChannel",
+                headerName: t(
+                    "verificationRequest:tagSourceChannel"
+                ),
+                flex: 1,
+                valueGetter: (value, row) => row.sourceChannel || "",
+            },
+            {
+                field: "severity",
+                headerName: t(
+                    "verificationRequest:tagSeverity"
+                ),
+                flex: 1,
+                valueGetter: (value, row) => row.severity || "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
             },
             {
                 field: "viewRequest",
@@ -261,7 +314,7 @@ const VerificationRequestList = () => {
             >
                 <Grid item>
                     <IconButton onClick={handleFilterClick}>
-                        <FilterListIcon />
+                        <FilterList />
                     </IconButton>
                     <FilterPopover
                         anchorEl={anchorEl}
