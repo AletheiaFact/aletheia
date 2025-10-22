@@ -1,7 +1,7 @@
 # Description
 *Summary of the changes and the related issue. List any dependencies that are required for this change.*
 
-Fixes # (issue)
+Related Ticket # (issue)
 
 # Type of change
 *Please delete options that are not relevant.*
