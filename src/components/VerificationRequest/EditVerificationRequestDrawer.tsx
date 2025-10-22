@@ -35,7 +35,7 @@ const useExtraSources = (initialSources: string[] = []) => {
     return { extraSources, addSource, removeSource, updateSource };
 }
 
-const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps> = ({
+const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps> = ({
     open,
     onClose,
     verificationRequest,
@@ -217,4 +217,4 @@ const EditVerificationRequestModal: React.FC<EditVerificationRequestDrawerProps>
     )
 };
 
-export default EditVerificationRequestModal;
+export default EditVerificationRequestDrawer;
