@@ -12,7 +12,6 @@ import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
 import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
-import colors from "../../styles/colors";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 

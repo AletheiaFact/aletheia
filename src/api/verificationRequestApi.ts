@@ -156,6 +156,21 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
         });
 };
 
+const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
+    return request
+        .put(`/${data_hash}/topics`, topics)
+        .then((response) => {
+            MessageManager.showMessage("success",
+                t("verificationRequest:addVerificationRequestSuccess")
+            );
+            return response.data;
+        })
+        .catch((e) => {
+            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            console.error("error while updating verification request", e);
+        });
+};
+
 const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
         .put(`/${id}/group`, params)

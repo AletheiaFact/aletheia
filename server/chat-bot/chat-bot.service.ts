@@ -17,6 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
+    sourceChannel?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;
@@ -46,9 +47,7 @@ export class ChatbotService {
     }
 
     private async createNewChatBotState(id: string) {
-        const newMachine = createChatBotMachine(
-            this.verificationRequestStateMachineService
-        );
+        const newMachine = createChatBotMachine(this.verificationRequestStateMachineService);
         const snapshot = newMachine.getSnapshot();
         return await this.chatBotStateService.create(
             {
@@ -96,8 +95,10 @@ export class ChatbotService {
         const chatBotMachineService = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
-            chatbotState.machine.context,
-            chatbotState._id
+            {
+                ...chatbotState.machine.context,
+                sourceChannel: channel,
+            }
         );
 
         chatBotMachineService.start(chatbotState.machine.value);
