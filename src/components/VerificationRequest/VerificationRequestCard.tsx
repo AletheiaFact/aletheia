@@ -76,7 +76,7 @@ const VerificationRequestCard = ({
             icon: <Public style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|impactArea`,
             label: t("verificationRequest:tagImpactArea"),
-            label_value: verificationRequest.impactArea.name,
+            label_value: verificationRequest.impactArea?.name,
             style: { backgroundColor: colors.neutralSecondary, color: colors.white }
         },
         {
