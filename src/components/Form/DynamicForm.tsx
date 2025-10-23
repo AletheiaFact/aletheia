@@ -39,6 +39,9 @@ const DynamicForm = ({
                                     marginBottom: 0,
                                 }}
                             >
+                                {fieldItem.rules.required &&
+                                    <span style={{ fontSize: 16, color: colors.error }}>* </span>
+                                }
                                 {t(label)}
                             </h4>
                         </Grid>

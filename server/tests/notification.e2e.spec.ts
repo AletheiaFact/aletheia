@@ -5,6 +5,10 @@ import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
 import { SessionGuard } from "../auth/session.guard";
 import { SessionGuardMock } from "./mocks/SessionGuardMock";
+import { SessionOrM2MGuard } from "../auth/m2m-or-session.guard";
+import { SessionOrM2MGuardMock } from "./mocks/SessionOrM2MGuardMock";
+import { M2MGuard } from "../auth/m2m.guard";
+import { M2MGuardMock } from "./mocks/M2MGuardMock";
 import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
@@ -62,8 +66,12 @@ describe("NotificationController (e2e)", () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule.register(testConfig)],
         })
-            .overrideProvider(SessionGuard)
+            .overrideGuard(SessionGuard)
             .useValue(SessionGuardMock)
+            .overrideGuard(SessionOrM2MGuard)
+            .useValue(SessionOrM2MGuardMock)
+            .overrideGuard(M2MGuard)
+            .useValue(M2MGuardMock)
             .overrideGuard(AbilitiesGuard)
             .useValue(AbilitiesGuardMock)
             .overrideProvider(NotificationService)

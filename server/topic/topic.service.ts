@@ -4,9 +4,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
+import { ContentModelEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable()
@@ -16,7 +15,6 @@ export class TopicService {
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
         private imageService: ImageService,
-        private verificationRequestService: VerificationRequestService,
         private wikidataService: WikidataService
     ) {}
 
@@ -55,62 +53,64 @@ export class TopicService {
             contentModel,
             topics,
             data_hash,
-            reviewTaskType,
         }: {
-            contentModel: ContentModelEnum;
-            topics: { label: string; value: string }[] | string[];
-            data_hash: string;
-            reviewTaskType: ReviewTaskTypeEnum;
+            contentModel?: ContentModelEnum;
+            topics: { label: string; value: string }[] | string[] | (string | { label: string; value: string })[];
+            data_hash?: string;
         },
         language: string = "pt"
     ) {
-        const createdTopics = await Promise.all(
-            topics.map(async (topic) => {
-                const slug = slugify(topic?.label || topic, {
-                    lower: true,
-                    strict: true,
-                });
-                const findedTopic = await this.getBySlug(slug);
+        try {
+            const createdTopics = await Promise.all(
+                topics.map(async (topic) => {
+                    const slug = slugify(topic?.label || topic, {
+                        lower: true,
+                        strict: true,
+                    });
+                    const findedTopic = await this.getBySlug(slug);
 
-                if (findedTopic) {
-                    return findedTopic?.wikidataId
-                        ? {
-                              label: findedTopic?.name,
-                              value: findedTopic?.wikidataId,
-                          }
-                        : findedTopic.slug;
-                } else {
-                    const newTopic = {
-                        name: topic?.label || topic,
-                        wikidataId: topic?.value,
-                        slug,
-                        language,
-                    };
-                    const createdTopic = await new this.TopicModel(
-                        newTopic
-                    ).save();
+                    if (findedTopic) {
+                        return findedTopic?.wikidataId
+                            ? {
+                                id: findedTopic._id,
+                                label: findedTopic?.name,
+                                value: findedTopic?.wikidataId,
+                            }
+                            : findedTopic.slug;
+                    } else {
+                        const newTopic = {
+                            name: topic?.label || topic,
+                            wikidataId: topic?.value,
+                            slug,
+                            language,
+                        };
 
-                    return {
-                        label: createdTopic.name,
-                        value: createdTopic?.wikidataId,
-                    };
-                }
-            })
-        );
+                        const createdTopic = await new this.TopicModel(
+                            newTopic
+                        ).save();
 
-        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
-            return this.verificationRequestService.updateVerificationRequestWithTopics(
-                createdTopics,
-                data_hash
+                        return {
+                            id: createdTopic._id,
+                            label: createdTopic.name,
+                            value: createdTopic?.wikidataId,
+                        };
+                    }
+                })
             );
-        }
 
-        return contentModel === ContentModelEnum.Image
-            ? this.imageService.updateImageWithTopics(createdTopics, data_hash)
-            : this.sentenceService.updateSentenceWithTopics(
-                  createdTopics,
-                  data_hash
-              );
+            if (contentModel === ContentModelEnum.Image) {
+                return this.imageService.updateImageWithTopics(createdTopics, data_hash);
+            } else if (contentModel) {
+                return this.sentenceService.updateSentenceWithTopics(
+                    createdTopics, data_hash
+                );
+            } else {
+                return createdTopics;
+            }
+        } catch (error) {
+            console.error("Error creating topics:", error);
+            throw new Error("Failed to create topics or update related content");
+        }
     }
 
     /**

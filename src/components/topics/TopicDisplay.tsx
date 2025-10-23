@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ContentModelEnum } from "../../types/enums";
 import ImageApi from "../../api/image";
 import TopicForm from "./TopicForm";
-import TopicsApi from "../../api/topicsApi";
 import { useTranslation } from "next-i18next";
-import { useDispatch } from "react-redux";
 import TagDisplay from "./TagDisplay";
 import SentenceApi from "../../api/sentenceApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
@@ -21,8 +19,6 @@ const TopicDisplay = ({
     const [inputValue, setInputValue] = useState<any[]>([]);
     const [tags, setTags] = useState<any[]>([]);
     const { t } = useTranslation();
-    const dispatch = useDispatch();
-    let timeout: NodeJS.Timeout;
 
     useEffect(() => {
         const inputValueFormatted = inputValue.map((inputValue) =>
@@ -44,29 +40,6 @@ const TopicDisplay = ({
         );
         setTags(topicsArray?.concat(filterValues) || []);
     }, [inputValue, topicsArray]);
-
-    const fetchTopicList = async (
-        topic: string
-    ) => new Promise<{ label: string; value: string }[]>((resolve) => {
-        if (timeout) clearTimeout(timeout);
-        if (topic.length >= 3) {
-            timeout = setTimeout(async () => {
-                const topicSearchResults = await TopicsApi.getTopics({
-                    topicName: topic,
-                    t,
-                    dispatch,
-                });
-                resolve(
-                    topicSearchResults?.map(({ name, wikidata }) => ({
-                        label: name,
-                        value: wikidata
-                    })) || []
-                );
-            }, 1000);
-        }
-        return [];
-    });
-    
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
@@ -107,7 +80,6 @@ const TopicDisplay = ({
                 <TopicForm
                     contentModel={contentModel}
                     data_hash={data_hash}
-                    fetchTopicList={fetchTopicList}
                     topicsArray={topicsArray}
                     setTopicsArray={setTopicsArray}
                     setInputValue={setInputValue}

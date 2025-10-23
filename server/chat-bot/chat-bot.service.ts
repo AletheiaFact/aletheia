@@ -4,9 +4,9 @@ import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -26,7 +26,7 @@ export class ChatbotService {
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
-        private verificationService: VerificationRequestService,
+        private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private chatBotStateService: ChatBotStateService
     ) { }
 
@@ -44,7 +44,7 @@ export class ChatbotService {
     }
 
     private async createNewChatBotState(id: string) {
-        const newMachine = createChatBotMachine(this.verificationService);
+        const newMachine = createChatBotMachine(this.verificationRequestStateMachineService);
         const snapshot = newMachine.getSnapshot();
         return await this.chatBotStateService.create(
             {
@@ -57,7 +57,7 @@ export class ChatbotService {
 
     private rehydrateChatBotState(chatbotState) {
         const rehydratedMachine = createChatBotMachine(
-            this.verificationService,
+            this.verificationRequestStateMachineService,
             chatbotState.machine.value,
             chatbotState.machine.context
         );
@@ -82,14 +82,19 @@ export class ChatbotService {
         const { api_url, api_token } = this.configService.get("zenvia");
         const { from, to, channel, contents } = message;
 
+        const channel_api_url = `${api_url}/${channel}/messages`;
+
         const chatbotState = await this.getOrCreateChatBotMachine(
             from,
             channel
         );
         const chatBotMachineService = createChatBotMachine(
-            this.verificationService,
+            this.verificationRequestStateMachineService,
             chatbotState.machine.value,
-            chatbotState.machine.context
+            {
+                ...chatbotState.machine.context,
+                sourceChannel: channel,
+            }
         );
 
         chatBotMachineService.start(chatbotState.machine.value);
@@ -111,7 +116,7 @@ export class ChatbotService {
 
         const body = this.createResponseBody(to, from, responseMessage);
 
-        return this.sendHttpPost(api_url, api_token, body);
+        return this.sendHttpPost(channel_api_url, api_token, body);
     }
 
     private shouldPauseMachine(chatbotState, snapshot) {
@@ -130,12 +135,12 @@ export class ChatbotService {
     }
 
     private sendHttpPost(
-        api_url,
+        channel_api_url,
         api_token,
         body
     ): Observable<AxiosResponse<any>> {
         return this.httpService
-            .post(api_url, body, {
+            .post(channel_api_url, body, {
                 headers: { "X-API-TOKEN": api_token },
             })
             .pipe(
