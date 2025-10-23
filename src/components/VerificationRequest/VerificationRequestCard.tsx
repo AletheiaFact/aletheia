@@ -62,7 +62,7 @@ const VerificationRequestCard = ({
             icon: <Filter style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|reportType`,
             label: t("verificationRequest:tagReportType"),
-            label_value: t(`claimForm:${verificationRequest.reportType}`),
+            label_value: t(`claimForm:${verificationRequest.reportType || "undefined"}`),
             style: { backgroundColor: colors.secondary, color: colors.white }
         },
         {
