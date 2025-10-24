@@ -44,5 +44,6 @@
     "uploadImageButton": "Enviar imagem",
     "fileInputButton": "Escolha o arquivo",
     "fileTypeError": "Voce só pode enviar arquivos nos formatos {{types}}",
-    "fileSizeError": "O arquivo deve ter menos de {{size}}"
+    "fileSizeError": "O arquivo deve ter menos de {{size}}",
+    "undefined": "Indefinido"
 }

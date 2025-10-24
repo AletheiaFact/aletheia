@@ -44,5 +44,6 @@
     "uploadImageButton": "Upload image",
     "fileInputButton": "Choose file",
     "fileTypeError": "You can only upload {{types}} files",
-    "fileSizeError": "File must smaller than {{size}}"
+    "fileSizeError": "File must smaller than {{size}}",
+    "undefined": "Undefined"
 }
