@@ -3,6 +3,7 @@ import {
     Injectable,
     Inject,
     forwardRef,
+    Logger,
 } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
@@ -27,6 +28,8 @@ const md5 = require("md5");
 
 @Injectable()
 export class VerificationRequestService {
+    private readonly logger = new Logger(VerificationRequestService.name);
+
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
@@ -114,15 +117,18 @@ export class VerificationRequestService {
         user?: any
     ): Promise<VerificationRequestDocument> {
         try {
+            this.logger.debug("Creating verification request", { data });
+
             const vr = await this.VerificationRequestModel.create({
                 ...data,
                 data_hash: md5(data.content),
                 embedding: null,
                 source: null,
-                impactArea: null
+                impactArea: null,
             });
 
-            const validSources = data.source?.filter(source => source?.href?.trim()) || [];
+            const validSources =
+                data.source?.filter((source) => source?.href?.trim()) || [];
 
             if (validSources.length) {
                 const srcId = await Promise.all(
@@ -141,8 +147,9 @@ export class VerificationRequestService {
 
             if (data.impactArea) {
                 const topicWikidataEntities = [data.impactArea];
-
-                const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
+                const createdTopic = await this.topicService.create({
+                    topics: topicWikidataEntities,
+                });
 
                 vr.impactArea = Types.ObjectId(createdTopic[0].id);
                 await vr.save();
@@ -159,11 +166,29 @@ export class VerificationRequestService {
             );
             await this.historyService.createHistory(history);
 
+            this.logger.log(
+                `Verification request created successfully: ${vr._id}`
+            );
             return vr;
         } catch (e) {
+            this.logger.error("Failed to create verification request", e.stack);
+
+            if (e.name === "ValidationError") {
+                const fields = Object.keys(e.errors).join(", ");
+                throw new BadRequestException(
+                    `Validation failed: ${fields} are invalid or missing`
+                );
+            }
+
+            if (e.code === 11000) {
+                const field = Object.keys(e.keyPattern)[0];
+                throw new BadRequestException(
+                    `Duplicate value for field: ${field}`
+                );
+            }
+
             throw new BadRequestException(
-                "Failed to create verification request",
-                e
+                "Failed to create verification request"
             );
         }
     }
