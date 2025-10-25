@@ -10,6 +10,7 @@ import {
     Param,
     Put,
     UseGuards,
+    Logger,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
@@ -31,9 +32,12 @@ import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
+import { Roles } from "../auth/ability/ability.factory";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
+    private readonly logger = new Logger(VerificationRequestController.name);
+
     constructor(
         private verificationRequestService: VerificationRequestService,
         private configService: ConfigService,
@@ -102,12 +106,20 @@ export class VerificationRequestController {
         @Req() req: BaseRequest,
         @Body() verificationRequestBody: CreateVerificationRequestDTO
     ) {
-        const validateCaptcha = await this.captchaService.validate(
-            verificationRequestBody.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+        const isM2MUser = req.user?.role?.main === Roles.Integration;
+
+        if (!isM2MUser) {
+            this.logger.log("Regular user request - validating CAPTCHA");
+            const validateCaptcha = await this.captchaService.validate(
+                verificationRequestBody.recaptcha
+            );
+            if (!validateCaptcha) {
+                throw new Error("Error validating captcha");
+            }
+        } else {
+            this.logger.log("M2M user request - skipping CAPTCHA validation");
         }
+
         return this.verificationRequestStateMachineService.request(
             verificationRequestBody,
             req.user
