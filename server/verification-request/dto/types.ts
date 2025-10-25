@@ -74,3 +74,7 @@ export const VerificationRequestMessages = {
         LOCATION_SERVICE_PROVIDER_OR_USER_NOT_FOUND: 'Location, Service, Provider or User not  found.',
     },
 }
+
+export const MAX_RETRY_ATTEMPTS = 3;
+export const AI_TASK_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+export const EXPECTED_STATES = ['embedding', 'identifiedData', 'topics', 'impactArea', 'severity'];
