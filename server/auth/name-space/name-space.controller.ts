@@ -8,7 +8,6 @@ import {
     Query,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import { NameSpaceService } from "./name-space.service";
 import type { Request, Response } from "express";
@@ -18,11 +17,7 @@ import { parse } from "url";
 import { ViewService } from "../../view/view.service";
 import { CreateNameSpaceDTO } from "./dto/create-namespace.dto";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../../auth/ability/ability.decorator";
-import { AbilitiesGuard } from "../../auth/ability/abilities.guard";
+import { AdminOnly } from "../decorators/auth.decorator";
 import { Types } from "mongoose";
 import { Roles } from "../../auth/ability/ability.factory";
 import { NotificationService } from "../../notifications/notifications.service";
@@ -37,10 +32,9 @@ export class NameSpaceController {
         private notificationService: NotificationService
     ) {}
 
+    @AdminOnly()
     @ApiTags("name-space")
     @Post("api/name-space")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async create(@Body() namespace: CreateNameSpaceDTO) {
         namespace.slug = slugify(namespace.name, {
             lower: true,
@@ -55,10 +49,9 @@ export class NameSpaceController {
         return await this.nameSpaceService.create(namespace);
     }
 
+    @AdminOnly()
     @ApiTags("name-space")
     @Put("api/name-space/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async update(@Param("id") id, @Body() namespaceBody: UpdateNameSpaceDTO) {
         const nameSpace = await this.nameSpaceService.getById(id);
         const newNameSpace = {
@@ -86,9 +79,8 @@ export class NameSpaceController {
         return await this.nameSpaceService.update(id, newNameSpace);
     }
 
+    @AdminOnly()
     @ApiTags("name-space")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     @Get("api/name-space")
     async findAllOrFiltered(
         @Query("userId") userId?: string,
@@ -100,6 +92,7 @@ export class NameSpaceController {
         return this.nameSpaceService.listAll();
     }
 
+    @AdminOnly()
     @ApiTags("name-space")
     @Get("admin/name-spaces")
     public async adminNameSpaces(@Req() req: Request, @Res() res: Response) {
