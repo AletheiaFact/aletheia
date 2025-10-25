@@ -1,4 +1,4 @@
-export interface GetVerificationRequestsParams {
+export interface GetHistoryParams {
     targetId: string;
     targetModel: string;
     page: number;

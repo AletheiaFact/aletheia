@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
-import { GetVerificationRequestsParams } from "interfaces/history.interface";
+import { GetHistoryParams } from "./types/history.interface";
 interface HistoryQuery {
     targetId: Types.ObjectId;
     targetModel: string;
@@ -75,7 +75,7 @@ export class HistoryService {
      * @param order asc or desc.
      * @returns The paginated history of a target.
      */
-    async getByTargetIdModelAndType(params: GetVerificationRequestsParams) {
+    async getByTargetIdModelAndType(params: GetHistoryParams) {
         const {
             targetId,
             targetModel,

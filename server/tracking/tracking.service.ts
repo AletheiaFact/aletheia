@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { TrackingResponseDTO } from "./interfaces/tracking.interfaces";
+import { TrackingResponseDTO } from "./types/tracking.interfaces";
 
 @Injectable()
 export class TrackingService {
@@ -32,11 +32,11 @@ export class TrackingService {
     }
 
     const tracking = histories
-      .filter(h => h.details?.after?.status && h.details?.before?.status !== h.details?.after?.status)
-      .map(h => ({
-        id: h._id,
-        status: h.details.after.status,
-        date: (h.date as unknown) as Date,
+      .filter(history => history.details?.after?.status && history.details?.before?.status !== history.details?.after?.status)
+      .map(history => ({
+        id: history._id,
+        status: history.details.after.status,
+        date: (history.date as unknown) as Date,
       }));
 
     const latestStatus = tracking.length > 0
