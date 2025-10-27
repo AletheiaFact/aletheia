@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Head from "next/head";
 import "../styles/app.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
@@ -21,6 +21,7 @@ import {
 import { GetUserRole } from "../utils/GetUserRole";
 import { AletheiaThemeConfig } from "../styles/namespaceThemes";
 import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
@@ -31,7 +32,8 @@ function MyApp({ Component, pageProps }) {
     const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
 
     const [nameSpace] = useAtom(currentNameSpace);
-    const safeNamespace = nameSpace || "main";
+    const safeNamespace = nameSpace || NameSpaceEnum.Main;
+    const namespaceTheme = useMemo(() => AletheiaThemeConfig(safeNamespace), [safeNamespace]);
 
     GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);
@@ -66,7 +68,7 @@ function MyApp({ Component, pageProps }) {
                 )}
             </Head>
             <Provider store={store}>
-                <ThemeProvider theme={AletheiaThemeConfig(safeNamespace)}>
+                <ThemeProvider theme={namespaceTheme}>
                     <GlobalMessage />
                     <CssBaseline />
                     <MainApp>
