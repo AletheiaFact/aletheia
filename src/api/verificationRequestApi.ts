@@ -112,7 +112,7 @@ const getById = (id, _t = null, params = {}) => {
 };
 
 const updateVerificationRequest = (id, params, t, operationType = "update") => {
-    const menssages = {
+    const messages = {
         update: {
             success: "verificationRequest:editVerificationRequestSuccess",
             error: "verificationRequest:editVerificationRequestError",
@@ -128,14 +128,14 @@ const updateVerificationRequest = (id, params, t, operationType = "update") => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(menssages[operationType].success)
+                t(messages[operationType].success)
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t(menssages[operationType].error)
+                t(messages[operationType].error)
             );
             console.error("error while updating verification request", e);
         });

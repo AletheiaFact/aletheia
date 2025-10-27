@@ -15,7 +15,7 @@ import LargeDrawer from "../LargeDrawer";
 interface EditVerificationRequestDrawerProps {
     open: boolean;
     onClose: () => void;
-    verificationRequest;
+    verificationRequest: VerificationRequest;
     onSave: (updatedRequest: VerificationRequest) => void;
 }
 
@@ -60,24 +60,40 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
             reset({
                 content: verificationRequest.content,
                 publicationDate: verificationRequest.publicationDate,
-                date: verificationRequest.date,
                 heardFrom: verificationRequest.heardFrom,
                 source: verificationRequest.source || [],
             });
         }
     }, [open, verificationRequest, reset]);
 
-    const getEditableFields = (verificationRequest) => {
-        const editableFields = new Set(["publicationDate", "source"]);
+    const editabledFields = new Set(["publicationDate", "source"]);
+    const excludedField = new Set(["email"]);
 
-        return createVerificationRequestForm.map((field) => {
-            if (field.fieldName === "source") {
-                const hasExistingSource = verificationRequest?.source?.length > 0;
-                return { ...field, disabled: hasExistingSource, rules: {} };
-            }
-            return { ...field, disabled: !editableFields.has(field.fieldName) };
-        }).filter(field => field.fieldName !== "email");
-    };
+    const isFieldDisabled = (fieldName: string, verificationRequest) => {
+        if (fieldName === "source") {
+            return verificationRequest?.source?.length > 0;
+        }
+        return !editabledFields.has(fieldName);
+    }
+
+    const configureFieldRules = (field, verificationRequest) => {
+        const disabled = isFieldDisabled(field.fieldName, verificationRequest);
+
+        if (field.fieldName === "source") {
+            return { ...field, disabled, rules: {} };
+        }
+        return { ...field, disabled };
+    }
+
+    const shouldIncludeField = (field) => {
+        return !excludedField.has(field.fieldName)
+    }
+
+    const getEditableFields = (verificationRequest) => {
+        return createVerificationRequestForm
+            .map(field => configureFieldRules(field, verificationRequest))
+            .filter(shouldIncludeField);
+    }
 
     const formFields = getEditableFields(verificationRequest);
 
@@ -86,7 +102,7 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
             ? sources
                 .map(src => {
                     if (typeof src === "object" && src._id) {
-                        const originalSource = verificationRequest.source?.find(existingSource => existingSource._id === src._id);
+                        const originalSource = verificationRequest.source?.find(existingSource => existingSource.targetId === src.targetId);
                         return originalSource?.href ? { href: originalSource.href } : null;
                     }
                     return null;
@@ -128,15 +144,12 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
         }
     };
 
-    const machineValues = verificationRequest ? {
-        content: verificationRequest.content || "",
-        publicationDate: verificationRequest.publicationDate || "",
-        heardFrom: verificationRequest.heardFrom || "",
-        source: Array.isArray(verificationRequest.source) && verificationRequest.source.length > 0
-            ? verificationRequest.source[0]?.href || ""
-            : "",
-        date: verificationRequest.date || "",
-    } : {};
+    const machineValues = {
+        ...verificationRequest,
+        source: Array.isArray(verificationRequest.source)
+            ? verificationRequest.source.map(src => src.href)
+            : [],
+    };
 
     return (
         <LargeDrawer open={open} onClose={onClose}>

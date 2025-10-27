@@ -34,7 +34,7 @@ const VerificationRequestMainContent = ({
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
 
-                {role !== Roles.Regular && (
+                {role == Roles.Admin && (
                     <IconButton size="small">
                         <EditIcon
                             style={{ fontSize: 18 }}
