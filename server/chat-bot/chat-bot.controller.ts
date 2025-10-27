@@ -1,7 +1,7 @@
 import { Controller, Post, Req, Res } from "@nestjs/common";
 import { ChatbotService } from "./chat-bot.service";
 import type { Request, Response } from "express";
-import { AdminOnly } from "auth/decorators/auth.decorator";
+import { AdminOnly } from "../auth/decorators/auth.decorator";
 
 @Controller()
 export class ChatbotController {
