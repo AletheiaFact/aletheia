@@ -19,21 +19,32 @@ interface EditVerificationRequestDrawerProps {
     onSave: (updatedRequest: VerificationRequest) => void;
 }
 
-const useExtraSources = (initialSources: string[] = []) => {
-    const [extraSources, setExtraSources] = useState<string[]>(initialSources);
+interface ExtraSourceItem {
+    id: string;
+    value: string;
+}
 
-    const addSource = () => setExtraSources([...extraSources, ""]);
-    const removeSource = (indexToRemove: number) => {
-        setExtraSources(extraSources.filter((source, index) => index !== indexToRemove));
-    };
-    const updateSource = (index: number, value: string) => {
-        const newSources = [...extraSources];
-        newSources[index] = value;
-        setExtraSources(newSources);
+const useExtraSources = (initialSources: string[] = []) => {
+    const [extraSources, setExtraSources] = useState<ExtraSourceItem[]>(
+        initialSources.map((value) => ({ id: crypto.randomUUID(), value }))
+    );
+
+    const addSource = () =>
+        setExtraSources([...extraSources, { id: crypto.randomUUID(), value: "" }]);
+
+    const removeSource = (idToRemove: string) =>
+        setExtraSources(extraSources.filter((source) => source.id !== idToRemove));
+
+    const updateSource = (id: string, value: string) => {
+        setExtraSources((prev) =>
+            prev.map((source) =>
+                source.id === id ? { ...source, value } : source
+            )
+        );
     };
 
     return { extraSources, addSource, removeSource, updateSource };
-}
+};
 
 const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps> = ({
     open,
@@ -110,8 +121,8 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
                 .filter(src => src?.href)
             : [];
 
-    const formatNewSources = (sources: string[]) =>
-        sources.filter(src => src.trim() !== "").map(src => ({ href: src }));
+    const formatNewSources = (sources: ExtraSourceItem[]) =>
+        sources.filter(src => src.value.trim() !== "").map(src => ({ href: src.value }));
 
     const onSubmit = async (data) => {
         setIsSubmit(true);
@@ -174,9 +185,9 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
                         machineValues={machineValues}
                     />
 
-                    {extraSources.map((source, index) => (
+                    {extraSources.map((source) => (
                         <Box
-                            key={index}
+                            key={source.id}
                             style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -185,12 +196,12 @@ const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps
                             }}
                         >
                             <AletheiaInput
-                                value={source}
-                                onChange={(e) => updateSource(index, e.target.value)}
+                                value={source.value}
+                                onChange={(e) => updateSource(source.id, e.target.value)}
                                 placeholder={t("verificationRequest:sourcePlaceholder")}
                             />
                             <AletheiaButton
-                                onClick={() => removeSource(index)}
+                                onClick={() => removeSource(source.id)}
                                 style={{ minWidth: "auto", padding: "8px" }}
                             >
                                 <DeleteIcon />
