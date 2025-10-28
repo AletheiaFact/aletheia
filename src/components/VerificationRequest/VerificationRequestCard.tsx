@@ -83,7 +83,7 @@ const VerificationRequestCard = ({
             icon: <WarningAmber style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
-            label_value: "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
+            label_value: verificationRequest.severity,
             style: { backgroundColor: colors.error, color: colors.white }
         }
     ]
