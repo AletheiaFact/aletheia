@@ -23,7 +23,6 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import {
     AI_TASK_TIMEOUT,

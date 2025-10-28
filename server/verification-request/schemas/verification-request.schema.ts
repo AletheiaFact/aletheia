@@ -89,13 +89,6 @@ export class VerificationRequest {
     statesExecuted: string[];
 
     @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: "Topic",
-    })
-    impactArea: Topic;
-
-    @Prop({
         required: false,
         type: String,
     })
