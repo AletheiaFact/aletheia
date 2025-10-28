@@ -43,8 +43,8 @@ const FilterPopover = ({
                         <MenuItem value="topics">
                             {t("verificationRequest:topicsFilterOption")}
                         </MenuItem>
-                        <MenuItem value="content">
-                            {t("verificationRequest:contentFilterOption")}
+                        <MenuItem value="impactArea">
+                            {t("verificationRequest:impactAreaFilterOption")}
                         </MenuItem>
                     </Select>
                 </FormControl>
@@ -59,12 +59,13 @@ const FilterPopover = ({
                     />
                 </Grid>
             )}
-            {filterType === "content" && (
+            {filterType === "impactArea" && (
                 <Grid item xs={12}>
-                    <TextField
-                        label={t("verificationRequest:filterByContentLabel")}
-                        onChange={(e) => setFilterValue(e.target.value)}
-                        fullWidth
+                    <AdvancedSearch
+                        defaultValue={[]}
+                        onSearch={fetchTopicList}
+                        options={autoCompleteTopicsResults}
+                        handleFilter={setFilterValue}
                     />
                 </Grid>
             )}

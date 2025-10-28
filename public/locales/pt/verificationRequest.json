@@ -61,5 +61,20 @@
     "contentFilterOption": "Conteudo",
     "filterByContentLabel": "Filtrar por Conteudo",
     "applyButtonLabel": "Aplicar",
-    "showText": "Mostrar"
+    "showText": "Mostrar",
+    "statusPreTriage": "Pré-Triagem",
+    "statusInTriage": "Em Triagem",
+    "statusPosted": "Publicado",
+    "statusDeclined": "Recusado",
+    "allPriorities": "Todas as Prioridades",
+    "priorityCritical": "Crítica",
+    "priorityHigh": "Alta",
+    "priorityMedium": "Média",
+    "priorityLow": "Baixa",
+    "filterByPriority": "Filtrar por Prioridade",
+    "noRequestsInStatus": "Nenhuma solicitação neste status",
+    "statusFilterOption": "Status",
+    "impactAreaFilterOption": "Área de Impacto",
+    "statusFilterLabel": "Status:",
+    "impactAreaFilterLabel": "Área de Impacto:"
 }

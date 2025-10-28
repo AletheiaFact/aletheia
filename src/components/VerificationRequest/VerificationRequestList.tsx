@@ -4,8 +4,9 @@ import verificationRequestApi from "../../api/verificationRequestApi";
 import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
-import { Grid, IconButton, Button } from "@mui/material";
-import { FilterList, InfoOutlined } from "@mui/icons-material";
+import VerificationRequestBoardView from "./VerificationRequestBoardView";
+import { Grid, IconButton, Button, ToggleButtonGroup, ToggleButton, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { FilterList, InfoOutlined, ViewList, ViewModule } from "@mui/icons-material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -36,13 +37,15 @@ const VerificationRequestList = () => {
     const [applyFilters, setApplyFilters] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [viewMode, setViewMode] = useState<"list" | "board">("list");
+    const [priorityFilter, setPriorityFilter] = useState("all");
 
-    const { autoCompleteTopicsResults, filtersUsed, topicFilterUsed } =
+    const { autoCompleteTopicsResults, topicFilterUsed, impactAreaFilterUsed } =
         useAppSelector((state) => ({
             autoCompleteTopicsResults:
                 state?.search?.autocompleteTopicsResults || [],
-            filtersUsed: state?.search?.searchFilterUsed || [],
             topicFilterUsed: state?.topicFilterUsed || [],
+            impactAreaFilterUsed: state?.impactAreaFilterUsed || [],
         }));
 
     const fetchData = useCallback(async () => {
@@ -52,7 +55,8 @@ const VerificationRequestList = () => {
                 page: paginationModel.page + 1,
                 pageSize: paginationModel.pageSize,
                 topics: topicFilterUsed,
-                filtersUsed: filtersUsed,
+                severity: priorityFilter,
+                impactArea: impactAreaFilterUsed,
             });
             if (response) {
                 setTotalVerificationRequests(response.total);
@@ -67,7 +71,8 @@ const VerificationRequestList = () => {
         paginationModel.page,
         paginationModel.pageSize,
         topicFilterUsed,
-        filtersUsed,
+        priorityFilter,
+        impactAreaFilterUsed,
     ]);
 
     useEffect(() => {
@@ -103,10 +108,16 @@ const VerificationRequestList = () => {
                 topicFilterUsed: updatedTopics,
             });
         }
-        if (filterType === "content" && filterValue) {
+        if (filterType === "impactArea" && filterValue) {
+            const impactAreasToAdd = Array.isArray(filterValue)
+                ? filterValue
+                : [filterValue];
+            const updatedImpactAreas = [
+                ...new Set([...impactAreaFilterUsed, ...impactAreasToAdd]),
+            ];
             dispatch({
-                type: ActionTypes.SET_SEARCH_FILTER_USED,
-                filterUsed: [...filtersUsed, filterValue],
+                type: ActionTypes.SET_IMPACT_AREA_FILTER_USED,
+                impactAreaFilterUsed: updatedImpactAreas,
             });
         }
         setPaginationModel((prev) => ({ ...prev, page: 0 }));
@@ -122,13 +133,13 @@ const VerificationRequestList = () => {
                 type: ActionTypes.SET_TOPIC_FILTER_USED,
                 topicFilterUsed: updatedTopics,
             });
-        } else if (removedFilter.type === "content") {
-            const updatedFilters = filtersUsed.filter(
-                (filter) => filter !== removedFilter.value
+        } else if (removedFilter.type === "impactArea") {
+            const updatedImpactAreas = impactAreaFilterUsed.filter(
+                (impactArea) => impactArea !== removedFilter.value
             );
             dispatch({
-                type: ActionTypes.SET_SEARCH_FILTER_USED,
-                filterUsed: updatedFilters,
+                type: ActionTypes.SET_IMPACT_AREA_FILTER_USED,
+                impactAreaFilterUsed: updatedImpactAreas,
             });
         }
         setPaginationModel((prev) => ({ ...prev, page: 0 }));
@@ -142,12 +153,13 @@ const VerificationRequestList = () => {
 
     const handleResetFilters = () => {
         setFilterValue([]);
+        setPriorityFilter("all");
         setPaginationModel({ pageSize: 10, page: 0 });
         dispatch({
             type: ActionTypes.SET_TOPIC_FILTER_USED,
             topicFilterUsed: [],
         });
-        dispatch({ type: ActionTypes.SET_SEARCH_FILTER_USED, filterUsed: [] });
+        dispatch({ type: ActionTypes.SET_IMPACT_AREA_FILTER_USED, impactAreaFilterUsed: [] });
         setApplyFilters(true);
     };
 
@@ -303,6 +315,12 @@ const VerificationRequestList = () => {
         []
     );
 
+    const handlePriorityFilterChange = (newPriority: string) => {
+        setPriorityFilter(newPriority);
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        setApplyFilters(true);
+    };
+
     return (
         <Grid container spacing={2} justifyContent="center">
             <Grid
@@ -311,24 +329,66 @@ const VerificationRequestList = () => {
                 container
                 alignItems="center"
                 justifyContent="space-between"
+                style={{ marginTop: 30 }}
             >
-                <Grid item>
-                    <IconButton onClick={handleFilterClick}>
-                        <FilterList />
-                    </IconButton>
-                    <FilterPopover
-                        anchorEl={anchorEl}
-                        onClose={handleFilterClose}
-                        filterType={filterType}
-                        setFilterType={setFilterType}
-                        setFilterValue={debouncedSetFilterValue}
-                        fetchTopicList={fetchTopicList}
-                        autoCompleteTopicsResults={autoCompleteTopicsResults}
-                        onFilterApply={handleFilterApply}
-                        t={t}
-                    />
+                {/* TODO: separate the manage options in a different component 
+                This will follow the atomic design principles. */}
+                <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <ToggleButtonGroup
+                        value={viewMode}
+                        exclusive
+                        onChange={(_, newView) => {
+                            if (newView !== null) {
+                                setViewMode(newView);
+                            }
+                        }}
+                        aria-label="view mode"
+                        size="small"
+                    >
+                        <ToggleButton value="list" aria-label="list view">
+                            <ViewList />
+                        </ToggleButton>
+                        <ToggleButton value="board" aria-label="board view">
+                            <ViewModule />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    {viewMode === "board" && (
+                        <>
+                            <IconButton onClick={handleFilterClick}>
+                                <FilterList />
+                            </IconButton>
+                            <FilterPopover
+                                anchorEl={anchorEl}
+                                onClose={handleFilterClose}
+                                filterType={filterType}
+                                setFilterType={setFilterType}
+                                setFilterValue={debouncedSetFilterValue}
+                                fetchTopicList={fetchTopicList}
+                                autoCompleteTopicsResults={autoCompleteTopicsResults}
+                                onFilterApply={handleFilterApply}
+                                t={t}
+                            />
+                            <FormControl sx={{ minWidth: 200 }} size="small">
+                                <InputLabel id="priority-filter-label">
+                                    {t("verificationRequest:filterByPriority")}
+                                </InputLabel>
+                                <Select
+                                    labelId="priority-filter-label"
+                                    value={priorityFilter}
+                                    label={t("verificationRequest:filterByPriority")}
+                                    onChange={(e) => handlePriorityFilterChange(e.target.value)}
+                                >
+                                    <MenuItem value="all">{t("verificationRequest:allPriorities")}</MenuItem>
+                                    <MenuItem value="critical">{t("verificationRequest:priorityCritical")}</MenuItem>
+                                    <MenuItem value="high">{t("verificationRequest:priorityHigh")}</MenuItem>
+                                    <MenuItem value="medium">{t("verificationRequest:priorityMedium")}</MenuItem>
+                                    <MenuItem value="low">{t("verificationRequest:priorityLow")}</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </>
+                    )}
                 </Grid>
-                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                {(topicFilterUsed.length > 0 || priorityFilter !== "all" || impactAreaFilterUsed.length > 0) && (
                     <Grid item>
                         <Button onClick={handleResetFilters}>
                             {t("verificationRequest:resetFiltersButton")}
@@ -336,45 +396,50 @@ const VerificationRequestList = () => {
                     </Grid>
                 )}
             </Grid>
-            {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+            {(topicFilterUsed.length > 0 || impactAreaFilterUsed.length > 0) && (
                 <Grid item xs={10}>
                     <ActiveFilters
                         topicFilterUsed={topicFilterUsed}
-                        filtersUsed={filtersUsed}
+                        impactAreaFilterUsed={impactAreaFilterUsed}
                         onRemoveFilter={handleRemoveFilter}
                         t={t}
                     />
                 </Grid>
             )}
-            <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
-                <DataGrid
-                    rows={filteredRequests}
-                    columns={columns}
-                    paginationModel={paginationModel}
-                    pageSizeOptions={[5, 10, 50]}
-                    onPaginationModelChange={handlePaginationChange}
-                    getRowId={(row) => row._id}
-                    autoHeight
-                    rowCount={totalVerificationRequests}
-                    paginationMode="server"
-                    loading={loading}
-                    sx={{
-                        "& .MuiDataGrid-columnHeader": {
-                            backgroundColor: colors.lightNeutralSecondary,
-                            color: colors.primary,
-                            fontWeight: "bold",
-                            borderBottom: `2px solid ${colors.secondary}`,
-                        },
-                        "& .MuiIconButton-root": {
-                            color:
-                                filtersUsed.length > 0 ||
-                                    topicFilterUsed.length > 0
-                                    ? colors.primary
-                                    : "default",
-                        },
-                    }}
-                />
-            </Grid>
+            {viewMode === "list" ? (
+                <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
+                    <DataGrid
+                        rows={filteredRequests}
+                        columns={columns}
+                        paginationModel={paginationModel}
+                        pageSizeOptions={[5, 10, 50]}
+                        onPaginationModelChange={handlePaginationChange}
+                        getRowId={(row) => row._id}
+                        autoHeight
+                        rowCount={totalVerificationRequests}
+                        paginationMode="server"
+                        loading={loading}
+                        sx={{
+                            "& .MuiDataGrid-columnHeader": {
+                                backgroundColor: colors.lightNeutralSecondary,
+                                color: colors.primary,
+                                fontWeight: "bold",
+                                borderBottom: `2px solid ${colors.secondary}`,
+                            },
+                            "& .MuiIconButton-root": {
+                                color: colors.primary
+                            },
+                        }}
+                    />
+                </Grid>
+            ) : (
+                <Grid item xs={12}>
+                    <VerificationRequestBoardView
+                        requests={filteredRequests}
+                        loading={loading}
+                    />
+                </Grid>
+            )}
         </Grid>
     );
 };

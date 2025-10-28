@@ -58,6 +58,9 @@ export class VerificationRequestController {
             contentFilters = [],
             topics = [],
             order,
+            severity,
+            status,
+            impactArea,
         } = getVerificationRequest;
 
         const [verificationRequests, totalVerificationRequests] =
@@ -68,10 +71,16 @@ export class VerificationRequestController {
                     page,
                     pageSize,
                     order,
+                    severity,
+                    status,
+                    impactArea,
                 }),
                 this.verificationRequestService.count({
                     contentFilters,
                     topics,
+                    severity,
+                    status,
+                    impactArea,
                 }),
             ]);
 

@@ -61,5 +61,20 @@
     "contentFilterOption": "Content",
     "filterByContentLabel": "Filter by Content",
     "applyButtonLabel": "Apply",
-    "showText": "Show"
+    "showText": "Show",
+    "statusPreTriage": "Pre Triage",
+    "statusInTriage": "In Triage",
+    "statusPosted": "Posted",
+    "statusDeclined": "Declined",
+    "allPriorities": "All Priorities",
+    "priorityCritical": "Critical",
+    "priorityHigh": "High",
+    "priorityMedium": "Medium",
+    "priorityLow": "Low",
+    "filterByPriority": "Filter by Priority",
+    "noRequestsInStatus": "No requests in this status",
+    "statusFilterOption": "Status",
+    "impactAreaFilterOption": "Impact Area",
+    "statusFilterLabel": "Status:",
+    "impactAreaFilterLabel": "Impact Area:"
 }

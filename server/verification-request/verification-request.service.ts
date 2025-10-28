@@ -50,6 +50,9 @@ export class VerificationRequestService {
         pageSize,
         order,
         topics,
+        severity,
+        status,
+        impactArea,
     }): Promise<VerificationRequest[]> {
         const query: any = {};
 
@@ -61,6 +64,22 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (severity && severity !== "all") {
+            if (severity === "critical") {
+                query.severity = "critical";
+            } else {
+                query.severity = { $regex: `^${severity}`, $options: "i" };
+            }
+        }
+
+        if (status && status.length > 0) {
+            query.status = { $in: status };
+        }
+
+        if (impactArea && impactArea.length > 0) {
+            query.impactArea = { $in: impactArea };
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -466,7 +485,7 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count({ contentFilters, topics }): Promise<number> {
+    async count({ contentFilters, topics, severity, status, impactArea }): Promise<number> {
         const query: any = {};
 
         if (contentFilters && contentFilters.length > 0) {
@@ -477,6 +496,22 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (severity && severity !== "all") {
+            if (severity === "critical") {
+                query.severity = "critical";
+            } else {
+                query.severity = { $regex: `^${severity}`, $options: "i" };
+            }
+        }
+
+        if (status && status.length > 0) {
+            query.status = { $in: status };
+        }
+
+        if (impactArea && impactArea.length > 0) {
+            query.impactArea = { $in: impactArea };
         }
 
         return this.VerificationRequestModel.countDocuments(query);
