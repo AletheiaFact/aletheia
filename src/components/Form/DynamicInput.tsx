@@ -12,6 +12,7 @@ import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
 import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
+import colors from "../../styles/colors";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -26,6 +27,7 @@ interface DynamicInputProps {
     "data-cy": string;
     extraProps: any;
     disabledDate?: any;
+    disabled?: boolean;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -65,6 +67,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     data-cy={props["data-cy"]}
                     white="true"
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
                 />
             );
         case "textList":
@@ -141,6 +145,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     data-cy={"testSelectDate"}
                     disabledDate={props.disabledDate}
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
                 />
             );
         case "email":

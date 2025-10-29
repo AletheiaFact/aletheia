@@ -77,7 +77,6 @@
     "filterBySourceChannel": "Filtrar por Canal de Origem",
     "noRequestsInStatus": "Nenhuma solicitação neste status",
     "statusFilterOption": "Status",
-    "impactAreaFilterOption": "Área de Impacto",
     "statusFilterLabel": "Status:",
     "impactAreaFilterLabel": "Área de Impacto:"
 }

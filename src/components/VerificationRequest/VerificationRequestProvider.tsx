@@ -43,7 +43,8 @@ export const VerificationRequestProvider = ({
             {
                 group: [...groupContent, newVerificationRequest],
             },
-            t
+            t,
+            'updateGroup'
         );
         setRecommendations((prev) =>
             prev.filter((v) => v._id !== newVerificationRequest._id)

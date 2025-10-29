@@ -1,4 +1,5 @@
 import { Group } from "./Group";
+import { Source } from "../../server/source/schemas/source.schema";
 
 export type VerificationRequest = {
     data_hash: string;
@@ -7,6 +8,8 @@ export type VerificationRequest = {
     rejected: boolean;
     group: Group;
     date: Date;
-    sources?: string[];
+    source?: Source[];
     _id?: string;
+    publicationDate: string;
+    heardFrom: string;
 };
