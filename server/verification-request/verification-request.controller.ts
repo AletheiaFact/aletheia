@@ -274,42 +274,32 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    @Get("verification-request/:data_hash/history")
-    public async verificationRequestHistoryPage(
-        @Req() req: BaseRequest,
-        @Res() res: Response
-    ) {
-        const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
-
-        const verificationRequest =
-            await this.verificationRequestService.findByDataHash(data_hash);
-
-        const queryObject = Object.assign(parsedUrl.query, {
-            targetId: verificationRequest._id,
-            targetModel: TargetModel.VerificationRequest,
-        });
-
-        await this.viewService.render(req, res, "/history-page", queryObject);
-    }
-
-    @ApiTags("pages")
     //To DO: set decorator to public
-    @Get("verification-request/:data_hash/tracking")
-    public async verificationRequestTrackingPage(
+    @Get("verification-request/:data_hash/:viewType")
+    public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
+        const { data_hash, viewType } = req.params;
 
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
 
-        const queryObject = Object.assign(parsedUrl.query, {
-            verificationRequestId: verificationRequest._id,
-        });
+        const view = viewType === "history" ? "/history-page" : "/tracking-page";
 
-        await this.viewService.render(req, res, "/tracking-page", queryObject);
+        const queryObject = Object.assign(
+            parsedUrl.query,
+            viewType === "history"
+                ? {
+                    targetId: verificationRequest._id,
+                    targetModel: TargetModel.VerificationRequest,
+                }
+                : {
+                    verificationRequestId: verificationRequest._id,
+                }
+        );
+
+        await this.viewService.render(req, res, view, queryObject);
     }
 }
