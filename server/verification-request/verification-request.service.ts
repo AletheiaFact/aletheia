@@ -1177,23 +1177,18 @@ export class VerificationRequestService {
      * Revalidate and run missing states with parallel execution
      * IMPORTANT: Topics and Impact Area can only run AFTER identifiedData is populated
      *
-     * This function checks pending tasks to prevent duplicate AI task creation.
-     * When identifiedData completes, it triggers topics and impactArea in parallel.
-     * It avoids falling back to sequential execution if these tasks are already pending.
+     * This function only checks statesExecuted and triggers missing states using
+     * triggerStateMachineForMissingState with proper validations.
      */
     private async revalidateAndRunMissingStatesWithParallel(
         verificationRequest: VerificationRequestDocument
     ) {
         const statesExecuted = verificationRequest.statesExecuted || [];
-        const hasIdentifiedData = !!verificationRequest.identifiedData;
-        const pendingTasks = verificationRequest.pendingAiTasks || new Map();
 
         this.logger.log(
             `Revalidating VR ${
                 verificationRequest.id
-            }, states executed: ${statesExecuted.join(", ")}, identifiedData: ${
-                hasIdentifiedData ? "YES" : "NO"
-            }`
+            }, states executed: ${statesExecuted.join(", ")}`
         );
 
         // If severity is completed, we're done
@@ -1204,78 +1199,57 @@ export class VerificationRequestService {
             return;
         }
 
-        // Check if tasks are already pending or completed
-        const topicsCompleted = statesExecuted.includes("topics");
-        const impactAreaCompleted = statesExecuted.includes("impactArea");
-        const topicsPending =
-            pendingTasks.has("topics") || pendingTasks.get("topics");
-        const impactAreaPending =
-            pendingTasks.has("impactArea") || pendingTasks.get("impactArea");
+        // Define the expected order of states
+        const expectedStates = [
+            "embedding",
+            "identifiedData",
+            "topics",
+            "impactArea",
+            "severity",
+        ];
 
-        // After identifiedData is complete, run topics and impactArea in parallel
-        // Only trigger if BOTH are not completed AND not pending
-        if (
-            statesExecuted.includes("identifiedData") &&
-            hasIdentifiedData &&
-            !topicsCompleted &&
-            !impactAreaCompleted &&
-            !topicsPending &&
-            !impactAreaPending
-        ) {
+        // Find all missing states
+        const missingStates = expectedStates.filter(
+            (state) => !statesExecuted.includes(state)
+        );
+
+        if (missingStates.length === 0) {
+            this.logger.log(`No missing states for VR ${verificationRequest.id}`);
+            return;
+        }
+
+        this.logger.log(
+            `Missing states for VR ${verificationRequest.id}: ${missingStates.join(", ")}`
+        );
+
+        // Trigger missing states with validation checks
+        for (const state of missingStates) {
+            // Validation: Check prerequisites before triggering
+            if ((state === "topics" || state === "impactArea") &&
+                !statesExecuted.includes("identifiedData")) {
+                this.logger.log(
+                    `Skipping ${state} for VR ${verificationRequest.id} - identifiedData not yet completed`
+                );
+                continue;
+            }
+
+            if (state === "severity" &&
+                (!statesExecuted.includes("topics") || !statesExecuted.includes("impactArea"))) {
+                this.logger.log(
+                    `Skipping severity for VR ${verificationRequest.id} - topics or impactArea not yet completed`
+                );
+                continue;
+            }
+
             this.logger.log(
-                `identifiedData populated, running topics and impactArea in parallel for VR ${verificationRequest.id}`
+                `Triggering state machine for missing state: ${state} on VR ${verificationRequest.id}`
             );
 
-            await Promise.allSettled([
-                this.verificationRequestStateService.defineTopics(
-                    verificationRequest.id
-                ),
-                this.verificationRequestStateService.defineImpactArea(
-                    verificationRequest.id
-                ),
-            ]);
-
-            return; // Let callbacks handle next steps
+            await this.triggerStateMachineForMissingState(
+                verificationRequest,
+                state
+            );
         }
-
-        // If identifiedData is done but topics/impactArea are in progress, don't fall back to sequential
-        // This prevents re-triggering identifiedData when callbacks for topics/impactArea complete
-        if (statesExecuted.includes("identifiedData") && hasIdentifiedData) {
-            if (
-                topicsPending ||
-                topicsCompleted ||
-                impactAreaPending ||
-                impactAreaCompleted
-            ) {
-                this.logger.log(
-                    `identifiedData complete, topics/impactArea already in progress or done.`
-                );
-
-                // Check if BOTH topics and impactArea are completed AND severity is not yet done
-                if (
-                    topicsCompleted &&
-                    impactAreaCompleted &&
-                    !statesExecuted.includes("severity")
-                ) {
-                    const severityPending =
-                        pendingTasks.has("severity") ||
-                        pendingTasks.get("severity");
-                    if (!severityPending) {
-                        this.logger.log(
-                            `Both topics and impactArea completed, triggering severity for VR ${verificationRequest.id}`
-                        );
-                        await this.verificationRequestStateService.defineSeverity(
-                            verificationRequest.id
-                        );
-                    }
-                }
-
-                return;
-            }
-        }
-
-        // Fall back to sequential execution for other cases
-        await this.revalidateAndRunMissingStates(verificationRequest);
     }
 
     /**
