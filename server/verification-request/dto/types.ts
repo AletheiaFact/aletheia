@@ -18,6 +18,14 @@ export enum VerificationRequestStatus {
     DECLINED = "Declined",
 }
 
+export enum VerificationRequestSourceChannel {
+    Website = "Website",
+    Instagram = "Instagram",
+    Whatsapp = "WhatsApp",
+    Telegram = "Telegram",
+    AutomatedMonitoring = "automated_monitoring",
+}
+
 export enum VerificationRequestStateMachineStates {
     REQUESTING = 'requesting',
     CREATING = 'creating',

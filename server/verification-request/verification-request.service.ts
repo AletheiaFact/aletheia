@@ -51,6 +51,7 @@ export class VerificationRequestService {
         order,
         topics,
         severity,
+        sourceChannel,
         status,
         impactArea,
     }): Promise<VerificationRequest[]> {
@@ -72,6 +73,10 @@ export class VerificationRequestService {
             } else {
                 query.severity = { $regex: `^${severity}`, $options: "i" };
             }
+        }
+
+        if (sourceChannel && sourceChannel !== "all") {
+            query.sourceChannel = { $in: sourceChannel };
         }
 
         if (status && status.length > 0) {
@@ -485,7 +490,7 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count({ contentFilters, topics, severity, status, impactArea }): Promise<number> {
+    async count({ contentFilters, topics, severity, sourceChannel, status, impactArea }): Promise<number> {
         const query: any = {};
 
         if (contentFilters && contentFilters.length > 0) {
@@ -504,6 +509,10 @@ export class VerificationRequestService {
             } else {
                 query.severity = { $regex: `^${severity}`, $options: "i" };
             }
+        }
+
+        if (sourceChannel && sourceChannel !== "all") {
+            query.sourceChannel = { $in: sourceChannel };
         }
 
         if (status && status.length > 0) {

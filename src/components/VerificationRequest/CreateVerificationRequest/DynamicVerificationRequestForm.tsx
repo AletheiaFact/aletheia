@@ -31,7 +31,7 @@ const DynamicVerificationRequestForm = () => {
             content: data.content,
             reportType: data.reportType,
             impactArea: data.impactArea,
-            sourceChannel: "Web",
+            sourceChannel: "website",
             source: [{ href: data.source }],
             publicationDate: data.publicationDate,
             email: data.email,

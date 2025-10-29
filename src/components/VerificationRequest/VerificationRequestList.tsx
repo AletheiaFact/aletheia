@@ -5,7 +5,7 @@ import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
 import VerificationRequestBoardView from "./VerificationRequestBoardView";
-import { Grid, IconButton, Button, ToggleButtonGroup, ToggleButton, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, IconButton, Button, ToggleButtonGroup, ToggleButton, FormControl } from "@mui/material";
 import { FilterList, InfoOutlined, ViewList, ViewModule } from "@mui/icons-material";
 import {
     DataGrid,
@@ -20,9 +20,11 @@ import { ActionTypes } from "../../store/types";
 import debounce from "lodash.debounce";
 import AletheiaButton from "../Button";
 import InfoTooltip from "../Claim/InfoTooltip";
+import SelectFilter from "./SelectFilter";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
     const dispatch = useDispatch();
     const [totalVerificationRequests, setTotalVerificationRequests] =
         useState(0);
@@ -39,6 +41,7 @@ const VerificationRequestList = () => {
     const [loading, setLoading] = useState(false);
     const [viewMode, setViewMode] = useState<"list" | "board">("list");
     const [priorityFilter, setPriorityFilter] = useState("all");
+    const [SourceChannelFilter, setSourceChannelFilter] = useState("all");
 
     const { autoCompleteTopicsResults, topicFilterUsed, impactAreaFilterUsed } =
         useAppSelector((state) => ({
@@ -56,6 +59,7 @@ const VerificationRequestList = () => {
                 pageSize: paginationModel.pageSize,
                 topics: topicFilterUsed,
                 severity: priorityFilter,
+                sourceChannel: SourceChannelFilter,
                 impactArea: impactAreaFilterUsed,
             });
             if (response) {
@@ -72,6 +76,7 @@ const VerificationRequestList = () => {
         paginationModel.pageSize,
         topicFilterUsed,
         priorityFilter,
+        SourceChannelFilter,
         impactAreaFilterUsed,
     ]);
 
@@ -154,6 +159,7 @@ const VerificationRequestList = () => {
     const handleResetFilters = () => {
         setFilterValue([]);
         setPriorityFilter("all");
+        setSourceChannelFilter("all");
         setPaginationModel({ pageSize: 10, page: 0 });
         dispatch({
             type: ActionTypes.SET_TOPIC_FILTER_USED,
@@ -245,7 +251,7 @@ const VerificationRequestList = () => {
                                     content={t("verificationRequest:seeAllSources")}
                                     useCustomStyle={false}
                                 >
-                                    <InfoOutlined style={{color: colors.neutralSecondary}} fontSize="inherit" />
+                                    <InfoOutlined style={{ color: colors.neutralSecondary }} fontSize="inherit" />
                                 </InfoTooltip>
                             )}
                         </div>
@@ -315,8 +321,8 @@ const VerificationRequestList = () => {
         []
     );
 
-    const handlePriorityFilterChange = (newPriority: string) => {
-        setPriorityFilter(newPriority);
+    const createFilterChangeHandler = (setterFunction) => (newValue) => {
+        setterFunction(newValue);
         setPaginationModel((prev) => ({ ...prev, page: 0 }));
         setApplyFilters(true);
     };
@@ -368,27 +374,29 @@ const VerificationRequestList = () => {
                                 onFilterApply={handleFilterApply}
                                 t={t}
                             />
-                            <FormControl sx={{ minWidth: 200 }} size="small">
-                                <InputLabel id="priority-filter-label">
-                                    {t("verificationRequest:filterByPriority")}
-                                </InputLabel>
-                                <Select
-                                    labelId="priority-filter-label"
-                                    value={priorityFilter}
-                                    label={t("verificationRequest:filterByPriority")}
-                                    onChange={(e) => handlePriorityFilterChange(e.target.value)}
-                                >
-                                    <MenuItem value="all">{t("verificationRequest:allPriorities")}</MenuItem>
-                                    <MenuItem value="critical">{t("verificationRequest:priorityCritical")}</MenuItem>
-                                    <MenuItem value="high">{t("verificationRequest:priorityHigh")}</MenuItem>
-                                    <MenuItem value="medium">{t("verificationRequest:priorityMedium")}</MenuItem>
-                                    <MenuItem value="low">{t("verificationRequest:priorityLow")}</MenuItem>
-                                </Select>
+                            <FormControl
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: vw?.xs ? "column" : "row",
+                                    alignItems: "center",
+                                    gap: 2
+                                }}
+                                size="small">
+                                <SelectFilter
+                                    filterType="filterByPriority"
+                                    currentValue={priorityFilter}
+                                    onValueChange={createFilterChangeHandler(setPriorityFilter)}
+                                />
+                                <SelectFilter
+                                    filterType="filterBySourceChannel"
+                                    currentValue={SourceChannelFilter}
+                                    onValueChange={createFilterChangeHandler(setSourceChannelFilter)}
+                                />
                             </FormControl>
                         </>
                     )}
                 </Grid>
-                {(topicFilterUsed.length > 0 || priorityFilter !== "all" || impactAreaFilterUsed.length > 0) && (
+                {(topicFilterUsed.length > 0 || priorityFilter || SourceChannelFilter !== "all" || impactAreaFilterUsed.length > 0) && (
                     <Grid item>
                         <Button onClick={handleResetFilters}>
                             {t("verificationRequest:resetFiltersButton")}

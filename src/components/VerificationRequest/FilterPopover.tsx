@@ -2,14 +2,11 @@ import React from "react";
 import {
     Grid,
     Popover,
-    TextField,
     Button,
     FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
 } from "@mui/material";
 import AdvancedSearch from "../Search/AdvancedSearch";
+import SelectFilter from "./SelectFilter";
 
 const FilterPopover = ({
     anchorEl,
@@ -32,21 +29,11 @@ const FilterPopover = ({
         <Grid container spacing={2} p={2}>
             <Grid item xs={12}>
                 <FormControl fullWidth>
-                    <InputLabel>
-                        {t("verificationRequest:filterByTypeLabel")}
-                    </InputLabel>
-                    <Select
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        label="Filter by Type"
-                    >
-                        <MenuItem value="topics">
-                            {t("verificationRequest:topicsFilterOption")}
-                        </MenuItem>
-                        <MenuItem value="impactArea">
-                            {t("verificationRequest:impactAreaFilterOption")}
-                        </MenuItem>
-                    </Select>
+                    <SelectFilter
+                        filterType="filterByTypeLabel"
+                        currentValue={filterType}
+                        onValueChange={(e) => setFilterType(e)}
+                    />
                 </FormControl>
             </Grid>
             {filterType === "topics" && (

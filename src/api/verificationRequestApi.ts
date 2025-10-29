@@ -10,6 +10,7 @@ interface SearchOptions {
     topics?: any;
     filtersUsed?: any;
     severity?: string;
+    sourceChannel?: string;
     status?: any;
     impactArea?: any;
 }
@@ -54,6 +55,7 @@ const get = (options: SearchOptions, dispatch = null) => {
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
         severity: options.severity || "all",
+        sourceChannel: options.sourceChannel || "all",
         status: options.status || [],
         impactArea: options.impactArea || [],
     };
