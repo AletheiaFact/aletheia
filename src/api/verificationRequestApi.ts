@@ -28,7 +28,8 @@ const createVerificationRequest = (
     return request
         .post("/", verificationRequest)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:verificationRequestCreateSuccess")
             );
             router.push(
@@ -40,7 +41,8 @@ const createVerificationRequest = (
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("verificationRequest:verificationRequestCreateError")
             );
         });
@@ -115,17 +117,32 @@ const getById = (id, _t = null, params = {}) => {
         });
 };
 
-const updateVerificationRequest = (id, params, t) => {
+const updateVerificationRequest = (id, params, t, operationType = "update") => {
+    const messages = {
+        update: {
+            success: "verificationRequest:editVerificationRequestSuccess",
+            error: "verificationRequest:editVerificationRequestError",
+        },
+        updateGroup: {
+            success: "verificationRequest:addVerificationRequestSuccess",
+            error: "verificationRequest:addVerificationRequestError",
+        },
+    };
+
     return request
         .put(`/${id}`, params)
         .then((response) => {
-            MessageManager.showMessage("success",
-                t("verificationRequest:addVerificationRequestSuccess")
+            MessageManager.showMessage(
+                "success",
+                t(messages[operationType].success)
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage(
+                "error",
+                t(messages[operationType].error)
+            );
             console.error("error while updating verification request", e);
         });
 };
@@ -149,13 +166,15 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
         .put(`/${id}/group`, params)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:removeVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("verificationRequest:removeVerificationRequestError")
             );
             console.error("error while removing verification request", e);

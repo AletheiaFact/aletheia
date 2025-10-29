@@ -76,5 +76,12 @@
     "statusFilterOption": "Status",
     "impactAreaFilterOption": "Impact Area",
     "statusFilterLabel": "Status:",
-    "impactAreaFilterLabel": "Impact Area:"
+    "impactAreaFilterLabel": "Impact Area:",
+    "reportedContent": "Reported Content",
+    "contentTypeLabel": "Content Type",
+    "receptionChannelLabel": "Reception Channel",
+    "severityLabel": "Severity",
+    "editVerificationRequestSuccess": "Verification Request edited successfully",
+    "editVerificationRequestError": "Error while editing the Verification Request",
+    "titleEditVerificationRequest": "Verification Request Edition"
 }

@@ -76,5 +76,12 @@
     "statusFilterOption": "Status",
     "impactAreaFilterOption": "Área de Impacto",
     "statusFilterLabel": "Status:",
-    "impactAreaFilterLabel": "Área de Impacto:"
+    "impactAreaFilterLabel": "Área de Impacto:",
+    "reportedContent": "Conteúdo Reportado",
+    "contentTypeLabel": "Tipo de Conteúdo",
+    "receptionChannelLabel": "Canal de Recepção",
+    "severityLabel": "Prioridade",
+    "editVerificationRequestSuccess": "Denúncia editada com sucesso",
+    "editVerificationRequestError": "Erro ao editar a denúncia",
+    "titleEditVerificationRequest": "Edição de Denúncia"
 }
