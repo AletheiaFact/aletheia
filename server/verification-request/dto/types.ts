@@ -19,10 +19,10 @@ export enum VerificationRequestStatus {
 }
 
 export enum VerificationRequestSourceChannel {
-    Website = "Website",
-    Instagram = "Instagram",
-    Whatsapp = "WhatsApp",
-    Telegram = "Telegram",
+    Website = "Web",
+    Instagram = "instagram",
+    Whatsapp = "whatsapp",
+    Telegram = "telegram",
     AutomatedMonitoring = "automated_monitoring",
 }
 
@@ -50,7 +50,7 @@ export enum VerificationRequestStateMachineEvents {
     DEFINE_TOPICS = 'defineTopics',
     DEFINE_IMPACT_AREA = 'defineImpactArea',
     DEFINE_SEVERITY = 'defineSeverity',
-} 
+}
 
 export const VerificationRequestMessages = {
     DESCRIPTIONS: {
@@ -64,7 +64,7 @@ export const VerificationRequestMessages = {
         CANCELLING: 'Verification is being cancelled. Status changes to Cancelled.',
         CANCELLED: 'Verification has been cancelled.',
         ERROR:
-        'An unhandled error occurred on any of the steps of the request process.\n\nShould notify all entities associated and to inner channels.',
+            'An unhandled error occurred on any of the steps of the request process.\n\nShould notify all entities associated and to inner channels.',
     },
     ERRORS: {
         LOCATION_SERVICE_PROVIDER_OR_USER_NOT_FOUND: 'Location, Service, Provider or User not  found.',

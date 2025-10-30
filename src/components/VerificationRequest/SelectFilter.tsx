@@ -6,6 +6,7 @@ import { VerificationRequestSourceChannel } from "../../../server/verification-r
 interface SelectOption {
   value: string;
   labelKey: string;
+  fallbackLabel?: string;
 }
 
 interface SelectFilterProps {
@@ -28,8 +29,9 @@ const getOptionsByLabelKey = (key: string): SelectOption[] => {
     case "filterBySourceChannel":
       const allSourceOption = { value: "all", labelKey: "allSourceChannels" };
       const enumOptions = Object.values(VerificationRequestSourceChannel).map(channel => ({
-        value: channel.toLocaleLowerCase(),
+        value: channel,
         labelKey: channel,
+        fallbackLabel: channel.charAt(0).toUpperCase() + channel.slice(1), // Capitalize first letter but, just used when translation is missing
       }));
       return [allSourceOption, ...enumOptions];
 
@@ -79,7 +81,7 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
               key={item.value}
               value={item.value}
             >
-              {t(`verificationRequest:${item.labelKey}`)}
+              {t(`verificationRequest:${item.labelKey}`, item.fallbackLabel)}
             </MenuItem>
           ))}
       </Select>
