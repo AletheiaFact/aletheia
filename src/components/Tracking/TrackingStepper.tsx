@@ -19,10 +19,10 @@ const TrackingStepper: React.FC<TrackingResponseDTO> = ({
 
   let dynamicSteps: string[];
 
-  if (!isRequestDeclined) {
-    dynamicSteps = ALL_STEPS.filter(step => step !== VerificationRequestStatus.DECLINED);
-  } else {
+  if (isRequestDeclined) {
     dynamicSteps = ALL_STEPS.filter(step => step !== VerificationRequestStatus.POSTED);
+  } else {
+    dynamicSteps = ALL_STEPS.filter(step => step !== VerificationRequestStatus.DECLINED);
   }
 
   const completedStepIndex = dynamicSteps.indexOf(currentStatus);
