@@ -30,9 +30,9 @@ const VerificationRequestBoardView = ({ state, actions }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const statuses = [
-    { key: VerificationRequestStatus.PRE_TRIAGE, label: t("verificationRequest:statusPreTriage") },
-    { key: VerificationRequestStatus.IN_TRIAGE, label: t("verificationRequest:statusInTriage") },
-    { key: VerificationRequestStatus.POSTED, label: t("verificationRequest:statusPosted") },
+    { key: VerificationRequestStatus.PRE_TRIAGE, label: t("verificationRequest:PRE_TRIAGE") },
+    { key: VerificationRequestStatus.IN_TRIAGE, label: t("verificationRequest:IN_TRIAGE") },
+    { key: VerificationRequestStatus.POSTED, label: t("verificationRequest:POSTED") },
   ];
 
   const handleCardClick = (request: any) => {

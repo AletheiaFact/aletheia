@@ -65,10 +65,6 @@
     "showText": "Mostrar",
     "startDate": "Data inicial",
     "endDate": "Data final",
-    "statusPreTriage": "Pré-Triagem",
-    "statusInTriage": "Em Triagem",
-    "statusPosted": "Publicado",
-    "statusDeclined": "Recusado",
     "allPriorities": "Todas as Prioridades",
     "allSourceChannels": "Todos os Canais de Origem",
     "priorityCritical": "Crítica",
@@ -84,5 +80,9 @@
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
     "filterBySourceChannel": "Filtrar por Canal de Origem",
-    "errorUpdatingStatus": "Erro ao atualizar status:"
+    "errorUpdatingStatus": "Erro ao atualizar status:",
+    "PRE_TRIAGE": "Pré Triagem",
+    "IN_TRIAGE": "Em Triagem",
+    "POSTED": "Postado",
+    "DECLINED": "Recusado"
 }

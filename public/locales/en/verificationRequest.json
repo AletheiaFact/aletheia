@@ -65,10 +65,6 @@
     "showText": "Show",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "statusPreTriage": "Pre Triage",
-    "statusInTriage": "In Triage",
-    "statusPosted": "Posted",
-    "statusDeclined": "Declined",
     "allPriorities": "All Priorities",
     "allSourceChannels": "All Source Channels",
     "priorityCritical": "Critical",
@@ -84,5 +80,9 @@
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
     "filterBySourceChannel": "Filter by Source Channel",
-    "errorUpdatingStatus": "Error updating status:"
+    "errorUpdatingStatus": "Error updating status:",
+    "PRE_TRIAGE": "Pre Triage",
+    "IN_TRIAGE": "In Triage",
+    "POSTED": "Posted",
+    "DECLINED": "Declined"
 }

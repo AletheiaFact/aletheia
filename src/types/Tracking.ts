@@ -1,4 +1,4 @@
-interface TrackingViewProps {
+interface TrackingCardProps {
   verificationRequestId: string;
 }
 
@@ -13,4 +13,16 @@ interface HistoryItem {
   date: Date;
 }
 
-export type { TrackingResponseDTO, TrackingViewProps };
+interface TrackingStepProps {
+  stepKey: string;
+  stepDate: Date | null;
+  isCompleted: boolean;
+  isDeclined: boolean;
+}
+
+interface StepLabelStyledProps {
+  backgroundStatusColor: string;
+  iconColor: string;
+}
+
+export type { TrackingResponseDTO, TrackingCardProps, TrackingStepProps, StepLabelStyledProps };
