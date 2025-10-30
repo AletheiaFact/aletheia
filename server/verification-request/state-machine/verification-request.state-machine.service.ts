@@ -121,14 +121,19 @@ export class VerificationRequestStateMachineService {
 
     async defineSeverity(verificationRequestId: string): Promise<any> {
         const verificationRequest =
-            await this.verificationRequestService.getById(
-                verificationRequestId
+            await this.verificationRequestService.getByIdWithPopulatedFields(
+                verificationRequestId,
+                ["topics", "impactArea"]
             );
+
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
                 verificationRequest: {
                     id: verificationRequestId,
-                    ...verificationRequest,
+                    content: verificationRequest.content,
+                    topics: verificationRequest.topics,
+                    impactArea: verificationRequest.impactArea,
+                    identifiedData: verificationRequest.identifiedData,
                 },
             },
             VerificationRequestStateMachineEvents.DEFINE_SEVERITY

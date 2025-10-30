@@ -94,6 +94,28 @@ export class VerificationRequestService {
     }
 
     /**
+     * Get verification request by ID with specific fields populated
+     * @param verificationRequestId verification request ID
+     * @param fieldsToPopulate array of field names to populate
+     * @returns the verification request document with populated fields
+     */
+    async getByIdWithPopulatedFields(
+        verificationRequestId: string,
+        fieldsToPopulate: string[] = []
+    ): Promise<VerificationRequest> {
+        let query = this.VerificationRequestModel.findById(
+            verificationRequestId,
+            { embedding: 0 }
+        );
+
+        fieldsToPopulate.forEach((field) => {
+            query = query.populate(field);
+        });
+
+        return query.exec();
+    }
+
+    /**
      * Creates a new verification request document
      * Executes the createEmbed function to store the verification request content embedding
      * For each sources in verification request, creates a new source document
@@ -346,7 +368,21 @@ export class VerificationRequestService {
                     );
                     break;
                 case "severity":
-                    valueToUpdate = result;
+                    if (typeof result === "string") {
+                        valueToUpdate = result;
+                    } else if (result?.severity) {
+                        valueToUpdate = result.severity;
+                    } else {
+                        throw new BadRequestException(
+                            `Invalid severity result format: ${JSON.stringify(
+                                result
+                            )}`
+                        );
+                    }
+                    this.logger.log(
+                        `Extracted severity: ${valueToUpdate} from result:`,
+                        result
+                    );
                     break;
                 default:
                     throw new BadRequestException(`Invalid field: ${field}`);
@@ -1214,27 +1250,36 @@ export class VerificationRequestService {
         );
 
         if (missingStates.length === 0) {
-            this.logger.log(`No missing states for VR ${verificationRequest.id}`);
+            this.logger.log(
+                `No missing states for VR ${verificationRequest.id}`
+            );
             return;
         }
 
         this.logger.log(
-            `Missing states for VR ${verificationRequest.id}: ${missingStates.join(", ")}`
+            `Missing states for VR ${
+                verificationRequest.id
+            }: ${missingStates.join(", ")}`
         );
 
         // Trigger missing states with validation checks
         for (const state of missingStates) {
             // Validation: Check prerequisites before triggering
-            if ((state === "topics" || state === "impactArea") &&
-                !statesExecuted.includes("identifiedData")) {
+            if (
+                (state === "topics" || state === "impactArea") &&
+                !statesExecuted.includes("identifiedData")
+            ) {
                 this.logger.log(
                     `Skipping ${state} for VR ${verificationRequest.id} - identifiedData not yet completed`
                 );
                 continue;
             }
 
-            if (state === "severity" &&
-                (!statesExecuted.includes("topics") || !statesExecuted.includes("impactArea"))) {
+            if (
+                state === "severity" &&
+                (!statesExecuted.includes("topics") ||
+                    !statesExecuted.includes("impactArea"))
+            ) {
                 this.logger.log(
                     `Skipping severity for VR ${verificationRequest.id} - topics or impactArea not yet completed`
                 );

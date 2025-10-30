@@ -1,5 +1,5 @@
-import { getOnDoneAction, getOnErrorAction } from './base'
-import { AnyEventObject, assign, InvokeConfig } from 'xstate'
+import { getOnDoneAction, getOnErrorAction } from "./base";
+import { AnyEventObject, assign, InvokeConfig } from "xstate";
 
 import { CommonStateMachineStates } from "./base";
 import {
@@ -48,7 +48,11 @@ const getStateInvokeSrc = (
                 );
             };
         case VerificationRequestStateMachineEvents.EMBED:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+            return async (
+                context: VerificationRequestStateMachineContext,
+                event,
+                meta
+            ) => {
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.TEXT_EMBEDDING,
                     content: {
@@ -61,28 +65,37 @@ const getStateInvokeSrc = (
                         field: "embedding",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+                await getVerificationRequestService().createAiTask(taskDto);
+                return context.result;
+            };
         case VerificationRequestStateMachineEvents.IDENTIFY_DATA:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+            return async (
+                context: VerificationRequestStateMachineContext,
+                event,
+                meta
+            ) => {
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.IDENTIFYING_DATA,
                     content: {
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
+                    callbackRoute:
+                        CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
                         field: "identifiedData",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+                await getVerificationRequestService().createAiTask(taskDto);
+                return context.result;
+            };
         case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+            return async (
+                context: VerificationRequestStateMachineContext,
+                event,
+                meta
+            ) => {
                 // TODO: Add more context for be used to recover the topics
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_TOPICS,
@@ -90,17 +103,22 @@ const getStateInvokeSrc = (
                         text: context.verificationRequest.identifiedData,
                         model: OPENAI_IDENTIFY_DATA,
                     },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
+                    callbackRoute:
+                        CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
                         field: "topics",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+                await getVerificationRequestService().createAiTask(taskDto);
+                return context.result;
+            };
         case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+            return async (
+                context: VerificationRequestStateMachineContext,
+                event,
+                meta
+            ) => {
                 // TODO: Add more context for be used to recover the impact area
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_IMPACT_AREA,
@@ -108,32 +126,53 @@ const getStateInvokeSrc = (
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
+                    callbackRoute:
+                        CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
                         field: "impactArea",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+                await getVerificationRequestService().createAiTask(taskDto);
+                return context.result;
+            };
         case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
-            return async (context: VerificationRequestStateMachineContext, event, meta) => {
+            return async (
+                context: VerificationRequestStateMachineContext,
+                event,
+                meta
+            ) => {
+                const impactAreaWikidataId =
+                    context.verificationRequest.impactArea?.wikidataId || null;
+                const topicsWikidataIds =
+                    context.verificationRequest.topics
+                        ?.map((t) => t.wikidataId)
+                        .filter(Boolean) || [];
+
+                // TODO: Fix personality wikidataId extraction
+                // Currently identifiedData is stored as a string (just the name), not an object with wikidataId
+                const personalityWikidataId = null;
+
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_SEVERITY,
                     content: {
+                        verificationId: context.verificationRequest.id,
+                        impactAreaWikidataId,
+                        topicsWikidataIds,
+                        personalityWikidataId,
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
-                    callbackRoute: CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
+                    callbackRoute:
+                        CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
                     callbackParams: {
                         targetId: context.verificationRequest.id,
                         field: "severity",
                     },
                 };
-                await getVerificationRequestService().createAiTask(taskDto)
-                return context.result
-            }
+                await getVerificationRequestService().createAiTask(taskDto);
+                return context.result;
+            };
         default:
             return async (
                 context: VerificationRequestStateMachineContext,
@@ -145,39 +184,44 @@ const getStateInvokeSrc = (
     }
 };
 
-type ConditionalFunc = (context: any, event: any) => boolean
+type ConditionalFunc = (context: any, event: any) => boolean;
 
 const verificationRequestCanRunStep: ConditionalFunc = (context, event) => {
-    const eventName = event.type.split('.')[2]
-    const hasStateExecuted = context.verificationRequest?.statesExecuted?.includes(eventName)
-    return !hasStateExecuted
-}
+    const eventName = event.type.split(".")[2];
+    const hasStateExecuted =
+        context.verificationRequest?.statesExecuted?.includes(eventName);
+    return !hasStateExecuted;
+};
 
 const canDefineTopics: ConditionalFunc = (context, event) => {
     // Topics can only run after identifiedData is populated
-    const hasIdentifiedData = context.verificationRequest?.identifiedData
-    const notAlreadyExecuted = !context.verificationRequest?.statesExecuted?.includes('topics')
+    const hasIdentifiedData = context.verificationRequest?.identifiedData;
+    const notAlreadyExecuted =
+        !context.verificationRequest?.statesExecuted?.includes("topics");
 
-    return !!(hasIdentifiedData && notAlreadyExecuted)
-}
+    return !!(hasIdentifiedData && notAlreadyExecuted);
+};
 
 const canDefineImpactArea: ConditionalFunc = (context, event) => {
     // Impact area can only run after identifiedData is populated
-    const hasIdentifiedData = context.verificationRequest?.identifiedData
-    const notAlreadyExecuted = !context.verificationRequest?.statesExecuted?.includes('impactArea')
+    const hasIdentifiedData = context.verificationRequest?.identifiedData;
+    const notAlreadyExecuted =
+        !context.verificationRequest?.statesExecuted?.includes("impactArea");
 
-    return !!(hasIdentifiedData && notAlreadyExecuted)
-}
+    return !!(hasIdentifiedData && notAlreadyExecuted);
+};
 
 const canDefineSeverity: ConditionalFunc = (context, event) => {
     // Check if impact area, topics, and identified data (personality) are all defined
-    const hasImpactArea = context.verificationRequest?.impactArea
-    const hasTopics = context.verificationRequest?.topics && context.verificationRequest?.topics.length > 0
-    const hasIdentifiedData = context.verificationRequest?.identifiedData
+    const hasImpactArea = context.verificationRequest?.impactArea;
+    const hasTopics =
+        context.verificationRequest?.topics &&
+        context.verificationRequest?.topics.length > 0;
+    const hasIdentifiedData = context.verificationRequest?.identifiedData;
 
     // All three must be present to proceed with severity definition
-    return !!(hasImpactArea && hasTopics && hasIdentifiedData)
-}
+    return !!(hasImpactArea && hasTopics && hasIdentifiedData);
+};
 
 const getStateInvoke = (
     eventName: VerificationRequestStateMachineEvents,
@@ -198,100 +242,121 @@ const getStateInvoke = (
                         target: VerificationRequestStateMachineStates.EMBEDDING,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
-                            verificationRequest: (context: any, event: AnyEventObject) => {
-                                return { id: event.data.id, ...context.verificationRequest }
+                            verificationRequest: (
+                                context: any,
+                                event: AnyEventObject
+                            ) => {
+                                return {
+                                    id: event.data.id,
+                                    ...context.verificationRequest,
+                                };
                             },
                         }),
                     },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         case VerificationRequestStateMachineEvents.EMBED:
             return {
                 id: eventName,
-                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                src: getStateInvokeSrc(
+                    eventName,
+                    getVerificationRequestService
+                ),
                 onDone: [
                     {
                         // Don't auto-transition - let callbacks handle orchestration
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
                         }),
                     },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         case VerificationRequestStateMachineEvents.IDENTIFY_DATA:
             return {
                 id: eventName,
-                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                src: getStateInvokeSrc(
+                    eventName,
+                    getVerificationRequestService
+                ),
                 onDone: [
                     {
                         // Don't auto-transition to DEFINING_TOPICS - let callbacks handle orchestration
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
                         }),
                     },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
             return {
                 id: eventName,
-                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                src: getStateInvokeSrc(
+                    eventName,
+                    getVerificationRequestService
+                ),
                 onDone: [
                     {
                         // Don't auto-transition - let callbacks handle orchestration
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
                         }),
                     },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
             return {
                 id: eventName,
-                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                src: getStateInvokeSrc(
+                    eventName,
+                    getVerificationRequestService
+                ),
                 onDone: [
                     {
                         // Don't auto-transition - let callbacks handle orchestration
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
                         }),
                     },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
             return {
                 id: eventName,
-                src: getStateInvokeSrc(eventName, getVerificationRequestService),
+                src: getStateInvokeSrc(
+                    eventName,
+                    getVerificationRequestService
+                ),
                 onDone: [
                     {
                         target: CommonStateMachineStates.WRAP_UP_EXECUTION,
                         actions: assign({
                             result: (context, event: AnyEventObject) => {
-                                return event.data
+                                return event.data;
                             },
                         }),
-                    }
+                    },
                 ],
                 onError: getOnErrorAction(),
-            }
+            };
         default:
             return {
                 id: eventName,
@@ -331,7 +396,7 @@ const getStateTransitions = (
                 [VerificationRequestStateMachineEvents.DEFINE_SEVERITY]: {
                     target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
                 },
-            }
+            };
         case VerificationRequestStateMachineStates.EMBEDDING:
             return {
                 [VerificationRequestStateMachineEvents.EMBED]: {
@@ -349,13 +414,13 @@ const getStateTransitions = (
                 [VerificationRequestStateMachineEvents.DEFINE_SEVERITY]: {
                     target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
                 },
-            }
+            };
         case VerificationRequestStateMachineStates.IDENTIFYING_DATA:
             return {
                 [VerificationRequestStateMachineEvents.IDENTIFY_DATA]: {
                     target: VerificationRequestStateMachineStates.IDENTIFYING_DATA,
-                }
-            }
+                },
+            };
         case VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA:
             return {
                 [VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA]: {
@@ -364,13 +429,13 @@ const getStateTransitions = (
                 [VerificationRequestStateMachineEvents.DEFINE_SEVERITY]: {
                     target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
                 },
-            }
+            };
         case VerificationRequestStateMachineStates.DEFINING_SEVERITY:
             return {
                 [VerificationRequestStateMachineEvents.DEFINE_SEVERITY]: {
                     target: VerificationRequestStateMachineStates.DEFINING_SEVERITY,
                 },
-            }
+            };
         case VerificationRequestStateMachineStates.DEFINING_TOPICS:
             return {
                 [VerificationRequestStateMachineEvents.DEFINE_TOPICS]: {
@@ -379,7 +444,7 @@ const getStateTransitions = (
                 [VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA]: {
                     target: VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA,
                 },
-            }
+            };
         default:
             return {
                 on: {},
@@ -402,7 +467,10 @@ export const getVerificationRequestStateMachineConfig = (
                 on: getStateTransitions(CommonStateMachineStates.REHYDRATE),
             },
             [VerificationRequestStateMachineStates.IDENTIFYING_DATA]: {
-                invoke: getStateInvoke(VerificationRequestStateMachineEvents.IDENTIFY_DATA, stateMachineService),
+                invoke: getStateInvoke(
+                    VerificationRequestStateMachineEvents.IDENTIFY_DATA,
+                    stateMachineService
+                ),
                 description: VerificationRequestMessages.DESCRIPTIONS.DEFAULT,
             },
             [VerificationRequestStateMachineStates.CREATING]: {
@@ -428,20 +496,36 @@ export const getVerificationRequestStateMachineConfig = (
                 description: VerificationRequestMessages.DESCRIPTIONS.EMBED,
             },
             [VerificationRequestStateMachineStates.IDENTIFYING_PERSONALITY]: {
-                invoke: getStateInvoke(VerificationRequestStateMachineEvents.IDENTIFY_DATA, stateMachineService),
-                description: VerificationRequestMessages.DESCRIPTIONS.IDENTIFY_DATA,
+                invoke: getStateInvoke(
+                    VerificationRequestStateMachineEvents.IDENTIFY_DATA,
+                    stateMachineService
+                ),
+                description:
+                    VerificationRequestMessages.DESCRIPTIONS.IDENTIFY_DATA,
             },
             [VerificationRequestStateMachineStates.DEFINING_IMPACT_AREA]: {
-                invoke: getStateInvoke(VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA, stateMachineService),
-                description: VerificationRequestMessages.DESCRIPTIONS.DEFINE_IMPACT_AREA,
+                invoke: getStateInvoke(
+                    VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA,
+                    stateMachineService
+                ),
+                description:
+                    VerificationRequestMessages.DESCRIPTIONS.DEFINE_IMPACT_AREA,
             },
             [VerificationRequestStateMachineStates.DEFINING_SEVERITY]: {
-                invoke: getStateInvoke(VerificationRequestStateMachineEvents.DEFINE_SEVERITY, stateMachineService),
-                description: VerificationRequestMessages.DESCRIPTIONS.DEFINE_SEVERITY,
+                invoke: getStateInvoke(
+                    VerificationRequestStateMachineEvents.DEFINE_SEVERITY,
+                    stateMachineService
+                ),
+                description:
+                    VerificationRequestMessages.DESCRIPTIONS.DEFINE_SEVERITY,
             },
             [VerificationRequestStateMachineStates.DEFINING_TOPICS]: {
-                invoke: getStateInvoke(VerificationRequestStateMachineEvents.DEFINE_TOPICS, stateMachineService),
-                description: VerificationRequestMessages.DESCRIPTIONS.DEFINE_TOPICS,
+                invoke: getStateInvoke(
+                    VerificationRequestStateMachineEvents.DEFINE_TOPICS,
+                    stateMachineService
+                ),
+                description:
+                    VerificationRequestMessages.DESCRIPTIONS.DEFINE_TOPICS,
             },
             [CommonStateMachineStates.ERROR]: {
                 description: VerificationRequestMessages.DESCRIPTIONS.ERROR,
