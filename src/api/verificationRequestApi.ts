@@ -204,6 +204,18 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
         });
 };
 
+const getVerificationRequestStats = () => {
+    return request
+        .get(`/stats`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((e) => {
+            console.error("error while getting verification request stats", e);
+            throw e;
+        });
+};
+
 const verificationRequestApi = {
     createVerificationRequest,
     get,
@@ -213,6 +225,7 @@ const verificationRequestApi = {
     updateVerificationRequestWithTopics,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
+    getVerificationRequestStats,
 };
 
 export default verificationRequestApi;

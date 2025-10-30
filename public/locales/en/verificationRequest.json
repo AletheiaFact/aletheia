@@ -87,6 +87,22 @@
     "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
+    "errorUpdatingStatus": "Error updating status:",
     "filterBySourceChannel": "Filter by Source Channel",
-    "errorUpdatingStatus": "Error updating status:"
+    "dashboard": {
+        "title": "Reports Dashboard",
+        "subtitle": "Transparency and public monitoring",
+        "totalReports": "Total Reports",
+        "verified": "Verified",
+        "inAnalysis": "In Analysis",
+        "pending": "Pending",
+        "receivedThisMonth": "Received this month",
+        "ofTotal": "of total",
+        "sourcesTitle": "Report Sources",
+        "sourcesSubtitle": "Distribution by reception channel",
+        "statusTitle": "Report Status",
+        "statusSubtitle": "Distribution by verification status",
+        "activityTitle": "Recent Activity",
+        "activitySubtitle": "Latest updates from the system"
+    }
 }
