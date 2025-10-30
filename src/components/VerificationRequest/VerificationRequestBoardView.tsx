@@ -11,11 +11,21 @@ import {
 } from "@mui/material";
 import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
+import { SeverityEnum } from "../../../server/verification-request/dto/types";
 
 interface VerificationRequestBoardViewProps {
     requests: any[];
     loading: boolean;
 }
+
+type SeverityLevel = "low" | "medium" | "high" | "critical";
+
+const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
+    low: colors.low,
+    medium: colors.medium,
+    high: colors.high,
+    critical: colors.critical,
+};
 
 const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> = ({
     requests,
@@ -45,14 +55,19 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
         return grouped;
     }, [requests, statuses]);
 
-    const getSeverityColor = (severity: string) => {
+    const getSeverityColor = (severity: SeverityEnum | undefined): string => {
         if (!severity) return colors.neutralSecondary;
-        const lowerSeverity = severity.toLowerCase();
-        if (lowerSeverity === "critical") return "#d32f2f";
-        if (lowerSeverity.startsWith("high")) return "#f57c00";
-        if (lowerSeverity.startsWith("medium")) return "#fbc02d";
-        if (lowerSeverity.startsWith("low")) return "#388e3c";
-        return colors.neutralSecondary;
+
+        const severityStr = String(severity);
+
+        const severityLevel: SeverityLevel =
+            severityStr.startsWith("low") ? "low" :
+                severityStr.startsWith("medium") ? "medium" :
+                    severityStr.startsWith("high") ? "high" :
+                        severityStr === "critical" ? "critical" :
+                            "low";
+
+        return SEVERITY_COLOR_MAP[severityLevel];
     };
 
     const formatSeverityLabel = (severity: string) => {
