@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
 import {
     Box,
@@ -10,24 +10,48 @@ import {
     Paper,
 } from "@mui/material";
 import colors from "../../styles/colors";
-import AletheiaButton from "../Button";
+import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
 
 interface VerificationRequestBoardViewProps {
     requests: any[];
     loading: boolean;
+    onRequestUpdated?: () => void;
 }
 
 const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> = ({
     requests,
     loading,
+    onRequestUpdated,
 }) => {
     const { t } = useTranslation();
+    const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const statuses = [
-        { key: "Pre Triage", label: t("verificationRequest:statusPreTriage") },
-        { key: "In Triage", label: t("verificationRequest:statusInTriage") },
-        { key: "Posted", label: t("verificationRequest:statusPosted") },
-    ];
+    const statuses = useMemo(
+        () => [
+            { key: "Pre Triage", label: t("verificationRequest:statusPreTriage") },
+            { key: "In Triage", label: t("verificationRequest:statusInTriage") },
+            { key: "Posted", label: t("verificationRequest:statusPosted") },
+        ],
+        [t]
+    );
+
+    const handleCardClick = (request: any) => {
+        setSelectedRequest(request);
+        setDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setDrawerOpen(false);
+        setSelectedRequest(null);
+    };
+
+    const handleRequestUpdate = () => {
+        setSelectedRequest(null);
+        if (onRequestUpdated) onRequestUpdated();
+    };
+
+
 
     const groupedRequests = useMemo(() => {
         const grouped = statuses.reduce((acc, status) => {
@@ -118,6 +142,7 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
                                     {groupedRequests[status.key].map((request) => (
                                         <Card
                                             key={request._id}
+                                            onClick={() => handleCardClick(request)}
                                             sx={{
                                                 cursor: "pointer",
                                                 transition: "all 0.2s",
@@ -170,16 +195,6 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
                                                         {truncateText(request.sourceChannel, 30)}
                                                     </Typography>
                                                 )}
-
-                                                <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                                                    <AletheiaButton
-
-                                                        href={`/verification-request/${request.data_hash}`}
-                                                        target="_blank"
-                                                    >
-                                                        {t("verificationRequest:openVerificationRequest")}
-                                                    </AletheiaButton>
-                                                </Box>
                                             </CardContent>
                                         </Card>
                                     ))}
@@ -195,6 +210,13 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
                     </Grid>
                 ))}
             </Grid>
+
+            <VerificationRequestDetailDrawer
+                verificationRequest={selectedRequest}
+                open={drawerOpen}
+                onClose={handleDrawerClose}
+                onUpdate={handleRequestUpdate}
+            />
         </Box>
     );
 };

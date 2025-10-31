@@ -83,5 +83,6 @@
     "severityLabel": "Severity",
     "editVerificationRequestSuccess": "Verification Request edited successfully",
     "editVerificationRequestError": "Error while editing the Verification Request",
-    "titleEditVerificationRequest": "Verification Request Edition"
+    "titleEditVerificationRequest": "Verification Request Edition",
+    "viewFullPage": "View full page"
 }

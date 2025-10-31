@@ -331,7 +331,7 @@ const VerificationRequestList = () => {
                 justifyContent="space-between"
                 style={{ marginTop: 30 }}
             >
-                {/* TODO: separate the manage options in a different component 
+                {/* TODO: separate the manage options in a different component
                 This will follow the atomic design principles. */}
                 <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <ToggleButtonGroup
@@ -437,6 +437,7 @@ const VerificationRequestList = () => {
                     <VerificationRequestBoardView
                         requests={filteredRequests}
                         loading={loading}
+                        onRequestUpdated={() => fetchData()}
                     />
                 </Grid>
             )}
