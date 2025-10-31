@@ -48,7 +48,7 @@ const VerificationRequestList = () => {
             impactAreaFilterUsed: state?.impactAreaFilterUsed || [],
         }));
 
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (noCache = false) => {
         setLoading(true);
         try {
             const response = await verificationRequestApi.get({
@@ -57,6 +57,7 @@ const VerificationRequestList = () => {
                 topics: topicFilterUsed,
                 severity: priorityFilter,
                 impactArea: impactAreaFilterUsed,
+                noCache,
             });
             if (response) {
                 setTotalVerificationRequests(response.total);
@@ -437,7 +438,7 @@ const VerificationRequestList = () => {
                     <VerificationRequestBoardView
                         requests={filteredRequests}
                         loading={loading}
-                        onRequestUpdated={() => fetchData()}
+                        onRequestUpdated={() => fetchData(true)}
                     />
                 </Grid>
             )}
