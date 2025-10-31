@@ -121,4 +121,15 @@ export class TopicService {
     getBySlug(slug) {
         return this.TopicModel.findOne({ slug });
     }
+
+    /**
+     *
+     * @param names topic names array
+     * @returns topics
+     */
+    async findByNames(names: string[]) {
+        return this.TopicModel.find({ name: { $in: names } });
+    }
+
+
 }
