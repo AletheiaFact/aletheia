@@ -24,6 +24,8 @@ import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { buildDateQuery } from "../../src/utils/date.utils";
+import { ParamsTokenFactory } from "@nestjs/core/pipes";
 
 const md5 = require("md5");
 
@@ -55,6 +57,9 @@ export class VerificationRequestService {
         endDate,
     }): Promise<VerificationRequest[]> {
         const query: any = {};
+        const dateQuery = buildDateQuery(startDate, endDate);
+
+        if (dateQuery) query.date = dateQuery;
 
         if (contentFilters && contentFilters.length > 0) {
             query.$or = contentFilters.map((filter) => ({
@@ -64,17 +69,6 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
-        }
-
-        if (startDate && endDate) {
-            query.date = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate),
-            };
-        } else if (startDate) {
-            query.date = { $gte: new Date(startDate) };
-        } else if (endDate) {
-            query.date = { $lte: new Date(endDate) };
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -487,6 +481,9 @@ export class VerificationRequestService {
         endDate,
     }): Promise<number> {
         const query: any = {};
+        const dateQuery = buildDateQuery(startDate, endDate);
+
+        if (dateQuery) query.date = dateQuery;
 
         if (contentFilters && contentFilters.length > 0) {
             query.$or = contentFilters.map((filter) => ({
@@ -496,17 +493,6 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
-        }
-
-        if (startDate && endDate) {
-            query.date = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate),
-            };
-        } else if (startDate) {
-            query.date = { $gte: new Date(startDate) };
-        } else if (endDate) {
-            query.date = { $lte: new Date(endDate) };
         }
 
         return this.VerificationRequestModel.countDocuments(query);
