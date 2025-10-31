@@ -25,7 +25,6 @@ import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import { buildDateQuery } from "../../src/utils/date.utils";
-import { ParamsTokenFactory } from "@nestjs/core/pipes";
 
 const md5 = require("md5");
 

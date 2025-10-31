@@ -4,7 +4,7 @@ import verificationRequestApi from "../../api/verificationRequestApi";
 import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
-import { Grid, IconButton, Button, Box } from "@mui/material";
+import { Grid, IconButton, Button } from "@mui/material";
 import { FilterList, InfoOutlined } from "@mui/icons-material";
 import {
     DataGrid,
