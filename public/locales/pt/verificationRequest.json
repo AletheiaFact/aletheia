@@ -61,5 +61,7 @@
     "contentFilterOption": "Conteudo",
     "filterByContentLabel": "Filtrar por Conteudo",
     "applyButtonLabel": "Aplicar",
-    "showText": "Mostrar"
+    "showText": "Mostrar",
+    "startDate": "Data inicial",
+    "endDate": "Data final"
 }

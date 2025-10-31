@@ -9,6 +9,8 @@ interface SearchOptions {
     order?: string;
     topics?: any;
     filtersUsed?: any;
+    startDate?: string;
+    endDate?: string;
 }
 
 const request = axios.create({
@@ -25,7 +27,8 @@ const createVerificationRequest = (
     return request
         .post("/", verificationRequest)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:verificationRequestCreateSuccess")
             );
             router.push(
@@ -37,7 +40,8 @@ const createVerificationRequest = (
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("verificationRequest:verificationRequestCreateError")
             );
         });
@@ -50,6 +54,8 @@ const get = (options: SearchOptions, dispatch = null) => {
         order: options.order || "desc",
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
+        startDate: options.startDate || undefined,
+        endDate: options.endDate || undefined,
     };
 
     return request
@@ -113,13 +119,17 @@ const updateVerificationRequest = (id, params, t) => {
     return request
         .put(`/${id}`, params)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:addVerificationRequestError")
+            );
             console.error("error while updating verification request", e);
         });
 };
@@ -128,13 +138,17 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:addVerificationRequestError")
+            );
             console.error("error while updating verification request", e);
         });
 };
@@ -143,13 +157,15 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
         .put(`/${id}/group`, params)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:removeVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("verificationRequest:removeVerificationRequestError")
             );
             console.error("error while removing verification request", e);

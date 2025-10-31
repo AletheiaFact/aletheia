@@ -50,6 +50,8 @@ export class VerificationRequestService {
         pageSize,
         order,
         topics,
+        startDate,
+        endDate,
     }): Promise<VerificationRequest[]> {
         const query: any = {};
 
@@ -61,6 +63,17 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (startDate && endDate) {
+            query.date = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        } else if (startDate) {
+            query.date = { $gte: new Date(startDate) };
+        } else if (endDate) {
+            query.date = { $lte: new Date(endDate) };
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -466,7 +479,12 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count({ contentFilters, topics }): Promise<number> {
+    async count({
+        contentFilters,
+        topics,
+        startDate,
+        endDate,
+    }): Promise<number> {
         const query: any = {};
 
         if (contentFilters && contentFilters.length > 0) {
@@ -477,6 +495,17 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (startDate && endDate) {
+            query.date = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        } else if (startDate) {
+            query.date = { $gte: new Date(startDate) };
+        } else if (endDate) {
+            query.date = { $lte: new Date(endDate) };
         }
 
         return this.VerificationRequestModel.countDocuments(query);

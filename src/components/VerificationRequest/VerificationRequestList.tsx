@@ -4,7 +4,7 @@ import verificationRequestApi from "../../api/verificationRequestApi";
 import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
 import ActiveFilters from "./ActiveFilters";
-import { Grid, IconButton, Button } from "@mui/material";
+import { Grid, IconButton, Button, Box } from "@mui/material";
 import { FilterList, InfoOutlined } from "@mui/icons-material";
 import {
     DataGrid,
@@ -19,6 +19,7 @@ import { ActionTypes } from "../../store/types";
 import debounce from "lodash.debounce";
 import AletheiaButton from "../Button";
 import InfoTooltip from "../Claim/InfoTooltip";
+import DateRangePicker from "../DateRangePicker";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -36,6 +37,8 @@ const VerificationRequestList = () => {
     const [applyFilters, setApplyFilters] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
 
     const { autoCompleteTopicsResults, filtersUsed, topicFilterUsed } =
         useAppSelector((state) => ({
@@ -53,6 +56,8 @@ const VerificationRequestList = () => {
                 pageSize: paginationModel.pageSize,
                 topics: topicFilterUsed,
                 filtersUsed: filtersUsed,
+                startDate: startDate?.toISOString(),
+                endDate: endDate?.toISOString(),
             });
             if (response) {
                 setTotalVerificationRequests(response.total);
@@ -68,6 +73,8 @@ const VerificationRequestList = () => {
         paginationModel.pageSize,
         topicFilterUsed,
         filtersUsed,
+        startDate,
+        endDate,
     ]);
 
     useEffect(() => {
@@ -77,6 +84,12 @@ const VerificationRequestList = () => {
             setApplyFilters(false);
         }
     }, [applyFilters, fetchData, isInitialLoad]);
+
+    useEffect(() => {
+        if (startDate && endDate) {
+            fetchData();
+        }
+    }, [startDate, endDate]);
 
     const fetchTopicList = async (term) => {
         try {
@@ -148,6 +161,8 @@ const VerificationRequestList = () => {
             topicFilterUsed: [],
         });
         dispatch({ type: ActionTypes.SET_SEARCH_FILTER_USED, filterUsed: [] });
+        setStartDate(null);
+        setEndDate(null);
         setApplyFilters(true);
     };
 
@@ -224,7 +239,7 @@ const VerificationRequestList = () => {
 
                     return (
                         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <span style={{overflow: "hidden"}}>
+                            <span style={{ overflow: "hidden" }}>
                                 {truncateWithEllipsis(firstSource, 30)}
                             </span>
                             {params.value.length > 1 && (
@@ -233,7 +248,7 @@ const VerificationRequestList = () => {
                                     content={t("verificationRequest:seeAllSources")}
                                     useCustomStyle={false}
                                 >
-                                    <InfoOutlined style={{color: colors.neutralSecondary}} fontSize="inherit" />
+                                    <InfoOutlined style={{ color: colors.neutralSecondary }} fontSize="inherit" />
                                 </InfoTooltip>
                             )}
                         </div>
@@ -311,6 +326,7 @@ const VerificationRequestList = () => {
                 container
                 alignItems="center"
                 justifyContent="space-between"
+                marginTop={2}
             >
                 <Grid item>
                     <IconButton onClick={handleFilterClick}>
@@ -328,7 +344,15 @@ const VerificationRequestList = () => {
                         t={t}
                     />
                 </Grid>
-                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+
+                <DateRangePicker
+                    startDate={startDate}
+                    endDate={endDate}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                />
+
+                {(topicFilterUsed.length > 0 || filtersUsed.length > 0 || (startDate && endDate)) && (
                     <Grid item>
                         <Button onClick={handleResetFilters}>
                             {t("verificationRequest:resetFiltersButton")}
@@ -336,6 +360,7 @@ const VerificationRequestList = () => {
                     </Grid>
                 )}
             </Grid>
+
             {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
                 <Grid item xs={10}>
                     <ActiveFilters
@@ -346,6 +371,7 @@ const VerificationRequestList = () => {
                     />
                 </Grid>
             )}
+
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
                     rows={filteredRequests}
@@ -375,7 +401,7 @@ const VerificationRequestList = () => {
                     }}
                 />
             </Grid>
-        </Grid>
+        </Grid >
     );
 };
 
