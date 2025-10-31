@@ -70,6 +70,7 @@ const DynamicForm = ({
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
                                         disabledDate={disabledDate}
+                                        disabled={fieldItem.disabled}
                                     />
                                 )}
                             />

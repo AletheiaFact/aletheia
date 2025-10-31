@@ -64,4 +64,12 @@
     "showText": "Mostrar",
     "startDate": "Data inicial",
     "endDate": "Data final"
+    "reportedContent": "Conteúdo Reportado",
+    "contentTypeLabel": "Tipo de Conteúdo",
+    "receptionChannelLabel": "Canal de Recepção",
+    "impactAreaLabel": "Área de impacto",
+    "severityLabel": "Prioridade",
+    "editVerificationRequestSuccess": "Denúncia editada com sucesso",
+    "editVerificationRequestError": "Erro ao editar a denúncia",
+    "titleEditVerificationRequest": "Edição de Denúncia"
 }

@@ -115,20 +115,31 @@ const getById = (id, _t = null, params = {}) => {
         });
 };
 
-const updateVerificationRequest = (id, params, t) => {
+const updateVerificationRequest = (id, params, t, operationType = "update") => {
+    const messages = {
+        update: {
+            success: "verificationRequest:editVerificationRequestSuccess",
+            error: "verificationRequest:editVerificationRequestError",
+        },
+        updateGroup: {
+            success: "verificationRequest:addVerificationRequestSuccess",
+            error: "verificationRequest:addVerificationRequestError",
+        },
+    };
+
     return request
         .put(`/${id}`, params)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("verificationRequest:addVerificationRequestSuccess")
+                t(messages[operationType].success)
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t("verificationRequest:addVerificationRequestError")
+                t(messages[operationType].error)
             );
             console.error("error while updating verification request", e);
         });
