@@ -33,6 +33,7 @@ import {
 } from "./dto/types";
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
+import { IPersonalityService } from "../interfaces/personality.service.interface";
 
 const md5 = require("md5");
 
@@ -50,7 +51,9 @@ export class VerificationRequestService {
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
-        private readonly topicService: TopicService
+        private readonly topicService: TopicService,
+        @Inject("PersonalityService")
+        private readonly personalityService: IPersonalityService
     ) {}
 
     async listAll({ page, pageSize, order, ...filters }): Promise<VerificationRequest[]> {
@@ -303,29 +306,43 @@ export class VerificationRequestService {
                     valueToUpdate = result;
                     break;
                 case "identifiedData":
-                    // Handle different result formats from AI
-                    if (typeof result === "string") {
-                        valueToUpdate = result;
-                    } else if (
-                        result?.personalities &&
-                        Array.isArray(result.personalities) &&
-                        result.personalities.length > 0
-                    ) {
-                        valueToUpdate =
-                            result.personalities[0]?.name ||
-                            JSON.stringify(result.personalities[0]);
-                    } else if (result?.name) {
-                        valueToUpdate = result.name;
-                    } else {
-                        valueToUpdate =
-                            typeof result === "object"
-                                ? JSON.stringify(result)
-                                : String(result);
-                    }
                     this.logger.log(
-                        `Extracted identifiedData: ${valueToUpdate} from result:`,
+                        `Processing identifiedData with personalities array:`,
                         result
                     );
+
+                    if (
+                        result?.personalities &&
+                        Array.isArray(result.personalities)
+                    ) {
+                        const personalityIds = await Promise.all(
+                            result.personalities.map(
+                                async (personalityData) => {
+                                    const personality =
+                                        await this.personalityService.findOrCreatePersonality(
+                                            {
+                                                name: personalityData.name,
+                                                wikidata:
+                                                    personalityData.wikidata,
+                                            }
+                                        );
+                                    return (personality as any)._id;
+                                }
+                            )
+                        );
+
+                        valueToUpdate = personalityIds;
+                        this.logger.log(
+                            `Personalities created/found with IDs: ${personalityIds.join(
+                                ", "
+                            )}`
+                        );
+                    } else {
+                        this.logger.warn(
+                            `Unexpected identifiedData format, setting empty array`
+                        );
+                        valueToUpdate = [];
+                    }
                     break;
                 case "topics":
                     this.logger.log(
@@ -1018,16 +1035,27 @@ export class VerificationRequestService {
             case "identifiedData":
                 // Allow string or null/empty (AI might not identify anyone)
                 if (
-                    result !== null &&
-                    result !== undefined &&
-                    result !== "" &&
-                    typeof result !== "string"
+                    result === null ||
+                    result === undefined ||
+                    result === "" ||
+                    (Array.isArray(result) && result.length === 0)
                 ) {
-                    return {
-                        valid: false,
-                        error: `Identified data must be a string, got: ${typeof result}`,
-                    };
+                    return { valid: true };
                 }
+
+                if (Array.isArray(result)) {
+                    const allValidIds = result.every((id) =>
+                        isValidObjectId(id)
+                    );
+                    if (allValidIds) {
+                        return { valid: true };
+                    }
+                }
+
+                return {
+                    valid: false,
+                    error: `Identified data must be an array of ObjectIds, got: ${typeof result}`,
+                };
                 break;
             case "impactArea":
                 if (!result) {

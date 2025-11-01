@@ -93,10 +93,11 @@ export class VerificationRequest {
     statesExecuted: string[];
 
     @Prop({
+        type: [mongoose.Schema.Types.ObjectId],
         required: false,
-        type: String,
+        ref: "Personality",
     })
-    identifiedData: string;
+    identifiedData: mongoose.Types.ObjectId[];
 
     @Prop({
         required: false,

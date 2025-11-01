@@ -47,7 +47,7 @@ const DefiningSeverityContentSchema = z.object({
     model: z.string().min(1),
     impactArea: SourceObjectSchema.nullable(),
     topics: z.array(SourceObjectSchema),
-    personality: PersonalityObjectSchema.nullable(),
+    personalities: z.array(PersonalityObjectSchema),
 });
 
 const AiTaskContentSchema = z.discriminatedUnion("type", [

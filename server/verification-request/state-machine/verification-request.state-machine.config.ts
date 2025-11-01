@@ -160,21 +160,20 @@ const getStateInvokeSrc = (
                         wikidataId: t.wikidataId || null,
                     })) || [];
 
-                // TODO: Fix personality wikidataId extraction
-                // identifiedData is currently stored as a string (just the name)
-                const personality = context.verificationRequest.identifiedData
-                    ? {
-                          name: context.verificationRequest.identifiedData,
-                          wikidataId: null,
-                      }
-                    : null;
+                const personalities =
+                    context.verificationRequest.identifiedData?.map(
+                        (personality) => ({
+                            name: personality.name,
+                            wikidataId: personality.wikidata || null,
+                        })
+                    ) || [];
 
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_SEVERITY,
                     content: {
                         impactArea,
                         topics,
-                        personality,
+                        personalities,
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
@@ -227,12 +226,14 @@ const canDefineImpactArea: ConditionalFunc = (context, event) => {
 };
 
 const canDefineSeverity: ConditionalFunc = (context, event) => {
-    // Check if impact area, topics, and identified data (personality) are all defined
+    // Check if impact area, topics, and identified data (personalities) are all defined
     const hasImpactArea = context.verificationRequest?.impactArea;
     const hasTopics =
         context.verificationRequest?.topics &&
         context.verificationRequest?.topics.length > 0;
-    const hasIdentifiedData = context.verificationRequest?.identifiedData;
+    const hasIdentifiedData =
+        context.verificationRequest?.identifiedData &&
+        context.verificationRequest?.identifiedData.length > 0;
 
     // All three must be present to proceed with severity definition
     return !!(hasImpactArea && hasTopics && hasIdentifiedData);

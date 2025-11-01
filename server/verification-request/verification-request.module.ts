@@ -20,6 +20,7 @@ import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispat
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { TopicModule } from "../topic/topic.module";
+import { PersonalityModule } from "../personality/personality.module";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
@@ -43,6 +44,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         CallbackDispatcherModule,
         AbilityModule,
         TopicModule,
+        PersonalityModule.register(),
     ],
     exports: [
         VerificationRequestService,

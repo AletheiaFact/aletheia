@@ -123,7 +123,7 @@ export class VerificationRequestStateMachineService {
         const verificationRequest =
             await this.verificationRequestService.getByIdWithPopulatedFields(
                 verificationRequestId,
-                ["topics", "impactArea"]
+                ["topics", "impactArea", "identifiedData"]
             );
 
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
