@@ -1,12 +1,3 @@
-import {
-    BadRequestException,
-    Injectable,
-    Inject,
-    forwardRef,
-    Scope,
-    Logger,
-    Scope,
-} from "@nestjs/common";
 import { isValidObjectId, Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
@@ -24,6 +15,14 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import {
+    BadRequestException,
+    Injectable,
+    Inject,
+    forwardRef,
+    Logger,
+    Scope,
+} from "@nestjs/common";
 import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
