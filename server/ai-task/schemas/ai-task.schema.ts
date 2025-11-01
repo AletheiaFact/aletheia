@@ -31,9 +31,23 @@ const DefiningImpactAreaContentSchema = z.object({
     model: z.string().min(1),
 });
 
+const SourceObjectSchema = z.object({
+    name: z.string(),
+    language: z.string(),
+    wikidataId: z.string().nullable(),
+});
+
+const PersonalityObjectSchema = z.object({
+    name: z.string(),
+    wikidataId: z.string().nullable(),
+});
+
 const DefiningSeverityContentSchema = z.object({
     text: z.string().min(1).max(10000),
     model: z.string().min(1),
+    impactArea: SourceObjectSchema.nullable(),
+    topics: z.array(SourceObjectSchema),
+    personality: PersonalityObjectSchema.nullable(),
 });
 
 const AiTaskContentSchema = z.discriminatedUnion("type", [

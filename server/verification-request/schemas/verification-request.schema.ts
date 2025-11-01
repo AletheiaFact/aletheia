@@ -67,7 +67,11 @@ export class VerificationRequest {
     @Prop({ required: false, type: [Number] })
     embedding: number[];
 
-    @Prop({ type: Array, required: false })
+    @Prop({
+        type: [mongoose.Schema.Types.ObjectId],
+        required: false,
+        ref: "Topic",
+    })
     topics: Topic[];
 
     @Prop({

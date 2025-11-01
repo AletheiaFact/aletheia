@@ -16,7 +16,7 @@ import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
 import {
     AiTaskType,
     CallbackRoute,
-    OPENAI_EMBEDDING_MODEL,
+    DEFAULT_EMBEDDING_MODEL,
     OPENAI_IDENTIFY_DATA,
 } from "../../ai-task/constants/ai-task.constants";
 
@@ -57,7 +57,7 @@ const getStateInvokeSrc = (
                     type: AiTaskType.TEXT_EMBEDDING,
                     content: {
                         text: context.verificationRequest.content,
-                        model: OPENAI_EMBEDDING_MODEL,
+                        model: DEFAULT_EMBEDDING_MODEL,
                     },
                     callbackRoute: CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
                     callbackParams: {
@@ -100,7 +100,7 @@ const getStateInvokeSrc = (
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_TOPICS,
                     content: {
-                        text: context.verificationRequest.identifiedData,
+                        text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
                     callbackRoute:
@@ -142,24 +142,39 @@ const getStateInvokeSrc = (
                 event,
                 meta
             ) => {
-                const impactAreaWikidataId =
-                    context.verificationRequest.impactArea?.wikidataId || null;
-                const topicsWikidataIds =
-                    context.verificationRequest.topics
-                        ?.map((t) => t.wikidataId)
-                        .filter(Boolean) || [];
+                const impactArea = context.verificationRequest.impactArea
+                    ? {
+                          name: context.verificationRequest.impactArea.name,
+                          language:
+                              context.verificationRequest.impactArea.language,
+                          wikidataId:
+                              context.verificationRequest.impactArea
+                                  .wikidataId || null,
+                      }
+                    : null;
+
+                const topics =
+                    context.verificationRequest.topics?.map((t) => ({
+                        name: t.name,
+                        language: t.language,
+                        wikidataId: t.wikidataId || null,
+                    })) || [];
 
                 // TODO: Fix personality wikidataId extraction
-                // Currently identifiedData is stored as a string (just the name), not an object with wikidataId
-                const personalityWikidataId = null;
+                // identifiedData is currently stored as a string (just the name)
+                const personality = context.verificationRequest.identifiedData
+                    ? {
+                          name: context.verificationRequest.identifiedData,
+                          wikidataId: null,
+                      }
+                    : null;
 
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.DEFINING_SEVERITY,
                     content: {
-                        verificationId: context.verificationRequest.id,
-                        impactAreaWikidataId,
-                        topicsWikidataIds,
-                        personalityWikidataId,
+                        impactArea,
+                        topics,
+                        personality,
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
                     },
