@@ -32,7 +32,7 @@ import {
 } from "./dto/types";
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 const md5 = require("md5");
 
