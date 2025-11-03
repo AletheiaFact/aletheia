@@ -1,5 +1,18 @@
-import { Grid, Typography, Button, Alert, AlertTitle, Box } from "@mui/material";
-import { WarningAmber, Public, DateRange, Filter, Share } from "@mui/icons-material";
+import {
+    Grid,
+    Typography,
+    Button,
+    Alert,
+    AlertTitle,
+    Box,
+} from "@mui/material";
+import {
+    WarningAmber,
+    Public,
+    DateRange,
+    Filter,
+    Share,
+} from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
@@ -15,7 +28,7 @@ const ContentWrapper = styled.div`
     word-wrap: break-word;
     overflow: hidden;
     width: 50vw;
-    
+
     @media (max-width: 768px) {
         flex-direction: column;
         width: 70vw;
@@ -62,31 +75,36 @@ const VerificationRequestCard = ({
             icon: <Filter style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|reportType`,
             label: t("verificationRequest:tagReportType"),
-            label_value: t(`claimForm:${verificationRequest.reportType}`),
-            style: { backgroundColor: colors.secondary, color: colors.white }
+            label_value: t(
+                `claimForm:${verificationRequest.reportType || "undefined"}`
+            ),
+            style: { backgroundColor: colors.secondary, color: colors.white },
         },
         {
             icon: <Share style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|receptionChannel`,
             label: t("verificationRequest:tagSourceChannel"),
             label_value: verificationRequest.sourceChannel,
-            style: { backgroundColor: colors.primary, color: colors.white }
+            style: { backgroundColor: colors.primary, color: colors.white },
         },
         {
             icon: <Public style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|impactArea`,
             label: t("verificationRequest:tagImpactArea"),
-            label_value: verificationRequest.impactArea.name,
-            style: { backgroundColor: colors.neutralSecondary, color: colors.white }
+            label_value: verificationRequest.impactArea?.name,
+            style: {
+                backgroundColor: colors.neutralSecondary,
+                color: colors.white,
+            },
         },
         {
             icon: <WarningAmber style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
-            label_value: "Alta", // Dynamic Field: It must be populated with the severy of the Verification Request
-            style: { backgroundColor: colors.error, color: colors.white }
-        }
-    ]
+            label_value: verificationRequest.severity,
+            style: { backgroundColor: colors.error, color: colors.white },
+        },
+    ];
 
     const handleToggle = () => {
         setVisible(true);
@@ -94,7 +112,8 @@ const VerificationRequestCard = ({
 
     useEffect(() => {
         if (textRef.current) {
-            const isOverflow = textRef.current.scrollHeight > textRef.current.clientHeight;
+            const isOverflow =
+                textRef.current.scrollHeight > textRef.current.clientHeight;
             setIsOverflowing(isOverflow);
         }
     }, [verificationRequest.content]);
@@ -103,8 +122,15 @@ const VerificationRequestCard = ({
         <CardBase style={{ padding: "32px", ...style }}>
             <ContentWrapper>
                 <Alert severity="info">
-                    <Typography variant="h2"
-                        sx={{ fontFamily: "initial", fontSize: "18px", fontWeight: "bold", marginBottom: "2px" }}>
+                    <Typography
+                        variant="h2"
+                        sx={{
+                            fontFamily: "initial",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            marginBottom: "2px",
+                        }}
+                    >
                         {t("verificationRequest:tagReportedContent")}
                     </Typography>
                     <AlertTitle>
@@ -113,13 +139,22 @@ const VerificationRequestCard = ({
                             style={{
                                 color: colors.black,
                                 fontSize: "14px",
-                            }}>
+                            }}
+                        >
                             {verificationRequest.content}
                         </Typography>
                     </AlertTitle>
                 </Alert>
 
-                <Grid item style={{ display: "flex", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap" }}>
+                <Grid
+                    item
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "16px",
+                        flexWrap: "wrap",
+                    }}
+                >
                     {verificationRequest.publicationDate && (
                         <RequestDates
                             icon={<DateRange style={smallGreyIcon} />}
@@ -127,7 +162,6 @@ const VerificationRequestCard = ({
                             value={verificationRequest.publicationDate}
                         />
                     )}
-
 
                     {verificationRequest.date && (
                         <RequestDates
@@ -157,22 +191,33 @@ const VerificationRequestCard = ({
                 </Box>
 
                 <MetaChipContainer container>
-                    {metaChipData.map(({ icon, key, label, label_value, style }) => (
-                        <Grid item key={key} style={{ marginBottom: "8px" }}>
-                            <MetaChip
-                                icon={icon}
-                                label={label}
-                                label_value={label_value}
-                                style={style}
-                            />
-                        </Grid>
-                    ))}
+                    {metaChipData.map(
+                        ({ icon, key, label, label_value, style }) => (
+                            <Grid
+                                item
+                                key={key}
+                                style={{ marginBottom: "8px" }}
+                            >
+                                <MetaChip
+                                    icon={icon}
+                                    label={label}
+                                    label_value={label_value}
+                                    style={style}
+                                />
+                            </Grid>
+                        )
+                    )}
                 </MetaChipContainer>
 
                 {expandable && !visible && isOverflowing && (
                     <Button
                         variant="text"
-                        style={{ marginLeft: "auto", color: colors.lightPrimary, textDecoration: 'underline', padding: 0 }}
+                        style={{
+                            marginLeft: "auto",
+                            color: colors.lightPrimary,
+                            textDecoration: "underline",
+                            padding: 0,
+                        }}
                         onClick={handleToggle}
                     >
                         {t("verificationRequest:showText")}
@@ -180,7 +225,8 @@ const VerificationRequestCard = ({
                 )}
             </ContentWrapper>
 
-            <Grid item
+            <Grid
+                item
                 style={{
                     marginTop: 16,
                     display: "flex",

@@ -11,7 +11,7 @@ import AletheiaInfo from "./AletheiaInfo";
 const Footer = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-    const theme = useTheme()
+    const theme = useTheme();
 
     return (
         <Box
@@ -21,7 +21,7 @@ const Footer = () => {
                 background: theme.palette.primary.main,
                 color: colors.white,
                 padding: "32px",
-                alignSelf: "flex-end"
+                alignSelf: "flex-end",
             }}
         >
             <Box sx={{ mt: vw?.xs ? 8 : 0 }}>
@@ -45,11 +45,17 @@ const Footer = () => {
                     background: backgroundColor,
                     color: colors.white,
                     padding: "32px",
-                    alignSelf: "flex-end"
+                    alignSelf: "flex-end",
                 }}
             >
                 <Grid container spacing={3} justifyContent="center">
-                    <Grid item md={4} sm={6} xs={12} style={{ marginTop: "-40px" }}>
+                    <Grid
+                        item
+                        md={4}
+                        sm={6}
+                        xs={12}
+                        style={{ marginTop: "-40px" }}
+                    >
                         <AletheiaSocialMediaFooter />
                         <Box
                             sx={{
@@ -57,7 +63,6 @@ const Footer = () => {
                                 textAlign: "center",
                                 display: "flex",
                                 flexDirection: "column",
-                                
                             }}
                         >
                             <Box sx={{ mb: 2 }}>
@@ -110,7 +115,6 @@ const Footer = () => {
                 </Grid>
             </Box>
         </Box>
-
     );
 };
 

@@ -194,7 +194,10 @@ export const createChatBotMachine = (
                         date: new Date(),
                     };
 
-                    verificationRequestStateMachineService.request(verificationRequestBody);
+                    verificationRequestStateMachineService.request(
+                        verificationRequestBody,
+                        chatbotStateId
+                    );
                 },
             },
         }

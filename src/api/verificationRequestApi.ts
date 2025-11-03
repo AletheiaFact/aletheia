@@ -213,7 +213,7 @@ const verificationRequestApi = {
     getVerificationRequests,
     getById,
     updateVerificationRequest,
-    editingVerificationRequest,
+    updateVerificationRequestWithTopics,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
 };
