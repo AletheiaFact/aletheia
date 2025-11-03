@@ -1,20 +1,13 @@
 import { PlainExtension } from "remirror";
+import { Fragment } from "prosemirror-model";
 
 /**
- * Simple extension that removes links from pasted content
- * by intercepting paste events and cleaning the clipboard data
+ * Simple extension that removes hyperlinks from pasted content
+ * by intercepting paste events and extracting only plain text
  */
 export class SimplePasteFilter extends PlainExtension {
-    // Define regex patterns once for better performance
-    private static readonly URL_PATTERNS = [
-        // Remove standalone URLs
-        /(?:https?:\/\/|www\.)[^\s]+/gi,
-        // Remove email addresses that might be linked
-        /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    ];
-
-    private static readonly HTML_TAG_PATTERN = /<[^>]*>/g;
-    private static readonly WHITESPACE_PATTERN = /\s+/g;
+    private static readonly MAX_PASTE_LENGTH = 1048576;
+    private static readonly WHITESPACE_REGEX = /\s+/g;
 
     get name() {
         return "simplePasteFilter" as const;
@@ -27,22 +20,46 @@ export class SimplePasteFilter extends PlainExtension {
                     const clipboardData = event.clipboardData;
                     if (!clipboardData) return false;
 
-                    const htmlContent = clipboardData.getData("text/html");
-                    const plainText = clipboardData.getData("text/plain");
+                    let plainText = clipboardData.getData("text/plain");
 
-                    if (htmlContent || plainText) {
+                    if (!plainText?.trim()) return false;
+                    if (plainText.length > SimplePasteFilter.MAX_PASTE_LENGTH) {
+                        console.warn(
+                            "Paste content too large, truncating to 1MB"
+                        );
+                        plainText = plainText.substring(
+                            0,
+                            SimplePasteFilter.MAX_PASTE_LENGTH
+                        );
+                    }
+
+                    if (plainText.trim()) {
                         event.preventDefault();
 
-                        const cleanText = this.cleanContent(
-                            htmlContent || plainText
-                        );
+                        const { state } = view;
+                        const { tr } = state;
 
-                        if (cleanText.trim()) {
-                            const { state } = view;
-                            const { tr } = state;
+                        if (
+                            plainText.includes("\n\n") ||
+                            plainText.match(/\n\s*\n/)
+                        ) {
+                            this.insertParagraphNodes(
+                                tr,
+                                plainText,
+                                state.selection.from,
+                                state.schema
+                            );
+                        } else {
+                            const cleanText = plainText
+                                .replace(
+                                    SimplePasteFilter.WHITESPACE_REGEX,
+                                    " "
+                                )
+                                .trim();
                             tr.insertText(cleanText, state.selection.from);
-                            view.dispatch(tr);
                         }
+
+                        view.dispatch(tr);
 
                         return true;
                     }
@@ -53,49 +70,53 @@ export class SimplePasteFilter extends PlainExtension {
         };
     }
 
-    /**
-     * Clean content by removing HTML tags and URL patterns
-     */
-    private cleanContent(content: string): string {
-        let cleanContent = content;
+    private insertParagraphNodes(
+        tr: any,
+        text: string,
+        position: number,
+        schema: any
+    ) {
+        const lines = text.split("\n");
+        const nodes = [];
+        const paragraphParts = [];
 
-        if (content.includes("<")) {
-            cleanContent = this.stripHtmlTags(content);
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+
+            if (trimmedLine === "") {
+                if (paragraphParts.length > 0) {
+                    const cleanParagraph = paragraphParts
+                        .join(" ")
+                        .replace(SimplePasteFilter.WHITESPACE_REGEX, " ")
+                        .trim();
+                    nodes.push(
+                        schema.nodes.paragraph.create(
+                            null,
+                            schema.text(cleanParagraph)
+                        )
+                    );
+                    paragraphParts.length = 0;
+                }
+
+                nodes.push(schema.nodes.paragraph.create());
+            } else {
+                paragraphParts.push(trimmedLine);
+            }
         }
 
-        cleanContent = this.removeUrlPatterns(cleanContent);
-
-        return cleanContent;
-    }
-
-    /**
-     * Simple HTML tag removal
-     */
-    private stripHtmlTags(html: string): string {
-        if (typeof document !== "undefined") {
-            const temp = document.createElement("div");
-            temp.innerHTML = html;
-            return temp.textContent || temp.innerText || "";
+        if (paragraphParts.length > 0) {
+            const cleanParagraph = paragraphParts
+                .join(" ")
+                .replace(SimplePasteFilter.WHITESPACE_REGEX, " ")
+                .trim();
+            nodes.push(
+                schema.nodes.paragraph.create(null, schema.text(cleanParagraph))
+            );
         }
 
-        return html
-            .replace(SimplePasteFilter.HTML_TAG_PATTERN, " ")
-            .replace(SimplePasteFilter.WHITESPACE_PATTERN, " ")
-            .trim();
-    }
+        if (nodes.length === 0) return;
 
-    /**
-     * Remove URL patterns from text
-     */
-    private removeUrlPatterns(text: string): string {
-        let cleanText = text;
-        SimplePasteFilter.URL_PATTERNS.forEach((pattern) => {
-            cleanText = cleanText.replace(pattern, "");
-        });
-
-        // Clean up extra whitespace
-        return cleanText
-            .replace(SimplePasteFilter.WHITESPACE_PATTERN, " ")
-            .trim();
+        const fragment = Fragment.from(nodes);
+        tr.replaceWith(position, position, fragment);
     }
 }

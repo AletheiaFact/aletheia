@@ -68,5 +68,6 @@
     "impactAreaLabel": "Área de impacto",
     "severityLabel": "Prioridade",
     "editVerificationRequestSuccess": "Denúncia editada com sucesso",
-    "editVerificationRequestError": "Erro ao editar a denúncia"
+    "editVerificationRequestError": "Erro ao editar a denúncia",
+    "titleEditVerificationRequest": "Edição de Denúncia"
 }

@@ -28,7 +28,6 @@ const ContentWrapper = styled.div`
     word-wrap: break-word;
     overflow: hidden;
     width: 50vw;
-
     @media (max-width: 768px) {
         flex-direction: column;
         width: 70vw;

@@ -14,6 +14,10 @@ export class CreateVerificationRequestDTO {
 
     @IsEnum(ContentModelEnum)
     @ApiProperty()
+    sourceChannel: string;
+
+    @IsEnum(ContentModelEnum)
+    @ApiProperty()
     @IsOptional()
     reportType: ContentModelEnum;
 
@@ -22,10 +26,6 @@ export class CreateVerificationRequestDTO {
     impactArea: string | { label: string; value: string };
 
     @IsArray()
-    @ApiProperty()
-    sourceChannel: string;
-
-    @IsEnum(ContentModelEnum)
     @ApiProperty()
     @IsOptional()
     source: Source[];

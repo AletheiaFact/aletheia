@@ -128,33 +128,14 @@ const updateVerificationRequest = (id, params, t, operationType = "update") => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("verificationRequest:addVerificationRequestSuccess")
+                t(messages[operationType].success)
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t("verificationRequest:addVerificationRequestError")
-            );
-            console.error("error while updating verification request", e);
-        });
-};
-
-const editingVerificationRequest = (id, params, t) => {
-    return request
-        .put(`/${id}`, params)
-        .then((response) => {
-            MessageManager.showMessage(
-                "success",
-                t("verificationRequest:editVerificationRequestSuccess")
-            );
-            return response.data;
-        })
-        .catch((e) => {
-            MessageManager.showMessage(
-                "error",
-                t("verificationRequest:editVerificationRequestError")
+                t(messages[operationType].error)
             );
             console.error("error while updating verification request", e);
         });

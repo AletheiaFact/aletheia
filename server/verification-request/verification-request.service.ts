@@ -358,14 +358,14 @@ export class VerificationRequestService {
                     );
             }
 
-            const user = this.req?.user;
+            const user = this.req.user;
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
                 TargetModel.VerificationRequest,
                 user,
                 HistoryType.Update,
-                newVerificationRequest,
+                updatedVerificationRequestData,
                 latestVerificationRequest
             );
 
@@ -577,7 +577,7 @@ export class VerificationRequestService {
             topics,
         };
 
-        const user = this.req?.user;
+        const user = this.req.user;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
