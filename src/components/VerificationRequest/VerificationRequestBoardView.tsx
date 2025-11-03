@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
 import {
   Box,
@@ -16,6 +16,7 @@ import {
   SeverityLevel,
   VerificationRequestBoardViewProps,
 } from "../../types/VerificationRequest";
+import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
 
 const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
   low: colors.low,
@@ -25,14 +26,31 @@ const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
 };
 
 const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> =
-  ({ requests, loading }) => {
+  ({ requests, loading, onRequestUpdated }) => {
     const { t } = useTranslation();
+    const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const statuses = [
       { key: "Pre Triage", label: t("verificationRequest:statusPreTriage") },
       { key: "In Triage", label: t("verificationRequest:statusInTriage") },
       { key: "Posted", label: t("verificationRequest:statusPosted") },
     ];
+
+    const handleCardClick = (request: any) => {
+      setSelectedRequest(request);
+      setDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setDrawerOpen(false);
+        setSelectedRequest(null);
+    };
+
+    const handleRequestUpdate = () => {
+        setSelectedRequest(null);
+        if (onRequestUpdated) onRequestUpdated();
+    };
 
     const groupedRequests = useMemo(() => {
       const grouped = statuses.reduce((acc, status) => {
@@ -141,6 +159,7 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
                             transform: "translateY(-2px)",
                           },
                         }}
+                        onClick={() => handleCardClick(request)}
                       >
                         <CardContent>
                           <Box
@@ -245,6 +264,12 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
             </Grid>
           ))}
         </Grid>
+        <VerificationRequestDetailDrawer
+          verificationRequest={selectedRequest}
+          open={drawerOpen}
+          onClose={handleDrawerClose}
+          onUpdate={handleRequestUpdate}
+        />
       </Box>
     );
   };

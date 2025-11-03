@@ -76,7 +76,6 @@
     "filterByPriority": "Filtrar por Prioridade",
     "noRequestsInStatus": "Nenhuma solicitação neste status",
     "statusFilterOption": "Status",
-    "impactAreaFilterOption": "Área de Impacto",
     "statusFilterLabel": "Status:",
     "impactAreaFilterLabel": "Área de Impacto:",
     "reportedContent": "Conteúdo Reportado",
@@ -86,12 +85,7 @@
     "editVerificationRequestSuccess": "Denúncia editada com sucesso",
     "editVerificationRequestError": "Erro ao editar a denúncia",
     "titleEditVerificationRequest": "Edição de Denúncia",
-    "viewFullPage": "Ver página completa"
+    "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
-    "filterByPriority": "Filtrar por Prioridade",
-    "filterBySourceChannel": "Filtrar por Canal de Origem",
-    "noRequestsInStatus": "Nenhuma solicitação neste status",
-    "statusFilterOption": "Status",
-    "statusFilterLabel": "Status:",
-    "impactAreaFilterLabel": "Área de Impacto:"
+    "filterBySourceChannel": "Filtrar por Canal de Origem"
 }

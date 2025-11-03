@@ -76,7 +76,6 @@
     "filterByPriority": "Filter by Priority",
     "noRequestsInStatus": "No requests in this status",
     "statusFilterOption": "Status",
-    "impactAreaFilterOption": "Impact Area",
     "statusFilterLabel": "Status:",
     "impactAreaFilterLabel": "Impact Area:",
     "reportedContent": "Reported Content",
@@ -86,12 +85,7 @@
     "editVerificationRequestSuccess": "Verification Request edited successfully",
     "editVerificationRequestError": "Error while editing the Verification Request",
     "titleEditVerificationRequest": "Verification Request Edition",
-    "viewFullPage": "View full page"
+    "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
-    "filterByPriority": "Filter by Priority",
-    "filterBySourceChannel": "Filter by Source Channel",
-    "noRequestsInStatus": "No requests in this status",
-    "statusFilterOption": "Status",
-    "statusFilterLabel": "Status:",
-    "impactAreaFilterLabel": "Impact Area:"
+    "filterBySourceChannel": "Filter by Source Channel"
 }

@@ -191,6 +191,7 @@ const VerificationRequestListContent = ({ state, actions }) => {
       <VerificationRequestBoardView
         requests={filteredRequests}
         loading={loading}
+        // onRequestUpdated={() => fetchData()}
       />
     </Grid>
   );
