@@ -9,6 +9,10 @@ interface SearchOptions {
     order?: string;
     topics?: any;
     filtersUsed?: any;
+    severity?: string;
+    sourceChannel?: string;
+    status?: any;
+    impactArea?: any;
 }
 
 const request = axios.create({
@@ -52,6 +56,10 @@ const get = (options: SearchOptions, dispatch = null) => {
         order: options.order || "desc",
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
+        severity: options.severity || "all",
+        sourceChannel: options.sourceChannel || "all",
+        status: options.status || [],
+        impactArea: options.impactArea || [],
     };
 
     return request

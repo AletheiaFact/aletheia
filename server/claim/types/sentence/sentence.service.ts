@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Model } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -29,8 +29,13 @@ export class SentenceService {
     }
 
     async getByDataHash(data_hash) {
+        if (typeof data_hash !== "string") {
+          throw new BadRequestException("Invalid data_hash: must be a string.");
+        }
         const report = await this.reportService.findByDataHash(data_hash);
-        const sentence = await this.SentenceModel.findOne({ data_hash });
+        const sentence = await this.SentenceModel.findOne({
+          data_hash: { $eq: data_hash },
+        });
         if (sentence) {
             sentence.props = {
                 classification: report?.classification,
@@ -45,11 +50,18 @@ export class SentenceService {
     async updateSentenceWithTopics(topics, data_hash) {
         const sentence = await this.getByDataHash(data_hash);
 
+        if (!Array.isArray(topics) || !topics.every((t) => typeof t === "string")) {
+          throw new BadRequestException("Invalid topics array.");
+        }
+
         const newSentence = {
             ...sentence.toObject(),
             topics,
         };
-        return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
+        return this.SentenceModel.updateOne(
+          { _id: sentence._id },
+          { $set: { topics } }
+        );
     }
 
     async findAll({

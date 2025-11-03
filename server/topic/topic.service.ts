@@ -25,12 +25,22 @@ export class TopicService {
         );
     }
 
-    async searchTopics(query: string, language = "pt"): Promise<Topic[]> {
-        return this.TopicModel.find({
-            name: { $regex: query, $options: "i" },
-            language,
-        });
+  async searchTopics(
+    query: string,
+    language = "pt",
+    limit = 10
+  ): Promise<Topic[]> {
+    if (typeof language !== "string") {
+       throw new TypeError("Invalid language");
     }
+
+    return this.TopicModel.find({
+    name: { $regex: query, $options: "i" },
+    language: { $eq: language }
+  })
+    .limit(limit)
+    .sort({ name: 1 });
+  }
 
     /**
      *
@@ -120,5 +130,13 @@ export class TopicService {
      */
     getBySlug(slug) {
         return this.TopicModel.findOne({ slug });
+    }
+    /**
+     *
+     * @param names topic names array
+     * @returns topics
+     */
+    findByNames(names: string[]) {
+        return this.TopicModel.find({ name: { $in: names } });
     }
 }
