@@ -338,7 +338,7 @@ export class VerificationRequestService {
                         );
                     } else {
                         this.logger.warn(
-                            `Unexpected identifiedData format, setting empty array`
+                            `No personalities identified or unexpected format, setting empty array`
                         );
                         valueToUpdate = [];
                     }
@@ -1032,11 +1032,10 @@ export class VerificationRequestService {
                 }
                 break;
             case "identifiedData":
-                // Allow string or null/empty (AI might not identify anyone)
+                // Allow empty array (AI processor returns empty when no personalities found)
                 if (
                     result === null ||
                     result === undefined ||
-                    result === "" ||
                     (Array.isArray(result) && result.length === 0)
                 ) {
                     return { valid: true };
@@ -1049,13 +1048,16 @@ export class VerificationRequestService {
                     if (allValidIds) {
                         return { valid: true };
                     }
+                    return {
+                        valid: false,
+                        error: "All identifiedData must be valid ObjectIds",
+                    };
                 }
 
                 return {
                     valid: false,
                     error: `Identified data must be an array of ObjectIds, got: ${typeof result}`,
                 };
-                break;
             case "impactArea":
                 if (!result) {
                     return { valid: false, error: "Impact area is required" };
