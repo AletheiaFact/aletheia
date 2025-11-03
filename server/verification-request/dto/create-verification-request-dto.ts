@@ -14,10 +14,6 @@ export class CreateVerificationRequestDTO {
 
     @IsEnum(ContentModelEnum)
     @ApiProperty()
-    sourceChannel: string;
-
-    @IsEnum(ContentModelEnum)
-    @ApiProperty()
     @IsOptional()
     reportType: ContentModelEnum;
 
