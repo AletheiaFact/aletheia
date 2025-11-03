@@ -12,7 +12,8 @@ export interface ChatBotContext {
 export const createChatBotMachine = (
     verificationRequestStateMachineService: VerificationRequestStateMachineService,
     value?,
-    context?
+    context?,
+    chatbotStateId?
 ) => {
     const chatBotMachine = createMachine<ChatBotContext>(
         {
@@ -193,7 +194,10 @@ export const createChatBotMachine = (
                         date: new Date(),
                     };
 
-                    verificationRequestStateMachineService.request(verificationRequestBody);
+                    verificationRequestStateMachineService.request(
+                        verificationRequestBody,
+                        chatbotStateId
+                    );
                 },
             },
         }

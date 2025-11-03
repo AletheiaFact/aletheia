@@ -59,6 +59,7 @@ export class VerificationRequestController {
             topics = [],
             order,
             severity,
+            sourceChannel,
             status,
             impactArea,
         } = getVerificationRequest;
@@ -72,6 +73,7 @@ export class VerificationRequestController {
                     pageSize,
                     order,
                     severity,
+                    sourceChannel,
                     status,
                     impactArea,
                 }),
@@ -79,6 +81,7 @@ export class VerificationRequestController {
                     contentFilters,
                     topics,
                     severity,
+                    sourceChannel,
                     status,
                     impactArea,
                 }),

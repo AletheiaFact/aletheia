@@ -1,37 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import React, { useLayoutEffect, useState } from "react";
+import React from "react";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import FooterInfo from "./FooterInfo";
 import AletheiaInfo from "./AletheiaInfo";
-import { NameSpaceEnum } from "../../types/Namespace";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 
 const Footer = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-    const [nameSpace] = useAtom(currentNameSpace);
-    const [backgroundColor, setBackgroundColor] = useState(colors.primary);
-
-    useLayoutEffect(() => {
-        setBackgroundColor(
-            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
-        );
-    }, [nameSpace]);
+    const theme = useTheme();
 
     return (
         <Box
             component="footer"
             sx={{
                 textAlign: "center",
-                background: backgroundColor,
+                background: theme.palette.primary.main,
                 color: colors.white,
                 padding: "32px",
-                alignSelf: "flex-end"
+                alignSelf: "flex-end",
             }}
         >
             <Box sx={{ mt: vw?.xs ? 8 : 0 }}>
@@ -52,14 +42,20 @@ const Footer = () => {
             <Box
                 sx={{
                     textAlign: "center",
-                    background: backgroundColor,
+                    background: theme.palette.primary.main,
                     color: colors.white,
                     padding: "32px",
-                    alignSelf: "flex-end"
+                    alignSelf: "flex-end",
                 }}
             >
                 <Grid container spacing={3} justifyContent="center">
-                    <Grid item md={4} sm={6} xs={12} style={{ marginTop: "-40px" }}>
+                    <Grid
+                        item
+                        md={4}
+                        sm={6}
+                        xs={12}
+                        style={{ marginTop: "-40px" }}
+                    >
                         <AletheiaSocialMediaFooter />
                         <Box
                             sx={{
@@ -67,7 +63,6 @@ const Footer = () => {
                                 textAlign: "center",
                                 display: "flex",
                                 flexDirection: "column",
-                                
                             }}
                         >
                             <Box sx={{ mb: 2 }}>
@@ -120,7 +115,6 @@ const Footer = () => {
                 </Grid>
             </Box>
         </Box>
-
     );
 };
 

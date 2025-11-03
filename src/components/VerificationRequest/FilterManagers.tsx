@@ -1,0 +1,174 @@
+import React from "react";
+import { useAppSelector } from "../../store/store";
+import { ActionTypes } from "../../store/types";
+import SelectFilter from "./SelectFilter";
+import FilterPopover from "./FilterPopover";
+import {
+  Grid,
+  IconButton,
+  Button,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormControl,
+} from "@mui/material";
+import { FilterList, ViewList, ViewModule } from "@mui/icons-material";
+
+const FilterManager = ({ state, actions }) => {
+  const {
+    viewMode,
+    priorityFilter,
+    sourceChannelFilter,
+    filterValue,
+    filterType,
+    anchorEl,
+    autoCompleteTopicsResults,
+    topicFilterUsed,
+    impactAreaFilterUsed,
+  } = state;
+  const {
+    setViewMode,
+    setPriorityFilter,
+    setSourceChannelFilter,
+    setFilterValue,
+    setFilterType,
+    setAnchorEl,
+    setPaginationModel,
+    setApplyFilters,
+    fetchTopicList,
+    createFilterChangeHandler,
+    dispatch,
+    t,
+  } = actions;
+  const { vw } = useAppSelector((state) => state);
+
+  const handleFilterClick = (event) => setAnchorEl(event.currentTarget);
+  const handleFilterClose = () => setAnchorEl(null);
+
+  const handleFilterApply = () => {
+    setAnchorEl(null);
+    if (filterType === "topics" && filterValue) {
+      const topicsToAdd = Array.isArray(filterValue)
+        ? filterValue
+        : [filterValue];
+      const updatedTopics = [...new Set([...topicFilterUsed, ...topicsToAdd])];
+      dispatch({
+        type: ActionTypes.SET_TOPIC_FILTER_USED,
+        topicFilterUsed: updatedTopics,
+      });
+    }
+    if (filterType === "impactArea" && filterValue) {
+      const impactAreasToAdd = Array.isArray(filterValue)
+        ? filterValue
+        : [filterValue];
+      const updatedImpactAreas = [
+        ...new Set([...impactAreaFilterUsed, ...impactAreasToAdd]),
+      ];
+      dispatch({
+        type: ActionTypes.SET_IMPACT_AREA_FILTER_USED,
+        impactAreaFilterUsed: updatedImpactAreas,
+      });
+    }
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    setApplyFilters(true);
+  };
+
+  const handleResetFilters = () => {
+    setFilterValue([]);
+    setPriorityFilter("all");
+    setSourceChannelFilter("all");
+    setPaginationModel({ pageSize: 10, page: 0 });
+    dispatch({
+      type: ActionTypes.SET_TOPIC_FILTER_USED,
+      topicFilterUsed: [],
+    });
+    dispatch({
+      type: ActionTypes.SET_IMPACT_AREA_FILTER_USED,
+      impactAreaFilterUsed: [],
+    });
+    setApplyFilters(true);
+  };
+
+  return (
+    <Grid
+      item
+      xs={10}
+      container
+      alignItems="center"
+      justifyContent="space-between"
+      style={{ marginTop: 30 }}
+    >
+      <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <ToggleButtonGroup
+          value={viewMode}
+          exclusive
+          onChange={(_, newView) => {
+            if (newView !== null) {
+              setViewMode(newView);
+            }
+          }}
+          aria-label="view mode"
+          size="small"
+        >
+          <ToggleButton value="list" aria-label="list view">
+            <ViewList />
+          </ToggleButton>
+          <ToggleButton value="board" aria-label="board view">
+            <ViewModule />
+          </ToggleButton>
+        </ToggleButtonGroup>
+        {viewMode === "board" && (
+          <>
+            <IconButton onClick={handleFilterClick}>
+              <FilterList />
+            </IconButton>
+            <FilterPopover
+              anchorEl={anchorEl}
+              onClose={handleFilterClose}
+              filterType={filterType}
+              setFilterType={setFilterType}
+              setFilterValue={setFilterValue}
+              fetchTopicList={fetchTopicList}
+              autoCompleteTopicsResults={autoCompleteTopicsResults}
+              onFilterApply={handleFilterApply}
+              t={t}
+            />
+            <FormControl
+              sx={{
+                display: "flex",
+                flexDirection: vw?.xs ? "column" : "row",
+                alignItems: "center",
+                gap: 2,
+              }}
+              size="small"
+            >
+              <SelectFilter
+                filterType="filterByPriority"
+                currentValue={priorityFilter}
+                onValueChange={createFilterChangeHandler(setPriorityFilter)}
+              />
+              <SelectFilter
+                filterType="filterBySourceChannel"
+                currentValue={sourceChannelFilter}
+                onValueChange={createFilterChangeHandler(
+                  setSourceChannelFilter
+                )}
+              />
+            </FormControl>
+          </>
+        )}
+      </Grid>
+      {(topicFilterUsed.length > 0 ||
+        priorityFilter ||
+        sourceChannelFilter !== "all" ||
+        impactAreaFilterUsed.length > 0) && (
+        <Grid item>
+          <Button onClick={handleResetFilters}>
+            {t("verificationRequest:resetFiltersButton")}
+          </Button>
+        </Grid>
+      )}
+    </Grid>
+  );
+};
+
+export default FilterManager;

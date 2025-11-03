@@ -10,9 +10,10 @@ interface SearchOptions {
     topics?: any;
     filtersUsed?: any;
     severity?: string;
+    noCache?: boolean;
+    sourceChannel?: string;
     status?: any;
     impactArea?: any;
-    noCache?: boolean;
 }
 
 const request = axios.create({
@@ -57,6 +58,7 @@ const get = (options: SearchOptions, dispatch = null) => {
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
         severity: options.severity || "all",
+        sourceChannel: options.sourceChannel || "all",
         status: options.status || [],
         impactArea: options.impactArea || [],
     };

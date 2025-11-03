@@ -58,6 +58,7 @@
     "contentFilterLabel": "Content:",
     "filterByTypeLabel": "Filter by",
     "topicsFilterOption": "Topics",
+    "impactAreaFilterOption": "Impact Areas",
     "contentFilterOption": "Content",
     "filterByContentLabel": "Filter by Content",
     "applyButtonLabel": "Apply",
@@ -67,6 +68,7 @@
     "statusPosted": "Posted",
     "statusDeclined": "Declined",
     "allPriorities": "All Priorities",
+    "allSourceChannels": "All Source Channels",
     "priorityCritical": "Critical",
     "priorityHigh": "High",
     "priorityMedium": "Medium",
@@ -85,4 +87,11 @@
     "editVerificationRequestError": "Error while editing the Verification Request",
     "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page"
+    "automated_monitoring": "Automated Monitoring",
+    "filterByPriority": "Filter by Priority",
+    "filterBySourceChannel": "Filter by Source Channel",
+    "noRequestsInStatus": "No requests in this status",
+    "statusFilterOption": "Status",
+    "statusFilterLabel": "Status:",
+    "impactAreaFilterLabel": "Impact Area:"
 }
