@@ -13,5 +13,8 @@
     "nameSpaceItem": "Namespace",
     "supportiveMaterials": "Materiais de Apoio",
     "sourcesItem": "Fontes",
-    "verificationRequestItem": "Denúncias"
+    "verificationRequestItem": "Denúncias",
+    "version": "Versão",
+    "releaseNotes": "Notas de Versão",
+    "Badges": "Insígnias"
 }

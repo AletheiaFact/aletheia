@@ -1,10 +1,11 @@
-import { List, ListItemButton } from "@mui/material";
+import { List, ListItemButton, Box, Typography, Link } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { currentUserRole } from "../atoms/currentUser";
+import getConfig from "next/config";
 
 import actions from "../store/actions";
 import colors from "../styles/colors";
@@ -18,6 +19,9 @@ const AletheiaMenu = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const [nameSpace] = useAtom(currentNameSpace);
+    const [role] = useAtom(currentUserRole);
+    const { publicRuntimeConfig } = getConfig();
+    const version = publicRuntimeConfig?.version || "1.0.4";
 
     const handleClick = (menuItem) => {
         dispatch(actions.openSideMenu());
@@ -27,8 +31,6 @@ const AletheiaMenu = () => {
             router.push(menuItem.key);
         }
     };
-
-    const [role] = useAtom(currentUserRole);
 
     return (
         <List
@@ -176,6 +178,48 @@ const AletheiaMenu = () => {
                     {t("header:donateButton")}
                 </ListItemButton>
                 : null}
+
+            {/* Menu Footer with Version */}
+            <Box
+                sx={{
+                    marginTop: "auto",
+                    paddingTop: "16px",
+                    paddingBottom: "16px",
+                    borderTop: `1px solid ${colors.blackTertiary}`,
+                }}
+            >
+                <Typography
+                    variant="caption"
+                    sx={{
+                        color: colors.blackSecondary,
+                        display: "block",
+                        textAlign: "center",
+                        fontSize: "12px",
+                    }}
+                >
+                    {t("menu:version")}: {version}
+                </Typography>
+                <Link
+                    component="button"
+                    onClick={() => handleClick({
+                        key: "/release-notes"
+                    })}
+                    sx={{
+                        display: "block",
+                        textAlign: "center",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                        cursor: "pointer",
+                        textDecoration: "none",
+                        color: colors.primary,
+                        "&:hover": {
+                            textDecoration: "underline",
+                        },
+                    }}
+                >
+                    {t("menu:releaseNotes")}
+                </Link>
+            </Box>
         </List>
     );
 };
