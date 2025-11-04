@@ -153,6 +153,15 @@ export class TopicService {
     }
 
     /**
+     *
+     * @param wikidataIds topic names array
+     * @returns wikidataIds
+     */
+    findByWikidataIds(wikidataIds: string[]) {
+        return this.TopicModel.find({ wikidataId: { $in: wikidataIds } });
+    }
+
+    /**
      * Find or create a Topic for impact area
      * Used by verification request AI task callback
      * @param topicData object with { slug?, name, wikidataId?, language?, description? }

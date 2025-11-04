@@ -915,12 +915,16 @@ export class VerificationRequestService {
 
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
+        const foundTopics = await this.topicService.findByWikidataIds(
+            topics.map(topic => topic.value)
+        );
+        const topicIds = foundTopics.map(topic => topic._id);
 
         const latestVerificationRequest = verificationRequest.toObject();
 
         const newVerificationRequest = {
             ...latestVerificationRequest,
-            topics,
+            topics: topicIds,
         };
 
         const user = this.req.user;
