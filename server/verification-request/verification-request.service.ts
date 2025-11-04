@@ -3,6 +3,7 @@ import {
     Injectable,
     Inject,
     forwardRef,
+    Scope,
     Logger,
 } from "@nestjs/common";
 import { Model, Types } from "mongoose";
@@ -26,7 +27,7 @@ import { VerificationRequestStateMachineService } from "./state-machine/verifica
 
 const md5 = require("md5");
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class VerificationRequestService {
     private readonly logger = new Logger(VerificationRequestService.name);
 
@@ -50,6 +51,10 @@ export class VerificationRequestService {
         pageSize,
         order,
         topics,
+        severity,
+        sourceChannel,
+        status,
+        impactArea,
     }): Promise<VerificationRequest[]> {
         const query: any = {};
 
@@ -61,6 +66,26 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (severity && severity !== "all") {
+            if (severity === "critical") {
+                query.severity = "critical";
+            } else {
+                query.severity = { $regex: `^${severity}`, $options: "i" };
+            }
+        }
+
+        if (sourceChannel && sourceChannel !== "all") {
+            query.sourceChannel = { $in: sourceChannel };
+        }
+
+        if (status && status.length > 0) {
+            query.status = { $in: status };
+        }
+
+        if (impactArea && impactArea.length > 0) {
+            query.impactArea = { $in: impactArea };
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -374,7 +399,7 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            );
+            ).populate("source");
         } catch (error) {
             console.error("Failed to update verification request:", error);
             throw error;
@@ -466,7 +491,7 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count({ contentFilters, topics }): Promise<number> {
+    async count({ contentFilters, topics, severity, sourceChannel, status, impactArea }): Promise<number> {
         const query: any = {};
 
         if (contentFilters && contentFilters.length > 0) {
@@ -477,6 +502,26 @@ export class VerificationRequestService {
 
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
+        }
+
+        if (severity && severity !== "all") {
+            if (severity === "critical") {
+                query.severity = "critical";
+            } else {
+                query.severity = { $regex: `^${severity}`, $options: "i" };
+            }
+        }
+
+        if (sourceChannel && sourceChannel !== "all") {
+            query.sourceChannel = { $in: sourceChannel };
+        }
+
+        if (status && status.length > 0) {
+            query.status = { $in: status };
+        }
+
+        if (impactArea && impactArea.length > 0) {
+            query.impactArea = { $in: impactArea };
         }
 
         return this.VerificationRequestModel.countDocuments(query);

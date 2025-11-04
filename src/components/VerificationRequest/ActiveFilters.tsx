@@ -1,13 +1,13 @@
 import React from "react";
 import { Grid, Typography, Chip } from "@mui/material";
 
-const ActiveFilters = ({ topicFilterUsed, filtersUsed, onRemoveFilter, t }) => (
+const ActiveFilters = ({ topicFilterUsed, impactAreaFilterUsed, onRemoveFilter, t }) => (
     <Grid item xs={10}>
         <Typography variant="subtitle1" gutterBottom>
             {t("verificationRequest:activeFiltersLabel")}
         </Typography>
         <Grid container spacing={1}>
-            {topicFilterUsed.map((topic) => (
+            {topicFilterUsed?.map((topic) => (
                 <Grid item key={topic}>
                     <Chip
                         label={`${t(
@@ -23,17 +23,17 @@ const ActiveFilters = ({ topicFilterUsed, filtersUsed, onRemoveFilter, t }) => (
                     />
                 </Grid>
             ))}
-            {filtersUsed.map((filter) => (
-                <Grid item key={filter}>
+            {impactAreaFilterUsed?.map((impactArea) => (
+                <Grid item key={impactArea}>
                     <Chip
                         label={`${t(
-                            "verificationRequest:contentFilterLabel"
-                        )} ${filter}`}
+                            "verificationRequest:impactAreaFilterLabel"
+                        )} ${impactArea}`}
                         onDelete={() =>
                             onRemoveFilter({
-                                label: `Content: ${filter}`,
-                                value: filter,
-                                type: "content",
+                                label: `Impact Area: ${impactArea}`,
+                                value: impactArea,
+                                type: "impactArea",
                             })
                         }
                     />
