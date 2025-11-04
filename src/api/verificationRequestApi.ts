@@ -10,6 +10,7 @@ interface SearchOptions {
     topics?: any;
     filtersUsed?: any;
     severity?: string;
+    noCache?: boolean;
     sourceChannel?: string;
     status?: any;
     impactArea?: any;
@@ -50,7 +51,7 @@ const createVerificationRequest = (
 };
 
 const get = (options: SearchOptions, dispatch = null) => {
-    const params = {
+    const params: any = {
         contentFilters: options.filtersUsed || [],
         page: options.page ? options.page - 1 : 0,
         order: options.order || "desc",
@@ -62,8 +63,15 @@ const get = (options: SearchOptions, dispatch = null) => {
         impactArea: options.impactArea || [],
     };
 
+    const config: any = { params };
+    if (options.noCache) {
+        config.headers = {
+            "Cache-Control": "no-cache",
+        };
+    }
+
     return request
-        .get(`/`, { params })
+        .get(`/`, config)
         .then((response) => {
             const {
                 verificationRequests,

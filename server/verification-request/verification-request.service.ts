@@ -45,49 +45,8 @@ export class VerificationRequestService {
         private readonly topicService: TopicService
     ) {}
 
-    async listAll({
-        contentFilters,
-        page,
-        pageSize,
-        order,
-        topics,
-        severity,
-        sourceChannel,
-        status,
-        impactArea,
-    }): Promise<VerificationRequest[]> {
-        const query: any = {};
-
-        if (contentFilters && contentFilters.length > 0) {
-            query.$or = contentFilters.map((filter) => ({
-                content: { $regex: filter, $options: "i" },
-            }));
-        }
-
-        if (topics && topics.length > 0) {
-            query["topics.label"] = { $in: topics };
-        }
-
-        if (severity && severity !== "all") {
-            if (severity === "critical") {
-                query.severity = "critical";
-            } else {
-                query.severity = { $regex: `^${severity}`, $options: "i" };
-            }
-        }
-
-        if (sourceChannel && sourceChannel !== "all") {
-            query.sourceChannel = { $in: sourceChannel };
-        }
-
-        if (status && status.length > 0) {
-            query.status = { $in: status };
-        }
-
-        if (impactArea && impactArea.length > 0) {
-            query.impactArea = { $in: impactArea };
-        }
-
+    async listAll({ page, pageSize, order, ...filters }): Promise<VerificationRequest[]> {
+        const query = await this.buildVerificationRequestQuery(filters);
         return this.VerificationRequestModel.find(query, { embedding: 0 })
             .populate("impactArea")
             .skip(page * parseInt(pageSize, 10))
@@ -491,39 +450,8 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count({ contentFilters, topics, severity, sourceChannel, status, impactArea }): Promise<number> {
-        const query: any = {};
-
-        if (contentFilters && contentFilters.length > 0) {
-            query.$or = contentFilters.map((filter) => ({
-                content: { $regex: filter, $options: "i" },
-            }));
-        }
-
-        if (topics && topics.length > 0) {
-            query["topics.label"] = { $in: topics };
-        }
-
-        if (severity && severity !== "all") {
-            if (severity === "critical") {
-                query.severity = "critical";
-            } else {
-                query.severity = { $regex: `^${severity}`, $options: "i" };
-            }
-        }
-
-        if (sourceChannel && sourceChannel !== "all") {
-            query.sourceChannel = { $in: sourceChannel };
-        }
-
-        if (status && status.length > 0) {
-            query.status = { $in: status };
-        }
-
-        if (impactArea && impactArea.length > 0) {
-            query.impactArea = { $in: impactArea };
-        }
-
+    async count(filters): Promise<number> {
+        const query = await this.buildVerificationRequestQuery(filters);
         return this.VerificationRequestModel.countDocuments(query);
     }
 
@@ -638,5 +566,57 @@ export class VerificationRequestService {
             { _id: verificationRequest._id },
             newVerificationRequest
         );
+    }
+
+    private async buildVerificationRequestQuery(filters: {
+        contentFilters?: string[];
+        topics?: string[];
+        severity?: string;
+        sourceChannel?: string;
+        status?: string[];
+        impactArea?: string[];
+    }): Promise<Record<string, any>> {
+        const { contentFilters, topics, severity, sourceChannel, status, impactArea } = filters;
+        const query: any = {};
+        
+        const orConditions: any[] = [];
+
+        const [topicsObj, impactAreasObj] = await Promise.all([
+            topics?.length ? this.topicService.findByNames(topics) : [],
+            impactArea?.length ? this.topicService.findByNames(impactArea) : [],
+        ]);
+
+        const topicIds = topicsObj.map(topics => topics.wikidataId);
+        const impactAreaIds = impactAreasObj.map(impactArea => Types.ObjectId(impactArea._id));
+
+        if (topicIds.length) orConditions.push({ "topics.value": { $in: topicIds } });
+
+        if (impactAreaIds.length) orConditions.push({ impactArea: { $in: impactAreaIds } });
+
+        if (contentFilters?.length) {
+            const contentConditions = contentFilters.map((filter) => ({
+                content: { $regex: filter, $options: "i" },
+            }));
+            orConditions.push(...contentConditions);
+        }
+
+        if (orConditions.length) {
+            query.$or = orConditions;
+        }
+
+        if (severity && severity !== "all") {
+            query.severity = severity === "critical"
+                ? "critical"
+                : { $regex: `^${severity}`, $options: "i" };
+        }
+
+        if (sourceChannel && sourceChannel !== "all") {
+            query.sourceChannel = { $in: sourceChannel };
+        }
+
+        if (status?.length) {
+            query.status = { $in: status };
+        }
+        return query;
     }
 }

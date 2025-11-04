@@ -28,7 +28,7 @@ export class ChatbotService {
         private readonly httpService: HttpService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private chatBotStateService: ChatBotStateService
-    ) { }
+    ) {}
 
     private async getOrCreateChatBotMachine(from: string, channel: string) {
         const id = `${channel}-${from}`;
