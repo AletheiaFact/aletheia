@@ -4,7 +4,6 @@ import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
@@ -18,6 +17,7 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
+    sourceChannel?: string;
     source?: { href: string }[];
     publicationDate?: string;
     heardFrom?: string;

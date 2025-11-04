@@ -48,7 +48,7 @@ export class History {
 
     @Prop({
         type: mongoose.Types.ObjectId,
-        required: true,
+        required: false,
         ref: "User",
     })
     user: User;

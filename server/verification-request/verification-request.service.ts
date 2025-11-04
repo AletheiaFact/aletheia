@@ -19,9 +19,9 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
+import { TopicService } from "../topic/topic.service";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const md5 = require("md5");
@@ -40,7 +40,8 @@ export class VerificationRequestService {
         private sourceService: SourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
-        private readonly aiTaskService: AiTaskService
+        private readonly aiTaskService: AiTaskService,
+        private readonly topicService: TopicService
     ) {}
 
     async listAll({
@@ -63,6 +64,7 @@ export class VerificationRequestService {
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
+            .populate("impactArea")
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
@@ -109,6 +111,7 @@ export class VerificationRequestService {
     async create(
         data: {
             content: string;
+            impactArea?: { label: string; value: string } | string;
             source?: Array<{ href: string }>;
         },
         user?: any
@@ -121,11 +124,14 @@ export class VerificationRequestService {
                 data_hash: md5(data.content),
                 embedding: null,
                 source: null,
+                impactArea: null
             });
 
-            if (data.source?.length) {
+            const validSources = data.source?.filter(source => source?.href?.trim()) || [];
+
+            if (validSources.length) {
                 const srcId = await Promise.all(
-                    data.source.map(async (source) => {
+                    validSources.map(async (source) => {
                         const src = await this.sourceService.create({
                             href: source.href,
                             targetId: vr.id,
@@ -138,6 +144,15 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
+            if (data.impactArea) {
+                const topicWikidataEntities = [data.impactArea];
+
+                const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
+
+                vr.impactArea = Types.ObjectId(createdTopic[0].id);
+                await vr.save();
+            }
+
             const currentUser = user || this.req?.user;
 
             const history = this.historyService.getHistoryParams(
@@ -147,7 +162,6 @@ export class VerificationRequestService {
                 HistoryType.Create,
                 vr
             );
-
             await this.historyService.createHistory(history);
 
             this.logger.log(
@@ -222,7 +236,8 @@ export class VerificationRequestService {
                 data_hash,
             })
                 .populate("group")
-                .populate("source");
+                .populate("source")
+                .populate("impactArea");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });
