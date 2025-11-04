@@ -1,3 +1,5 @@
+// IMPORTANT: Import tracing first to ensure OpenTelemetry is initialized before any other modules
+import "./tracing";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";

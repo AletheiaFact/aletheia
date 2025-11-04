@@ -1,3 +1,5 @@
+// IMPORTANT: Import tracing first to initialize OpenTelemetry before other modules
+import "../utils/tracing-browser";
 import React, { useMemo } from "react";
 import Head from "next/head";
 import "../styles/app.css";

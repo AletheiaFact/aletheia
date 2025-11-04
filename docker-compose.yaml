@@ -165,6 +165,50 @@ services:
     restart: unless-stopped
     networks:
       - intranet
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.91.0
+    restart: unless-stopped
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ${DATA_PATH:-./data}/otel-data:/tmp/otel-data
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+    networks:
+      - intranet
+
+  # Loki - Log aggregation system
+  loki:
+    container_name: loki
+    image: grafana/loki:2.9.3
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - intranet
+
+  # Grafana - Visualization UI for logs, traces, and metrics
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:10.2.3
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=false
+    volumes:
+      - ${DATA_PATH:-./data}/grafana:/var/lib/grafana
+    networks:
+      - intranet
+    depends_on:
+      - loki
 networks:
   intranet:
 volumes:

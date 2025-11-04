@@ -1,0 +1,70 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+extensions:
+  zpages:
+    endpoint: 0.0.0.0:55679
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+
+exporters:
+  # Console exporter for development/debugging
+  logging:
+    loglevel: debug
+
+  # File exporter - saves telemetry data to files
+  file:
+    path: /tmp/otel-data/traces.json
+
+  # Loki exporter for logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    tls:
+      insecure: true
+
+  # Uncomment below to add Jaeger for distributed tracing visualization
+  # jaeger:
+  #   endpoint: jaeger:14250
+  #   tls:
+  #     insecure: true
+
+  # Uncomment below to add Prometheus for metrics
+  # prometheus:
+  #   endpoint: "0.0.0.0:8889"
+
+  # Uncomment below to send to external services like Honeycomb, Lightstep, etc.
+  # otlp:
+  #   endpoint: your-backend:4317
+  #   tls:
+  #     insecure: true
+
+service:
+  extensions: [zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging, file]
+
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging, loki]
