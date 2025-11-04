@@ -8,7 +8,7 @@ export class CreateVerificationRequestDTO {
     @ApiProperty()
     content: string;
 
-    @IsArray()
+    @IsString()
     @ApiProperty()
     sourceChannel: string;
 
