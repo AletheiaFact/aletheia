@@ -49,7 +49,6 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Get("api/verification-request")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
     @Public()
     public async listAll(@Query() getVerificationRequest) {
         const {
