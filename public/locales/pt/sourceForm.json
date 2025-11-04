@@ -1,6 +1,7 @@
 {
     "addNewSourceButton": "Insira outro link",
     "errorMessageValidURL": "Por favor insira um link válido",
+    "errorMessageTrailingDot": "URLs não devem terminar com ponto final. Remova o ponto do final da URL.",
     "errorMessageNoURL": "Insira ao menos um link no sumário",
     "label": "Forneça ao menos um link de uma fonte confiável",
     "placeholder": "Cole uma URL",
