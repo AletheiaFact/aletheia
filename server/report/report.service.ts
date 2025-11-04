@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { SourceService } from "../source/source.service";
@@ -54,7 +54,11 @@ export class ReportService {
         return this.sourceService.update(data_hash, newSourceBody);
     }
 
-    findByDataHash(data_hash) {
-        return this.ReportModel.findOne({ data_hash });
-    }
+  findByDataHash(data_hash: string) {
+  if (!data_hash || typeof data_hash !== "string" || data_hash.length !== 32) {
+    throw new BadRequestException("Invalid data hash provided.");
+  }
+
+  return this.ReportModel.findOne({ data_hash: { $eq: data_hash } });
+}
 }

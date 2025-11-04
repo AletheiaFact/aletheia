@@ -1,6 +1,7 @@
 {
     "addNewSourceButton": "Add another link",
     "errorMessageValidURL": "Please insert a valid URL",
+    "errorMessageTrailingDot": "URLs should not end with a trailing dot. Please remove the dot from the end of the URL.",
     "errorMessageNoURL": "Insert at least one source on the summary",
     "label": "Provide at least one link to a reliable source",
     "placeholder": "Paste URL",

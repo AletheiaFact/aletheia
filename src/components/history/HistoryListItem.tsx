@@ -16,7 +16,7 @@ interface IHistoryListItemProps {
 
 const HistoryListItem = ({ history }: IHistoryListItemProps) => {
     const { t } = useTranslation()
-    const username = history.user ? history.user.name : t('history:annonymousUserName')
+    const username = history.user ? history.user.name : t("history:anonymousUserName")
     const type = t(`history:${history.type}`)
     const targetModel = t(`history:${history.targetModel}`)
     const titleTag = history.targetModel === "personality" ? "name" : "title"

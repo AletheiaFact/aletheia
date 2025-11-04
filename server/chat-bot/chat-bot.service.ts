@@ -1,10 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
@@ -18,13 +17,11 @@ const MESSAGE_MAP = {
 interface ChatBotContext {
     verificationRequest?: string;
     responseMessage?: string;
-    source?: { href: string }[];
-    publicationDate?: string;
-    heardFrom?: string;
+    additionalInfo?: string;
     email?: string;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ChatbotService {
     constructor(
         private configService: ConfigService,
@@ -189,9 +186,7 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
-            case "askingForSource":
-            case "askingForPublicationDate":
-            case "askingForHeardFrom":
+            case "askingForAdditionalInfo":
             case "askingForEmail":
                 this.handleOptionalInfoState(
                     parsedMessage,
@@ -262,20 +257,10 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
-            askingForSource: {
-                receive: "RECEIVE_SOURCE",
+            askingForAdditionalInfo: {
+                receive: "RECEIVE_ADDITIONAL_INFO",
                 empty: "RECEIVE_NO",
-                field: "source",
-            },
-            askingForPublicationDate: {
-                receive: "RECEIVE_PUBLICATION_DATE",
-                empty: "RECEIVE_NO",
-                field: "publicationDate",
-            },
-            askingForHeardFrom: {
-                receive: "RECEIVE_HEARD_FROM",
-                empty: "RECEIVE_NO",
-                field: "heardFrom",
+                field: "additionalInfo",
             },
             askingForEmail: {
                 receive: "RECEIVE_EMAIL",

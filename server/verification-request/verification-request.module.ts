@@ -1,5 +1,6 @@
 import { Module, OnModuleInit } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ModuleRef } from "@nestjs/core";
 import {
     VerificationRequestSchema,
     VerificationRequest,
@@ -18,6 +19,8 @@ import { CallbackDispatcherService } from "../callback-dispatcher/callback-dispa
 import { CallbackDispatcherModule } from "../callback-dispatcher/callback-dispatcher.module";
 import { CallbackRoute } from "../ai-task/constants/ai-task.constants";
 import { AbilityModule } from "../auth/ability/ability.module";
+import { TopicModule } from "../topic/topic.module";
+import { PersonalityModule } from "../personality/personality.module";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
@@ -40,6 +43,8 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
+        TopicModule,
+        PersonalityModule.register(),
     ],
     exports: [
         VerificationRequestService,
@@ -54,14 +59,83 @@ const VerificationRequestModel = MongooseModule.forFeature([
 export class VerificationRequestModule implements OnModuleInit {
     constructor(
         private readonly dispatcher: CallbackDispatcherService,
-        private readonly verificationService: VerificationRequestService
+        private readonly moduleRef: ModuleRef
     ) {}
 
     onModuleInit() {
+        // Register callback for embedding updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            (params, result) =>
-                this.verificationService.updateEmbedding(params, result)
+            async (params, result) => {
+                console.log(
+                    `[VerificationRequestModule] EMBEDDING callback invoked with params:`,
+                    params
+                );
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
+                );
+                return verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for identifying data updates (legacy, kept for compatibility)
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
+            async (params, result) => {
+                console.log(
+                    `[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`,
+                    params
+                );
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
+                );
+                return verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for topics updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
+            async (params, result) => {
+                console.log(
+                    `[VerificationRequestModule] TOPICS callback invoked with params:`,
+                    params
+                );
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
+                );
+                return verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for impact area updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
+            async (params, result) => {
+                console.log(
+                    `[VerificationRequestModule] IMPACT_AREA callback invoked with params:`,
+                    params
+                );
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
+                );
+                return verificationService.updateFieldByAiTask(params, result);
+            }
+        );
+
+        // Register callback for severity updates
+        this.dispatcher.register(
+            CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
+            async (params, result) => {
+                console.log(
+                    `[VerificationRequestModule] SEVERITY callback invoked with params:`,
+                    params
+                );
+                const verificationService = await this.moduleRef.resolve(
+                    VerificationRequestService
+                );
+                return verificationService.updateFieldByAiTask(params, result);
+            }
         );
     }
 }

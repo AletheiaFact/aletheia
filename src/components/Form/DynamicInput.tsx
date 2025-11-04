@@ -10,6 +10,9 @@ import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
+import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
+import colors from "../../styles/colors";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -24,6 +27,7 @@ interface DynamicInputProps {
     "data-cy": string;
     extraProps: any;
     disabledDate?: any;
+    disabled?: boolean;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -63,6 +67,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     data-cy={props["data-cy"]}
                     white="true"
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
                 />
             );
         case "textList":
@@ -83,6 +89,22 @@ const DynamicInput = (props: DynamicInputProps) => {
                     type="select"
                     onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
+                    placeholder={t(props.placeholder)}
+                />
+            );
+        case "selectReportType":
+            return (
+                <ReportTypeSelect
+                    defaultValue={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    placeholder={t(props.placeholder)}
+
+                />
+            );
+        case "selectImpactArea":
+            return (
+                <ImpactAreaSelect
+                    onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                 />
             );
@@ -123,6 +145,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     data-cy={"testSelectDate"}
                     disabledDate={props.disabledDate}
+                    disabled={props.disabled}
+                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
                 />
             );
         case "email":

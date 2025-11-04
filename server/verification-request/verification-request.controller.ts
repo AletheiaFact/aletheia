@@ -49,7 +49,6 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Get("api/verification-request")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
     @Public()
     public async listAll(@Query() getVerificationRequest) {
         const {
@@ -58,6 +57,10 @@ export class VerificationRequestController {
             contentFilters = [],
             topics = [],
             order,
+            severity,
+            sourceChannel,
+            status,
+            impactArea,
         } = getVerificationRequest;
 
         const [verificationRequests, totalVerificationRequests] =
@@ -68,10 +71,18 @@ export class VerificationRequestController {
                     page,
                     pageSize,
                     order,
+                    severity,
+                    sourceChannel,
+                    status,
+                    impactArea,
                 }),
                 this.verificationRequestService.count({
                     contentFilters,
                     topics,
+                    severity,
+                    sourceChannel,
+                    status,
+                    impactArea,
                 }),
             ]);
 
@@ -187,7 +198,7 @@ export class VerificationRequestController {
 
     @ApiTags("pages")
     @Get("verification-request")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "no-cache")
     @Public()
     public async verificationRequestPage(
         @Req() req: BaseRequest,

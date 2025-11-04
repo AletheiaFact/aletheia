@@ -167,6 +167,72 @@ export class MongoPersonalityService {
         });
     }
 
+    /**
+     * Find or create a personality based on AI task result
+     * @param personalityData - Data from AI task processor with name, wikidata info, etc.
+     * @returns The found or created personality document
+     */
+    async findOrCreatePersonality(personalityData: {
+        name: string;
+        wikidata?: {
+            id?: string;
+            label?: string;
+            description?: string;
+        };
+    }): Promise<PersonalityDocument> {
+        const wikidataId = personalityData.wikidata?.id || null;
+
+        if (wikidataId) {
+            const existing = await this.PersonalityModel.findOne({
+                wikidata: wikidataId,
+                isDeleted: false,
+            });
+            if (existing) {
+                this.logger.log(
+                    `Found existing personality by wikidata: ${wikidataId}`
+                );
+                return existing;
+            }
+        }
+
+        const slug = slugify(personalityData.name, {
+            lower: true,
+            strict: true,
+        });
+
+        const existingBySlug = await this.PersonalityModel.findOne({
+            slug,
+            isDeleted: false,
+        });
+
+        if (existingBySlug) {
+            this.logger.log(`Found existing personality by slug: ${slug}`);
+            if (wikidataId && !existingBySlug.wikidata) {
+                existingBySlug.wikidata = wikidataId;
+                await existingBySlug.save();
+                this.logger.log(
+                    `Updated personality ${slug} with wikidata: ${wikidataId}`
+                );
+            }
+            return existingBySlug;
+        }
+
+        const newPersonality = new this.PersonalityModel({
+            name: personalityData.name,
+            slug,
+            description:
+                personalityData.wikidata?.description ||
+                `Personality: ${personalityData.name}`,
+            wikidata: wikidataId,
+            isHidden: false,
+        });
+
+        await newPersonality.save();
+        this.logger.log(`Created new personality: ${personalityData.name}`);
+
+        return newPersonality;
+    }
+
     async getById(
         personalityId,
         query: { language?: string; nameSpace?: string } = {
