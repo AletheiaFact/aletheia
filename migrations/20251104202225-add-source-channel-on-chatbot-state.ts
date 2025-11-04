@@ -11,9 +11,7 @@ export async function up(db: Db) {
     console.log(`Found ${chatBotStates.length} chatbot states to update`);
 
     if (chatBotStates.length === 0) {
-        console.log(
-            "No chatbot states found. This is normal if no chatbot conversations have occurred yet."
-        );
+        console.log("No chatbot states found.");
         return;
     }
 
