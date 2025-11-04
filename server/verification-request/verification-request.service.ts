@@ -124,10 +124,11 @@ export class VerificationRequestService {
                 data_hash: md5(data.content),
                 embedding: null,
                 source: null,
-                impactArea: null
+                impactArea: null,
             });
 
-            const validSources = data.source?.filter(source => source?.href?.trim()) || [];
+            const validSources =
+                data.source?.filter((source) => source?.href?.trim()) || [];
 
             if (validSources.length) {
                 const srcId = await Promise.all(
@@ -146,8 +147,9 @@ export class VerificationRequestService {
 
             if (data.impactArea) {
                 const topicWikidataEntities = [data.impactArea];
-
-                const createdTopic = await this.topicService.create({ topics: topicWikidataEntities });
+                const createdTopic = await this.topicService.create({
+                    topics: topicWikidataEntities,
+                });
 
                 vr.impactArea = Types.ObjectId(createdTopic[0].id);
                 await vr.save();
