@@ -27,24 +27,51 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
             {tags.length <= 0 && <span>{t("topics:noTopics")}</span>}
 
             {tags &&
-                tags.map((tag) => (
-                    <Chip
-                        label={(tag?.label || tag).toUpperCase()}
-                        key={tag?.value || tag}
-                        onClick={() => handleTagClick(tag?.label || tag)}
-                        onDelete={editable ? () => handleClose(tag?.value || tag) : undefined}
-                        deleteIcon={<CloseOutlined style={{fontSize: 15, color: colors.white}}/>}
-                        style={{
-                            backgroundColor: colors.secondary,
-                            color: colors.white,
-                            borderRadius: 32,
-                            padding: "4px 10px 2px",
-                            marginTop: 4,
-                            marginBottom: 4,
-                            cursor: "pointer",
-                        }}
-                    />
-                ))}
+                tags.map((tag) => {
+                    const displayLabel = tag?.name || tag?.label || tag;
+                    const tagKey =
+                        tag?._id || tag?.value || tag?.slug || displayLabel;
+                    const tagValue = tag?.name || tag?.label || tag;
+
+                    return (
+                        <Chip
+                            label={
+                                typeof displayLabel === "string"
+                                    ? displayLabel.toUpperCase()
+                                    : String(displayLabel).toUpperCase()
+                            }
+                            key={tagKey}
+                            onClick={() => handleTagClick(tagValue)}
+                            onDelete={
+                                editable
+                                    ? () =>
+                                          handleClose(
+                                              tag?.wikidataId ||
+                                                  tag?.value ||
+                                                  tagValue
+                                          )
+                                    : undefined
+                            }
+                            deleteIcon={
+                                <CloseOutlined
+                                    style={{
+                                        fontSize: 15,
+                                        color: colors.white,
+                                    }}
+                                />
+                            }
+                            style={{
+                                backgroundColor: colors.secondary,
+                                color: colors.white,
+                                borderRadius: 32,
+                                padding: "4px 10px 2px",
+                                marginTop: 4,
+                                marginBottom: 4,
+                                cursor: "pointer",
+                            }}
+                        />
+                    );
+                })}
         </Grid>
     );
 };
