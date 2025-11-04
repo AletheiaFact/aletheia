@@ -26,6 +26,7 @@ type VerificationRequest = {
 interface VerificationRequestBoardViewProps {
   requests: any[];
   loading: boolean;
+  onRequestUpdated?: () => void;
 }
 interface FiltersState {
   loading: boolean;

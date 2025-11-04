@@ -20,7 +20,12 @@ const VerificationRequestListContent = ({ state, actions }) => {
     filteredRequests,
     totalVerificationRequests,
   } = state;
-  const { setPaginationModel, setApplyFilters, t } = actions;
+  const { 
+    setPaginationModel, 
+    setApplyFilters, 
+    fetchData, 
+    t 
+  } = actions;
 
   const formatPublicationDate = (dateString) => {
     const publicationDate = new Date(dateString);
@@ -191,6 +196,7 @@ const VerificationRequestListContent = ({ state, actions }) => {
       <VerificationRequestBoardView
         requests={filteredRequests}
         loading={loading}
+        onRequestUpdated={fetchData}
       />
     </Grid>
   );
