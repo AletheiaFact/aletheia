@@ -55,10 +55,16 @@ export class VerificationRequestService {
         private readonly personalityService: IPersonalityService
     ) {}
 
-    async listAll({ page, pageSize, order, ...filters }): Promise<VerificationRequest[]> {
+    async listAll({
+        page,
+        pageSize,
+        order,
+        ...filters
+    }): Promise<VerificationRequest[]> {
         const query = await this.buildVerificationRequestQuery(filters);
         return this.VerificationRequestModel.find(query, { embedding: 0 })
             .populate("impactArea")
+            .populate("topics")
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
@@ -597,7 +603,8 @@ export class VerificationRequestService {
             })
                 .populate("group")
                 .populate("source")
-                .populate("impactArea");
+                .populate("impactArea")
+                .populate("topics");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });
@@ -950,9 +957,16 @@ export class VerificationRequestService {
         status?: string[];
         impactArea?: string[];
     }): Promise<Record<string, any>> {
-        const { contentFilters, topics, severity, sourceChannel, status, impactArea } = filters;
+        const {
+            contentFilters,
+            topics,
+            severity,
+            sourceChannel,
+            status,
+            impactArea,
+        } = filters;
         const query: any = {};
-        
+
         const orConditions: any[] = [];
 
         const [topicsObj, impactAreasObj] = await Promise.all([
@@ -960,12 +974,16 @@ export class VerificationRequestService {
             impactArea?.length ? this.topicService.findByNames(impactArea) : [],
         ]);
 
-        const topicIds = topicsObj.map(topics => topics.wikidataId);
-        const impactAreaIds = impactAreasObj.map(impactArea => Types.ObjectId(impactArea._id));
+        const topicIds = topicsObj.map((topics) => topics.wikidataId);
+        const impactAreaIds = impactAreasObj.map((impactArea) =>
+            Types.ObjectId(impactArea._id)
+        );
 
-        if (topicIds.length) orConditions.push({ "topics.value": { $in: topicIds } });
+        if (topicIds.length)
+            orConditions.push({ "topics.value": { $in: topicIds } });
 
-        if (impactAreaIds.length) orConditions.push({ impactArea: { $in: impactAreaIds } });
+        if (impactAreaIds.length)
+            orConditions.push({ impactArea: { $in: impactAreaIds } });
 
         if (contentFilters?.length) {
             const contentConditions = contentFilters.map((filter) => ({
@@ -979,9 +997,10 @@ export class VerificationRequestService {
         }
 
         if (severity && severity !== "all") {
-            query.severity = severity === "critical"
-                ? "critical"
-                : { $regex: `^${severity}`, $options: "i" };
+            query.severity =
+                severity === "critical"
+                    ? "critical"
+                    : { $regex: `^${severity}`, $options: "i" };
         }
 
         if (sourceChannel && sourceChannel !== "all") {
