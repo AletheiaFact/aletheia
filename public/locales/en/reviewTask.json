@@ -33,6 +33,7 @@
     "RESET_ERROR": "It was not possible to reset",
 
     "ADD_REJECTION_COMMENT": "Send comment",
+    "CONFIRM_REJECTION": "Confirm rejection",
     "ASSIGN_USER": "Assign",
     "ASSIGN_REQUEST": "Assign",
     "FINISH_REPORT": "Finish Report",
@@ -53,10 +54,16 @@
     "RESET": "Reset",
 
     "errorWhileFetching": "Error while fetching machine",
+    "unassigned": "Unassigned",
     "assigned": "User assigned",
     "reported": "Without reviewer",
+    "selectReviewer": "Select reviewer",
+    "selectCrossChecker": "Select cross-checker",
+    "cross-checking": "Cross-checking",
     "summarized": "Partial report",
     "submitted": "In review",
+    "rejected": "Rejected",
+    "addCommentCrossChecking": "Add comment for cross-checking",
     "published": "Published",
     "draft": "Draft",
     "assignedRequest": "User assigned",
@@ -67,6 +74,8 @@
     "hasStartedAlertTitle": "This review has started",
     "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
     "seeFullPage": "See full page",
+    "stepCounter": "Step {{current}} of {{total}}",
+    "userAssigned": "User assigned",
 
     "sentenceInfo": "This sentence is being checked by AletheiaFact."
 }

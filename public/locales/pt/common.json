@@ -12,5 +12,10 @@
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contato@aletheiafact.org",
     "captchaError": "Erro na validação do captcha",
-    "change": "Mudar"
+    "change": "Mudar",
+    "viewOnly": "Somente Visualização",
+    "assignee": "Responsável",
+    "reviewer": "Revisor",
+    "crossChecker": "Verificador Cruzado",
+    "unknownPersonality": "Pessoa Desconhecida"
 }

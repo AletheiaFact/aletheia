@@ -10,6 +10,7 @@ enum ReviewTaskEvents {
     draft = "SAVE_DRAFT",
     goback = "GO_BACK",
     addRejectionComment = "ADD_REJECTION_COMMENT",
+    confirmRejection = "CONFIRM_REJECTION",
     addComment = "ADD_COMMENT",
     submitComment = "SUBMIT_COMMENT",
     selectedReview = "SELECTED_REVIEW",

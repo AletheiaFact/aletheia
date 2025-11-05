@@ -18,7 +18,6 @@ import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
-import SentenceReportPreviewView from "../SentenceReport/SentenceReportPreviewView";
 
 export interface ClaimReviewViewProps {
     content: Content;
@@ -32,10 +31,9 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
-    const { vw, enableViewReportPreview, reviewDrawerCollapsed } =
+    const { vw, reviewDrawerCollapsed } =
         useAppSelector((state) => ({
             vw: state?.vw,
-            enableViewReportPreview: state?.enableViewReportPreview,
             reviewDrawerCollapsed:
                 state?.reviewDrawerCollapsed !== undefined
                     ? state?.reviewDrawerCollapsed
@@ -105,26 +103,17 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 />
             )}
 
-            {enableViewReportPreview ? (
-                <SentenceReportPreviewView
-                    context={review?.report || reviewData}
-                    userIsNotRegular={userIsNotRegular}
-                    userIsReviewer={userIsReviewer}
-                    isHidden={review?.isHidden}
-                    href={href}
-                    componentStyle={componentStyle}
-                    {...props}
-                />
-            ) : (
-                <SentenceReportView
-                    context={review?.report || reviewData}
-                    userIsNotRegular={userIsNotRegular}
-                    userIsReviewer={userIsReviewer}
-                    isHidden={review?.isHidden}
-                    href={href}
-                    componentStyle={componentStyle}
-                />
-            )}
+            <SentenceReportView
+                context={review?.report || reviewData}
+                userIsNotRegular={userIsNotRegular}
+                userIsReviewer={userIsReviewer}
+                isHidden={review?.isHidden}
+                href={href}
+                componentStyle={componentStyle}
+                personality={personality}
+                content={content}
+                claim={target}
+            />
 
             {!review?.isPublished && (
                 <ClaimReviewForm

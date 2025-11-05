@@ -43,6 +43,7 @@
     "reviewerPlaceholder": "Select a user",
     "crossCheckerLabel": "Select a reviewer for cross-ckecking",
     "crossCheckerPlaceholder": "Select a user",
+    "viewOnlyMode": "You are viewing this report in read-only mode. The content is visible but cannot be edited.",
     "crossCheckingCommentLabel": "Cross-checking comment",
     "crossCheckingCommentPlaceholder": "Insert cross-checking comment",
     "crossCheckingClassificationLabel": "Review this report",

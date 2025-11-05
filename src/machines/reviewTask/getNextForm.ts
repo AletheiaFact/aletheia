@@ -6,6 +6,7 @@ import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassig
 import crossCheckingForm from "../../components/ClaimReview/form/fieldLists/crossCheckingForm";
 import selectCrossCheckerForm from "../../components/ClaimReview/form/fieldLists/selectCrossCheckerForm";
 import verificationRequestForm from "../../components/ClaimReview/form/fieldLists/verificationRequestForm";
+import rejectionForm from "../../components/ClaimReview/form/fieldLists/rejectionForm";
 
 const getNextForm = (
     param: ReviewTaskEvents | ReviewTaskStates,
@@ -38,7 +39,9 @@ const getNextForm = (
 
         [ReviewTaskEvents.sendToReview]: visualEditor,
         [ReviewTaskStates.submitted]: visualEditor,
-        [ReviewTaskEvents.addRejectionComment]: visualEditor,
+        [ReviewTaskEvents.addRejectionComment]: rejectionForm,
+        [ReviewTaskStates.rejected]: rejectionForm,
+        [ReviewTaskEvents.confirmRejection]: rejectionForm,
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
 

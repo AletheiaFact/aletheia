@@ -29,8 +29,9 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = true }) => {
     const {
         handleSubmit,
         control,
@@ -66,6 +67,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
+    // Use centralized permission system as middleware only
+    const permissions = useReviewTaskPermissions();
+
     const resetIsLoading = () => {
         const isLoading = {};
         events?.forEach((eventName) => {
@@ -90,11 +94,34 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
+        
+        // Filter out visualEditor for events that don't need it (navigation, selection, and comment-only events)
+        const eventsWithoutVisualEditor = [
+            ReviewTaskEvents.addRejectionComment,
+            ReviewTaskEvents.confirmRejection,
+            ReviewTaskEvents.selectedCrossChecking,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.selectedReview,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.reAssignUser,
+            ReviewTaskEvents.viewPreview,
+            ReviewTaskEvents.addComment,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.submitComment, // Cross-checking comment submission uses separate form fields
+        ];
+        
+        const filteredFormData = eventsWithoutVisualEditor.includes(eventName)
+            ? Object.fromEntries(
+                Object.entries(formData).filter(([key]) => key !== 'visualEditor')
+              )
+            : formData;
+        
         const payload = {
             data_hash,
             reportModel,
             reviewData: {
-                ...formData,
+                ...filteredFormData,
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review
@@ -198,30 +225,16 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
     };
 
-    const checkIfUserCanSeeButtons = (): boolean => {
-        const userIsReviewer = reviewData.reviewerId === userId;
-        const userIsCrossChecker = reviewData.crossCheckerId === userId;
-        const userIsAssignee = reviewData.usersId.includes(userId);
-        const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
-
-        if (
-            isReported &&
-            !userIsAssignee &&
-            !userIsCrossChecker &&
-            !userIsAdmin
-        ) {
-            return false;
-        }
-        if (isCrossChecking || isAddCommentCrossChecking) {
-            return userIsCrossChecker || userIsAdmin;
-        }
-        if (isReviewing) {
-            return userIsReviewer || userIsAdmin;
-        }
-        return true;
+    // Check if user can perform any actions as middleware
+    const canUserInteractWithForm = () => {
+        // If no events from state machine, no buttons
+        if (!events || events.length === 0) return false;
+        
+        // Use permissions as middleware to check if user can perform any action
+        return permissions.showForm && canInteract;
     };
 
-    const showButtons = checkIfUserCanSeeButtons();
+    const showButtons = canUserInteractWithForm();
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -262,6 +275,15 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                     }}
                 >
                     {events?.map((event) => {
+                        // Use permissions as middleware to check if user can perform this specific action
+                        const canPerformAction = permissions.canSubmitActions.includes(event);
+                        
+                        // Skip rendering button if user can't perform this action
+                        if (!canPerformAction) return null;
+                        
+                        // Use standard label - confirmRejection event now has its own translation
+                        const eventLabel = t(`reviewTask:${event}`);
+                        
                         return (
                             <AletheiaButton
                                 loading={isLoading[event]}
@@ -273,7 +295,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                                 disabled={!hasCaptcha}
                                 data-cy={`testClaimReview${event}`}
                             >
-                                {t(`reviewTask:${event}`)}
+                                {eventLabel}
                             </AletheiaButton>
                         );
                     })}
