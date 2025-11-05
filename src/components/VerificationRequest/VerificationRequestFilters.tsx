@@ -5,36 +5,41 @@ import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import debounce from "lodash.debounce";
-import {
-  FiltersContext,
-  VerificationRequest,
-  ViewMode,
-} from "../../types/VerificationRequest";
+import { FiltersContext } from "../../types/VerificationRequest";
 
 export const useVerificationRequestFilters = (): FiltersContext => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sourceChannelFilter, setSourceChannelFilter] = useState("all");
   const [filterValue, setFilterValue] = useState([]);
   const [filterType, setFilterType] = useState("topics");
   const [anchorEl, setAnchorEl] = useState(null);
-
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
-    page: 0,
+    "Pre Triage": { pageSize: 20, page: 0 },
+    "In Triage": { pageSize: 20, page: 0 },
+    Posted: { pageSize: 20, page: 0 },
   });
 
   const [applyFilters, setApplyFilters] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const [totalVerificationRequests, setTotalVerificationRequests] = useState(0);
-  const [filteredRequests, setFilteredRequests] = useState<
-    VerificationRequest[]
-  >([]);
-  const [loading, setLoading] = useState(false);
+  const [totalVerificationRequests, setTotalVerificationRequests] = useState({
+    "Pre Triage": 0,
+    "In Triage": 0,
+    Posted: 0,
+  });
+  const [filteredRequests, setFilteredRequests] = useState({
+    "Pre Triage": [],
+    "In Triage": [],
+    Posted: [],
+  });
+  const [loading, setLoading] = useState({
+    "Pre Triage": false,
+    "In Triage": false,
+    Posted: false,
+  });
 
   const { autoCompleteTopicsResults, topicFilterUsed, impactAreaFilterUsed } =
     useAppSelector((state) => ({
@@ -43,39 +48,48 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       impactAreaFilterUsed: state?.impactAreaFilterUsed || [],
     }));
 
-  const fetchData = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    try {
-      const response = await verificationRequestApi.get({
-        page: paginationModel.page + 1,
-        pageSize: paginationModel.pageSize,
-        topics: topicFilterUsed,
-        severity: priorityFilter,
-        sourceChannel: sourceChannelFilter,
-        impactArea: impactAreaFilterUsed,
-      });
+  const fetchData = useCallback(
+    async (status: "Pre Triage" | "In Triage" | "Posted") => {
+      setLoading((prev) => ({ ...prev, [status]: true }));
+      try {
+        const response = await verificationRequestApi.get({
+          page: paginationModel[status].page + 1,
+          pageSize: paginationModel[status].pageSize,
+          topics: topicFilterUsed,
+          severity: priorityFilter,
+          sourceChannel: sourceChannelFilter,
+          impactArea: impactAreaFilterUsed,
+          status: status,
+        });
 
-      if (response) {
-        setTotalVerificationRequests(response.total);
-        setFilteredRequests(response.data);
+        if (response) {
+          setTotalVerificationRequests((prev) => ({
+            ...prev,
+            [status]: response.total,
+          }));
+          setFilteredRequests((prev) => ({
+            ...prev,
+            [status]: response.data,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching verification requests:", error);
+      } finally {
+        setLoading((prev) => ({ ...prev, [status]: false }));
       }
-    } catch (error) {
-      console.error("Error fetching verification requests:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    paginationModel.page,
-    paginationModel.pageSize,
-    topicFilterUsed,
-    priorityFilter,
-    sourceChannelFilter,
-    impactAreaFilterUsed,
-  ]);
+    }, [
+      paginationModel,
+      topicFilterUsed,
+      priorityFilter,
+      sourceChannelFilter,
+      impactAreaFilterUsed,
+    ]);
 
   useEffect(() => {
     if (isInitialLoad || applyFilters) {
-      fetchData();
+      fetchData("Pre Triage");
+      fetchData("In Triage");
+      fetchData("Posted");
       if (isInitialLoad) setIsInitialLoad(false);
       setApplyFilters(false);
     }
@@ -96,7 +110,11 @@ export const useVerificationRequestFilters = (): FiltersContext => {
 
   const createFilterChangeHandler = (setter) => (newValue) => {
     setter(newValue);
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    setPaginationModel((prev) => ({
+      "Pre Triage": { ...prev["Pre Triage"], page: 0 },
+      "In Triage": { ...prev["In Triage"], page: 0 },
+      Posted: { ...prev.Posted, page: 0 },
+    }));
     setApplyFilters(true);
   };
 
@@ -105,7 +123,6 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       loading,
       filteredRequests,
       totalVerificationRequests,
-      viewMode,
       priorityFilter,
       sourceChannelFilter,
       filterValue,
@@ -119,7 +136,6 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       isInitialLoad,
     },
     actions: {
-      setViewMode,
       setPriorityFilter,
       setSourceChannelFilter,
       setFilterValue: debouncedSetFilterValue,

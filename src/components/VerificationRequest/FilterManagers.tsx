@@ -7,15 +7,12 @@ import {
   Grid,
   IconButton,
   Button,
-  ToggleButtonGroup,
-  ToggleButton,
   FormControl,
 } from "@mui/material";
-import { FilterList, ViewList, ViewModule } from "@mui/icons-material";
+import { FilterList } from "@mui/icons-material";
 
 const FilterManager = ({ state, actions }) => {
   const {
-    viewMode,
     priorityFilter,
     sourceChannelFilter,
     filterValue,
@@ -26,7 +23,6 @@ const FilterManager = ({ state, actions }) => {
     impactAreaFilterUsed,
   } = state;
   const {
-    setViewMode,
     setPriorityFilter,
     setSourceChannelFilter,
     setFilterValue,
@@ -98,26 +94,6 @@ const FilterManager = ({ state, actions }) => {
       style={{ marginTop: 30 }}
     >
       <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <ToggleButtonGroup
-          value={viewMode}
-          exclusive
-          onChange={(_, newView) => {
-            if (newView !== null) {
-              setViewMode(newView);
-            }
-          }}
-          aria-label="view mode"
-          size="small"
-        >
-          <ToggleButton value="list" aria-label="list view">
-            <ViewList />
-          </ToggleButton>
-          <ToggleButton value="board" aria-label="board view">
-            <ViewModule />
-          </ToggleButton>
-        </ToggleButtonGroup>
-        {viewMode === "board" && (
-          <>
             <IconButton onClick={handleFilterClick}>
               <FilterList />
             </IconButton>
@@ -154,8 +130,6 @@ const FilterManager = ({ state, actions }) => {
                 )}
               />
             </FormControl>
-          </>
-        )}
       </Grid>
       {(topicFilterUsed.length > 0 ||
         priorityFilter ||
