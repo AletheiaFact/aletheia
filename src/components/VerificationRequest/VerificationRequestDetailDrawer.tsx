@@ -68,7 +68,7 @@ const truncateUrl = (url) => {
 };
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose, onUpdate }) => {
+    ({ verificationRequest, open, onClose}) => {
         const { t } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -95,13 +95,6 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                         t,
                         "update"
                     );
-
-                if (updatedRequest) {
-                    if (onUpdate) {
-                        onUpdate();
-                    }
-                    onClose();
-                }
             } catch (error) {
                 console.error("Erro ao atualizar status:", error);
             } finally {

@@ -45,11 +45,6 @@ const VerificationRequestBoardView = ({ state, actions }) => {
     setSelectedRequest(null);
   };
 
-  const handleRequestUpdate = () => {
-    fetchData();
-    setSelectedRequest(null);
-  };
-
   useEffect(() => {
     for (const status in paginationModel) {
       fetchData(status);
@@ -281,7 +276,6 @@ const VerificationRequestBoardView = ({ state, actions }) => {
         verificationRequest={selectedRequest}
         open={drawerOpen}
         onClose={handleDrawerClose}
-        onUpdate={handleRequestUpdate}
       />
     </Box>
   );

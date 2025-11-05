@@ -19,6 +19,7 @@ interface ChatBotContext {
     responseMessage?: string;
     additionalInfo?: string;
     email?: string;
+    sourceChannel?: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })
