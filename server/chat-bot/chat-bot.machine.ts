@@ -7,6 +7,7 @@ export interface ChatBotContext {
     responseMessage: string;
     additionalInfo?: string;
     email?: string;
+    sourceChannel?: string;
 }
 
 export const createChatBotMachine = (
@@ -24,6 +25,7 @@ export const createChatBotMachine = (
                 responseMessage: "",
                 additionalInfo: "",
                 email: "",
+                sourceChannel: "",
             },
             states: {
                 greeting: {
@@ -191,6 +193,7 @@ export const createChatBotMachine = (
                         content: context.verificationRequest,
                         additionalInfo: context.additionalInfo || "",
                         email: context.email || "",
+                        sourceChannel: context.sourceChannel,
                         date: new Date(),
                     };
 

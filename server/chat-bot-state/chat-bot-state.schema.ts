@@ -10,6 +10,7 @@ export interface ChatBotMachineSnapshot {
         responseMessage?: string;
         additionalInfo?: string;
         email?: string;
+        sourceChannel?: string;
     };
 }
 
