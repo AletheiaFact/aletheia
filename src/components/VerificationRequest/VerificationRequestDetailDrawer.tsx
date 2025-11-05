@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Typography, Box, Alert, AlertTitle, FormControl, FormLabel } from "@mui/material";
+import {
+    Grid,
+    Typography,
+    Box,
+    Alert,
+    AlertTitle,
+    FormControl,
+    FormLabel,
+} from "@mui/material";
 import {
     WarningAmber,
     Public,
@@ -11,7 +19,11 @@ import {
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import verificationRequestApi from "../../api/verificationRequestApi";
-import { ReportModelEnum, ReviewTaskEvents, ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import {
+    ReportModelEnum,
+    ReviewTaskEvents,
+    ReviewTaskTypeEnum,
+} from "../../machines/reviewTask/enums";
 import { Roles } from "../../types/enums";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAppSelector } from "../../store/store";
@@ -73,7 +85,7 @@ const truncateUrl = (url) => {
 };
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose}) => {
+    ({ verificationRequest, open, onClose }) => {
         const { t } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -145,7 +157,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                 isPartialReview: false,
                                 personality: verificationRequest.personality,
                                 targetId: "", // what is this?
-                                usersId: "" // What is this?
+                                usersId: "", // What is this?
                             },
                         },
                         value: "published",
@@ -155,17 +167,23 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                     reviewTaskType: ReviewTaskTypeEnum.VerificationRequest,
                     target: verificationRequest._id,
                 };
-            
-                reviewTaskApi.createReviewTask(reviewTask, t, ReviewTaskEvents.publish)
+
+                reviewTaskApi
+                    .createReviewTask(reviewTask, t, ReviewTaskEvents.publish)
                     .then((response: any) => {
                         window.location.href = `/claim/create?verificationRequest=${verificationRequest._id}`;
                     })
                     .catch((e) => {
                         // TODO: Track errors with Sentry
-                    })
-                    // .finally(() => resetIsLoading());
-            
-                sendReviewNotifications(verificationRequest.data_hash, event, reviewTask, userId, t);
+                    });
+                // .finally(() => resetIsLoading());
+                sendReviewNotifications(
+                    verificationRequest.data_hash,
+                    ReviewTaskEvents.publish,
+                    reviewTask,
+                    userId,
+                    t
+                );
             } catch (error) {
                 console.error("Erro ao auto atribuir:", error);
             }
@@ -279,7 +297,9 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            {t("verificationRequest:viewFullPage")}
+                                            {t(
+                                                "verificationRequest:viewFullPage"
+                                            )}
                                         </AletheiaButton>
                                     </Grid>
                                 </Grid>
@@ -466,7 +486,12 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                             style={{ padding: "32px 0" }}
                                         >
                                             <FormLabel>
-                                            <AletheiaCaptcha onChange={setRecaptchaString} ref={recaptchaRef} />
+                                                <AletheiaCaptcha
+                                                    onChange={
+                                                        setRecaptchaString
+                                                    }
+                                                    ref={recaptchaRef}
+                                                />
                                             </FormLabel>
                                         </FormControl>
                                         <Grid
@@ -489,14 +514,20 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                 <AletheiaButton
                                                     type={ButtonType.blue}
                                                     onClick={handleApprove}
-                                                    disabled={isUpdating || !hasCaptcha}
+                                                    disabled={
+                                                        isUpdating ||
+                                                        !hasCaptcha
+                                                    }
                                                 >
                                                     {t("common:approve")}
                                                 </AletheiaButton>
                                                 <AletheiaButton
                                                     type={ButtonType.blue}
                                                     onClick={handleDecline}
-                                                    disabled={isUpdating || !hasCaptcha}
+                                                    disabled={
+                                                        isUpdating ||
+                                                        !hasCaptcha
+                                                    }
                                                     style={{
                                                         backgroundColor:
                                                             colors.error ||
