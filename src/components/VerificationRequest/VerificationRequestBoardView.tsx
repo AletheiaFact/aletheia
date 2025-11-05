@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import {
   Box,
@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import colors from "../../styles/colors";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../Button";
 import { SeverityEnum } from "../../../server/verification-request/dto/types";
 import { SeverityLevel } from "../../types/VerificationRequest";
 import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
@@ -23,8 +23,8 @@ const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
 };
 
 const VerificationRequestBoardView = ({ state, actions }) => {
-  const { loading, filteredRequests } = state;
-  const { fetchData } = actions;
+  const { loading, filteredRequests, paginationModel } = state;
+  const { fetchData, setPaginationModel } = actions;
   const { t } = useTranslation();
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -50,21 +50,17 @@ const VerificationRequestBoardView = ({ state, actions }) => {
     setSelectedRequest(null);
   };
 
-  const groupedRequests = useMemo(() => {
-    const grouped = statuses.reduce((acc, status) => {
-      acc[status.key] = [];
-      return acc;
-    }, {} as Record<string, any[]>);
-
-    for (const filteredRequest of filteredRequests) {
-      const status = filteredRequest.status || "Pre Triage";
-      if (grouped[status]) {
-        grouped[status].push(filteredRequest);
-      }
+  useEffect(() => {
+    for (const status in paginationModel) {
+      fetchData(status);
     }
+  }, [paginationModel]);
 
-    return grouped;
-  }, [filteredRequests, statuses]);
+  const groupedRequests = {
+    "Pre Triage": filteredRequests["Pre Triage"],
+    "In Triage": filteredRequests["In Triage"],
+    Posted: filteredRequests.Posted,
+  };
 
   const getSeverityColor = (severity: SeverityEnum | undefined): string => {
     if (!severity) return colors.neutralSecondary;
@@ -138,7 +134,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                 />
               </Typography>
 
-              {loading ? (
+              {loading[status.key] ? (
                 <Typography variant="body2" color="textSecondary">
                   {t("common:loading")}
                 </Typography>
@@ -246,7 +242,26 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       </CardContent>
                     </Card>
                   ))}
-
+                  {groupedRequests[status.key].length >= 20 && (
+                    <AletheiaButton
+                      type={ButtonType.gray}
+                      onClick={() => {
+                        setPaginationModel((prev) => {
+                          const updated = {
+                            ...prev,
+                            [status.key]: {
+                              ...prev[status.key],
+                              pageSize: prev[status.key].pageSize + 20,
+                            },
+                          };
+                          return updated;
+                        });
+                      }}
+                      data-cy={"testLoadMoreVerificationRequest"}
+                    >
+                      {t("list:loadMoreButton")}
+                    </AletheiaButton>
+                  )}
                   {groupedRequests[status.key].length === 0 && (
                     <Typography
                       variant="body2"
