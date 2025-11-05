@@ -95,7 +95,10 @@ export class ChatbotService {
         const chatBotMachineService = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
-            chatbotState.machine.context,
+            {
+                ...chatbotState.machine.context,
+                sourceChannel: channel,
+            },
             chatbotState._id
         );
 
