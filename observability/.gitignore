@@ -1,0 +1,13 @@
+# Ignore data directories created by volume mounts
+data/
+*.db
+*.log
+
+# Ignore Grafana runtime files
+grafana/grafana.db
+grafana/plugins/
+grafana/png/
+
+# Ignore any local overrides
+*.local.yaml
+*.local.yml

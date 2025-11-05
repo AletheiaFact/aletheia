@@ -64,6 +64,8 @@ import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
 import { M2MGuard } from "./auth/m2m.guard";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
+import { TelemetryModule } from "./telemetry/telemetry.module";
+import { TelemetryMiddleware } from "./telemetry/telemetry.middleware";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -71,7 +73,12 @@ export class AppModule implements NestModule {
         consumer
             .apply(DisableBodyParserMiddleware)
             .forRoutes(OryController)
-            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware)
+            .apply(
+                JsonBodyMiddleware,
+                LoggerMiddleware,
+                GetLanguageMiddleware,
+                TelemetryMiddleware
+            )
             .forRoutes("*");
     }
 
@@ -107,6 +114,7 @@ export class AppModule implements NestModule {
                 ConfigModule.forRoot({
                     load: [() => options || {}],
                 }),
+                TelemetryModule,
                 ThrottlerModule.forRoot({
                     ttl: options.throttle.ttl,
                     limit: options.throttle.limit,

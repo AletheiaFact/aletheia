@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'Aletheia Dashboards'
+    orgId: 1
+    folder: 'Aletheia'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true

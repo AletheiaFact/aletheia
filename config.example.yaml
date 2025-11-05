@@ -54,3 +54,7 @@ services:
         api_token: ZENVIA_API_TOKEN
       agencia:
         access_token: AGENCIA_ACCESS_TOKEN
+      telemetry:
+        metricsPort: 9464 # Port for Prometheus metrics endpoint
+        logsEndpoint: http://localhost:4318/v1/logs # OpenTelemetry Collector endpoint for logs
+        enableAutoInstrumentation: true # Enable automatic instrumentation for Express, MongoDB, etc.

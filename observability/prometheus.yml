@@ -1,0 +1,55 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'aletheia-local'
+    environment: 'development'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: []
+
+# Load rules once and periodically evaluate them
+# rule_files:
+#   - "alerts/*.yml"
+
+scrape_configs:
+  # Scrape Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Scrape OpenTelemetry Collector metrics
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8888']
+        labels:
+          service: 'otel-collector'
+
+  # Scrape metrics exposed by OpenTelemetry Collector Prometheus exporter
+  - job_name: 'otel-collector-prometheus-exporter'
+    static_configs:
+      - targets: ['otel-collector:8889']
+        labels:
+          service: 'aletheia'
+
+  # Scrape Aletheia application metrics directly (Prometheus exporter)
+  - job_name: 'aletheia-app'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:9464']
+        labels:
+          service: 'aletheia'
+          environment: 'development'
+
+  # Scrape Loki metrics
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+
+  # Scrape Grafana metrics
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']

@@ -1,0 +1,77 @@
+receivers:
+  # OTLP receiver for logs and metrics
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+  # Prometheus receiver to scrape metrics from the application
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'aletheia-app'
+          scrape_interval: 10s
+          static_configs:
+            - targets: ['host.docker.internal:9464']
+              labels:
+                service: 'aletheia'
+                environment: 'development'
+
+processors:
+  # Batch processor to batch telemetry data
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+  # Resource processor to add additional attributes
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: development
+        action: upsert
+
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+
+exporters:
+  # Loki exporter for logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
+  # Prometheus exporter for metrics
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    namespace: aletheia
+    const_labels:
+      environment: development
+
+  # Debug exporter for troubleshooting
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+service:
+  pipelines:
+    # Logs pipeline
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch, resource]
+      exporters: [loki, debug]
+
+    # Metrics pipeline
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, batch, resource]
+      exporters: [prometheus]
+
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      level: detailed
+      address: 0.0.0.0:8888
