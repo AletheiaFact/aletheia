@@ -19,6 +19,7 @@ interface ChatBotContext {
     responseMessage?: string;
     additionalInfo?: string;
     email?: string;
+    sourceChannel?: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -94,10 +95,7 @@ export class ChatbotService {
         const chatBotMachineService = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
-            {
-                ...chatbotState.machine.context,
-                sourceChannel: channel,
-            },
+            chatbotState.machine.context,
             chatbotState._id
         );
 

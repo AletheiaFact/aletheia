@@ -48,8 +48,8 @@ const VerificationRequestBoardView: React.FC<VerificationRequestBoardViewProps> 
     };
 
     const handleRequestUpdate = () => {
-        onRequestUpdated();
         setSelectedRequest(null);
+        if (onRequestUpdated) onRequestUpdated();
     };
 
     const groupedRequests = useMemo(() => {
