@@ -29,7 +29,7 @@ interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
     open: boolean;
     onClose: () => void;
-    onUpdate?: () => void;
+    onUpdate?: (oldStatus: string, newStatus: string) => void;
 }
 
 const getSeverityColor = (severity: string) => {
@@ -68,7 +68,7 @@ const truncateUrl = (url) => {
 };
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose, onUpdate }) => {
+    ({ verificationRequest, open, onClose, onUpdate}) => {
         const { t } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -83,31 +83,33 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
             setCurrentRequest(verificationRequest);
         }, [verificationRequest]);
 
-        const handleStatusUpdate = async (newStatus: "Posted" | "Declined") => {
-            if (!currentRequest?._id) return;
+    const handleStatusUpdate = async (newStatus: "Posted" | "Declined") => {
+        if (!currentRequest?._id) return;
 
-            setIsUpdating(true);
-            try {
-                const updatedRequest =
-                    await verificationRequestApi.updateVerificationRequest(
-                        currentRequest._id,
-                        { status: newStatus },
-                        t,
-                        "update"
-                    );
+      const oldStatus = currentRequest.status;
 
-                if (updatedRequest) {
-                    if (onUpdate) {
-                        onUpdate();
-                    }
-                    onClose();
-                }
-            } catch (error) {
-                console.error("Erro ao atualizar status:", error);
-            } finally {
-                setIsUpdating(false);
-            }
-        };
+      setIsUpdating(true);
+      try {
+        const updatedRequest =
+          await verificationRequestApi.updateVerificationRequest(
+            currentRequest._id,
+            { status: newStatus },
+            t,
+            "update"
+          );
+
+        if (updatedRequest) {
+          onClose();
+          if (onUpdate) {
+            onUpdate(oldStatus, newStatus);
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar status:", error);
+      } finally {
+        setIsUpdating(false);
+      }
+    };
 
         const handleApprove = () => {
             handleStatusUpdate("Posted");
