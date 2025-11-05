@@ -23,11 +23,6 @@ type VerificationRequest = {
   publicationDate: string;
   heardFrom: string;
 };
-interface VerificationRequestBoardViewProps {
-  requests: any[];
-  loading: boolean;
-  onRequestUpdated?: () => void;
-}
 interface FiltersState {
   loading: boolean;
   filteredRequests: VerificationRequest[];
@@ -78,6 +73,5 @@ export type {
   FiltersContext,
   ViewMode,
   PaginationModel,
-  VerificationRequestBoardViewProps,
   SeverityLevel,
 };
