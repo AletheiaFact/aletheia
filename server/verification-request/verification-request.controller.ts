@@ -207,6 +207,7 @@ export class VerificationRequestController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
         });
 
         await this.viewService.render(

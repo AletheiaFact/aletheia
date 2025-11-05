@@ -9,11 +9,17 @@ import { currentNameSpace } from "../atoms/namespace";
 import { useSetAtom } from "jotai";
 import AffixButton from "../components/AffixButton/AffixButton";
 import VerificationRequestList from "../components/VerificationRequest/VerificationRequestList";
+import { useDispatch } from "react-redux";
+import actions from "../store/actions";
 
-const VerificationRequestPage: NextPage<{ nameSpace }> = ({ nameSpace }) => {
+const VerificationRequestPage: NextPage<{ nameSpace, sitekey }> = ({ nameSpace, sitekey }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
+    dispatch(actions.setSitekey(sitekey));
+
     return (
         <>
             <Seo
@@ -35,6 +41,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            sitekey: query.sitekey,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

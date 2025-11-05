@@ -13,6 +13,8 @@ import ClaimSummaryDisplay from "./ClaimSummaryDisplay";
 import SourceSummaryDisplay from "./SourceSummaryDisplay";
 import VerificationRequestDisplay from "../VerificationRequest/VerificationRequestDisplay";
 
+// If the data is isVerificationRequest and is opened by the kanban, for some reason the content is not being passed correctly.
+// TODO: Fix what is causing this.
 const SentenceReportCard = ({
     target,
     personality,
