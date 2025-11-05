@@ -978,13 +978,13 @@ export class VerificationRequestService {
             impactArea?.length ? this.topicService.findByNames(impactArea) : [],
         ]);
 
-        const topicIds = topicsObj.map((topics) => topics.wikidataId);
+        const topicIds = topicsObj.map((topics) => topics._id);
         const impactAreaIds = impactAreasObj.map((impactArea) =>
             Types.ObjectId(impactArea._id)
         );
 
         if (topicIds.length)
-            orConditions.push({ "topics.value": { $in: topicIds } });
+            orConditions.push({ topics: { $in: topicIds } });
 
         if (impactAreaIds.length)
             orConditions.push({ impactArea: { $in: impactAreaIds } });
