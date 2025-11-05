@@ -25,6 +25,7 @@ import {
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
 import { Roles } from "../../types/enums";
+import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -46,7 +47,7 @@ interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
     open: boolean;
     onClose: () => void;
-    onUpdate?: () => void;
+    onUpdate?: (oldStatus: string, newStatus: string) => void;
 }
 
 const getSeverityColor = (severity: string) => {
@@ -85,7 +86,7 @@ const truncateUrl = (url) => {
 };
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose }) => {
+    ({ verificationRequest, open, onClose, onUpdate }) => {
         const { t } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -108,8 +109,12 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
             setCurrentRequest(verificationRequest);
         }, [verificationRequest]);
 
-        const handleStatusUpdate = async (newStatus: "Posted" | "Declined") => {
+        const handleStatusUpdate = async (
+            newStatus: VerificationRequestStatus
+        ) => {
             if (!currentRequest?._id) return;
+
+            const oldStatus = currentRequest.status;
 
             setIsUpdating(true);
             try {
@@ -128,12 +133,17 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 if (newStatus === "Posted") {
                     await handleAutoAssign();
                 }
-
                 if (updatedRequest) {
                     onClose();
+                    if (onUpdate) {
+                        onUpdate(oldStatus, newStatus);
+                    }
                 }
             } catch (error) {
-                console.error("Erro ao atualizar status:", error);
+                console.error(
+                    t("verificationRequest:errorUpdatingStatus"),
+                    error
+                );
             } finally {
                 setIsUpdating(false);
             }
@@ -190,11 +200,11 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
         };
 
         const handleApprove = () => {
-            handleStatusUpdate("Posted");
+            handleStatusUpdate(VerificationRequestStatus.POSTED);
         };
 
         const handleDecline = () => {
-            handleStatusUpdate("Declined");
+            handleStatusUpdate(VerificationRequestStatus.DECLINED);
         };
 
         const metaChipData = currentRequest
