@@ -87,5 +87,6 @@
     "titleEditVerificationRequest": "Edição de Denúncia",
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
-    "filterBySourceChannel": "Filtrar por Canal de Origem"
+    "filterBySourceChannel": "Filtrar por Canal de Origem",
+    "errorUpdatingStatus": "Erro ao atualizar status:"
 }

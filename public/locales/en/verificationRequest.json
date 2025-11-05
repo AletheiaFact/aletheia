@@ -87,5 +87,6 @@
     "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
-    "filterBySourceChannel": "Filter by Source Channel"
+    "filterBySourceChannel": "Filter by Source Channel",
+    "errorUpdatingStatus": "Error updating status:"
 }
