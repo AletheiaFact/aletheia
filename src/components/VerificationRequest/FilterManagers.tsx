@@ -10,6 +10,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { FilterList } from "@mui/icons-material";
+import DateRangePicker from "../DateRangePicker";
 
 const FilterManager = ({ state, actions }) => {
   const {
@@ -21,6 +22,8 @@ const FilterManager = ({ state, actions }) => {
     autoCompleteTopicsResults,
     topicFilterUsed,
     impactAreaFilterUsed,
+    startDate,
+    endDate
   } = state;
   const {
     setPriorityFilter,
@@ -34,6 +37,8 @@ const FilterManager = ({ state, actions }) => {
     createFilterChangeHandler,
     dispatch,
     t,
+    setStartDate,
+    setEndDate
   } = actions;
   const { vw } = useAppSelector((state) => state);
 
@@ -68,11 +73,25 @@ const FilterManager = ({ state, actions }) => {
     setApplyFilters(true);
   };
 
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    setApplyFilters(true);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    setApplyFilters(true);
+  };
+
   const handleResetFilters = () => {
     setFilterValue([]);
     setPriorityFilter("all");
     setSourceChannelFilter("all");
-    setPaginationModel({ pageSize: 10, page: 0 });
+    setPaginationModel({ pageSize: 20, page: 0 });
+    setStartDate(null);
+    setEndDate(null);
     dispatch({
       type: ActionTypes.SET_TOPIC_FILTER_USED,
       topicFilterUsed: [],
@@ -131,10 +150,17 @@ const FilterManager = ({ state, actions }) => {
               />
             </FormControl>
       </Grid>
+      <DateRangePicker
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={handleStartDateChange}
+        setEndDate={handleEndDateChange}
+      />
       {(topicFilterUsed.length > 0 ||
         priorityFilter ||
         sourceChannelFilter !== "all" ||
-        impactAreaFilterUsed.length > 0) && (
+        impactAreaFilterUsed.length > 0 ||
+        (startDate || endDate)) && (
         <Grid item>
           <Button onClick={handleResetFilters}>
             {t("verificationRequest:resetFiltersButton")}
@@ -144,5 +170,4 @@ const FilterManager = ({ state, actions }) => {
     </Grid>
   );
 };
-
 export default FilterManager;

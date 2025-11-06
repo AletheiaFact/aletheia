@@ -23,7 +23,7 @@ const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
 };
 
 const VerificationRequestBoardView = ({ state, actions }) => {
-  const { loading, filteredRequests, paginationModel } = state;
+  const { loading, filteredRequests, paginationModel, startDate, endDate } = state;
   const { fetchData, setPaginationModel } = actions;
   const { t } = useTranslation();
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);

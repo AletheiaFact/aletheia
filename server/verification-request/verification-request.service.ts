@@ -961,6 +961,8 @@ export class VerificationRequestService {
         sourceChannel?: string;
         status?: string[];
         impactArea?: string[];
+        startDate?: string;
+        endDate?: string;
     }): Promise<Record<string, any>> {
         const {
             contentFilters,
@@ -969,6 +971,8 @@ export class VerificationRequestService {
             sourceChannel,
             status,
             impactArea,
+            startDate,
+            endDate
         } = filters;
         const query: any = {};
 
