@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
+import Cop30Section from "./COP30/Cop30Section";
 
 const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
     const { results } = useAppSelector((state) => ({
@@ -31,6 +32,9 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
             >
                 <Grid item xs={11} sm={11} md={9}>
                     <HomeFeed searchResults={results} />
+                </Grid>
+                <Grid item xs={11} sm={11} md={9}>
+                    <Cop30Section />
                 </Grid>
                 <Grid item xs={11} sm={11} md={9} style={{ marginBottom: 32 }}>
                     <ReviewsGrid
