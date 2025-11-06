@@ -112,60 +112,67 @@ const FilterManager = ({ state, actions }) => {
       style={{ marginTop: 30 }}
     >
       <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton onClick={handleFilterClick}>
-              <FilterList />
-            </IconButton>
-            <FilterPopover
-              anchorEl={anchorEl}
-              onClose={handleFilterClose}
-              filterType={filterType}
-              setFilterType={setFilterType}
-              setFilterValue={setFilterValue}
-              fetchTopicList={fetchTopicList}
-              autoCompleteTopicsResults={autoCompleteTopicsResults}
-              onFilterApply={handleFilterApply}
-              t={t}
-            />
-            <FormControl
-              sx={{
-                display: "flex",
-                flexDirection: vw?.xs ? "column" : "row",
-                alignItems: "center",
-                gap: 2,
-              }}
-              size="small"
-            >
-              <SelectFilter
-                filterType="filterByPriority"
-                currentValue={priorityFilter}
-                onValueChange={createFilterChangeHandler(setPriorityFilter)}
-              />
-              <SelectFilter
-                filterType="filterBySourceChannel"
-                currentValue={sourceChannelFilter}
-                onValueChange={createFilterChangeHandler(
-                  setSourceChannelFilter
-                )}
-              />
-            </FormControl>
+        <IconButton onClick={handleFilterClick}>
+          <FilterList />
+        </IconButton>
+        <FilterPopover
+          anchorEl={anchorEl}
+          onClose={handleFilterClose}
+          filterType={filterType}
+          setFilterType={setFilterType}
+          setFilterValue={setFilterValue}
+          fetchTopicList={fetchTopicList}
+          autoCompleteTopicsResults={autoCompleteTopicsResults}
+          onFilterApply={handleFilterApply}
+          t={t}
+        />
+        <FormControl
+          sx={{
+            display: "flex",
+            flexDirection: vw?.xs ? "column" : "row",
+            alignItems: "center",
+            gap: 2,
+          }}
+          size="small"
+        >
+          <SelectFilter
+            filterType="filterByPriority"
+            currentValue={priorityFilter}
+            onValueChange={createFilterChangeHandler(setPriorityFilter)}
+          />
+          <SelectFilter
+            filterType="filterBySourceChannel"
+            currentValue={sourceChannelFilter}
+            onValueChange={createFilterChangeHandler(
+              setSourceChannelFilter
+            )}
+          />
+        </FormControl>
       </Grid>
-      <DateRangePicker
-        startDate={startDate}
-        endDate={endDate}
-        setStartDate={handleStartDateChange}
-        setEndDate={handleEndDateChange}
-      />
+      <Grid
+        item
+        sx={{
+          marginTop: { xs: "15px", md: 0 },
+        }}
+      >
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={handleStartDateChange}
+          setEndDate={handleEndDateChange}
+        />
+      </Grid>
       {(topicFilterUsed.length > 0 ||
         priorityFilter ||
         sourceChannelFilter !== "all" ||
         impactAreaFilterUsed.length > 0 ||
         (startDate || endDate)) && (
-        <Grid item>
-          <Button onClick={handleResetFilters}>
-            {t("verificationRequest:resetFiltersButton")}
-          </Button>
-        </Grid>
-      )}
+          <Grid item>
+            <Button onClick={handleResetFilters}>
+              {t("verificationRequest:resetFiltersButton")}
+            </Button>
+          </Grid>
+        )}
     </Grid>
   );
 };
