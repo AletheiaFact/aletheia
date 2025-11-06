@@ -89,7 +89,6 @@ const FilterManager = ({ state, actions }) => {
     setFilterValue([]);
     setPriorityFilter("all");
     setSourceChannelFilter("all");
-    setPaginationModel({ pageSize: 20, page: 0 });
     setStartDate(null);
     setEndDate(null);
     dispatch({
