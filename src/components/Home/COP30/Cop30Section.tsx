@@ -3,6 +3,7 @@ import { useTranslation } from "next-i18next";
 import Cop30SectionStyled from "./Cop30Section.style";
 import Statistics from "./statistics";
 import Claim from "./Claims";
+import { Grid } from "@mui/material";
 
 interface Cop30Review {
     _id: string;
@@ -101,6 +102,7 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({
 
     return (
         <Cop30SectionStyled>
+            <Grid container xs={11} sm={11} md={9}>
             {/* COP30 Banner */}
             <section className="cop30-banner">
                 <div className="cop30-banner-content">
@@ -148,6 +150,7 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({
                     </div>
                 </section>
             </section>
+            </Grid>
         </Cop30SectionStyled>
     );
 };
