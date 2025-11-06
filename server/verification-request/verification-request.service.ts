@@ -1479,6 +1479,8 @@ export class VerificationRequestService {
         await this.revalidateAndRunMissingStates(updatedVr);
 
         return updatedVr;
+    }
+
     /**
      * Get statistics for verification requests dashboard
      * @returns Statistics object with counts, percentages, and distributions
@@ -1586,7 +1588,7 @@ export class VerificationRequestService {
             },
             recentActivity,
         };
-    }
+    };
 
     /**
      * Format date to relative time string
