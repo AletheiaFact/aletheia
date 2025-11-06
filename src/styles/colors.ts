@@ -23,6 +23,10 @@ const colors = {
     error: "#ff4d4f",
     active: "#49DE80",
     inactive: "#FBCC13",
+    critical: "#d32f2f",
+    high: "#f57c00",
+    medium: "#fbc02d",
+    low: "#388e3c",
     ...(localConfig?.theme?.colors || {}),
 };
 export default colors;

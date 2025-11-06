@@ -12,6 +12,11 @@ const languageVariantMap = {
     "pt-br": "pt",
 };
 
+const WIKIMEDIA_HEADERS = {
+    "User-Agent":
+        "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
+};
+
 @Injectable()
 export class WikidataService {
     constructor(
@@ -46,6 +51,7 @@ export class WikidataService {
                 format: "json",
                 formatversion: "2",
             },
+            headers: WIKIMEDIA_HEADERS,
         });
         const entities = data && data.entities;
         return this.extractProperties(
@@ -170,7 +176,10 @@ export class WikidataService {
         };
 
         return axios
-            .get(`https://www.wikidata.org/w/api.php`, { params })
+            .get(`https://www.wikidata.org/w/api.php`, {
+                params,
+                headers: WIKIMEDIA_HEADERS,
+            })
             .then((response) => {
                 const { search } = response && response.data;
                 return search.flatMap((wbentity) => {
@@ -200,6 +209,7 @@ export class WikidataService {
                     format: "json",
                     formatversion: "2",
                 },
+                headers: WIKIMEDIA_HEADERS,
             }
         );
         const { pages } = data && data.query;

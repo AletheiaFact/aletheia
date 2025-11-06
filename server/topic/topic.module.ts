@@ -15,12 +15,7 @@ const TopicModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [
-        TopicModel,
-        SentenceModule,
-        ImageModule,
-        WikidataModule,
-    ],
+    imports: [TopicModel, SentenceModule, ImageModule, WikidataModule],
     controllers: [TopicController],
     providers: [TopicService],
     exports: [TopicService],

@@ -49,7 +49,6 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Get("api/verification-request")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
     @Public()
     public async listAll(@Query() getVerificationRequest) {
         const {
@@ -60,6 +59,10 @@ export class VerificationRequestController {
             order,
             startDate,
             endDate,
+            severity,
+            sourceChannel,
+            status,
+            impactArea,
         } = getVerificationRequest;
 
         const [verificationRequests, totalVerificationRequests] =
@@ -72,12 +75,20 @@ export class VerificationRequestController {
                     order,
                     startDate,
                     endDate,
+                    severity,
+                    sourceChannel,
+                    status,
+                    impactArea,
                 }),
                 this.verificationRequestService.count({
                     contentFilters,
                     topics,
                     startDate,
                     endDate,
+                    severity,
+                    sourceChannel,
+                    status,
+                    impactArea,
                 }),
             ]);
 
@@ -193,7 +204,7 @@ export class VerificationRequestController {
 
     @ApiTags("pages")
     @Get("verification-request")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "no-cache")
     @Public()
     public async verificationRequestPage(
         @Req() req: BaseRequest,
@@ -202,6 +213,7 @@ export class VerificationRequestController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
         });
 
         await this.viewService.render(

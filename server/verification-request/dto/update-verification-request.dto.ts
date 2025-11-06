@@ -1,10 +1,11 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateVerificationRequestDTO } from "./create-verification-request-dto";
-import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Group } from "../../group/schemas/group.schema";
 import { Transform } from "class-transformer";
 import { Source } from "../../source/schemas/source.schema";
+import { VerificationRequestStatus } from "./types";
 
 export class UpdateVerificationRequestDTO extends PartialType(
     CreateVerificationRequestDTO
@@ -39,4 +40,9 @@ export class UpdateVerificationRequestDTO extends PartialType(
         return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
     })
     rejected?: boolean;
+
+    @IsEnum(VerificationRequestStatus)
+    @IsOptional()
+    @ApiProperty()
+    status?: VerificationRequestStatus;
 }

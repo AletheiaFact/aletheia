@@ -20,6 +20,14 @@ export type IPersonalityService = {
     ): Promise<IPersonality[]>;
     create(personality: any): Promise<IPersonality>;
     getDeletedPersonalityByWikidata(wikidata: string);
+    findOrCreatePersonality(personalityData: {
+        name: string;
+        wikidata?: {
+            id?: string;
+            label?: string;
+            description?: string;
+        };
+    }): Promise<IPersonality>;
     getById(
         personalityId: string | LeanDocument<IPersonality>,
         options?: { language?: string; nameSpace?: string }
