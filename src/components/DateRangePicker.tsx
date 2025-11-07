@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { Box } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { ptBR } from 'date-fns/locale';
+import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { ptBR } from "date-fns/locale";
 
 interface DateRangePickerProps {
     startDate: Date | null;
