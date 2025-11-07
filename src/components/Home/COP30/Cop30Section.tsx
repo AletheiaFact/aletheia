@@ -45,7 +45,7 @@ const defaultReviews: Cop30Review[] = [
         authorName: "Henderson Lira Pinto",
         authorRole: "Político do Brasil",
         claimText: "66% do território nacional ainda é coberto por essa vegetação, sendo 33% dentro das propriedades rurais.",
-        topics: ["🌳 Desmatamento", "📊 Dados Ambientais"],
+        topics: ["Desmatamento", "Dados Ambientais"],
     },
     {
         _id: "2",
@@ -54,7 +54,7 @@ const defaultReviews: Cop30Review[] = [
         authorName: "Gustavo Souza",
         authorRole: "Diretor sênior de Políticas Públicas e Incentivos da Conservação Internacional",
         claimText: "As soluções baseadas na natureza podem gerar até 30% das reduções de emissões necessárias até 2030, mas recebem menos de 3% do financiamento climático.",
-        topics: ["💰 Financiamento Climático", "🌱 Soluções Baseadas na Natureza"],
+        topics: ["Financiamento Climático", "Soluções Baseadas na Natureza"],
     },
     {
         _id: "3",
@@ -63,7 +63,7 @@ const defaultReviews: Cop30Review[] = [
         authorName: "Cristina Graeml",
         authorRole: "Jornalista e política brasileira",
         claimText: "O Ministério da Cidade está disponibilizando 40 milhões de reais para que sejam entregues pelo menos 256 moradias de um total de 768 unidades, então seriam mais 256 possibilidades de hospedagem no Minha Casa, Minha Vida, porque não há leitos para hospedar os convidados para COP 30.",
-        topics: ["🏘️ Infraestrutura", "🤝 Políticas Públicas"],
+        topics: ["Infraestrutura", "Políticas Públicas"],
     },
     {
         _id: "4",
@@ -72,19 +72,19 @@ const defaultReviews: Cop30Review[] = [
         authorName: "Gleisi Hoffmann",
         authorRole: "Política brasileira, ministra-chefe da Secretaria de Relações Institucionais da Presidência da República",
         claimText: "A licença do Ibama para a pesquisa de petróleo na Margem Equatorial é o resultado de quase cinco anos de estudos, audiências públicas e medidas de proteção ambiental adotadas pela Petrobras.",
-        topics: ["🛢️ Petróleo", "🌊 Amazônia Azul"],
+        topics: ["Petróleo", "Amazônia Azul"],
     },
 ];
 
 const filterOptions = [
     "Todos",
-    "🌳 Desmatamento",
-    "💰 Financiamento Climático",
-    "🌡️ Emissões",
-    "🌊 Amazônia Azul",
-    "⚡ Energia",
-    "🤝 Acordos",
-    "🏘️ Infraestrutura",
+    "Desmatamento",
+    "Financiamento Climático",
+    "Emissões",
+    "Amazônia Azul",
+    "Energia",
+    "Acordos",
+    "Infraestrutura",
 ];
 
 const Cop30Section: React.FC<Cop30SectionProps> = ({
@@ -107,17 +107,14 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({
             <section className="cop30-banner">
                 <div className="cop30-banner-content">
                     <div className="cop30-badge-wrapper">
-                        <div className="cop30-badge">COP30</div>
+                        <div className="cop30-badge">{t("cop30:bannerBadge")}</div>
                         <div className="cop30-location">
-                            <span>📍</span>
-                            <span>Belém, Brasil • Novembro 2025</span>
+                            <span>{t("cop30:bannerLocation")}</span>
                         </div>
                     </div>
-                    <h1>Checagem de Fatos sobre a COP30</h1>
+                    <h1>{t("cop30:bannerTitle")}</h1>
                     <p>
-                        Verificamos afirmações de autoridades, políticos e especialistas sobre a
-                        Conferência das Nações Unidas sobre Mudanças Climáticas (COP30). Acompanhe as
-                        checagens em tempo real e contribua para um debate público informado sobre clima e meio ambiente.
+                        {t("cop30:bannerDescription")}
                     </p>
                 </div>
                 <Statistics
@@ -128,7 +125,7 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({
                 />
                 <section className="filters-container">
                     <div className="section-header">
-                        <h2 className="section-title">Últimas Checagens</h2>
+                        <h2 className="section-title">{t("cop30:sectionLatestChecks")}</h2>
                     </div>
                     <div className="filters-grid">
                         {filterOptions.map((filter) => (

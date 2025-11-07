@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { AnyARecord } from "node:dns";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
 
 interface ClaimProps {
     claim: any;
@@ -22,6 +23,7 @@ const Claim: React.FC<ClaimProps> = ({
     claim,
 }) => {
     const router = useRouter();
+    const { t } = useTranslation();
 
     const handleOpenReview = (review: Cop30Review) => {
         if (review.claimId) {
@@ -37,9 +39,9 @@ const Claim: React.FC<ClaimProps> = ({
 
     const getStatusLabel = (status: string) => {
         if (status === "confiavel") {
-            return "✓ CONFIÁVEL, MAS...";
+            return t("cop30:claimStatusReliable");
         }
-        return "✗ ENGANOSO";
+        return t("cop30:claimStatusMisleading");
     };
 
     return (
@@ -47,14 +49,14 @@ const Claim: React.FC<ClaimProps> = ({
             <div className="card-header">
                 <div className="author-avatar">
                     {claim.authorAvatar ? (
-                        <img src={claim.authorAvatar} alt={claim.authorName} />
+                        <Image src={claim.authorAvatar} alt={claim.authorName} />
                     ) : (
                         <div className="avatar-placeholder">👤</div>
                     )}
                 </div>
                 <div className="card-meta">
                     <div className="card-date">
-                        Declarou em <strong>{claim.date}</strong> em um Discurso oficial
+                        {t("cop30:claimDeclaredOn")} <strong>{claim.date}</strong> {t("cop30:claimInOfficialSpeech")}
                     </div>
                     <span className={`status-badge status-${claim.status}`}>
                         {getStatusLabel(claim.status)}
@@ -74,7 +76,7 @@ const Claim: React.FC<ClaimProps> = ({
 
             <div className="claim-box">
                 <p className="claim-text">"(...) {claim.claimText}"</p>
-                <a href="#" className="view-full-link">veja o texto completo →</a>
+                <a href="#" className="view-full-link">{t("cop30:claimSeeFullText")}</a>
             </div>
 
             <div className="card-footer">
@@ -86,13 +88,13 @@ const Claim: React.FC<ClaimProps> = ({
                         handleViewProfile(claim);
                     }}
                 >
-                    Veja o perfil
+                    {t("cop30:claimViewProfile")}
                 </a>
                 <button
                     className="btn-open"
                     onClick={() => handleOpenReview(claim)}
                 >
-                    Abrir
+                    {t("cop30:claimOpen")}
                 </button>
             </div>
         </article>

@@ -1,3 +1,6 @@
+import React from "react";
+import { useTranslation } from "next-i18next";
+
 interface StatisticsProps {
     total: number;
     confiavel: number;
@@ -10,24 +13,26 @@ const Statistics: React.FC<StatisticsProps> = ({
     enganoso,
     emAnalise,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <section className="stats-container">
             <div className="stats-grid">
                 <div className="stat-item">
                     <span className="stat-number">{total}</span>
-                    <span className="stat-label">Checagens COP30</span>
+                    <span className="stat-label">{t("cop30:statisticsTotalChecks")}</span>
                 </div>
                 <div className="stat-item">
                     <span className="stat-number">{confiavel}</span>
-                    <span className="stat-label">Confiáveis</span>
+                    <span className="stat-label">{t("cop30:statisticsReliable")}</span>
                 </div>
                 <div className="stat-item">
                     <span className="stat-number">{enganoso}</span>
-                    <span className="stat-label">Enganosas</span>
+                    <span className="stat-label">{t("cop30:statisticsMisleading")}</span>
                 </div>
                 <div className="stat-item">
                     <span className="stat-number">{emAnalise}</span>
-                    <span className="stat-label">Em Análise</span>
+                    <span className="stat-label">{t("cop30:statisticsUnderReview")}</span>
                 </div>
             </div>
         </section>
