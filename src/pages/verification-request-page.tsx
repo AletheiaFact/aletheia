@@ -8,7 +8,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import { useSetAtom } from "jotai";
 import AffixButton from "../components/AffixButton/AffixButton";
-import VerificationRequestList from "../components/VerificationRequest/VerificationRequestList";
+import VerificationRequestView from "../components/VerificationRequest/VerificationRequestView";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 
@@ -26,7 +26,7 @@ const VerificationRequestPage: NextPage<{ nameSpace, sitekey }> = ({ nameSpace, 
                 title={t("seo:verificationRequestTitle")}
                 description={t("seo:verificationRequestDescription")}
             />
-            <VerificationRequestList />
+            <VerificationRequestView />
             <AffixButton />
         </>
     );

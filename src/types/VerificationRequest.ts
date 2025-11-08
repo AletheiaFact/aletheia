@@ -7,6 +7,8 @@ type PaginationSettings = {
   page: number;
 };
 
+type ViewMode = "board" | "dashboard" ;
+
 type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
 
 type PaginationModel = Record<verificationRequestStatus, PaginationSettings>;
@@ -40,6 +42,7 @@ interface FiltersState {
   topicFilterUsed: string[];
   impactAreaFilterUsed: string[];
   applyFilters: boolean;
+  viewMode: ViewMode;
 }
 interface FiltersActions {
   setIsInitialLoad: (initial: boolean) => void;
@@ -57,6 +60,7 @@ interface FiltersActions {
   ) => (newValue: any) => void;
   dispatch: Dispatch<any>;
   t: (key: string) => string;
+  setViewMode: (mode: ViewMode) => void;
 }
 interface FiltersContext {
   state: FiltersState;
@@ -70,4 +74,5 @@ export type {
   FiltersContext,
   PaginationModel,
   SeverityLevel,
+  ViewMode,
 };

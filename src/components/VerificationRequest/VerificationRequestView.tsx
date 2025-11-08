@@ -4,16 +4,22 @@ import FilterManager from "./FilterManagers";
 import ActiveFilters from "./ActiveFilters";
 import VerificationRequestBoardView from "./VerificationRequestBoardView";
 import { useVerificationRequestFilters } from "./VerificationRequestFilters";
+import VerificationRequestDashboard from "./VerificationRequestDashboard";
 
-const VerificationRequestList = () => {
+const VerificationRequestView = () => {
   const { state, actions } = useVerificationRequestFilters();
+  const { viewMode } = state;
+
   return (
     <Grid container spacing={2} justifyContent="center">
       <FilterManager state={state} actions={actions} />
       <ActiveFilters state={state} actions={actions} />
-      <VerificationRequestBoardView state={state} actions={actions} />
+      {viewMode === "board" && (
+        <VerificationRequestBoardView state={state} actions={actions} />
+      )}
+      {viewMode === "dashboard" && <VerificationRequestDashboard />}
     </Grid>
   );
 };
 
-export default VerificationRequestList;
+export default VerificationRequestView;
