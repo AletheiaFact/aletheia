@@ -122,22 +122,35 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                 variant="h6"
                 sx={{
                   mb: 2,
+                  display: "flex",
                   fontWeight: "bold",
+                  justifyContent: "space-between",
                   color: colors.primary,
                   borderBottom: `2px solid ${colors.secondary}`,
                   pb: 1,
                 }}
               >
-                {status.label}
-                <Chip
-                  label={groupedTotalRequests[status.key]}
-                  size="small"
-                  sx={{ ml: 1 }}
-                />
+                <Grid item>
+                  {status.label}
+                  <Chip
+                    label={groupedRequests[status.key].length}
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                </Grid>
+                <Typography
+                  variant="body2"
+                  color={colors.blackSecondary}
+                  alignContent="flex-end"
+                >
+                  {t("list:totalItems", {
+                    total: groupedTotalRequests[status.key],
+                  })}
+                </Typography>
               </Typography>
 
               {loading[status.key] ? (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color={colors.blackSecondary}>
                   {t("common:loading")}
                 </Typography>
               ) : (
