@@ -1597,12 +1597,15 @@ export class VerificationRequestService {
         const hours = Math.floor(diff / 3600000);
         const days = Math.floor(diff / 86400000);
 
+        const pluralize = (value, singular, plural) =>
+            `Há ${value} ${value === 1 ? singular : plural}`;
+
         if (minutes < 60) {
-            return `Há ${minutes} minuto${minutes !== 1 ? "s" : ""}`;
+            return pluralize(minutes, "minuto", "minutos");
         } else if (hours < 24) {
-            return `Há ${hours} hora${hours !== 1 ? "s" : ""}`;
+            return pluralize(hours, "hora", "horas");
         } else if (days < 7) {
-            return `Há ${days} dia${days !== 1 ? "s" : ""}`;
+            return pluralize(days, "dia", "dias");
         } else {
             return new Date(date).toLocaleDateString("pt-BR");
         }

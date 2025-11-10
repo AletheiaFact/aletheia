@@ -5,6 +5,7 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import verificationRequestApi from "../../api/verificationRequestApi";
+import { VerificationRequestSourceChannel } from "../../../server/verification-request/dto/types";
 
 const Dashboard = styled(Grid)`
     padding: 24px;
@@ -312,19 +313,24 @@ export const VerificationRequestDashboard: React.FC = () => {
         },
     ];
 
-    const sourceColors = [colors.lightPrimary, colors.secondary, colors.tertiary, colors.lightSecondary];
+    const sourceColors = {
+        [VerificationRequestSourceChannel.Whatsapp]: colors.lightPrimary,
+        [VerificationRequestSourceChannel.Instagram]: colors.secondary,
+        [VerificationRequestSourceChannel.Website]: colors.tertiary,
+        [VerificationRequestSourceChannel.AutomatedMonitoring]: colors.lightSecondary,
+    };
 
     // Calculate pie chart segments
     const calculatePieSegments = () => {
         let currentAngle = 0;
-        return stats.sourceChannels.map((channel, index) => {
+        return stats.sourceChannels.map((channel) => {
             const percentage = channel.percentage;
             const angle = (percentage / 100) * 360;
             const segment = {
                 startAngle: currentAngle,
                 endAngle: currentAngle + angle,
                 percentage,
-                color: sourceColors[index % sourceColors.length],
+                color: sourceColors[channel.label],
                 label: channel.label,
             };
             currentAngle += angle;
@@ -369,8 +375,8 @@ export const VerificationRequestDashboard: React.FC = () => {
         <Grid item xs={12} lg={7}>
             {/* Stats Cards */}
             <Grid container spacing={3} mb={4}>
-                {statsCards.map((card, index) => (
-                    <Grid item xs={12} sm={6} md={3} key={index}>
+                {statsCards.map((card) => (
+                    <Grid item xs={12} sm={6} md={3} key={card.label}>
                         <StatsCard>
                             <StatsCardContent>
                                 <StatsHeader>
@@ -396,9 +402,9 @@ export const VerificationRequestDashboard: React.FC = () => {
 
                             <PieChartContainer>
                                 <PieChartSVG width="200" height="200" viewBox="0 0 200 200">
-                                    {pieSegments.map((segment, index) => (
+                                    {pieSegments.map((segment) => (
                                         <path
-                                            key={index}
+                                            key={segment.label}
                                             d={createPiePath(segment.startAngle, segment.endAngle)}
                                             fill={segment.color}
                                             stroke={colors.white}
@@ -409,10 +415,12 @@ export const VerificationRequestDashboard: React.FC = () => {
                             </PieChartContainer>
 
                             <LegendContainer>
-                                {stats.sourceChannels.map((channel, index) => (
-                                    <LegendItem key={index}>
-                                        <LegendColor color={sourceColors[index % sourceColors.length]} />
-                                        <LegendLabel>{channel.label}</LegendLabel>
+                                {stats.sourceChannels.map((channel) => (
+                                    <LegendItem key={channel.label}>
+                                        <LegendColor color={sourceColors[channel.label]} />
+                                        <LegendLabel>
+                                            {t(`verificationRequest:${channel.label}`, channel.label.charAt(0).toUpperCase() + channel.label.slice(1))}
+                                            </LegendLabel>
                                         <LegendPercentage>{channel.percentage.toFixed(1)}%</LegendPercentage>
                                     </LegendItem>
                                 ))}
