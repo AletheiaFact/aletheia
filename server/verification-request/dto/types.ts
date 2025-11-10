@@ -22,7 +22,6 @@ export enum VerificationRequestSourceChannel {
     Website = "Web",
     Instagram = "instagram",
     Whatsapp = "whatsapp",
-    Telegram = "telegram",
     AutomatedMonitoring = "automated_monitoring",
 }
 
