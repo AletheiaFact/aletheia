@@ -11,7 +11,7 @@ const VerificationRequestView = () => {
   const { viewMode } = state;
 
   return (
-    <Grid container spacing={2} justifyContent="center">
+    <Grid container justifyContent="center">
       <FilterManager state={state} actions={actions} />
       <ActiveFilters state={state} actions={actions} />
       {viewMode === "board" && (

@@ -6,14 +6,9 @@ import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import verificationRequestApi from "../../api/verificationRequestApi";
 
-const DashboardContainer = styled(Box)`
+const Dashboard = styled(Grid)`
     padding: 24px;
     background-color: ${colors.lightNeutral};
-    min-height: 100vh;
-`;
-
-const Header = styled(Box)`
-    margin-bottom: 32px;
 `;
 
 const Title = styled(Typography)`
@@ -206,13 +201,11 @@ const ActivityItem = styled(Box)`
     }
 `;
 
-const ActivityBadge = styled(Box)<{ color: string }>`
-    padding: 4px 12px;
+const ActivityBadge = styled(Typography)<{ backgroundColor: string }>`
+    padding: 2px 6px;
     border-radius: 4px;
     background-color: ${(props) => props.color};
     color: ${colors.white};
-    font-size: 11px;
-    font-weight: 600;
     text-transform: uppercase;
 `;
 
@@ -362,18 +355,18 @@ export const VerificationRequestDashboard: React.FC = () => {
     const maxStatusValue = Math.max(stats.statusDistribution.verified, stats.statusDistribution.inAnalysis, stats.statusDistribution.pending);
 
     const statusBadgeColors: { [key: string]: string } = {
-        verified: colors.active,
-        "in analysis": colors.inactive,
-        pending: colors.neutralSecondary,
+        verificada: colors.low,
+        "em análise": colors.medium,
+        nova: colors.neutralSecondary,
     };
 
     return (
-        <DashboardContainer>
-            <Header>
-                <Title>{t("dashboard.title")}</Title>
-                <Subtitle>{t("dashboard.subtitle")}</Subtitle>
-            </Header>
-
+        <Dashboard container spacing={2} xs={10}>
+        <Grid item xs={12}>
+            <Title>{t("dashboard.title")}</Title>
+            <Subtitle>{t("dashboard.subtitle")}</Subtitle>
+        </Grid>
+        <Grid item xs={12} lg={7}>
             {/* Stats Cards */}
             <Grid container spacing={3} mb={4}>
                 {statsCards.map((card, index) => (
@@ -386,7 +379,6 @@ export const VerificationRequestDashboard: React.FC = () => {
                                 <StatsValue>{card.value}</StatsValue>
                                 <StatsLabel>{card.label}</StatsLabel>
                                 <StatsLabel style={{ fontSize: "12px" }}>{card.subLabel}</StatsLabel>
-                                <StatsChange positive={card.change.startsWith("+")}>{card.change}</StatsChange>
                             </StatsCardContent>
                         </StatsCard>
                     </Grid>
@@ -468,10 +460,10 @@ export const VerificationRequestDashboard: React.FC = () => {
                     </ChartCard>
                 </Grid>
             </Grid>
+        </Grid>
 
             {/* Recent Activity */}
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
+            <Grid item xs={12} lg={5}>
                     <ActivityCard>
                         <ActivityCardContent>
                             <ChartTitle>{t("dashboard.activityTitle")}</ChartTitle>
@@ -480,7 +472,7 @@ export const VerificationRequestDashboard: React.FC = () => {
                             <Box mt={2}>
                                 {stats.recentActivity.map((activity) => (
                                     <ActivityItem key={activity.id}>
-                                        <ActivityBadge color={statusBadgeColors[activity.status.toLowerCase()] || colors.neutral}>
+                                        <ActivityBadge variant="body2" backgroundColor={statusBadgeColors[activity.status.toLowerCase()] || colors.neutral}>
                                             {activity.status}
                                         </ActivityBadge>
                                         <ActivityText>{activity.message}</ActivityText>
@@ -490,9 +482,8 @@ export const VerificationRequestDashboard: React.FC = () => {
                             </Box>
                         </ActivityCardContent>
                     </ActivityCard>
-                </Grid>
-            </Grid>
-        </DashboardContainer>
+        </Grid>
+        </Dashboard>
     );
 };
 

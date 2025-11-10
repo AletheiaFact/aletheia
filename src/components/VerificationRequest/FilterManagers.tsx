@@ -49,24 +49,27 @@ const FilterManager = ({ state, actions }) => {
     >
       <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <FilterToggleButtons viewMode={viewMode} setViewMode={setViewMode} />
-        <FilterBar
-          state={state}
-          actions={actions}
-          priorityFilter={priorityFilter}
-          sourceChannelFilter={sourceChannelFilter}
-          setPriorityFilter={setPriorityFilter}
-          setSourceChannelFilter={setSourceChannelFilter}
-          createFilterChangeHandler={createFilterChangeHandler}
-        />
+        {viewMode === "board" && (
+          <FilterBar
+            state={state}
+            actions={actions}
+            priorityFilter={priorityFilter}
+            sourceChannelFilter={sourceChannelFilter}
+            setPriorityFilter={setPriorityFilter}
+            setSourceChannelFilter={setSourceChannelFilter}
+            createFilterChangeHandler={createFilterChangeHandler}
+          />
+        )}
       </Grid>
-      {(topicFilterUsed.length > 0 ||
-        priorityFilter ||
-        sourceChannelFilter !== "all" ||
-        impactAreaFilterUsed.length > 0) && (
-        <Button onClick={handleResetFilters}>
-          {t("verificationRequest:resetFiltersButton")}
-        </Button>
-      )}
+      {viewMode === "board" &&
+        (topicFilterUsed.length > 0 ||
+          priorityFilter !== "all" ||
+          sourceChannelFilter !== "all" ||
+          impactAreaFilterUsed.length > 0) && (
+          <Button onClick={handleResetFilters}>
+            {t("verificationRequest:resetFiltersButton")}
+          </Button>
+        )}
     </Grid>
   );
 };

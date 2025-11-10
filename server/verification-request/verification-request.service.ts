@@ -1538,7 +1538,7 @@ export class VerificationRequestService {
         // Get recent activity (last 5 updates)
         const recentRequests = await this.VerificationRequestModel.find({})
             .sort({ date: -1 })
-            .limit(5)
+            .limit(10)
             .select("_id status content date data_hash")
             .lean();
 
@@ -1577,9 +1577,6 @@ export class VerificationRequestService {
             inAnalysis: inAnalysisCount,
             pending: pendingCount,
             totalChange: calculateChange(totalThisMonth, totalLastMonth),
-            verifiedChange: "+8.3%", // Placeholder - could be calculated with historical data
-            inAnalysisChange: "-3.2%", // Placeholder - could be calculated with historical data
-            pendingChange: "+2.1%", // Placeholder - could be calculated with historical data
             sourceChannels,
             statusDistribution: {
                 verified: verifiedCount,
