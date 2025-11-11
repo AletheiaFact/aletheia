@@ -26,22 +26,23 @@ export class TopicService {
         );
     }
 
-  async searchTopics(
-    query: string,
-    language = "pt",
-    limit = 10
-  ): Promise<Topic[]> {
-    if (typeof language !== "string") {
-       throw new TypeError("Invalid language");
-    }
+    async searchTopics(
+        query: string,
+        language = "pt",
+        limit = 10
+    ): Promise<Topic[]> {
+        if (typeof language !== "string") {
+            throw new TypeError("Invalid language");
+        }
 
-    return this.TopicModel.find({
-    name: { $regex: query, $options: "i" },
-    language: { $eq: language }
-  })
-    .limit(limit)
-    .sort({ name: 1 });
-  }
+        // TODO: Add support for searching by aliases
+        return this.TopicModel.find({
+            name: { $regex: query, $options: "i" },
+            language: { $eq: language },
+        })
+            .limit(limit)
+            .sort({ name: 1 });
+    }
 
     /**
      *
@@ -67,9 +68,12 @@ export class TopicService {
         }: {
             contentModel?: ContentModelEnum;
             topics:
-                | { label: string; value: string }[]
+                | { label: string; value: string; aliases?: string[] }[]
                 | string[]
-                | (string | { label: string; value: string })[];
+                | (
+                      | string
+                      | { label: string; value: string; aliases?: string[] }
+                  )[];
             data_hash?: string;
         },
         language: string = "pt"
@@ -95,6 +99,7 @@ export class TopicService {
                         const newTopic = {
                             name: topic?.label || topic,
                             wikidataId: topic?.value,
+                            aliases: topic?.aliases || [],
                             slug,
                             language,
                         };
@@ -147,8 +152,11 @@ export class TopicService {
      *
      * @param names topic names array
      * @returns topics
+     * @TODO Add support for searching by aliases to enable filtering verification requests by alias names
      */
     findByNames(names: string[]) {
+        // TODO: Add support for searching by aliases
+        // Consider updating to: $or: [{ name: { $in: names } }, { aliases: { $in: names } }]
         return this.TopicModel.find({ name: { $in: names } });
     }
 

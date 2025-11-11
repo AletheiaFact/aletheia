@@ -182,16 +182,28 @@ export class WikidataService {
             })
             .then((response) => {
                 const { search } = response && response.data;
+                const searchLower = query.toLowerCase();
+
                 return search.flatMap((wbentity) => {
-                    return wbentity.label
-                        ? [
-                              {
-                                  name: wbentity.label,
-                                  description: wbentity.description,
-                                  wikidata: wbentity.id,
-                              },
-                          ]
-                        : [];
+                    if (!wbentity.label) {
+                        return [];
+                    }
+
+                    const aliases = wbentity.aliases || [];
+
+                    const matchedAlias = aliases.find((alias) =>
+                        alias.toLowerCase().includes(searchLower)
+                    );
+
+                    return [
+                        {
+                            name: wbentity.label,
+                            description: wbentity.description,
+                            wikidata: wbentity.id,
+                            aliases: aliases,
+                            matchedAlias: matchedAlias || null,
+                        },
+                    ];
                 });
             });
     }
