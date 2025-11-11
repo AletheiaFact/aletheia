@@ -163,7 +163,7 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(query, language = "en") {
+    queryWikibaseEntities(query, language = "en", includeAliases = true) {
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -189,21 +189,22 @@ export class WikidataService {
                         return [];
                     }
 
-                    const aliases = wbentity.aliases || [];
+                    const result: any = {
+                        name: wbentity.label,
+                        description: wbentity.description,
+                        wikidata: wbentity.id,
+                    };
 
-                    const matchedAlias = aliases.find((alias) =>
-                        alias.toLowerCase().includes(searchLower)
-                    );
+                    if (includeAliases) {
+                        const aliases = wbentity.aliases || [];
+                        const matchedAlias = aliases.find((alias) =>
+                            alias.toLowerCase().includes(searchLower)
+                        );
+                        result.aliases = aliases;
+                        result.matchedAlias = matchedAlias || null;
+                    }
 
-                    return [
-                        {
-                            name: wbentity.label,
-                            description: wbentity.description,
-                            wikidata: wbentity.id,
-                            aliases: aliases,
-                            matchedAlias: matchedAlias || null,
-                        },
-                    ];
+                    return [result];
                 });
             });
     }

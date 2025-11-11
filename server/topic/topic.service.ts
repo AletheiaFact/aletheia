@@ -155,8 +155,6 @@ export class TopicService {
      * @TODO Add support for searching by aliases to enable filtering verification requests by alias names
      */
     findByNames(names: string[]) {
-        // TODO: Add support for searching by aliases
-        // Consider updating to: $or: [{ name: { $in: names } }, { aliases: { $in: names } }]
         return this.TopicModel.find({ name: { $in: names } });
     }
 

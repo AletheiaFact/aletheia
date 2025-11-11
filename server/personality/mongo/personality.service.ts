@@ -45,7 +45,11 @@ export class MongoPersonalityService {
     ) {}
 
     async getWikidataEntities(regex, language) {
-        return await this.wikidata.queryWikibaseEntities(regex, language);
+        return await this.wikidata.queryWikibaseEntities(
+            regex,
+            language,
+            false
+        );
     }
     async getWikidataList(regex, language) {
         const wbentities = await this.getWikidataEntities(regex, language);
