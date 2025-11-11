@@ -1532,7 +1532,7 @@ export class VerificationRequestService {
         const sourceChannels = sourceChannelAggregation.map((item) => ({
             label: item._id || "Unknown",
             value: item.count,
-            percentage: (item.count / totalCount) * 100,
+            percentage: totalCount > 0 ? (item.count / totalCount) * 100 : 0,
         }));
 
         // Get recent activity (last 5 updates)
