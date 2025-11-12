@@ -182,7 +182,6 @@ export class WikidataService {
             })
             .then((response) => {
                 const { search } = response && response.data;
-                const searchLower = query.toLowerCase();
 
                 return search.flatMap((wbentity) => {
                     if (!wbentity.label) {
@@ -198,7 +197,7 @@ export class WikidataService {
                     if (includeAliases) {
                         const aliases = wbentity.aliases || [];
                         const matchedAlias = aliases.find((alias) =>
-                            alias.toLowerCase().includes(searchLower)
+                            alias.toLowerCase().includes(query.toLowerCase())
                         );
                         result.aliases = aliases;
                         result.matchedAlias = matchedAlias || null;

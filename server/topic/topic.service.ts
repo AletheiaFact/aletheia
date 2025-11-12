@@ -19,6 +19,15 @@ export class TopicService {
         private wikidataService: WikidataService
     ) {}
 
+    /**
+     * Normalize a string by removing accents/diacritical marks
+     * @param text The text to normalize
+     * @returns Normalized text without accents
+     */
+    private normalizeText(text: string): string {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
     async getWikidataEntities(regex, language) {
         return await this.wikidataService.queryWikibaseEntities(
             regex,
@@ -35,13 +44,39 @@ export class TopicService {
             throw new TypeError("Invalid language");
         }
 
-        // TODO: Add support for searching by aliases
-        return this.TopicModel.find({
-            name: { $regex: query, $options: "i" },
+        const normalizedQuery = this.normalizeText(query);
+        const searchRegex = new RegExp(normalizedQuery, "i");
+
+        const allTopics = await this.TopicModel.find({
             language: { $eq: language },
-        })
-            .limit(limit)
-            .sort({ name: 1 });
+        });
+
+        const filteredTopics = allTopics.filter((topic) => {
+            const normalizedName = this.normalizeText(topic.name);
+            const nameMatches = searchRegex.test(normalizedName);
+
+            const aliasMatches = topic.aliases?.some((alias) =>
+                searchRegex.test(this.normalizeText(alias))
+            );
+
+            return nameMatches || aliasMatches;
+        });
+
+        const sortedTopics = filteredTopics
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .slice(0, limit);
+
+        const normalizedQueryLower = normalizedQuery.toLowerCase();
+        return sortedTopics.map((topic) => {
+            const topicObj = topic.toObject();
+            const matchedAlias =
+                topicObj.aliases?.find((alias) =>
+                    this.normalizeText(alias)
+                        .toLowerCase()
+                        .includes(normalizedQueryLower)
+                ) || null;
+            return { ...topicObj, matchedAlias };
+        });
     }
 
     /**
@@ -149,13 +184,31 @@ export class TopicService {
     }
 
     /**
+     * Escape special regex characters to prevent ReDoS attacks
+     * @param str The string to escape
+     * @returns Escaped string safe for regex
+     */
+    private escapeRegex(str: string): string {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    /**
      *
      * @param names topic names array
-     * @returns topics
-     * @TODO Add support for searching by aliases to enable filtering verification requests by alias names
+     * @returns topics (searches both name and aliases fields with case-insensitive matching)
      */
     findByNames(names: string[]) {
-        return this.TopicModel.find({ name: { $in: names } });
+        const nameConditions = names.flatMap((name) => {
+            const escapedName = this.escapeRegex(name);
+            return [
+                { name: { $regex: new RegExp(`^${escapedName}$`, "i") } },
+                { aliases: { $regex: new RegExp(`^${escapedName}$`, "i") } },
+            ];
+        });
+
+        return this.TopicModel.find({
+            $or: nameConditions,
+        });
     }
 
     /**

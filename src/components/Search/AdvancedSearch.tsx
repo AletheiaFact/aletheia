@@ -5,6 +5,14 @@ import { useTranslation } from "next-i18next";
 
 const AdvancedSearch = ({ onSearch, options, defaultValue, handleFilter }) => {
     const { t } = useTranslation();
+
+    const mappedOptions = options.map((option) => ({
+        label: option.matchedAlias
+            ? `${option.name} (${option.matchedAlias})`
+            : option.name,
+        value: option.name,
+    }));
+
     return (
         <Autocomplete
             multiple
@@ -12,8 +20,12 @@ const AdvancedSearch = ({ onSearch, options, defaultValue, handleFilter }) => {
             defaultValue={
                 Array.isArray(defaultValue) ? defaultValue : [defaultValue]
             }
-            options={options.map((option) => option.name)}
-            onChange={(event, newValue) => handleFilter(newValue)}
+            options={mappedOptions}
+            getOptionLabel={(option) => option.label || option}
+            onChange={(event, newValue) => {
+                const names = newValue.map((item) => item.value || item);
+                handleFilter(names);
+            }}
             renderInput={(params) => (
                 <TextField
                     {...params}

@@ -24,7 +24,7 @@ const TopicDisplay = ({
         const inputValueFormatted = inputValue.map((inputValue) =>
             inputValue?.value
                 ? {
-                      label: inputValue?.label.toLowerCase().replace(" ", "-"),
+                      label: inputValue?.label,
                       value: inputValue?.value,
                       aliases: inputValue?.aliases || [],
                       matchedAlias: inputValue?.matchedAlias || null,
