@@ -55,7 +55,7 @@ export class ReportService {
     }
 
   findByDataHash(data_hash: string) {
-  if (!data_hash || typeof data_hash !== "string" || data_hash.length !== 32) {
+    if (!data_hash) {
     throw new BadRequestException("Invalid data hash provided.");
   }
 
