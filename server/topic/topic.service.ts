@@ -62,9 +62,8 @@ export class TopicService {
             return nameMatches || aliasMatches;
         });
 
-        const sortedTopics = filteredTopics
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .slice(0, limit);
+        filteredTopics.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedTopics = filteredTopics.slice(0, limit);
 
         const normalizedQueryLower = normalizedQuery.toLowerCase();
         return sortedTopics.map((topic) => {
@@ -189,7 +188,7 @@ export class TopicService {
      * @returns Escaped string safe for regex
      */
     private escapeRegex(str: string): string {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return str.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
     }
 
     /**
