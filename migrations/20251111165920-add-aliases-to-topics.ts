@@ -4,6 +4,15 @@ export async function up(db: Db) {
     await db
         .collection("topics")
         .updateMany({ aliases: { $exists: false } }, { $set: { aliases: [] } });
+
+    // Special case: Add "COP30" alias to the specific Wikidata entity
+    // Q115323194 = Conferência das Nações Unidas sobre as Mudanças Climáticas de 2025
+    await db
+        .collection("topics")
+        .updateOne(
+            { wikidataId: "Q115323194" },
+            { $set: { aliases: ["COP30"] } }
+        );
 }
 
 export async function down(db: Db) {
