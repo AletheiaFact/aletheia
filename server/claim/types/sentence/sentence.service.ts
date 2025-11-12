@@ -28,8 +28,8 @@ export class SentenceService {
         return newSentence._id;
     }
 
-    async getByDataHash(data_hash) {
-        if (typeof data_hash !== "string") {
+    async getByDataHash(data_hash: string) {
+        if (!data_hash) {
           throw new BadRequestException("Invalid data_hash: must be a string.");
         }
         const report = await this.reportService.findByDataHash(data_hash);
@@ -50,14 +50,9 @@ export class SentenceService {
     async updateSentenceWithTopics(topics, data_hash) {
         const sentence = await this.getByDataHash(data_hash);
 
-        if (!Array.isArray(topics) || !topics.every((t) => typeof t === "string")) {
+        if (!Array.isArray(topics)) {
           throw new BadRequestException("Invalid topics array.");
         }
-
-        const newSentence = {
-            ...sentence.toObject(),
-            topics,
-        };
         return this.SentenceModel.updateOne(
           { _id: sentence._id },
           { $set: { topics } }

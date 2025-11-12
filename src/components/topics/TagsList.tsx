@@ -46,9 +46,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 editable
                                     ? () =>
                                           handleClose(
-                                              tag?.wikidataId ||
-                                                  tag?.value ||
-                                                  tagValue
+                                            tag?.wikidataId || tag?.value || tag
                                           )
                                     : undefined
                             }
