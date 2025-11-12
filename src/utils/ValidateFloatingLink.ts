@@ -1,5 +1,5 @@
 export const URL_PATTERN =
-  /^(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/;
+  /^(?!.*\.$)(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/i;
 
 export const validateFloatingLink = (href?: string, t?: (key: string) => string) => {
   if (href?.endsWith('.')) {
