@@ -77,7 +77,7 @@ export class TopicService {
         try {
             const createdTopics = await Promise.all(
                 topics.map(async (topic) => {
-                    const slug = slugify(topic?.label || topic, {
+                    const slug = slugify(topic?.label || topic.slug || topic, {
                         lower: true,
                         strict: true,
                     });
