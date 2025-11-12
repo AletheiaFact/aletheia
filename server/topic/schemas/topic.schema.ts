@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 
 export type TopicDocument = Topic & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
 export class Topic {
     // TODO: Implement topic taxonomy
     // TODO: Better I18N

@@ -4,7 +4,7 @@ import * as mongoose from "mongoose";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 
-@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true } })
+@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true })
 export class Personality {
     @Prop({ required: true })
     name: string;
