@@ -44,7 +44,7 @@ export class MongoPersonalityService {
         private readonly historyService: HistoryService
     ) {}
 
-    async getWikidataEntities(regex, language) {
+    async getWikidataEntities(regex: string, language: string) {
         return await this.wikidata.queryWikibaseEntities(
             regex,
             language,

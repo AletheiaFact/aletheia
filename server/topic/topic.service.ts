@@ -28,7 +28,7 @@ export class TopicService {
         return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
 
-    async getWikidataEntities(regex, language) {
+    async getWikidataEntities(regex: string, language: string) {
         return await this.wikidataService.queryWikibaseEntities(
             regex,
             language

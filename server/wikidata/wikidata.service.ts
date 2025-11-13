@@ -163,7 +163,11 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(query, language = "en", includeAliases = true) {
+    queryWikibaseEntities(
+        query: string,
+        language: string = "en",
+        includeAliases: boolean = true
+    ) {
         const params = {
             action: "wbsearchentities",
             search: query,
