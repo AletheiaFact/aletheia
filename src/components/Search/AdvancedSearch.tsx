@@ -18,7 +18,7 @@ interface MappedOption {
 
 interface AdvancedSearchProps {
     onSearch: (value: string) => void;
-    options: TopicOption[];
+    options?: TopicOption[] | null;
     defaultValue?: string[] | MappedOption[];
     handleFilter: (names: string[]) => void;
 }
@@ -31,7 +31,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 }) => {
     const { t } = useTranslation();
 
-    const mappedOptions: MappedOption[] = options.map((option) => ({
+    const mappedOptions: MappedOption[] = (options || []).map((option) => ({
         label: option.matchedAlias
             ? `${option.name} (${option.matchedAlias})`
             : option.name,

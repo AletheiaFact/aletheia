@@ -17,6 +17,21 @@ const WIKIMEDIA_HEADERS = {
         "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
 };
 
+export interface WikibaseEntity {
+    name: string;
+    description?: string;
+    wikidata: string;
+    aliases?: string[];
+    matchedAlias?: string | null;
+}
+
+interface WikibaseSearchResult {
+    id: string;
+    label?: string;
+    description?: string;
+    aliases?: string[];
+}
+
 @Injectable()
 export class WikidataService {
     constructor(
@@ -167,7 +182,7 @@ export class WikidataService {
         query: string,
         language: string = "en",
         includeAliases: boolean = true
-    ) {
+    ): Promise<WikibaseEntity[]> {
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -185,21 +200,22 @@ export class WikidataService {
                 headers: WIKIMEDIA_HEADERS,
             })
             .then((response) => {
-                const { search } = response && response.data;
+                const { search }: { search: WikibaseSearchResult[] } =
+                    response && response.data;
 
-                return search.flatMap((wbentity) => {
-                    if (!wbentity.label) {
+                return search.flatMap((searchResult: WikibaseSearchResult) => {
+                    if (!searchResult.label) {
                         return [];
                     }
 
-                    const result: any = {
-                        name: wbentity.label,
-                        description: wbentity.description,
-                        wikidata: wbentity.id,
+                    const result: WikibaseEntity = {
+                        name: searchResult.label,
+                        description: searchResult.description,
+                        wikidata: searchResult.id,
                     };
 
                     if (includeAliases) {
-                        const aliases = wbentity.aliases || [];
+                        const aliases = searchResult.aliases || [];
                         const matchedAlias = aliases.find((alias) =>
                             alias.toLowerCase().includes(query.toLowerCase())
                         );

@@ -75,7 +75,7 @@ export class TopicService {
      * @param getTopics options to fetch topics
      * @returns return all topics from wikidata database that match to topicName from input
      */
-    async findAll(getTopics, language = "pt"): Promise<Topic[]> {
+    async findAll(getTopics, language = "pt") {
         return this.getWikidataEntities(getTopics.topicName, language);
     }
 
@@ -184,11 +184,11 @@ export class TopicService {
     }
 
     /**
-     *
+     * Find topics by name or alias with case-insensitive matching
      * @param names topic names array
-     * @returns topics (searches both name and aliases fields with case-insensitive matching)
+     * @returns Promise resolving to array of matching topics
      */
-    findByNames(names: string[]) {
+    findByNames(names: string[]): Promise<TopicDocument[]> {
         const nameConditions = names.flatMap((name) => {
             const escapedName = this.escapeRegex(name);
             return [
@@ -199,7 +199,7 @@ export class TopicService {
 
         return this.TopicModel.find({
             $or: nameConditions,
-        });
+        }).exec();
     }
 
     /**
