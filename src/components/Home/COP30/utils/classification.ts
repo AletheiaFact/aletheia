@@ -19,9 +19,12 @@ export function buildStats(sentences: Array<{ classification: string }>) {
         enganoso: 0,
         emAnalise: 0,
     };
-    sentences.forEach((sentence) => {
+    for (const sentence of sentences) {
         const group = classificationMap[sentence.classification];
-        if (group) stats[group] += 1;
-    });
+
+        if (group) {
+            stats[group] += 1;
+        }
+    }
     return stats;
 }

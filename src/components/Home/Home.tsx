@@ -11,7 +11,9 @@ const Home = ({ personalities, stats, href, claims, reviews }) => {
     return (
         <>
             <HomeHeader stats={stats} />
-            <Cop30Section />
+            <Cop30Section
+                reviews={reviews}
+            />
             <HomeContent
                 personalities={personalities}
                 debateClaims={claims}

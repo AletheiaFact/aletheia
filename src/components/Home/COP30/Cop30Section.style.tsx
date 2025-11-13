@@ -66,9 +66,16 @@ justify-items: center;
         font-weight: 700;
     }
 
-    .cop30-banner p {
+    .cop30-banner .bannerDescription {
         color: #9bbcd1;
         font-size: 16px;
+        max-width: 900px;
+        line-height: 1.7;
+    }
+
+    .cop30-banner p {
+        color: #515151;
+        font-size: 12px;
         max-width: 900px;
         line-height: 1.7;
     }
@@ -327,38 +334,6 @@ justify-items: center;
         border: 1px solid #b1c2cd;
     }
 
-    /* Claim Content */
-    .claim-box {
-        background: #dae8ea;
-        border-left: 4px solid #4f8db4;
-        padding: 18px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .claim-text {
-        font-size: 15px;
-        color: #515151;
-        line-height: 1.7;
-        margin-bottom: 12px;
-    }
-
-    .view-full-link {
-        color: #4f8db4;
-        font-weight: 700;
-        font-size: 13px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        transition: color 0.2s ease;
-    }
-
-    .view-full-link:hover {
-        color: #67bef2;
-        text-decoration: underline;
-    }
-
     /* Card Footer */
     .card-footer {
         display: flex;
@@ -368,42 +343,6 @@ justify-items: center;
         border-top: 1px solid #c2c8cc;
         gap: 16px;
         flex-wrap: wrap;
-    }
-
-    .profile-link {
-        color: #657e8e;
-        font-size: 13px;
-        text-decoration: underline;
-        font-weight: 600;
-        transition: color 0.2s ease;
-    }
-
-    .profile-link:hover {
-        color: #4f8db4;
-    }
-
-    .btn-open {
-        background: #11273a;
-        color: #ffffff;
-        padding: 10px 24px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 700;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .btn-open:hover {
-        background: #657e8e;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(17, 39, 58, 0.2);
-    }
-
-    .btn-open:active {
-        transform: translateY(0);
     }
 
     /* Topics Section */

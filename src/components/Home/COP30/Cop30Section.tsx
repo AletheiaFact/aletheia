@@ -5,7 +5,6 @@ import Statistics from "./statistics";
 import { Grid } from "@mui/material";
 import { buildStats } from "./utils/classification";
 import { cop30Api } from "../../../api/cop30Api";
-import { useSentencesByTopic } from "../../../hooks/useSentencesByTopic";
 import ReviewsGrid from "../../ClaimReview/ReviewsGrid";
 
 interface Cop30Stats {
@@ -26,11 +25,14 @@ const filterOptions = [
     "Infraestrutura",
 ];
 
-const Cop30Section: React.FC = () => {
+const Cop30Section = ({ reviews }) => {
     const { t } = useTranslation();
     const [activeFilter, setActiveFilter] = useState("Todos");
-    const [stats, setStats] = useState<Cop30Stats>(null);
-    const { reviews: copReviews } = useSentencesByTopic("Q115323194");
+    const [stats, setStats] = useState<Cop30Stats | null>(null);
+
+    const cop30Reviews = reviews.filter((review) =>
+        review.content.topics?.some((topic) => topic.value === "Q115323194")
+    );
 
     useEffect(() => {
         async function statsCop30() {
@@ -46,19 +48,18 @@ const Cop30Section: React.FC = () => {
         statsCop30();
     }, []);
 
-    const filteredReviews = activeFilter === "Todos"
-        ? copReviews
-        : copReviews.filter((review) =>
-            review.content.topics?.some(
-                (topic) => topic.label === activeFilter
-            )
-        );
-    console.log("Filtered Reviews:", filteredReviews);
+    const filteredReviews =
+        activeFilter === "Todos"
+            ? cop30Reviews
+            : cop30Reviews.filter((review) =>
+                review.content.topics?.some(
+                    (topic) => topic.label === activeFilter
+                )
+            );
 
     return (
         <Cop30SectionStyled>
             <Grid container xs={11} sm={11} md={9}>
-                {/* COP30 Banner */}
                 <section className="cop30-banner">
                     <div className="cop30-banner-content">
                         <div className="cop30-badge-wrapper">
@@ -68,7 +69,7 @@ const Cop30Section: React.FC = () => {
                             </div>
                         </div>
                         <h1>{t("cop30:bannerTitle")}</h1>
-                        <p>
+                        <p className="bannerDescription">
                             {t("cop30:bannerDescription")}
                         </p>
                     </div>
