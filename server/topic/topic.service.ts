@@ -47,26 +47,18 @@ export class TopicService {
         const normalizedQuery = this.normalizeText(query);
         const searchRegex = new RegExp(normalizedQuery, "i");
 
-        const allTopics = await this.TopicModel.find({
+        const topics = await this.TopicModel.find({
             language: { $eq: language },
-        });
-
-        const filteredTopics = allTopics.filter((topic) => {
-            const normalizedName = this.normalizeText(topic.name);
-            const nameMatches = searchRegex.test(normalizedName);
-
-            const aliasMatches = topic.aliases?.some((alias) =>
-                searchRegex.test(this.normalizeText(alias))
-            );
-
-            return nameMatches || aliasMatches;
-        });
-
-        filteredTopics.sort((a, b) => a.name.localeCompare(b.name));
-        const sortedTopics = filteredTopics.slice(0, limit);
+            $or: [
+                { name: { $regex: searchRegex } },
+                { aliases: { $regex: searchRegex } },
+            ],
+        })
+            .limit(limit)
+            .sort({ name: 1 });
 
         const normalizedQueryLower = normalizedQuery.toLowerCase();
-        return sortedTopics.map((topic) => {
+        return topics.map((topic) => {
             const topicObj = topic.toObject();
             const matchedAlias =
                 topicObj.aliases?.find((alias) =>
