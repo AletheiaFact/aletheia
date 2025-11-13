@@ -45,11 +45,9 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             onDelete={
                                 editable
                                     ? () =>
-                                        handleClose(
-                                            tag?.wikidataId ||
-                                            tag?.value ||
-                                            tagValue
-                                        )
+                                          handleClose(
+                                            tag?.wikidataId || tag?.value || tag
+                                          )
                                     : undefined
                             }
                             deleteIcon={
