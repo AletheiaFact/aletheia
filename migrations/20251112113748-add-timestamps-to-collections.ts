@@ -90,7 +90,6 @@ export async function up(db: Db) {
         "groups",
         "reviewtasks",
         "sources",
-        "topics",
         "users",
         "claims",
         "speeches",
