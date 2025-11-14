@@ -180,7 +180,7 @@ export class TopicService {
      * @returns Escaped string safe for regex
      */
     private escapeRegex(str: string): string {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
     /**
