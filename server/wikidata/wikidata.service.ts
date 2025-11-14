@@ -17,6 +17,21 @@ const WIKIMEDIA_HEADERS = {
         "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
 };
 
+export interface WikibaseEntity {
+    name: string;
+    description?: string;
+    wikidata: string;
+    aliases?: string[];
+    matchedAlias?: string | null;
+}
+
+interface WikibaseSearchResult {
+    id: string;
+    label?: string;
+    description?: string;
+    aliases?: string[];
+}
+
 @Injectable()
 export class WikidataService {
     constructor(
@@ -166,7 +181,11 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(query, language = "en") {
+    queryWikibaseEntities(
+        query: string,
+        language: string = "en",
+        includeAliases: boolean = true
+    ): Promise<WikibaseEntity[]> {
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -184,17 +203,30 @@ export class WikidataService {
                 headers: WIKIMEDIA_HEADERS,
             })
             .then((response) => {
-                const { search } = response && response.data;
-                return search.flatMap((wbentity) => {
-                    return wbentity.label
-                        ? [
-                              {
-                                  name: wbentity.label,
-                                  description: wbentity.description,
-                                  wikidata: wbentity.id,
-                              },
-                          ]
-                        : [];
+                const { search }: { search: WikibaseSearchResult[] } =
+                    response && response.data;
+
+                return search.flatMap((searchResult: WikibaseSearchResult) => {
+                    if (!searchResult.label) {
+                        return [];
+                    }
+
+                    const result: WikibaseEntity = {
+                        name: searchResult.label,
+                        description: searchResult.description,
+                        wikidata: searchResult.id,
+                    };
+
+                    if (includeAliases) {
+                        const aliases = searchResult.aliases || [];
+                        const matchedAlias = aliases.find((alias) =>
+                            alias.toLowerCase().includes(query.toLowerCase())
+                        );
+                        result.aliases = aliases;
+                        result.matchedAlias = matchedAlias || null;
+                    }
+
+                    return [result];
                 });
             });
     }
