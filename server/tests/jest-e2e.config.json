@@ -11,5 +11,9 @@
     "transform": {
         "^.+\\.(t|j)s$": "ts-jest"
     },
-    "modulePathIgnorePatterns": ["./dist/"]
+    "modulePathIgnorePatterns": ["./dist/"],
+    "globalSetup": "./globalSetup.ts",
+    "globalTeardown": "./globalTeardown.ts",
+    "maxWorkers": 1,
+    "testTimeout": 30000
 }
