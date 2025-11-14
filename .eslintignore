@@ -16,3 +16,6 @@ coverage/*
 **/report/**
 **/webpack.config*.js
 **/docs/**
+# migration files
+migrations/**
+migrate-mongo-config.ts

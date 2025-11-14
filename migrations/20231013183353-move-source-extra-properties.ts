@@ -1,12 +1,14 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
-    return;
     // migrations not needed
     const sourcesCursor = await db.collection("sources").find();
 
     while (await sourcesCursor.hasNext()) {
         const source = await sourcesCursor.next();
+        if (!source) {
+            continue;
+        }
         const { _id, user, href, targetId } = source;
 
         const updateData: any = {
@@ -27,6 +29,6 @@ export async function up(db: Db) {
         copyPropsIfExist("targetText");
         copyPropsIfExist("textRange");
 
-        await db.collection("sources").update({ _id: source._id }, updateData);
+        await db.collection("sources").updateOne({ _id: source?._id }, { $set: updateData });
     }
 }
