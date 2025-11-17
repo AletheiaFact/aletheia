@@ -64,7 +64,6 @@ import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
 import { M2MGuard } from "./auth/m2m.guard";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
-import { Cop30Module } from "./cop30/cop30.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -154,7 +153,6 @@ export class AppModule implements NestModule {
                 FeatureFlagModule,
                 GroupModule,
                 AiTaskModule,
-                Cop30Module,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],

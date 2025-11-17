@@ -15,6 +15,12 @@ export class SentenceController {
     }
 
     @ApiTags("claim")
+    @Get("api/sentences/cop30")
+    async getAllSentencesWithCop30Topic() {
+        return this.sentenceService.getAllSentencesWithCop30Topic();
+    }
+
+    @ApiTags("claim")
     @Put("api/sentence/:data_hash")
     update(@Param("data_hash") data_hash, @Body() topics) {
         return this.sentenceService.updateSentenceWithTopics(topics, data_hash);

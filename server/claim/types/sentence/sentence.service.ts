@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { Model } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
+import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -23,6 +28,48 @@ export class SentenceService {
         private util: UtilService
     ) {}
 
+    async getAllSentencesWithCop30Topic() {
+        const aggregation = [
+            { $match: { "topics.value": { $in: allCop30WikiDataIds } } },
+            {
+                $lookup: {
+                    from: "reviewtasks",
+                    let: { sentenceDataHash: "$data_hash" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: [
+                                        "$machine.context.reviewData.data_hash",
+                                        "$$sentenceDataHash",
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                classification:
+                                    "$machine.context.reviewData.classification",
+                            },
+                        },
+                    ],
+                    as: "reviewInfo",
+                },
+            },
+            {
+                $addFields: {
+                    classification: {
+                        $arrayElemAt: ["$reviewInfo.classification", 0],
+                    },
+                },
+            },
+            { $project: { reviewInfo: 0 } },
+        ];
+
+        return this.SentenceModel.aggregate(aggregation).exec();
+    }
+
     async create(sentenceBody) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
         return newSentence._id;
@@ -30,11 +77,13 @@ export class SentenceService {
 
     async getByDataHash(data_hash: string) {
         if (!data_hash) {
-          throw new BadRequestException("Invalid data_hash: must be a string.");
+            throw new BadRequestException(
+                "Invalid data_hash: must be a string."
+            );
         }
         const report = await this.reportService.findByDataHash(data_hash);
         const sentence = await this.SentenceModel.findOne({
-          data_hash: { $eq: data_hash },
+            data_hash: { $eq: data_hash },
         });
         if (sentence) {
             sentence.props = {
@@ -51,11 +100,11 @@ export class SentenceService {
         const sentence = await this.getByDataHash(data_hash);
 
         if (!Array.isArray(topics)) {
-          throw new BadRequestException("Invalid topics array.");
+            throw new BadRequestException("Invalid topics array.");
         }
         return this.SentenceModel.updateOne(
-          { _id: sentence._id },
-          { $set: { topics } }
+            { _id: sentence._id },
+            { $set: { topics } }
         );
     }
 
