@@ -6,6 +6,18 @@ import { Grid } from "@mui/material";
 import { buildStats } from "./utils/classification";
 import { cop30Api } from "../../../api/cop30Api";
 import ReviewsGrid from "../../ClaimReview/ReviewsGrid";
+import { Sentence } from "../../../types/Sentence";
+import { Review } from "../../../types/Review";
+import cop30Filters, { allCop30WikiDataIds } from "../../../constants/cop30Filters";
+
+interface Cop30Sentence extends Sentence {
+    classification?: string;
+    review?: Review;
+}
+
+interface Cop30SectionProps {
+    reviews: Cop30Sentence[];
+}
 
 interface Cop30Stats {
     total: number;
@@ -14,46 +26,43 @@ interface Cop30Stats {
     emAnalise: number;
 }
 
-const filterOptions = [
-    "Todos",
-    "Desmatamento",
-    "Financiamento Climático",
-    "Emissões",
-    "Amazônia Azul",
-    "Energia",
-    "Acordos",
-    "Infraestrutura",
-];
-
-const Cop30Section = ({ reviews }) => {
+const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
     const { t } = useTranslation();
-    const [activeFilter, setActiveFilter] = useState("Todos");
+    const [activeFilter, setActiveFilter] = useState("all");
     const [stats, setStats] = useState<Cop30Stats | null>(null);
 
-    const cop30Reviews = reviews.filter((review) =>
-        review.content.topics?.some((topic) => topic.value === "Q115323194")
-    );
+    const hasCop30Topic = (topics?: { value: string }[]) =>
+        topics?.some(topic => allCop30WikiDataIds.includes(topic.value));
+
+    const filterOptions = cop30Filters.map(filter => ({
+        id: filter.id,
+        wikidataId: filter.wikidataId,
+        label: t(filter.translationKey),
+    }));
+
+    const cop30Reviews = reviews.filter(review => hasCop30Topic(review.content.topics));
 
     useEffect(() => {
-        async function statsCop30() {
+        async function fetchStats() {
             const sentences = await cop30Api.getSentences();
-
-            const copSentencesOnly = sentences.filter(sentence =>
-                sentence.topics?.some(topic => topic.value === "Q115323194")
+            const copSentencesOnly = sentences.filter(sentence => hasCop30Topic(sentence.topics)
             );
 
             const computedStats = buildStats(copSentencesOnly);
             setStats(computedStats);
         }
-        statsCop30();
+        setActiveFilter("all")
+        fetchStats();
     }, []);
 
+    const selectedWikiDataId = cop30Filters.find(filter => filter.id === activeFilter)?.wikidataId
+
     const filteredReviews =
-        activeFilter === "Todos"
+        activeFilter === "all"
             ? cop30Reviews
-            : cop30Reviews.filter((review) =>
+            : cop30Reviews.filter(review =>
                 review.content.topics?.some(
-                    (topic) => topic.label === activeFilter
+                    ({ value }) => value === selectedWikiDataId
                 )
             );
 
@@ -88,13 +97,13 @@ const Cop30Section = ({ reviews }) => {
                             <h2 className="section-title">{t("cop30:sectionLatestChecks")}</h2>
                         </div>
                         <div className="filters-grid">
-                            {filterOptions.map((filter) => (
+                            {filterOptions.map(option => (
                                 <button
-                                    key={filter}
-                                    className={`filter-chip ${activeFilter === filter ? "active" : ""}`}
-                                    onClick={() => setActiveFilter(filter)}
+                                    key={option.id}
+                                    className={`filter-chip ${activeFilter === option.id ? "active" : ""}`}
+                                    onClick={() => setActiveFilter(option.id)}
                                 >
-                                    {filter}
+                                    {option.label}
                                 </button>
                             ))}
                         </div>
