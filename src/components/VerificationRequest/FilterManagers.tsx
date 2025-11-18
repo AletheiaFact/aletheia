@@ -11,6 +11,8 @@ const FilterManager = ({ state, actions }) => {
     topicFilterUsed,
     impactAreaFilterUsed,
     viewMode,
+    startDate,
+    endDate,
   } = state;
   const {
     setViewMode,
@@ -18,15 +20,18 @@ const FilterManager = ({ state, actions }) => {
     setSourceChannelFilter,
     setFilterValue,
     setApplyFilters,
-    createFilterChangeHandler,
     dispatch,
     t,
+    setStartDate,
+    setEndDate,
   } = actions;
 
   const handleResetFilters = () => {
     setFilterValue([]);
     setPriorityFilter("all");
     setSourceChannelFilter("all");
+    setStartDate(null);
+    setEndDate(null);
     dispatch({
       type: ActionTypes.SET_TOPIC_FILTER_USED,
       topicFilterUsed: [],
@@ -49,23 +54,15 @@ const FilterManager = ({ state, actions }) => {
     >
       <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <FilterToggleButtons viewMode={viewMode} setViewMode={setViewMode} />
-        {viewMode === "board" && (
-          <FilterBar
-            state={state}
-            actions={actions}
-            priorityFilter={priorityFilter}
-            sourceChannelFilter={sourceChannelFilter}
-            setPriorityFilter={setPriorityFilter}
-            setSourceChannelFilter={setSourceChannelFilter}
-            createFilterChangeHandler={createFilterChangeHandler}
-          />
-        )}
+        {viewMode === "board" && <FilterBar state={state} actions={actions} />}
       </Grid>
       {viewMode === "board" &&
         (topicFilterUsed.length > 0 ||
           priorityFilter !== "all" ||
           sourceChannelFilter !== "all" ||
-          impactAreaFilterUsed.length > 0) && (
+          impactAreaFilterUsed.length > 0 ||
+          startDate ||
+          endDate) && (
           <Button onClick={handleResetFilters}>
             {t("verificationRequest:resetFiltersButton")}
           </Button>
@@ -73,5 +70,4 @@ const FilterManager = ({ state, actions }) => {
     </Grid>
   );
 };
-
 export default FilterManager;

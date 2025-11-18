@@ -42,6 +42,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
     Posted: false,
   });
 
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const { autoCompleteTopicsResults, topicFilterUsed, impactAreaFilterUsed } =
     useAppSelector((state) => ({
       autoCompleteTopicsResults: state?.search?.autocompleteTopicsResults || [],
@@ -61,6 +63,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
           sourceChannel: sourceChannelFilter,
           impactArea: impactAreaFilterUsed,
           status: status,
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString(),
         });
 
         if (response) {
@@ -78,13 +82,17 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       } finally {
         setLoading((prev) => ({ ...prev, [status]: false }));
       }
-    }, [
+    },
+    [
       paginationModel,
       topicFilterUsed,
       priorityFilter,
       sourceChannelFilter,
       impactAreaFilterUsed,
-    ]);
+      startDate,
+      endDate,
+    ]
+  );
 
   useEffect(() => {
     if (isInitialLoad || applyFilters) {
@@ -136,6 +144,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       applyFilters,
       isInitialLoad,
       viewMode,
+      startDate,
+      endDate,
     },
     actions: {
       setPriorityFilter,
@@ -152,6 +162,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       dispatch,
       t,
       setViewMode,
+      setStartDate,
+      setEndDate,
     },
   };
 };

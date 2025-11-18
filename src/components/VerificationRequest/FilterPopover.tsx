@@ -16,6 +16,7 @@ const FilterPopover = ({ state, actions }) => {
   } = state;
 
   const {
+    setPaginationModel,
     setFilterValue,
     fetchTopicList,
     setApplyFilters,
@@ -52,6 +53,7 @@ const FilterPopover = ({ state, actions }) => {
         impactAreaFilterUsed: updatedImpactAreas,
       });
     }
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
     setApplyFilters(true);
   };
 

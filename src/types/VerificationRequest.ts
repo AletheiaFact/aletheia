@@ -1,13 +1,27 @@
 import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
-import { Dispatch } from "react";
+import { ActionTypes } from "../store/types";
+
+export enum FilterType {
+  TOPIC = "topic",
+  IMPACT_AREA = "impactArea",
+}
 
 type PaginationSettings = {
   pageSize: number;
   page: number;
 };
+interface TopicOption {
+  name: string;
+  matchedAlias?: string | null;
+}
+interface FilterItem {
+  label: string;
+  value: string;
+  type: FilterType;
+}
 
-type ViewMode = "board" | "dashboard" ;
+type ViewMode = "board" | "dashboard";
 
 type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
 
@@ -38,11 +52,13 @@ interface FiltersState {
   filterType: string;
   anchorEl: HTMLElement | null;
   paginationModel: PaginationModel;
-  autoCompleteTopicsResults: string[];
+  autoCompleteTopicsResults?: TopicOption[];
   topicFilterUsed: string[];
   impactAreaFilterUsed: string[];
   applyFilters: boolean;
   viewMode: ViewMode;
+  startDate: Date | null;
+  endDate: Date | null;
 }
 interface FiltersActions {
   setIsInitialLoad: (initial: boolean) => void;
@@ -52,15 +68,19 @@ interface FiltersActions {
   setFilterValue: (value: string[]) => void;
   setFilterType: (type: string) => void;
   setAnchorEl: (el: HTMLElement | null) => void;
-  setPaginationModel: (model: FiltersState["paginationModel"]) => void;
+  setPaginationModel: React.Dispatch<
+        React.SetStateAction<PaginationModel>
+    >;
   setApplyFilters: (apply: boolean) => void;
   fetchTopicList: (term: string) => Promise<void>;
   createFilterChangeHandler: (
     setter: (v: any) => void
   ) => (newValue: any) => void;
-  dispatch: Dispatch<any>;
+  dispatch: (action: { type: ActionTypes; [key: string]: any }) => void;
   t: (key: string) => string;
   setViewMode: (mode: ViewMode) => void;
+  setStartDate: (date: Date | null) => void;
+  setEndDate: (date: Date | null) => void;
 }
 interface FiltersContext {
   state: FiltersState;
@@ -75,4 +95,6 @@ export type {
   PaginationModel,
   SeverityLevel,
   ViewMode,
+  FilterItem,
+  TopicOption,
 };
