@@ -9,6 +9,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
 import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
+import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
+import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
+import { buildStats } from "../../../../src/components/Home/COP30/utils/classification";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -28,7 +31,7 @@ export class SentenceService {
         private util: UtilService
     ) {}
 
-    async getAllSentencesWithCop30Topic() {
+    async getSentencesByTopic(): Promise<Cop30Sentence[]> {
         const aggregation = [
             { $match: { "topics.value": { $in: allCop30WikiDataIds } } },
             {
@@ -68,6 +71,12 @@ export class SentenceService {
         ];
 
         return this.SentenceModel.aggregate(aggregation).exec();
+    }
+
+    async getCop30Stats(): Promise<Cop30Stats> {
+        const sentences = await this.getSentencesByTopic();
+
+        return buildStats(sentences);
     }
 
     async create(sentenceBody) {

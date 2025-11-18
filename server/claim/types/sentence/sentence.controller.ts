@@ -2,6 +2,8 @@ import { Controller, Param, Put, Body, Get } from "@nestjs/common";
 import { SentenceService } from "./sentence.service";
 import { ApiTags } from "@nestjs/swagger";
 import { IsPublic } from "../../../auth/decorators/is-public.decorator";
+import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
+import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
 
 @Controller()
 export class SentenceController {
@@ -16,8 +18,14 @@ export class SentenceController {
 
     @ApiTags("claim")
     @Get("api/sentences/cop30")
-    async getAllSentencesWithCop30Topic() {
-        return this.sentenceService.getAllSentencesWithCop30Topic();
+    async getAllSentencesWithCop30Topic(): Promise<Cop30Sentence[]> {
+        return this.sentenceService.getSentencesByTopic();
+    }
+
+    @ApiTags("claim")
+    @Get("api/sentences/cop30/stats")
+    async getCop30Stats(): Promise<Cop30Stats> {
+        return this.sentenceService.getCop30Stats();
     }
 
     @ApiTags("claim")
