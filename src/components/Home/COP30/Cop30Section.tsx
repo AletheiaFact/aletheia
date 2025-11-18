@@ -3,27 +3,14 @@ import { useTranslation } from "next-i18next";
 import Cop30SectionStyled from "./Cop30Section.style";
 import Statistics from "./statistics";
 import { Grid } from "@mui/material";
-import { buildStats } from "./utils/classification";
-import { cop30Api } from "../../../api/cop30Api";
 import ReviewsGrid from "../../ClaimReview/ReviewsGrid";
-import { Sentence } from "../../../types/Sentence";
-import { Review } from "../../../types/Review";
+import { Cop30Sentence } from "../../../types/Cop30Sentence";
+import { Cop30Stats } from "../../../types/Cop30Stats";
 import cop30Filters, { allCop30WikiDataIds } from "../../../constants/cop30Filters";
-
-interface Cop30Sentence extends Sentence {
-    classification?: string;
-    review?: Review;
-}
+import SentenceApi from "../../../api/sentenceApi";
 
 interface Cop30SectionProps {
     reviews: Cop30Sentence[];
-}
-
-interface Cop30Stats {
-    total: number;
-    confiavel: number;
-    enganoso: number;
-    emAnalise: number;
 }
 
 const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
@@ -44,12 +31,8 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
 
     useEffect(() => {
         async function fetchStats() {
-            const sentences = await cop30Api.getSentences();
-            const copSentencesOnly = sentences.filter(sentence => hasCop30Topic(sentence.topics)
-            );
-
-            const computedStats = buildStats(copSentencesOnly);
-            setStats(computedStats);
+            const stats = await SentenceApi.getCop30Stats()
+            setStats(stats);
         }
         setActiveFilter("all")
         fetchStats();
@@ -72,7 +55,7 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
                 <section className="cop30-banner">
                     <div className="cop30-banner-content">
                         <div className="cop30-badge-wrapper">
-                            <div className="cop30-badge">{t("cop30:bannerBadge")}</div>
+                            <div className="cop30-badge">{t("cop30:cop30Conference")}</div>
                             <div className="cop30-location">
                                 <span>{t("cop30:bannerLocation")}</span>
                             </div>
