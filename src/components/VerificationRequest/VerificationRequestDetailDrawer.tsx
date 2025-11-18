@@ -42,6 +42,8 @@ import { currentUserId } from "../../atoms/currentUser";
 import reviewTaskApi from "../../api/reviewTaskApi";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import PersonalitiesSection from "./PersonalitiesSection";
+import { usePersonalities } from "../../hooks/usePersonalities";
 
 interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
@@ -87,7 +89,7 @@ const truncateUrl = (url) => {
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
     ({ verificationRequest, open, onClose, onUpdate }) => {
-        const { t } = useTranslation();
+        const { t, i18n } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
         const [role] = useAtom(currentUserRole);
@@ -98,6 +100,20 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
         const [recaptchaString, setRecaptchaString] = useState("");
         const hasCaptcha = !!recaptchaString;
         const recaptchaRef = useRef(null);
+
+        const {
+            personalities,
+            isLoading: loadingPersonalities,
+            error: personalitiesError,
+            retry: retryPersonalities,
+        } = usePersonalities({
+            requestId: currentRequest?._id,
+            isOpen: open,
+            hasIdentifiedData:
+                currentRequest?.identifiedData &&
+                currentRequest.identifiedData.length > 0,
+            language: i18n.language || "en",
+        });
 
         const canApprove =
             role === Roles.Admin ||
@@ -484,6 +500,21 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                             }
                                         />
                                     </Box>
+
+                                    {currentRequest?.identifiedData &&
+                                        currentRequest.identifiedData.length >
+                                            0 && (
+                                            <PersonalitiesSection
+                                                personalities={personalities}
+                                                isLoading={loadingPersonalities}
+                                                error={personalitiesError}
+                                                expectedCount={
+                                                    currentRequest
+                                                        .identifiedData.length
+                                                }
+                                                onRetry={retryPersonalities}
+                                            />
+                                        )}
                                 </Grid>
                             </Grid>
 
