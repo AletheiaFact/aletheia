@@ -48,6 +48,9 @@ export class WikidataService {
             .exec();
         if (!wikidataCache) {
             const props = await this.requestProperties(params);
+            if (props.isAllowedProp === false) {
+                return props;
+            }
             const newWikidataCache = new this.wikidataCache({
                 ...params,
                 props,

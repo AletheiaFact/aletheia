@@ -109,7 +109,7 @@ export class MongoPersonalityService {
             );
         }
 
-        return await Promise.all(
+        const processedPersonalities = await Promise.all(
             personalities.map(async (personality) => {
                 try {
                     return await this.postProcess(personality, language);
@@ -117,8 +117,14 @@ export class MongoPersonalityService {
                     this.logger.log(
                         `It was not possible to do postProcess the personality ${personality}`
                     );
+                    return null;
                 }
             })
+        );
+
+        return processedPersonalities.filter(
+            (personalities) =>
+                personalities !== null && personalities !== undefined
         );
     }
 
@@ -263,7 +269,18 @@ export class MongoPersonalityService {
             select: "_id title content",
         });
         this.logger.log(`Found personality ${personality?._id}`);
-        return await this.postProcess(personality.toObject(), query.language);
+        const processed = await this.postProcess(
+            personality.toObject(),
+            query.language
+        );
+
+        if (!processed) {
+            throw new NotFoundException(
+                `Personality with id ${personalityId} not found or has invalid instance type`
+            );
+        }
+
+        return processed;
     }
 
     async getPersonalityBySlug(query, language = "pt") {
@@ -276,7 +293,18 @@ export class MongoPersonalityService {
             const personality = await this.PersonalityModel.findOne(
                 queryOptions
             );
-            return await this.postProcess(personality.toObject(), language);
+            const processed = await this.postProcess(
+                personality.toObject(),
+                language
+            );
+
+            if (!processed) {
+                throw new NotFoundException(
+                    `Personality not found or has invalid instance type`
+                );
+            }
+
+            return processed;
         } catch {
             throw new NotFoundException();
         }
@@ -311,7 +339,18 @@ export class MongoPersonalityService {
                 })
             );
             this.logger.log(`Found personality ${personality._id}`);
-            return await this.postProcess(personality.toObject(), language);
+            const processed = await this.postProcess(
+                personality.toObject(),
+                language
+            );
+
+            if (!processed) {
+                throw new NotFoundException(
+                    `Personality not found or has invalid instance type`
+                );
+            }
+
+            return processed;
         } catch {
             throw new NotFoundException();
         }
@@ -563,13 +602,26 @@ export class MongoPersonalityService {
             },
         ]);
 
-        return {
-            totalRows: personalities[0].totalRows,
-            processedPersonalities: await Promise.all(
-                personalities[0].rows.map(async (personality) => {
+        const processedPersonalities = await Promise.all(
+            personalities[0].rows.map(async (personality) => {
+                try {
                     return await this.postProcess(personality, language);
-                })
-            ),
+                } catch (error) {
+                    this.logger.log(
+                        `It was not possible to do postProcess the personality ${personality._id}`
+                    );
+                    return null;
+                }
+            })
+        );
+
+        const filteredPersonalities = processedPersonalities.filter(
+            (personality) => personality !== null && personality !== undefined
+        );
+
+        return {
+            totalRows: filteredPersonalities.length,
+            processedPersonalities: filteredPersonalities,
         };
     }
 }
