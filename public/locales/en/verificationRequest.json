@@ -84,5 +84,12 @@
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
     "filterBySourceChannel": "Filter by Source Channel",
-    "errorUpdatingStatus": "Error updating status:"
+    "errorUpdatingStatus": "Error updating status:",
+    "identifiedPersonalities": "People Mentioned",
+    "loadingPersonalities": "Loading personalities...",
+    "personalitiesList": "List of identified personalities",
+    "noPersonalitiesFound": "No personalities identified in this request",
+    "errorLoadingPersonalities": "Error loading personalities. Please try again.",
+    "retryLoadingPersonalities": "Retry",
+    "viewPersonalityPage": "View personality page for {{name}}"
 }
