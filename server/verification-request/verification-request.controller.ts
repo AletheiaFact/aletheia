@@ -46,8 +46,8 @@ export class VerificationRequestController {
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
         private captchaService: CaptchaService,
-        private verificationRequestStateMachineService: VerificationRequestStateMachineService,
-        private wikidataService: WikidataService
+        private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
+        private readonly wikidataService: WikidataService
     ) {}
 
     @ApiTags("verification-request")

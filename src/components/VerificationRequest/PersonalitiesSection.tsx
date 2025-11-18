@@ -129,11 +129,9 @@ const PersonalityCard: React.FC<PersonalityCardProps> = ({ personality }) => {
         <Link
             href={personalityUrl}
             style={{ textDecoration: "none" }}
-            aria-label={
-                t("verificationRequest:viewPersonalityPage", {
-                    name: personality.name,
-                }) as string
-            }
+            aria-label={t("verificationRequest:viewPersonalityPage", {
+                name: personality.name,
+            })}
         >
             {cardContent}
         </Link>
@@ -161,11 +159,9 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
                             size="small"
                             startIcon={<Refresh />}
                             onClick={onRetry}
-                            aria-label={
-                                t(
-                                    "verificationRequest:retryLoadingPersonalities"
-                                ) as string
-                            }
+                            aria-label={t(
+                                "verificationRequest:retryLoadingPersonalities"
+                            )}
                         >
                             {t("verificationRequest:retryLoadingPersonalities")}
                         </Button>
@@ -178,46 +174,50 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
 
         if (isLoading) {
             return (
-                <Stack spacing={2} role="status" aria-live="polite">
-                    {Array.from({ length: expectedCount }).map((_, index) => (
-                        <Card
-                            key={`skeleton-${index}`}
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                padding: "12px 16px",
-                                backgroundColor: colors.white,
-                                border: `1px solid ${colors.neutralTertiary}`,
-                                borderRadius: "8px",
-                            }}
-                        >
-                            <Skeleton
-                                variant="circular"
-                                width={56}
-                                height={56}
-                                sx={{ marginRight: 2 }}
-                            />
-                            <Box
-                                sx={{
-                                    flex: 1,
-                                    minWidth: 0,
-                                }}
-                            >
-                                <Skeleton
-                                    variant="text"
-                                    width="60%"
-                                    height={24}
-                                    sx={{ marginBottom: "4px" }}
-                                />
-                                <Skeleton
-                                    variant="text"
-                                    width="40%"
-                                    height={16}
-                                />
-                            </Box>
-                        </Card>
-                    ))}
-                </Stack>
+                <output aria-live="polite">
+                    <Stack spacing={2}>
+                        {Array.from({ length: expectedCount }).map(
+                            (_, index) => (
+                                <Card
+                                    key={`skeleton-${index}`}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        padding: "12px 16px",
+                                        backgroundColor: colors.white,
+                                        border: `1px solid ${colors.neutralTertiary}`,
+                                        borderRadius: "8px",
+                                    }}
+                                >
+                                    <Skeleton
+                                        variant="circular"
+                                        width={56}
+                                        height={56}
+                                        sx={{ marginRight: 2 }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            flex: 1,
+                                            minWidth: 0,
+                                        }}
+                                    >
+                                        <Skeleton
+                                            variant="text"
+                                            width="60%"
+                                            height={24}
+                                            sx={{ marginBottom: "4px" }}
+                                        />
+                                        <Skeleton
+                                            variant="text"
+                                            width="40%"
+                                            height={16}
+                                        />
+                                    </Box>
+                                </Card>
+                            )
+                        )}
+                    </Stack>
+                </output>
             );
         }
 
