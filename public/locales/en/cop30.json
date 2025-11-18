@@ -1,5 +1,4 @@
 {
-    "bannerBadge": "COP30",
     "bannerLocation": "Belém, Brazil • November 2025",
     "bannerTitle": "Fact-Checking on COP30",
     "bannerDescription": "We verify statements from authorities, politicians and experts about the United Nations Climate Change Conference (COP30). Follow fact-checks in real-time and contribute to an informed public debate on climate and environment.",
@@ -15,12 +14,13 @@
     "claimSeeFullText": "see full text →",
     "claimViewProfile": "View profile",
     "claimOpen": "Open",
-    "allTopics": "All",
+    "all": "All",
     "deforestation": "Deforestation",
     "climateFinancing": "Climate Financing",
     "emissions": "Emissions",
     "blueAmazon": "Blue Amazon",
     "energy": "Energy",
     "environment": "Environment",
-    "infrastructure": "Infrastructure"
+    "infrastructure": "Infrastructure",
+    "cop30Conference": "COP30"
 }

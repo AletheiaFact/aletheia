@@ -12,19 +12,24 @@ export const classificationMap = {
     notFact: "emAnalise",
 };
 
-export function buildStats(sentences: Array<{ classification: string }>) {
+export function buildStats(sentences: Array<{ classification?: string }>) {
+    const normalizedSentences = Array.isArray(sentences) ? sentences : [];
+
     const stats = {
-        total: sentences.length,
+        total: normalizedSentences.length,
         confiavel: 0,
         enganoso: 0,
         emAnalise: 0,
     };
-    for (const sentence of sentences) {
-        const group = classificationMap[sentence.classification];
+
+    for (const sentence of normalizedSentences) {
+        const classification = sentence.classification ?? "";
+        const group = classificationMap[classification];
 
         if (group) {
             stats[group] += 1;
         }
     }
+
     return stats;
 }

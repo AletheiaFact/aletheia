@@ -1,5 +1,4 @@
 {
-    "bannerBadge": "COP30",
     "bannerLocation": "Belém, Brasil • Novembro 2025",
     "bannerTitle": "Checagem de Fatos sobre a COP30",
     "bannerDescription": "Verificamos afirmações de autoridades, políticos e especialistas sobre a Conferência das Nações Unidas sobre Mudanças Climáticas (COP30). Acompanhe as checagens em tempo real e contribua para um debate público informado sobre clima e meio ambiente.",
@@ -15,12 +14,13 @@
     "claimSeeFullText": "veja o texto completo →",
     "claimViewProfile": "Veja o perfil",
     "claimOpen": "Abrir",
-    "allTopics": "Todos",
+    "all": "Todos",
     "deforestation": "Desmatamento",
     "climateFinancing": "Financiamento Climático",
     "emissions": "Emissões",
     "blueAmazon": "Amazônia Azul",
     "energy": "Energia",
     "environment": "Meio-ambiente",
-    "infrastructure": "Infraestrutura"
+    "infrastructure": "Infraestrutura",
+    "cop30Conference": "COP30"
 }
