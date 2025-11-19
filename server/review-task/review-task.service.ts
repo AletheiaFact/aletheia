@@ -42,19 +42,19 @@ interface IListAllQuery {
 interface IPostProcess {
     data_hash: string;
     machine: Machine;
-    target: any;
-    reviewTaskType: string;
+    target: any; // TODO: Type this properly as Claim | VerificationRequest
+    reviewTaskType: ReviewTaskTypeEnum;
 }
 
 export interface IReviewTask {
     content: Source | Sentence | Image;
     usersName: string[];
     value: string;
-    personalityName: string;
-    claimTitle: string;
+    personalityName?: string;
+    claimTitle?: string;
     targetId: string;
-    personalityId: string;
-    contentModel: string;
+    personalityId?: string;
+    contentModel?: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -134,7 +134,16 @@ export class ReviewTaskService {
 
     buildLookupPipeline(reviewTaskType) {
         let pipeline: any = [
-            { $match: { $expr: { $eq: ["$_id", "$$targetId"] } } },
+            {
+                $match: {
+                    $expr: {
+                        $and: [
+                            { $ne: ["$$targetId", null] },
+                            { $eq: ["$_id", "$$targetId"] },
+                        ],
+                    },
+                },
+            },
         ];
 
         if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
@@ -181,13 +190,40 @@ export class ReviewTaskService {
                     from: "personalities",
                     let: {
                         personalityId: {
-                            $toObjectId: "$machine.context.review.personality",
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        {
+                                            $ne: [
+                                                "$machine.context.review.personality",
+                                                null,
+                                            ],
+                                        },
+                                        {
+                                            $ne: [
+                                                "$machine.context.review.personality",
+                                                "",
+                                            ],
+                                        },
+                                    ],
+                                },
+                                then: {
+                                    $toObjectId:
+                                        "$machine.context.review.personality",
+                                },
+                                else: null,
+                            },
                         },
                     },
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$_id", "$$personalityId"] },
+                                $expr: {
+                                    $and: [
+                                        { $ne: ["$$personalityId", null] },
+                                        { $eq: ["$_id", "$$personalityId"] },
+                                    ],
+                                },
                             },
                         },
                         { $project: { slug: 1, name: 1, _id: 1 } },
@@ -204,7 +240,20 @@ export class ReviewTaskService {
             {
                 $lookup: {
                     from: `${reviewTaskType.toLowerCase()}s`,
-                    let: { targetId: { $toObjectId: "$target" } },
+                    let: {
+                        targetId: {
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        { $ne: ["$target", null] },
+                                        { $ne: ["$target", ""] },
+                                    ],
+                                },
+                                then: { $toObjectId: "$target" },
+                                else: null,
+                            },
+                        },
+                    },
                     pipeline: this.buildLookupPipeline(reviewTaskType),
                     as: "target",
                 },
@@ -238,43 +287,70 @@ export class ReviewTaskService {
         );
     }
 
+    /**
+     * Post-processes review task data after aggregation pipeline
+     * Handles optional fields gracefully for different review types
+     * @param params - PostProcess parameters
+     * @returns Formatted review task data
+     */
     async postProcess({
         data_hash,
         machine,
         target,
         reviewTaskType,
     }: IPostProcess): Promise<IReviewTask> {
-        let content: Source | Sentence | Image = target;
-        const personality: { _id?: string; name?: string } =
-            machine.context.review.personality;
-        const contentModel: string = target?.latestRevision?.contentModel;
-        const claimTitle: string = target?.latestRevision?.title;
-        const usersId: User[] = machine.context.reviewData.usersId;
-        const isContentImage: boolean = contentModel === ContentModelEnum.Image;
-        const usersName: string[] = usersId.map((user) => user.name);
+        const personality = machine.context?.review?.personality;
+        const reviewData = machine.context?.reviewData;
+        const latestRevision = target?.latestRevision;
 
-        if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
+        const usersId: User[] = reviewData?.usersId || [];
+
+        const usersName: string[] = usersId
+            .map((user) => user?.name)
+            .filter(
+                (name): name is string =>
+                    typeof name === "string" && name.length > 0
+            );
+
+        const contentModel = latestRevision?.contentModel;
+        const claimTitle = latestRevision?.title;
+        const isContentImage = contentModel === ContentModelEnum.Image;
+
+        let content: Source | Sentence | Image = target;
+
+        if (reviewTaskType === ReviewTaskTypeEnum.Claim && latestRevision) {
             if (isContentImage) {
                 content = await this.imageService.getByDataHash(data_hash);
+            } else {
+                content = await this.sentenceService.getByDataHash(data_hash);
             }
-
-            content = await this.sentenceService.getByDataHash(data_hash);
         }
 
-        return {
+        const result: IReviewTask = {
             content,
             usersName,
             value: machine.value,
-            personalityName: personality?.name,
-            claimTitle,
             targetId: target._id,
-            personalityId: personality?._id,
-            contentModel,
         };
+
+        if (personality?.name) {
+            result.personalityName = personality.name;
+        }
+        if (personality && "_id" in personality && personality._id) {
+            result.personalityId = String(personality._id);
+        }
+        if (claimTitle) {
+            result.claimTitle = claimTitle;
+        }
+        if (contentModel) {
+            result.contentModel = contentModel;
+        }
+
+        return result;
     }
 
-    getById(reviewTaskId: string) {
-        return this.ReviewTaskModel.findById(reviewTaskId);
+    getById(reviewTaskId: string): Promise<ReviewTaskDocument | null> {
+        return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
     _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
