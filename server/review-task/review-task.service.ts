@@ -190,28 +190,33 @@ export class ReviewTaskService {
                     from: "personalities",
                     let: {
                         personalityId: {
-                            $cond: {
-                                if: {
-                                    $and: [
-                                        {
-                                            $ne: [
-                                                "$machine.context.review.personality",
-                                                null,
-                                            ],
-                                        },
-                                        {
-                                            $ne: [
-                                                "$machine.context.review.personality",
-                                                "",
-                                            ],
-                                        },
-                                    ],
-                                },
-                                then: {
-                                    $toObjectId:
+                            $let: {
+                                vars: {
+                                    personalityValue:
                                         "$machine.context.review.personality",
                                 },
-                                else: null,
+                                in: {
+                                    $cond: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $ne: [
+                                                        "$$personalityValue",
+                                                        null,
+                                                    ],
+                                                },
+                                                {
+                                                    $ne: [
+                                                        "$$personalityValue",
+                                                        "",
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        { $toObjectId: "$$personalityValue" },
+                                        null,
+                                    ],
+                                },
                             },
                         },
                     },
@@ -242,15 +247,25 @@ export class ReviewTaskService {
                     from: `${reviewTaskType.toLowerCase()}s`,
                     let: {
                         targetId: {
-                            $cond: {
-                                if: {
-                                    $and: [
-                                        { $ne: ["$target", null] },
-                                        { $ne: ["$target", ""] },
+                            $let: {
+                                vars: { targetValue: "$target" },
+                                in: {
+                                    $cond: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $ne: [
+                                                        "$$targetValue",
+                                                        null,
+                                                    ],
+                                                },
+                                                { $ne: ["$$targetValue", ""] },
+                                            ],
+                                        },
+                                        { $toObjectId: "$$targetValue" },
+                                        null,
                                     ],
                                 },
-                                then: { $toObjectId: "$target" },
-                                else: null,
                             },
                         },
                     },
