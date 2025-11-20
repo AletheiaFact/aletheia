@@ -84,8 +84,8 @@ export class ReviewTaskService {
         const query = getQueryMatchForMachineValue(value);
 
         Object.keys(filterUser).forEach((key) => {
-            const value = filterUser[key];
-            if (value === true || value === "true") {
+            const filterValue = filterUser[key];
+            if (filterValue === true || filterValue === "true") {
                 const queryPath = this.fieldMap[key];
                 query[queryPath] = Types.ObjectId(this.req.user._id);
             }
@@ -132,7 +132,7 @@ export class ReviewTaskService {
         });
     }
 
-    buildLookupPipeline(reviewTaskType) {
+    buildLookupPipeline(reviewTaskType: ReviewTaskTypeEnum) {
         let pipeline: any = [
             {
                 $match: {
@@ -337,7 +337,10 @@ export class ReviewTaskService {
             result.personalityName = personality.name;
         }
         if (personality && "_id" in personality && personality._id) {
-            result.personalityId = String(personality._id);
+            result.personalityId =
+                typeof personality._id === "string"
+                    ? personality._id
+                    : personality._id.toString();
         }
         if (claimTitle) {
             result.claimTitle = claimTitle;
