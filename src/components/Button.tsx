@@ -1,5 +1,6 @@
 import { Button, ButtonProps } from "@mui/material";
 import colors from "../styles/colors";
+import { borderRadius, heights, spacingRem } from "../styles";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
@@ -43,8 +44,8 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: 40,
-        borderRadius: props.rounded ? "30px" : "4px",
+        height: heights.button, // 40px standardized
+        borderRadius: props.rounded ? borderRadius.round : borderRadius.sm, // 30px or 4px
         fontSize: "12px",
         lineHeight: "16px",
         ...props.style,
@@ -112,7 +113,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
                 <span
                     style={{
                         alignItems: "center",
-                        marginRight: "4px",
+                        marginRight: spacingRem[2], // 4px standardized
                         display: "flex",
                         justifyContent: "center",
                     }}
@@ -125,7 +126,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
                     alignItems: "center",
                     display: "flex",
                     justifyContent: "center",
-                    marginTop: "3px",
+                    marginTop: spacingRem[1], // 2px standardized
                 }}
             >
                 {children}

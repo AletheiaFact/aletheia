@@ -1,8 +1,9 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
-import { Grid } from "@mui/material";
+import { Grid } from "../Grid";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { spacing } from "../../styles";
 
 const MetricsOverview = ({ stats }) => {
     const { t } = useTranslation();
@@ -35,7 +36,7 @@ const MetricsOverview = ({ stats }) => {
                                 fontSize: 14,
                                 lineHeight: "22px",
                                 color: colors.blackSecondary,
-                                marginBottom: "16px",
+                                marginBottom: spacing.md,
                             }}
                         >
                             {t("metrics:header")}

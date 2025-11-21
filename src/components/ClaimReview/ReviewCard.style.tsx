@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
+import { spacing } from "../../styles";
 
 const ReviewCardStyled = styled.div`
     display: flex;
-    gap: 16px;
-    padding: 32px;
+    gap: ${spacing.md}; /* 16px - unrelated elements */
+    padding: ${spacing.xl}; /* 32px - major section padding */
     width: 100%;
     flex-wrap: wrap;
 
@@ -16,7 +17,7 @@ const ReviewCardStyled = styled.div`
         display: flex;
         flex-direction: column;
         flex: 1;
-        gap: 16px;
+        gap: ${spacing.md}; /* 16px - unrelated elements */
         justify-content: space-between;
     }
 
@@ -30,19 +31,19 @@ const ReviewCardStyled = styled.div`
 
     .sentence-content {
         display: flex;
-        gap: 16px;
+        gap: ${spacing.md}; /* 16px - unrelated elements */
     }
 
     .review-actions {
-        margin-top: 16px;
+        margin-top: ${spacing.md}; /* 16px */
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 8px;
+        gap: ${spacing.sm}; /* 8px - related elements */
     }
 
     @media ${queries.sm} {
-        padding: 16px;
+        padding: ${spacing.md}; /* 16px on mobile */
 
         .personality-card {
             width: 100%;

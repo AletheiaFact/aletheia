@@ -1,8 +1,9 @@
 import SectionTitle from "./SectionTitle";
-import { Grid } from "@mui/material";
+import { Grid } from "./Grid";
 import React from "react";
 import Button, { ButtonType } from "./Button";
 import { ArrowForwardOutlined } from "@mui/icons-material";
+import { spacing } from "../styles";
 
 const GridList = ({
     renderItem,
@@ -18,7 +19,7 @@ const GridList = ({
         <>
             <SectionTitle>{title}</SectionTitle>
 
-            <Grid container columnSpacing={1}>
+            <Grid container columnSpacing="xs">
                 {dataSource.map((item) => (
                     <Grid container
                         item
@@ -37,7 +38,7 @@ const GridList = ({
                     style={{
                         display: "flex",
                         justifyContent: "center",
-                        margin: "48px 0 64px 0",
+                        margin: `${spacing['2xl']} 0 ${spacing['3xl']} 0`,
                     }}
                 >
                     <Button href={href} type={ButtonType.blue} data-cy={dataCy}>

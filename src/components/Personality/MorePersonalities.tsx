@@ -1,5 +1,5 @@
 import React from "react";
-import Grid from "@mui/material/Grid"
+import { Grid } from "../Grid";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
@@ -8,6 +8,7 @@ import { useAppSelector } from "../../store/store";
 import CTAFolder from "../Home/CTAFolder";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
+import { spacing } from "../../styles";
 
 const MorePersonalities = ({ personalities, href, title }) => {
     const { t } = useTranslation();
@@ -18,7 +19,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
         <Grid container
             style={{
                 width: "100%",
-                paddingTop: "32px",
+                paddingTop: spacing.xl,
                 justifyContent: "center",
             }}
         >
@@ -31,7 +32,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
 
             <Grid item
                 xs={isLoggedIn || vw?.lg ? 11 : 3}
-                style={{ paddingLeft: vw?.lg ? 0 : 20 }}
+                style={{ paddingLeft: vw?.lg ? 0 : spacing.lg }}
             >
 
                 {!vw?.md && (

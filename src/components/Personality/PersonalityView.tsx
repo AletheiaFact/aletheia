@@ -1,17 +1,18 @@
-import Grid from "@mui/material/Grid"
+import { Grid } from "../Grid";
 import { useTranslation } from "next-i18next";
 
 import ClaimList from "../Claim/ClaimList";
-import Loading from "../Loading";
+import PersonalityViewSkeleton from "../Skeleton/PersonalityViewSkeleton";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
 import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
+import { spacing } from "../../styles";
 
 const PersonalityView = ({ personality, href, personalities }) => {
     const { t } = useTranslation();
     if (!personality) {
-        return <Loading />;
+        return <PersonalityViewSkeleton />;
     }
 
     return (
@@ -31,7 +32,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 </Grid>
             </Grid>
 
-            <Grid container justifyContent="center"style={{ marginTop: "64px" }}>
+            <Grid container justifyContent="center" style={{ marginTop: spacing['3xl'] }}>
                 <Grid item sm={11} md={7} lg={6}>
                     <ClaimList personality={personality} />
                 </Grid>

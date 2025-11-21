@@ -1,6 +1,7 @@
 import { Box, Grid } from "@mui/material";
 import { useRouter } from "next/router";
 import BackButton from "./BackButton";
+import { spacing, shadows } from "../styles";
 
 const ContentWrapper = ({ children }) => {
     const router = useRouter();
@@ -28,7 +29,7 @@ const ContentWrapper = ({ children }) => {
             sx={{
                 padding: layout === "mobile" ? "0 30%" : "0",
                 "@media (max-width: 600px)": {
-                    padding: layout === "mobile" ? "0 15px" : "0",
+                    padding: layout === "mobile" ? `0 ${spacing.md}` : "0", // 16px standardized
                 },
             }}
         >
@@ -38,9 +39,9 @@ const ContentWrapper = ({ children }) => {
                     item
                     xs={12}
                     sx={{
-                        padding: "10px 30px",
+                        padding: `${spacing.sm} ${spacing.xl}`, // 8px 32px - standardized spacing
                         backgroundColor: "white",
-                        boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
+                        boxShadow: shadows.sm,
                         margin: 0,
                     }}
                 >

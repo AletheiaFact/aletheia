@@ -1,4 +1,5 @@
-import { CircularProgress, Button, Grid, List, ListItem } from "@mui/material";
+import { CircularProgress, Button, List, ListItem } from "@mui/material";
+import { Grid } from "../Grid";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
@@ -9,6 +10,7 @@ import SortByButton from "./SortByButton";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { spacing } from "../../styles";
 
 const BaseList = ({
     apiCall,
@@ -121,7 +123,7 @@ const BaseList = ({
                     style={{
                         alignContent: "middle",
                         justifyContent: "space-between",
-                        padding: "12px 0",
+                        padding: `${spacing.sm} 0`,
                         borderBottom: "1px solid #eee"
                     }}
                 >
@@ -164,13 +166,13 @@ const BaseList = ({
                     }}
                 >
                     {loading && loadingProps ? (
-                        <Grid container style={{ display: "flex", justifyContent: "center", padding: 2 }}>
+                        <Grid container style={{ display: "flex", justifyContent: "center", padding: spacing.xs }}>
                             {loadingIcon}
                         </Grid>
                     ) : (
                         items.map((item) => (
                             <Grid container item {...grid}>
-                                <ListItem key={item} style={{ borderBottom: showDividers ? "1px solid #eee" : "none", padding: "0 10px", ...style }}>
+                                <ListItem key={item} style={{ borderBottom: showDividers ? "1px solid #eee" : "none", padding: `0 ${spacing.sm}`, ...style }}>
                                     {renderItem(item)}
                                 </ListItem>
                             </Grid>
@@ -189,7 +191,7 @@ const BaseList = ({
                         fontSize: "14px",
                         lineHeight: "22px",
                         color: colors.blackSecondary,
-                        marginBottom: "20px",
+                        marginBottom: spacing.lg,
                     }}
                 >
                     {t("list:totalItems", {

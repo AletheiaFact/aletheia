@@ -1,6 +1,6 @@
 import React from "react";
 import CTAFolder from "./CTAFolder";
-import { Grid } from "@mui/material"
+import { Grid } from "../Grid";
 import SocialMediaShare from "../SocialMediaShare";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
+import { spacing } from "../../styles";
 
 const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
     const { results } = useAppSelector((state) => ({
@@ -25,14 +26,14 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
             <Grid container
                 style={{
                     width: "100%",
-                    paddingTop: "32px",
+                    paddingTop: spacing.xl,
                     justifyContent: "center",
                 }}
             >
                 <Grid item xs={11} sm={11} md={9}>
                     <HomeFeed searchResults={results} />
                 </Grid>
-                <Grid item xs={11} sm={11} md={9} style={{ marginBottom: 32 }}>
+                <Grid item xs={11} sm={11} md={9} style={{ marginBottom: spacing.xl }}>
                     <ReviewsGrid
                         reviews={reviews}
                         title={t("home:latestReviewsTitle")}
@@ -46,7 +47,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                         md={9}
                         style={{
                             width: "100%",
-                            paddingBottom: "32px",
+                            paddingBottom: spacing.xl,
                             justifyContent: "center",
                         }}
                     >

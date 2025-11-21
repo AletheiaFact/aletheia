@@ -144,6 +144,16 @@ The frontend uses Next.js with React:
 
 8. **Analytics**: Umami v2 for privacy-focused analytics (configured via NEXT_PUBLIC_UMAMI_SITE_ID)
 
+9. **Design System**: Based on GitLab Pajamas layout principles with Aletheia's design identity
+   - **Spacing**: 8px system with design tokens (`src/styles/spacing.ts`)
+   - **Layout**: Standardized utilities (`src/styles/layout.ts`)
+   - **Typography**: Font scales, headings, UI text (`src/styles/typography.ts`)
+   - **Colors**: Semantic color system (`src/styles/semanticColors.ts`)
+   - **Grid**: Responsive grid components (`src/components/Grid/`)
+   - **Forms**: Validation system and components (`src/components/Form/`)
+   - **Skeleton**: Loading state components (`src/components/Skeleton/`)
+   - See `DESIGN_SYSTEM.md`, `CONTENT_GUIDELINES.md`, `EXAMPLES.md` for docs
+
 ## Development Setup Prerequisites
 
 1. MongoDB running (via Docker or local)
@@ -158,6 +168,9 @@ The frontend uses Next.js with React:
 3. **Testing**: Jest for unit tests, Cypress for e2e tests
 4. **Error Handling**: Centralized error filters in NestJS
 5. **Validation**: class-validator DTOs for request validation
+6. **Design Tokens**: Use spacing and layout tokens from `src/styles/` for consistency
+   - Import: `import { spacing, borderRadius, shadows } from '../styles'`
+   - Example: `padding: ${spacing.xl}` instead of `padding: "32px"`
 
 ## Important Files
 
@@ -166,3 +179,4 @@ The frontend uses Next.js with React:
 - `.env` - Environment variables for frontend
 - `server/app.module.ts` - Main backend module registration
 - `src/pages/_app.tsx` - Next.js app initialization
+- `DESIGN_SYSTEM.md` - Complete design system documentation (spacing, layout, components)
