@@ -31,10 +31,13 @@ const ReviewedImage = ({
             // @ts-ignore
             let { naturalWidth: width, naturalHeight: height } = image;
             const windowHeight = window.innerHeight;
-            // 2.25 is the ratio of the lottie container to the window
-            // determined by 66.6% of the claim container
-            // inside a section with 66.6% of the window
-            const windowWidth = window.innerWidth / 2.25;
+            // Responsive width calculation
+            // Mobile: use 90% of viewport for better display
+            // Desktop: use 1.5 ratio (was 2.25, now larger images)
+            const isMobile = window.innerWidth < 768;
+            const windowWidth = isMobile
+                ? window.innerWidth * 0.9
+                : window.innerWidth / 1.5;
 
             const aspectRatio = width / height;
 
