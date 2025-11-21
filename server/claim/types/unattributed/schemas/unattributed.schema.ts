@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
 
 export type UnattributedDocument = Unattributed & mongoose.Document;
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Unattributed {
     @Prop({
         default: "unattributed",

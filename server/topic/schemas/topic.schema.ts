@@ -3,11 +3,7 @@ import * as mongoose from "mongoose";
 
 export type TopicDocument = Topic & mongoose.Document;
 
-@Schema({
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true },
-    timestamps: true,
-})
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Topic {
     // TODO: Implement topic taxonomy
     // TODO: Better I18N
@@ -24,9 +20,6 @@ export class Topic {
 
     @Prop({ required: false })
     wikidataId?: string;
-
-    @Prop({ required: false, type: [String], default: [] })
-    aliases?: string[];
 
     @Prop({
         required: true,

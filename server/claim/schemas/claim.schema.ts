@@ -8,7 +8,7 @@ import { Group } from "../../group/schemas/group.schema";
 
 export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Claim {
     @Prop({
         type: [

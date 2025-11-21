@@ -18,7 +18,7 @@ export type EditorContentObjectType = {
         }[];
     }[];
 };
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Editor {
     @Prop({
         required: true,

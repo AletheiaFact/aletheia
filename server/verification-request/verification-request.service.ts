@@ -15,7 +15,6 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { buildDateQuery } from "../../src/utils/date.utils";
 import {
     BadRequestException,
     Injectable,
@@ -961,8 +960,6 @@ export class VerificationRequestService {
         sourceChannel?: string;
         status?: string[];
         impactArea?: string[];
-        startDate?: string;
-        endDate?: string;
     }): Promise<Record<string, any>> {
         const {
             contentFilters,
@@ -971,8 +968,6 @@ export class VerificationRequestService {
             sourceChannel,
             status,
             impactArea,
-            startDate,
-            endDate
         } = filters;
         const query: any = {};
 
@@ -1000,10 +995,6 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
-      
-        const dateQuery = buildDateQuery(startDate, endDate);
-        
-        if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {
             query.$or = orConditions;

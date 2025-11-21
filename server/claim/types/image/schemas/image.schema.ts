@@ -6,7 +6,7 @@ import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-rev
 
 export type ImageDocument = Image & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Image {
     @Prop({
         default: ContentModelEnum.Image,

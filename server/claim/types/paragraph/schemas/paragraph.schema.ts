@@ -5,7 +5,7 @@ import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-rev
 
 export type ParagraphDocument = Paragraph & mongoose.Document;
 
-@Schema({ timestamps: true })
+@Schema()
 export class Paragraph {
     @Prop({
         type: String,

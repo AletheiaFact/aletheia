@@ -9,7 +9,7 @@ export enum CommentEnum {
     review = "review",
 }
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Comment {
     @Prop({ type: Number })
     from: number;
@@ -22,6 +22,9 @@ export class Comment {
 
     @Prop({ required: true })
     text: string;
+
+    @Prop({ required: true, default: Date.now() })
+    createdAt: number;
 
     @Prop({
         type: mongoose.Types.ObjectId,

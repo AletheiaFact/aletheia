@@ -40,8 +40,6 @@ interface FiltersState {
   topicFilterUsed: string[];
   impactAreaFilterUsed: string[];
   applyFilters: boolean;
-  startDate: Date | null;
-  endDate: Date | null;
 }
 interface FiltersActions {
   setIsInitialLoad: (initial: boolean) => void;
@@ -59,8 +57,6 @@ interface FiltersActions {
   ) => (newValue: any) => void;
   dispatch: Dispatch<any>;
   t: (key: string) => string;
-  setStartDate: (date: Date | null) => void;
-  setEndDate: (date: Date | null) => void;
 }
 interface FiltersContext {
   state: FiltersState;

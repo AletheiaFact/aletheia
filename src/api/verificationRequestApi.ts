@@ -9,8 +9,6 @@ interface SearchOptions {
     order?: string;
     topics?: any;
     filtersUsed?: any;
-    startDate?: string;
-    endDate?: string;
     severity?: string;
     noCache?: boolean;
     sourceChannel?: string;
@@ -59,8 +57,6 @@ const get = (options: SearchOptions, dispatch = null) => {
         order: options.order || "desc",
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
-        startDate: options.startDate || undefined,
-        endDate: options.endDate || undefined,
         severity: options.severity || "all",
         sourceChannel: options.sourceChannel || "all",
         status: options.status || [],
@@ -165,17 +161,13 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            MessageManager.showMessage(
-                "success",
+            MessageManager.showMessage("success",
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage(
-                "error",
-                t("verificationRequest:addVerificationRequestError")
-            );
+            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
             console.error("error while updating verification request", e);
         });
 };

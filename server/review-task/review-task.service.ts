@@ -42,19 +42,19 @@ interface IListAllQuery {
 interface IPostProcess {
     data_hash: string;
     machine: Machine;
-    target: any; // TODO: Type this properly as Claim | VerificationRequest
-    reviewTaskType: ReviewTaskTypeEnum;
+    target: any;
+    reviewTaskType: string;
 }
 
 export interface IReviewTask {
     content: Source | Sentence | Image;
     usersName: string[];
     value: string;
-    personalityName?: string;
-    claimTitle?: string;
+    personalityName: string;
+    claimTitle: string;
     targetId: string;
-    personalityId?: string;
-    contentModel?: string;
+    personalityId: string;
+    contentModel: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -84,8 +84,8 @@ export class ReviewTaskService {
         const query = getQueryMatchForMachineValue(value);
 
         Object.keys(filterUser).forEach((key) => {
-            const filterValue = filterUser[key];
-            if (filterValue === true || filterValue === "true") {
+            const value = filterUser[key];
+            if (value === true || value === "true") {
                 const queryPath = this.fieldMap[key];
                 query[queryPath] = Types.ObjectId(this.req.user._id);
             }
@@ -132,18 +132,9 @@ export class ReviewTaskService {
         });
     }
 
-    buildLookupPipeline(reviewTaskType: ReviewTaskTypeEnum) {
+    buildLookupPipeline(reviewTaskType) {
         let pipeline: any = [
-            {
-                $match: {
-                    $expr: {
-                        $and: [
-                            { $ne: ["$$targetId", null] },
-                            { $eq: ["$_id", "$$targetId"] },
-                        ],
-                    },
-                },
-            },
+            { $match: { $expr: { $eq: ["$_id", "$$targetId"] } } },
         ];
 
         if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
@@ -190,45 +181,13 @@ export class ReviewTaskService {
                     from: "personalities",
                     let: {
                         personalityId: {
-                            $let: {
-                                vars: {
-                                    personalityValue:
-                                        "$machine.context.review.personality",
-                                },
-                                in: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                {
-                                                    $ne: [
-                                                        "$$personalityValue",
-                                                        null,
-                                                    ],
-                                                },
-                                                {
-                                                    $ne: [
-                                                        "$$personalityValue",
-                                                        "",
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        { $toObjectId: "$$personalityValue" },
-                                        null,
-                                    ],
-                                },
-                            },
+                            $toObjectId: "$machine.context.review.personality",
                         },
                     },
                     pipeline: [
                         {
                             $match: {
-                                $expr: {
-                                    $and: [
-                                        { $ne: ["$$personalityId", null] },
-                                        { $eq: ["$_id", "$$personalityId"] },
-                                    ],
-                                },
+                                $expr: { $eq: ["$_id", "$$personalityId"] },
                             },
                         },
                         { $project: { slug: 1, name: 1, _id: 1 } },
@@ -245,30 +204,7 @@ export class ReviewTaskService {
             {
                 $lookup: {
                     from: `${reviewTaskType.toLowerCase()}s`,
-                    let: {
-                        targetId: {
-                            $let: {
-                                vars: { targetValue: "$target" },
-                                in: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                {
-                                                    $ne: [
-                                                        "$$targetValue",
-                                                        null,
-                                                    ],
-                                                },
-                                                { $ne: ["$$targetValue", ""] },
-                                            ],
-                                        },
-                                        { $toObjectId: "$$targetValue" },
-                                        null,
-                                    ],
-                                },
-                            },
-                        },
-                    },
+                    let: { targetId: { $toObjectId: "$target" } },
                     pipeline: this.buildLookupPipeline(reviewTaskType),
                     as: "target",
                 },
@@ -302,73 +238,43 @@ export class ReviewTaskService {
         );
     }
 
-    /**
-     * Post-processes review task data after aggregation pipeline
-     * Handles optional fields gracefully for different review types
-     * @param params - PostProcess parameters
-     * @returns Formatted review task data
-     */
     async postProcess({
         data_hash,
         machine,
         target,
         reviewTaskType,
     }: IPostProcess): Promise<IReviewTask> {
-        const personality = machine.context?.review?.personality;
-        const reviewData = machine.context?.reviewData;
-        const latestRevision = target?.latestRevision;
-
-        const usersId: User[] = reviewData?.usersId || [];
-
-        const usersName: string[] = usersId
-            .map((user) => user?.name)
-            .filter(
-                (name): name is string =>
-                    typeof name === "string" && name.length > 0
-            );
-
-        const contentModel = latestRevision?.contentModel;
-        const claimTitle = latestRevision?.title;
-        const isContentImage = contentModel === ContentModelEnum.Image;
-
         let content: Source | Sentence | Image = target;
+        const personality: { _id?: string; name?: string } =
+            machine.context.review.personality;
+        const contentModel: string = target?.latestRevision?.contentModel;
+        const claimTitle: string = target?.latestRevision?.title;
+        const usersId: User[] = machine.context.reviewData.usersId;
+        const isContentImage: boolean = contentModel === ContentModelEnum.Image;
+        const usersName: string[] = usersId.map((user) => user.name);
 
-        if (reviewTaskType === ReviewTaskTypeEnum.Claim && latestRevision) {
+        if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
             if (isContentImage) {
                 content = await this.imageService.getByDataHash(data_hash);
-            } else {
-                content = await this.sentenceService.getByDataHash(data_hash);
             }
+
+            content = await this.sentenceService.getByDataHash(data_hash);
         }
 
-        const result: IReviewTask = {
+        return {
             content,
             usersName,
             value: machine.value,
+            personalityName: personality?.name,
+            claimTitle,
             targetId: target._id,
+            personalityId: personality?._id,
+            contentModel,
         };
-
-        if (personality?.name) {
-            result.personalityName = personality.name;
-        }
-        if (personality && "_id" in personality && personality._id) {
-            result.personalityId =
-                typeof personality._id === "string"
-                    ? personality._id
-                    : personality._id.toString();
-        }
-        if (claimTitle) {
-            result.claimTitle = claimTitle;
-        }
-        if (contentModel) {
-            result.contentModel = contentModel;
-        }
-
-        return result;
     }
 
-    getById(reviewTaskId: string): Promise<ReviewTaskDocument | null> {
-        return this.ReviewTaskModel.findById(reviewTaskId).exec();
+    getById(reviewTaskId: string) {
+        return this.ReviewTaskModel.findById(reviewTaskId);
     }
 
     _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {

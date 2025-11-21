@@ -12,7 +12,7 @@ export enum TypeModel {
     Published = "published",
 }
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class StateEvent {
     @Prop({
         type: mongoose.Types.ObjectId,

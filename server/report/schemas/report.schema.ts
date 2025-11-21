@@ -6,7 +6,7 @@ import { ReportModelEnum } from "../../types/enums";
 
 export type ReportDocument = Report & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Report {
     @Prop({ required: true })
     data_hash: string;

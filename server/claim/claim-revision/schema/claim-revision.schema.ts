@@ -6,7 +6,7 @@ import { ContentModelEnum } from "../../../types/enums";
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class ClaimRevision {
     @Prop({ required: true })
     title: string;

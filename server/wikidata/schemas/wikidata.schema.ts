@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 
 export type WikidataCacheDocument = WikidataCache & Document;
 
-@Schema({ timestamps: true })
+@Schema()
 export class WikidataCache {
     @Prop({ required: true })
     wikidataId: string;
@@ -13,6 +13,9 @@ export class WikidataCache {
 
     @Prop({ type: Object, required: true })
     props: object;
+
+    @Prop({ default: Date.now })
+    createdAt: Date;
 }
 
 export const WikidataCacheSchema = SchemaFactory.createForClass(WikidataCache);

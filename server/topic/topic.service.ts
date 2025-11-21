@@ -19,63 +19,36 @@ export class TopicService {
         private wikidataService: WikidataService
     ) {}
 
-    /**
-     * Normalize a string by removing accents/diacritical marks
-     * @param text The text to normalize
-     * @returns Normalized text without accents
-     */
-    private normalizeText(text: string): string {
-        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
-
-    async getWikidataEntities(regex: string, language: string) {
+    async getWikidataEntities(regex, language) {
         return await this.wikidataService.queryWikibaseEntities(
             regex,
             language
         );
     }
 
-    async searchTopics(
-        query: string,
-        language = "pt",
-        limit = 10
-    ): Promise<Topic[]> {
-        if (typeof language !== "string") {
-            throw new TypeError("Invalid language");
-        }
-
-        const normalizedQuery = this.normalizeText(query);
-        const searchRegex = new RegExp(normalizedQuery, "i");
-
-        const topics = await this.TopicModel.find({
-            language: { $eq: language },
-            $or: [
-                { name: { $regex: searchRegex } },
-                { aliases: { $regex: searchRegex } },
-            ],
-        })
-            .limit(limit)
-            .sort({ name: 1 });
-
-        const normalizedQueryLower = normalizedQuery.toLowerCase();
-        return topics.map((topic) => {
-            const topicObj = topic.toObject();
-            const matchedAlias =
-                topicObj.aliases?.find((alias) =>
-                    this.normalizeText(alias)
-                        .toLowerCase()
-                        .includes(normalizedQueryLower)
-                ) || null;
-            return { ...topicObj, matchedAlias };
-        });
+  async searchTopics(
+    query: string,
+    language = "pt",
+    limit = 10
+  ): Promise<Topic[]> {
+    if (typeof language !== "string") {
+       throw new TypeError("Invalid language");
     }
+
+    return this.TopicModel.find({
+    name: { $regex: query, $options: "i" },
+    language: { $eq: language }
+  })
+    .limit(limit)
+    .sort({ name: 1 });
+  }
 
     /**
      *
      * @param getTopics options to fetch topics
      * @returns return all topics from wikidata database that match to topicName from input
      */
-    async findAll(getTopics, language = "pt") {
+    async findAll(getTopics, language = "pt"): Promise<Topic[]> {
         return this.getWikidataEntities(getTopics.topicName, language);
     }
 
@@ -94,12 +67,9 @@ export class TopicService {
         }: {
             contentModel?: ContentModelEnum;
             topics:
-                | { label: string; value: string; aliases?: string[] }[]
+                | { label: string; value: string }[]
                 | string[]
-                | (
-                      | string
-                      | { label: string; value: string; aliases?: string[] }
-                  )[];
+                | (string | { label: string; value: string })[];
             data_hash?: string;
         },
         language: string = "pt"
@@ -125,7 +95,6 @@ export class TopicService {
                         const newTopic = {
                             name: topic?.label || topic,
                             wikidataId: topic?.value,
-                            aliases: topic?.aliases || [],
                             slug,
                             language,
                         };
@@ -175,31 +144,12 @@ export class TopicService {
     }
 
     /**
-     * Escape special regex characters to prevent ReDoS attacks
-     * @param str The string to escape
-     * @returns Escaped string safe for regex
-     */
-    private escapeRegex(str: string): string {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-
-    /**
-     * Find topics by name or alias with case-insensitive matching
+     *
      * @param names topic names array
-     * @returns Promise resolving to array of matching topics
+     * @returns topics
      */
-    findByNames(names: string[]): Promise<TopicDocument[]> {
-        const nameConditions = names.flatMap((name) => {
-            const escapedName = this.escapeRegex(name);
-            return [
-                { name: { $regex: new RegExp(`^${escapedName}$`, "i") } },
-                { aliases: { $regex: new RegExp(`^${escapedName}$`, "i") } },
-            ];
-        });
-
-        return this.TopicModel.find({
-            $or: nameConditions,
-        }).exec();
+    findByNames(names: string[]) {
+        return this.TopicModel.find({ name: { $in: names } });
     }
 
     /**

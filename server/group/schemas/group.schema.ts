@@ -4,7 +4,7 @@ import { VerificationRequest } from "../../verification-request/schemas/verifica
 
 export type GroupDocument = Group & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Group {
     @Prop({
         type: [

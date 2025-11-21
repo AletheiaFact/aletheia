@@ -7,7 +7,7 @@ export interface UserDocument extends User, Document {
     authenticate(): any;
 }
 
-@Schema({ timestamps: true })
+@Schema()
 export class User {
     @Prop({ required: true })
     name: string;
