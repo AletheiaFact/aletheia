@@ -9,7 +9,7 @@ export enum SourceTargetModel {
     Claim = "Claim",
     ClaimReview = "ClaimReview",
 }
-@Schema()
+@Schema({ timestamps: true })
 export class Source {
     @Prop({ required: true })
     href: string;
