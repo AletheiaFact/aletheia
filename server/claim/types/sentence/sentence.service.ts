@@ -31,7 +31,7 @@ export class SentenceService {
         private util: UtilService
     ) {}
 
-    async getSentencesByTopic(): Promise<Cop30Sentence[]> {
+    async getSentencesWithCop30Topics(): Promise<Cop30Sentence[]> {
         const aggregation = [
             { $match: { "topics.value": { $in: allCop30WikiDataIds } } },
             {
@@ -74,7 +74,7 @@ export class SentenceService {
     }
 
     async getCop30Stats(): Promise<Cop30Stats> {
-        const sentences = await this.getSentencesByTopic();
+        const sentences = await this.getSentencesWithCop30Topics();
 
         return buildStats(sentences);
     }

@@ -69,9 +69,9 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
                     {stats && (
                         <Statistics
                             total={stats.total}
-                            confiavel={stats.confiavel}
-                            enganoso={stats.enganoso}
-                            emAnalise={stats.emAnalise}
+                            reliable={stats.reliable}
+                            deceptive={stats.deceptive}
+                            underReview={stats.underReview}
                         />
                     )}
 

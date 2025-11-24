@@ -1,6 +1,6 @@
 export interface Cop30Stats {
     total: number;
-    confiavel: number;
-    enganoso: number;
-    emAnalise: number;
+    reliable: number;
+    deceptive: number;
+    underReview: number;
 }

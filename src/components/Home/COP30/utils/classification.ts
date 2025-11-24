@@ -1,15 +1,15 @@
 export const classificationMap = {
-    trustworthy: "confiavel",
-    trustworthyBut: "confiavel",
+    trustworthy: "reliable",
+    trustworthyBut: "reliable",
 
-    misleading: "enganoso",
-    false: "enganoso",
-    unsustainable: "enganoso",
-    exaggerated: "enganoso",
-    unverifiable: "enganoso",
+    misleading: "deceptive",
+    false: "deceptive",
+    unsustainable: "deceptive",
+    exaggerated: "deceptive",
+    unverifiable: "deceptive",
 
-    arguable: "emAnalise",
-    notFact: "emAnalise",
+    arguable: "underReview",
+    notFact: "underReview",
 };
 
 export function buildStats(sentences: Array<{ classification?: string }>) {
@@ -17,9 +17,9 @@ export function buildStats(sentences: Array<{ classification?: string }>) {
 
     const stats = {
         total: normalizedSentences.length,
-        confiavel: 0,
-        enganoso: 0,
-        emAnalise: 0,
+        reliable: 0,
+        deceptive: 0,
+        underReview: 0,
     };
 
     for (const sentence of normalizedSentences) {

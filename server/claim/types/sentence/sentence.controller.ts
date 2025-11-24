@@ -9,25 +9,25 @@ import { Auth } from "../../../auth/decorators/auth.decorator";
 export class SentenceController {
     constructor(private sentenceService: SentenceService) {}
 
+    @Auth({ public: true })
+    @ApiTags("claim")
+    @Get("api/sentence/cop30")
+    async getAllSentencesWithCop30Topic(): Promise<Cop30Sentence[]> {
+        return this.sentenceService.getSentencesWithCop30Topics();
+    }
+
+    @Auth({ public: true })
+    @ApiTags("claim")
+    @Get("api/sentence/cop30/stats")
+    async getCop30Stats(): Promise<Cop30Stats> {
+        return this.sentenceService.getCop30Stats();
+    }
+
     @ApiTags("claim")
     @Auth({ public: true })
     @Get("api/sentence/:data_hash")
     getSentenceByHash(@Param("data_hash") data_hash) {
         return this.sentenceService.getByDataHash(data_hash);
-    }
-
-    @Auth({ public: true })
-    @ApiTags("claim")
-    @Get("api/sentences/cop30")
-    async getAllSentencesWithCop30Topic(): Promise<Cop30Sentence[]> {
-        return this.sentenceService.getSentencesByTopic();
-    }
-
-    @Auth({ public: true })
-    @ApiTags("claim")
-    @Get("api/sentences/cop30/stats")
-    async getCop30Stats(): Promise<Cop30Stats> {
-        return this.sentenceService.getCop30Stats();
     }
 
     @ApiTags("claim")
