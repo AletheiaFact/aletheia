@@ -3,7 +3,6 @@ import { Novu } from "@novu/node";
 import config from "../migrate-mongo-config";
 
 export async function up(db: Db) {
-    return;
     // migrations not needed
     /* Create novu subscribers */
     const novuApiKey = await config.novu_api_key;
@@ -11,9 +10,13 @@ export async function up(db: Db) {
 
     const usersCursor = await db.collection("users").find();
     while (await usersCursor.hasNext()) {
-        const { _id, email, name } = await usersCursor.next();
+        const user = await usersCursor.next();
+        if (!user) {
+            continue;
+        }
+        const { _id, email, name } = user;
 
-        await novu.subscribers.identify(_id, {
+        await novu.subscribers.identify(_id.toString(), {
             email,
             firstName: name,
         });
@@ -29,6 +32,6 @@ export async function down(db: Db) {
     while (await usersCursor.hasNext()) {
         const user = await usersCursor.next();
 
-        await novu.subscribers.delete(user.id);
+        await novu.subscribers.delete(user?.id);
     }
 }
