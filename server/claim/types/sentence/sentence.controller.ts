@@ -16,12 +16,14 @@ export class SentenceController {
         return this.sentenceService.getByDataHash(data_hash);
     }
 
+    @IsPublic()
     @ApiTags("claim")
     @Get("api/sentences/cop30")
     async getAllSentencesWithCop30Topic(): Promise<Cop30Sentence[]> {
         return this.sentenceService.getSentencesByTopic();
     }
 
+    @IsPublic()
     @ApiTags("claim")
     @Get("api/sentences/cop30/stats")
     async getCop30Stats(): Promise<Cop30Stats> {

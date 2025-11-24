@@ -26,6 +26,6 @@ const cop30Filters: Cop30Filter[] = Object.entries(cop30FilterMap).map(
 
 export const allCop30WikiDataIds = cop30Filters
     .filter((filter) => filter.wikidataId !== null)
-    .map((filter) => filter.wikidataId as string);
+    .map((filter) => filter.wikidataId);
 
 export default cop30Filters;
