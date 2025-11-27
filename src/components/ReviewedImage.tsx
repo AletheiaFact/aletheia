@@ -1,8 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
 import lottie from "lottie-web";
-import { generateLottie } from "../lottiefiles/generateLottie";
+import { generateLottie, LottieAnimation } from "../lottiefiles/generateLottie";
 import { ClassificationEnum } from "../types/enums";
+
+interface ImageDimensions {
+    width: number;
+    height: number;
+}
+
+const getImageMeta = (url: string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+        img.src = url;
+    });
+
+const getDimensions = async (imageData: string): Promise<ImageDimensions> => {
+    try {
+        const image = await getImageMeta(imageData);
+        const width = image.naturalWidth;
+        const height = image.naturalHeight;
+
+        return { width, height };
+    } catch (error) {
+        console.error("Failed to load image dimensions:", error);
+        return { width: 500, height: 500 };
+    }
+};
 
 const ReviewedImage = ({
     imageUrl,
@@ -13,49 +39,12 @@ const ReviewedImage = ({
     title: string;
     classification?: keyof typeof ClassificationEnum;
 }) => {
-    const [animation, setAnimation] = useState<any>(null);
-    const container = useRef(null);
-    const getImageMeta = (url) =>
-        new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-            img.src = url;
-        });
+    const [animation, setAnimation] = useState<LottieAnimation | null>(null);
+    const container = useRef<HTMLDivElement>(null);
 
-    // get the natural width and height of the image or fit it to the window
-    const getDimensions = async (imageData: any) => {
-        try {
-            const image = await getImageMeta(imageData);
-
-            // @ts-ignore
-            let { naturalWidth: width, naturalHeight: height } = image;
-            const windowHeight = window.innerHeight;
-            // Responsive width calculation
-            // Mobile: use 90% of viewport for better display
-            // Desktop: use 1.5 ratio (was 2.25, now larger images)
-            const isMobile = window.innerWidth < 768;
-            const windowWidth = isMobile
-                ? window.innerWidth * 0.9
-                : window.innerWidth / 1.5;
-
-            const aspectRatio = width / height;
-
-            if (height > windowHeight) {
-                height = windowHeight;
-                width = height * aspectRatio;
-            }
-            if (width > windowWidth) {
-                width = windowWidth;
-                height = width / aspectRatio;
-            }
-            return { width, height };
-        } catch (error) {
-            console.log(error);
-            return { width: 500, height: 500 };
-        }
-    };
     useEffect(() => {
+        if (!classification) return;
+
         getDimensions(imageUrl).then(({ width, height }) => {
             const newAnimation = generateLottie(
                 classification,
@@ -65,7 +54,7 @@ const ReviewedImage = ({
             );
             setAnimation(newAnimation);
         });
-    }, []);
+    }, [imageUrl, classification]);
 
     useEffect(() => {
         if (classification) {
@@ -76,8 +65,7 @@ const ReviewedImage = ({
                 autoplay: false,
                 animationData: animation,
                 rendererSettings: {
-                    preserveAspectRatio: "xMinYMin meet",
-                    viewBoxSize: "10 10",
+                    preserveAspectRatio: "xMidYMid meet",
                 },
             });
             lottie.setSpeed(1.5);
@@ -105,9 +93,13 @@ const ReviewedImage = ({
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                             ref={container}
+                            aria-hidden="true"
                             style={{
                                 maxWidth: "100%",
                                 maxHeight: "100vh",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                             }}
                         />
                     )}
@@ -119,6 +111,8 @@ const ReviewedImage = ({
                     style={{
                         maxWidth: "100%",
                         maxHeight: "100vh",
+                        display: "block",
+                        margin: "0 auto",
                     }}
                 />
             )}
