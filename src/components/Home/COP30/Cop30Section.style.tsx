@@ -84,7 +84,7 @@ justify-items: center;
     .stats-container {
         background: #ffffff;
         border-radius: 12px;
-        padding: 28px 32px;
+        padding: 16px;
         margin-bottom: 32px;
         box-shadow: 0 2px 8px rgba(17, 39, 58, 0.08);
         border: 1px solid #c2c8cc;
@@ -93,7 +93,7 @@ justify-items: center;
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 24px;
+        gap: 12px;
     }
 
     .stat-item {
