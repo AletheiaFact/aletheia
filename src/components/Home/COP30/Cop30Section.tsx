@@ -18,8 +18,6 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
     const [activeFilter, setActiveFilter] = useState("all");
     const [stats, setStats] = useState<Cop30Stats | null>(null);
 
-    const [cop30Reviews, setCop30Reviews] = useState<Cop30Sentence[]>([]);
-
     const hasCop30Topic = (topics?: { value: string }[]) =>
         topics?.some(topic => allCop30WikiDataIds.includes(topic.value));
 
@@ -29,6 +27,8 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
         label: t(filter.translationKey),
     }));
 
+    const cop30Reviews = reviews.filter(review => hasCop30Topic(review.content.topics));
+
     useEffect(() => {
         async function fetchStats() {
             const stats = await SentenceApi.getCop30Stats()
@@ -37,14 +37,6 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
         setActiveFilter("all")
         fetchStats();
     }, []);
-
-    useEffect(() => {
-        async function fetchCop30Reviews() {
-            const cop30Reviews = await SentenceApi.getSentencesWithCop30Topics();
-            setCop30Reviews(cop30Reviews);
-        }
-        fetchCop30Reviews();
-    }, [activeFilter]);
 
     const selectedWikiDataId = cop30Filters.find(filter => filter.id === activeFilter)?.wikidataId
 
