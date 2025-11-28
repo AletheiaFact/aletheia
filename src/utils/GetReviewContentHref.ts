@@ -31,6 +31,8 @@ export const generateReviewContentPath = (
             return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
         case ContentModelEnum.Unattributed:
             return `${basePath}/claim/${claim?.slug}/sentence/${data_hash}`;
+        case ContentModelEnum.History:
+            return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}/history`;
         default:
             return "";
     }

@@ -28,6 +28,7 @@ enum ContentModelEnum {
     Image = "Image",
     Debate = "Debate",
     Unattributed = "Unattributed",
+    History = "History",
 }
 
 export enum TargetModel {
