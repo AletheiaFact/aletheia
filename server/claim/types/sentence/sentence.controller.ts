@@ -1,19 +1,23 @@
 import { Controller, Param, Put, Body, Get } from "@nestjs/common";
 import { SentenceService } from "./sentence.service";
 import { ApiTags } from "@nestjs/swagger";
-import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
 import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
 import { Auth } from "../../../auth/decorators/auth.decorator";
+import { ClaimReviewService } from "../../../claim-review/claim-review.service";
+import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
 
 @Controller()
 export class SentenceController {
-    constructor(private sentenceService: SentenceService) {}
+    constructor(
+        private sentenceService: SentenceService,
+        private claimReviewService: ClaimReviewService
+    ) {}
 
     @Auth({ public: true })
     @ApiTags("claim")
     @Get("api/sentence/cop30")
-    async getAllSentencesWithCop30Topic(): Promise<Cop30Sentence[]> {
-        return this.sentenceService.getSentencesWithCop30Topics();
+    async getAllSentencesWithCop30Topic() {
+        return this.claimReviewService.listCop30Reviews(allCop30WikiDataIds);
     }
 
     @Auth({ public: true })
