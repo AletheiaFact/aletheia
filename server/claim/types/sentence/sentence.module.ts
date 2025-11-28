@@ -1,6 +1,7 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ReportModule } from "../../../report/report.module";
+import { ClaimReviewModule } from "../../../claim-review/claim-review.module";
 import { Sentence, SentenceSchema } from "./schemas/sentence.schema";
 import { SentenceController } from "./sentence.controller";
 import { SentenceService } from "./sentence.service";
@@ -14,7 +15,7 @@ const SentenceModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [SentenceModel, ReportModule],
+    imports: [SentenceModel, ReportModule, forwardRef(() => ClaimReviewModule)],
     controllers: [SentenceController],
     providers: [UtilService, SentenceService],
     exports: [SentenceService],

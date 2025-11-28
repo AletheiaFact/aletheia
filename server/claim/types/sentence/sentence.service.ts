@@ -36,6 +36,22 @@ export class SentenceService {
             { $match: { "topics.value": { $in: allCop30WikiDataIds } } },
             {
                 $lookup: {
+                    from: "claimrevisions",
+                    localField: "claimRevisionId",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "claim.personalities",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
                     from: "reviewtasks",
                     let: { sentenceDataHash: "$data_hash" },
                     pipeline: [
@@ -64,6 +80,16 @@ export class SentenceService {
                 $addFields: {
                     classification: {
                         $arrayElemAt: ["$reviewInfo.classification", 0],
+                    },
+                    content: {
+                        content: "$content",
+                        data_hash: "$data_hash",
+                        topics: "$topics",
+                        props: {
+                            classification: {
+                                $arrayElemAt: ["$reviewInfo.classification", 0],
+                            },
+                        },
                     },
                 },
             },
@@ -115,6 +141,17 @@ export class SentenceService {
             { _id: sentence._id },
             { $set: { topics } }
         );
+    }
+
+    async hasCop30Topic(
+        data_hash: string,
+        cop30WikiDataIds: string[]
+    ): Promise<boolean> {
+        const sentence = await this.SentenceModel.findOne({
+            data_hash,
+            "topics.value": { $in: cop30WikiDataIds },
+        });
+        return !!sentence;
     }
 
     async findAll({

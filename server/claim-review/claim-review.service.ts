@@ -81,6 +81,52 @@ export class ClaimReviewService {
         );
     }
 
+    async listCop30Reviews(cop30WikiDataIds: string[]) {
+        const claimReviews = await this.ClaimReviewModel.find({
+            targetModel: ReviewTaskTypeEnum.Claim,
+            isDeleted: false,
+            isHidden: false,
+        })
+            .populate({
+                path: "target",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    model: "ClaimRevision",
+                },
+                match: {
+                    isDeleted: false,
+                },
+            })
+            .populate({
+                path: "personality",
+                model: "Personality",
+                match: {
+                    isDeleted: false,
+                },
+            })
+            .exec();
+
+        const cop30Reviews = [];
+        for (const review of claimReviews) {
+            if (!review.data_hash) continue;
+
+            const hasSentenceWithCop30 =
+                await this.sentenceService.hasCop30Topic(
+                    review.data_hash,
+                    cop30WikiDataIds
+                );
+
+            if (hasSentenceWithCop30) {
+                cop30Reviews.push(review);
+            }
+        }
+
+        return Promise.all(
+            cop30Reviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
     async listDailyClaimReviews(query) {
         const pipeline = this.ClaimReviewModel.find({
             ...query,
