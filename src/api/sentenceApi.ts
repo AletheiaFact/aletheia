@@ -17,21 +17,6 @@ const getSentenceTopicsByDatahash = (data_hash) => {
         });
 };
 
-const getSentencesWithCop30Topics = () => {
-    return request
-        .get("/cop30")
-        .then((response) => {
-            return response.data;
-        })
-        .catch((err) => {
-            throw err;
-        });
-};
-
-const getCop30Stats = () => {
-    return request.get("/cop30/stats").then((response) => response.data);
-};
-
 const deleteSentenceTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}`, topics)
@@ -47,8 +32,6 @@ const deleteSentenceTopic = (topics, data_hash, t) => {
 
 const SentenceApi = {
     deleteSentenceTopic,
-    getSentencesWithCop30Topics,
-    getCop30Stats,
     getSentenceTopicsByDatahash,
 };
 
