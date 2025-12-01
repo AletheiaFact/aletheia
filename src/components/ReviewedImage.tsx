@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
-import lottie from "lottie-web";
 import { generateLottie } from "../lottiefiles/generateLottie";
 import { ClassificationEnum } from "../types/enums";
 
@@ -14,6 +13,8 @@ const ReviewedImage = ({
     classification?: keyof typeof ClassificationEnum;
 }) => {
     const [animation, setAnimation] = useState<any>(null);
+    const [lottieInstance, setLottieInstance] = useState<any>(null);
+    const [animationInstance, setAnimationInstance] = useState<any>(null);
     const container = useRef(null);
     const getImageMeta = (url) =>
         new Promise((resolve, reject) => {
@@ -56,20 +57,29 @@ const ReviewedImage = ({
         }
     };
     useEffect(() => {
-        getDimensions(imageUrl).then(({ width, height }) => {
-            const newAnimation = generateLottie(
-                classification,
-                imageUrl,
-                width,
-                height
-            );
-            setAnimation(newAnimation);
-        });
-    }, []);
+        // Only load lottie on client side
+        if (typeof window !== 'undefined' && !lottieInstance) {
+            import('lottie-web').then((lottie) => {
+                setLottieInstance(lottie.default);
+            });
+        }
+        
+        if (typeof window !== 'undefined') {
+            getDimensions(imageUrl).then(({ width, height }) => {
+                const newAnimation = generateLottie(
+                    classification,
+                    imageUrl,
+                    width,
+                    height
+                );
+                setAnimation(newAnimation);
+            });
+        }
+    }, [imageUrl, classification]);
 
     useEffect(() => {
-        if (classification) {
-            lottie.loadAnimation({
+        if (classification && lottieInstance && animation && container.current) {
+            const newAnimationInstance = lottieInstance.loadAnimation({
                 container: container.current,
                 renderer: "svg",
                 loop: false,
@@ -80,21 +90,29 @@ const ReviewedImage = ({
                     viewBoxSize: "10 10",
                 },
             });
-            lottie.setSpeed(1.5);
+            newAnimationInstance.setSpeed(1.5);
+            setAnimationInstance(newAnimationInstance);
+            
+            return () => {
+                if (newAnimationInstance) {
+                    newAnimationInstance.destroy();
+                }
+            };
         }
-        return () => {
-            lottie.destroy();
-        };
-    }, [animation, classification]);
+    }, [animation, classification, lottieInstance]);
 
     const handleMouseEnter = () => {
-        lottie.setDirection(1);
-        lottie.play();
+        if (animationInstance) {
+            animationInstance.setDirection(1);
+            animationInstance.play();
+        }
     };
 
     const handleMouseLeave = () => {
-        lottie.setDirection(-1);
-        lottie.play();
+        if (animationInstance) {
+            animationInstance.setDirection(-1);
+            animationInstance.play();
+        }
     };
     return (
         <>
