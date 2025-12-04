@@ -1,6 +1,6 @@
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { NameSpaceEnum } from "../types/Namespace";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, TargetModel } from "../types/enums";
 
 interface Personality {
     slug: string;
@@ -17,7 +17,8 @@ export const generateReviewContentPath = (
     claim: Claim | null | undefined,
     contentModel: ContentModelEnum,
     data_hash: string,
-    reviewTaskType //TODO: Track reviewTaskType params to properly type this param
+    reviewTaskType, //TODO: Track reviewTaskType params to properly type this param
+    targetModel?: TargetModel,
 ): string => {
     const basePath = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
 
@@ -27,6 +28,10 @@ export const generateReviewContentPath = (
 
     if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
         return `${basePath}/verification-request/${data_hash}`;
+    }
+
+    if (targetModel === TargetModel.History) {
+        return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}/history`;
     }
 
     switch (contentModel) {
