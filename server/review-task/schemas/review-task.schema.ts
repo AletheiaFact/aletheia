@@ -7,7 +7,7 @@ import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 export type ReviewTaskDocument = ReviewTask &
     mongoose.Document & { content: any };
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
 export class ReviewTask {
     @Prop({ type: Object, required: true })
     machine: Machine;

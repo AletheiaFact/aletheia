@@ -28,9 +28,17 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
 
             {tags &&
                 tags.map((tag) => {
-                    const displayLabel = tag?.name || tag?.label || tag;
+                    const baseName = tag?.name || tag?.label || tag;
+                    const aliasToShow =
+                        tag?.matchedAlias ||
+                        (tag?.aliases && tag.aliases.length > 0
+                            ? tag.aliases[0]
+                            : null);
+                    const displayLabel = aliasToShow
+                        ? `${baseName} (${aliasToShow})`
+                        : baseName;
                     const tagKey =
-                        tag?._id || tag?.value || tag?.slug || displayLabel;
+                        tag?._id || tag?.value || tag?.slug || baseName;
                     const tagValue = tag?.name || tag?.label || tag;
 
                     return (
@@ -45,11 +53,11 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             onDelete={
                                 editable
                                     ? () =>
-                                          handleClose(
-                                              tag?.wikidataId ||
-                                                  tag?.value ||
-                                                  tagValue
-                                          )
+                                        handleClose(
+                                            tag?.wikidataId ||
+                                            tag?.value ||
+                                            tag
+                                        )
                                     : undefined
                             }
                             deleteIcon={
@@ -68,6 +76,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 marginTop: 4,
                                 marginBottom: 4,
                                 cursor: "pointer",
+                                maxWidth: "300px",
                             }}
                         />
                     );

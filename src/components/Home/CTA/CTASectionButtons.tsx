@@ -27,7 +27,7 @@ const CTASectionButtons = () => {
         >
             {!smallDevice && (
                 <Grid item xs={6}>
-                    {localConfig.header.ctaButton.show && (
+                    {localConfig?.header?.ctaButton?.show && (
                         <CTAButton
                             type={ButtonType.white}
                             location="header"
@@ -40,7 +40,7 @@ const CTASectionButtons = () => {
 
             {!smallDevice && (
                 <Grid item xs={5.5}>
-                    {localConfig.header.donateButton.show ? (
+                    {localConfig?.header?.donateButton?.show ? (
                         <DonateButton
                             style={{ fontSize: mediumDevice ? "12px" : "14px" }}
                         />

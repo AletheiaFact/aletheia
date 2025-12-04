@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Typography, Box, Alert, AlertTitle } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import {
+    Grid,
+    Typography,
+    Box,
+    Alert,
+    AlertTitle,
+    FormControl,
+    FormLabel,
+} from "@mui/material";
 import {
     WarningAmber,
     Public,
@@ -11,8 +19,13 @@ import {
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import verificationRequestApi from "../../api/verificationRequestApi";
-import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import {
+    ReportModelEnum,
+    ReviewTaskEvents,
+    ReviewTaskTypeEnum,
+} from "../../machines/reviewTask/enums";
 import { Roles } from "../../types/enums";
+import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -24,12 +37,17 @@ import { MetaChip } from "./MetaChip";
 import { VerificationRequestContent } from "./VerificationRequestContent";
 import { RequestDates } from "./RequestDates";
 import SourceList from "./SourceListVerificationRequest";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { currentUserId } from "../../atoms/currentUser";
+import reviewTaskApi from "../../api/reviewTaskApi";
+import sendReviewNotifications from "../../notifications/sendReviewNotifications";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
 interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
     open: boolean;
     onClose: () => void;
-    onUpdate?: () => void;
+    onUpdate?: (oldStatus: string, newStatus: string) => void;
 }
 
 const getSeverityColor = (severity: string) => {
@@ -76,45 +94,117 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
         const [isUpdating, setIsUpdating] = useState(false);
         const [currentRequest, setCurrentRequest] =
             useState(verificationRequest);
+        const [userId] = useAtom(currentUserId);
+        const [recaptchaString, setRecaptchaString] = useState("");
+        const hasCaptcha = !!recaptchaString;
+        const recaptchaRef = useRef(null);
 
-        const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+        const canApprove =
+            role === Roles.Admin ||
+            role === Roles.SuperAdmin ||
+            role === Roles.FactChecker ||
+            role === Roles.Reviewer;
 
         useEffect(() => {
             setCurrentRequest(verificationRequest);
         }, [verificationRequest]);
 
-        const handleStatusUpdate = async (newStatus: "Posted" | "Declined") => {
+        const handleStatusUpdate = async (
+            newStatus: VerificationRequestStatus
+        ) => {
             if (!currentRequest?._id) return;
+
+            const oldStatus = currentRequest.status;
 
             setIsUpdating(true);
             try {
+                // When approving/decline the verification request
+                // Is necessary auto assign the verification request to the user
+                // TODO: the group will be improved in the future, but for now we need to pass an empty array to the backend.
+                const group = newStatus === "Posted" ? [] : undefined;
                 const updatedRequest =
                     await verificationRequestApi.updateVerificationRequest(
                         currentRequest._id,
-                        { status: newStatus },
+                        { status: newStatus, group },
                         t,
                         "update"
                     );
 
+                if (newStatus === "Posted") {
+                    await handleAutoAssign();
+                }
                 if (updatedRequest) {
-                    if (onUpdate) {
-                        onUpdate();
-                    }
                     onClose();
+                    if (onUpdate) {
+                        onUpdate(oldStatus, newStatus);
+                    }
                 }
             } catch (error) {
-                console.error("Erro ao atualizar status:", error);
+                console.error(
+                    t("verificationRequest:errorUpdatingStatus"),
+                    error
+                );
             } finally {
                 setIsUpdating(false);
             }
         };
 
+        const handleAutoAssign = async () => {
+            try {
+                // TODO: add isSensitive and rejected in case of rejected
+                // TODO: add targetId and usersId in the reviewTask
+                const reviewTask = {
+                    data_hash: verificationRequest.data_hash,
+                    reportModel: ReportModelEnum.Request,
+                    machine: {
+                        context: {
+                            reviewData: {
+                                isSensitive: false,
+                                rejected: false,
+                                usersId: [userId],
+                            },
+                            review: {
+                                isPartialReview: false,
+                                personality: verificationRequest.personality,
+                                targetId: "", // what is this?
+                                usersId: "", // What is this?
+                            },
+                        },
+                        value: "published",
+                    },
+                    recaptcha: recaptchaString,
+                    nameSpace: NameSpaceEnum.Main,
+                    reviewTaskType: ReviewTaskTypeEnum.VerificationRequest,
+                    target: verificationRequest._id,
+                };
+
+                reviewTaskApi
+                    .createReviewTask(reviewTask, t, ReviewTaskEvents.publish)
+                    .then((response: any) => {
+                        window.location.href = `/claim/create?verificationRequest=${verificationRequest._id}`;
+                    })
+                    .catch((e) => {
+                        // TODO: Track errors with Sentry
+                    });
+                // .finally(() => resetIsLoading());
+                sendReviewNotifications(
+                    verificationRequest.data_hash,
+                    ReviewTaskEvents.publish,
+                    reviewTask,
+                    userId,
+                    t
+                );
+            } catch (error) {
+                console.error("Erro ao auto atribuir:", error);
+            }
+        };
+
         const handleApprove = () => {
-            handleStatusUpdate("Posted");
+            handleStatusUpdate(VerificationRequestStatus.POSTED);
         };
 
         const handleDecline = () => {
-            handleStatusUpdate("Declined");
+            handleStatusUpdate(VerificationRequestStatus.DECLINED);
         };
 
         const metaChipData = currentRequest
@@ -217,7 +307,9 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            {t("verificationRequest:viewFullPage")}
+                                            {t(
+                                                "verificationRequest:viewFullPage"
+                                            )}
                                         </AletheiaButton>
                                     </Grid>
                                 </Grid>
@@ -395,50 +487,72 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                 </Grid>
                             </Grid>
 
-                            {userIsAdmin &&
+                            {canApprove &&
                                 currentRequest.status === "In Triage" && (
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        style={{
-                                            gap: "24px",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            justifyContent: "flex-end",
-                                        }}
-                                    >
-                                        <Box
+                                    <>
+                                        <FormControl
+                                            fullWidth
+                                            id="createClaim"
+                                            style={{ padding: "32px 0" }}
+                                        >
+                                            <FormLabel>
+                                                <AletheiaCaptcha
+                                                    onChange={
+                                                        setRecaptchaString
+                                                    }
+                                                    ref={recaptchaRef}
+                                                />
+                                            </FormLabel>
+                                        </FormControl>
+                                        <Grid
+                                            item
+                                            xs={12}
                                             style={{
+                                                gap: "24px",
                                                 display: "flex",
-                                                justifyContent: "center",
-                                                gap: 12,
+                                                flexDirection: "column",
+                                                justifyContent: "flex-end",
                                             }}
                                         >
-                                            <AletheiaButton
-                                                type={ButtonType.blue}
-                                                onClick={handleApprove}
-                                                disabled={isUpdating}
-                                            >
-                                                {t("common:approve")}
-                                            </AletheiaButton>
-                                            <AletheiaButton
-                                                type={ButtonType.blue}
-                                                onClick={handleDecline}
-                                                disabled={isUpdating}
+                                            <Box
                                                 style={{
-                                                    backgroundColor:
-                                                        colors.error ||
-                                                        "#d32f2f",
-                                                    color: colors.white,
-                                                    borderColor:
-                                                        colors.error ||
-                                                        "#d32f2f",
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    gap: 12,
                                                 }}
                                             >
-                                                {t("common:reject")}
-                                            </AletheiaButton>
-                                        </Box>
-                                    </Grid>
+                                                <AletheiaButton
+                                                    type={ButtonType.blue}
+                                                    onClick={handleApprove}
+                                                    disabled={
+                                                        isUpdating ||
+                                                        !hasCaptcha
+                                                    }
+                                                >
+                                                    {t("common:approve")}
+                                                </AletheiaButton>
+                                                <AletheiaButton
+                                                    type={ButtonType.blue}
+                                                    onClick={handleDecline}
+                                                    disabled={
+                                                        isUpdating ||
+                                                        !hasCaptcha
+                                                    }
+                                                    style={{
+                                                        backgroundColor:
+                                                            colors.error ||
+                                                            "#d32f2f",
+                                                        color: colors.white,
+                                                        borderColor:
+                                                            colors.error ||
+                                                            "#d32f2f",
+                                                    }}
+                                                >
+                                                    {t("common:reject")}
+                                                </AletheiaButton>
+                                            </Box>
+                                        </Grid>
+                                    </>
                                 )}
                         </Grid>
                     ) : null}

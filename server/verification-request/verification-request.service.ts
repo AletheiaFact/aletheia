@@ -15,6 +15,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { buildDateQuery } from "../../src/utils/date.utils";
 import {
     BadRequestException,
     Injectable,
@@ -923,7 +924,7 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(topic => topic.value)
+            topics.map(topic => topic.value || topic.wikidataId)
         );
         const topicIds = foundTopics.map(topic => topic._id);
 
@@ -960,6 +961,8 @@ export class VerificationRequestService {
         sourceChannel?: string;
         status?: string[];
         impactArea?: string[];
+        startDate?: string;
+        endDate?: string;
     }): Promise<Record<string, any>> {
         const {
             contentFilters,
@@ -968,6 +971,8 @@ export class VerificationRequestService {
             sourceChannel,
             status,
             impactArea,
+            startDate,
+            endDate
         } = filters;
         const query: any = {};
 
@@ -978,13 +983,13 @@ export class VerificationRequestService {
             impactArea?.length ? this.topicService.findByNames(impactArea) : [],
         ]);
 
-        const topicIds = topicsObj.map((topics) => topics.wikidataId);
+        const topicIds = topicsObj.map((topics) => topics._id);
         const impactAreaIds = impactAreasObj.map((impactArea) =>
             Types.ObjectId(impactArea._id)
         );
 
         if (topicIds.length)
-            orConditions.push({ "topics.value": { $in: topicIds } });
+            orConditions.push({ topics: { $in: topicIds } });
 
         if (impactAreaIds.length)
             orConditions.push({ impactArea: { $in: impactAreaIds } });
@@ -995,6 +1000,10 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
+      
+        const dateQuery = buildDateQuery(startDate, endDate);
+        
+        if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {
             query.$or = orConditions;

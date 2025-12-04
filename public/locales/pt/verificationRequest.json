@@ -63,6 +63,8 @@
     "filterByContentLabel": "Filtrar por Conteudo",
     "applyButtonLabel": "Aplicar",
     "showText": "Mostrar",
+    "startDate": "Data inicial",
+    "endDate": "Data final",
     "statusPreTriage": "Pré-Triagem",
     "statusInTriage": "Em Triagem",
     "statusPosted": "Publicado",
@@ -75,17 +77,12 @@
     "priorityLow": "Baixa",
     "filterByPriority": "Filtrar por Prioridade",
     "noRequestsInStatus": "Nenhuma solicitação neste status",
-    "statusFilterOption": "Status",
-    "statusFilterLabel": "Status:",
     "impactAreaFilterLabel": "Área de Impacto:",
-    "reportedContent": "Conteúdo Reportado",
-    "contentTypeLabel": "Tipo de Conteúdo",
-    "receptionChannelLabel": "Canal de Recepção",
-    "severityLabel": "Prioridade",
     "editVerificationRequestSuccess": "Denúncia editada com sucesso",
     "editVerificationRequestError": "Erro ao editar a denúncia",
     "titleEditVerificationRequest": "Edição de Denúncia",
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
-    "filterBySourceChannel": "Filtrar por Canal de Origem"
+    "filterBySourceChannel": "Filtrar por Canal de Origem",
+    "errorUpdatingStatus": "Erro ao atualizar status:"
 }

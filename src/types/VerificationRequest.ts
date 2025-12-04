@@ -2,12 +2,14 @@ import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
 import { Dispatch } from "react";
 
-type ViewMode = "list" | "board";
-
-type PaginationModel = {
+type PaginationSettings = {
   pageSize: number;
   page: number;
 };
+
+type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
+
+type PaginationModel = Record<verificationRequestStatus, PaginationSettings>;
 
 type SeverityLevel = "low" | "medium" | "high" | "critical";
 
@@ -23,35 +25,27 @@ type VerificationRequest = {
   publicationDate: string;
   heardFrom: string;
 };
-interface VerificationRequestBoardViewProps {
-  requests: any[];
-  loading: boolean;
-  onRequestUpdated?: () => void;
-}
 interface FiltersState {
-  loading: boolean;
-  filteredRequests: VerificationRequest[];
-  totalVerificationRequests: number;
+  loading: Record<verificationRequestStatus, boolean>;
+  filteredRequests: Record<verificationRequestStatus, VerificationRequest[]>;
+  totalVerificationRequests: Record<verificationRequestStatus, number>;
   isInitialLoad: boolean;
-  viewMode: ViewMode;
   priorityFilter: string;
   sourceChannelFilter: string;
   filterValue: string[];
   filterType: string;
   anchorEl: HTMLElement | null;
-  paginationModel: {
-    pageSize: number;
-    page: number;
-  };
+  paginationModel: PaginationModel;
   autoCompleteTopicsResults: string[];
   topicFilterUsed: string[];
   impactAreaFilterUsed: string[];
   applyFilters: boolean;
+  startDate: Date | null;
+  endDate: Date | null;
 }
 interface FiltersActions {
   setIsInitialLoad: (initial: boolean) => void;
-  fetchData: () => Promise<void>;
-  setViewMode: (mode: ViewMode) => void;
+  fetchData: (status: verificationRequestStatus) => Promise<void>;
   setPriorityFilter: (value: string) => void;
   setSourceChannelFilter: (value: string) => void;
   setFilterValue: (value: string[]) => void;
@@ -65,6 +59,8 @@ interface FiltersActions {
   ) => (newValue: any) => void;
   dispatch: Dispatch<any>;
   t: (key: string) => string;
+  setStartDate: (date: Date | null) => void;
+  setEndDate: (date: Date | null) => void;
 }
 interface FiltersContext {
   state: FiltersState;
@@ -76,8 +72,6 @@ export type {
   FiltersState,
   FiltersActions,
   FiltersContext,
-  ViewMode,
   PaginationModel,
-  VerificationRequestBoardViewProps,
   SeverityLevel,
 };

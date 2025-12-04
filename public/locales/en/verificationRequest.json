@@ -63,6 +63,8 @@
     "filterByContentLabel": "Filter by Content",
     "applyButtonLabel": "Apply",
     "showText": "Show",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "statusPreTriage": "Pre Triage",
     "statusInTriage": "In Triage",
     "statusPosted": "Posted",
@@ -75,17 +77,12 @@
     "priorityLow": "Low",
     "filterByPriority": "Filter by Priority",
     "noRequestsInStatus": "No requests in this status",
-    "statusFilterOption": "Status",
-    "statusFilterLabel": "Status:",
     "impactAreaFilterLabel": "Impact Area:",
-    "reportedContent": "Reported Content",
-    "contentTypeLabel": "Content Type",
-    "receptionChannelLabel": "Reception Channel",
-    "severityLabel": "Severity",
     "editVerificationRequestSuccess": "Verification Request edited successfully",
     "editVerificationRequestError": "Error while editing the Verification Request",
     "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
-    "filterBySourceChannel": "Filter by Source Channel"
+    "filterBySourceChannel": "Filter by Source Channel",
+    "errorUpdatingStatus": "Error updating status:"
 }
