@@ -28,7 +28,6 @@ enum ContentModelEnum {
     Image = "Image",
     Debate = "Debate",
     Unattributed = "Unattributed",
-    History = "History",
 }
 
 export enum TargetModel {
@@ -38,6 +37,7 @@ export enum TargetModel {
     ClaimReview = "ClaimReview",
     ReviewTask = "ReviewTask",
     Image = "Image",
+    History = "History",
 }
 
 enum CommentEnum {

@@ -11,7 +11,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import { useRouter } from "next/router";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
 import { useAppSelector } from "../../store/store";
-import { ContentModelEnum } from "../../types/enums";
+import { TargetModel } from "../../types/enums";
 
 const ReviewTaskAdminToolBar = () => {
     const [nameSpace] = useAtom(currentNameSpace);
@@ -37,9 +37,10 @@ const ReviewTaskAdminToolBar = () => {
             nameSpace,
             personality,
             claim,
-            ContentModelEnum.History,
+            content,
             data_hash,
             content?.reviewTaskType,
+            TargetModel.History
         );
         router.push(historyRoute)
     }

@@ -1,6 +1,6 @@
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { NameSpaceEnum } from "../types/Namespace";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, TargetModel } from "../types/enums";
 
 export const generateReviewContentPath = (
     nameSpace,
@@ -8,7 +8,8 @@ export const generateReviewContentPath = (
     claim,
     contentModel,
     data_hash,
-    reviewTaskType
+    reviewTaskType,
+    targetModel?
 ) => {
     const basePath = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
 
@@ -18,6 +19,10 @@ export const generateReviewContentPath = (
 
     if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
         return `${basePath}/verification-request/${data_hash}`;
+    }
+
+    if (targetModel === TargetModel.History) {
+        return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}/history`;
     }
 
     switch (contentModel) {
@@ -31,8 +36,6 @@ export const generateReviewContentPath = (
             return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
         case ContentModelEnum.Unattributed:
             return `${basePath}/claim/${claim?.slug}/sentence/${data_hash}`;
-        case ContentModelEnum.History:
-            return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}/history`;
         default:
             return "";
     }
