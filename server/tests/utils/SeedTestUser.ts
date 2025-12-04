@@ -6,10 +6,20 @@ export const SeedTestUser = async (uri) => {
     await client.connect();
 
     try {
-        return await client
+        // Use updateOne with upsert to avoid duplicate key errors in parallel execution
+        const result = await client
             .db("test")
             .collection("users")
-            .insertOne(AdminUserMock);
+            .updateOne(
+                { _id: AdminUserMock._id },
+                { $set: AdminUserMock },
+                { upsert: true }
+            );
+
+        return {
+            insertedId: AdminUserMock._id,
+            acknowledged: result.acknowledged,
+        };
     } finally {
         await client.close();
     }
