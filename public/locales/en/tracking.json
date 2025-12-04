@@ -1,0 +1,7 @@
+{
+  "verificationProgress":"Verification Request progress",
+  "description_PRE_TRIAGE": "Verification request received and entered into the automated triage system. Initial analysis and severity assessment in progress.",
+  "description_IN_TRIAGE": "Under review by the Aletheia team.",
+  "description_POSTED": "Verification request complete and reviewed. Results posted.",
+  "description_DECLINED": "Verification request declined following detailed analysis. The veracity of the information provided could not be confirmed."
+}

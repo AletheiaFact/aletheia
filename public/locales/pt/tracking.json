@@ -1,0 +1,7 @@
+{
+  "verificationProgress": "Progresso da Denúncia",
+  "description_PRE_TRIAGE": "Denúncia recebida e inserida no sistema de triagem automatizada. Análise inicial e definição de severidade em progresso.",
+  "description_IN_TRIAGE": "Sob revisão da equipe da Aletheia.",
+  "description_POSTED": "Denúncia completa e revisada. Resultados publicados.",
+  "description_DECLINED": "Denúncia negada após análise detalhada. Não foi possível confirmar a veracidade dos dados fornecidos."
+}

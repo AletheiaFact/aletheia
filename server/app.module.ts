@@ -64,6 +64,7 @@ import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
 import { M2MGuard } from "./auth/m2m.guard";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
+import { TrackingModule } from "./tracking/tracking.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -120,6 +121,7 @@ export class AppModule implements NestModule {
                 ReviewTaskModule,
                 ClaimRevisionModule,
                 HistoryModule,
+                TrackingModule,
                 StateEventModule,
                 SourceModule,
                 SpeechModule,

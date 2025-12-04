@@ -2,6 +2,12 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
+import { GetHistoryParams } from "./types/history.interface";
+interface HistoryQuery {
+    targetId: Types.ObjectId;
+    targetModel: string;
+    type?: string | { $in: string[] };
+}
 
 @Injectable()
 export class HistoryService {
@@ -69,26 +75,23 @@ export class HistoryService {
      * @param order asc or desc.
      * @returns The paginated history of a target.
      */
-    async getByTargetIdModelAndType(
-        targetId,
-        targetModel,
-        page,
-        pageSize,
-        order = "asc",
-        type = ""
-    ) {
-        let query;
+    async getByTargetIdModelAndType(params: GetHistoryParams) {
+        const {
+            targetId,
+            targetModel,
+            page,
+            pageSize,
+            order,
+            type = null
+        } = params;
+
+        const query: HistoryQuery = {
+            targetId: Types.ObjectId(targetId),
+            targetModel,
+        };
+
         if (type) {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-                type,
-            };
-        } else {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-            };
+            query.type = Array.isArray(type) ? { $in: type } : type;
         }
         return this.HistoryModel.find(query)
             .populate("user", "_id name")
@@ -99,14 +102,14 @@ export class HistoryService {
 
     async getDescriptionForHide(content, target) {
         if (content?.isHidden) {
-            const history = await this.getByTargetIdModelAndType(
-                content._id,
-                target,
-                0,
-                1,
-                "desc",
-                HistoryType.Hide
-            );
+            const history = await this.getByTargetIdModelAndType({
+                targetId: content._id,
+                targetModel: target,
+                page: 0,
+                pageSize: 1,
+                order: "desc",
+                type: HistoryType.Hide
+            });
 
             return history[0]?.details?.after?.description;
         }
