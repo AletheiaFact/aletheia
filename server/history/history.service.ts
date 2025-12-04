@@ -38,7 +38,7 @@ export class HistoryService {
     ) {
         const date = new Date();
         return {
-            targetId: Types.ObjectId(dataId),
+            targetId: new Types.ObjectId(dataId),
             targetModel,
             user: user?._id || user || null, //I need to make it optional because we still need to do M2M for chatbot
             type,
@@ -80,13 +80,13 @@ export class HistoryService {
         let query;
         if (type) {
             query = {
-                targetId: Types.ObjectId(targetId),
+                targetId: new Types.ObjectId(targetId),
                 targetModel,
                 type,
             };
         } else {
             query = {
-                targetId: Types.ObjectId(targetId),
+                targetId: new Types.ObjectId(targetId),
                 targetModel,
             };
         }
@@ -94,7 +94,7 @@ export class HistoryService {
             .populate("user", "_id name")
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ date: order });
+            .sort({ date: order as any });
     }
 
     async getDescriptionForHide(content, target) {

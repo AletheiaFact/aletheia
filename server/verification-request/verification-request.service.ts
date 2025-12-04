@@ -812,7 +812,7 @@ export class VerificationRequestService {
     ) {
         const contentIds =
             updatedVerificationRequest?.group?.map((item) =>
-                Types.ObjectId(item?._id || item)
+                new Types.ObjectId(item?._id || item)
             ) || [];
 
         const groupId = (
@@ -864,7 +864,7 @@ export class VerificationRequestService {
             return [];
         }
         const filterIds = filter.map((verificationRequestId) =>
-            Types.ObjectId(verificationRequestId)
+            new Types.ObjectId(verificationRequestId)
         );
 
         return await this.VerificationRequestModel.aggregate([

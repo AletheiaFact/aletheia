@@ -114,7 +114,7 @@ export class NameSpaceController {
 
     private async updateNameSpaceUsers(users, key) {
         const promises = users.map(async (user) => {
-            const userId = Types.ObjectId(user._id);
+            const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
 
             if (!existingUser.role[key]) {
@@ -157,7 +157,7 @@ export class NameSpaceController {
 
     private async deleteUsersNameSpace(usersId, key) {
         const updatePromises = usersId.map(async (userId) => {
-            const id = Types.ObjectId(userId);
+            const id = new Types.ObjectId(userId);
             const user = await this.usersService.getById(id);
             delete user.role[key];
             return this.usersService.updateUser(user._id, { role: user.role });

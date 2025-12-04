@@ -36,7 +36,7 @@ export class SourceService {
 
     async create(data) {
         if (data?.targetId) {
-            data.targetId = [Types.ObjectId(data.targetId)];
+            data.targetId = [new Types.ObjectId(data.targetId)];
         }
         if (data?.props?.date) {
             data.props.date = new Date(data.props.date);
@@ -49,7 +49,7 @@ export class SourceService {
         }
 
         data.data_hash = md5(data.href);
-        data.user = Types.ObjectId(data.user);
+        data.user = new Types.ObjectId(data.user);
 
         const existingSource = await this.SourceModel.findOne({
             data_hash: { $eq: data.data_hash },
@@ -71,12 +71,12 @@ export class SourceService {
     }
 
     async getByTargetId(targetId, page, pageSize, order = "asc") {
-        targetId = Types.ObjectId(targetId);
+        targetId = new Types.ObjectId(targetId);
 
         return this.SourceModel.find({ targetId })
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ _id: order });
+            .sort({ _id: order as any });
     }
 
     find(match) {

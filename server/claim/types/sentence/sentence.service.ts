@@ -227,7 +227,7 @@ export class SentenceService {
             }
         );
 
-        const sentences = await this.SentenceModel.aggregate(pipeline);
+        const sentences = await this.SentenceModel.aggregate(pipeline as any);
 
         return {
             totalRows: sentences[0].totalRows,

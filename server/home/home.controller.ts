@@ -79,7 +79,7 @@ export class HomeController {
                     debateRevision.personalities.map((personality) => {
                         if (personality) {
                             return this.personalityService.getById(
-                                personality,
+                                personality as any,
                                 {
                                     language: req.language,
                                     nameSpace:
