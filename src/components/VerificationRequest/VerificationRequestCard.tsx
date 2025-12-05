@@ -101,7 +101,7 @@ const VerificationRequestCard = ({
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
             label_value: verificationRequest.severity,
-            style: { backgroundColor: colors.error, color: colors.white },
+            style: { backgroundColor: colors.neutralSecondary, color: colors.white },
         },
     ];
 

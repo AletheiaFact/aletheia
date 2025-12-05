@@ -45,5 +45,6 @@
     "fileInputButton": "Escolha o arquivo",
     "fileTypeError": "Voce só pode enviar arquivos nos formatos {{types}}",
     "fileSizeError": "O arquivo deve ter menos de {{size}}",
-    "undefined": "Indefinido"
+    "undefined": "Indefinido",
+    "noAnswer": "N/A"
 }
