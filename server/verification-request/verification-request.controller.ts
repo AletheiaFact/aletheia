@@ -48,6 +48,14 @@ export class VerificationRequestController {
     ) {}
 
     @ApiTags("verification-request")
+    @Get("api/verification-request/stats")
+    @Header("Cache-Control", "max-age=300, must-revalidate")
+    @Public()
+    public async getStats() {
+        return this.verificationRequestService.getStats();
+    }
+
+    @ApiTags("verification-request")
     @Get("api/verification-request")
     @Public()
     public async listAll(@Query() getVerificationRequest) {

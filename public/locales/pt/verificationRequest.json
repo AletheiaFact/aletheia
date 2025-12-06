@@ -83,6 +83,22 @@
     "titleEditVerificationRequest": "Edição de Denúncia",
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
+    "errorUpdatingStatus": "Erro ao atualizar status:",
     "filterBySourceChannel": "Filtrar por Canal de Origem",
-    "errorUpdatingStatus": "Erro ao atualizar status:"
+    "dashboard": {
+        "title": "Painel de Denúncias",
+        "subtitle": "Transparência e acompanhamento público",
+        "totalReports": "Total de Denúncias",
+        "verified": "Verificadas",
+        "inAnalysis": "Em Análise",
+        "pending": "Pendentes",
+        "receivedThisMonth": "Recebidas este mês",
+        "ofTotal": "do total",
+        "sourcesTitle": "Fontes de Denúncias",
+        "sourcesSubtitle": "Distribuição por canal de recebimento",
+        "statusTitle": "Status das Denúncias",
+        "statusSubtitle": "Distribuição por estado de verificação",
+        "activityTitle": "Atividade Recente",
+        "activitySubtitle": "Últimas atualizações do sistema"
+    }
 }
