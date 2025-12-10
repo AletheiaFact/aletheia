@@ -255,7 +255,7 @@
         "coverageReporters": [
             "lcov"
         ],
-        "testTimeout": 30000
+        "testTimeout": 10000
     },
     "lint-staged": {
         "*.(ts|js|tsx)": [

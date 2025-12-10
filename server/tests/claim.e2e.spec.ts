@@ -1,4 +1,3 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
 import * as request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
@@ -20,6 +19,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { MongoPersonalityService } from "../personality/mongo/personality.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
+import { CleanupDatabase } from "./utils/CleanupDatabase";
 
 jest.setTimeout(10000);
 
@@ -79,7 +79,6 @@ const personalityService = {
 
 describe("ClaimController (e2e)", () => {
     let app: any;
-    let db: any;
     let personalitiesId: string[];
     let claimId: string;
     let speechClaimId: string;
@@ -92,14 +91,14 @@ describe("ClaimController (e2e)", () => {
     const date: string = "2023-11-25T14:49:30.992Z";
 
     beforeAll(async () => {
-        db = await MongoMemoryServer.create({ instance: { port: 35025 } });
-        const mongoUri = db.getUri();
-        
+        // Use shared MongoDB instance from global setup
+        const mongoUri = process.env.MONGO_URI!;
+
         await SeedTestUser(mongoUri);
         const { insertedIds } = await SeedTestPersonality(mongoUri);
         personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
 
-        // Update test config with actual MongoDB URI
+        // Update test config with shared MongoDB URI
         const testConfig = {
             ...TestConfigOptions.config,
             db: {
@@ -599,7 +598,7 @@ describe("ClaimController (e2e)", () => {
     });
 
     afterAll(async () => {
-        await db.stop();
-        app.close();
+        await app.close();
+        await CleanupDatabase(process.env.MONGO_URI!);
     });
 });
