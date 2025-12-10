@@ -16,6 +16,7 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
+import { ClaimRevision } from "./claim-revision/schema/claim-revision.schema";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -27,6 +28,21 @@ type ClaimMatchParameters = (
       }
 ) &
     FilterQuery<ClaimDocument>;
+
+interface SaveClaimResult {
+    _id: Types.ObjectId;
+    title: string;
+    slug: string;
+    contentId: Types.ObjectId;
+    contentModel: ContentModelEnum;
+    date: Date;
+    claimId: Types.ObjectId;
+    personalities: Types.ObjectId[];
+    latestRevision: Types.ObjectId;
+    isHidden: boolean;
+    nameSpace: string;
+    group?: Types.ObjectId;
+}
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
@@ -47,7 +63,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = Types.ObjectId(query.personalities);
+            query.personalities = new Types.ObjectId(query.personalities);
         }
 
         const claims = await this.ClaimModel.find(query)
@@ -123,13 +139,13 @@ export class ClaimService {
      * @param claim ClaimBody received of the client.
      * @returns Return a new claim object.
      */
-    async create(claim) {
+    async create(claim): Promise<SaveClaimResult> {
         claim.personalities = claim.personalities.map((personality) => {
-            return Types.ObjectId(personality);
+            return new Types.ObjectId(personality);
         });
 
         if (claim.group) {
-            claim.group = Types.ObjectId(claim.group);
+            claim.group = new Types.ObjectId(claim.group);
         }
 
         const newClaim = new this.ClaimModel(claim);
