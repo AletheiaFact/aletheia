@@ -6,7 +6,6 @@ import {
     Put,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
@@ -20,11 +19,7 @@ import { UsersService } from "../users/users.service";
 import { Types } from "mongoose";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
+import { AdminOnly } from "../auth/decorators/auth.decorator";
 
 @Controller(":namespace?")
 export class BadgeController {
@@ -36,6 +31,7 @@ export class BadgeController {
         private util: UtilService
     ) {}
 
+    @AdminOnly()
     @ApiTags("badge")
     @Post("api/badge")
     public async createBadge(@Body() badge: CreateBadgeDTO, @Req() request) {
@@ -64,6 +60,7 @@ export class BadgeController {
         return createdBadge;
     }
 
+    @AdminOnly()
     @ApiTags("badge")
     @Put("api/badge/:id")
     public async updateBadge(@Body() badge: UpdateBadgeDTO, @Req() request) {
@@ -136,10 +133,9 @@ export class BadgeController {
         return this.badgeService.listAll();
     }
 
+    @AdminOnly()
     @ApiTags("admin")
     @Get("admin/badges")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
         const badges = await this.badgeService.listAll();
         const users = await this.usersService.findAll({

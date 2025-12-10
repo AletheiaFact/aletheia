@@ -12,25 +12,19 @@ import {
     Query,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import { parse } from "url";
 import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonalityDTO } from "./dto/create-personality.dto";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller(":namespace?")
@@ -45,7 +39,7 @@ export class PersonalityController {
         private historyService: HistoryService
     ) {}
 
-    @IsPublic()
+    @Public()
     @ApiTags("personality")
     @Get("api/personality")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -70,7 +64,7 @@ export class PersonalityController {
         }
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("personality")
     @Get("api/personality/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -88,10 +82,9 @@ export class PersonalityController {
         return this.personalityService.update(personalityId, body);
     }
 
+    @AdminOnly()
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
@@ -107,17 +100,16 @@ export class PersonalityController {
         );
     }
 
+    @AdminOnly()
     @ApiTags("personality")
     @Delete("api/personality/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") personalityId) {
         return this.personalityService.delete(personalityId).catch((err) => {
             this.logger.error(err);
         });
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("personality")
     @Get("api/personality/:id/reviews")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -150,7 +142,7 @@ export class PersonalityController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("personality/:slug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -202,7 +194,7 @@ export class PersonalityController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("personality")
     @Header("Cache-Control", "max-age=60, must-revalidate")
