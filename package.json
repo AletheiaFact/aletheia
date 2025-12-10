@@ -282,5 +282,8 @@
         "@compodoc/compodoc": "1.1.21",
         "cheerio": "1.0.0-rc.12"
     },
-    "packageManager": "yarn@3.6.3"
+    "packageManager": "yarn@3.6.3",
+    "engines": {
+        "node": ">=20.18.0"
+    }
 }
