@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "url";
 import { ViewService } from "../../view/view.service";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { Public } from "../decorators/auth.decorator";
 import OryService from "./ory.service";
 
 @Controller("api/.ory")
@@ -12,7 +12,7 @@ export default class OryController {
         private readonly viewService: ViewService,
         private readonly oryService: OryService
     ) {}
-    @IsPublic()
+    @Public()
     @Get("sessions/whoami")
     public async whoAmI(@Req() req: Request, @Res() res: Response) {
         try {
@@ -27,7 +27,7 @@ export default class OryController {
         }
     }
 
-    @IsPublic()
+    @Public()
     @Get("*")
     public async getOryPaths(
         @Req() req: NextApiRequest,
@@ -36,7 +36,7 @@ export default class OryController {
         await this.oryPaths(req, res);
     }
 
-    @IsPublic()
+    @Public()
     @Post("*")
     public async postOryPaths(
         @Req() req: NextApiRequest,

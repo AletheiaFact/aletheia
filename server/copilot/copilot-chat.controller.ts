@@ -17,22 +17,17 @@
  * This controller uses decorators to define routes and their configurations, ensuring proper request handling and response formatting. It also integrates file upload handling for PDF documents, enabling document-context chat functionalities.
  */
 
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { CopilotChatService } from "./copilot-chat.service";
 import { ContextAwareMessagesDto } from "./dtos/context-aware-messages.dto";
-import {
-    CheckAbilities,
-    FactCheckerUserAbility,
-} from "../auth/ability/ability.decorator";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { FactCheckerOnly } from "../auth/decorators/auth.decorator";
 
 @Controller()
 export class CopilotChatController {
     constructor(private readonly copilotChatService: CopilotChatService) {}
 
+    @FactCheckerOnly()
     @Post("api/agent-chat")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new FactCheckerUserAbility())
     async agentChat(
         @Body() contextAwareMessagesDto: ContextAwareMessagesDto,
         @Req() req

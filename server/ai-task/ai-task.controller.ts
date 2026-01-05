@@ -14,29 +14,28 @@ import type { UpdateAiTaskDto } from "./dto/update-ai-task.dto";
 import { AiTask } from "./schemas/ai-task.schema";
 import { AiTaskState } from "./constants/ai-task.constants";
 import { ObjectIdValidationPipe } from "./pipes/objectid-validation.pipe";
-import { M2MOrAbilities } from "../auth/decorators/m2m-or-abilities.decorator";
-import { ADMIN_USER_ABILITY } from "../auth/ability/abilities.constants";
+import { AdminOnly } from "../auth/decorators/auth.decorator";
 
 @ApiTags("ai-tasks")
 @Controller("api/ai-tasks")
 export class AiTaskController {
     constructor(private readonly aiTaskService: AiTaskService) {}
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    @AdminOnly({ allowM2M: true })
     @ApiOperation({ summary: "Enqueue a new AI task" })
     @Post()
     create(@Body() createDto: CreateAiTaskDto) {
         return this.aiTaskService.create(createDto);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    @AdminOnly({ allowM2M: true })
     @ApiOperation({ summary: "Get all pending AI tasks" })
     @Get("pending")
     getPending() {
         return this.aiTaskService.findAll(AiTaskState.PENDING);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    @AdminOnly({ allowM2M: true })
     @ApiOperation({ summary: "Get AI tasks by state" })
     @Get()
     findAll(@Query("state") state?: string) {
@@ -44,7 +43,7 @@ export class AiTaskController {
         return this.aiTaskService.findAll(typedState);
     }
 
-    @M2MOrAbilities(ADMIN_USER_ABILITY)
+    @AdminOnly({ allowM2M: true })
     @ApiOperation({
         summary: "Update AI task state and optionally dispatch result",
     })
