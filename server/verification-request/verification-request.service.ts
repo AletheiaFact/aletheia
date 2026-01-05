@@ -605,7 +605,8 @@ export class VerificationRequestService {
                 .populate("group")
                 .populate("source")
                 .populate("impactArea")
-                .populate("topics");
+                .populate("topics")
+                .populate("identifiedData");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });
@@ -924,9 +925,9 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(topic => topic.value || topic.wikidataId)
+            topics.map((topic) => topic.value || topic.wikidataId)
         );
-        const topicIds = foundTopics.map(topic => topic._id);
+        const topicIds = foundTopics.map((topic) => topic._id);
 
         const latestVerificationRequest = verificationRequest.toObject();
 
@@ -972,7 +973,7 @@ export class VerificationRequestService {
             status,
             impactArea,
             startDate,
-            endDate
+            endDate,
         } = filters;
         const query: any = {};
 
@@ -988,8 +989,7 @@ export class VerificationRequestService {
             Types.ObjectId(impactArea._id)
         );
 
-        if (topicIds.length)
-            orConditions.push({ topics: { $in: topicIds } });
+        if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });
 
         if (impactAreaIds.length)
             orConditions.push({ impactArea: { $in: impactAreaIds } });
@@ -1000,9 +1000,9 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
-      
+
         const dateQuery = buildDateQuery(startDate, endDate);
-        
+
         if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {
