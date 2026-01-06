@@ -34,6 +34,7 @@ import {
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { StatsRecentActivity, StatsSourceChannels, StatsCount } from "./dto/stats-verification-request-dto";
 
 const md5 = require("md5");
 
@@ -1000,9 +1001,9 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
-      
+
         const dateQuery = buildDateQuery(startDate, endDate);
-        
+
         if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {
@@ -1494,142 +1495,110 @@ export class VerificationRequestService {
      * Get statistics for verification requests dashboard
      * @returns Statistics object with counts, percentages, and distributions
      */
-    async getStats() {
+    async getStats() {//need to create unit tests for this method
         const now = new Date();
         const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-        // Get total counts by status
-        const [
-            totalCount,
-            verifiedCount,
-            inAnalysisCount,
-            pendingCount,
-            totalThisMonth,
-            totalLastMonth,
-        ] = await Promise.all([
-            this.VerificationRequestModel.countDocuments({}),
-            this.VerificationRequestModel.countDocuments({ status: "Posted" }),
-            this.VerificationRequestModel.countDocuments({ status: "In Triage" }),
-            this.VerificationRequestModel.countDocuments({ status: { $in: ["Pre Triage", "Declined"] } }),
-            this.VerificationRequestModel.countDocuments({ date: { $gte: firstDayOfMonth } }),
-            this.VerificationRequestModel.countDocuments({
-                date: { $gte: firstDayOfLastMonth, $lt: firstDayOfMonth }
-            }),
-        ]);
-
-        // Calculate month-over-month changes
-        const calculateChange = (current: number, previous: number): string => {
-            if (previous === 0) return "+0.0%";
-            const change = ((current - previous) / previous) * 100;
-            return `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
-        };
-
-        // Get source channel distribution
-        const sourceChannelAggregation = await this.VerificationRequestModel.aggregate([
-            {
-                $group: {
-                    _id: "$sourceChannel",
-                    count: { $sum: 1 },
-                },
-            },
-            {
-                $sort: { count: -1 },
-            },
-        ]);
-
-        const sourceChannels = sourceChannelAggregation.map((item) => ({
-            label: item._id || "Unknown",
-            value: item.count,
-            percentage: totalCount > 0 ? (item.count / totalCount) * 100 : 0,
-        }));
-
-        // Get recent activity (last 5 updates)
-        const recentRequests = await this.VerificationRequestModel.find({})
-            .sort({ date: -1 })
-            .limit(10)
-            .select("_id status content date data_hash")
-            .lean();
-
-        const recentActivity = recentRequests.map((req) => {
-            const timeAgo = this.formatTimeAgo(req.date);
-            let message = "";
-
-            switch (req.status) {
-                case "Posted":
-                    message = `Denúncia #${req.data_hash.substring(0, 8)} verificada e encaminhada`;
-                    break;
-                case "In Triage":
-                    message = `Denúncia #${req.data_hash.substring(0, 8)} em processo de verificação`;
-                    break;
-                case "Pre Triage":
-                    message = `Nova denúncia recebida via ${req["sourceChannel"] || "aplicativo móvel"}`;
-                    break;
-                case "Declined":
-                    message = `Denúncia #${req.data_hash.substring(0, 8)} verificada e arquivada`;
-                    break;
-                default:
-                    message = `Denúncia #${req.data_hash.substring(0, 8)} atualizada`;
-            }
-
-            return {
-                id: req._id.toString(),
-                status: this.translateStatus(req.status),
-                message,
-                timestamp: timeAgo,
-            };
-        });
+        const statsCount = await this.getStatsCount(
+            firstDayOfMonth
+        );
+        const statsSourceChannels = await this.getStatsSourceChannels(
+            statsCount.total
+        );
+        const statsRecentActivity = await this.getStatsRecentActivity();
 
         return {
-            total: totalCount,
-            verified: verifiedCount,
-            inAnalysis: inAnalysisCount,
-            pending: pendingCount,
-            totalChange: calculateChange(totalThisMonth, totalLastMonth),
-            sourceChannels,
-            statusDistribution: {
-                verified: verifiedCount,
-                inAnalysis: inAnalysisCount,
-                pending: pendingCount,
+            statsCount: statsCount,
+            statsSourceChannels: statsSourceChannels,
+            statsRecentActivity: statsRecentActivity,
+        };
+    }
+
+    /**
+     * Get total counts by status
+     */
+    private async getStatsCount(firstDayOfMonth: Date): Promise<StatsCount> {//need to create unit tests for this method
+        const result = await this.VerificationRequestModel.aggregate([
+            {
+                $facet: {
+                    statuses: [
+                        {
+                            $group: {
+                                _id: "$status",
+                                count: { $sum: 1 },
+                            },
+                        },
+                    ],
+                    totalThisMonth: [
+                        { $match: { date: { $gte: firstDayOfMonth } } },
+                        { $count: "count" },
+                    ],
+                    totalCount: [{ $count: "count" }],
+                },
             },
-            recentActivity,
+        ]);
+
+        const data = result[0] || { statuses: [], totalThisMonth: [], totalCount: [] };
+
+        const total = data.totalCount[0]?.count || 0;
+        const totalThisMonth = data.totalThisMonth[0]?.count || 0;
+
+        const statusMap = Object.fromEntries(
+            data.statuses.map((item) => [item._id, item.count])
+        );
+
+        return {
+            total,
+            verified: statusMap[VerificationRequestStatus.POSTED] || 0,
+            inAnalysis: statusMap[VerificationRequestStatus.IN_TRIAGE] || 0,
+            pending: (statusMap[VerificationRequestStatus.PRE_TRIAGE] || 0) + (statusMap[VerificationRequestStatus.DECLINED] || 0),
+            totalThisMonth,
         };
     };
 
     /**
-     * Format date to relative time string
+     * Get source channel distribution
      */
-    private formatTimeAgo(date: Date): string {
-        const now = new Date();
-        const diff = now.getTime() - new Date(date).getTime();
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(diff / 3600000);
-        const days = Math.floor(diff / 86400000);
+    private async getStatsSourceChannels(
+        totalCount?: number
+    ): Promise<StatsSourceChannels[]> {//need to create unit tests for this method
+        const sourceChannelAggregation =
+            await this.VerificationRequestModel.aggregate([
+                {
+                    $group: {
+                        _id: "$sourceChannel",
+                        count: { $sum: 1 },
+                    },
+                },
+                {
+                    $sort: { count: -1 },
+                },
+            ]);
 
-        const pluralize = (value, singular, plural) =>
-            `Há ${value} ${value === 1 ? singular : plural}`;
-
-        if (minutes < 60) {
-            return pluralize(minutes, "minuto", "minutos");
-        } else if (hours < 24) {
-            return pluralize(hours, "hora", "horas");
-        } else if (days < 7) {
-            return pluralize(days, "dia", "dias");
-        } else {
-            return new Date(date).toLocaleDateString("pt-BR");
-        }
+        return sourceChannelAggregation.map((item) => ({
+            label: item._id || "Unknown",
+            value: item.count,
+            percentage: totalCount > 0 ? (item.count / totalCount) * 100 : 0,
+        }));
     }
 
     /**
-     * Translate status to Portuguese
+     * Get recent activity (last 10 updates)
      */
-    private translateStatus(status: string): string {
-        const translations = {
-            "Posted": "Verificada",
-            "In Triage": "Em Análise",
-            "Pre Triage": "Nova",
-            "Declined": "Pendente",
-        };
-        return translations[status] || status;
+    private async getStatsRecentActivity(): Promise<StatsRecentActivity[]> {//need to create unit tests for this method
+        const recentRequests = await this.VerificationRequestModel.find({})
+            .sort({ updatedAt: -1 })
+            .limit(10)
+            .select("_id status sourceChannel content data_hash updatedAt")
+            .lean()
+            .exec();
+
+        return recentRequests.map((req) => ({
+            id: req._id.toString(),
+            status: req.status,
+            sourceChannel: req.sourceChannel,
+            data_hash: req.data_hash.substring(0, 8),
+            timestamp: req.updatedAt,
+        }));
     }
 }

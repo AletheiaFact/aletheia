@@ -85,6 +85,12 @@
     "automated_monitoring": "Automated Monitoring",
     "errorUpdatingStatus": "Error updating status:",
     "filterBySourceChannel": "Filter by Source Channel",
+    "activity": {
+        "Posted": "Verification request #{{hash}} verified and forwarded",
+        "In Triage": "Verification request #{{hash}} in the verification process",
+        "Pre Triage": "New verification request received by {{source}}",
+        "Declined": "Verification request #{{hash}} checked and archived"
+    },
     "dashboard": {
         "title": "Reports Dashboard",
         "subtitle": "Transparency and public monitoring",
@@ -99,6 +105,7 @@
         "statusTitle": "Report Status",
         "statusSubtitle": "Distribution by verification status",
         "activityTitle": "Recent Activity",
-        "activitySubtitle": "Latest updates from the system"
+        "activitySubtitle": "Latest updates from the system",
+        "noData": "No data available"
     }
 }

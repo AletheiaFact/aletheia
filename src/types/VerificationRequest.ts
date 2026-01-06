@@ -7,7 +7,7 @@ export enum FilterType {
   IMPACT_AREA = "impactArea",
 }
 
-type PaginationSettings = {
+interface PaginationSettings {
   pageSize: number;
   page: number;
 };
@@ -29,7 +29,7 @@ type PaginationModel = Record<verificationRequestStatus, PaginationSettings>;
 
 type SeverityLevel = "low" | "medium" | "high" | "critical";
 
-type VerificationRequest = {
+interface VerificationRequest {
   data_hash: string;
   content: string;
   isSensitive: boolean;
@@ -68,9 +68,7 @@ interface FiltersActions {
   setFilterValue: (value: string[]) => void;
   setFilterType: (type: string) => void;
   setAnchorEl: (el: HTMLElement | null) => void;
-  setPaginationModel: React.Dispatch<
-        React.SetStateAction<PaginationModel>
-    >;
+  setPaginationModel: React.Dispatch<React.SetStateAction<PaginationModel>>;
   setApplyFilters: (apply: boolean) => void;
   fetchTopicList: (term: string) => Promise<void>;
   createFilterChangeHandler: (
@@ -86,6 +84,33 @@ interface FiltersContext {
   state: FiltersState;
   actions: FiltersActions;
 }
+interface StatsCount {
+  total?: number;
+  totalThisMonth?: number;
+  verified: number;
+  inAnalysis: number;
+  pending: number;
+}
+interface StatsSourceChannels {
+  label: string;
+  value: number;
+  percentage: number;
+}
+interface StatsRecentActivity {
+  id: string;
+  status: string;
+  sourceChannel: string;
+  data_hash: string;
+  timestamp: Date;
+}
+
+interface StatsSourceChannelsProps {
+  statsCounts?: StatsCount;
+  statsSourceChannels: StatsSourceChannels[];
+}
+interface StatsRecentActivityProps {
+  statsRecentActivity: StatsRecentActivity[];
+}
 
 export type {
   VerificationRequest,
@@ -97,4 +122,9 @@ export type {
   ViewMode,
   FilterItem,
   TopicOption,
+  StatsCount,
+  StatsSourceChannels,
+  StatsRecentActivity,
+  StatsSourceChannelsProps,
+  StatsRecentActivityProps,
 };

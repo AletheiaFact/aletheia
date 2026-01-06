@@ -4,7 +4,7 @@ import FilterManager from "./FilterManagers";
 import ActiveFilters from "./ActiveFilters";
 import VerificationRequestBoardView from "./VerificationRequestBoardView";
 import { useVerificationRequestFilters } from "./VerificationRequestFilters";
-import VerificationRequestDashboard from "./VerificationRequestDashboard";
+import VerificationRequestDashboard from "./Dashboard/VerificationRequestDashboard";
 
 const VerificationRequestView = () => {
   const { state, actions } = useVerificationRequestFilters();

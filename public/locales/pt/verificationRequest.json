@@ -85,6 +85,12 @@
     "automated_monitoring": "Monitoramento Automatizado",
     "errorUpdatingStatus": "Erro ao atualizar status:",
     "filterBySourceChannel": "Filtrar por Canal de Origem",
+    "activity": {
+        "Posted": "Denúncia #{{hash}} verificada e encaminhada",
+        "In Triage": "Denúncia #{{hash}} em processo de verificação",
+        "Pre Triage": "Nova denúncia recebida via {{source}}",
+        "Declined": "Denúncia #{{hash}} verificada e arquivada"
+    },
     "dashboard": {
         "title": "Painel de Denúncias",
         "subtitle": "Transparência e acompanhamento público",
@@ -99,6 +105,7 @@
         "statusTitle": "Status das Denúncias",
         "statusSubtitle": "Distribuição por estado de verificação",
         "activityTitle": "Atividade Recente",
-        "activitySubtitle": "Últimas atualizações do sistema"
+        "activitySubtitle": "Últimas atualizações do sistema",
+        "noData": "Nenhum dado disponível"
     }
 }

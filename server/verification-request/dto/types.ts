@@ -84,3 +84,7 @@ export const EXPECTED_STATES = [
     "impactArea",
     "severity",
 ];
+export interface TimeStamps {
+    createdAt: Date;
+    updatedAt: Date;
+}
