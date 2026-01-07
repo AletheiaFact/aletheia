@@ -1,12 +1,16 @@
 import user from "../fixtures/user";
 import locators from "./locators";
 
-Cypress.Commands.add("login", () => {
+Cypress.Commands.add("goToLoginPage", () => {
     cy.visit("http://localhost:3000");
     cy.title().should("contain", "AletheiaFact.org");
     cy.get(locators.menu.USER_ICON).click();
     cy.get(locators.menu.LOGIN_MENU).click();
     cy.url().should("contains", "login");
+});
+
+Cypress.Commands.add("login", () => {
+    cy.goToLoginPage();
     cy.get(locators.login.USER).type(user.email);
     cy.get(locators.login.PASSWORD).type(user.password);
     cy.get(locators.login.BTN_LOGIN).click();
@@ -35,6 +39,7 @@ declare global {
         interface Chainable {
             login(): Chainable<Element>;
             checkRecaptcha(): Chainable<Element>;
+            goToLoginPage(): Chainable<Element>;
         }
     }
 }
