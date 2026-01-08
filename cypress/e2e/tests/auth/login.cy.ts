@@ -18,8 +18,8 @@ describe("Login tests", () => {
         );
         cy.goToLoginPage();
         submitLoginForm(user.email, "invalidPassword123");
-
         cy.wait("@loginRequest").its("response.statusCode").should("eq", 400);
+        cy.contains("Erro ao fazer login").should("be.visible");
     });
 
     it("Should not login with invalid email", () => {
@@ -28,8 +28,8 @@ describe("Login tests", () => {
         );
         cy.goToLoginPage();
         submitLoginForm("invalidEmail@alethieiafact.org", user.password);
-
         cy.wait("@loginRequest").its("response.statusCode").should("eq", 400);
+        cy.contains("Erro ao fazer login").should("be.visible");
     });
 
     it("Should logout successfully", () => {
@@ -37,8 +37,8 @@ describe("Login tests", () => {
         cy.get(locators.menu.USER_ICON).click();
         cy.get(locators.menu.LOGOUT_MENU).click();
         cy.intercept("/api/.ory/sessions/whoami").as("confirmLogout");
-        cy.wait("@confirmLogout", { timeout: 30000 })
-            .its("response.statusCode")
-            .should("eq", 401);
+        cy.wait("@confirmLogout", { timeout: 30000 });
+        cy.get(locators.menu.USER_ICON).click();
+        cy.get(locators.menu.LOGIN_MENU).should("be.visible");
     });
 });
