@@ -83,7 +83,6 @@
     "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
-    "errorUpdatingStatus": "Error updating status:",
     "filterBySourceChannel": "Filter by Source Channel",
     "activity": {
         "Posted": "Verification request #{{hash}} verified and forwarded",
@@ -107,5 +106,13 @@
         "activityTitle": "Recent Activity",
         "activitySubtitle": "Latest updates from the system",
         "noData": "No data available"
-    }
+    },
+    "errorUpdatingStatus": "Error updating status:",
+    "identifiedPersonalities": "People Mentioned",
+    "loadingPersonalities": "Loading personalities...",
+    "personalitiesList": "List of identified personalities",
+    "noPersonalitiesFound": "No personalities identified in this request",
+    "errorLoadingPersonalities": "Error loading personalities. Please try again.",
+    "retryLoadingPersonalities": "Retry",
+    "viewPersonalityPage": "View personality page for {{name}}"
 }

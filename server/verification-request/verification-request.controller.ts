@@ -28,6 +28,8 @@ import { VerificationRequestStateMachineService } from "./state-machine/verifica
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
+import { WikidataService } from "../wikidata/wikidata.service";
+import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -39,7 +41,8 @@ export class VerificationRequestController {
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
         private captchaService: CaptchaService,
-        private verificationRequestStateMachineService: VerificationRequestStateMachineService
+        private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
+        private readonly wikidataService: WikidataService
     ) {}
 
     @ApiTags("verification-request")
@@ -118,6 +121,113 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getById(@Param("id") verificationRequestId: string) {
         return this.verificationRequestService.getById(verificationRequestId);
+    }
+
+    /**
+     * Get personalities associated with a verification request, enriched with Wikidata information
+     * @param verificationRequestId - The verification request ID
+     * @param language - Language code for Wikidata labels (default: 'en')
+     * @returns Array of personalities with Wikidata avatar and metadata
+     */
+    @ApiTags("verification-request")
+    @Get("api/verification-request/:id/personalities")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
+    public async getPersonalitiesWithWikidata(
+        @Param("id") verificationRequestId: string,
+        @Query("language") language: string = "en"
+    ): Promise<PersonalityWithWikidataDto[]> {
+        const verificationRequest =
+            await this.verificationRequestService.getByIdWithPopulatedFields(
+                verificationRequestId,
+                ["identifiedData"]
+            );
+
+        if (
+            !verificationRequest?.identifiedData ||
+            verificationRequest.identifiedData.length === 0
+        ) {
+            this.logger.debug(
+                `No identifiedData found for VR ${verificationRequestId}`
+            );
+            return [];
+        }
+
+        this.logger.debug(
+            `Found ${verificationRequest.identifiedData.length} personalities for VR ${verificationRequestId}`
+        );
+
+        const personalities: PersonalityWithWikidataDto[] = await Promise.all(
+            verificationRequest.identifiedData.map(
+                async (
+                    personality: any
+                ): Promise<PersonalityWithWikidataDto> => {
+                    if (!personality?.name) {
+                        this.logger.warn(
+                            `Personality missing name field for VR ${verificationRequestId}`
+                        );
+                        return {
+                            personalityId: personality._id?.toString() || "",
+                            name: "Unknown",
+                            slug: "",
+                            description: null,
+                            avatar: null,
+                            wikidata: null,
+                        };
+                    }
+
+                    const baseData = {
+                        personalityId: personality._id.toString(),
+                        name: personality.name,
+                        slug: personality.slug || "",
+                        description: personality.description || null,
+                    };
+
+                    if (!personality.wikidata) {
+                        this.logger.debug(
+                            `Personality ${personality.name} has no wikidata ID`
+                        );
+                        return {
+                            ...baseData,
+                            avatar: null,
+                            wikidata: null,
+                        };
+                    }
+
+                    try {
+                        const wikidataProps =
+                            await this.wikidataService.fetchProperties({
+                                wikidataId: personality.wikidata,
+                                language,
+                            });
+
+                        return {
+                            ...baseData,
+                            name: wikidataProps.name || personality.name,
+                            description:
+                                wikidataProps.description ||
+                                personality.description ||
+                                null,
+                            avatar: wikidataProps.avatar || null,
+                            wikidata: personality.wikidata,
+                        };
+                    } catch (error) {
+                        this.logger.error(
+                            `Error fetching wikidata for personality ${personality.name} (${personality.wikidata}):`,
+                            error.message
+                        );
+
+                        return {
+                            ...baseData,
+                            avatar: null,
+                            wikidata: personality.wikidata,
+                        };
+                    }
+                }
+            )
+        );
+
+        return personalities;
     }
 
     @ApiTags("verification-request")

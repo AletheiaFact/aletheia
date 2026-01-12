@@ -83,7 +83,6 @@
     "titleEditVerificationRequest": "Edição de Denúncia",
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
-    "errorUpdatingStatus": "Erro ao atualizar status:",
     "filterBySourceChannel": "Filtrar por Canal de Origem",
     "activity": {
         "Posted": "Denúncia #{{hash}} verificada e encaminhada",
@@ -107,5 +106,13 @@
         "activityTitle": "Atividade Recente",
         "activitySubtitle": "Últimas atualizações do sistema",
         "noData": "Nenhum dado disponível"
-    }
+    },
+    "errorUpdatingStatus": "Erro ao atualizar status:",
+    "identifiedPersonalities": "Pessoas Mencionadas",
+    "loadingPersonalities": "Carregando personalidades...",
+    "personalitiesList": "Lista de personalidades identificadas",
+    "noPersonalitiesFound": "Nenhuma personalidade identificada nesta denúncia",
+    "errorLoadingPersonalities": "Erro ao carregar personalidades. Por favor, tente novamente.",
+    "retryLoadingPersonalities": "Tentar novamente",
+    "viewPersonalityPage": "Ver página da personalidade {{name}}"
 }
