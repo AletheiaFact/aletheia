@@ -493,8 +493,7 @@ export class VerificationRequestService {
         const pendingTasks = verificationRequest.pendingAiTasks || new Map();
 
         this.logger.log(
-            `[revalidateAndRunMissingStates] VR ${
-                verificationRequest.id
+            `[revalidateAndRunMissingStates] VR ${verificationRequest.id
             }, states executed: ${statesExecuted.join(
                 ", "
             )}, pending: ${Object.keys(pendingTasks).join(", ")}`
@@ -1544,7 +1543,7 @@ export class VerificationRequestService {
         const totalThisMonth = data.totalThisMonth[0]?.count || 0;
 
         const statusMap = Object.fromEntries(
-            data.statuses.map((item) => [item._id, item.count])
+            (data.statuses || []).map((item) => [item._id, item.count])
         );
 
         return {
