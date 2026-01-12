@@ -7,7 +7,7 @@ import { formatTimeAgo } from "../../../helpers/formatTimeAgo";
 const VerificationRequestActivity = ({
   statsRecentActivity,
 }: StatsRecentActivityProps) => {
-  const { t } = useTranslation("verificationRequest");
+  const { t } = useTranslation();
   
   const STATUS_CONFIG = {
     Posted: {
@@ -32,17 +32,17 @@ const VerificationRequestActivity = ({
     <Card className="card">
       <CardContent className="card-content">
         <Typography className="title">
-          {t("dashboard.activityTitle")}
+          {t("verificationRequest:dashboard.activityTitle")}
         </Typography>
         <Typography className="subtitle">
-          {t("dashboard.activitySubtitle")}
+          {t("verificationRequest:dashboard.activitySubtitle")}
         </Typography>
 
         <Box mt={2}>
           {statsRecentActivity.map((activity) => {
             const { color, labelKey } = STATUS_CONFIG[activity.status];
 
-            const message = t(`activity.${activity.status}`, {
+            const message = t(`verificationRequest:activity.${activity.status}`, {
               hash: activity.data_hash,
               source: t(
                 `verificationRequest:${activity.sourceChannel}`,
@@ -53,11 +53,11 @@ const VerificationRequestActivity = ({
             return (
               <Box className="item" key={activity.id}>
                 <Typography className="badge" variant="body2" bgcolor={color}>
-                  {t(labelKey)}
+                  {t(`verificationRequest:${labelKey}`)}
                 </Typography>
                 <Typography className="legend-label">{message}</Typography>
                 <Typography className="legend-percentage">
-                  {formatTimeAgo(activity.timestamp)}
+                  {formatTimeAgo(activity.timestamp, t)}
                 </Typography>
               </Box>
             );

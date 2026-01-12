@@ -30,7 +30,7 @@ interface StatsDto {
   statsRecentActivity: StatsRecentActivity[];
 }
 
-export {
+export type {
   StatsCount,
   StatsSourceChannels,
   StatsRecentActivity,
