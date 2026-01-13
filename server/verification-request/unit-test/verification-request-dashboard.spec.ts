@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
 import { VerificationRequestService } from "../verification-request.service";
 import { VerificationRequestDocument } from "../schemas/verification-request.schema";
-import { createVRTestingModule, mockQuery, mockVerificationRequestModel } from "./setup/vr-test.module";
+import { createVRTestingModule, mockQuery, mockVerificationRequestModel } from "./setup/verification-request-test.module";
 
 function createFakeRequest(overrides?: Partial<VerificationRequestDocument>) {
   return {
