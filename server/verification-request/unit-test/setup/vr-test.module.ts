@@ -24,7 +24,7 @@ const mockVerificationRequestModel = {
 };
 
 const createVRTestingModule = async () => {
-  const module: TestingModule = await Test.createTestingModule({
+  const testingModule: TestingModule = await Test.createTestingModule({
     providers: [
       VerificationRequestService,
       {
@@ -45,10 +45,10 @@ const createVRTestingModule = async () => {
     ],
   }).compile();
 
-  const service = await module.resolve<VerificationRequestService>(VerificationRequestService);
-  const model = module.get<Model<VerificationRequestDocument>>(getModelToken("VerificationRequest"));
+  const service = await testingModule.resolve<VerificationRequestService>(VerificationRequestService);
+  const model = testingModule.get<Model<VerificationRequestDocument>>(getModelToken("VerificationRequest"));
 
-  return { service, model, module };
+  return { service, model, testingModule };
 };
 
 export { createVRTestingModule, mockVerificationRequestModel, mockQuery };

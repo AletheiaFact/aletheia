@@ -1494,7 +1494,7 @@ export class VerificationRequestService {
      * Get statistics for verification requests dashboard
      * @returns Statistics object with counts, percentages, and distributions
      */
-    async getStats() {//need to create unit tests for this method
+    async getStats() {
         const now = new Date();
         const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -1516,7 +1516,7 @@ export class VerificationRequestService {
     /**
      * Get total counts by status
      */
-    private async getStatsCount(firstDayOfMonth: Date): Promise<StatsCount> {//need to create unit tests for this method
+    private async getStatsCount(firstDayOfMonth: Date): Promise<StatsCount> {
         const result = await this.VerificationRequestModel.aggregate([
             {
                 $facet: {
@@ -1560,7 +1560,7 @@ export class VerificationRequestService {
      */
     private async getStatsSourceChannels(
         totalCount?: number
-    ): Promise<StatsSourceChannels[]> {//need to create unit tests for this method
+    ): Promise<StatsSourceChannels[]> {
         const sourceChannelAggregation =
             await this.VerificationRequestModel.aggregate([
                 {
@@ -1584,7 +1584,7 @@ export class VerificationRequestService {
     /**
      * Get recent activity (last 10 updates)
      */
-    private async getStatsRecentActivity(): Promise<StatsRecentActivity[]> {//need to create unit tests for this method
+    private async getStatsRecentActivity(): Promise<StatsRecentActivity[]> {
         const recentRequests = await this.VerificationRequestModel.find({})
             .sort({ updatedAt: -1 })
             .limit(10)
