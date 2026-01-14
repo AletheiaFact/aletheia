@@ -2,17 +2,7 @@ import { Model } from "mongoose";
 import { VerificationRequestService } from "../verification-request.service";
 import { VerificationRequestDocument } from "../schemas/verification-request.schema";
 import { createVRTestingModule, mockQuery, mockVerificationRequestModel } from "./setup/verification-request-test.module";
-
-function createFakeRequest(overrides?: Partial<VerificationRequestDocument>) {
-  return {
-    _id: "60c72b2f9f1b2c3d4e5f6a7b",
-    status: "In Triage",
-    sourceChannel: "Whatsapp",
-    data_hash: "AABBCCDD1122334455667788",
-    updatedAt: new Date(),
-    ...overrides,
-  };
-}
+import { createFakeVerificationRequest } from "./setup/verification-request.factory";
 
 describe("VerificationRequestStats (Unit)", () => {
   let service: VerificationRequestService;
@@ -48,7 +38,7 @@ describe("VerificationRequestStats (Unit)", () => {
       });
 
       it("should transform data_hash to the first 8 characters and map _id to id", async () => {
-        const mockDoc = createFakeRequest({ data_hash: "1234567890ABC" });
+        const mockDoc = createFakeVerificationRequest({ data_hash: "1234567890ABC" });
         setupMockData([mockDoc]);
 
         const [result] = await (service as any).getStatsRecentActivity();
