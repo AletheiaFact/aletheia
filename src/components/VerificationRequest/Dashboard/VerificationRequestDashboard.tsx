@@ -21,6 +21,7 @@ const VerificationRequestDashboard: React.FC = () => {
     statsRecentActivity: StatsRecentActivity[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -29,10 +30,15 @@ const VerificationRequestDashboard: React.FC = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
+      setError(false);
       const data = await verificationRequestApi.getVerificationRequestStats();
+      if (!data) {
+        throw new Error("Empty data");
+      }
       setStats(data);
-    } catch (error) {
-      console.error("Error fetching stats:", error);
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -42,10 +48,10 @@ const VerificationRequestDashboard: React.FC = () => {
     return <Loading />;
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
-      <Dashboard container xs={10} style={{ justifyContent: "center" }}>
-        <Typography>{t("dashboard.noData")}</Typography>
+      <Dashboard style={{ justifyContent: "center" }}>
+        <Typography>{t("dashboard.errorLoading")}</Typography>
       </Dashboard>
     );
   }

@@ -3,7 +3,7 @@ import { StatsSourceChannelsProps } from "../../../types/VerificationRequest";
 import { SourceChannelDistribution } from "./SourceChannelDistribution";
 import { StatusDistribution } from "./StatusDistribution";
 
-const verificationRequestOverview = ({
+const VerificationRequestOverview = ({
   statsCounts,
   statsSourceChannels,
 }: StatsSourceChannelsProps) => (
@@ -22,4 +22,4 @@ const verificationRequestOverview = ({
   </Grid>
 );
 
-export default verificationRequestOverview;
+export default VerificationRequestOverview;

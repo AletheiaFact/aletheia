@@ -105,7 +105,7 @@
         "statusSubtitle": "Distribution by verification status",
         "activityTitle": "Recent Activity",
         "activitySubtitle": "Latest updates from the system",
-        "noData": "No data available"
+        "errorLoading": "Error fetching statistics"
     },
     "errorUpdatingStatus": "Error updating status:",
     "identifiedPersonalities": "People Mentioned",

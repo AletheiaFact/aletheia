@@ -22,9 +22,9 @@ const VerificationRequestCounts = ({
       icon: <Description />,
       label: t("dashboard.totalReports"),
       value: total,
-      subLabel: `${((totalThisMonth / total) * 100).toFixed(1)}% ${t(
-        "dashboard.receivedThisMonth"
-      )}`,
+      subLabel: `${
+        total > 0 ? ((totalThisMonth / total) * 100).toFixed(1) : "0.0"
+      }% ${t("dashboard.receivedThisMonth")}`,
     },
     {
       icon: <CheckCircle />,

@@ -105,7 +105,7 @@
         "statusSubtitle": "Distribuição por estado de verificação",
         "activityTitle": "Atividade Recente",
         "activitySubtitle": "Últimas atualizações do sistema",
-        "noData": "Nenhum dado disponível"
+        "errorLoading": "Erro ao buscar as estatísticas"
     },
     "errorUpdatingStatus": "Erro ao atualizar status:",
     "identifiedPersonalities": "Pessoas Mencionadas",
