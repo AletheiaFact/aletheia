@@ -213,6 +213,18 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
         });
 };
 
+const getVerificationRequestStats = () => {
+    return request
+        .get(`/stats`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((e) => {
+            console.error("error while getting verification request stats", e);
+            throw e;
+        });
+};
+
 /**
  * Fetch personalities associated with a verification request, enriched with Wikidata information
  * @param verificationRequestId - The verification request ID
@@ -243,6 +255,7 @@ const verificationRequestApi = {
     updateVerificationRequestWithTopics,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
+    getVerificationRequestStats,
     getPersonalitiesWithWikidata,
 };
 
