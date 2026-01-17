@@ -1,22 +1,26 @@
+import { useTranslation } from "next-i18next";
 import React from "react";
 
-const LocalizedDate = ({
-    date,
-    showTime = false,
-}: {
-    date: Date;
-    showTime?: boolean;
-}) => {
-    date = new Date(date);
-    const localizedDate = date.toLocaleDateString();
-    const localizedTime = date.toLocaleTimeString();
-    return (
-        // Suppress hydration warning because currentTime varies between server and client rendering
-        <span suppressHydrationWarning style={{ fontWeight: 700 }}>
-            {localizedDate}
-            {showTime && ` - ${localizedTime}`}
-        </span>
-    );
+interface LocalizedDateProps {
+  date: Date | string | number;
+  showTime?: boolean;
+}
+
+const LocalizedDate = ({ date, showTime = false }: LocalizedDateProps) => {
+  const { i18n } = useTranslation();
+  const currentLocale = i18n.language || "en";
+  const dateObj = new Date(date);
+
+  if (isNaN(dateObj.getTime())) return null;
+
+  const formattedDate = dateObj.toLocaleDateString(currentLocale);
+  const formattedTime = showTime ? ` - ${dateObj.toLocaleTimeString(currentLocale)}` : "";
+
+  return (
+    <time dateTime={dateObj.toISOString()} style={{ fontWeight: 700 }}>
+      {formattedDate}{formattedTime}
+    </time>
+  );
 };
 
 export default LocalizedDate;

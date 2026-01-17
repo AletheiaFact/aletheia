@@ -5,14 +5,15 @@ const request = axios.create({
     baseURL: `/api/history`,
 });
 
-type optionsType = {
+type OptionsType = {
     targetId: string;
     targetModel: string;
-    page: number;
-    order: "asc" | "desc";
-    pageSize: number;
+    page?: number;
+    order?: "asc" | "desc";
+    pageSize?: number;
 };
-const getByTargetId = (options: optionsType) => {
+
+const getByTargetId = (options: OptionsType) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -31,12 +32,13 @@ const getByTargetId = (options: optionsType) => {
             };
         })
         .catch((err) => {
-            // TODO: use Sentry instead
-            // console.log(err);
+            console.error(err);
+            return { data: [], total: 0, totalPages: 0 };
         });
 };
 
 const HistoryApi = {
     getByTargetId,
 };
+
 export default HistoryApi;
