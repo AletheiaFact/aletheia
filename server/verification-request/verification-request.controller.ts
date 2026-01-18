@@ -30,6 +30,7 @@ import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -37,6 +38,7 @@ export class VerificationRequestController {
 
     constructor(
         private verificationRequestService: VerificationRequestService,
+        private verificationRequestStatsService: VerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
@@ -50,7 +52,7 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=300, must-revalidate")
     @Public()
     public async getStats(): Promise<StatsDto> {
-        return this.verificationRequestService.getStats();
+        return this.verificationRequestStatsService.getStats();
     }
 
     @ApiTags("verification-request")
