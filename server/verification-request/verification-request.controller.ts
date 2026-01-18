@@ -38,7 +38,7 @@ export class VerificationRequestController {
 
     constructor(
         private verificationRequestService: VerificationRequestService,
-        private verificationRequestStatsService: VerificationRequestStatsService,
+        private readonly verificationRequestStatsService: VerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,

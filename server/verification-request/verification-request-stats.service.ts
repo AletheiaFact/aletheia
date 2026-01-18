@@ -15,7 +15,7 @@ export class VerificationRequestStatsService {
 
   constructor(
     @InjectModel(VerificationRequest.name)
-    private VerificationRequestModel: Model<VerificationRequestDocument>
+    private readonly VerificationRequestModel: Model<VerificationRequestDocument>
   ) { }
 
   /**
