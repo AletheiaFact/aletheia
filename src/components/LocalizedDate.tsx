@@ -11,7 +11,7 @@ const LocalizedDate = ({ date, showTime = false }: LocalizedDateProps) => {
   const currentLocale = i18n.language || "en";
   const dateObj = new Date(date);
 
-  if (isNaN(dateObj.getTime())) return null;
+  if (Number.isNaN(dateObj.getTime())) return null;
 
   const formattedDate = dateObj.toLocaleDateString(currentLocale);
   const formattedTime = showTime ? ` - ${dateObj.toLocaleTimeString(currentLocale)}` : "";

@@ -1,21 +1,39 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "next-i18next";
 import LocalizedDate from "../LocalizedDate";
+import { User } from "../../types/User";
+import { TFunction } from "i18next";
+import { M2M } from "../../../server/entities/m2m.entity";
 
-const getDisplayName = (user: any, t: any): string => {
-  // to do type and refactor function
+type PerformedBy = M2M | User | string;
+
+interface HistoryListItemProps {
+  history: {
+    user: PerformedBy;
+    type: string;
+    targetModel: string;
+    date?: Date;
+    details: {
+      before?: Record<string, any>;
+      after: Record<string, any>;
+    };
+  };
+}
+
+const getDisplayName = (user: PerformedBy, t: TFunction): string => {
   if (typeof user === "string") {
-    return "Chatbot";
-  } else if (user?.isM2M === true) {
-    return "M2M";
-  } else if (user?._id) {
-    return user.name;
-  } else {
-    return t("anonymousUserName");
+    return t("virtualAssistant");
   }
+  if (user && "isM2M" in user) {
+    return t("automatedMonitoring");
+  }
+  if (user && "name" in user) {
+    return user.name;
+  }
+  return t("anonymousUserName");
 };
 
-const HistoryListItem: React.FC<{ history: any }> = ({ history }) => {
+const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
   const { t } = useTranslation("history");
 
   const vm = useMemo(() => {
@@ -25,10 +43,8 @@ const HistoryListItem: React.FC<{ history: any }> = ({ history }) => {
       const username = getDisplayName(user, t);
 
       const titleField = targetModel === "personality" ? "name" : "title";
-      const displayTitle =
-        type === "delete"
-          ? details?.before?.[titleField]
-          : details?.after?.[titleField];
+      const data = type === "delete" ? details?.before : details?.after;
+      const displayTitle = data?.[titleField];
 
       return { username, type, targetModel, displayTitle, date };
     } catch (err) {

@@ -2,7 +2,11 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
 import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
-import { User } from "../users/schemas/user.schema";
+import {
+    HistoryItem,
+    HistoryQuery,
+    HistoryResponse,
+} from "./types/history.interfaces";
 
 @Injectable()
 export class HistoryService {
@@ -36,7 +40,7 @@ export class HistoryService {
     getHistoryParams(
         dataId: string,
         targetModel: string,
-        performedBy: User | any,
+        performedBy: any,
         type: string,
         latestChange: any,
         previousChange = null
@@ -81,14 +85,14 @@ export class HistoryService {
     async getHistoryForTarget(
         targetId: string,
         targetModel: string,
-        query: any = {} //to do type
-    ):Promise <any> { //to do type 
-        const page = Math.max(parseInt(query.page, 10) || 0, 0);
-        const pageSize = Math.max(parseInt(query.pageSize, 10) || 10, 1);
+        query: HistoryQuery
+    ): Promise<HistoryResponse> {
+        const page = Math.max(Number(query.page) || 0, 0);
+        const pageSize = Math.max(Number(query.pageSize) || 10, 1);
         const order = query.order === "desc" ? -1 : 1;
         const type = query.type || "";
 
-        const mongoQuery: any = { // to do type
+        const mongoQuery: HistoryItem = {
             targetId: Types.ObjectId(targetId),
             targetModel,
         };
@@ -120,7 +124,7 @@ export class HistoryService {
         };
     }
 
-    private getUserLookupStages(): any[] { // to do type
+    private getUserLookupStages() {
         return [
             {
                 $lookup: {
