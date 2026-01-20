@@ -8,6 +8,7 @@ import {
     HistoryItem,
     HistoryQuery,
     HistoryResponse,
+    IHideableContent,
     PerformedBy,
 } from "./types/history.interfaces";
 
@@ -165,17 +166,20 @@ export class HistoryService {
         ];
     }
 
-    async getDescriptionForHide(content: any, target: string) {
-        if (content?.isHidden) {
-            const { history } = await this.getHistoryForTarget(content._id, target, {
-                page: 0,
-                pageSize: 1,
-                order: "desc",
-                type: HistoryType.Hide,
-            });
-
-            return history[0]?.details?.after?.description;
+    async getDescriptionForHide(
+        content: IHideableContent, 
+        target: string
+    ) {
+        if (!content?._id || !content?.isHidden) {
+            return "";
         }
-        return "";
+        const { history } = await this.getHistoryForTarget(content._id, target, {
+            page: 0,
+            pageSize: 1,
+            order: "desc",
+            type: HistoryType.Hide,
+        });
+
+        return history[0]?.details?.after?.description || "";
     }
 }

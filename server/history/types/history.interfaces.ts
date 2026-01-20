@@ -46,6 +46,11 @@ interface HistoryDetails {
   before?: AfterAndBeforeType | null;
 }
 type AfterAndBeforeType = Record<string, any>;
+interface IHideableContent {
+    _id?: string;
+    isHidden?: boolean;
+    [key: string]: any;
+}
 
 export type {
   HistoryParams,
@@ -53,5 +58,6 @@ export type {
   HistoryResponse,
   HistoryItem,
   PerformedBy,
-  AfterAndBeforeType
+  AfterAndBeforeType,
+  IHideableContent
 };
