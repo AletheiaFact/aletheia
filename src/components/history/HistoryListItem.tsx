@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "next-i18next";
 import LocalizedDate from "../LocalizedDate";
-import { User } from "../../types/User";
+import { M2M, User } from "../../types/User";
 import { TFunction } from "i18next";
-import { M2M } from "../../../server/entities/m2m.entity";
 
 type PerformedBy = M2M | User | string;
 
@@ -36,7 +35,7 @@ const getDisplayName = (user: PerformedBy, t: TFunction): string => {
 const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
   const { t } = useTranslation("history");
 
-  const vm = useMemo(() => {
+  const currentHistory = useMemo(() => {
     try {
       const { user, type, targetModel, details, date } = history;
 
@@ -53,14 +52,14 @@ const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
     }
   }, [history, t]);
 
-  if (!vm) return null;
+  if (!currentHistory) return null;
 
   return (
     <div style={{ fontSize: 14, padding: "4px 0" }}>
-      <LocalizedDate date={vm.date} showTime />
+      <LocalizedDate date={currentHistory.date} showTime />
       {` - `}
-      <strong>{vm.username}</strong> {t(vm.type)} {t(vm.targetModel)}{" "}
-      {vm.displayTitle && `"${vm.displayTitle}"`}
+      <strong>{currentHistory.username}</strong> {t(currentHistory.type)} {t(currentHistory.targetModel)}{" "}
+      {currentHistory.displayTitle && `"${currentHistory.displayTitle}"`}
     </div>
   );
 };
