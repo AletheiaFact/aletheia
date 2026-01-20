@@ -135,7 +135,16 @@ export class HistoryService {
                     from: "users",
                     let: { userId: "$user" },
                     pipeline: [
-                        { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: [{ $type: "$$userId" }, "objectId"] },
+                                        { $eq: ["$_id", "$$userId"] }
+                                    ]
+                                }
+                            }
+                        },
                         { $project: { _id: 1, name: 1 } },
                     ],
                     as: "userLookup",
