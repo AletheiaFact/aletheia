@@ -16,27 +16,40 @@ export class VerificationRequestStatsService {
   constructor(
     @InjectModel(VerificationRequest.name)
     private readonly VerificationRequestModel: Model<VerificationRequestDocument>
-  ) { }
+  ) {}
 
   /**
    * Get statistics for verification requests dashboard
    * @returns Statistics object with counts, percentages, and distributions
    */
   async getStats() {
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    try {
+      const now = new Date();
+      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const statsCount = await this.getStatsCount(firstDayOfMonth);
-    const statsSourceChannels = await this.getStatsSourceChannels(
-      statsCount.total
-    );
-    const statsRecentActivity = await this.getStatsRecentActivity();
+      const statsCount = await this.getStatsCount(firstDayOfMonth);
+      const statsSourceChannels = await this.getStatsSourceChannels(
+        statsCount.total
+      );
+      const statsRecentActivity = await this.getStatsRecentActivity();
 
-    return {
-      statsCount: statsCount,
-      statsSourceChannels: statsSourceChannels,
-      statsRecentActivity: statsRecentActivity,
-    };
+      return {
+        statsCount,
+        statsSourceChannels,
+        statsRecentActivity,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Failed to get dashboard stats: ${error.message}`,
+        error.stack
+      );
+
+      return {
+        statsCount: { total: 0, totalThisMonth: 0, verified: 0, inAnalysis: 0, pending: 0 },
+        statsSourceChannels: [],
+        statsRecentActivity: [],
+      };
+    }
   }
 
   /**

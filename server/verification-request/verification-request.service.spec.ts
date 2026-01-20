@@ -9,7 +9,7 @@ import { GroupService } from "../group/group.service";
 import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { TopicService } from "../topic/topic.service";
-import { mockVerificationRequestModel } from "./verification-request-stats.service.spec";
+import { mockVerificationRequestModel } from "../mocks/VerificationRequestMock";
 
 describe("VerificationRequestService (Unit)", () => {
   let testingModule: TestingModule;
