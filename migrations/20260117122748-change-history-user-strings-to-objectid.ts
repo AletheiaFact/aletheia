@@ -15,7 +15,12 @@ export async function up(db: Db) {
             const bulkOps = historiesToChange.map((history) => ({
                 updateOne: {
                     filter: { _id: history._id },
-                    update: { $set: { user: new ObjectId(history.user as string) } },
+                    update: {
+                        $set: {
+                            user: new ObjectId(history.user as string),
+                            migration_revert_flag: true,
+                        },
+                    },
                 },
             }));
 
@@ -32,25 +37,26 @@ export async function down(db: Db) {
     try {
         const historiesToRedefine = await db
             .collection("histories")
-            .find({ user: { $type: "objectId" } })
+            .find({ migration_revert_flag: true })
             .toArray();
 
         if (historiesToRedefine.length === 0) return;
 
         const bulkOps = historiesToRedefine.map((history) => {
-            const userIdString = history.user ? String(history.user) : null;
+                const userIdString = history.user ? String(history.user) : null;
 
-            return {
-                updateOne: {
-                    filter: { _id: history._id },
-                    update: { $set: { user: userIdString } },
-                },
-            };
-        }).filter(op => op.updateOne.update.$set.user !== null);
+                return {
+                    updateOne: {
+                        filter: { _id: history._id },
+                        update: { $set: { user: userIdString } },
+                        $unset: { migration_revert_flag: "" },
+                    },
+                };
+            })
 
         const result = await db.collection("histories").bulkWrite(bulkOps);
         console.log(`Reverted ${result.modifiedCount} fields back to strings.`);
-        
+
     } catch (error) {
         console.error("Migration DOWN failed:", error);
         throw error;
