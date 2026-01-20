@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
-import { BaseRequest } from "../../types/BaseRequest";
+
+export const HEX24 = /^[0-9a-fA-F]{24}$/;
 
 interface HistoryParams {
   targetId: string;
@@ -12,25 +13,13 @@ interface HistoryQuery {
   order?: "asc" | "desc";
   type?: string;
 }
-
-interface HistoryDetails {
-  after: any;
-  before?: any;
+interface HistoryResponse {
+  history: HistoryItem[];
+  totalChanges: number;
+  totalPages: number;
+  page: number;
+  pageSize: number;
 }
-
-interface M2M {
-  isM2M: boolean;
-  clientId: string;
-  subject: string;
-  scopes: string[];
-  role: {
-    main: string;
-  };
-  namespace: string;
-}
-
-type PerformedBy = M2M | BaseRequest | string;
-
 interface HistoryItem {
   _id?: string;
   targetId: Types.ObjectId;
@@ -41,17 +30,28 @@ interface HistoryItem {
   date?: Date | string;
 }
 
-interface HistoryResponse {
-  history: HistoryItem[];
-  totalChanges: number;
-  totalPages: number;
-  page: number;
-  pageSize: number;
+type PerformedBy = Types.ObjectId[] | M2M | string | null;
+interface M2M {
+  isM2M: boolean;
+  clientId: string;
+  subject: string;
+  scopes: string[];
+  role: {
+    main: string;
+  };
+  namespace: string;
 }
+interface HistoryDetails {
+  after: AfterAndBeforeType;
+  before?: AfterAndBeforeType | null;
+}
+type AfterAndBeforeType = Record<string, any>;
 
 export type {
   HistoryParams,
   HistoryQuery,
   HistoryResponse,
-  HistoryItem
+  HistoryItem,
+  PerformedBy,
+  AfterAndBeforeType
 };

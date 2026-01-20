@@ -3,9 +3,12 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
 import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
 import {
+    AfterAndBeforeType,
+    HEX24,
     HistoryItem,
     HistoryQuery,
     HistoryResponse,
+    PerformedBy,
 } from "./types/history.interfaces";
 
 @Injectable()
@@ -28,7 +31,8 @@ export class HistoryService {
      * @param dataId Target Id.
      * @param targetModel The model of the target(claim or personality ).
      * @param performedBy The actor who performed the change. Can be:
-     * - a intern user object with _id field
+     * - an array of internal user object IDs
+     * - a string of the internal user id
      * - a string representing chatbot ID
      * - a Machine-to-Machine (M2M) object
      * - null if unknown or invalid
@@ -40,17 +44,17 @@ export class HistoryService {
     getHistoryParams(
         dataId: string,
         targetModel: string,
-        performedBy: any,
+        performedBy: PerformedBy,
         type: string,
-        latestChange: any,
-        previousChange = null
+        latestChange: AfterAndBeforeType,
+        previousChange?: AfterAndBeforeType
     ) {
         const date = new Date();
         const targetId = Types.ObjectId(dataId);
         let currentPerformedBy = null;
 
-        if (performedBy?._id) {
-            currentPerformedBy = Types.ObjectId(performedBy?._id);
+        if (typeof performedBy === "string" && HEX24.test(performedBy)) {
+            currentPerformedBy = Types.ObjectId(performedBy);
         } else {
             currentPerformedBy = performedBy;
         }

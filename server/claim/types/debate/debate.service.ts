@@ -75,7 +75,7 @@ export class DebateService {
         const history = this.historyService.getHistoryParams(
             newDebate._id,
             TargetModel.Debate,
-            this.req.user,
+            this.req.user?._id,
             HistoryType.Update,
             newDebate,
             previousDebate

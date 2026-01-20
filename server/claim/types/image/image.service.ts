@@ -37,7 +37,7 @@ export class ImageService {
         const history = this.historyService.getHistoryParams(
             newImage._id,
             TargetModel.Image,
-            this.req.user,
+            this.req.user?._id,
             HistoryType.Create,
             newImage
         );
