@@ -1,14 +1,13 @@
 import { jest } from "@jest/globals";
-import { Claim } from "../claim/schemas/claim.schema";
 
 export const mockClaimService = () => ({
-    getById: jest.fn(),
+    getByPersonalityIdAndClaimSlug: jest.fn<() => Promise<{ _id: string }>>(),
 });
 
 export const mockImageService = () => ({
-    getByDataHash: jest.fn(),
+    getByDataHash: jest.fn<() => Promise<{ _id: string; dataHash: string }>>(),
 });
 
 export const mockPersonalityService = () => ({
-    getPersonalityBySlug: jest.fn(),
+    getPersonalityBySlug: jest.fn<() => Promise<{ _id: string }>>(),
 });
