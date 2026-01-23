@@ -48,6 +48,7 @@ import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { Types } from "mongoose";
 import { GroupService } from "../group/group.service";
+import { GetByDataHashDto } from "../claim/dto/get-by-datahash.dto";
 
 @Controller(":namespace?")
 export class ClaimController {
@@ -401,7 +402,13 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { data_hash, claimId, namespace } = req.params;
+        const validatedParams = GetByDataHashDto.parse({
+            dataHash: req.params.data_hash,
+        });
+
+        const { data_hash } = validatedParams;
+
+        const { claimId, namespace } = req.params;
         const claim = await this.claimService.getById(
             claimId,
             namespace as NameSpaceEnum
@@ -484,7 +491,13 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { data_hash, personalitySlug, claimSlug } = req.params;
+        const validatedParams = GetByDataHashDto.parse({
+            data_hash: req.params.data_hash,
+        });
+
+        const { data_hash } = validatedParams;
+
+        const { personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
             {
                 slug: personalitySlug,
