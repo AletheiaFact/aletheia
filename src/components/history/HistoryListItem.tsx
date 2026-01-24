@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import { useTranslation } from "next-i18next";
 import LocalizedDate from "../LocalizedDate";
 import { TFunction } from "i18next";
-import { HistoryListItemProps, PerformedBy } from "../../types/history";
-import { isM2M, isUser } from "../../utils/typeGuards";
+import { HistoryListItemProps, PerformedBy } from "../../types/History";
+import { isM2M, isUser } from "../../utils/TypeGuards";
 import { M2MSubject } from "../../types/enums";
 
 const getDisplayName = (user: PerformedBy, t: TFunction): string => {

@@ -1,4 +1,4 @@
-import { PerformedBy } from "../types/history";
+import { PerformedBy } from "../types/History";
 import { M2M, User } from "../types/User";
 
 export function isM2M(user: PerformedBy): user is M2M {
