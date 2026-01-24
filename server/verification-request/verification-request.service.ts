@@ -6,7 +6,7 @@ import {
     Scope,
     Logger,
 } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { isValidObjectId, Model, Types } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
     VerificationRequest,
@@ -97,9 +97,14 @@ export class VerificationRequestService {
      * @returns the verification request document
      */
     async getById(verificationRequestId: string): Promise<VerificationRequest> {
-        return this.VerificationRequestModel.findById(verificationRequestId, {
+        if (!isValidObjectId(verificationRequestId)) {
+            throw new BadRequestException("Invalid verification request ID");
+        }
+        return (await this.VerificationRequestModel.findById(verificationRequestId, {
             embedding: 0,
-        }).populate("group");
+        })
+            .populate("group")
+            .exec()) as VerificationRequestDocument;
     }
 
     /**
@@ -152,7 +157,7 @@ export class VerificationRequestService {
                     topics: topicWikidataEntities,
                 });
 
-                vr.impactArea = Types.ObjectId(createdTopic[0].id);
+                vr.impactArea = new Types.ObjectId(createdTopic[0].id);
                 await vr.save();
             }
 
@@ -235,15 +240,16 @@ export class VerificationRequestService {
         populate = true
     ): Promise<VerificationRequestDocument> {
         if (populate) {
-            return this.VerificationRequestModel.findOne({
+            return (await this.VerificationRequestModel.findOne({
                 data_hash,
             })
                 .populate("group")
                 .populate("source")
-                .populate("impactArea");
+                .populate("impactArea")
+                .exec()) as VerificationRequestDocument;
         }
 
-        return this.VerificationRequestModel.findOne({ data_hash });
+        return (await this.VerificationRequestModel.findOne({ data_hash }).exec()) as VerificationRequestDocument;
     }
 
     /**
@@ -306,10 +312,9 @@ export class VerificationRequestService {
         postProcess: boolean = true
     ): Promise<VerificationRequestDocument> {
         try {
-            const verificationRequest =
-                await this.VerificationRequestModel.findById(
-                    verificationRequestId
-                ).populate("group");
+            const verificationRequest = (await this.VerificationRequestModel.findById(
+                verificationRequestId
+            ).populate("group").exec()) as VerificationRequestDocument;
 
             if (!verificationRequest) {
                 throw new Error("Verification request not found");
@@ -344,7 +349,7 @@ export class VerificationRequestService {
                         ),
                         ...newSourceIds.map((id) => id.toString()),
                     ])
-                ).map((id) => Types.ObjectId(id));
+                ).map((id) => new Types.ObjectId(id));
             }
 
             if (
@@ -371,11 +376,11 @@ export class VerificationRequestService {
 
             await this.historyService.createHistory(history);
 
-            return await this.VerificationRequestModel.findByIdAndUpdate(
+            return (await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            ).populate("source");
+            ).populate("source").exec()) as VerificationRequestDocument;
         } catch (error) {
             console.error("Failed to update verification request:", error);
             throw error;
