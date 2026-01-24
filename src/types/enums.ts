@@ -50,6 +50,10 @@ enum SenderEnum {
     User = "You",
 }
 
+enum M2MSubject {
+    Chatbot = "chatbot-service",
+} 
+
 export {
     ClassificationEnum,
     Roles,
@@ -57,4 +61,5 @@ export {
     ContentModelEnum,
     CommentEnum,
     SenderEnum,
+    M2MSubject,
 };

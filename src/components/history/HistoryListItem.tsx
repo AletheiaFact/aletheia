@@ -1,32 +1,19 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "next-i18next";
 import LocalizedDate from "../LocalizedDate";
-import { M2M, User } from "../../types/User";
 import { TFunction } from "i18next";
-
-type PerformedBy = M2M | User | string;
-
-interface HistoryListItemProps {
-  history: {
-    user: PerformedBy;
-    type: string;
-    targetModel: string;
-    date?: Date;
-    details: {
-      before?: Record<string, any>;
-      after: Record<string, any>;
-    };
-  };
-}
+import { HistoryListItemProps, PerformedBy } from "../../types/history";
+import { isM2M, isUser } from "../../utils/typeGuards";
+import { M2MSubject } from "../../types/enums";
 
 const getDisplayName = (user: PerformedBy, t: TFunction): string => {
-  if (typeof user === "string") {
+  if (isM2M(user) && user.subject === M2MSubject.Chatbot) {
     return t("virtualAssistant");
   }
-  if (user && "isM2M" in user) {
+  if (isM2M(user)) {
     return t("automatedMonitoring");
   }
-  if (user && "name" in user) {
+  if (isUser(user)) {
     return user.name;
   }
   return t("anonymousUserName");
@@ -41,7 +28,7 @@ const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
 
       const username = getDisplayName(user, t);
 
-      const titleField = targetModel === "personality" ? "name" : "title";
+      const titleField = targetModel === "Personality" ? "name" : "title";
       const data = type === "delete" ? details?.before : details?.after;
       const displayTitle = data?.[titleField];
 

@@ -1,6 +1,7 @@
 import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
+import { M2M } from "../entities/m2m.entity";
 
 export interface ChatBotContext {
     verificationRequest: string;
@@ -14,7 +15,7 @@ export const createChatBotMachine = (
     verificationRequestStateMachineService: VerificationRequestStateMachineService,
     value?,
     context?,
-    chatbotStateId?
+    M2MUser?: M2M,
 ) => {
     const chatBotMachine = createMachine<ChatBotContext>(
         {
@@ -199,7 +200,7 @@ export const createChatBotMachine = (
 
                     verificationRequestStateMachineService.request(
                         verificationRequestBody,
-                        chatbotStateId
+                        M2MUser
                     );
                 },
             },

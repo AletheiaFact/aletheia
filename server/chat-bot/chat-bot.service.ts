@@ -7,6 +7,7 @@ import { createChatBotMachine } from "./chat-bot.machine";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
+import { Roles } from "../auth/ability/ability.factory";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -20,6 +21,19 @@ interface ChatBotContext {
     additionalInfo?: string;
     email?: string;
     sourceChannel?: string;
+}
+
+function M2MUser(clientId) {
+  return {
+    isM2M: true,
+    clientId,
+    subject: "chatbot-service",
+    scopes: ["read", "write"],
+    role: {
+      main: Roles.Integration,
+    },
+    namespace: "main",
+  };
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -99,7 +113,7 @@ export class ChatbotService {
                 ...chatbotState.machine.context,
                 sourceChannel: channel,
             },
-            chatbotState._id
+            M2MUser(chatbotState._id)       
         );
 
         chatBotMachineService.start(chatbotState.machine.value);

@@ -13,6 +13,7 @@ export type User = {
 
 export class M2M {
     isM2M: boolean;
+    subject: string;
     role: {
         main: string;
     };
