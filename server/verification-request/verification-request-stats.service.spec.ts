@@ -69,7 +69,7 @@ describe("VerificationRequestStatsService (Unit)", () => {
         const [result] = await (service as any).getStatsRecentActivity();
 
         expect(result.data_hash).toBe("12345678");
-        expect(result.id).toBe(mockDoc._id);
+        expect(result.id).toBe(mockDoc._id.toString());
       });
     });
 

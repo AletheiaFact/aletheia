@@ -117,7 +117,11 @@ export class VerificationRequestService {
         verificationRequestId: string,
         fieldsToPopulate: string[] = []
     ): Promise<VerificationRequest> {
-        let query = this.VerificationRequestModel.findById(
+        if (!isValidObjectId(verificationRequestId)) {
+            throw new BadRequestException("Invalid verification request ID");
+        }
+
+        let query: any = this.VerificationRequestModel.findById(
             verificationRequestId,
             { embedding: 0 }
         );
@@ -126,7 +130,8 @@ export class VerificationRequestService {
             query = query.populate(field);
         });
 
-        return query.exec();
+        const result = await query.exec();
+        return result as VerificationRequest;
     }
 
     /**
@@ -990,7 +995,7 @@ export class VerificationRequestService {
 
         const topicIds = topicsObj.map((topics) => topics._id);
         const impactAreaIds = impactAreasObj.map((impactArea) =>
-            Types.ObjectId(impactArea._id)
+            new Types.ObjectId(impactArea._id)
         );
 
         if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });
