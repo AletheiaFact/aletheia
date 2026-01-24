@@ -37,6 +37,7 @@ export enum TargetModel {
     ClaimReview = "ClaimReview",
     ReviewTask = "ReviewTask",
     Image = "Image",
+    History = "History",
 }
 
 enum CommentEnum {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Head from "next/head";
 import "../styles/app.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
@@ -11,8 +11,7 @@ import CookieConsent from "react-cookie-consent";
 import colors from "../styles/colors";
 import { DefaultSeo } from "next-seo";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { materialTheme } from "../styles/materialTheme";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
     currentAuthentication,
     currentUserId,
@@ -20,6 +19,9 @@ import {
     isUserLoggedIn,
 } from "../atoms/currentUser";
 import { GetUserRole } from "../utils/GetUserRole";
+import { AletheiaThemeConfig } from "../styles/namespaceThemes";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
@@ -28,6 +30,10 @@ function MyApp({ Component, pageProps }) {
     const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
     const setCurrentUserId = useSetAtom(currentUserId);
     const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
+
+    const [nameSpace] = useAtom(currentNameSpace);
+    const safeNamespace = nameSpace || NameSpaceEnum.Main;
+    const namespaceTheme = useMemo(() => AletheiaThemeConfig(safeNamespace), [safeNamespace]);
 
     GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);
@@ -62,7 +68,7 @@ function MyApp({ Component, pageProps }) {
                 )}
             </Head>
             <Provider store={store}>
-                <ThemeProvider theme={materialTheme}>
+                <ThemeProvider theme={namespaceTheme}>
                     <GlobalMessage />
                     <CssBaseline />
                     <MainApp>

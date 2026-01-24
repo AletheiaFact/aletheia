@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
@@ -19,16 +19,17 @@ interface ChatBotContext {
     responseMessage?: string;
     additionalInfo?: string;
     email?: string;
+    sourceChannel?: string;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ChatbotService {
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private chatBotStateService: ChatBotStateService
-    ) { }
+    ) {}
 
     private async getOrCreateChatBotMachine(from: string, channel: string) {
         const id = `${channel}-${from}`;
@@ -44,7 +45,9 @@ export class ChatbotService {
     }
 
     private async createNewChatBotState(id: string) {
-        const newMachine = createChatBotMachine(this.verificationRequestStateMachineService);
+        const newMachine = createChatBotMachine(
+            this.verificationRequestStateMachineService
+        );
         const snapshot = newMachine.getSnapshot();
         return await this.chatBotStateService.create(
             {
@@ -59,7 +62,8 @@ export class ChatbotService {
         const rehydratedMachine = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
-            chatbotState.machine.context
+            chatbotState.machine.context,
+            chatbotState._id
         );
         const snapshot = rehydratedMachine.getSnapshot();
         chatbotState.machine.value = snapshot.value;
@@ -94,7 +98,8 @@ export class ChatbotService {
             {
                 ...chatbotState.machine.context,
                 sourceChannel: channel,
-            }
+            },
+            chatbotState._id
         );
 
         chatBotMachineService.start(chatbotState.machine.value);

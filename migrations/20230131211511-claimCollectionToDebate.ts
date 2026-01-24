@@ -3,7 +3,6 @@ import { Db } from "mongodb";
 const ObjectId = require("mongodb").ObjectID;
 
 export async function up(db: Db) {
-    return;
     // migrations not needed
     try {
         const claimCollectionCursor = await db
@@ -16,7 +15,7 @@ export async function up(db: Db) {
             type: "info",
         });
         while (await claimCollectionCursor.hasNext()) {
-            const doc = await claimCollectionCursor.next();
+            const doc: any = await claimCollectionCursor.next();
             // create debate, claim and claim revision with claim collection basic data
             let hashString = doc.personalities.join(" ");
             hashString += ` ${doc.title} ${doc.date.toString()}`;
@@ -69,7 +68,7 @@ export async function up(db: Db) {
                                 editorContentObject.content[i].attrs.claimId
                             ),
                         });
-                    const speechId = ObjectId(oldClaimRevision.contentId);
+                    const speechId = ObjectId(oldClaimRevision?.contentId);
 
                     delete editorContentObject.content[i].attrs.claimId;
                     editorContentObject.content[i].attrs.speechId =
@@ -80,8 +79,8 @@ export async function up(db: Db) {
                         {
                             $set: {
                                 personality:
-                                    oldClaimRevision.personalities?.[0] ||
-                                    oldClaimRevision.personality ||
+                                    oldClaimRevision?.personalities?.[0] ||
+                                    oldClaimRevision?.personality ||
                                     "",
                             },
                         }
@@ -97,22 +96,22 @@ export async function up(db: Db) {
                     await db
                         .collection("claimreviews")
                         .updateMany(
-                            { claim: oldClaimRevision.claimId },
+                            { claim: oldClaimRevision?.claimId },
                             { $set: { claim: claim.insertedId } }
                         );
                     await db
                         .collection("claimreviewtasks")
                         .updateMany(
-                            { claim: oldClaimRevision.claimId.toString() },
+                            { claim: oldClaimRevision?.claimId.toString() },
                             { $set: { claim: claim.insertedId.toString() } }
                         );
 
                     await db
                         .collection("claims")
-                        .deleteOne({ _id: oldClaimRevision.claimId });
+                        .deleteOne({ _id: oldClaimRevision?.claimId });
                     await db
                         .collection("claimrevisions")
-                        .deleteOne({ _id: oldClaimRevision._id });
+                        .deleteOne({ _id: oldClaimRevision?._id });
                 }
             }
 
@@ -127,13 +126,13 @@ export async function up(db: Db) {
                 .find({ targetId: doc._id });
             while (await sourceCursor.hasNext()) {
                 const source = await sourceCursor.next();
-                const targetId = source.targetId.map((target) => {
+                const targetId = source?.targetId.map((target) => {
                     return target.toString() === doc._id.toString()
                         ? claim.insertedId
                         : target;
                 });
                 await db.collection("sources").updateOne(
-                    { _id: source._id },
+                    { _id: source?._id },
                     {
                         $set: { targetId },
                     }
@@ -163,7 +162,7 @@ export async function down(db: Db) {
         });
         const debateCursor = await db.collection("debates").find();
         while (await debateCursor.hasNext()) {
-            const debate = await debateCursor.next();
+            const debate: any = await debateCursor.next();
             const editor = await db
                 .collection("editors")
                 .findOne({ reference: debate._id });
@@ -175,10 +174,10 @@ export async function down(db: Db) {
                 });
 
             const claim = await db.collection("claims").findOne({
-                latestRevision: claimRevision._id,
+                latestRevision: claimRevision?._id,
             });
 
-            const editorContentObject = editor.editorContentObject;
+            const editorContentObject = editor?.editorContentObject;
             if (editorContentObject?.content) {
                 for (let i = 0; i < editorContentObject.content.length; i++) {
                     if (
@@ -196,7 +195,7 @@ export async function down(db: Db) {
                         const newClaim = await db
                             .collection("claims")
                             .insertOne({
-                                slug: claimRevision.slug,
+                                slug: claimRevision?.slug,
                                 personalities: [ObjectId(personalityId)],
                                 isDeleted: false,
                                 deletedAt: null,
@@ -207,10 +206,10 @@ export async function down(db: Db) {
                                 claimId: newClaim.insertedId,
                                 contentModel: "Speech",
                                 personalities: [ObjectId(personalityId)],
-                                title: claimRevision.title,
-                                date: claimRevision.date,
-                                slug: claimRevision.slug,
-                                contentId: speech._id,
+                                title: claimRevision?.title,
+                                date: claimRevision?.date,
+                                slug: claimRevision?.slug,
+                                contentId: speech?._id,
                             });
                         await db.collection("claims").updateOne(
                             { _id: newClaim.insertedId },
@@ -233,17 +232,18 @@ export async function down(db: Db) {
                 .insertOne({
                     isHidden: false,
                     isLive: debate.isLive,
-                    personalities: claim.personalities,
-                    title: claimRevision.title,
-                    date: claimRevision.date,
-                    slug: claimRevision.slug,
-                    editorContentObject: editor.editorContentObject,
+                    personalities: claim?.personalities,
+                    title: claimRevision?.title,
+                    date: claimRevision?.date,
+                    slug: claimRevision?.slug,
+                    editorContentObject: editor?.editorContentObject,
                 });
 
             const reviews = await db
                 .collection("claimreviews")
-                .find({ claim: claim._id });
-            reviews.forEach(async (review) => {
+                .find({ claim: claim?._id })
+                .toArray();
+            for (const review of reviews) {
                 db.collection("sentences")
                     .findOne({ data_hash: review.data_hash })
                     .then(async (sentence) => {
@@ -270,14 +270,14 @@ export async function down(db: Db) {
                             .collection("claimreviews")
                             .updateOne(
                                 { _id: review._id },
-                                { $set: { claim: revision.claimId } }
+                                { $set: { claim: revision?.claimId } }
                             );
                         await db.collection("claimreviewTasks").updateOne(
                             { data_hash: review.data_hash },
                             {
                                 $set: {
                                     "machine.context.claimReview.claim":
-                                        revision.claimId.toString(),
+                                        revision?.claimId.toString(),
                                 },
                             }
                         );
@@ -290,28 +290,28 @@ export async function down(db: Db) {
                             type: "error",
                         });
                     });
-            });
+            };
 
-            await db.collection("editors").deleteOne({ _id: editor._id });
+            await db.collection("editors").deleteOne({ _id: editor?._id });
             await db.collection("debates").deleteOne({ _id: debate._id });
-            await db.collection("claims").deleteOne({ _id: claim._id });
+            await db.collection("claims").deleteOne({ _id: claim?._id });
             await db.collection("claimrevisions").deleteOne({
-                _id: claimRevision._id,
+                _id: claimRevision?._id,
             });
 
             //update sources
             const sourceCursor = await db
                 .collection("sources")
-                .find({ targetId: claim._id });
+                .find({ targetId: claim?._id });
             while (await sourceCursor.hasNext()) {
                 const source = await sourceCursor.next();
-                const targetId = source.targetId.map((target) => {
-                    return target.toString() === claim._id.toString()
+                const targetId = source?.targetId.map((target) => {
+                    return target.toString() === claim?._id.toString()
                         ? claimCollection.insertedId
                         : target;
                 });
                 await db.collection("sources").updateOne(
-                    { _id: source._id },
+                    { _id: source?._id },
                     {
                         $set: { targetId },
                     }

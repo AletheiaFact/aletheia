@@ -2,6 +2,7 @@ import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
+import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -9,6 +10,13 @@ interface SearchOptions {
     order?: string;
     topics?: any;
     filtersUsed?: any;
+    startDate?: string;
+    endDate?: string;
+    severity?: string;
+    noCache?: boolean;
+    sourceChannel?: string;
+    status?: any;
+    impactArea?: any;
 }
 
 const request = axios.create({
@@ -46,16 +54,29 @@ const createVerificationRequest = (
 };
 
 const get = (options: SearchOptions, dispatch = null) => {
-    const params = {
+    const params: any = {
         contentFilters: options.filtersUsed || [],
         page: options.page ? options.page - 1 : 0,
         order: options.order || "desc",
         pageSize: options.pageSize ? options.pageSize : 10,
         topics: options.topics || [],
+        startDate: options.startDate || undefined,
+        endDate: options.endDate || undefined,
+        severity: options.severity || "all",
+        sourceChannel: options.sourceChannel || "all",
+        status: options.status || [],
+        impactArea: options.impactArea || [],
     };
 
+    const config: any = { params };
+    if (options.noCache) {
+        config.headers = {
+            "Cache-Control": "no-cache",
+        };
+    }
+
     return request
-        .get(`/`, { params })
+        .get(`/`, config)
         .then((response) => {
             const {
                 verificationRequests,
@@ -145,13 +166,17 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t("verificationRequest:addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("verificationRequest:addVerificationRequestError"));
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:addVerificationRequestError")
+            );
             console.error("error while updating verification request", e);
         });
 };
@@ -188,6 +213,39 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
         });
 };
 
+const getVerificationRequestStats = () => {
+    return request
+        .get(`/stats`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((e) => {
+            console.error("error while getting verification request stats", e);
+            throw e;
+        });
+};
+
+/**
+ * Fetch personalities associated with a verification request, enriched with Wikidata information
+ * @param verificationRequestId - The verification request ID
+ * @param language - Language code for Wikidata labels (default: 'en')
+ * @returns Promise resolving to array of personalities with Wikidata avatar and metadata
+ */
+const getPersonalitiesWithWikidata = (
+    verificationRequestId: string,
+    language: string = "en"
+): Promise<PersonalityWithWikidata[]> => {
+    return request
+        .get(`/${verificationRequestId}/personalities`, {
+            params: { language },
+        })
+        .then((response) => response.data)
+        .catch((err) => {
+            console.error("error while getting personalities", err);
+            return [];
+        });
+};
+
 const verificationRequestApi = {
     createVerificationRequest,
     get,
@@ -197,6 +255,8 @@ const verificationRequestApi = {
     updateVerificationRequestWithTopics,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
+    getVerificationRequestStats,
+    getPersonalitiesWithWikidata,
 };
 
 export default verificationRequestApi;

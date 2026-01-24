@@ -5,28 +5,31 @@ import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class TopicController {
-    constructor(private topicService: TopicService) {}
+  constructor(private topicService: TopicService) {}
 
-    @IsPublic()
-    @ApiTags("topics")
-    @Get("api/topics")
-    public async getAll(@Query() getTopics) {
-        return this.topicService.findAll(getTopics);
-    }
+  @IsPublic()
+  @ApiTags("topics")
+  @Get("api/topics")
+  public async getAll(@Query() getTopics) {
+    return this.topicService.findAll(getTopics);
+  }
 
-    @ApiTags("topics")
-    @Get("api/topics/search")
-    async searchTopics(@Query("query") query: string) {
-        const topicsList = await this.topicService.searchTopics(query);
-        return topicsList;
-    }
+  @ApiTags("topics")
+  @Get("api/topics/search")
+  async searchTopics(
+    @Query("query") query: string,
+    @Query("limit") limit: number = 10,
+    @Query("language") language: string = "pt"
+  ) {
+    return this.topicService.searchTopics(query, language, limit);
+  }
 
-    @ApiTags("topics")
-    @Post("api/topics")
-    create(@Body() topicBody, @Req() req) {
-        return this.topicService.create(
-            topicBody,
-            req.cookies.default_language
-        );
-    }
+  @ApiTags("topics")
+  @Post("api/topics")
+  create(@Body() topicBody, @Req() req) {
+    return this.topicService.create(
+        topicBody,
+        req.cookies.default_language
+    );
+  }
 }

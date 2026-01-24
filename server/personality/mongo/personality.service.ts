@@ -44,8 +44,12 @@ export class MongoPersonalityService {
         private readonly historyService: HistoryService
     ) {}
 
-    async getWikidataEntities(regex, language) {
-        return await this.wikidata.queryWikibaseEntities(regex, language);
+    async getWikidataEntities(regex: string, language: string) {
+        return await this.wikidata.queryWikibaseEntities(
+            regex,
+            language,
+            false
+        );
     }
     async getWikidataList(regex, language) {
         const wbentities = await this.getWikidataEntities(regex, language);
@@ -105,7 +109,7 @@ export class MongoPersonalityService {
             );
         }
 
-        return await Promise.all(
+        const processedPersonalities = await Promise.all(
             personalities.map(async (personality) => {
                 try {
                     return await this.postProcess(personality, language);
@@ -113,8 +117,14 @@ export class MongoPersonalityService {
                     this.logger.log(
                         `It was not possible to do postProcess the personality ${personality}`
                     );
+                    return null;
                 }
             })
+        );
+
+        return processedPersonalities.filter(
+            (personalities) =>
+                personalities !== null && personalities !== undefined
         );
     }
 
@@ -167,6 +177,72 @@ export class MongoPersonalityService {
         });
     }
 
+    /**
+     * Find or create a personality based on AI task result
+     * @param personalityData - Data from AI task processor with name, wikidata info, etc.
+     * @returns The found or created personality document
+     */
+    async findOrCreatePersonality(personalityData: {
+        name: string;
+        wikidata?: {
+            id?: string;
+            label?: string;
+            description?: string;
+        };
+    }): Promise<PersonalityDocument> {
+        const wikidataId = personalityData.wikidata?.id || null;
+
+        if (wikidataId) {
+            const existing = await this.PersonalityModel.findOne({
+                wikidata: wikidataId,
+                isDeleted: false,
+            });
+            if (existing) {
+                this.logger.log(
+                    `Found existing personality by wikidata: ${wikidataId}`
+                );
+                return existing;
+            }
+        }
+
+        const slug = slugify(personalityData.name, {
+            lower: true,
+            strict: true,
+        });
+
+        const existingBySlug = await this.PersonalityModel.findOne({
+            slug,
+            isDeleted: false,
+        });
+
+        if (existingBySlug) {
+            this.logger.log(`Found existing personality by slug: ${slug}`);
+            if (wikidataId && !existingBySlug.wikidata) {
+                existingBySlug.wikidata = wikidataId;
+                await existingBySlug.save();
+                this.logger.log(
+                    `Updated personality ${slug} with wikidata: ${wikidataId}`
+                );
+            }
+            return existingBySlug;
+        }
+
+        const newPersonality = new this.PersonalityModel({
+            name: personalityData.name,
+            slug,
+            description:
+                personalityData.wikidata?.description ||
+                `Personality: ${personalityData.name}`,
+            wikidata: wikidataId,
+            isHidden: false,
+        });
+
+        await newPersonality.save();
+        this.logger.log(`Created new personality: ${personalityData.name}`);
+
+        return newPersonality;
+    }
+
     async getById(
         personalityId,
         query: { language?: string; nameSpace?: string } = {
@@ -193,7 +269,18 @@ export class MongoPersonalityService {
             select: "_id title content",
         });
         this.logger.log(`Found personality ${personality?._id}`);
-        return await this.postProcess(personality.toObject(), query.language);
+        const processed = await this.postProcess(
+            personality.toObject(),
+            query.language
+        );
+
+        if (!processed) {
+            throw new NotFoundException(
+                `Personality with id ${personalityId} not found or has invalid instance type`
+            );
+        }
+
+        return processed;
     }
 
     async getPersonalityBySlug(query, language = "pt") {
@@ -206,7 +293,18 @@ export class MongoPersonalityService {
             const personality = await this.PersonalityModel.findOne(
                 queryOptions
             );
-            return await this.postProcess(personality.toObject(), language);
+            const processed = await this.postProcess(
+                personality.toObject(),
+                language
+            );
+
+            if (!processed) {
+                throw new NotFoundException(
+                    `Personality not found or has invalid instance type`
+                );
+            }
+
+            return processed;
         } catch {
             throw new NotFoundException();
         }
@@ -241,7 +339,18 @@ export class MongoPersonalityService {
                 })
             );
             this.logger.log(`Found personality ${personality._id}`);
-            return await this.postProcess(personality.toObject(), language);
+            const processed = await this.postProcess(
+                personality.toObject(),
+                language
+            );
+
+            if (!processed) {
+                throw new NotFoundException(
+                    `Personality not found or has invalid instance type`
+                );
+            }
+
+            return processed;
         } catch {
             throw new NotFoundException();
         }
@@ -493,13 +602,26 @@ export class MongoPersonalityService {
             },
         ]);
 
-        return {
-            totalRows: personalities[0].totalRows,
-            processedPersonalities: await Promise.all(
-                personalities[0].rows.map(async (personality) => {
+        const processedPersonalities = await Promise.all(
+            personalities[0].rows.map(async (personality) => {
+                try {
                     return await this.postProcess(personality, language);
-                })
-            ),
+                } catch (error) {
+                    this.logger.log(
+                        `It was not possible to do postProcess the personality ${personality._id}`
+                    );
+                    return null;
+                }
+            })
+        );
+
+        const filteredPersonalities = processedPersonalities.filter(
+            (personality) => personality !== null && personality !== undefined
+        );
+
+        return {
+            totalRows: filteredPersonalities.length,
+            processedPersonalities: filteredPersonalities,
         };
     }
 }

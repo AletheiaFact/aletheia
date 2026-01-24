@@ -11,7 +11,7 @@ import { Source } from "../../source/schemas/source.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
 export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,

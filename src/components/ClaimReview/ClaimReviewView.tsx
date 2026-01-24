@@ -51,8 +51,13 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const hasStartedTask =
         machineService.state.value !== ReviewTaskStates.unassigned;
     const origin = window.location.origin ? window.location.origin : "";
-    const isClaimTypeAndNotSmallScreen = reviewTaskType === "Claim" && !vw.sm || !hasStartedTask || !userIsNotRegular;
-    const isSourceOrVerificationRequest = reviewTaskType === "Source" || reviewTaskType === "VerificationRequest";
+    const isImageContent = target?.contentModel === "Image";
+    const isClaimTypeAndNotSmallScreen =
+        (reviewTaskType === "Claim" && (!vw.sm || isImageContent)) ||
+        !hasStartedTask ||
+        !userIsNotRegular;
+    const isSourceOrVerificationRequest =
+        reviewTaskType === "Source" || reviewTaskType === "VerificationRequest";
 
     const componentStyle = {
         span: 9,
@@ -92,7 +97,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     )}
                 </>
             )}
-            {(isClaimTypeAndNotSmallScreen || isSourceOrVerificationRequest) && (
+            {(isClaimTypeAndNotSmallScreen ||
+                isSourceOrVerificationRequest) && (
                 <ClaimReviewHeader
                     classification={
                         review?.report?.classification ||

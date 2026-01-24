@@ -7,7 +7,7 @@ export type NameSpaceDocument = NameSpace & mongoose.Document;
 export enum NameSpaceEnum {
     Main = "main",
 }
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
 export class NameSpace {
     @Prop({ required: true })
     name: string;

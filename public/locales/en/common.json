@@ -12,5 +12,7 @@
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contact@aletheiafact.org",
     "captchaError": "There was an error validating the captcha",
-    "change": "Change"
+    "change": "Change",
+    "approve": "Approve",
+    "reject": "Reject"
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, Scope } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
@@ -8,8 +8,9 @@ import { ContentModelEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TopicService {
+    private readonly logger = new Logger(TopicService.name);
     constructor(
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
@@ -18,17 +19,54 @@ export class TopicService {
         private wikidataService: WikidataService
     ) {}
 
-    async getWikidataEntities(regex, language) {
+    /**
+     * Normalize a string by removing accents/diacritical marks
+     * @param text The text to normalize
+     * @returns Normalized text without accents
+     */
+    private normalizeText(text: string): string {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    async getWikidataEntities(regex: string, language: string) {
         return await this.wikidataService.queryWikibaseEntities(
             regex,
             language
         );
     }
 
-    async searchTopics(query: string, language = "pt"): Promise<Topic[]> {
-        return this.TopicModel.find({
-            name: { $regex: query, $options: "i" },
-            language,
+    async searchTopics(
+        query: string,
+        language = "pt",
+        limit = 10
+    ): Promise<Topic[]> {
+        if (typeof language !== "string") {
+            throw new TypeError("Invalid language");
+        }
+
+        const normalizedQuery = this.normalizeText(query);
+        const searchRegex = new RegExp(normalizedQuery, "i");
+
+        const topics = await this.TopicModel.find({
+            language: { $eq: language },
+            $or: [
+                { name: { $regex: searchRegex } },
+                { aliases: { $regex: searchRegex } },
+            ],
+        })
+            .limit(limit)
+            .sort({ name: 1 });
+
+        const normalizedQueryLower = normalizedQuery.toLowerCase();
+        return topics.map((topic) => {
+            const topicObj = topic.toObject();
+            const matchedAlias =
+                topicObj.aliases?.find((alias) =>
+                    this.normalizeText(alias)
+                        .toLowerCase()
+                        .includes(normalizedQueryLower)
+                ) || null;
+            return { ...topicObj, matchedAlias };
         });
     }
 
@@ -37,7 +75,7 @@ export class TopicService {
      * @param getTopics options to fetch topics
      * @returns return all topics from wikidata database that match to topicName from input
      */
-    async findAll(getTopics, language = "pt"): Promise<Topic[]> {
+    async findAll(getTopics, language = "pt") {
         return this.getWikidataEntities(getTopics.topicName, language);
     }
 
@@ -55,7 +93,13 @@ export class TopicService {
             data_hash,
         }: {
             contentModel?: ContentModelEnum;
-            topics: { label: string; value: string }[] | string[] | (string | { label: string; value: string })[];
+            topics:
+                | { label: string; value: string; aliases?: string[] }[]
+                | string[]
+                | (
+                      | string
+                      | { label: string; value: string; aliases?: string[] }
+                  )[];
             data_hash?: string;
         },
         language: string = "pt"
@@ -63,7 +107,7 @@ export class TopicService {
         try {
             const createdTopics = await Promise.all(
                 topics.map(async (topic) => {
-                    const slug = slugify(topic?.label || topic, {
+                    const slug = slugify(topic?.label || topic.slug || topic, {
                         lower: true,
                         strict: true,
                     });
@@ -72,15 +116,16 @@ export class TopicService {
                     if (findedTopic) {
                         return findedTopic?.wikidataId
                             ? {
-                                id: findedTopic._id,
-                                label: findedTopic?.name,
-                                value: findedTopic?.wikidataId,
-                            }
+                                  id: findedTopic._id,
+                                  label: findedTopic?.name,
+                                  value: findedTopic?.wikidataId,
+                              }
                             : findedTopic.slug;
                     } else {
                         const newTopic = {
                             name: topic?.label || topic,
                             wikidataId: topic?.value,
+                            aliases: topic?.aliases || [],
                             slug,
                             language,
                         };
@@ -99,17 +144,24 @@ export class TopicService {
             );
 
             if (contentModel === ContentModelEnum.Image) {
-                return this.imageService.updateImageWithTopics(createdTopics, data_hash);
+                return this.imageService.updateImageWithTopics(
+                    createdTopics,
+                    data_hash
+                );
             } else if (contentModel) {
                 return this.sentenceService.updateSentenceWithTopics(
-                    createdTopics, data_hash
+                    createdTopics,
+                    data_hash
                 );
             } else {
                 return createdTopics;
             }
         } catch (error) {
-            console.error("Error creating topics:", error);
-            throw new Error("Failed to create topics or update related content");
+            this.logger.error(
+                `Failed to create topics or update related content: ${error.message}`,
+                error.stack
+            );
+            throw error;
         }
     }
 
@@ -120,5 +172,82 @@ export class TopicService {
      */
     getBySlug(slug) {
         return this.TopicModel.findOne({ slug });
+    }
+
+    /**
+     * Escape special regex characters to prevent ReDoS attacks
+     * @param str The string to escape
+     * @returns Escaped string safe for regex
+     */
+    private escapeRegex(str: string): string {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    /**
+     * Find topics by name or alias with case-insensitive matching
+     * @param names topic names array
+     * @returns Promise resolving to array of matching topics
+     */
+    findByNames(names: string[]): Promise<TopicDocument[]> {
+        const nameConditions = names.flatMap((name) => {
+            const escapedName = this.escapeRegex(name);
+            return [
+                { name: { $regex: new RegExp(`^${escapedName}$`, "i") } },
+                { aliases: { $regex: new RegExp(`^${escapedName}$`, "i") } },
+            ];
+        });
+
+        return this.TopicModel.find({
+            $or: nameConditions,
+        }).exec();
+    }
+
+    /**
+     *
+     * @param wikidataIds topic names array
+     * @returns wikidataIds
+     */
+    findByWikidataIds(wikidataIds: string[]) {
+        return this.TopicModel.find({ wikidataId: { $in: wikidataIds } });
+    }
+
+    /**
+     * Find or create a Topic for impact area
+     * Used by verification request AI task callback
+     * @param topicData object with { slug?, name, wikidataId?, language?, description? }
+     * @returns the existing or newly created topic document
+     */
+    async findOrCreateTopic(topicData: {
+        name: string;
+        wikidataId?: string;
+        language?: string;
+        description?: string; // Future use
+    }): Promise<Topic> {
+        try {
+            const slug = slugify(topicData.name, { lower: true, strict: true });
+
+            const existingTopic = await this.TopicModel.findOne({ slug });
+
+            if (existingTopic) {
+                return existingTopic;
+            }
+
+            const newTopic = {
+                name: topicData.name,
+                slug,
+                language: topicData.language || "pt",
+                wikidataId: topicData.wikidataId || undefined,
+            };
+
+            const createdTopic = await new this.TopicModel(newTopic).save();
+
+            return createdTopic;
+        } catch (error) {
+            this.logger.error(
+                `Failed to find or create topic for "${topicData.name}": ${error.message}`,
+                error.stack
+            );
+            throw error;
+        }
     }
 }

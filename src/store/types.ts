@@ -35,6 +35,8 @@ export enum ActionTypes {
     SET_VISUAL_EDITOR_ENVIRONEMNT,
     SET_TOPIC_FILTER_USED,
     SET_SEARCH_OVERLAY_NAME,
+    SET_STATUS_FILTER_USED,
+    SET_IMPACT_AREA_FILTER_USED,
 }
 
 export enum SearchTypes {
@@ -66,6 +68,8 @@ export interface RootState {
         totalResults: number;
     };
     topicFilterUsed: any;
+    statusFilterUsed: any;
+    impactAreaFilterUsed: any;
     autoSave: boolean;
     enableCollaborativeEdit: boolean;
     enableCopilotChatBot: boolean;

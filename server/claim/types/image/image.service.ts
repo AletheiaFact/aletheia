@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
 import { Model } from "mongoose";
@@ -45,7 +45,10 @@ export class ImageService {
         return newImage;
     }
 
-    async getByDataHash(data_hash) {
+    async getByDataHash(data_hash: string) {
+        if (!data_hash) {
+              throw new BadRequestException("Invalid data hash format.");
+            }
         const report = await this.reportService.findByDataHash(data_hash);
         const image = await this.ImageModel.findOne({ data_hash });
         if (image) {

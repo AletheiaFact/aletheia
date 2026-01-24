@@ -10,10 +10,11 @@ export interface ChatBotMachineSnapshot {
         responseMessage?: string;
         additionalInfo?: string;
         email?: string;
+        sourceChannel?: string;
     };
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class ChatBotState {
     @Prop({ required: true })
     _id: string;

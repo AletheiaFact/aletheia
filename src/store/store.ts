@@ -159,6 +159,16 @@ const reducer = (state, action) => {
                 ...state,
                 topicFilterUsed: action.topicFilterUsed,
             };
+        case ActionTypes.SET_STATUS_FILTER_USED:
+            return {
+                ...state,
+                statusFilterUsed: action.statusFilterUsed,
+            };
+        case ActionTypes.SET_IMPACT_AREA_FILTER_USED:
+            return {
+                ...state,
+                impactAreaFilterUsed: action.impactAreaFilterUsed,
+            };
         case ActionTypes.SET_LOGIN_STATUS:
             return {
                 ...state,
