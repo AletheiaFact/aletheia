@@ -1,5 +1,5 @@
-import { Roles } from "auth/ability/ability.factory";
-import { HistoryType, TargetModel } from "history/schema/history.schema";
+import { Roles } from "../../auth/ability/ability.factory";
+import { HistoryType, TargetModel } from "../schema/history.schema";
 import { Types } from "mongoose";
 
 export const HEX24 = /^[0-9a-fA-F]{24}$/;
