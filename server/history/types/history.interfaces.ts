@@ -1,17 +1,19 @@
+import { Roles } from "auth/ability/ability.factory";
+import { HistoryType, TargetModel } from "history/schema/history.schema";
 import { Types } from "mongoose";
 
 export const HEX24 = /^[0-9a-fA-F]{24}$/;
 
 interface HistoryParams {
   targetId: string;
-  targetModel: string;
+  targetModel: TargetModel;
 }
 
 interface HistoryQuery {
   page?: number;
   pageSize?: number;
   order?: "asc" | "desc";
-  type?: string;
+  type?: HistoryType;
 }
 interface HistoryResponse {
   history: HistoryItem[];
@@ -23,9 +25,9 @@ interface HistoryResponse {
 interface HistoryItem {
   _id?: string;
   targetId: Types.ObjectId;
-  targetModel: string;
+  targetModel: TargetModel;
   user?: PerformedBy;
-  type?: string;
+  type?: HistoryType;
   details?: HistoryDetails;
   date?: Date | string;
 }
@@ -37,7 +39,7 @@ interface M2M {
   subject: string;
   scopes: string[];
   role: {
-    main: string;
+    main: Roles.Integration;
   };
   namespace: string;
 }

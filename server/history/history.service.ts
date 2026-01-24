@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
-import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
+import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
 import {
     AfterAndBeforeType,
     HEX24,
@@ -44,12 +44,16 @@ export class HistoryService {
      */
     getHistoryParams(
         dataId: string,
-        targetModel: string,
+        targetModel: TargetModel,
         performedBy: PerformedBy,
-        type: string,
+        type: HistoryType,
         latestChange: AfterAndBeforeType,
         previousChange?: AfterAndBeforeType
     ) {
+        if (!isValidObjectId(dataId)) {
+            throw new Error(`Invalid dataId received: ${dataId}`);
+        }
+
         const date = new Date();
         const targetId = Types.ObjectId(dataId);
         let currentPerformedBy = null;
@@ -60,9 +64,6 @@ export class HistoryService {
             currentPerformedBy = performedBy;
         }
 
-        if (!isValidObjectId(dataId)) {
-            throw new Error(`Invalid dataId received: ${dataId}`);
-        }
 
         return {
             targetId: targetId,
@@ -82,14 +83,16 @@ export class HistoryService {
      * @param data Object with the history data
      * @returns Returns a new history document to database
      */
-    async createHistory(data) {
+    async createHistory(
+        data: Partial<HistoryDocument>
+    ): Promise<HistoryDocument> {
         const newHistory = new this.HistoryModel(data);
         return newHistory.save();
     }
 
     async getHistoryForTarget(
         targetId: string,
-        targetModel: string,
+        targetModel: TargetModel,
         query: HistoryQuery
     ): Promise<HistoryResponse> {
         const page = Math.max(Number(query.page) || 0, 0);
@@ -167,8 +170,8 @@ export class HistoryService {
     }
 
     async getDescriptionForHide(
-        content: IHideableContent, 
-        target: string
+        content: IHideableContent,
+        target: TargetModel
     ) {
         if (!content?._id || !content?.isHidden) {
             return "";

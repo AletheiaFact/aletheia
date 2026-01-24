@@ -19,6 +19,11 @@ export class HistoryController {
         @Query() query: HistoryQuery
     ): Promise<HistoryResponse> {
         const { targetId, targetModel } = param;
+
+        if (!targetId || !targetModel) {
+            throw new Error("targetId and targetModel are required");
+        }
+
         try {
             const response = await this.historyService.getHistoryForTarget(
                 targetId,

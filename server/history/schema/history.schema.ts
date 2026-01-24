@@ -68,7 +68,7 @@ export class History {
         type: Date,
         required: true,
     })
-    date: mongoose.Date;
+    date: Date;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);
