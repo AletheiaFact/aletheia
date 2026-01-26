@@ -97,7 +97,9 @@ describe("ClaimController (Unit)", () => {
         } as any;
         const res = {} as any;
 
-        personalityService.getPersonalityBySlug.mockResolvedValue({ _id: "1" });
+        personalityService.getPersonalityBySlug!.mockResolvedValue({
+            _id: "1",
+        });
 
         claimService.getByPersonalityIdAndClaimSlug.mockResolvedValue({
             _id: "2",

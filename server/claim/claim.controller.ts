@@ -403,7 +403,7 @@ export class ClaimController {
         @Res() res: Response
     ) {
         const validatedParams = GetByDataHashDto.parse({
-            dataHash: req.params.data_hash,
+            data_hash: req.params.data_hash,
         });
 
         const { data_hash } = validatedParams;
