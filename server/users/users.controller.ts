@@ -25,6 +25,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
 import { GetUsersDTO } from "./dto/get-users.dto";
 import { Public, AdminOnly, Auth } from "../auth/decorators/auth.decorator";
+import { CaptchaService } from "../captcha/captcha.service";
 
 // TODO: check permissions for routes
 @Controller(":namespace?")
@@ -33,7 +34,8 @@ export class UsersController {
         private readonly usersService: UsersService,
         private viewService: ViewService,
         private configService: ConfigService,
-        private util: UtilService
+        private util: UtilService,
+        private captchaService: CaptchaService
     ) {}
 
     @ApiTags("pages")
@@ -52,11 +54,12 @@ export class UsersController {
     @Public()
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const sitekey = this.configService.get<string>("recaptcha_sitekey");
         await this.viewService.render(
             req,
             res,
             "/sign-up",
-            Object.assign(parsedUrl.query)
+            Object.assign(parsedUrl.query, { sitekey })
         );
     }
 
@@ -64,6 +67,13 @@ export class UsersController {
     @Post("api/user/register")
     @Public()
     public async register(@Body() createUserDto: CreateUserDTO) {
+        const validateCaptcha = await this.captchaService.validate(
+            createUserDto.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new UnprocessableEntityException("Error validating captcha");
+        }
+
         try {
             return await this.usersService.register(createUserDto);
         } catch (errorResponse) {

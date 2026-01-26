@@ -16,4 +16,9 @@ export class CreateUserDTO {
     @IsString()
     @ApiProperty()
     password: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+    recaptcha: string;
 }
