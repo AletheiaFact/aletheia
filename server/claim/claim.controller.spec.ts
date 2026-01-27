@@ -31,9 +31,9 @@ describe("ClaimController (Unit)", () => {
     let personalityService: ReturnType<typeof mockPersonalityService>;
 
     beforeEach(async () => {
-        (imageService = mockImageService()),
-            (claimService = mockClaimService()),
-            (personalityService = mockPersonalityService());
+        imageService = mockImageService();
+        claimService = mockClaimService();
+        personalityService = mockPersonalityService();
 
         testingModule = await Test.createTestingModule({
             controllers: [ClaimController],
