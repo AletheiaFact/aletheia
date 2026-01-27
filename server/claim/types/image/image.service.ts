@@ -16,7 +16,7 @@ import {
 import { REQUEST } from "@nestjs/core";
 import { ReportService } from "../../../report/report.service";
 import type { BaseRequest } from "../../../types";
-import { GetByDataHashDto } from "claim/dto/get-by-datahash.dto";
+import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
