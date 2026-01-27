@@ -18,14 +18,17 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             supportedEvents.includes(event.type as ReviewTaskEvents) &&
             "visualEditor" in event.reviewData
         ) {
-            const schema = editorParser.editor2schema(
-                event.reviewData.visualEditor.toJSON()
+            const visualEditorJSON = event.reviewData.visualEditor.toJSON();
+            const cleanedVisualEditor = editorParser.removeTrailingParagraph(
+                visualEditorJSON
             );
+            const schema = editorParser.editor2schema(cleanedVisualEditor);
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
                 ...event.reviewData,
                 ...schema,
                 reviewDataHtml,
+                visualEditor: cleanedVisualEditor,
             };
         }
         return {
