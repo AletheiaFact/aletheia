@@ -73,19 +73,36 @@ export async function up(db: Db) {
 
             if (isTrailingParagraph) {
                 const newContent = content.slice(0, -1);
-                await collection.updateOne(
-                    { _id: doc._id },
-                    {
-                        $set: {
-                            "machine.context.reviewData.visualEditor.content":
-                                newContent,
-                        },
-                        $unset: {
-                            "machine.context.reviewData.paragraph": "",
-                            "machine.context.reviewData.reviewDataHtml.paragraph": "",
-                        },
-                    }
-                );
+
+                const unsetFields: Record<string, string> = {};
+
+                if (
+                    doc.machine?.context?.reviewData?.paragraph !== undefined
+                ) {
+                    unsetFields["machine.context.reviewData.paragraph"] = "";
+                }
+
+                if (
+                    doc.machine?.context?.reviewData?.reviewDataHtml?.paragraph !==
+                    undefined
+                ) {
+                    unsetFields[
+                        "machine.context.reviewData.reviewDataHtml.paragraph"
+                    ] = "";
+                }
+
+                const updateOperation: any = {
+                    $set: {
+                        "machine.context.reviewData.visualEditor.content":
+                            newContent,
+                    },
+                };
+
+                if (Object.keys(unsetFields).length > 0) {
+                    updateOperation.$unset = unsetFields;
+                }
+
+                await collection.updateOne({ _id: doc._id }, updateOperation);
                 updated++;
 
                 if (updated % 100 === 0) {

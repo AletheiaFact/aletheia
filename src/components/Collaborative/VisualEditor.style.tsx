@@ -18,7 +18,6 @@ const VisualEditorStyled = styled(AllStyledComponent)`
 
     .ProseMirror.remirror-editor > p {
         margin: 0;
-        ${process.env.NEXT_PUBLIC_ENVIRONMENT === "watch-dev" ? "border: 1px solid red;" : ""}
     }
 
     .remirror-editor-wrapper {
