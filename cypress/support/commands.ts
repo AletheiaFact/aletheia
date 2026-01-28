@@ -34,12 +34,36 @@ Cypress.Commands.add("checkRecaptcha", () => {
     getIframeBody().find("#recaptcha-anchor").click();
 });
 
+Cypress.Commands.add("goToSignUpPage", () => {
+    cy.visit("http://localhost:3000/sign-up");
+    cy.url().should("contains", "sign-up");
+});
+
+Cypress.Commands.add(
+    "signup",
+    (name: string, email: string, password: string) => {
+        cy.goToSignUpPage();
+        cy.get(locators.signup.NAME).type(name);
+        cy.get(locators.signup.EMAIL).type(email);
+        cy.get(locators.signup.PASSWORD).type(password);
+        cy.get(locators.signup.REPEATED_PASSWORD).type(password);
+        cy.checkRecaptcha();
+        cy.get(locators.signup.BTN_SUBMIT).click();
+    }
+);
+
 declare global {
     namespace Cypress {
         interface Chainable {
             login(): Chainable<Element>;
             checkRecaptcha(): Chainable<Element>;
             goToLoginPage(): Chainable<Element>;
+            goToSignUpPage(): Chainable<Element>;
+            signup(
+                name: string,
+                email: string,
+                password: string
+            ): Chainable<Element>;
         }
     }
 }
