@@ -13,6 +13,10 @@ const locators = {
         PASSWORD: "[data-cy=passwordInputCreateAccount]",
         REPEATED_PASSWORD: "[data-cy=repeatedPasswordInputCreateAccount]",
         BTN_SUBMIT: "[data-cy=loginButton]",
+        ERROR_NAME: "[data-cy=nameError]",
+        ERROR_EMAIL: "[data-cy=emailError]",
+        ERROR_PASSWORD: "[data-cy=passwordError]",
+        ERROR_REPEATED_PASSWORD: "[data-cy=repeatedPasswordError]",
     },
 
     personality: {

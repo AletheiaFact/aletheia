@@ -64,6 +64,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             })}
                         />
                         <TextError
+                            data-cy="nameError"
                             stateError={errors.name}
                             children={t("login:nameErrorMessage")}
                         />
@@ -84,6 +85,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             })}
                         />
                         <TextError
+                            data-cy="emailError"
                             stateError={errors.email}
                             children={
                                 errors.email?.type === "pattern"
@@ -106,6 +108,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             })}
                         />
                         <TextError
+                            data-cy="passwordError"
                             stateError={errors.password}
                             children={t("login:passwordErrorMessage")}
                         />
@@ -125,6 +128,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             })}
                         />
                         <TextError
+                            data-cy="repeatedPasswordError"
                             stateError={errors.repeatedPassword}
                             children={
                                 errors.repeatedPassword?.type === "required"

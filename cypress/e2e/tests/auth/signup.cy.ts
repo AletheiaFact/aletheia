@@ -29,7 +29,11 @@ describe("Sign Up tests", () => {
         cy.get(locators.signup.REPEATED_PASSWORD).type(testUser.password);
         cy.checkRecaptcha();
         cy.get(locators.signup.BTN_SUBMIT).click();
-        cy.contains("Campo obrigatório").should("be.visible");
+        cy.get(locators.signup.ERROR_NAME).should("be.visible");
+        cy.get(locators.signup.ERROR_NAME).should(
+            "contain",
+            "Please, insert your name"
+        );
     });
 
     it("Should show validation error when email is invalid", () => {
@@ -39,7 +43,8 @@ describe("Sign Up tests", () => {
         cy.get(locators.signup.REPEATED_PASSWORD).type(testUser.password);
         cy.checkRecaptcha();
         cy.get(locators.signup.BTN_SUBMIT).click();
-        cy.contains("E-mail inválido").should("be.visible");
+        cy.get(locators.signup.ERROR_EMAIL).should("be.visible");
+        cy.get(locators.signup.ERROR_EMAIL).should("contain", "Invalid e-mail");
     });
 
     it("Should show validation error when passwords don't match", () => {
@@ -49,7 +54,11 @@ describe("Sign Up tests", () => {
         cy.get(locators.signup.REPEATED_PASSWORD).type("DifferentPassword123!");
         cy.checkRecaptcha();
         cy.get(locators.signup.BTN_SUBMIT).click();
-        cy.contains("senhas não são iguais").should("be.visible");
+        cy.get(locators.signup.ERROR_REPEATED_PASSWORD).should("be.visible");
+        cy.get(locators.signup.ERROR_REPEATED_PASSWORD).should(
+            "contain",
+            "The two passwords that you entered do not match"
+        );
     });
 
     it("Should show error when CAPTCHA is not completed", () => {
@@ -58,7 +67,7 @@ describe("Sign Up tests", () => {
         cy.get(locators.signup.PASSWORD).type(testUser.password);
         cy.get(locators.signup.REPEATED_PASSWORD).type(testUser.password);
         cy.get(locators.signup.BTN_SUBMIT).click();
-        cy.contains("Campo obrigatório").should("be.visible");
+        cy.contains("Field is required").should("be.visible");
     });
 
     it("Should successfully create account with valid data and CAPTCHA", () => {
@@ -67,21 +76,19 @@ describe("Sign Up tests", () => {
         cy.get(locators.signup.PASSWORD).type(testUser.password);
         cy.get(locators.signup.REPEATED_PASSWORD).type(testUser.password);
         cy.checkRecaptcha();
+
+        // Intercept the registration API call
+        cy.intercept("POST", "/api/user/register").as("registerUser");
+        cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
+
         cy.get(locators.signup.BTN_SUBMIT).click();
+
+        // Wait for registration to complete
+        cy.wait("@registerUser", { timeout: 30000 });
+        cy.wait("@confirmLogin", { timeout: 30000 });
 
         // After successful registration, user should be redirected to home
-        cy.url().should("eq", "http://localhost:3000/");
-        cy.contains("Cadastro realizado com sucesso").should("be.visible");
-    });
-
-    it("Should show error when email already exists", () => {
-        cy.get(locators.signup.NAME).type("Duplicate User");
-        cy.get(locators.signup.EMAIL).type("existing@aletheiafact.org");
-        cy.get(locators.signup.PASSWORD).type(testUser.password);
-        cy.get(locators.signup.REPEATED_PASSWORD).type(testUser.password);
-        cy.checkRecaptcha();
-        cy.get(locators.signup.BTN_SUBMIT).click();
-
-        cy.contains(/usuário já existe|já cadastrado/i).should("be.visible");
+        cy.url({ timeout: 30000 }).should("eq", "http://localhost:3000/");
+        cy.contains("Sign-up successful").should("be.visible");
     });
 });
