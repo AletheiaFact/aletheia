@@ -3,7 +3,8 @@ import styled from "styled-components";
 const Cop30SectionStyled = styled.div`
 width: 100%;
 padding-top: 32px;
-justify-items: center;
+display: flex;
+justify-content: center;
     /* COP30 Header Section */
     .cop30-banner {
         background: linear-gradient(135deg, #11273a 0%, #657e8e 100%);

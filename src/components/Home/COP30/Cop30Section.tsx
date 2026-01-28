@@ -51,7 +51,7 @@ const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {
 
     return (
         <Cop30SectionStyled>
-            <Grid container xs={11} sm={11} md={9}>
+            <Grid container xs={11} sm={11} md={9} justifyContent="center">
                 <section className="cop30-banner">
                     <div className="cop30-banner-content">
                         <div className="cop30-badge-wrapper">
