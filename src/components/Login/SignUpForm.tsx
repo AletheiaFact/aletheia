@@ -134,10 +134,9 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label
-                            required
-                            children={t("common:captchaLabel") + " :"}
-                        />
+                        <Label required>
+                            {t("common:captchaLabel") + " :"}
+                        </Label>
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <AletheiaCaptcha

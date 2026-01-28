@@ -34,8 +34,8 @@ export class UsersController {
         private readonly usersService: UsersService,
         private viewService: ViewService,
         private configService: ConfigService,
-        private util: UtilService,
-        private captchaService: CaptchaService
+        private readonly util: UtilService,
+        private readonly captchaService: CaptchaService
     ) {}
 
     @ApiTags("pages")
