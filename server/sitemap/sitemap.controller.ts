@@ -1,12 +1,12 @@
 import { Controller, Get, Header, Request, Res } from "@nestjs/common";
 import { SitemapService } from "./sitemap.service";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 
 @Controller("/")
 export class SitemapController {
     constructor(private sitemapService: SitemapService) {}
 
-    @IsPublic()
+    @Public()
     @Get("sitemap.xml")
     @Header("Content-Type", "text/xml")
     @Header("Cache-Control", "max-age=86400")

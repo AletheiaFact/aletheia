@@ -1,9 +1,9 @@
 import { Controller, Get, Header, Req, Res } from "@nestjs/common";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 
 @Controller("")
 export class RootController {
-    @IsPublic()
+    @Public()
     @Get("robots.txt")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     robots(@Res() res, @Req() req) {
@@ -13,7 +13,7 @@ export class RootController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @Get("api/health")
     health() {
         return { status: "ok" };

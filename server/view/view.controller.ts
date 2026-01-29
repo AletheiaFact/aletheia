@@ -10,7 +10,7 @@ import {
 import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
@@ -27,7 +27,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("about")
     @Header("Cache-Control", "max-age=86400")
@@ -36,7 +36,7 @@ export class ViewController {
         await this.viewService.render(req, res, "/about-page", parsedUrl.query);
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("signup-invite")
     @Header("Cache-Control", "max-age=86400")
@@ -50,7 +50,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("about/:person")
     @Header("Cache-Control", "max-age=86400")
@@ -65,7 +65,7 @@ export class ViewController {
         res.redirect(302, "/about");
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("supportive-materials")
     @Header("Cache-Control", "max-age=86400")
@@ -82,7 +82,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("privacy-policy")
     @Header("Cache-Control", "max-age=86400")
@@ -99,7 +99,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("code-of-conduct")
     @Header("Cache-Control", "max-age=86400")
@@ -113,7 +113,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @Get("_next*")
     @Header("Cache-Control", "max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
@@ -130,7 +130,7 @@ export class ViewController {
      * Redirects to our custom 404 page.
      * The render404() method was not used here as it conflicts with our i18n strategy.
      */
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("404")
     @Header("Cache-Control", "max-age=86400")
@@ -151,7 +151,7 @@ export class ViewController {
         );
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("unauthorized")
     public async acessDeniedPage(

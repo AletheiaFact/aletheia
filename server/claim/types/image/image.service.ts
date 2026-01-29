@@ -1,4 +1,10 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+    Scope,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
 import { Model } from "mongoose";
@@ -10,6 +16,7 @@ import {
 import { REQUEST } from "@nestjs/core";
 import { ReportService } from "../../../report/report.service";
 import type { BaseRequest } from "../../../types";
+import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
@@ -46,11 +53,18 @@ export class ImageService {
     }
 
     async getByDataHash(data_hash: string) {
-        if (!data_hash) {
-              throw new BadRequestException("Invalid data hash format.");
-            }
-        const report = await this.reportService.findByDataHash(data_hash);
-        const image = await this.ImageModel.findOne({ data_hash });
+        const validatedParams = GetByDataHashDto.safeParse({ data_hash });
+
+        if (!validatedParams.success) {
+            throw new BadRequestException("Invalid data_hash format");
+        }
+
+        const { data_hash: validatedHash } = validatedParams.data;
+
+        const report = await this.reportService.findByDataHash(validatedHash);
+        const image = await this.ImageModel.findOne({
+            data_hash: validatedHash,
+        });
         if (image) {
             image.props = {
                 classification: report?.classification,

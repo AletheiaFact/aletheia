@@ -18,7 +18,7 @@ import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
 import type { Response } from "express";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 import { CreateSourceDTO } from "./dto/create-source.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { UnleashService } from "nestjs-unleash";
@@ -99,7 +99,7 @@ export class SourceController {
         await this.viewService.render(req, res, "/sources-create", queryObject);
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("source")
     @Get("api/source")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -124,7 +124,7 @@ export class SourceController {
         });
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("source")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -137,7 +137,7 @@ export class SourceController {
         await this.viewService.render(req, res, "/sources-page", queryObject);
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("source/:dataHash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
