@@ -19,6 +19,9 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             "visualEditor" in event.reviewData
         ) {
             const visualEditorJSON = event.reviewData.visualEditor.toJSON();
+            // Remove the trailing paragraph added by Remirror's TrailingNodeExtension.
+            // This empty paragraph is necessary to allow insertion of new nodes in the editor,
+            // but should not be persisted in the database to avoid issues when loading content.
             const cleanedVisualEditor = editorParser.removeTrailingParagraph(
                 visualEditorJSON
             );
