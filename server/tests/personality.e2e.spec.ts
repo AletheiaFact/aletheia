@@ -1,4 +1,3 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
 import * as request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
@@ -15,6 +14,7 @@ import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
+import { CleanupDatabase } from "./utils/CleanupDatabase";
 
 jest.setTimeout(10000);
 
@@ -40,12 +40,11 @@ jest.setTimeout(10000);
  */
 describe("PersonalityController (e2e)", () => {
     let app: any;
-    let db: any;
     let personalityId: string;
 
     beforeAll(async () => {
-        db = await MongoMemoryServer.create({ instance: { port: 35025 } });
-        const mongoUri = db.getUri();
+        // Use shared MongoDB instance from global setup
+        const mongoUri = process.env.MONGO_URI!;
         
         await SeedTestUser(mongoUri);
 
@@ -408,7 +407,7 @@ describe("PersonalityController (e2e)", () => {
     });
 
     afterAll(async () => {
-        await db.stop();
-        app.close();
+        await app.close();
+        await CleanupDatabase(process.env.MONGO_URI!);
     });
 });

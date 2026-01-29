@@ -1,4 +1,3 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
 import * as request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AppModule } from "../app.module";
@@ -24,6 +23,7 @@ import { SeedTestSpeech } from "./utils/SeedTestSpeech";
 import { SeedTestClaimRevision } from "./utils/SeedTestClaimRevision";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
 import { ValidationPipe } from "@nestjs/common";
+import { CleanupDatabase } from "./utils/CleanupDatabase";
 const { ObjectId } = require("mongodb");
 
 jest.setTimeout(10000);
@@ -45,7 +45,6 @@ jest.setTimeout(10000);
  */
 describe("ClaimReviewController (e2e)", () => {
     let app: any;
-    let db: any;
     let userId: string;
     let personalitiesId: string[];
     let reportId: string;
@@ -57,8 +56,8 @@ describe("ClaimReviewController (e2e)", () => {
     let claimReviewId: string;
 
     beforeAll(async () => {
-        db = await MongoMemoryServer.create({ instance: { port: 35025 } });
-        const mongoUri = db.getUri();
+        // Use shared MongoDB instance from global setup
+        const mongoUri = process.env.MONGO_URI!;
         
         const user = await SeedTestUser(mongoUri);
         userId = user.insertedId.toString();
@@ -346,7 +345,7 @@ describe("ClaimReviewController (e2e)", () => {
     it("api/review/:id (PUT) - Should validate update payload", () => {
         // First create a new review for this test by re-seeding
         return SeedTestClaimReview(
-            db.getUri(),
+            process.env.MONGO_URI!,
             claimId,
             personalitiesId,
             reportId,
@@ -385,7 +384,7 @@ describe("ClaimReviewController (e2e)", () => {
     });
 
     afterAll(async () => {
-        await db.stop();
-        app.close();
+        await app.close();
+        await CleanupDatabase(process.env.MONGO_URI!);
     });
 });

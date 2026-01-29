@@ -1,15 +1,47 @@
 import { MongoClient } from "mongodb";
 import { PersonalitiesMock } from "./PersonalitiesMock";
+import { TEST_DB_NAME } from "./TestConstants";
 
 export const SeedTestPersonality = async (uri) => {
     const client = await new MongoClient(uri);
     await client.connect();
 
     try {
-        return await client
-            .db("test")
+        // Use bulkWrite with upsert to avoid duplicate errors in parallel execution
+        const operations = PersonalitiesMock.map((personality) => ({
+            updateOne: {
+                filter: { slug: personality.slug },
+                update: { $set: personality },
+                upsert: true,
+            },
+        }));
+
+        const result = await client
+            .db(TEST_DB_NAME)
             .collection("personalities")
-            .insertMany(PersonalitiesMock);
+            .bulkWrite(operations);
+
+        // Get the inserted/updated IDs with explicit ordering for consistency
+        const personalities = await client
+            .db(TEST_DB_NAME)
+            .collection("personalities")
+            .find({ slug: { $in: PersonalitiesMock.map((p) => p.slug) } })
+            .sort({ slug: 1 })
+            .toArray();
+
+        // Map by slug to ensure order-independent ID mapping
+        return {
+            insertedIds: PersonalitiesMock.reduce((acc, mock, index) => {
+                const personality = personalities.find(
+                    (p) => p.slug === mock.slug
+                );
+                if (personality) {
+                    acc[index.toString()] = personality._id;
+                }
+                return acc;
+            }, {}),
+            acknowledged: result.ok === 1,
+        };
     } finally {
         await client.close();
     }
