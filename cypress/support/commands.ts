@@ -25,13 +25,18 @@ Cypress.Commands.add("checkRecaptcha", () => {
         // get the iframe > document > body
         // and retries until the body is not empty or fails with timeout
         return cy
-            .get('iframe[title="reCAPTCHA"]')
+            .get('iframe[title="reCAPTCHA"]', { timeout: 10000 })
             .its("0.contentDocument.body")
             .should("not.be.empty")
             .then(cy.wrap);
     };
 
-    getIframeBody().find("#recaptcha-anchor").click();
+    getIframeBody()
+        .find("#recaptcha-anchor", { timeout: 10000 })
+        .should("be.visible")
+        .click({ force: true });
+
+    cy.wait(500);
 });
 
 Cypress.Commands.add("goToSignUpPage", () => {
