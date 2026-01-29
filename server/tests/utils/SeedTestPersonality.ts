@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { PersonalitiesMock } from "./PersonalitiesMock";
+import { TEST_DB_NAME } from "./TestConstants";
 
 export const SeedTestPersonality = async (uri) => {
     const client = await new MongoClient(uri);
@@ -16,20 +17,27 @@ export const SeedTestPersonality = async (uri) => {
         }));
 
         const result = await client
-            .db("test")
+            .db(TEST_DB_NAME)
             .collection("personalities")
             .bulkWrite(operations);
 
-        // Get the inserted/updated IDs
+        // Get the inserted/updated IDs with explicit ordering for consistency
         const personalities = await client
-            .db("test")
+            .db(TEST_DB_NAME)
             .collection("personalities")
             .find({ slug: { $in: PersonalitiesMock.map((p) => p.slug) } })
+            .sort({ slug: 1 })
             .toArray();
 
+        // Map by slug to ensure order-independent ID mapping
         return {
-            insertedIds: personalities.reduce((acc, p, index) => {
-                acc[index.toString()] = p._id;
+            insertedIds: PersonalitiesMock.reduce((acc, mock, index) => {
+                const personality = personalities.find(
+                    (p) => p.slug === mock.slug
+                );
+                if (personality) {
+                    acc[index.toString()] = personality._id;
+                }
                 return acc;
             }, {}),
             acknowledged: result.ok === 1,

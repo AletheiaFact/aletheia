@@ -1,11 +1,14 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryServer } from "mongodb-memory-server";
 
+/**
+ * Global setup for Jest test suite
+ * Creates a shared MongoMemoryServer instance for all test suites
+ * to improve performance and reduce resource usage
+ */
 export default async function globalSetup() {
-    console.log('\n🚀 Starting shared MongoMemoryServer...');
-
     const instance = await MongoMemoryServer.create({
         instance: {
-            dbName: 'jest-test',
+            dbName: "jest-test",
         },
     });
 
@@ -16,6 +19,4 @@ export default async function globalSetup() {
 
     // Store URI in environment for all tests to use
     process.env.MONGO_URI = uri;
-
-    console.log(`✅ MongoDB ready at: ${uri}\n`);
 }

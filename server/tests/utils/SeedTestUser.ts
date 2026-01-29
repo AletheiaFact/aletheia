@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { AdminUserMock } from "./AdminUserMock";
+import { TEST_DB_NAME } from "./TestConstants";
 
 export const SeedTestUser = async (uri) => {
     const client = await new MongoClient(uri);
@@ -8,7 +9,7 @@ export const SeedTestUser = async (uri) => {
     try {
         // Use updateOne with upsert to avoid duplicate key errors in parallel execution
         const result = await client
-            .db("test")
+            .db(TEST_DB_NAME)
             .collection("users")
             .updateOne(
                 { _id: AdminUserMock._id },
