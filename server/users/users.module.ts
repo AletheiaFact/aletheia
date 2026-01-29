@@ -11,6 +11,7 @@ import { UtilService } from "../util";
 import { NotificationModule } from "../notifications/notifications.module";
 import { SessionGuard } from "../auth/session.guard";
 import { M2MGuard } from "../auth/m2m.guard";
+import { CaptchaModule } from "../captcha/captcha.module";
 
 const UserModel = MongooseModule.forFeature([
     {
@@ -26,7 +27,8 @@ const UserModel = MongooseModule.forFeature([
         OryModule,
         ConfigModule,
         AbilityModule,
-        NotificationModule
+        NotificationModule,
+        CaptchaModule,
     ],
     exports: [UsersService, UserModel],
     controllers: [UsersController],
