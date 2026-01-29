@@ -98,16 +98,31 @@ describe("ClaimController (Unit)", () => {
         const res = {} as any;
 
         personalityService.getPersonalityBySlug!.mockResolvedValue({
-            _id: "1",
-        });
+            _id: "507f1f77bcf86cd799439011",
+            name: "Test Personality",
+            slug: "test-personality",
+            description: "Test description",
+            isHidden: false,
+        } as any);
 
         claimService.getByPersonalityIdAndClaimSlug.mockResolvedValue({
-            _id: "2",
-        });
+            _id: "507f1f77bcf86cd799439012",
+            slug: "test-claim",
+            personalities: ["507f1f77bcf86cd799439011"],
+            isHidden: false,
+            nameSpace: "main",
+        } as any);
+
         imageService.getByDataHash.mockResolvedValue({
-            _id: "3",
-            dataHash: "5a96cffa6efb4c5732c46dfed98be0987",
-        });
+            _id: "507f1f77bcf86cd799439013",
+            type: "Image",
+            data_hash: "96cffa6efb4c5732c46dfed98be707a5",
+            content: "https://example.com/image.jpg",
+            props: {
+                key: "test-image-key",
+                extension: "jpg",
+            },
+        } as any);
 
         jest.spyOn(
             controller as any,
