@@ -50,17 +50,10 @@ const HomeFeed = ({ searchResults }) => {
     return (
         <>
             {results.length > 0 && (
-                <Grid>
+                <Grid container>
                     <h2>{t("home:homeFeedTitle")}</h2>
 
-                    <Grid
-                        style={{
-                            display: "flex",
-                            gap: 16,
-                            flexWrap: "wrap",
-                            marginBottom: 32,
-                        }}
-                    >
+                    <Grid item>
                         <HomeFeedList results={results} />
                     </Grid>
                 </Grid>
