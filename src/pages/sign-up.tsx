@@ -26,13 +26,12 @@ const SignUpPage: NextPage<{ sitekey: string }> = ({ sitekey }) => {
 
 export async function getServerSideProps({ locale, locales, req, query }) {
     locale = GetLocale(req, locale, locales);
-    const sitekey =
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITEKEY || query.sitekey || "";
+    query = JSON.parse(query.props);
 
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            sitekey,
+            sitekey: query.sitekey,
         },
     };
 }
