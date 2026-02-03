@@ -26,42 +26,44 @@ const VerificationRequestResultList = ({ results }) => {
         <Grid className="verification-request-list" container xs={12} spacing={2}>
             {results?.length > 0 &&
                 results.map((verificationRequest) => (
-                  <Grid item sm={12} md={6} xl={4} key={verificationRequest._id}>
+                    <Grid item sm={12} md={6} xl={4} key={verificationRequest._id}>
                         <VerificationRequestCard
                             verificationRequest={verificationRequest}
                             expandable={false}
                             t={t}
                             style={{ minHeight: "100%" }}
                             actions={[
-                              <Grid container justifyContent="center">
-                                <AletheiaButton
+                                <Grid container
+                                    justifyContent="center"
                                     key={`add-${verificationRequest._id}`}
-                                    disabled={checkIfIsInGroup(
-                                        verificationRequest._id
-                                    )}
-                                    loading={isLoading}
-                                    onClick={async () => {
-                                        setIsLoading(true);
-                                        await addRecommendation(
-                                            verificationRequest
-                                        );
-                                        setIsLoading(false);
-                                    }}
                                 >
-                                    {checkIfIsInGroup(verificationRequest._id)
-                                        ? t(
-                                              "verificationRequest:alreadyInGroupMessage"
-                                          )
-                                        : t(
-                                              "verificationRequest:addInGroupButton"
-                                          )}
-                                </AletheiaButton>
-                              </Grid>
+                                    <AletheiaButton
+                                        disabled={checkIfIsInGroup(
+                                            verificationRequest._id
+                                        )}
+                                        loading={isLoading}
+                                        onClick={async () => {
+                                            setIsLoading(true);
+                                            await addRecommendation(
+                                                verificationRequest
+                                            );
+                                            setIsLoading(false);
+                                        }}
+                                    >
+                                        {checkIfIsInGroup(verificationRequest._id)
+                                            ? t(
+                                                "verificationRequest:alreadyInGroupMessage"
+                                            )
+                                            : t(
+                                                "verificationRequest:addInGroupButton"
+                                            )}
+                                    </AletheiaButton>
+                                </Grid>
                             ]}
                         />
                     </Grid>
                 ))}
-      </Grid>
+        </Grid>
     );
 };
 

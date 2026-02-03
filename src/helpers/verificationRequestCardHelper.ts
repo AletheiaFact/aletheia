@@ -10,7 +10,7 @@ export const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
 };
 
 export const getSeverityLabel = (severity: string, t: TFunction): string => {
-  if (!severity) return "N/A";
+  if (!severity || severity === "N/A") return t("claimForm:noAnswer");
 
   const [label, level] = severity.split("_");
 
@@ -20,7 +20,7 @@ export const getSeverityLabel = (severity: string, t: TFunction): string => {
 };
 
 export const getSeverityColor = (severity: string): string => {
-  if (!severity) return colors.neutralSecondary;
+  if (!severity || severity === "N/A") return colors.neutralSecondary;
 
   const severityStr = String(severity).toLowerCase();
   const levels: SeverityLevel[] = ["critical", "high", "medium", "low"];
@@ -29,16 +29,18 @@ export const getSeverityColor = (severity: string): string => {
   return SEVERITY_COLOR_MAP[matchedLevel];
 };
 
-export const truncateUrl = (url) => {
-    try {
-        const { hostname, pathname } = new URL(url);
-        const maxLength = 30;
-        const shortPath =
-            pathname.length > maxLength
-                ? `${pathname.substring(0, maxLength)}...`
-                : pathname;
-        return `${hostname}${shortPath}`;
-    } catch (e) {
-        return url;
-    }
+export const truncateUrl = (url: string) => {
+  try {
+    if (!url || typeof url !== 'string') return url;
+
+    const { hostname, pathname } = new URL(url);
+    const maxLength = 30;
+    const shortPath = pathname.length > maxLength
+      ? `${pathname.substring(0, maxLength)}...`
+      : pathname;
+    return `${hostname}${shortPath}`;
+  } catch (error) {
+    console.warn("Invalid URL for truncation:", url, error);
+    return url;
+  }
 };
