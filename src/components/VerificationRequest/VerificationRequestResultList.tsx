@@ -4,7 +4,6 @@ import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
 import { useTranslation } from "next-i18next";
-import VerificationRequestResultListStyled from "./VerificationRequestRecommedations.style";
 
 const VerificationRequestResultList = ({ results }) => {
     const { t } = useTranslation();
@@ -24,19 +23,17 @@ const VerificationRequestResultList = ({ results }) => {
     };
 
     return (
-        <VerificationRequestResultListStyled>
+        <Grid className="verification-request-list" container xs={12} spacing={2}>
             {results?.length > 0 &&
                 results.map((verificationRequest) => (
-                    <Grid item
-                        style={{ width: "300px" }}
-                        key={verificationRequest._id}
-                    >
+                  <Grid item sm={12} md={6} xl={4} key={verificationRequest._id}>
                         <VerificationRequestCard
                             verificationRequest={verificationRequest}
                             expandable={false}
                             t={t}
                             style={{ minHeight: "100%" }}
                             actions={[
+                              <Grid container justifyContent="center">
                                 <AletheiaButton
                                     key={`add-${verificationRequest._id}`}
                                     disabled={checkIfIsInGroup(
@@ -58,12 +55,13 @@ const VerificationRequestResultList = ({ results }) => {
                                         : t(
                                               "verificationRequest:addInGroupButton"
                                           )}
-                                </AletheiaButton>,
+                                </AletheiaButton>
+                              </Grid>
                             ]}
                         />
                     </Grid>
                 ))}
-        </VerificationRequestResultListStyled>
+      </Grid>
     );
 };
 

@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "next-i18next";
 import VerificationRequestCard from "./VerificationRequestCard";
@@ -28,16 +28,17 @@ const VerificationRequestMainContent = ({
     };
 
     return (
-        <main style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography style={{ fontFamily: "serif", fontWeight: 600, fontSize: 26, lineHeight: 1.35 }} variant="h3">
+        <main className="container">
+            <Grid item xs={12} lg={10} xl={8} justifyContent="center">
+              <Box className="box-title">
+                <Typography className="title" variant="h1">
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
 
                 {role == Roles.Admin && (
                     <IconButton size="small">
                         <EditIcon
-                            style={{ fontSize: 18 }}
+                            className="edit-icon"
                             color="primary"
                             onClick={() => setOpenEditDrawer(true)} />
                     </IconButton>
@@ -65,6 +66,7 @@ const VerificationRequestMainContent = ({
                         openDrawer={openDrawer}
                     />
                 )}
+            </Grid>    
         </main>
     );
 };

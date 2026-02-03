@@ -35,7 +35,7 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
                 description: (
                     <AletheiaButton
                         href={`/claim/create?verificationRequest=${verificationRequestId}`}
-                        style={{ width: "fit-content", marginTop: 32 }}
+                        className="container-alert"
                     >
                         {t("seo:claimCreateTitle")}
                     </AletheiaButton>
@@ -44,40 +44,19 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
         }
         if (targetId) {
             return {
-                type: "warning",
+                type: "success",
                 showIcon: false,
-                message: (
-                    <div
-                        style={{
-                            display: "flex",
-                            gap: 16,
-                            flexWrap: "wrap",
-                            justifyContent: "space-around",
-                        }}
-                    >
-                        <span
-                            style={{
-                                height: "auto",
-                                fontSize: 18,
-                                lineHeight: "40px",
-                                textAlign: "center",
-                            }}
-                        >
-                            {t(
-                                "verificationRequest:openVerificationRequestClaimLabel"
-                            )}
-                        </span>
+                message: t("verificationRequest:openVerificationRequestClaimLabel"),
+                description: (
                         <AletheiaButton
                             href={`/claim/${targetId?.slug}`}
-                            style={{ width: "fit-content" }}
+                            className="container-alert"
                         >
                             {t(
                                 "verificationRequest:openVerificationRequestClaimButton"
                             )}
                         </AletheiaButton>
-                    </div>
                 ),
-                description: null,
             };
         }
         return null;

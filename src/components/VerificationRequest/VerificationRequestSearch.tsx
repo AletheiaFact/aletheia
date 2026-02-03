@@ -38,16 +38,15 @@ const VerificationRequestSearch = () => {
     };
 
     return (
-        <div style={{ width: "100%" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-                <Grid item xs={12}>
+          <section className="container">
+              <Grid item sm={12} md={6} xl={4}>
                     <InputSearch
                         placeholder={t("verificationRequest:searchPlaceholder")}
                         suffix={
                             <AletheiaButton
                                 type={ButtonType.white}
                                 onClick={handleInputSearch}
-                                style={{ width: "100%", height: "auto" }}
+                                className="container"
                                 disabled={content.length <= 3}
                                 loading={isLoading}
                             >
@@ -63,11 +62,10 @@ const VerificationRequestSearch = () => {
                             }
                         }}
                     />
-                </Grid>
-            </div>
+              </Grid>
             {verificationRequests && (
-                <Grid item style={{ marginTop: 32 }}>
-                    <Typography variant="h4">
+                <Grid item>
+                    <Typography className="title" variant="h1">
                         {t("verificationRequest:searchResultsTitle")}
                     </Typography>
                     {isLoading && <Loading />}
@@ -80,7 +78,7 @@ const VerificationRequestSearch = () => {
                     )}
                 </Grid>
             )}
-        </div>
+          </section>
     );
 };
 
