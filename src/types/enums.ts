@@ -16,6 +16,7 @@ enum Roles {
     Reviewer = "reviewer",
     Admin = "admin",
     SuperAdmin = "super-admin",
+    Integration = "integration",
 }
 
 enum Status {

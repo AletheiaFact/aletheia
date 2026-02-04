@@ -12,10 +12,12 @@ export type User = {
 };
 
 export class M2M {
-    isM2M: boolean;
-    subject: string;
-    role: {
-        main: string;
-    };
-    scopes: string[];
+  isM2M: boolean;
+  clientId: string;
+  subject: string;
+  scopes: string[];
+  role: {
+    main: Roles.Integration;
+  };
+  namespace: string;
 }

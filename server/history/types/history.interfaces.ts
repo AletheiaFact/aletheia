@@ -1,4 +1,4 @@
-import { Roles } from "../../auth/ability/ability.factory";
+import { M2M } from "../../entities/m2m.entity";
 import { HistoryType, TargetModel } from "../schema/history.schema";
 import { Types } from "mongoose";
 
@@ -33,16 +33,6 @@ interface HistoryItem {
 }
 
 type PerformedBy = Types.ObjectId[] | M2M | string | null;
-interface M2M {
-  isM2M: boolean;
-  clientId: string;
-  subject: string;
-  scopes: string[];
-  role: {
-    main: Roles.Integration;
-  };
-  namespace: string;
-}
 interface HistoryDetails {
   after: AfterAndBeforeType;
   before?: AfterAndBeforeType | null;

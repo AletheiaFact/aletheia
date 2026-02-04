@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 import { Roles } from "../auth/ability/ability.factory";
+import { M2M } from "../entities/m2m.entity";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -23,7 +24,7 @@ interface ChatBotContext {
     sourceChannel?: string;
 }
 
-function M2MUser(clientId) {
+function M2MUser(clientId): M2M {
   return {
     isM2M: true,
     clientId,
