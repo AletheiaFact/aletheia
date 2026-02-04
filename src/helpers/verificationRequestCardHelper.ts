@@ -26,7 +26,7 @@ export const getSeverityColor = (severity: string): string => {
   const levels: SeverityLevel[] = ["critical", "high", "medium", "low"];
   const matchedLevel = levels.find((level) => severityStr.startsWith(level));
 
-  return SEVERITY_COLOR_MAP[matchedLevel];
+  return SEVERITY_COLOR_MAP[matchedLevel] || colors.neutralSecondary;
 };
 
 export const truncateUrl = (url: string) => {
