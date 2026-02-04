@@ -25,10 +25,10 @@ interface SelectFilterProps {
 const filterActions: Record<string, () => SelectOption[]> = {
   filterByPriority: () => [
     { value: "all", labelKey: "allPriorities" },
-    { value: "critical", labelKey: "priorityCritical" },
-    { value: "high", labelKey: "priorityHigh" },
-    { value: "medium", labelKey: "priorityMedium" },
-    { value: "low", labelKey: "priorityLow" },
+    { value: "critical", labelKey: "priority.critical" },
+    { value: "high", labelKey: "priority.filter_high" },
+    { value: "medium", labelKey: "priority.filter_medium" },
+    { value: "low", labelKey: "priority.filter_low" },
   ],
 
   filterBySourceChannel: () => {

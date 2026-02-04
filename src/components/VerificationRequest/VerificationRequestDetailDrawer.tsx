@@ -44,6 +44,10 @@ import sendReviewNotifications from "../../notifications/sendReviewNotifications
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import PersonalitiesSection from "./PersonalitiesSection";
 import { usePersonalities } from "../../hooks/usePersonalities";
+import {
+  getSeverityColor,
+  getSeverityLabel,
+} from "../../helpers/verificationRequestCardHelper";
 
 interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
@@ -51,41 +55,6 @@ interface VerificationRequestDetailDrawerProps {
     onClose: () => void;
     onUpdate?: (oldStatus: string, newStatus: string) => void;
 }
-
-const getSeverityColor = (severity: string) => {
-    if (!severity) return colors.neutralSecondary;
-    const lowerSeverity = severity.toLowerCase();
-    if (lowerSeverity === "critical") return "#d32f2f";
-    if (lowerSeverity.startsWith("high")) return "#f57c00";
-    if (lowerSeverity.startsWith("medium")) return "#fbc02d";
-    if (lowerSeverity.startsWith("low")) return "#388e3c";
-    return colors.neutralSecondary;
-};
-
-const formatSeverityLabel = (severity: string) => {
-    if (!severity) return "N/A";
-    const parts = severity.split("_");
-    if (parts.length === 2) {
-        return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${
-            parts[1]
-        })`;
-    }
-    return severity.charAt(0).toUpperCase() + severity.slice(1);
-};
-
-const truncateUrl = (url) => {
-    try {
-        const { hostname, pathname } = new URL(url);
-        const maxLength = 30;
-        const shortPath =
-            pathname.length > maxLength
-                ? `${pathname.substring(0, maxLength)}...`
-                : pathname;
-        return `${hostname}${shortPath}`;
-    } catch (e) {
-        return url;
-    }
-};
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
     ({ verificationRequest, open, onClose, onUpdate }) => {
@@ -243,7 +212,10 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                       icon: <Share style={{ fontSize: 18 }} />,
                       key: `${currentRequest._id}|receptionChannel`,
                       label: t("verificationRequest:tagSourceChannel"),
-                      label_value: currentRequest.sourceChannel,
+                      label_value: t(
+                        `verificationRequest:${currentRequest.sourceChannel}`,
+                      { defaultValue: currentRequest.sourceChannel },
+                      ),
                       style: {
                           backgroundColor: colors.primary,
                           color: colors.white,
@@ -263,12 +235,9 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                       icon: <WarningAmber style={{ fontSize: 18 }} />,
                       key: `${currentRequest._id}|severity`,
                       label: t("verificationRequest:tagSeverity"),
-                      label_value:
-                          formatSeverityLabel(currentRequest.severity) || "N/A",
+                      label_value: getSeverityLabel(currentRequest.severity, t),
                       style: {
-                          backgroundColor: getSeverityColor(
-                              currentRequest.severity
-                          ),
+                          backgroundColor: getSeverityColor(currentRequest.severity),
                           color: colors.white,
                       },
                   },
@@ -419,7 +388,6 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                             <SourceList
                                                 sources={currentRequest.source}
                                                 t={t}
-                                                truncateUrl={truncateUrl}
                                                 id={currentRequest._id}
                                             />
                                         </Box>

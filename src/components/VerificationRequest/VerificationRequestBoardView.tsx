@@ -11,16 +11,12 @@ import {
 } from "@mui/material";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import { SeverityEnum, VerificationRequestStatus } from "../../../server/verification-request/dto/types";
-import { SeverityLevel } from "../../types/VerificationRequest";
+import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
 import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
-
-const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
-  low: colors.low,
-  medium: colors.medium,
-  high: colors.high,
-  critical: colors.critical,
-};
+import {
+  getSeverityColor,
+  getSeverityLabel,
+} from "../../helpers/verificationRequestCardHelper";
 
 const VerificationRequestBoardView = ({ state, actions }) => {
   const { loading, filteredRequests, totalVerificationRequests, paginationModel } = state;
@@ -63,33 +59,6 @@ const VerificationRequestBoardView = ({ state, actions }) => {
   const groupedTotalRequests = Object.fromEntries(
     statuses.map(({ key }) => [key, totalVerificationRequests[key]])
   );
-
-  const getSeverityColor = (severity: SeverityEnum | undefined): string => {
-    if (!severity) return colors.neutralSecondary;
-
-    const severityStr = String(severity);
-
-    let severityLevel: SeverityLevel;
-
-    if (severityStr.startsWith("low")) severityLevel = "low";
-    else if (severityStr.startsWith("medium")) severityLevel = "medium";
-    else if (severityStr.startsWith("high")) severityLevel = "high";
-    else if (severityStr === "critical") severityLevel = "critical";
-    else severityLevel = "low";
-
-    return SEVERITY_COLOR_MAP[severityLevel];
-  };
-
-  const formatSeverityLabel = (severity: string) => {
-    if (!severity) return "N/A";
-    const parts = severity.split("_");
-    if (parts.length === 2) {
-      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${
-        parts[1]
-      })`;
-    }
-    return severity.charAt(0).toUpperCase() + severity.slice(1);
-  };
 
   const truncateText = (text: string, maxLength: number) => {
     if (!text) return "";
@@ -179,7 +148,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                           }}
                         >
                           <Chip
-                            label={formatSeverityLabel(request.severity)}
+                            label={getSeverityLabel(request.severity, t)}
                             size="small"
                             sx={{
                               backgroundColor: getSeverityColor(
@@ -236,7 +205,13 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             <strong>
                               {t("verificationRequest:tagSourceChannel")}:
                             </strong>{" "}
-                            {truncateText(request.sourceChannel, 30)}
+                            {truncateText(
+                              t(
+                                `verificationRequest:${request.sourceChannel}`,
+                                { defaultValue: request.sourceChannel },
+                              ),
+                              30,
+                            )}
                           </Typography>
                         )}
 
