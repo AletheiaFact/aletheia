@@ -7,13 +7,14 @@ import TagDisplay from "./TagDisplay";
 import SentenceApi from "../../api/sentenceApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import { TopicDisplayProps } from "../../types/Topic";
 
 const TopicDisplay = ({
     data_hash,
     topics,
     reviewTaskType,
     contentModel = null,
-}) => {
+}: TopicDisplayProps) => {
     const [showTopicsForm, setShowTopicsForm] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
     const [inputValue, setInputValue] = useState<any[]>([]);
@@ -45,7 +46,7 @@ const TopicDisplay = ({
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
-            (topic) => (topic?.value || topic) !== removedTopicValue
+            (topic) => (topic?.value || topic?.wikidataId || topic) !== removedTopicValue
         );
         const newInputValue = inputValue.filter(
             (topic) => (topic?.value || topic) !== removedTopicValue
