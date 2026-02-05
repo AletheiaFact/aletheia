@@ -178,7 +178,9 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user?._id ? user._id : user || this.req.user?._id;
+            const currentUser = user?._id
+                ? user._id
+                : user || this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
@@ -492,7 +494,8 @@ export class VerificationRequestService {
         const pendingTasks = verificationRequest.pendingAiTasks || new Map();
 
         this.logger.log(
-            `[revalidateAndRunMissingStates] VR ${verificationRequest.id
+            `[revalidateAndRunMissingStates] VR ${
+                verificationRequest.id
             }, states executed: ${statesExecuted.join(
                 ", "
             )}, pending: ${Object.keys(pendingTasks).join(", ")}`
@@ -650,7 +653,7 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             );
         } catch (error) {
-            console.error(
+            this.logger.error(
                 "Failed to remove verification request from group:",
                 error
             );
@@ -742,7 +745,7 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             ).populate("source");
         } catch (error) {
-            console.error("Failed to update verification request:", error);
+            this.logger.error("Failed to update verification request:", error);
             throw error;
         }
     }

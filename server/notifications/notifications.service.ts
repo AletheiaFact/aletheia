@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Novu, TriggerRecipientsTypeEnum } from "@novu/node";
 import { InjectNovu } from "./novu.provider";
 import { createHmac } from "crypto";
 import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class NotificationService {
+    private readonly logger = new Logger(NotificationService.name);
+
     constructor(
         @InjectNovu()
         private readonly novu: Novu,
@@ -90,7 +92,7 @@ export class NotificationService {
             const result = await this.novu.topics.get(key);
             return result.data;
         } catch (e) {
-            console.log(e);
+            this.logger.error("Failed to get topic:", e);
             return false;
         }
     }

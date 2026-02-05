@@ -6,7 +6,7 @@ import { NotificationService } from "../notifications/notifications.service";
 import { WinstonLogger } from "../winstonLogger";
 import loadConfig from "../configLoader";
 
-async function createNovuSubscriber(userFromDB, novuService) {
+async function createNovuSubscriber(userFromDB, novuService, logger) {
     if (!userFromDB || !userFromDB.id) {
         throw new Error(`Invalid user data: ${JSON.stringify(userFromDB)}`);
     }
@@ -17,7 +17,7 @@ async function createNovuSubscriber(userFromDB, novuService) {
             email: userFromDB.email,
             name: userFromDB.name,
         });
-        console.log(`Subscriber created for user ${userFromDB.email}`);
+        logger.log(`Subscriber created for user ${userFromDB.email}`);
     } catch (error) {
         throw new Error(
             `Failed to create Novu subscriber for user ${userFromDB.email}: ${error.message}`
@@ -42,8 +42,7 @@ async function initApp() {
         const users = await userService.getAllUsers();
 
         for (const user of users) {
-            await createNovuSubscriber(user, novuService);
-            logger.log(`Novu subscriber created for user: ${user.email}`);
+            await createNovuSubscriber(user, novuService, logger);
         }
 
         logger.log("All users have been processed for Novu subscription.");

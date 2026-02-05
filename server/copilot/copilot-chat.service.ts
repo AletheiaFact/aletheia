@@ -221,7 +221,6 @@ export class CopilotChatService {
     }
 
     private exceptionHandling = (e: unknown) => {
-        console.log(e);
         this.logger.error(e);
         throw new HttpException(
             customMessage(
