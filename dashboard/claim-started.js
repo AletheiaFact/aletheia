@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 //Querying how long it took from start to finish considering
 //the day the claim was registered
 db.getCollection("stateevents").aggregate([
