@@ -2,7 +2,7 @@ name: Track Issues on Project Board
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, edited, reopened, ready_for_review]
     branches: [develop, stage]
   push:
     branches: [stage, master]
@@ -36,33 +36,23 @@ jobs:
             const projectNumber = parseInt('${{ env.PROJECT_NUMBER }}');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+            const prNumber = context.payload.pull_request.number;
 
-            const prBody = context.payload.pull_request.body || '';
-            const prTitle = context.payload.pull_request.title || '';
-            const text = `${prBody} ${prTitle}`;
-
-            // Extract linked issues - create new regex each time to avoid lastIndex issues
-            const issues = new Set();
-
-            // Pattern for closes/fixes/resolves #123
-            let match;
-            const linkedPattern = new RegExp(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*#(\d+)/gi);
-            while ((match = linkedPattern.exec(text)) !== null) {
-              issues.add(match[1]);
-            }
-
-            if (issues.size === 0) {
-              console.log('No linked issues found in PR');
-              return;
-            }
-
-            console.log('Found linked issues:', Array.from(issues));
-
-            // Get project and status field info (once, outside the loop)
-            const projectData = await github.graphql(`
-              query($owner: String!, $number: Int!) {
+            // Get linked issues + project info in a single GraphQL call
+            const result = await github.graphql(`
+              query($owner: String!, $repo: String!, $prNumber: Int!, $projectNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $prNumber) {
+                    closingIssuesReferences(first: 20) {
+                      nodes {
+                        number
+                        id
+                      }
+                    }
+                  }
+                }
                 organization(login: $owner) {
-                  projectV2(number: $number) {
+                  projectV2(number: $projectNumber) {
                     id
                     field(name: "Status") {
                       ... on ProjectV2SingleSelectField {
@@ -73,9 +63,18 @@ jobs:
                   }
                 }
               }
-            `, { owner, number: projectNumber });
+            `, { owner, repo, prNumber, projectNumber });
 
-            const project = projectData.organization.projectV2;
+            const linkedIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
+
+            if (linkedIssues.length === 0) {
+              console.log('No linked issues found on PR');
+              return;
+            }
+
+            console.log('Found linked issues:', linkedIssues.map(i => `#${i.number}`));
+
+            const project = result.organization.projectV2;
             const statusField = project.field;
             const targetOption = statusField.options.find(o =>
               o.name.toLowerCase().includes('review')
@@ -87,13 +86,8 @@ jobs:
               return;
             }
 
-            for (const issueNumber of issues) {
+            for (const issue of linkedIssues) {
               try {
-                const issue = await github.rest.issues.get({
-                  owner, repo,
-                  issue_number: parseInt(issueNumber)
-                });
-
                 // Add to project (idempotent - returns existing item if already added)
                 const addResult = await github.graphql(`
                   mutation($projectId: ID!, $contentId: ID!) {
@@ -101,11 +95,10 @@ jobs:
                       item { id }
                     }
                   }
-                `, { projectId: project.id, contentId: issue.data.node_id });
+                `, { projectId: project.id, contentId: issue.id });
 
                 const itemId = addResult.addProjectV2ItemById.item.id;
 
-                // Update status
                 await github.graphql(`
                   mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
                     updateProjectV2ItemFieldValue(input: {
@@ -124,9 +117,9 @@ jobs:
                   value: targetOption.id
                 });
 
-                console.log(`Issue #${issueNumber} moved to "${targetOption.name}"`);
+                console.log(`Issue #${issue.number} moved to "${targetOption.name}"`);
               } catch (error) {
-                console.log(`Error processing issue #${issueNumber}:`, error.message);
+                console.log(`Error processing issue #${issue.number}:`, error.message);
               }
             }
 
@@ -143,7 +136,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // Find merged PR for this commit
+            // Find the merged PR for this push commit
             const { data: prs } = await github.rest.pulls.list({
               owner, repo,
               state: 'closed',
@@ -163,28 +156,21 @@ jobs:
 
             console.log(`Found merged PR #${mergedPR.number}: ${mergedPR.title}`);
 
-            // Extract linked issues
-            const text = `${mergedPR.body || ''} ${mergedPR.title}`;
-            const issues = new Set();
-
-            const linkedPattern = new RegExp(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*#(\d+)/gi);
-            let match;
-            while ((match = linkedPattern.exec(text)) !== null) {
-              issues.add(match[1]);
-            }
-
-            if (issues.size === 0) {
-              console.log('No linked issues found in merged PR');
-              return;
-            }
-
-            console.log('Found linked issues:', Array.from(issues));
-
-            // Get project info
-            const projectData = await github.graphql(`
-              query($owner: String!, $number: Int!) {
+            // Get linked issues + project info in a single GraphQL call
+            const result = await github.graphql(`
+              query($owner: String!, $repo: String!, $prNumber: Int!, $projectNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $prNumber) {
+                    closingIssuesReferences(first: 20) {
+                      nodes {
+                        number
+                        id
+                      }
+                    }
+                  }
+                }
                 organization(login: $owner) {
-                  projectV2(number: $number) {
+                  projectV2(number: $projectNumber) {
                     id
                     field(name: "Status") {
                       ... on ProjectV2SingleSelectField {
@@ -195,9 +181,18 @@ jobs:
                   }
                 }
               }
-            `, { owner, number: projectNumber });
+            `, { owner, repo, prNumber: mergedPR.number, projectNumber });
 
-            const project = projectData.organization.projectV2;
+            const linkedIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
+
+            if (linkedIssues.length === 0) {
+              console.log('No linked issues found on merged PR');
+              return;
+            }
+
+            console.log('Found linked issues:', linkedIssues.map(i => `#${i.number}`));
+
+            const project = result.organization.projectV2;
             const statusField = project.field;
             const targetOption = statusField.options.find(o =>
               o.name.toLowerCase() === 'qa' ||
@@ -210,25 +205,18 @@ jobs:
               return;
             }
 
-            for (const issueNumber of issues) {
+            for (const issue of linkedIssues) {
               try {
-                const issue = await github.rest.issues.get({
-                  owner, repo,
-                  issue_number: parseInt(issueNumber)
-                });
-
-                // Add to project (idempotent)
                 const addResult = await github.graphql(`
                   mutation($projectId: ID!, $contentId: ID!) {
                     addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
                       item { id }
                     }
                   }
-                `, { projectId: project.id, contentId: issue.data.node_id });
+                `, { projectId: project.id, contentId: issue.id });
 
                 const itemId = addResult.addProjectV2ItemById.item.id;
 
-                // Update status
                 await github.graphql(`
                   mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
                     updateProjectV2ItemFieldValue(input: {
@@ -247,9 +235,9 @@ jobs:
                   value: targetOption.id
                 });
 
-                console.log(`Issue #${issueNumber} moved to "${targetOption.name}"`);
+                console.log(`Issue #${issue.number} moved to "${targetOption.name}"`);
               } catch (error) {
-                console.log(`Error processing issue #${issueNumber}:`, error.message);
+                console.log(`Error processing issue #${issue.number}:`, error.message);
               }
             }
 
@@ -266,7 +254,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // Find merged PR for this commit
+            // Find the merged PR for this push commit
             const { data: prs } = await github.rest.pulls.list({
               owner, repo,
               state: 'closed',
@@ -286,28 +274,21 @@ jobs:
 
             console.log(`Found merged PR #${mergedPR.number}: ${mergedPR.title}`);
 
-            // Extract linked issues
-            const text = `${mergedPR.body || ''} ${mergedPR.title}`;
-            const issues = new Set();
-
-            const linkedPattern = new RegExp(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*#(\d+)/gi);
-            let match;
-            while ((match = linkedPattern.exec(text)) !== null) {
-              issues.add(match[1]);
-            }
-
-            if (issues.size === 0) {
-              console.log('No linked issues found in merged PR');
-              return;
-            }
-
-            console.log('Found linked issues:', Array.from(issues));
-
-            // Get project info
-            const projectData = await github.graphql(`
-              query($owner: String!, $number: Int!) {
+            // Get linked issues + project info in a single GraphQL call
+            const result = await github.graphql(`
+              query($owner: String!, $repo: String!, $prNumber: Int!, $projectNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $prNumber) {
+                    closingIssuesReferences(first: 20) {
+                      nodes {
+                        number
+                        id
+                      }
+                    }
+                  }
+                }
                 organization(login: $owner) {
-                  projectV2(number: $number) {
+                  projectV2(number: $projectNumber) {
                     id
                     field(name: "Status") {
                       ... on ProjectV2SingleSelectField {
@@ -318,9 +299,18 @@ jobs:
                   }
                 }
               }
-            `, { owner, number: projectNumber });
+            `, { owner, repo, prNumber: mergedPR.number, projectNumber });
 
-            const project = projectData.organization.projectV2;
+            const linkedIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
+
+            if (linkedIssues.length === 0) {
+              console.log('No linked issues found on merged PR');
+              return;
+            }
+
+            console.log('Found linked issues:', linkedIssues.map(i => `#${i.number}`));
+
+            const project = result.organization.projectV2;
             const statusField = project.field;
             const targetOption = statusField.options.find(o =>
               o.name.toLowerCase() === 'deployed' ||
@@ -333,25 +323,18 @@ jobs:
               return;
             }
 
-            for (const issueNumber of issues) {
+            for (const issue of linkedIssues) {
               try {
-                const issue = await github.rest.issues.get({
-                  owner, repo,
-                  issue_number: parseInt(issueNumber)
-                });
-
-                // Add to project (idempotent)
                 const addResult = await github.graphql(`
                   mutation($projectId: ID!, $contentId: ID!) {
                     addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
                       item { id }
                     }
                   }
-                `, { projectId: project.id, contentId: issue.data.node_id });
+                `, { projectId: project.id, contentId: issue.id });
 
                 const itemId = addResult.addProjectV2ItemById.item.id;
 
-                // Update status
                 await github.graphql(`
                   mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
                     updateProjectV2ItemFieldValue(input: {
@@ -370,9 +353,9 @@ jobs:
                   value: targetOption.id
                 });
 
-                console.log(`Issue #${issueNumber} moved to "${targetOption.name}"`);
+                console.log(`Issue #${issue.number} moved to "${targetOption.name}"`);
               } catch (error) {
-                console.log(`Error processing issue #${issueNumber}:`, error.message);
+                console.log(`Error processing issue #${issue.number}:`, error.message);
               }
             }
 
@@ -393,10 +376,10 @@ jobs:
 
             console.log(`Manually updating issue #${issueNumber} to "${targetStatus}"`);
 
-            const projectData = await github.graphql(`
-              query($owner: String!, $number: Int!) {
+            const result = await github.graphql(`
+              query($owner: String!, $projectNumber: Int!) {
                 organization(login: $owner) {
-                  projectV2(number: $number) {
+                  projectV2(number: $projectNumber) {
                     id
                     field(name: "Status") {
                       ... on ProjectV2SingleSelectField {
@@ -407,9 +390,9 @@ jobs:
                   }
                 }
               }
-            `, { owner, number: projectNumber });
+            `, { owner, projectNumber });
 
-            const project = projectData.organization.projectV2;
+            const project = result.organization.projectV2;
             const statusField = project.field;
             const targetOption = statusField.options.find(o =>
               o.name.toLowerCase().includes(targetStatus)
