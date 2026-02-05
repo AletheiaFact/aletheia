@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
+import { M2M } from "../../entities/m2m.entity";
 
 export type HistoryDocument = History & mongoose.Document;
 
@@ -47,11 +48,10 @@ export class History {
     targetModel: TargetModel;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.Mixed,
         required: false,
-        ref: "User",
     })
-    user: User;
+    user: User | M2M | string;
 
     @Prop({
         required: true,
@@ -68,7 +68,7 @@ export class History {
         type: Date,
         required: true,
     })
-    date: mongoose.Date;
+    date: Date;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

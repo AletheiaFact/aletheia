@@ -1,7 +1,16 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
+import { Model, Types, isValidObjectId } from "mongoose";
+import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
+import {
+    AfterAndBeforeType,
+    HEX24,
+    HistoryItem,
+    HistoryQuery,
+    HistoryResponse,
+    IHideableContent,
+    PerformedBy,
+} from "./types/history.interfaces";
 
 @Injectable()
 export class HistoryService {
@@ -22,25 +31,44 @@ export class HistoryService {
      * This function return an history object.
      * @param dataId Target Id.
      * @param targetModel The model of the target(claim or personality ).
-     * @param user User who made the change.
+     * @param performedBy The actor who performed the change. Can be:
+     * - an array of internal user object IDs
+     * - a string of the internal user id
+     * - a string representing chatbot ID
+     * - a Machine-to-Machine (M2M) object
+     * - null if unknown or invalid
      * @param type Type of the change(create, personality or delete).
      * @param latestChange Model latest change .
      * @param previousChange Model previous change.
      * @returns Returns an object with de params necessary to create an history.
      */
     getHistoryParams(
-        dataId,
-        targetModel,
-        user,
-        type,
-        latestChange,
-        previousChange = null
+        dataId: string,
+        targetModel: TargetModel,
+        performedBy: PerformedBy,
+        type: HistoryType,
+        latestChange: AfterAndBeforeType,
+        previousChange?: AfterAndBeforeType
     ) {
+        if (!isValidObjectId(dataId)) {
+            throw new Error(`Invalid dataId received: ${dataId}`);
+        }
+
         const date = new Date();
+        const targetId = Types.ObjectId(dataId);
+        let currentPerformedBy = null;
+
+        if (typeof performedBy === "string" && HEX24.test(performedBy)) {
+            currentPerformedBy = Types.ObjectId(performedBy);
+        } else {
+            currentPerformedBy = performedBy;
+        }
+
+
         return {
-            targetId: Types.ObjectId(dataId),
+            targetId: targetId,
             targetModel,
-            user: user?._id || user || null, //I need to make it optional because we still need to do M2M for chatbot
+            user: currentPerformedBy,
             type,
             details: {
                 after: latestChange,
@@ -55,62 +83,106 @@ export class HistoryService {
      * @param data Object with the history data
      * @returns Returns a new history document to database
      */
-    async createHistory(data) {
+    async createHistory(
+        data: Partial<HistoryDocument>
+    ): Promise<HistoryDocument> {
         const newHistory = new this.HistoryModel(data);
         return newHistory.save();
     }
 
-    /**
-     * This function queries the database for the history of changes on a target.
-     * @param targetId The id of the target.
-     * @param targetModel The model of the target (claim or personality).
-     * @param page The page of results, used in combination with pageSize to paginate results.
-     * @param pageSize How many results per page.
-     * @param order asc or desc.
-     * @returns The paginated history of a target.
-     */
-    async getByTargetIdModelAndType(
-        targetId,
-        targetModel,
-        page,
-        pageSize,
-        order = "asc",
-        type = ""
-    ) {
-        let query;
-        if (type) {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-                type,
-            };
-        } else {
-            query = {
-                targetId: Types.ObjectId(targetId),
-                targetModel,
-            };
-        }
-        return this.HistoryModel.find(query)
-            .populate("user", "_id name")
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ date: order });
+    async getHistoryForTarget(
+        targetId: string,
+        targetModel: TargetModel,
+        query: HistoryQuery
+    ): Promise<HistoryResponse> {
+        const page = Math.max(Number(query.page) || 0, 0);
+        const pageSize = Math.max(Number(query.pageSize) || 10, 1);
+        const order = query.order === "desc" ? -1 : 1;
+        const type = query.type || "";
+
+        const mongoQuery: HistoryItem = {
+            targetId: Types.ObjectId(targetId),
+            targetModel,
+        };
+        if (type) mongoQuery.type = type;
+
+        const result = await this.HistoryModel.aggregate([
+            { $match: mongoQuery },
+            {
+                $facet: {
+                    data: [
+                        { $sort: { date: order } },
+                        { $skip: page * pageSize },
+                        { $limit: pageSize },
+                        ...this.getUserLookupStages(),
+                    ],
+                    totalCount: [{ $count: "total" }],
+                },
+            },
+        ]);
+
+        const totalChanges = result[0]?.totalCount[0]?.total || 0;
+
+        return {
+            history: result[0]?.data || [],
+            totalChanges,
+            totalPages: Math.ceil(totalChanges / pageSize),
+            page,
+            pageSize,
+        };
     }
 
-    async getDescriptionForHide(content, target) {
-        if (content?.isHidden) {
-            const history = await this.getByTargetIdModelAndType(
-                content._id,
-                target,
-                0,
-                1,
-                "desc",
-                HistoryType.Hide
-            );
+    private getUserLookupStages() {
+        return [
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: [{ $type: "$$userId" }, "objectId"] },
+                                        { $eq: ["$_id", "$$userId"] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 1, name: 1 } },
+                    ],
+                    as: "userLookup",
+                },
+            },
+            {
+                $addFields: {
+                    user: {
+                        $cond: [
+                            { $gt: [{ $size: "$userLookup" }, 0] },
+                            { $arrayElemAt: ["$userLookup", 0] },
+                            "$user",
+                        ],
+                    },
+                },
+            },
+            { $project: { userLookup: 0 } },
+        ];
+    }
 
-            return history[0]?.details?.after?.description;
+    async getDescriptionForHide(
+        content: IHideableContent,
+        target: TargetModel
+    ) {
+        if (!content?._id || !content?.isHidden) {
+            return "";
         }
+        const { history } = await this.getHistoryForTarget(content._id, target, {
+            page: 0,
+            pageSize: 1,
+            order: "desc",
+            type: HistoryType.Hide,
+        });
 
-        return "";
+        return history[0]?.details?.after?.description || "";
     }
 }

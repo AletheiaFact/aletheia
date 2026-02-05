@@ -178,7 +178,7 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            const currentUser = user?._id ? user._id : user || this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
@@ -723,7 +723,7 @@ export class VerificationRequestService {
                     );
             }
 
-            const user = this.req.user;
+            const user = this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -935,7 +935,7 @@ export class VerificationRequestService {
             topics: topicIds,
         };
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
