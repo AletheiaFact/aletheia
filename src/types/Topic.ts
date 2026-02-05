@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import React from "react";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { ContentModelEnum } from "./enums";
 export interface Topic {
@@ -10,16 +10,48 @@ export interface Topic {
 }
 
 export interface ManualTopic {
-    id: ObjectId | string;
+    id?: string;
+    aliases?: string[];
+    displayLabel?: string;
     label: string;
+    matchedAlias?: string | null;
     value: string;
 }
 
-export interface TopicDisplayProps {
+export type UnifiedTopic = Topic | ManualTopic;
+export interface ITagDisplay {
+    handleClose: (removedTopicValue: string) => Promise<void>;
+    tags: ManualTopic[];
+    setShowTopicsForm: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ITopicForm {
+    contentModel: ContentModelEnum;
+    data_hash: string;
+    topicsArray: UnifiedTopic[];
+    setTopicsArray: React.Dispatch<React.SetStateAction<UnifiedTopic[]>>;
+    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[]>>;
+    tags: ManualTopic[];
+    reviewTaskType: ReviewTaskTypeEnum;
+}
+
+export interface ITopicDisplay {
     data_hash: string;
     topics: UnifiedTopic[];
     reviewTaskType: ReviewTaskTypeEnum;
     contentModel?: ContentModelEnum | null;
 }
 
-export type UnifiedTopic = Topic | ManualTopic;
+export interface IImpactAreaSelect {
+    onChange: (value: ManualTopic[]) => void;
+    placeholder?: string;
+}
+
+export interface IMultiSelectAutocomplete {
+    isMultiple?: boolean;
+    onChange: (value: ManualTopic[]) => void;
+    isLoading: boolean;
+    placeholder: string;
+    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[]>>;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}

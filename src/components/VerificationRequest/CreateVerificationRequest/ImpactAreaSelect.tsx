@@ -1,30 +1,25 @@
-import * as React from "react";
-import { useEffect, useState} from "react";
+import React, { useState, useEffect } from "react";
 import MultiSelectAutocomplete from "../../topics/TopicOrImpactSelect";
+import { IImpactAreaSelect, ManualTopic } from "../../../types/Topic";
 
-
-interface ImpactAreaSelectProps {
-  onChange: (value: string) => void;
-  placeholder?: string;
-}
-
-const ImpactAreaSelect: React.FC<ImpactAreaSelectProps> = ({
+const ImpactAreaSelect = ({
   onChange,
   placeholder,
-}) => {
-  const [value, setValue] = useState("");
+}: IImpactAreaSelect) => {
+  const [value, setValue] = useState<ManualTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    onChange(value || undefined);
+    onChange(value);
   }, []);
+  
   return (
     <MultiSelectAutocomplete
       placeholder={placeholder}
       onChange={onChange}
       setIsLoading={setIsLoading}
       isLoading={isLoading}
-      setInputValue={setValue}
+      setSelectedTags={setValue}
       isMultiple={false}
     />
   );

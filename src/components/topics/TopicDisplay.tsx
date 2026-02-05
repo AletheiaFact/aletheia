@@ -7,14 +7,14 @@ import TagDisplay from "./TagDisplay";
 import SentenceApi from "../../api/sentenceApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
-import { TopicDisplayProps } from "../../types/Topic";
+import { ITopicDisplay } from "../../types/Topic";
 
 const TopicDisplay = ({
     data_hash,
     topics,
     reviewTaskType,
     contentModel = null,
-}: TopicDisplayProps) => {
+}: ITopicDisplay) => {
     const [showTopicsForm, setShowTopicsForm] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
     const [selectedTags, setSelectedTags] = useState<any[]>([]);
@@ -44,7 +44,12 @@ const TopicDisplay = ({
         setTags(topicsArray?.concat(filterSelectedTags) || []);
     }, [selectedTags, topicsArray]);
 
+    console.log(topicsArray,selectedTags)
+
     const handleClose = async (removedTopicValue: any) => {
+        // NOTE: Filtering logic differs due to inconsistent data structures across collections:
+        // 1. topicsArray: May contain persisted topics from VerificationRequest, requiring 'wikidataId' as an identifier.
+        // 2. selectedTags: Follows the 'ManualTopic' UI schema, which consistently uses 'value'.
         const newTopicsArray = topicsArray.filter(
             (topic) => (topic?.value || topic?.wikidataId || topic) !== removedTopicValue
         );

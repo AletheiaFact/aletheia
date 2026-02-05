@@ -5,19 +5,9 @@ import AletheiaButton from "../Button";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
-import { ContentModelEnum } from "../../types/enums";
 import MultiSelectAutocomplete from "./TopicOrImpactSelect";
 import verificationRequestApi from "../../api/verificationRequestApi";
-
-interface ITopicForm {
-    contentModel: ContentModelEnum;
-    data_hash: string;
-    topicsArray: any[];
-    setTopicsArray: (topicsArray) => void;
-    setSelectedTags: (inputValue) => void;
-    tags: any[];
-    reviewTaskType: string;
-}
+import { ITopicForm } from "../../types/Topic";
 
 const TopicForm = ({
     contentModel,

@@ -8,6 +8,7 @@ import {
 import { useDispatch } from "react-redux";
 import TopicsApi from "../../api/topicsApi";
 import { useTranslation } from "react-i18next";
+import { IMultiSelectAutocomplete } from "../../types/Topic";
 
 const MultiSelectAutocomplete = ({
     isMultiple = true,
@@ -16,7 +17,7 @@ const MultiSelectAutocomplete = ({
     placeholder,
     setSelectedTags,
     setIsLoading,
-}) => {
+}: IMultiSelectAutocomplete) => {
     const { t } = useTranslation();
     const [options, setOptions] = useState([]);
     const dispatch = useDispatch();
