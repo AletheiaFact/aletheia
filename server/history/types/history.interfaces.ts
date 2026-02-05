@@ -13,7 +13,7 @@ interface HistoryQuery {
   page?: number;
   pageSize?: number;
   order?: "asc" | "desc";
-  type?: HistoryType;
+  type?: HistoryType[];
 }
 interface HistoryResponse {
   history: HistoryItem[];
@@ -27,7 +27,7 @@ interface HistoryItem {
   targetId: Types.ObjectId;
   targetModel: TargetModel;
   user?: PerformedBy;
-  type?: HistoryType;
+  type?: HistoryType | { $in: HistoryType[] };
   details?: HistoryDetails;
   date?: Date | string;
 }

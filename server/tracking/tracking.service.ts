@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { HistoryService } from "../history/history.service";
-import { TargetModel } from "../history/schema/history.schema";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TrackingResponseDTO } from "./types/tracking.interfaces";
 
 @Injectable()
@@ -18,20 +18,21 @@ export class TrackingService {
   async getTrackingStatus(
     verificationRequestId: string
   ): Promise<TrackingResponseDTO> {
-    const histories = await this.historyService.getByTargetIdModelAndType({
-      targetId: verificationRequestId,
-      targetModel: TargetModel.VerificationRequest,
+    const { history } = await this.historyService.getHistoryForTarget(
+      verificationRequestId,
+      TargetModel.VerificationRequest, {
       page: 0,
       pageSize: 1000,
       order: "asc",
-      type: ["create", "update"]
-    });
+      type: [HistoryType.Create, HistoryType.Update]
+    }
+    );
 
-    if (histories.length === 0) {
+    if (history.length === 0) {
       throw new NotFoundException(`Verification request history for ID "${verificationRequestId}" not found.`);
     }
 
-    const tracking = histories
+    const tracking = history
       .filter(history => history.details?.after?.status && history.details?.before?.status !== history.details?.after?.status)
       .map(history => ({
         id: history._id,

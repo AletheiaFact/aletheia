@@ -113,7 +113,6 @@
         "activitySubtitle": "Latest updates from the system",
         "errorLoading": "Error fetching statistics"
     },
-    "errorUpdatingStatus": "Error updating status:",
     "identifiedPersonalities": "People Mentioned",
     "loadingPersonalities": "Loading personalities...",
     "personalitiesList": "List of identified personalities",
