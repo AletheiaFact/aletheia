@@ -1,4 +1,5 @@
 import axios from "axios";
+import { HEX24 } from "../types/History";
 
 const request = axios.create({
   withCredentials: true,
@@ -6,13 +7,18 @@ const request = axios.create({
 });
 
 const getTrackingById = (verificationRequestId: string) => {
+  if (!HEX24.test(verificationRequestId)) {
+    console.error("Invalid verificationRequestId format");
+    return Promise.resolve([]);
+  }
+
   return request
-  .get(`/${verificationRequestId}`)
-  .then(response => response.data)
-  .catch((err)=>{
-    console.error(err)
-    return []; 
-  });
+    .get(`/${verificationRequestId}`)
+    .then((response) => response.data)
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
 };
 
 const TrackingApi = {

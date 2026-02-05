@@ -389,7 +389,7 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    //To DO: set decorator to public
+    @Public()
     @Get("verification-request/:data_hash/:viewType")
     public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,
