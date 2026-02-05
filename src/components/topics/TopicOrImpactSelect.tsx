@@ -14,7 +14,7 @@ const MultiSelectAutocomplete = ({
     onChange,
     isLoading,
     placeholder,
-    setInputValue,
+    setSelectedTags,
     setIsLoading,
 }) => {
     const { t } = useTranslation();
@@ -77,9 +77,9 @@ const MultiSelectAutocomplete = ({
                 size="small"
                 options={options}
                 onInputChange={(_, value) => fetchOptions(value)}
-                onChange={(_, selectedValues) => {
-                    onChange(selectedValues);
-                    setInputValue(selectedValues);
+                onChange={(_, inputTag) => {
+                    onChange(inputTag);
+                    setSelectedTags(inputTag);
                 }}
                 getOptionLabel={(option) =>
                     option.displayLabel || option.label || ""

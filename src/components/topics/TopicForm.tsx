@@ -14,7 +14,7 @@ interface ITopicForm {
     data_hash: string;
     topicsArray: any[];
     setTopicsArray: (topicsArray) => void;
-    setInputValue: (inputValue) => void;
+    setSelectedTags: (inputValue) => void;
     tags: any[];
     reviewTaskType: string;
 }
@@ -24,7 +24,7 @@ const TopicForm = ({
     data_hash,
     topicsArray,
     setTopicsArray,
-    setInputValue,
+    setSelectedTags,
     tags,
     reviewTaskType,
 }: ITopicForm) => {
@@ -92,7 +92,7 @@ const TopicForm = ({
                             onChange={onChange}
                             setIsLoading={setIsLoading}
                             isLoading={isLoading}
-                            setInputValue={setInputValue}
+                            setSelectedTags={setSelectedTags}
                         />
                     )}
                 />

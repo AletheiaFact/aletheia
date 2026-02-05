@@ -17,42 +17,42 @@ const TopicDisplay = ({
 }: TopicDisplayProps) => {
     const [showTopicsForm, setShowTopicsForm] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
-    const [inputValue, setInputValue] = useState<any[]>([]);
+    const [selectedTags, setSelectedTags] = useState<any[]>([]);
     const [tags, setTags] = useState<any[]>([]);
     const { t } = useTranslation();
 
     useEffect(() => {
-        const inputValueFormatted = inputValue.map((inputValue) =>
-            inputValue?.value
+        const formattedSelectedTags = selectedTags.map((selectedTag) =>
+            selectedTag?.value
                 ? {
-                      label: inputValue?.label,
-                      value: inputValue?.value,
-                      aliases: inputValue?.aliases || [],
-                      matchedAlias: inputValue?.matchedAlias || null,
+                      label: selectedTag?.label,
+                      value: selectedTag?.value,
+                      aliases: selectedTag?.aliases || [],
+                      matchedAlias: selectedTag?.matchedAlias || null,
                   }
-                : inputValue
+                : selectedTag
         );
 
-        const filterValues = inputValueFormatted.filter(
-            (inputValue) =>
+        const filterSelectedTags = formattedSelectedTags.filter(
+            (selectedTag) =>
                 !topicsArray.some(
                     (topic) =>
                         (topic?.value || topic) ===
-                        (inputValue?.value || inputValue)
+                        (selectedTag?.value || selectedTag)
                 )
         );
-        setTags(topicsArray?.concat(filterValues) || []);
-    }, [inputValue, topicsArray]);
+        setTags(topicsArray?.concat(filterSelectedTags) || []);
+    }, [selectedTags, topicsArray]);
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
             (topic) => (topic?.value || topic?.wikidataId || topic) !== removedTopicValue
         );
-        const newInputValue = inputValue.filter(
+        const newSelectedTag = selectedTags.filter(
             (topic) => (topic?.value || topic) !== removedTopicValue
         );
         setTopicsArray(newTopicsArray);
-        setInputValue(newInputValue);
+        setSelectedTags(newSelectedTag);
 
         if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
             return await verificationRequestApi.deleteVerificationRequestTopic(
@@ -85,7 +85,7 @@ const TopicDisplay = ({
                     data_hash={data_hash}
                     topicsArray={topicsArray}
                     setTopicsArray={setTopicsArray}
-                    setInputValue={setInputValue}
+                    setSelectedTags={setSelectedTags}
                     tags={tags}
                     reviewTaskType={reviewTaskType}
                 />
