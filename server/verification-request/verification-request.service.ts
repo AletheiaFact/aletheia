@@ -44,7 +44,7 @@ export class VerificationRequestService {
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
-        private VerificationRequestModel: Model<VerificationRequestDocument>,
+        private readonly VerificationRequestModel: Model<VerificationRequestDocument>,
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
@@ -178,7 +178,7 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            const currentUser = user?._id ? user._id : user || this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
@@ -492,8 +492,7 @@ export class VerificationRequestService {
         const pendingTasks = verificationRequest.pendingAiTasks || new Map();
 
         this.logger.log(
-            `[revalidateAndRunMissingStates] VR ${
-                verificationRequest.id
+            `[revalidateAndRunMissingStates] VR ${verificationRequest.id
             }, states executed: ${statesExecuted.join(
                 ", "
             )}, pending: ${Object.keys(pendingTasks).join(", ")}`
@@ -605,7 +604,8 @@ export class VerificationRequestService {
                 .populate("group")
                 .populate("source")
                 .populate("impactArea")
-                .populate("topics");
+                .populate("topics")
+                .populate("identifiedData");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });
@@ -723,7 +723,7 @@ export class VerificationRequestService {
                     );
             }
 
-            const user = this.req.user;
+            const user = this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -924,9 +924,9 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(topic => topic.value || topic.wikidataId)
+            topics.map((topic) => topic.value || topic.wikidataId)
         );
-        const topicIds = foundTopics.map(topic => topic._id);
+        const topicIds = foundTopics.map((topic) => topic._id);
 
         const latestVerificationRequest = verificationRequest.toObject();
 
@@ -935,7 +935,7 @@ export class VerificationRequestService {
             topics: topicIds,
         };
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
@@ -972,7 +972,7 @@ export class VerificationRequestService {
             status,
             impactArea,
             startDate,
-            endDate
+            endDate,
         } = filters;
         const query: any = {};
 
@@ -988,8 +988,7 @@ export class VerificationRequestService {
             Types.ObjectId(impactArea._id)
         );
 
-        if (topicIds.length)
-            orConditions.push({ topics: { $in: topicIds } });
+        if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });
 
         if (impactAreaIds.length)
             orConditions.push({ impactArea: { $in: impactAreaIds } });
@@ -1000,9 +999,9 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
-      
+
         const dateQuery = buildDateQuery(startDate, endDate);
-        
+
         if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {

@@ -21,6 +21,10 @@ import { MetaChip } from "./MetaChip";
 import { VerificationRequestContent } from "./VerificationRequestContent";
 import { RequestDates } from "./RequestDates";
 import SourceList from "./SourceListVerificationRequest";
+import {
+    getSeverityColor,
+    getSeverityLabel,
+} from "../../helpers/verificationRequestCardHelper";
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -43,20 +47,6 @@ const MetaChipContainer = styled(Grid)`
 `;
 
 const smallGreyIcon = { fontSize: 18, color: "grey" };
-
-const truncateUrl = (url) => {
-    try {
-        const { hostname, pathname } = new URL(url);
-        const maxLength = 30;
-        const shortPath =
-            pathname.length > maxLength
-                ? `${pathname.substring(0, maxLength)}...`
-                : pathname;
-        return `${hostname}${shortPath}`;
-    } catch (e) {
-        return url;
-    }
-};
 
 const VerificationRequestCard = ({
     verificationRequest,
@@ -83,7 +73,11 @@ const VerificationRequestCard = ({
             icon: <Share style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|receptionChannel`,
             label: t("verificationRequest:tagSourceChannel"),
-            label_value: verificationRequest.sourceChannel,
+            label_value:
+                t(
+                    `verificationRequest:${verificationRequest.sourceChannel}`,
+                    { defaultValue: verificationRequest.sourceChannel },
+                ),
             style: { backgroundColor: colors.primary, color: colors.white },
         },
         {
@@ -100,8 +94,11 @@ const VerificationRequestCard = ({
             icon: <WarningAmber style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
-            label_value: verificationRequest.severity,
-            style: { backgroundColor: colors.error, color: colors.white },
+            label_value: getSeverityLabel(verificationRequest.severity, t),
+            style: {
+                backgroundColor: getSeverityColor(verificationRequest.severity),
+                color: colors.white,
+            },
         },
     ];
 
@@ -183,7 +180,6 @@ const VerificationRequestCard = ({
                         <SourceList
                             sources={verificationRequest.source}
                             t={t}
-                            truncateUrl={truncateUrl}
                             id={verificationRequest._id}
                         />
                     )}

@@ -1,0 +1,8 @@
+{
+  "minutesAgo_one": "Há {{count}} minuto",
+  "minutesAgo_other": "Há {{count}} minutos",
+  "hoursAgo_one": "Há {{count}} hora",
+  "hoursAgo_other": "Há {{count}} horas",
+  "daysAgo_one": "Há {{count}} dia",
+  "daysAgo_other": "Há {{count}} dias"
+}

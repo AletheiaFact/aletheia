@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ParserService } from "./parser.service";
 import * as fs from "fs";
 import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import { Types } from "mongoose";
 import { AppModule } from "../../app.module";
 import { SessionGuard } from "../../auth/session.guard";
@@ -11,6 +10,7 @@ import { SessionOrM2MGuard } from "../../auth/m2m-or-session.guard";
 import { SessionOrM2MGuardMock } from "../../tests/mocks/SessionOrM2MGuardMock";
 import { M2MGuard } from "../../auth/m2m.guard";
 import { M2MGuardMock } from "../../tests/mocks/M2MGuardMock";
+import { CleanupDatabase } from "../../tests/utils/CleanupDatabase";
 
 /**
  * ParserService Unit Test Suite
@@ -36,13 +36,12 @@ import { M2MGuardMock } from "../../tests/mocks/M2MGuardMock";
  */
 describe("ParserService", () => {
     let parserService: ParserService;
-    let db: any;
     let moduleFixture: TestingModule;
     const claimRevisionIdMock = new Types.ObjectId();
 
     beforeAll(async () => {
-        db = await MongoMemoryServer.create({ instance: { port: 35025 } });
-        const mongoUri = db.getUri();
+        // Use shared MongoDB instance from global setup
+        const mongoUri = process.env.MONGO_URI!;
         
         // Update the test config with the actual MongoDB URI
         const testConfig = {
@@ -277,8 +276,6 @@ describe("ParserService", () => {
     });
 
     afterAll(async () => {
-        if (db) {
-            await db.stop();
-        }
+        await CleanupDatabase(process.env.MONGO_URI!);
     });
 });

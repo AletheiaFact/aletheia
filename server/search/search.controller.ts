@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ViewService } from "../view/view.service";
 import { parse } from "url";
@@ -31,7 +31,7 @@ export class SearchController {
         private configService: ConfigService
     ) {}
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -168,7 +168,7 @@ export class SearchController {
         }
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("search")
     @Get("api/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")

@@ -22,6 +22,8 @@ import { AbilityModule } from "../auth/ability/ability.module";
 import { TopicModule } from "../topic/topic.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { WikidataModule } from "../wikidata/wikidata.module";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -43,15 +45,18 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
+        WikidataModule,
         TopicModule,
         PersonalityModule.register(),
     ],
     exports: [
         VerificationRequestService,
+        VerificationRequestStatsService,
         VerificationRequestStateMachineService,
     ],
     providers: [
         VerificationRequestService,
+        VerificationRequestStatsService,
         VerificationRequestStateMachineService,
     ],
     controllers: [VerificationRequestController],

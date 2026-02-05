@@ -67,6 +67,9 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             enableViewReportPreview
         )
     );
+    dispatch(actions.setSelectPersonality(personality));
+    dispatch(actions.setSelectTarget(claim));
+    dispatch(actions.setSelectContent(content));
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const review = content?.props?.classification;

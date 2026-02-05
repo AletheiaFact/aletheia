@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { z } from "zod";
 import {
     WikidataCache,
     WikidataCacheDocument,
@@ -17,6 +18,60 @@ const WIKIMEDIA_HEADERS = {
         "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
 };
 
+const SUPPORTED_LANGUAGES = ["pt", "en", "pt-br"] as const;
+type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
+
+export interface WikidataParamsInput {
+    wikidataId: string;
+    language?: string;
+}
+
+export interface WikidataParams {
+    wikidataId: string;
+    language: SupportedLanguage;
+}
+
+export const WikidataParamsSchema = z.object({
+    wikidataId: z
+        .string()
+        .regex(/^Q\d+$/, "WikidataId must be in format Q followed by numbers"),
+    language: z
+        .string()
+        .optional()
+        .transform((val) => {
+            if (!val) return "en" as SupportedLanguage;
+            return SUPPORTED_LANGUAGES.includes(val as SupportedLanguage)
+                ? (val as SupportedLanguage)
+                : ("en" as SupportedLanguage);
+        })
+        .default("en" as SupportedLanguage),
+});
+
+export interface WikidataProperties {
+    name?: string;
+    description?: string;
+    isAllowedProp?: boolean;
+    image?: string;
+    wikipedia?: string;
+    avatar?: string;
+    twitterAccounts: string[];
+}
+
+export interface WikibaseEntity {
+    name: string;
+    description?: string;
+    wikidata: string;
+    aliases?: string[];
+    matchedAlias?: string | null;
+}
+
+interface WikibaseSearchResult {
+    id: string;
+    label?: string;
+    description?: string;
+    aliases?: string[];
+}
+
 @Injectable()
 export class WikidataService {
     constructor(
@@ -24,26 +79,49 @@ export class WikidataService {
         private wikidataCache: Model<WikidataCacheDocument>
     ) {}
 
-    async fetchProperties(params) {
+    /**
+     * Fetches Wikidata properties from cache or API
+     * @param params - Wikidata parameters (accepts flexible input)
+     * @returns Wikidata properties object
+     */
+    async fetchProperties(
+        params: WikidataParamsInput
+    ): Promise<WikidataProperties> {
+        const validatedParams = WikidataParamsSchema.parse(
+            params
+        ) as WikidataParams;
+
         const wikidataCache = await this.wikidataCache
             .findOne({
-                wikidataId: params.wikidataId,
-                language: params.language,
+                wikidataId: validatedParams.wikidataId,
+                language: validatedParams.language,
             })
             .exec();
+
         if (!wikidataCache) {
-            const props = await this.requestProperties(params);
+            const props = await this.requestProperties(validatedParams);
+            if (props.isAllowedProp === false) {
+                return props;
+            }
             const newWikidataCache = new this.wikidataCache({
-                ...params,
+                ...validatedParams,
                 props,
             });
-            newWikidataCache.save();
+            await newWikidataCache.save();
             return props;
         }
-        return wikidataCache.props;
+
+        return wikidataCache.props as WikidataProperties;
     }
 
-    async requestProperties(params) {
+    /**
+     * Requests Wikidata properties from the Wikidata API
+     * @param params - Validated Wikidata parameters
+     * @returns Wikidata properties object
+     */
+    async requestProperties(
+        params: WikidataParams
+    ): Promise<WikidataProperties> {
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
                 action: "wbgetentities",
@@ -60,8 +138,17 @@ export class WikidataService {
         );
     }
 
-    async extractProperties(wikidata, language = "en"): Promise<any> {
-        const wikidataProps = {
+    /**
+     * Extracts properties from Wikidata entity response
+     * @param wikidata - Wikidata entity object (can be any structure)
+     * @param language - Language code for labels and descriptions
+     * @returns Extracted Wikidata properties
+     */
+    async extractProperties(
+        wikidata: any,
+        language: string = "en"
+    ): Promise<WikidataProperties> {
+        const wikidataProps: WikidataProperties = {
             name: undefined,
             description: undefined,
             isAllowedProp: undefined,
@@ -71,7 +158,7 @@ export class WikidataService {
             twitterAccounts: [],
         };
         if (!wikidata) {
-            return {};
+            return wikidataProps;
         }
 
         // Get label for the personality name
@@ -142,14 +229,30 @@ export class WikidataService {
         return wikidataProps;
     }
 
-    getSiteLinkName(language) {
+    /**
+     * Gets the site link name for Wikipedia based on language
+     * @param language - Language code
+     * @returns Wiki site link name (e.g., 'ptwiki', 'enwiki')
+     */
+    getSiteLinkName(language: string): string {
         if (languageVariantMap[language]) {
             language = languageVariantMap[language];
         }
         return `${language}wiki`;
     }
 
-    extractValue(wikidata, property, language) {
+    /**
+     * Extracts a value from Wikidata entity for a specific property and language
+     * @param wikidata - Wikidata entity object
+     * @param property - Property name to extract (e.g., 'labels', 'descriptions')
+     * @param language - Language code
+     * @returns Extracted value or undefined
+     */
+    extractValue(
+        wikidata: any,
+        property: string,
+        language: string
+    ): string | undefined {
         if (!wikidata[property]) {
             return;
         }
@@ -163,7 +266,11 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(query, language = "en") {
+    queryWikibaseEntities(
+        query: string,
+        language: string = "en",
+        includeAliases: boolean = true
+    ): Promise<WikibaseEntity[]> {
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -181,22 +288,44 @@ export class WikidataService {
                 headers: WIKIMEDIA_HEADERS,
             })
             .then((response) => {
-                const { search } = response && response.data;
-                return search.flatMap((wbentity) => {
-                    return wbentity.label
-                        ? [
-                              {
-                                  name: wbentity.label,
-                                  description: wbentity.description,
-                                  wikidata: wbentity.id,
-                              },
-                          ]
-                        : [];
+                const { search }: { search: WikibaseSearchResult[] } =
+                    response && response.data;
+
+                return search.flatMap((searchResult: WikibaseSearchResult) => {
+                    if (!searchResult.label) {
+                        return [];
+                    }
+
+                    const result: WikibaseEntity = {
+                        name: searchResult.label,
+                        description: searchResult.description,
+                        wikidata: searchResult.id,
+                    };
+
+                    if (includeAliases) {
+                        const aliases = searchResult.aliases || [];
+                        const matchedAlias = aliases.find((alias) =>
+                            alias.toLowerCase().includes(query.toLowerCase())
+                        );
+                        result.aliases = aliases;
+                        result.matchedAlias = matchedAlias || null;
+                    }
+
+                    return [result];
                 });
             });
     }
 
-    async getCommonsThumbURL(imageTitle, imageSize) {
+    /**
+     * Gets the thumbnail URL from Wikimedia Commons
+     * @param imageTitle - Title of the image on Commons
+     * @param imageSize - Desired image width in pixels
+     * @returns Thumbnail URL or undefined
+     */
+    async getCommonsThumbURL(
+        imageTitle: string,
+        imageSize: number
+    ): Promise<string | undefined> {
         const { data } = await axios.get(
             "https://commons.wikimedia.org/w/api.php",
             {

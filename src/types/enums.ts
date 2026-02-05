@@ -16,6 +16,7 @@ enum Roles {
     Reviewer = "reviewer",
     Admin = "admin",
     SuperAdmin = "super-admin",
+    Integration = "integration",
 }
 
 enum Status {
@@ -37,6 +38,7 @@ export enum TargetModel {
     ClaimReview = "ClaimReview",
     ReviewTask = "ReviewTask",
     Image = "Image",
+    History = "History",
 }
 
 enum CommentEnum {
@@ -49,6 +51,10 @@ enum SenderEnum {
     User = "You",
 }
 
+enum M2MSubject {
+    Chatbot = "chatbot-service",
+} 
+
 export {
     ClassificationEnum,
     Roles,
@@ -56,4 +62,5 @@ export {
     ContentModelEnum,
     CommentEnum,
     SenderEnum,
+    M2MSubject,
 };

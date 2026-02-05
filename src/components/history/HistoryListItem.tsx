@@ -1,42 +1,54 @@
-import Typography from "@mui/material/Typography"
-import { useTranslation } from "next-i18next"
-import React from "react"
-import LocalizedDate from "../LocalizedDate"
-interface IHistoryListItemProps {
-    history: {
-        _id: string,
-        targetId: string,
-        targetModel: string,
-        user: { name: string },
-        type: string,
-        date: string
-        details: { after: any, before: any }
+import React, { useMemo } from "react";
+import { useTranslation } from "next-i18next";
+import LocalizedDate from "../LocalizedDate";
+import { TFunction } from "i18next";
+import { HistoryListItemProps, PerformedBy } from "../../types/History";
+import { isM2M, isUser } from "../../utils/TypeGuards";
+import { M2MSubject } from "../../types/enums";
+
+const getDisplayName = (user: PerformedBy, t: TFunction): string => {
+  if (isM2M(user) && user.subject === M2MSubject.Chatbot) {
+    return t("virtualAssistant");
+  }
+  if (isM2M(user)) {
+    return t("automatedMonitoring");
+  }
+  if (isUser(user)) {
+    return user.name;
+  }
+  return t("anonymousUserName");
+};
+
+const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
+  const { t } = useTranslation("history");
+
+  const currentHistory = useMemo(() => {
+    try {
+      const { user, type, targetModel, details, date } = history;
+
+      const username = getDisplayName(user, t);
+
+      const titleField = targetModel === "Personality" ? "name" : "title";
+      const data = type === "delete" ? details?.before : details?.after;
+      const displayTitle = data?.[titleField];
+
+      return { username, type, targetModel, displayTitle, date };
+    } catch (err) {
+      console.error("Mapping error:", err);
+      return null;
     }
-}
+  }, [history, t]);
 
-const HistoryListItem = ({ history }: IHistoryListItemProps) => {
-    const { t } = useTranslation()
-    const username = history.user ? history.user.name : t("history:anonymousUserName")
-    const type = t(`history:${history.type}`)
-    const targetModel = t(`history:${history.targetModel}`)
-    const titleTag = history.targetModel === "personality" ? "name" : "title"
+  if (!currentHistory) return null;
 
-    let title = history.details.after?.[titleTag] ? history.details.after?.[titleTag] : ''
-    const oldTitle = history.details.before?.[titleTag] ? history.details.before?.[titleTag] : ''
-    if (history.type === "delete") {
-        title = oldTitle
-    }
-    return (
-        <div style={{ fontSize: 14 }}>
-            <LocalizedDate date={history.date} showTime />{` - `}
-            {t('history:historyItem', { username, type, targetModel, title })}
-            {oldTitle && oldTitle !== title && (
-                <Typography variant="body1" display="flex">
-                    (<span style={{ textDecoration: "line-through" }}>{oldTitle}</span>)
-                </Typography>
-            )}
-        </div>
-    )
-}
+  return (
+    <div style={{ fontSize: 14, padding: "4px 0" }}>
+      <LocalizedDate date={currentHistory.date} showTime />
+      {` - `}
+      <strong>{currentHistory.username}</strong> {t(currentHistory.type)} {t(currentHistory.targetModel)}{" "}
+      {currentHistory.displayTitle && `"${currentHistory.displayTitle}"`}
+    </div>
+  );
+};
 
-export default HistoryListItem
+export default HistoryListItem;

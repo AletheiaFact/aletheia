@@ -1,4 +1,3 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
 import * as request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
@@ -18,6 +17,7 @@ import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { SeedTestPersonality } from "./utils/SeedTestPersonality";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
+import { CleanupDatabase } from "./utils/CleanupDatabase";
 const { ObjectId } = require("mongodb");
 
 jest.setTimeout(10000);
@@ -45,15 +45,14 @@ jest.setTimeout(10000);
  */
 describe("SourceController (e2e)", () => {
     let app: any;
-    let db: any;
     let userId: string;
     let personalitiesId: string[];
     let claimId: string;
     let targetId: string;
 
     beforeAll(async () => {
-        db = await MongoMemoryServer.create({ instance: { port: 35025 } });
-        const mongoUri = db.getUri();
+        // Use shared MongoDB instance from global setup
+        const mongoUri = process.env.MONGO_URI!;
         
         const user = await SeedTestUser(mongoUri);
         userId = user.insertedId.toString();
@@ -368,7 +367,7 @@ describe("SourceController (e2e)", () => {
 
     afterAll(async () => {
         jest.restoreAllMocks();
-        await db.stop();
-        app.close();
+        await app.close();
+        await CleanupDatabase(process.env.MONGO_URI!);
     });
 });

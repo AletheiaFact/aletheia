@@ -3,12 +3,12 @@ import * as mongoose from "mongoose";
 import { Group } from "../../group/schemas/group.schema";
 import { Topic } from "../../topic/schemas/topic.schema";
 import { ContentModelEnum } from "../../types/enums";
-import { SeverityEnum, VerificationRequestStatus } from "../dto/types";
+import { SeverityEnum, TimeStamps, VerificationRequestStatus } from "../dto/types";
 
 export type VerificationRequestDocument = VerificationRequest &
-    mongoose.Document;
+    mongoose.Document & TimeStamps;
 
-@Schema()
+@Schema({ timestamps: true })
 export class VerificationRequest {
     @Prop({ required: true, unique: true })
     data_hash: string;

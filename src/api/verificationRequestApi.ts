@@ -2,6 +2,7 @@ import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
+import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -212,6 +213,39 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
         });
 };
 
+const getVerificationRequestStats = () => {
+    return request
+        .get(`/stats`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((e) => {
+            console.error("error while getting verification request stats", e);
+            throw e;
+        });
+};
+
+/**
+ * Fetch personalities associated with a verification request, enriched with Wikidata information
+ * @param verificationRequestId - The verification request ID
+ * @param language - Language code for Wikidata labels (default: 'en')
+ * @returns Promise resolving to array of personalities with Wikidata avatar and metadata
+ */
+const getPersonalitiesWithWikidata = (
+    verificationRequestId: string,
+    language: string = "en"
+): Promise<PersonalityWithWikidata[]> => {
+    return request
+        .get(`/${verificationRequestId}/personalities`, {
+            params: { language },
+        })
+        .then((response) => response.data)
+        .catch((err) => {
+            console.error("error while getting personalities", err);
+            return [];
+        });
+};
+
 const verificationRequestApi = {
     createVerificationRequest,
     get,
@@ -221,6 +255,8 @@ const verificationRequestApi = {
     updateVerificationRequestWithTopics,
     removeVerificationRequestFromGroup,
     deleteVerificationRequestTopic,
+    getVerificationRequestStats,
+    getPersonalitiesWithWikidata,
 };
 
 export default verificationRequestApi;
