@@ -9,64 +9,58 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-const getIcons = (isCompleted: boolean, isDeclined: boolean) => {
-  if (isDeclined)
-    return {
-      backgroundColor: colors.errorTranslucent,
-      iconColor: colors.error,
-      IconComponent: <CancelIcon style={{ color: colors.error }} />,
-    };
-  if (isCompleted)
-    return {
-      backgroundColor: colors.activeTranslucent,
-      iconColor: colors.active,
-      IconComponent: <CheckCircleIcon style={{ color: colors.active }} />,
-    };
-  return {
-    backgroundColor: colors.lightNeutral,
-    iconColor: colors.neutralSecondary,
-    IconComponent: <PendingIcon style={{ color: colors.neutralSecondary }} />,
-  };
+const STEP_STATES = {
+  declined: {
+    bg: colors.errorTranslucent,
+    color: colors.error,
+    Icon: CancelIcon,
+  },
+  completed: {
+    bg: colors.activeTranslucent,
+    color: colors.active,
+    Icon: CheckCircleIcon,
+  },
+  pending: {
+    bg: colors.lightNeutral,
+    color: colors.neutralSecondary,
+    Icon: PendingIcon,
+  },
 };
 
-const TrackingStep: React.FC<TrackingStepProps> = ({
+const TrackingStep = ({
   stepKey,
   stepDate,
   isCompleted,
   isDeclined,
-}) => {
+}: TrackingStepProps) => {
   const { t } = useTranslation();
-  const stepLabel = stepKey.toUpperCase().replace(/ /g, '_');
-  const { backgroundColor, iconColor, IconComponent } = getIcons(isCompleted, isDeclined);
+
+  const currentState = isDeclined ? "declined" : isCompleted ? "completed" : "pending";
+  const { bg, color, Icon } = STEP_STATES[currentState];
+
+  const translationKey = stepKey.toUpperCase().replace(/ /g, "_");
 
   return (
     <StepLabelStyled
-      icon={IconComponent}
+      icon={<Icon style={{ color }} />}
       error={isDeclined}
-      backgroundStatusColor={backgroundColor}
-      iconColor={iconColor}
+      backgroundStatusColor={bg}
+      iconColor={color}
     >
       <Grid container className="stepItem">
-        <Typography
-          variant="subtitle2"
-          className="stepLabel"
-        >
-          {t(`verificationRequest:${stepLabel}`)}
+        <Typography variant="subtitle2" className="stepLabel">
+          {t(`verificationRequest:${translationKey}`)}
         </Typography>
+
         {stepDate && (
-          <Typography
-            variant="caption"
-            className="dateLabel"
-          >
+          <Typography variant="caption" className="dateLabel">
             <LocalizedDate date={stepDate} showTime />
           </Typography>
         )}
       </Grid>
-      <Typography
-        variant="body2"
-        className="description"
-      >
-        {t(`tracking:description_${stepLabel}`)}
+
+      <Typography variant="body2" className="description">
+        {t(`tracking:description_${translationKey}`)}
       </Typography>
     </StepLabelStyled>
   );

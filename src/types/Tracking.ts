@@ -1,15 +1,16 @@
+import { VerificationRequestStatus } from "./enums";
 interface TrackingCardProps {
   verificationRequestId: string;
 }
 
 interface TrackingResponseDTO {
-  currentStatus: string;
+  currentStatus: VerificationRequestStatus;
   historyEvents: HistoryItem[];
 }
 
 interface HistoryItem {
   id: string;
-  status: string;
+  status: VerificationRequestStatus;
   date: Date;
 }
 

@@ -1,47 +1,40 @@
 import * as React from "react";
 import { Step, Stepper } from "@mui/material";
-import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
+import { VerificationRequestStatus } from "../../types/enums";
 import { TrackingResponseDTO } from "../../types/Tracking";
 import TrackingStep from "./TrackingStep";
 
-const ALL_STEPS = Object.values(VerificationRequestStatus || "");
+const getVisibleSteps = (currentStatus: VerificationRequestStatus): VerificationRequestStatus[] => {
+  const allSteps = Object.values(VerificationRequestStatus);
 
-const TrackingStepper: React.FC<TrackingResponseDTO> = ({
+  if (currentStatus === VerificationRequestStatus.DECLINED) {
+    return allSteps.filter(step => step !== VerificationRequestStatus.POSTED);
+  }
+
+  return allSteps.filter(step => step !== VerificationRequestStatus.DECLINED);
+};
+
+const TrackingStepper = ({
   currentStatus,
   historyEvents,
-}) => {
-  const getDateForStep = (stepStatus: string) => {
-    const history = historyEvents.find(history => history.status === stepStatus);
+}: TrackingResponseDTO) => {
+  const dynamicSteps = getVisibleSteps(currentStatus);
+  const completedStepIndex = dynamicSteps.indexOf(currentStatus);
+
+  const getDateForStep = (stepStatus: VerificationRequestStatus) => {
+    const history = historyEvents.find(h => h.status === stepStatus);
     return history ? new Date(history.date) : null;
   };
 
-  const isRequestDeclined = currentStatus === VerificationRequestStatus.DECLINED;
-
-  let dynamicSteps: string[];
-
-  if (isRequestDeclined) {
-    dynamicSteps = ALL_STEPS.filter(step => step !== VerificationRequestStatus.POSTED);
-  } else {
-    dynamicSteps = ALL_STEPS.filter(step => step !== VerificationRequestStatus.DECLINED);
-  }
-
-  const completedStepIndex = dynamicSteps.indexOf(currentStatus);
-
   return (
-    <Stepper
-      activeStep={completedStepIndex}
-      orientation="vertical"
-    >
+    <Stepper activeStep={completedStepIndex} orientation="vertical">
       {dynamicSteps.map((stepLabel, index) => {
         const isCompleted = index <= completedStepIndex;
         const isDeclined = stepLabel === VerificationRequestStatus.DECLINED;
-
         const stepDate = getDateForStep(stepLabel);
+
         return (
-          <Step
-            key={`step-${stepLabel}-${index}`}
-            completed={isCompleted}
-          >
+          <Step key={stepLabel} completed={isCompleted}>
             <TrackingStep
               stepKey={stepLabel}
               stepDate={stepDate}
