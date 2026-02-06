@@ -8,13 +8,14 @@ import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
 import { PhotoOutlined, ArticleOutlined } from "@mui/icons-material";
-import { AvatarGroup, Grid, Typography } from "@mui/material";
+import { AvatarGroup, Grid, Typography, Chip } from "@mui/material";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import SourceApi from "../../api/sourceApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import colors from "../../styles/colors";
+import reviewColors from "../../constants/reviewColors";
 
 const KanbanCard = ({ reviewTask, reviewTaskType }) => {
     const { t } = useTranslation();
@@ -73,28 +74,83 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                 }}
             >
                 <Grid container style={{ width: "100%", padding: "10px" }}>
-                    <Grid item
+                    <Grid
+                        item
                         xs={12}
-                        style={{ display: "flex", flexDirection: "column", gap: 10}}
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 10,
+                        }}
                     >
                         <Typography
                             variant="body1"
                             style={{
                                 display: "-webkit-box",
-                                WebkitBoxOrient: "vertical", 
+                                WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 2,
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 fontSize: 14,
                                 fontWeight: "bold",
-                                color: colors.blackTertiary
+                                color: colors.blackTertiary,
                             }}
                         >
                             {title || reviewTask.content.href}
                         </Typography>
-                        <Typography style={{color: colors.blackTertiary,fontSize: 14}}>{reviewTask.personalityName}</Typography>
+                        <Typography
+                            style={{
+                                color: colors.blackTertiary,
+                                fontSize: 14,
+                            }}
+                        >
+                            {reviewTask.personalityName}
+                        </Typography>
+                        {reviewTask.value === "published" && (
+                            <Grid
+                                item
+                                style={{
+                                    display: "flex",
+                                    padding: "4px 8px",
+                                    gap: 3,
+                                    marginBottom: 8,
+                                    backgroundColor: colors.logo,
+                                    borderRadius: 20,
+                                    width: "fit-content",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Typography
+                                    style={{
+                                        fontWeight: 600,
+                                        color: colors.black,
+                                        fontSize: 11,
+                                    }}
+                                >
+                                    {t("claimReviewForm:classificationTag")}
+                                </Typography>
+                                <Chip
+                                    label={t(
+                                        `claimReviewForm:${reviewTask.content.props.classification}`
+                                    ).toUpperCase()}
+                                    size="small"
+                                    style={{
+                                        fontSize: 10,
+                                        color: colors.white,
+                                        fontWeight: 700,
+                                        padding: "4px 13px",
+                                        backgroundColor:
+                                            reviewColors[
+                                                reviewTask.content.props
+                                                    .classification
+                                            ],
+                                    }}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
-                    <Grid item
+                    <Grid
+                        item
                         xs={12}
                         style={{
                             display: "flex",
@@ -110,7 +166,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                             {reviewTask.usersName &&
                                 reviewTask.usersName.map((user, index) => {
                                     return <UserTag user={user} key={index} />;
-                                })} 
+                                })}
                         </AvatarGroup>
                     </Grid>
                 </Grid>
