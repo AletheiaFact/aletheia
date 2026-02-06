@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
+import { VerificationRequestStatus } from "../../types/enums";
 import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
 import {
   getSeverityColor,
@@ -42,9 +42,9 @@ const VerificationRequestBoardView = ({ state, actions }) => {
   };
 
   const handleRequestUpdate = (newStatus) => {
-  setSelectedRequest(null);
-  fetchData(newStatus);
-};
+    setSelectedRequest(null);
+    fetchData(newStatus);
+  };
 
   useEffect(() => {
     for (const status in paginationModel) {
@@ -123,8 +123,8 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   {t("common:loading")}
                 </Typography>
               ) : (
-                <Box 
-                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
                   {groupedRequests[status.key].map((request) => (
                     <Card
