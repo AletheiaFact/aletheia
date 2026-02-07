@@ -10,6 +10,7 @@ const ReportTypeSelect = ({
   defaultValue,
   placeholder,
   style = {},
+  isDisabled,
 }) => {
   const [value, setValue] = useState(defaultValue || "");
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ const ReportTypeSelect = ({
         onChange={onChangeSelect}
         value={value}
         style={style}
+        disabled={isDisabled}
       >
         <MenuItem value="" disabled>
           {placeholder}

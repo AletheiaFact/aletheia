@@ -45,6 +45,7 @@ export interface ITopicDisplay {
 export interface IImpactAreaSelect {
     onChange: (value: ManualTopic[]) => void;
     placeholder?: string;
+    isDisabled: boolean;
 }
 
 export interface IMultiSelectAutocomplete {
@@ -54,4 +55,5 @@ export interface IMultiSelectAutocomplete {
     placeholder: string;
     setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[]>>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    isDisabled: boolean;
 }

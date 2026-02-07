@@ -98,7 +98,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
-
+                    isDisabled={props.disabled}
                 />
             );
         case "selectImpactArea":
@@ -106,6 +106,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 <ImpactAreaSelect
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
+                    isDisabled={props.disabled}
                 />
             );
         case "textbox":

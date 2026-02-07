@@ -17,6 +17,7 @@ const MultiSelectAutocomplete = ({
     placeholder,
     setSelectedTags,
     setIsLoading,
+    isDisabled,
 }: IMultiSelectAutocomplete) => {
     const { t } = useTranslation();
     const [options, setOptions] = useState([]);
@@ -109,6 +110,7 @@ const MultiSelectAutocomplete = ({
                         }}
                     />
                 )}
+                disabled={isDisabled}
             />
         </FormControl>
     );

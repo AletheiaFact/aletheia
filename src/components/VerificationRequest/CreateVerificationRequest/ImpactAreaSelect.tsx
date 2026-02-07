@@ -5,6 +5,7 @@ import { IImpactAreaSelect, ManualTopic } from "../../../types/Topic";
 const ImpactAreaSelect = ({
   onChange,
   placeholder,
+  isDisabled,
 }: IImpactAreaSelect) => {
   const [value, setValue] = useState<ManualTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +22,7 @@ const ImpactAreaSelect = ({
       isLoading={isLoading}
       setSelectedTags={setValue}
       isMultiple={false}
+      isDisabled={isDisabled}
     />
   );
 };
