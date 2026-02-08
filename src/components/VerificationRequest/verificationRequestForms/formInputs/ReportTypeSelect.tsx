@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MenuItem, FormControl } from "@mui/material";
-import { ContentModelEnum } from "../../../types/enums";
-import { SelectInput } from "../../Form/ClaimReviewSelect";
+import { ContentModelEnum } from "../../../../types/enums";
+import { SelectInput } from "../../../Form/ClaimReviewSelect";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 

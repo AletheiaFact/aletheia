@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import EditIcon from '@mui/icons-material/Edit';
-import EditVerificationRequestDrawer from "./EditVerificationRequestDrawer";
+import EditVerificationRequestDrawer from "./verificationRequestForms/EditVerificationRequestView";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,

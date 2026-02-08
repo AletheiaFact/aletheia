@@ -10,9 +10,10 @@ import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
-import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
-import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
 import colors from "../../styles/colors";
+import ReportTypeSelect from "../VerificationRequest/verificationRequestForms/formInputs/ReportTypeSelect";
+import ImpactAreaSelect from "../VerificationRequest/verificationRequestForms/formInputs/ImpactAreaSelect";
+import InputExtraSourcesList from "../VerificationRequest/verificationRequestForms/formInputs/InputExtraSourcesList";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -83,6 +84,15 @@ const DynamicInput = (props: DynamicInputProps) => {
                     white="true"
                 />
             );
+        case "sourceList":
+            return (
+                <InputExtraSourcesList
+                    value={props.value}
+                    onChange={props.onChange}
+                    disabled={props.disabled}
+                    placeholder={props.placeholder}
+                />
+            );
         case "select":
             return (
                 <ClaimReviewSelect
@@ -104,6 +114,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "selectImpactArea":
             return (
                 <ImpactAreaSelect
+                    defaultValue={props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                     isDisabled={props.disabled}
@@ -142,6 +153,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "date":
             return (
                 <DatePickerInput
+                    defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
                     data-cy={"testSelectDate"}

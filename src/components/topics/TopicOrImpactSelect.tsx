@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { IMultiSelectAutocomplete } from "../../types/Topic";
 
 const MultiSelectAutocomplete = ({
+    defaultValue,
     isMultiple = true,
     onChange,
     isLoading,
@@ -78,13 +79,14 @@ const MultiSelectAutocomplete = ({
                 multiple={isMultiple}
                 size="small"
                 options={options}
+                defaultValue={defaultValue}
                 onInputChange={(_, value) => fetchOptions(value)}
                 onChange={(_, inputTag) => {
                     onChange(inputTag);
                     setSelectedTags(inputTag);
                 }}
                 getOptionLabel={(option) =>
-                    option.displayLabel || option.label || ""
+                    option.displayLabel || option.label || option.name || ""
                 }
                 isOptionEqualToValue={(option, value) =>
                     option.value === value.value

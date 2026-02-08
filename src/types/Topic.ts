@@ -43,12 +43,14 @@ export interface ITopicDisplay {
 }
 
 export interface IImpactAreaSelect {
+    defaultValue: any;
     onChange: (value: ManualTopic[]) => void;
     placeholder?: string;
     isDisabled: boolean;
 }
 
 export interface IMultiSelectAutocomplete {
+    defaultValue: any;
     isMultiple?: boolean;
     onChange: (value: ManualTopic[]) => void;
     isLoading: boolean;

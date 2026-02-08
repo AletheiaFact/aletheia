@@ -1,6 +1,7 @@
 import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
 import { ActionTypes } from "../store/types";
+import { Topic } from "./Topic";
 
 export enum FilterType {
   TOPIC = "topic",
@@ -40,6 +41,8 @@ interface VerificationRequest {
   _id?: string;
   publicationDate: string;
   heardFrom: string;
+  reportType?: string;
+  impactArea?: Topic;
 };
 interface FiltersState {
   loading: Record<verificationRequestStatus, boolean>;
