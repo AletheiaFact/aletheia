@@ -7,13 +7,15 @@ import loadConfig from "../configLoader";
 import { WinstonLogger } from "../winstonLogger";
 import OryService from "../auth/ory/ory.service";
 
-async function updateUserAppAffiliation(userFromDB, app) {
+async function updateUserAppAffiliation(userFromDB, app, logger) {
     const oryService = await app.resolve(OryService);
     const configService = app.get(ConfigService);
 
     const app_affiliation = configService.get("app_affiliation");
     if (userFromDB && app_affiliation) {
-        console.log(userFromDB.email, app_affiliation);
+        logger.log(
+            `Updating user ${userFromDB.email} with app_affiliation: ${app_affiliation}`
+        );
         await oryService.updateIdentity(userFromDB, null, {
             app_affiliation,
             role: userFromDB.role,
@@ -41,8 +43,7 @@ async function initApp() {
 
         // Loop through each user and apply the update
         for (const user of users) {
-            await updateUserAppAffiliation(user, app);
-            logger.log(`${user.email} updated`);
+            await updateUserAppAffiliation(user, app, logger);
         }
 
         logger.log("All users have been updated.");
