@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TrackingResponseDTO } from "./types/tracking.interfaces";
@@ -51,7 +51,7 @@ export class TrackingService {
         `Failed to fetch tracking for ID: ${verificationRequestId}`,
         error.stack, 
       );
-      throw new Error("Internal server error while fetching tracking status.");
+      throw new InternalServerErrorException("Internal server error while fetching tracking status.");
     }
   }
 }

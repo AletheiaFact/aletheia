@@ -23,7 +23,7 @@ const TrackingCard = ({ verificationRequestId }: TrackingCardProps) => {
   useEffect(() => {
     const fetchTracking = async () => {
       try {
-        const data = await TrackingApi.getTrackingById(verificationRequestId);
+        const data = await TrackingApi.getTrackingById(verificationRequestId, t);
         setTrackingData(data);
       } catch (error) {
         console.error("Error when searching for tracking:", error);
