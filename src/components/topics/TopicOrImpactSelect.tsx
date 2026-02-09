@@ -8,15 +8,16 @@ import {
 import { useDispatch } from "react-redux";
 import TopicsApi from "../../api/topicsApi";
 import { useTranslation } from "react-i18next";
+import { IMultiSelectAutocomplete } from "../../types/Topic";
 
 const MultiSelectAutocomplete = ({
     isMultiple = true,
     onChange,
     isLoading,
     placeholder,
-    setInputValue,
+    setSelectedTags,
     setIsLoading,
-}) => {
+}: IMultiSelectAutocomplete) => {
     const { t } = useTranslation();
     const [options, setOptions] = useState([]);
     const dispatch = useDispatch();
@@ -77,9 +78,9 @@ const MultiSelectAutocomplete = ({
                 size="small"
                 options={options}
                 onInputChange={(_, value) => fetchOptions(value)}
-                onChange={(_, selectedValues) => {
-                    onChange(selectedValues);
-                    setInputValue(selectedValues);
+                onChange={(_, inputTag) => {
+                    onChange(inputTag);
+                    setSelectedTags(inputTag);
                 }}
                 getOptionLabel={(option) =>
                     option.displayLabel || option.label || ""
