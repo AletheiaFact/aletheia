@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 //Querying average fact-checking time
 db.getCollection("stateevents").aggregate([
     { $match: { taskId: ObjectId("62e99af928bdbf2c8f1de4cc") } },

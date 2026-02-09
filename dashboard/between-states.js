@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 //Querying how long it takes to move between specifics states
 db.getCollection("stateevents").aggregate([
     {
