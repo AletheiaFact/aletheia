@@ -44,7 +44,9 @@ export class WinstonLogger implements LoggerService {
         this.logger.info(message, { context });
     }
 
-    error(message: string, trace?: string, context?: string) {
+    error(message: string, traceOrError?: string | Error, context?: string) {
+        const trace =
+            traceOrError instanceof Error ? traceOrError.stack : traceOrError;
         this.logger.error(message, { trace, context });
     }
 

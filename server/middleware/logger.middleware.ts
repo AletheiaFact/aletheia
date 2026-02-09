@@ -1,5 +1,6 @@
 import { Injectable, Logger, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
+import { randomUUID } from "crypto";
 
 declare global {
     namespace Express {
@@ -21,8 +22,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
         // Generate or use existing request ID
         const requestId =
-            (request.headers["x-request-id"] as string) ||
-            `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            (request.headers["x-request-id"] as string) || randomUUID();
 
         // Attach to request for use in exception filters and services
         request.requestId = requestId;

@@ -7,6 +7,7 @@ import {
     Logger,
 } from "@nestjs/common";
 import { Request, Response } from "express";
+import { randomUUID } from "crypto";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -32,7 +33,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const requestId =
             (request as any).requestId ||
             request.headers["x-request-id"] ||
-            `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            randomUUID();
 
         const errorContext = {
             requestId,
