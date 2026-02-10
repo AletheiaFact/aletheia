@@ -1,5 +1,6 @@
 {
-    "nameColumn": "Name",
+    "nameColumnLabel": "Name",
+    "nameColumnPlaceholder":"Namespace name",
     "title": "Namespaces area",
     "addNameSpace": "Add namespace",
     "editNameSpace": "Edit namespace",

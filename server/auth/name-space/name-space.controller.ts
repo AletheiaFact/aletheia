@@ -22,6 +22,7 @@ import { Types } from "mongoose";
 import { Roles } from "../../auth/ability/ability.factory";
 import { NotificationService } from "../../notifications/notifications.service";
 import slugify from "slugify";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class NameSpaceController {
@@ -29,7 +30,8 @@ export class NameSpaceController {
         private nameSpaceService: NameSpaceService,
         private usersService: UsersService,
         private viewService: ViewService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private configService: ConfigService,
     ) {}
 
     @AdminOnly()
@@ -59,13 +61,14 @@ export class NameSpaceController {
             ...namespaceBody,
         };
 
-        newNameSpace.slug = slugify(nameSpace.name, {
+        newNameSpace.slug = slugify(newNameSpace.name, {
             lower: true,
             strict: true,
         });
 
         newNameSpace.users = await this.updateNameSpaceUsers(
             newNameSpace.users,
+            newNameSpace.slug,
             nameSpace.slug
         );
 
@@ -100,24 +103,34 @@ export class NameSpaceController {
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
 
-        const query = Object.assign(parsedUrl.query, { nameSpaces, users });
+        const query = Object.assign(
+            parsedUrl.query,
+            {
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                nameSpaces,
+                users
+            }
+        );
 
         await this.viewService.render(req, res, "/admin-namespaces", query);
     }
 
-    private async updateNameSpaceUsers(users, key) {
+    private async updateNameSpaceUsers(users, newKey, oldKey = null) {
         const promises = users.map(async (user) => {
             const userId = Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
 
-            if (!existingUser.role[key]) {
-                await this.usersService.updateUser(existingUser._id, {
-                    role: {
-                        ...existingUser.role,
-                        [key]: Roles.Regular,
-                    },
-                });
+            let updatedRoles = { ...existingUser.role };
+
+            if (oldKey && oldKey !== newKey) {
+                delete updatedRoles[oldKey];
             }
+
+            updatedRoles[newKey] = Roles.Regular;
+
+            await this.usersService.updateUser(existingUser._id, {
+                role: updatedRoles,
+            });
 
             return userId;
         });

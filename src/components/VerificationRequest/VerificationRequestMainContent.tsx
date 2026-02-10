@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import EditIcon from '@mui/icons-material/Edit';
-import EditVerificationRequestDrawer from "./verificationRequestForms/EditVerificationRequestView";
+import EditVerificationRequestDrawer from "./verificationRequestForms/EditVerificationRequestDrawer";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,
@@ -66,7 +66,7 @@ const VerificationRequestMainContent = ({
                         openDrawer={openDrawer}
                     />
                 )}
-            </Grid>    
+            </Grid>
         </main>
     );
 };
