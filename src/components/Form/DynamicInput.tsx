@@ -14,17 +14,21 @@ import colors from "../../styles/colors";
 import ReportTypeSelect from "../VerificationRequest/verificationRequestForms/formInputs/ReportTypeSelect";
 import ImpactAreaSelect from "../VerificationRequest/verificationRequestForms/formInputs/ImpactAreaSelect";
 import InputExtraSourcesList from "../VerificationRequest/verificationRequestForms/formInputs/InputExtraSourcesList";
+import { Topic } from "../../types/Topic";
+import { SourceType } from "../../types/Source";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
+
+export type UnifiedDefaultValue = Topic | SourceType[] | string
 
 interface DynamicInputProps {
     fieldName: string;
     type: string;
     placeholder: string;
-    value: string | [];
+    value: UnifiedDefaultValue;
     onChange: any;
     addInputLabel: string;
-    defaultValue: string | [];
+    defaultValue: UnifiedDefaultValue;
     "data-cy": string;
     extraProps: any;
     disabledDate?: any;
@@ -87,7 +91,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "sourceList":
             return (
                 <InputExtraSourcesList
-                    value={props.value}
+                    sources={props.value}
                     onChange={props.onChange}
                     disabled={props.disabled}
                     placeholder={props.placeholder}

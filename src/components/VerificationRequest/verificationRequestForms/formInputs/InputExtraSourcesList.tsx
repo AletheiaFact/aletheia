@@ -1,105 +1,105 @@
-import React, { useState, useEffect } from "react";
-import { Box, Grid } from "@mui/material";
+import React, { useState } from "react";
+import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../../../Button";
 import AletheiaInput from "../../../AletheiaInput";
+import { IInputExtraSourcesList } from "../../../../types/VerificationRequest";
+import { SourceType } from "../../../../types/Source";
 
-interface IInputExtraSourcesList {
-  value: any;
-  onChange: (value: any[]) => void;
-  disabled: boolean;
-  placeholder: string;
-}
+const formatSources = (sources: SourceType[]) => {
+    const sourceArray = Array.isArray(sources) ? sources : [];
+    if (sourceArray.length === 0) return [createEmptySource()];
 
-const InputExtraSourcesList = ({ value, onChange, disabled, placeholder }: IInputExtraSourcesList) => {
-  const { t } = useTranslation();
+    return sourceArray.map((source) => ({
+        id: source._id,
+        href: typeof source === "object" ? source.href : source || "",
+        isNewSource: !!(typeof source === "object" ? source.href : source),
+    }));
+};
 
-  const [items, setItems] = useState(() => {
-    const initialArray = Array.isArray(value) ? value : [];
-    if (initialArray.length === 0) return [{ id: Math.random(), text: "", isOriginal: false }];
+const createEmptySource = () => ({
+    id: Math.random().toString(),
+    href: "",
+    isNewSource: false
+});
 
-    return initialArray.map((item) => {
-      const isObject = typeof item === "object" && item !== null;
-      const textValue = isObject ? item.href : item;
-      return {
-        id: item._id || Math.random(),
-        text: textValue || "",
-        isOriginal: !!textValue,
-      };
-    });
-  });
+const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IInputExtraSourcesList) => {
+    const { t } = useTranslation();
+    const [sourcesList, setSourcesList] = useState(() => formatSources(sources as SourceType[]));
 
-  useEffect(() => {
-    handleNotifyChange(items);
-  }, []);
+    const handleSubmit = (hrefsList: typeof sourcesList) => {
+        const updatedHrefs = [...new Set(hrefsList.map(source => source.href.trim()).filter(Boolean))];
+        onChange(updatedHrefs);
+    };
 
-  const handleNotifyChange = (newItems: any[]) => {
-    setItems(newItems);
-    const uniqueTexts = Array.from(
-      new Set(
-        newItems
-          .map(i => i.text.trim())
-          .filter(text => text !== "")
-      )
+    const updateSources = (id: string, newHref: string) => {
+        const newHrefList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
+        setSourcesList(newHrefList);
+        handleSubmit(newHrefList);
+    };
+
+    const addField = () => {
+        if (disabled) return;
+        const newHrefList = [...sourcesList, createEmptySource()];
+        setSourcesList(newHrefList);
+        handleSubmit(newHrefList);
+    };
+
+    const removeField = (id: string, index: number) => {
+        if (disabled || index === 0) return;
+        const newHrefList = sourcesList.filter((source) => source.id !== id);
+
+        setSourcesList(newHrefList);
+        handleSubmit(newHrefList);
+    };
+
+    return (
+        <Grid container justifyContent="center">
+            {sourcesList.map((source, index) => (
+                <Grid item
+                    key={source.id}
+                    style={{
+                        display: "flex",
+                        width: "100%",
+                        gap: 12,
+                        marginTop: 12
+                    }}
+                >
+                    <AletheiaInput
+                        value={source.href}
+                        disabled={disabled || (index === 0 && source.isNewSource)}
+                        onChange={(newHref) => updateSources(source.id, newHref.target.value)}
+                        placeholder={t(placeholder)}
+                        white="true"
+                    />
+
+                    {!disabled && index !== 0 && (
+                        <AletheiaButton
+                            onClick={() => removeField(source.id, index)}
+                            style={{ minWidth: "40px" }}
+                        >
+                            <DeleteIcon fontSize="small" />
+                        </AletheiaButton>
+                    )}
+                </Grid>
+            ))}
+
+            {!disabled && (
+                <Grid item>
+                    <AletheiaButton
+                        type={ButtonType.blue}
+                        onClick={addField}
+                        style={{ marginTop: 12 }}
+                    >
+                        <AddIcon fontSize="small" />
+                        {t("sourceForm:addNewSourceButton")}
+                    </AletheiaButton>
+                </Grid>
+            )}
+        </Grid>
     );
-
-    onChange(uniqueTexts);
-  };
-
-  const addField = () => {
-    if (disabled) return;
-    handleNotifyChange([...items, { id: Math.random(), text: "", isOriginal: false }]);
-  };
-
-  const removeField = (id: any) => {
-    const index = items.findIndex((item) => item.id === id);
-    if (disabled || index === 0) return;
-    handleNotifyChange(items.filter((item) => item.id !== id));
-  };
-
-  const updateField = (id: any, newText: string) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, text: newText } : item
-    );
-    handleNotifyChange(updatedItems);
-  };
-
-  return (
-    <Grid container>
-      {items.map((item, index) => (
-        <Box key={item.id} sx={{ display: "flex", width: "100%", gap: 1, mt: 1 }}>
-          <AletheiaInput
-            value={item.text}
-            disabled={disabled || (index === 0 && item.isOriginal)}
-            onChange={(e) => updateField(item.id, e.target.value)}
-            placeholder={t(placeholder)}
-            white="true"
-          />
-
-          {!disabled && index !== 0 && (
-            <AletheiaButton
-              onClick={() => removeField(item.id)}
-              style={{ minWidth: "40px" }}
-            >
-              <DeleteIcon fontSize="small" />
-            </AletheiaButton>
-          )}
-        </Box>
-      ))}
-
-      {!disabled && (
-        <AletheiaButton
-          type={ButtonType.blue}
-          onClick={addField}
-          style={{ marginTop: "8px" }}
-        >
-          <AddIcon fontSize="small" />
-        </AletheiaButton>
-      )}
-    </Grid>
-  );
 };
 
 export default InputExtraSourcesList;

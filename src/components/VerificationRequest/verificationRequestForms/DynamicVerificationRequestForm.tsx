@@ -5,18 +5,16 @@ import moment from "moment";
 import DynamicForm from "../../Form/DynamicForm";
 import SharedFormFooter from "../../SharedFormFooter";
 import editVerificationRequestForm from "./fieldLists/EditVerificationRequestForm";
+import { IDynamicVerificationRequestForm } from "../../../types/VerificationRequest";
 
-interface IDynamicVerificationRequestForm {
-    data?: any,
-    onSubmit: any,
-    isLoading: any,
-    setRecaptchaString: any,
-    hasCaptcha: any,
-    isEdit: any,
-    extrafields?: any,
-}
-
-const DynamicVerificationRequestForm = ({ data, onSubmit, isLoading, setRecaptchaString, hasCaptcha, isEdit }: IDynamicVerificationRequestForm) => {
+const DynamicVerificationRequestForm = ({
+    data,
+    onSubmit,
+    isLoading,
+    setRecaptchaString,
+    hasCaptcha,
+    isEdit,
+}: IDynamicVerificationRequestForm) => {
     const {
         handleSubmit,
         control,

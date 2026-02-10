@@ -8,7 +8,7 @@ import {
 import { useDispatch } from "react-redux";
 import TopicsApi from "../../api/topicsApi";
 import { useTranslation } from "react-i18next";
-import { IMultiSelectAutocomplete } from "../../types/Topic";
+import { IMultiSelectAutocomplete, ManualTopic } from "../../types/Topic";
 
 const MultiSelectAutocomplete = ({
     defaultValue,
@@ -47,7 +47,7 @@ const MultiSelectAutocomplete = ({
 
     const fetchTopicList = (
         topic: string
-    ): Promise<{ label: string; value: string }[]> => {
+    ): Promise<ManualTopic[]> => {
         return new Promise((resolve) => {
             if (timeout) clearTimeout(timeout);
             if (topic.length >= 3) {

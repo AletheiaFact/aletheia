@@ -1,24 +1,17 @@
 import React, { useState } from "react";
-import { VerificationRequest } from "../../../types/VerificationRequest";
+import { IEditVerificationRequestDrawer } from "../../../types/VerificationRequest";
 import { useTranslation } from "react-i18next";
 import { Divider, Grid } from "@mui/material";
 import verificationRequestApi from "../../../api/verificationRequestApi";
 import LargeDrawer from "../../LargeDrawer";
 import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
 
-interface EditVerificationRequestDrawerProps {
-    open: boolean;
-    onClose: () => void;
-    verificationRequest: VerificationRequest;
-    onSave: (updatedRequest: VerificationRequest) => void;
-}
-
-const EditVerificationRequestDrawer: React.FC<EditVerificationRequestDrawerProps> = ({
+const EditVerificationRequestDrawer = ({
     open,
     onClose,
     verificationRequest,
     onSave,
-}) => {
+}: IEditVerificationRequestDrawer) => {
     const { t } = useTranslation();
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
