@@ -42,7 +42,7 @@ const DynamicNameSpaceForm = ({
     };
 
     return (
-        <Grid item xs={10} mt={2}>
+        <Grid item xs={10}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <DynamicForm
                     currentForm={lifecycleNameSpaceForm}
@@ -56,11 +56,8 @@ const DynamicNameSpaceForm = ({
                     isLoading={isLoading}
                     setRecaptchaString={setRecaptchaString}
                     hasCaptcha={hasCaptcha}
-                />
-            </form>
-            {
-                nameSpace?._id && (
-                    <Grid item justifyItems="center" xs={12} mt={3}>
+                    hasCancelButton={false}
+                    extraButton={nameSpace?._id && (
                         <Button
                             onClick={handleDailyReviews}
                             loading={isLoading}
@@ -68,10 +65,10 @@ const DynamicNameSpaceForm = ({
                         >
                             {t("notification:dailyReportButton") as string}
                         </Button>
-                    </Grid>
-                )
-            }
-        </Grid>
+                    )}
+                />
+            </form >
+        </Grid >
     )
 }
 

@@ -16,10 +16,11 @@ import ImpactAreaSelect from "../VerificationRequest/verificationRequestForms/fo
 import InputExtraSourcesList from "../VerificationRequest/verificationRequestForms/formInputs/InputExtraSourcesList";
 import { Topic } from "../../types/Topic";
 import { SourceType } from "../../types/Source";
+import ImageUpload, { UploadFile } from "../ImageUpload";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
-export type UnifiedDefaultValue = Topic | SourceType[] | string
+export type UnifiedDefaultValue = Topic | SourceType[] | UploadFile[] | string
 
 interface DynamicInputProps {
     fieldName: string;
@@ -122,6 +123,13 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                     isDisabled={props.disabled}
+                />
+            );
+        case "imageUpload":
+            return (
+                <ImageUpload
+                    onChange={(value) => props.onChange(value)}
+                    defaultFileList={props.defaultValue}
                 />
             );
         case "textbox":

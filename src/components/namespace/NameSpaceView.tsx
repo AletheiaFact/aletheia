@@ -38,7 +38,7 @@ const NameSpaceView = () => {
         () => [
             {
                 field: "name",
-                headerName: t("namespaces:nameColumnLabel"),
+                headerName: t("namespaces:nameLabel"),
                 flex: 2,
             },
             {

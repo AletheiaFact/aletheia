@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Grid,
     Box,
@@ -11,6 +11,7 @@ import { FileUploadOutlined, DeleteOutline } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton from "./Button";
 import { MessageManager } from "../components/Messages";
+import { UnifiedDefaultValue } from "./Form/DynamicInput";
 
 export interface UploadFile {
     uid: string;
@@ -24,18 +25,30 @@ export interface UploadFile {
 interface ImageUploadProps {
     onChange: (fileList: UploadFile[]) => void;
     error?: boolean;
-    defaultFileList?: UploadFile[];
+    defaultFileList?: UnifiedDefaultValue;
 }
 
 const ImageUpload = ({
     onChange,
     error = false,
-    defaultFileList = [],
+    defaultFileList,
 }: ImageUploadProps) => {
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const [fileList, setFileList] = useState<UploadFile[]>(defaultFileList);
+    const [fileList, setFileList] = useState<UploadFile[]>(() => {
+        if (Array.isArray(defaultFileList)) {
+            return (defaultFileList as UploadFile[]).filter(file => file.uid);
+        }
+        return [];
+    });
+
+    useEffect(() => {
+        if (Array.isArray(defaultFileList)) {
+            setFileList(defaultFileList as UploadFile[]);
+        }
+    }, [defaultFileList]);
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");

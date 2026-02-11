@@ -16,7 +16,7 @@ export type FormField = {
     addInputLabel?: string;
     defaultValue: string | [];
     extraProps?: FormFieldExtraProps;
-    disabled?: boolean; 
+    disabled?: boolean;
 };
 
 // Use to add properties specific to one type of field
@@ -112,6 +112,10 @@ const fieldValidation = (value, validationFunction) => {
 
     if (dayjs.isDayjs(value)) {
         return dayjs(value).isValid() && dayjs(value).isBefore(dayjs());
+    }
+
+    if (Array.isArray(value) && value.length > 0 && (value[0].uid || value[0].originFileObj)) {
+        return true;
     }
 
     if (value instanceof Node) {

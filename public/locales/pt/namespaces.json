@@ -1,6 +1,6 @@
 {
-    "nameColumnLabel": "Nome",
-    "nameColumnPlaceholder":"Nome do namespace",
+    "nameLabel": "Nome",
+    "namePlaceholder":"Nome do namespace",
     "title": "Área de namespaces",
     "addNameSpace": "Adicionar namespace",
     "editNameSpace": "Editar namespace",

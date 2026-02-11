@@ -1,13 +1,27 @@
 // File: src/components/SharedFormFooter.js
 
-import React, { useRef } from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import AletheiaCaptcha from "./AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "./Button";
 
-const SharedFormFooter = ({ isLoading, setRecaptchaString, hasCaptcha }) => {
+interface ISharedFormFooter {
+    isLoading: boolean;
+    setRecaptchaString: Dispatch<SetStateAction<string>>;
+    hasCaptcha: boolean;
+    hasCancelButton?: boolean;
+    extraButton?: React.ReactNode;
+}
+
+const SharedFormFooter = ({
+    isLoading,
+    setRecaptchaString,
+    hasCaptcha,
+    hasCancelButton = true,
+    extraButton
+}: ISharedFormFooter) => {
     const recaptchaRef = useRef(null);
     const { t } = useTranslation();
     const router = useRouter();
@@ -21,12 +35,15 @@ const SharedFormFooter = ({ isLoading, setRecaptchaString, hasCaptcha }) => {
                     justifyContent: "space-evenly",
                 }}
             >
-                <AletheiaButton
-                    type={ButtonType.gray}
-                    onClick={() => router.back()}
-                >
-                    {t("claimForm:cancelButton")}
-                </AletheiaButton>
+                {hasCancelButton ?
+                    <AletheiaButton
+                        type={ButtonType.gray}
+                        onClick={() => router.back()}
+                    >
+                        {t("claimForm:cancelButton")}
+                    </AletheiaButton>
+                    : extraButton
+                }
                 <AletheiaButton
                     loading={isLoading}
                     type={ButtonType.blue}

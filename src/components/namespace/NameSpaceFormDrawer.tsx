@@ -19,6 +19,7 @@ import DynamicNameSpaceForm from "./DynamicNameSpaceForm";
 import { atomUserList } from "../../atoms/userEdit";
 
 const NameSpacesFormDrawer = () => {
+    const { t } = useTranslation();
     const [nameSpace] = useAtom(nameSpaceBeeingEdited);
     const [userList] = useAtom(atomUserList);
 
@@ -27,7 +28,6 @@ const NameSpacesFormDrawer = () => {
         usersId: nameSpace?.users?.map(namespace => namespace._id) || []
     }
 
-    const { t } = useTranslation();
     const [open, setOpen] = useAtom(isEditDrawerOpen);
     const addNameSpace = useSetAtom(addNameSpaceToList);
     const finishEditing = useSetAtom(finishEditingItem);
@@ -100,12 +100,7 @@ const NameSpacesFormDrawer = () => {
             onClose={onCloseDrawer}
             backgroundColor={colors.lightNeutralSecondary}
         >
-            <Grid
-                container
-                justifyContent="center"
-                alignItems="stretch"
-                mt={2}
-            >
+            <Grid container justifyContent="center">
                 <Grid item xs={10}>
                     <h2>
                         {t(
