@@ -8,13 +8,13 @@ const ImpactAreaSelect = ({
   placeholder,
   isDisabled,
 }: IImpactAreaSelect) => {
-  const [value, setValue] = useState<ManualTopic[]>([]);
+  const [value, setValue] = useState<ManualTopic[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     onChange(value);
   }, []);
-  
+
   return (
     <MultiSelectAutocomplete
       defaultValue={defaultValue}
