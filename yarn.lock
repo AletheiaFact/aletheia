@@ -1834,12 +1834,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@casl/ability@npm:^6.0.0":
-  version: 6.7.3
-  resolution: "@casl/ability@npm:6.7.3"
+"@casl/ability@npm:^6.7.5":
+  version: 6.8.0
+  resolution: "@casl/ability@npm:6.8.0"
   dependencies:
     "@ucast/mongo2js": ^1.3.0
-  checksum: 9905944ed6b95bc610e145be7e1170a79ae5b3e63f051bd8277a765bad60283951c99965e96c7cb39820373c11d9fe66a103686a52dcaa2cc2f7e5f851044ba0
+  checksum: a0ccee805ed8234cd411cddaf1a9deb5ca4cc0ecdd66b2dd4d4477bccff5b2cd8631561a46450a48927eb4cc7e7a639d31a585ba02c2e259ec2a063e86283a9d
   languageName: node
   linkType: hard
 
@@ -11004,7 +11004,7 @@ __metadata:
     "@babel/polyfill": ^7.12.1
     "@babel/preset-env": ^7.22.20
     "@babel/preset-react": ^7.14.5
-    "@casl/ability": ^6.0.0
+    "@casl/ability": ^6.7.5
     "@compodoc/compodoc": 1.1.21
     "@cypress/react": ^9.0.0
     "@dhaiwat10/react-link-preview": ^1.9.1
