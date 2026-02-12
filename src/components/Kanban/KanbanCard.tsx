@@ -111,7 +111,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                                 item
                                 style={{
                                     display: "flex",
-                                    padding: "4px 8px",
+                                    padding: "4px 4px",
                                     gap: 3,
                                     marginBottom: 8,
                                     backgroundColor: colors.logo,
@@ -120,15 +120,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                                     alignItems: "center",
                                 }}
                             >
-                                <Typography
-                                    style={{
-                                        fontWeight: 600,
-                                        color: colors.black,
-                                        fontSize: 11,
-                                    }}
-                                >
-                                    {t("claimReviewForm:classificationTag")}
-                                </Typography>
+                                
                                 <Chip
                                     label={t(
                                         `claimReviewForm:${reviewTask.content.props.classification}`
@@ -139,11 +131,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                                         color: colors.white,
                                         fontWeight: 700,
                                         padding: "4px 13px",
-                                        backgroundColor:
-                                            reviewColors[
-                                                reviewTask.content.props
-                                                    .classification
-                                            ],
+                                        backgroundColor:reviewColors[reviewTask.content.props.classification],
                                     }}
                                 />
                             </Grid>
