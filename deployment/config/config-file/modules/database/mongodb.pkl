@@ -2,8 +2,6 @@ atlas = false
 type = "mongodb"
 connection_uri = read("env:MONGODB_URI")
 options = new {
-    useUnifiedTopology = true
-    useNewUrlParser = true
     retryWrites =  true
     w =  "majority"
 }

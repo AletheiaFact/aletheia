@@ -47,8 +47,6 @@ async function initApp() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api", app, document);
 
-    mongoose.set("useCreateIndex", true);
-
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
