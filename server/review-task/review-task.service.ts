@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, Scope, Logger } from "@nestjs/common";
 import { Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -59,6 +59,7 @@ export interface IReviewTask {
 
 @Injectable({ scope: Scope.REQUEST })
 export class ReviewTaskService {
+    private readonly logger = new Logger(ReviewTaskService.name);
     fieldMap: { assigned: string; crossChecked: string; reviewed: string };
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
@@ -756,7 +757,7 @@ export class ReviewTaskService {
 
             return 0;
         } catch (error) {
-            console.error("Error in countReviewTasksNotDeleted:", error);
+            this.logger.error("Error in countReviewTasksNotDeleted:", error);
             throw error;
         }
     }

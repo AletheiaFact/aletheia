@@ -12,19 +12,19 @@ const VerificationRequestActivity = ({
   const STATUS_CONFIG = {
     Posted: {
       color: colors.low,
-      labelKey: "statusPosted",
+      labelKey: "POSTED",
     },
     "In Triage": {
       color: colors.medium,
-      labelKey: "statusInTriage",
+      labelKey: "IN_TRIAGE",
     },
     "Pre Triage": {
       color: colors.neutralSecondary,
-      labelKey: "statusPreTriage",
+      labelKey: "PRE_TRIAGE",
     },
     Declined: {
       color: colors.error,
-      labelKey: "statusDeclined",
+      labelKey: "DECLINED",
     },
   } as const;
 

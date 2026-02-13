@@ -1,4 +1,10 @@
-import { Injectable, Inject, Scope, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    Inject,
+    Scope,
+    NotFoundException,
+    Logger,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
@@ -30,6 +36,8 @@ type ClaimMatchParameters = (
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
+    private readonly logger = new Logger(ClaimService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Claim.name)
@@ -267,7 +275,7 @@ export class ClaimService {
                 newClaim
             );
         } catch (e) {
-            console.error(e);
+            this.logger.error("Failed to update claim:", e);
             throw new NotFoundException();
         }
     }

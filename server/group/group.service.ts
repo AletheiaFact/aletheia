@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Group, GroupDocument } from "./schemas/group.schema";
 
 @Injectable()
 export class GroupService {
+    private readonly logger = new Logger(GroupService.name);
+
     constructor(
         @InjectModel(Group.name)
         private GroupModel: Model<GroupDocument>
@@ -51,7 +53,7 @@ export class GroupService {
 
             return await new this.GroupModel(group).save();
         } catch (error) {
-            console.error("Failed to create or update group:", error);
+            this.logger.error("Failed to create or update group:", error);
             throw error;
         }
     }
@@ -107,7 +109,7 @@ export class GroupService {
                 );
             }
         } catch (error) {
-            console.error("Failed to remove content:", error);
+            this.logger.error("Failed to remove content:", error);
             throw error;
         }
     }

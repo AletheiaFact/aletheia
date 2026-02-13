@@ -102,13 +102,14 @@ export class HistoryService {
         const page = Math.max(Number(query.page) || 0, 0);
         const pageSize = Math.max(Number(query.pageSize) || 10, 1);
         const order = query.order === "desc" ? -1 : 1;
-        const type = query.type || "";
 
         const mongoQuery: HistoryItem = {
             targetId: new Types.ObjectId(targetId),
             targetModel,
         };
-        if (type) mongoQuery.type = type;
+        if (query.type && query.type.length > 0) {
+            mongoQuery.type = { $in: query.type };
+        }
 
         const result = await this.HistoryModel.aggregate([
             { $match: mongoQuery },
@@ -185,16 +186,12 @@ export class HistoryService {
         if (!content?._id || !content?.isHidden) {
             return "";
         }
-        const { history } = await this.getHistoryForTarget(
-            content._id,
-            target,
-            {
-                page: 0,
-                pageSize: 1,
-                order: "desc",
-                type: HistoryType.Hide,
-            }
-        );
+        const { history } = await this.getHistoryForTarget(content._id, target, {
+            page: 0,
+            pageSize: 1,
+            order: "desc",
+            type: [HistoryType.Hide],
+        });
 
         return history[0]?.details?.after?.description || "";
     }

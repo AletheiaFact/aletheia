@@ -1,14 +1,40 @@
 import { LoggerService } from "@nestjs/common";
 import * as winston from "winston";
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+const devFormat = winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.colorize({ all: true }),
+    winston.format.printf(({ timestamp, level, message, context, trace }) => {
+        const ctx = context ? `[${context}]` : "";
+        const traceStr = trace ? `\n  → ${trace}` : "";
+        return `${timestamp} ${level} ${ctx} ${message}${traceStr}`;
+    })
+);
+
+const prodFormat = winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DDTHH:mm:ss.SSSZ" }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+);
+
+const getLogLevel = (): string => {
+    if (process.env.LOG_LEVEL) {
+        return process.env.LOG_LEVEL;
+    }
+    return isDevelopment ? "debug" : "info";
+};
+
 export class WinstonLogger implements LoggerService {
     private logger: winston.Logger;
 
     constructor() {
         this.logger = winston.createLogger({
+            level: getLogLevel(),
             transports: [
                 new winston.transports.Console({
-                    format: winston.format.combine(winston.format.json()),
+                    format: isDevelopment ? devFormat : prodFormat,
                 }),
             ],
         });
@@ -18,7 +44,9 @@ export class WinstonLogger implements LoggerService {
         this.logger.info(message, { context });
     }
 
-    error(message: string, trace: string, context?: string) {
+    error(message: string, traceOrError?: string | Error, context?: string) {
+        const trace =
+            traceOrError instanceof Error ? traceOrError.stack : traceOrError;
         this.logger.error(message, { trace, context });
     }
 

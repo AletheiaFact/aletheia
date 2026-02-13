@@ -65,10 +65,6 @@
     "showText": "Show",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "statusPreTriage": "Pre Triage",
-    "statusInTriage": "In Triage",
-    "statusPosted": "Posted",
-    "statusDeclined": "Declined",
     "allPriorities": "All Priorities",
     "allSourceChannels": "All Source Channels",
     "priority": {
@@ -89,6 +85,11 @@
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
     "filterBySourceChannel": "Filter by Source Channel",
+    "errorUpdatingStatus": "Error updating status:",
+    "PRE_TRIAGE": "Pre Triage",
+    "IN_TRIAGE": "In Triage",
+    "POSTED": "Posted",
+    "DECLINED": "Declined",
     "activity": {
         "Posted": "Verification request #{{hash}} verified and forwarded",
         "In Triage": "Verification request #{{hash}} in the verification process",
@@ -112,7 +113,6 @@
         "activitySubtitle": "Latest updates from the system",
         "errorLoading": "Error fetching statistics"
     },
-    "errorUpdatingStatus": "Error updating status:",
     "identifiedPersonalities": "People Mentioned",
     "loadingPersonalities": "Loading personalities...",
     "personalitiesList": "List of identified personalities",

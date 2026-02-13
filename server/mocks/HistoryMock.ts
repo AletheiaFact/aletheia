@@ -1,3 +1,4 @@
+import { VerificationRequestStatus } from "../verification-request/dto/types";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { Types } from "mongoose";
 
@@ -8,10 +9,19 @@ export const historyServiceMock = {
 export const mockHistoryItem = {
   _id: "23432",
   targetId: new Types.ObjectId(),
-  targetModel: TargetModel.Claim,
+  targetModel: TargetModel.VerificationRequest,
   type: HistoryType.Update,
-  details: { after: { description: "new" }, before: { description: "old" } },
   date: new Date(),
+  details: {
+    after: {
+      description: "new",
+      status: VerificationRequestStatus.PRE_TRIAGE,
+    },
+    before: {
+      description: "old",
+      status: VerificationRequestStatus.IN_TRIAGE,
+    },
+  },
 };
 
 export const mockHistoryResponse = {
@@ -43,8 +53,3 @@ mockHistoryModel.mockImplementation(function (this: any, data) {
 });
 
 mockHistoryModel.aggregate = jest.fn();
-
-
-
-
-

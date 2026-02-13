@@ -24,8 +24,7 @@ import {
     ReviewTaskEvents,
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
-import { Roles } from "../../types/enums";
-import { VerificationRequestStatus } from "../../../server/verification-request/dto/types";
+import { Roles, VerificationRequestStatus } from "../../types/enums";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -45,8 +44,8 @@ import AletheiaCaptcha from "../AletheiaCaptcha";
 import PersonalitiesSection from "./PersonalitiesSection";
 import { usePersonalities } from "../../hooks/usePersonalities";
 import {
-  getSeverityColor,
-  getSeverityLabel,
+    getSeverityColor,
+    getSeverityLabel,
 } from "../../helpers/verificationRequestCardHelper";
 
 interface VerificationRequestDetailDrawerProps {
@@ -194,54 +193,53 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
         const metaChipData = currentRequest
             ? [
-                  {
-                      icon: <Filter style={{ fontSize: 18 }} />,
-                      key: `${currentRequest._id}|reportType`,
-                      label: t("verificationRequest:tagReportType"),
-                      label_value: t(
-                          `claimForm:${
-                              currentRequest.reportType || "undefined"
-                          }`
-                      ),
-                      style: {
-                          backgroundColor: colors.secondary,
-                          color: colors.white,
-                      },
-                  },
-                  {
-                      icon: <Share style={{ fontSize: 18 }} />,
-                      key: `${currentRequest._id}|receptionChannel`,
-                      label: t("verificationRequest:tagSourceChannel"),
-                      label_value: t(
+                {
+                    icon: <Filter style={{ fontSize: 18 }} />,
+                    key: `${currentRequest._id}|reportType`,
+                    label: t("verificationRequest:tagReportType"),
+                    label_value: t(
+                        `claimForm:${currentRequest.reportType || "undefined"
+                        }`
+                    ),
+                    style: {
+                        backgroundColor: colors.secondary,
+                        color: colors.white,
+                    },
+                },
+                {
+                    icon: <Share style={{ fontSize: 18 }} />,
+                    key: `${currentRequest._id}|receptionChannel`,
+                    label: t("verificationRequest:tagSourceChannel"),
+                    label_value: t(
                         `verificationRequest:${currentRequest.sourceChannel}`,
-                      { defaultValue: currentRequest.sourceChannel },
-                      ),
-                      style: {
-                          backgroundColor: colors.primary,
-                          color: colors.white,
-                      },
-                  },
-                  {
-                      icon: <Public style={{ fontSize: 18 }} />,
-                      key: `${currentRequest._id}|impactArea`,
-                      label: t("verificationRequest:tagImpactArea"),
-                      label_value: currentRequest.impactArea?.name,
-                      style: {
-                          backgroundColor: colors.neutralSecondary,
-                          color: colors.white,
-                      },
-                  },
-                  {
-                      icon: <WarningAmber style={{ fontSize: 18 }} />,
-                      key: `${currentRequest._id}|severity`,
-                      label: t("verificationRequest:tagSeverity"),
-                      label_value: getSeverityLabel(currentRequest.severity, t),
-                      style: {
-                          backgroundColor: getSeverityColor(currentRequest.severity),
-                          color: colors.white,
-                      },
-                  },
-              ]
+                        { defaultValue: currentRequest.sourceChannel },
+                    ),
+                    style: {
+                        backgroundColor: colors.primary,
+                        color: colors.white,
+                    },
+                },
+                {
+                    icon: <Public style={{ fontSize: 18 }} />,
+                    key: `${currentRequest._id}|impactArea`,
+                    label: t("verificationRequest:tagImpactArea"),
+                    label_value: currentRequest.impactArea?.name,
+                    style: {
+                        backgroundColor: colors.neutralSecondary,
+                        color: colors.white,
+                    },
+                },
+                {
+                    icon: <WarningAmber style={{ fontSize: 18 }} />,
+                    key: `${currentRequest._id}|severity`,
+                    label: t("verificationRequest:tagSeverity"),
+                    label_value: getSeverityLabel(currentRequest.severity, t),
+                    style: {
+                        backgroundColor: getSeverityColor(currentRequest.severity),
+                        color: colors.white,
+                    },
+                },
+            ]
             : [];
 
         return (
@@ -460,18 +458,18 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                     >
                                         <TopicDisplay
                                             data_hash={currentRequest.data_hash}
-                                            reviewTaskType={
-                                                ReviewTaskTypeEnum.VerificationRequest
-                                            }
                                             topics={
                                                 currentRequest?.topics || []
+                                            }
+                                            reviewTaskType={
+                                                ReviewTaskTypeEnum.VerificationRequest
                                             }
                                         />
                                     </Box>
 
                                     {currentRequest?.identifiedData &&
                                         currentRequest.identifiedData.length >
-                                            0 && (
+                                        0 && (
                                             <PersonalitiesSection
                                                 personalities={personalities}
                                                 isLoading={loadingPersonalities}

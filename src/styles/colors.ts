@@ -19,6 +19,8 @@ const colors = {
     white: "rgb(255, 255, 255)", //#ffffff
     warning: "rgba(219, 159, 13, 0.3)", //#db9f0d
     shadow: "rgba(0, 0, 0, 0.25)",
+    errorTranslucent: "rgba(255, 77, 79, 0.1)",
+    activeTranslucent: "rgba(73, 222, 128, 0.1)",
     logo: "#E8E8E8",
     error: "#ff4d4f",
     active: "#49DE80",

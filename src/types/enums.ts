@@ -55,6 +55,13 @@ enum M2MSubject {
     Chatbot = "chatbot-service",
 } 
 
+enum VerificationRequestStatus {
+    PRE_TRIAGE = "Pre Triage",
+    IN_TRIAGE = "In Triage",
+    POSTED = "Posted",
+    DECLINED = "Declined",
+}
+
 export {
     ClassificationEnum,
     Roles,
@@ -63,4 +70,5 @@ export {
     CommentEnum,
     SenderEnum,
     M2MSubject,
+    VerificationRequestStatus,
 };

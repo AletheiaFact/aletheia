@@ -659,7 +659,7 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             );
         } catch (error) {
-            console.error(
+            this.logger.error(
                 "Failed to remove verification request from group:",
                 error
             );
@@ -752,7 +752,7 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             ).populate("source");
         } catch (error) {
-            console.error("Failed to update verification request:", error);
+            this.logger.error("Failed to update verification request:", error);
             throw error;
         }
     }
