@@ -39,7 +39,7 @@ export class TopicService {
         query: string,
         language = "pt",
         limit = 10
-    ): Promise<Topic[]> {
+    ): Promise<any> {
         if (typeof language !== "string") {
             throw new TypeError("Invalid language");
         }
