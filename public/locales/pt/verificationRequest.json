@@ -65,10 +65,6 @@
     "showText": "Mostrar",
     "startDate": "Data inicial",
     "endDate": "Data final",
-    "statusPreTriage": "Pré-Triagem",
-    "statusInTriage": "Em Triagem",
-    "statusPosted": "Publicado",
-    "statusDeclined": "Recusado",
     "allPriorities": "Todas as Prioridades",
     "allSourceChannels": "Todos os Canais de Origem",
     "priority": {
@@ -89,6 +85,10 @@
     "viewFullPage": "Ver página completa",
     "automated_monitoring": "Monitoramento Automatizado",
     "filterBySourceChannel": "Filtrar por Canal de Origem",
+    "PRE_TRIAGE": "Pré Triagem",
+    "IN_TRIAGE": "Em Triagem",
+    "POSTED": "Postado",
+    "DECLINED": "Recusado",
     "activity": {
         "Posted": "Denúncia #{{hash}} verificada e encaminhada",
         "In Triage": "Denúncia #{{hash}} em processo de verificação",
