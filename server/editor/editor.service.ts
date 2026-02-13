@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Editor, EditorDocument } from "./schema/editor.schema";
-import { Model, Types } from "mongoose";
+import { Model, Types, UpdateWriteOpResult } from "mongoose";
 
 @Injectable()
 export class EditorService {
@@ -18,9 +18,12 @@ export class EditorService {
         return this.EditorModel.findOne({ reference });
     }
 
-    async updateByReference(reference, editorContentObject) {
+    async updateByReference(
+        reference,
+        editorContentObject
+    ): Promise<UpdateWriteOpResult> {
         const editor = await this.EditorModel.updateOne(
-            { reference: Types.ObjectId(reference) },
+            { reference: new Types.ObjectId(reference) },
             { $set: { editorContentObject } }
         );
         return editor;

@@ -1,7 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
-import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
+import {
+    History,
+    HistoryDocument,
+    HistoryType,
+    TargetModel,
+} from "./schema/history.schema";
 import {
     AfterAndBeforeType,
     HEX24,
@@ -55,15 +60,14 @@ export class HistoryService {
         }
 
         const date = new Date();
-        const targetId = Types.ObjectId(dataId);
+        const targetId = new Types.ObjectId(dataId);
         let currentPerformedBy = null;
 
         if (typeof performedBy === "string" && HEX24.test(performedBy)) {
-            currentPerformedBy = Types.ObjectId(performedBy);
+            currentPerformedBy = new Types.ObjectId(performedBy);
         } else {
             currentPerformedBy = performedBy;
         }
-
 
         return {
             targetId: targetId,
@@ -101,7 +105,7 @@ export class HistoryService {
         const type = query.type || "";
 
         const mongoQuery: HistoryItem = {
-            targetId: Types.ObjectId(targetId),
+            targetId: new Types.ObjectId(targetId),
             targetModel,
         };
         if (type) mongoQuery.type = type;
@@ -143,11 +147,16 @@ export class HistoryService {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: [{ $type: "$$userId" }, "objectId"] },
-                                        { $eq: ["$_id", "$$userId"] }
-                                    ]
-                                }
-                            }
+                                        {
+                                            $eq: [
+                                                { $type: "$$userId" },
+                                                "objectId",
+                                            ],
+                                        },
+                                        { $eq: ["$_id", "$$userId"] },
+                                    ],
+                                },
+                            },
                         },
                         { $project: { _id: 1, name: 1 } },
                     ],
@@ -176,12 +185,16 @@ export class HistoryService {
         if (!content?._id || !content?.isHidden) {
             return "";
         }
-        const { history } = await this.getHistoryForTarget(content._id, target, {
-            page: 0,
-            pageSize: 1,
-            order: "desc",
-            type: HistoryType.Hide,
-        });
+        const { history } = await this.getHistoryForTarget(
+            content._id,
+            target,
+            {
+                page: 0,
+                pageSize: 1,
+                order: "desc",
+                type: HistoryType.Hide,
+            }
+        );
 
         return history[0]?.details?.after?.description || "";
     }

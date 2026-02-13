@@ -16,6 +16,7 @@ import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { UpdateWriteOpResult } from "mongoose";
 
 @Controller()
 export class ClaimReviewController {
@@ -64,7 +65,10 @@ export class ClaimReviewController {
     @AdminOnly()
     @ApiTags("claim-review")
     @Put("api/review/:id")
-    async update(@Param("id") reviewId, @Body() body) {
+    async update(
+        @Param("id") reviewId,
+        @Body() body
+    ): Promise<UpdateWriteOpResult> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );

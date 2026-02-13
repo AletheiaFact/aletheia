@@ -103,7 +103,7 @@ export class TopicService {
             data_hash?: string;
         },
         language: string = "pt"
-    ) {
+    ): Promise<any> {
         try {
             const createdTopics = await Promise.all(
                 topics.map(async (topic) => {

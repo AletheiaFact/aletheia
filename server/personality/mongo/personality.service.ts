@@ -6,7 +6,7 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, UpdateWriteOpResult } from "mongoose";
 import slugify from "slugify";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../../wikidata/wikidata.service";
@@ -436,7 +436,11 @@ export class MongoPersonalityService {
         return personalityUpdate;
     }
 
-    async hideOrUnhidePersonality(personalityId, isHidden, description) {
+    async hideOrUnhidePersonality(
+        personalityId,
+        isHidden,
+        description
+    ): Promise<UpdateWriteOpResult> {
         const personality = await this.getById(personalityId);
 
         const newPersonality = {

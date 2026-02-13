@@ -22,6 +22,9 @@ import { ConfigService } from "@nestjs/config";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { ApiTags } from "@nestjs/swagger";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { UpdateWriteOpResult } from "mongoose";
+import { ReviewTaskDocument } from "./schemas/review-task.schema";
+import { UpdateResult } from "mongodb";
 
 @Controller(":namespace?")
 export class ReviewTaskController {
@@ -85,7 +88,7 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Post("api/reviewtask")
     @Header("Cache-Control", "no-cache")
-    async create(@Body() createReviewTask: CreateReviewTaskDTO) {
+    async create(@Body() createReviewTask: CreateReviewTaskDTO): Promise<any> {
         const validateCaptcha = await this.captchaService.validate(
             createReviewTask.recaptcha
         );
@@ -101,7 +104,7 @@ export class ReviewTaskController {
     async autoSaveDraft(
         @Param("data_hash") data_hash,
         @Body() reviewTaskBody: UpdateReviewTaskDTO
-    ) {
+    ): Promise<UpdateWriteOpResult> {
         const history = false;
         return this.reviewTaskService
             .getReviewTaskByDataHash(data_hash)

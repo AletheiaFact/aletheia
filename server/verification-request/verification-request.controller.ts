@@ -31,6 +31,7 @@ import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
 import { VerificationRequestStatsService } from "./verification-request-stats.service";
+import { UpdateWriteOpResult } from "mongoose";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -298,7 +299,7 @@ export class VerificationRequestController {
     async updateVerificationRequestWithTopics(
         @Param("data_hash") data_hash: string,
         @Body() topics
-    ) {
+    ): Promise<UpdateWriteOpResult> {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,
             data_hash

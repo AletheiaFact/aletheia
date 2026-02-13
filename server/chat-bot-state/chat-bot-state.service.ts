@@ -29,7 +29,7 @@ export class ChatBotStateService {
         return await this.ChatBotStateModel.findByIdAndUpdate(
             id,
             { machine: snapshot },
-            { new: true, useFindAndModify: false }
+            { new: true }
         ).exec();
     }
 

@@ -122,7 +122,7 @@ export class UsersController {
     async changePassword(@Req() req: BaseRequest, @Res() res) {
         try {
             this.usersService
-                .registerPasswordChange(Types.ObjectId(req.user._id))
+                .registerPasswordChange(new Types.ObjectId(req.user._id))
                 .then(() => {
                     res.status(200).json({
                         success: true,
@@ -153,7 +153,7 @@ export class UsersController {
 
             if (shouldEdit) {
                 this.usersService
-                    .updateUser(Types.ObjectId(userId), updates)
+                    .updateUser(new Types.ObjectId(userId), updates)
                     .then(() => {
                         res.status(200).json({
                             success: true,
@@ -209,7 +209,7 @@ export class UsersController {
     @Auth()
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getUser(@Param("id") userId) {
-        const value = Types.ObjectId(userId);
+        const value = new Types.ObjectId(userId);
         return this.usersService.getById(value);
     }
 }

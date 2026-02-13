@@ -1,6 +1,6 @@
 import { Injectable, Inject, Scope, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Model, Types } from "mongoose";
+import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
@@ -47,7 +47,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = Types.ObjectId(query.personalities);
+            query.personalities = new Types.ObjectId(query.personalities);
         }
 
         const claims = await this.ClaimModel.find(query)
@@ -125,11 +125,11 @@ export class ClaimService {
      */
     async create(claim) {
         claim.personalities = claim.personalities.map((personality) => {
-            return Types.ObjectId(personality);
+            return new Types.ObjectId(personality);
         });
 
         if (claim.group) {
-            claim.group = Types.ObjectId(claim.group);
+            claim.group = new Types.ObjectId(claim.group);
         }
 
         const newClaim = new this.ClaimModel(claim);
@@ -232,7 +232,11 @@ export class ClaimService {
         return this.ClaimModel.softDelete({ _id: claimId });
     }
 
-    async hideOrUnhideClaim(claimId, isHidden, description) {
+    async hideOrUnhideClaim(
+        claimId,
+        isHidden,
+        description
+    ): Promise<UpdateWriteOpResult> {
         try {
             const claim = await this.ClaimModel.findById(claimId);
 
@@ -241,7 +245,7 @@ export class ClaimService {
             }
 
             const newClaim = {
-                ...claim.toObject(),
+                ...(claim.toObject() as ClaimDocument),
                 isHidden,
             };
 

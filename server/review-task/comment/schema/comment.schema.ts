@@ -9,7 +9,11 @@ export enum CommentEnum {
     review = "review",
 }
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Comment {
     @Prop({ type: Number })
     from: number;
@@ -41,7 +45,7 @@ export class Comment {
     resolved: boolean;
 
     @Prop({ required: true, default: [] })
-    replies: Comment[];
+    replies: mongoose.Types.ObjectId[];
 
     @Prop({ required: true, default: false })
     isReply: boolean;

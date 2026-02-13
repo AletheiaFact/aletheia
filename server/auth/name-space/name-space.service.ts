@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
-import { Model, isValidObjectId } from "mongoose";
+import { Model, UpdateWriteOpResult, isValidObjectId } from "mongoose";
 import { NameSpaceDocument, NameSpace } from "./schemas/name-space.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
@@ -38,7 +38,10 @@ export class NameSpaceService {
         return newNameSpace;
     }
 
-    async update(id, newNameSpace: UpdateNameSpaceDTO) {
+    async update(
+        id,
+        newNameSpace: UpdateNameSpaceDTO
+    ): Promise<UpdateWriteOpResult> {
         const isNameSpaceTopic = await this.notificationService.getTopic(
             newNameSpace._id
         );

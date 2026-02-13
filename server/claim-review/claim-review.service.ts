@@ -1,5 +1,5 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
-import { LeanDocument, Model, Types } from "mongoose";
+import { LeanDocument, Model, Types, UpdateWriteOpResult } from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -247,17 +247,19 @@ export class ClaimReviewService {
      */
     async create(claimReview, data_hash, reportModel) {
         if (claimReview.personality) {
-            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.personality = new Types.ObjectId(
+                claimReview.personality
+            );
         }
 
         if (claimReview.target) {
-            claimReview.target = Types.ObjectId(claimReview.target);
+            claimReview.target = new Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {
-            return Types.ObjectId(userId);
+            return new Types.ObjectId(userId);
         });
-        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.report = new Types.ObjectId(claimReview.report._id);
         claimReview.data_hash = data_hash;
         claimReview.reportModel = reportModel;
         claimReview.date = new Date();
@@ -334,10 +336,14 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 
-    async hideOrUnhideReview(_id, hide, description) {
+    async hideOrUnhideReview(
+        _id,
+        hide,
+        description
+    ): Promise<UpdateWriteOpResult> {
         const review = await this.getById(_id);
         const newReview = {
-            ...review.toObject(),
+            ...review,
             ...{
                 report: review?.report?._id,
                 isHidden: hide,

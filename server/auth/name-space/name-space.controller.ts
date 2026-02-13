@@ -18,7 +18,7 @@ import { ViewService } from "../../view/view.service";
 import { CreateNameSpaceDTO } from "./dto/create-namespace.dto";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
 import { AdminOnly } from "../decorators/auth.decorator";
-import { Types } from "mongoose";
+import { Types, UpdateWriteOpResult } from "mongoose";
 import { Roles } from "../../auth/ability/ability.factory";
 import { NotificationService } from "../../notifications/notifications.service";
 import slugify from "slugify";
@@ -52,7 +52,10 @@ export class NameSpaceController {
     @AdminOnly()
     @ApiTags("name-space")
     @Put("api/name-space/:id")
-    async update(@Param("id") id, @Body() namespaceBody: UpdateNameSpaceDTO) {
+    async update(
+        @Param("id") id,
+        @Body() namespaceBody: UpdateNameSpaceDTO
+    ): Promise<UpdateWriteOpResult> {
         const nameSpace = await this.nameSpaceService.getById(id);
         const newNameSpace = {
             ...nameSpace.toObject(),
@@ -82,9 +85,7 @@ export class NameSpaceController {
     @AdminOnly()
     @ApiTags("name-space")
     @Get("api/name-space")
-    async findAllOrFiltered(
-        @Query("userId") userId?: string,
-    ) {
+    async findAllOrFiltered(@Query("userId") userId?: string) {
         if (userId) {
             return this.nameSpaceService.findByUser(userId);
         }
@@ -107,7 +108,7 @@ export class NameSpaceController {
 
     private async updateNameSpaceUsers(users, key) {
         const promises = users.map(async (user) => {
-            const userId = Types.ObjectId(user._id);
+            const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
 
             if (!existingUser.role[key]) {
@@ -150,7 +151,7 @@ export class NameSpaceController {
 
     private async deleteUsersNameSpace(usersId, key) {
         const updatePromises = usersId.map(async (userId) => {
-            const id = Types.ObjectId(userId);
+            const id = new Types.ObjectId(userId);
             const user = await this.usersService.getById(id);
             delete user.role[key];
             return this.usersService.updateUser(user._id, { role: user.role });

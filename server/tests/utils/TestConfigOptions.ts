@@ -18,10 +18,7 @@ export const TestConfigOptions = {
         db: {
             connection_uri: process.env.CI_MONGODB_URI,
             type: "mongodb",
-            options: {
-                useUnifiedTopology: true,
-                useNewUrlParser: true,
-            },
+            options: {},
         },
         feature_flag: {
             url: process.env.GITLAB_FEATURE_FLAG_URL,

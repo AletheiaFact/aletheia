@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
@@ -87,7 +87,7 @@ export class ReviewTaskService {
             const filterValue = filterUser[key];
             if (filterValue === true || filterValue === "true") {
                 const queryPath = this.fieldMap[key];
-                query[queryPath] = Types.ObjectId(this.req.user._id);
+                query[queryPath] = new Types.ObjectId(this.req.user._id);
             }
         });
 
@@ -421,7 +421,7 @@ export class ReviewTaskService {
         }
 
         const stateEvent = this.stateEventService.getStateEventParams(
-            Types.ObjectId(newReviewTask.machine.context.review.target),
+            new Types.ObjectId(newReviewTask.machine.context.review.target),
             typeModel || TypeModel.Published,
             draft,
             newReviewTask._id
@@ -463,7 +463,9 @@ export class ReviewTaskService {
     _returnObjectId(data): any {
         if (Array.isArray(data)) {
             return data.map((item) =>
-                item._id ? Types.ObjectId(item._id) || "" : Types.ObjectId(item)
+                item._id
+                    ? new Types.ObjectId(item._id) || ""
+                    : new Types.ObjectId(item)
             );
         }
     }
@@ -479,7 +481,9 @@ export class ReviewTaskService {
         return this.commentService.create(newCrossCheckingComment);
     }
 
-    async create(reviewTaskBody: CreateReviewTaskDTO) {
+    async create(
+        reviewTaskBody: CreateReviewTaskDTO
+    ): Promise<ReviewTaskDocument | UpdateWriteOpResult> {
         const reviewDataBody = reviewTaskBody.machine.context.reviewData;
         const reviewTask = await this.getReviewTaskByDataHash(
             reviewTaskBody.data_hash
@@ -499,12 +503,12 @@ export class ReviewTaskService {
 
         if (reviewDataBody.reviewerId) {
             reviewTaskBody.machine.context.reviewData.reviewerId =
-                Types.ObjectId(reviewDataBody.reviewerId) || "";
+                new Types.ObjectId(reviewDataBody.reviewerId) || "";
         }
 
         if (reviewDataBody.crossCheckerId) {
             reviewTaskBody.machine.context.reviewData.crossCheckerId =
-                Types.ObjectId(reviewDataBody.crossCheckerId) || "";
+                new Types.ObjectId(reviewDataBody.crossCheckerId) || "";
         }
 
         if (reviewDataBody.reviewComments) {
@@ -553,7 +557,7 @@ export class ReviewTaskService {
         nameSpace: string,
         reportModel: string,
         history: boolean = true
-    ) {
+    ): Promise<UpdateWriteOpResult> {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
@@ -777,7 +781,9 @@ export class ReviewTaskService {
             reviewData.reviewComments = [];
         }
 
-        reviewData.reviewComments.push(Types.ObjectId(newComment?._id));
+        reviewData.reviewComments.push(
+            new Types.ObjectId(newComment._id as string)
+        );
 
         const { machine } = await this.ReviewTaskModel.findOneAndUpdate(
             { _id: reviewTask._id },
@@ -792,7 +798,7 @@ export class ReviewTaskService {
     }
 
     async deleteComment(data_hash, commentId) {
-        const commentIdObject = Types.ObjectId(commentId);
+        const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         const reviewData = reviewTask.machine.context.reviewData;
         reviewData.reviewComments = reviewData.reviewComments.filter(

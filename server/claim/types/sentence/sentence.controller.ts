@@ -4,6 +4,7 @@ import { ApiTags } from "@nestjs/swagger";
 import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
 import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
 import { Auth } from "../../../auth/decorators/auth.decorator";
+import { UpdateWriteOpResult } from "mongoose";
 
 @Controller()
 export class SentenceController {
@@ -32,7 +33,10 @@ export class SentenceController {
 
     @ApiTags("claim")
     @Put("api/sentence/:data_hash")
-    update(@Param("data_hash") data_hash, @Body() topics) {
+    update(
+        @Param("data_hash") data_hash,
+        @Body() topics
+    ): Promise<UpdateWriteOpResult> {
         return this.sentenceService.updateSentenceWithTopics(topics, data_hash);
     }
 }
