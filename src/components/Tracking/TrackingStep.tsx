@@ -54,11 +54,15 @@ const TrackingStep = ({
                     {t(`verificationRequest:${translationKey}`)}
                 </Typography>
 
-                {stepDate && (
+                {stepDate ? (
                     <Typography variant="caption" className="dateLabel">
-                        <LocalizedDate date={stepDate} showTime />
+                        {stepDate === "noData" ? (
+                            t("tracking:noDateFound")
+                        ) : (
+                            <LocalizedDate date={stepDate} showTime />
+                        )}
                     </Typography>
-                )}
+                ) : null}
             </Grid>
 
             <Typography variant="body2" className="description">

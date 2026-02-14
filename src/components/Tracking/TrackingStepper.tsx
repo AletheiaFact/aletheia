@@ -24,6 +24,10 @@ const TrackingStepper = ({
 
     const getDateForStep = (stepStatus: VerificationRequestStatus) => {
         const history = historyEvents.find(history => history.status === stepStatus);
+        /// This is only necessary because we are not creating histories for this step, so it's good UX to provide feedback. This will no longer be necessary once all steps have a history. Tracked in issue #2244
+        if (stepStatus === VerificationRequestStatus.IN_TRIAGE) {
+            return "noData"
+        }
         return history ? new Date(history.date) : null;
     };
 

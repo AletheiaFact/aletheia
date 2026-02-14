@@ -18,7 +18,7 @@ interface HistoryItem {
 
 interface TrackingStepProps {
     stepKey: string;
-    stepDate: Date | null;
+    stepDate: Date | "noData" | null;
     isCompleted: boolean;
     isDeclined: boolean;
     isMinimal?: boolean
