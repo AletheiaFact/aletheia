@@ -32,7 +32,7 @@ const ContentWrapper = styled.div`
     word-wrap: break-word;
     overflow: hidden;
     width: 50vw;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         flex-direction: column;
         width: 70vw;
         flex-wrap: "wrap";
@@ -44,6 +44,7 @@ const MetaChipContainer = styled(Grid)`
     justify-content: space-around;
     margin-top: 16px;
     flex-wrap: wrap;
+    gap: 2px;
 `;
 
 const smallGreyIcon = { fontSize: 18, color: "grey" };

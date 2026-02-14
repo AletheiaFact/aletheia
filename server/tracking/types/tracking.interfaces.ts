@@ -1,11 +1,11 @@
 import { VerificationRequestStatus } from "../../verification-request/dto/types";
 
 export interface TrackingResponseDTO {
-  currentStatus: VerificationRequestStatus;
-  historyEvents: HistoryItem[];
+    currentStatus: string;
+    historyEvents: HistoryItem[];
 }
 interface HistoryItem {
-  id: string;
-  status: VerificationRequestStatus;
-  date: Date;
+    id: string;
+    status: VerificationRequestStatus;
+    date: Date;
 }

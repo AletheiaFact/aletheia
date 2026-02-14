@@ -9,6 +9,7 @@ import { currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import EditIcon from '@mui/icons-material/Edit';
 import EditVerificationRequestDrawer from "./EditVerificationRequestDrawer";
+import TrackingCard from "../Tracking/TrackingCard";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,
@@ -29,8 +30,7 @@ const VerificationRequestMainContent = ({
 
     return (
         <main className="container">
-            <Grid item xs={12} lg={10} xl={8} justifyContent="center">
-              <Box className="box-title">
+            <Box className="box-title">
                 <Typography className="title" variant="h1">
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
@@ -43,18 +43,26 @@ const VerificationRequestMainContent = ({
                             onClick={() => setOpenEditDrawer(true)} />
                     </IconButton>
                 )}
+                {openEditDrawer && (
+                    <EditVerificationRequestDrawer
+                        open={openEditDrawer}
+                        onClose={() => setOpenEditDrawer(false)}
+                        verificationRequest={currentRequest}
+                        onSave={handleSave}
+                    />
+                )}
             </Box>
-
-            {openEditDrawer && (
-                <EditVerificationRequestDrawer
-                    open={openEditDrawer}
-                    onClose={() => setOpenEditDrawer(false)}
-                    verificationRequest={currentRequest}
-                    onSave={handleSave}
-                />
-            )}
-
-            <VerificationRequestCard verificationRequest={currentRequest} t={t} />
+            <Grid container xs={12} spacing={2} alignItems="stretch">
+                <Grid item xs={12} lg={7} xl={8}>
+                    <VerificationRequestCard verificationRequest={currentRequest} t={t} style={{ height: "100%" }} />
+                </Grid>
+                <Grid item xs={12} lg={5} xl={4}>
+                    <TrackingCard
+                        verificationRequestId={content._id}
+                        isMinimal={true}
+                    />
+                </Grid>
+            </Grid>
             {!vw.xs &&
                 role !== Roles.Regular &&
                 verificationRequestGroup?.length > 0 && (
@@ -66,7 +74,6 @@ const VerificationRequestMainContent = ({
                         openDrawer={openDrawer}
                     />
                 )}
-            </Grid>    
         </main>
     );
 };
