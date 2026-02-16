@@ -1,6 +1,7 @@
 import { Controller, Param, Put, Body, Get } from "@nestjs/common";
 import { ImageService } from "./image.service";
 import { ApiTags } from "@nestjs/swagger";
+import { UpdateWriteOpResult } from "mongoose";
 
 @Controller()
 export class ImageController {
@@ -14,7 +15,10 @@ export class ImageController {
 
     @ApiTags("claim")
     @Put("api/image/:data_hash")
-    update(@Param("data_hash") data_hash, @Body() topics) {
+    update(
+        @Param("data_hash") data_hash,
+        @Body() topics
+    ): Promise<UpdateWriteOpResult> {
         return this.imageService.updateImageWithTopics(topics, data_hash);
     }
 }

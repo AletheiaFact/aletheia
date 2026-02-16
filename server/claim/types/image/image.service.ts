@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
-import { Model } from "mongoose";
+import { Model, UpdateWriteOpResult } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
     TargetModel,
@@ -76,7 +76,10 @@ export class ImageService {
         }
     }
 
-    async updateImageWithTopics(topics, data_hash) {
+    async updateImageWithTopics(
+        topics,
+        data_hash
+    ): Promise<UpdateWriteOpResult> {
         const image = await this.getByDataHash(data_hash);
 
         const newImage = {
