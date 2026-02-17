@@ -52,7 +52,7 @@ const VerificationRequestMainContent = ({
                     />
                 )}
             </Box>
-            <Grid container xs={12} spacing={2} alignItems="stretch">
+            <Grid container spacing={2} alignItems="stretch">
                 <Grid item xs={12} lg={7} xl={8}>
                     <VerificationRequestCard verificationRequest={currentRequest} t={t} style={{ height: "100%" }} />
                 </Grid>
