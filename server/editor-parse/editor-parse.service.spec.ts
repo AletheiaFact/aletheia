@@ -6,22 +6,22 @@ import { RemirrorJSON } from "remirror";
 
 /**
  * EditorParseService Unit Test Suite
- * 
+ *
  * Tests the bidirectional transformation service that converts between different
  * representation formats for the collaborative fact-checking editor system.
- * 
+ *
  * Business Context:
  * The editor parse service handles content transformation between three key formats:
  * 1. Schema format - Internal data structure with source references
  * 2. Editor format - Remirror JSON for rich text editing
  * 3. HTML format - Final rendered output for display
- * 
+ *
  * Core Functionality:
  * - Schema ↔ Editor: Bidirectional conversion for editing workflows
  * - Schema → HTML: Rendering for final display with source citations
  * - Source link processing: Converting markup references to interactive citations
  * - Content validation: Ensuring data integrity across transformations
- * 
+ *
  * Data Flow:
  * 1. User creates content in editor (Remirror JSON)
  * 2. Editor → Schema conversion for storage and processing
@@ -158,19 +158,19 @@ describe("EditorParseService", () => {
     describe("parse()", () => {
         /**
          * Test: Schema to Editor Conversion - Rich Text Structure Generation
-         * 
+         *
          * Purpose: Validates conversion from internal schema format to Remirror editor format
          * Business Logic:
          * - Transforms schema content structure to Remirror JSON nodes
          * - Converts source references to link marks with metadata
          * - Organizes content by section types (questions, summary, report, verification)
          * - Maintains source attribution and link relationships
-         * 
+         *
          * Test Data:
          * - Schema with questions, summary, report (with source), verification
          * - Source reference: {{uniqueId|duplicated}} → link mark with href
          * - Expected Remirror JSON with proper node structure
-         * 
+         *
          * Validates:
          * - Correct Remirror document structure (doc → sections → paragraphs → text)
          * - Source markup conversion to link marks
@@ -187,19 +187,19 @@ describe("EditorParseService", () => {
 
         /**
          * Test: Editor to Schema Conversion - Content Structure Extraction
-         * 
+         *
          * Purpose: Validates conversion from Remirror editor format to internal schema
          * Business Logic:
          * - Extracts content from Remirror JSON nodes by section type
          * - Converts link marks back to source reference markup
          * - Organizes content into schema structure with source metadata
          * - Preserves source relationships and attribution data
-         * 
+         *
          * Test Data:
          * - Remirror JSON with structured content sections
          * - Link marks with id, href, and target attributes
          * - Expected schema format with {{id|text}} source references
-         * 
+         *
          * Validates:
          * - Correct schema content extraction from editor nodes
          * - Link mark conversion to source markup format
@@ -216,19 +216,19 @@ describe("EditorParseService", () => {
 
         /**
          * Test: Schema to HTML Conversion - Rendering with Citations
-         * 
+         *
          * Purpose: Validates conversion from schema format to final HTML display format
          * Business Logic:
          * - Renders schema content as HTML with proper markup
          * - Converts source references to interactive citation links
          * - Generates superscript numbering for source citations
          * - Creates accessible link structure with proper attributes
-         * 
+         *
          * Test Data:
          * - Schema content with embedded source references
          * - Source metadata with href, textRange, targetText, and sup numbering
          * - Expected HTML with <div>, <p>, <a>, and <sup> elements
-         * 
+         *
          * Validates:
          * - Correct HTML structure generation (div containers, paragraphs)
          * - Source reference conversion to citation links
@@ -244,19 +244,19 @@ describe("EditorParseService", () => {
 
         /**
          * Test: Source Position Accuracy - Citation Placement Validation
-         * 
+         *
          * Purpose: Validates accurate positioning of source citations in HTML output
          * Business Logic:
          * - Ensures source citations appear at correct text positions
          * - Maintains source reference integrity during HTML conversion
          * - Preserves citation context and readability
          * - Validates superscript numbering and link formatting
-         * 
+         *
          * Test Data:
          * - Report text: "duplicated word {{uniqueId|duplicated}}"
          * - Expected HTML: "duplicated word <a href='#duplicated' rel='noopener noreferrer nofollow'>duplicated<sup>1</sup></a>"
          * - Source citation with proper attributes and superscript
-         * 
+         *
          * Validates:
          * - Exact text position of source citations
          * - Correct HTML link generation with href and rel attributes
@@ -272,19 +272,19 @@ describe("EditorParseService", () => {
 
         /**
          * Test: Bidirectional Source Processing - Editor Link Mark Accuracy
-         * 
+         *
          * Purpose: Validates accurate source processing in editor-to-schema conversion
          * Business Logic:
          * - Converts Remirror link marks back to schema markup format
          * - Maintains source reference position and metadata accuracy
          * - Ensures bidirectional conversion consistency
          * - Preserves source attribution and text relationships
-         * 
+         *
          * Test Data:
          * - Remirror editor content with link marks containing source metadata
          * - Link marks with id, href, target attributes on specific text ranges
          * - Expected schema markup: "duplicated word {{uniqueId|duplicated}}"
-         * 
+         *
          * Validates:
          * - Accurate conversion from link marks to schema markup
          * - Source position preservation in text content
@@ -340,12 +340,14 @@ describe("EditorParseService", () => {
         };
 
         const expectedSchemaWithLineBreaks = {
-            summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+            summary:
+                "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
             sources: [],
         };
 
         const expectedHtmlWithLineBreaks = {
-            summary: "<div><p>First paragraph with important information.</p><p>Second paragraph after line break.</p><p>Third paragraph with conclusion.</p></div>",
+            summary:
+                "<div><p>First paragraph with important information.</p><p>Second paragraph after line break.</p><p>Third paragraph with conclusion.</p></div>",
         };
 
         it("Should preserve line breaks when converting from editor to schema", async () => {
@@ -353,13 +355,16 @@ describe("EditorParseService", () => {
                 multiParagraphEditorContent
             );
 
-            expect(schemaResult.summary).toEqual(expectedSchemaWithLineBreaks.summary);
-            expect(schemaResult.summary.includes('\n')).toBe(true);
+            expect(schemaResult.summary).toEqual(
+                expectedSchemaWithLineBreaks.summary
+            );
+            expect(schemaResult.summary.includes("\n")).toBe(true);
         });
 
         it("Should convert line breaks to separate <p> elements in HTML output for semantic HTML", async () => {
             const schemaWithLineBreaks = {
-                summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+                summary:
+                    "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
                 sources: [],
             };
 
@@ -367,14 +372,17 @@ describe("EditorParseService", () => {
                 schemaWithLineBreaks
             );
 
-            expect(htmlResult.summary).toEqual(expectedHtmlWithLineBreaks.summary);
-            expect(htmlResult.summary.includes('<p>')).toBe(true);
-            expect(htmlResult.summary.split('<p>').length - 1).toBe(3); // Should have 3 paragraphs
+            expect(htmlResult.summary).toEqual(
+                expectedHtmlWithLineBreaks.summary
+            );
+            expect(htmlResult.summary.includes("<p>")).toBe(true);
+            expect(htmlResult.summary.split("<p>").length - 1).toBe(3); // Should have 3 paragraphs
         });
 
         it("Should convert schema with line breaks back to multiple paragraphs in editor", async () => {
             const schemaWithLineBreaks = {
-                summary: "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
+                summary:
+                    "First paragraph with important information.\nSecond paragraph after line break.\nThird paragraph with conclusion.",
                 sources: [],
             };
 
@@ -385,16 +393,23 @@ describe("EditorParseService", () => {
             expect(editorResult.content).toHaveLength(1);
             expect(editorResult.content[0].type).toBe("summary");
             expect(editorResult.content[0].content).toHaveLength(3); // Should have 3 paragraphs
-            
+
             // Verify each paragraph content
-            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph with important information.");
-            expect(editorResult.content[0].content[1].content[0].text).toBe("Second paragraph after line break.");
-            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph with conclusion.");
+            expect(editorResult.content[0].content[0].content[0].text).toBe(
+                "First paragraph with important information."
+            );
+            expect(editorResult.content[0].content[1].content[0].text).toBe(
+                "Second paragraph after line break."
+            );
+            expect(editorResult.content[0].content[2].content[0].text).toBe(
+                "Third paragraph with conclusion."
+            );
         });
 
         it("Should handle empty paragraphs (multiple consecutive line breaks)", async () => {
             const schemaWithEmptyLines = {
-                summary: "First paragraph.\n\nThird paragraph after empty line.",
+                summary:
+                    "First paragraph.\n\nThird paragraph after empty line.",
                 sources: [],
             };
 
@@ -403,9 +418,13 @@ describe("EditorParseService", () => {
             );
 
             expect(editorResult.content[0].content).toHaveLength(3);
-            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph.");
+            expect(editorResult.content[0].content[0].content[0].text).toBe(
+                "First paragraph."
+            );
             expect(editorResult.content[0].content[1].content).toHaveLength(0); // Empty paragraph
-            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph after empty line.");
+            expect(editorResult.content[0].content[2].content[0].text).toBe(
+                "Third paragraph after empty line."
+            );
         });
 
         it("Should maintain backward compatibility with single paragraph content", async () => {
@@ -417,9 +436,11 @@ describe("EditorParseService", () => {
             const editorResult = await editorParseService.schema2editor(
                 singleParagraphSchema
             );
-            
+
             expect(editorResult.content[0].content).toHaveLength(1);
-            expect(editorResult.content[0].content[0].content[0].text).toBe("Single paragraph without line breaks.");
+            expect(editorResult.content[0].content[0].content[0].text).toBe(
+                "Single paragraph without line breaks."
+            );
         });
 
         it("Should preserve line breaks with sources (marked content)", async () => {
@@ -471,8 +492,10 @@ describe("EditorParseService", () => {
                 multiParagraphWithSource
             );
 
-            expect(schemaResult.report).toContain('\n');
-            expect(schemaResult.report).toEqual("First paragraph with {{sourceId|source}}\nSecond paragraph continues here.");
+            expect(schemaResult.report).toContain("\n");
+            expect(schemaResult.report).toEqual(
+                "First paragraph with {{sourceId|source}}\nSecond paragraph continues here."
+            );
         });
     });
 
@@ -550,11 +573,13 @@ describe("EditorParseService", () => {
             );
 
             // Verify content structure
-            expect(schemaResult.report).toEqual("First paragraph with {{source1|first source}} and more text.\nSecond paragraph has {{source2|second source}} here.");
-            
+            expect(schemaResult.report).toEqual(
+                "First paragraph with {{source1|first source}} and more text.\nSecond paragraph has {{source2|second source}} here."
+            );
+
             // Verify both sources are captured
             expect(schemaResult.sources).toHaveLength(2);
-            
+
             // Verify first source
             expect(schemaResult.sources[0]).toMatchObject({
                 href: "https://source1.com",
@@ -562,9 +587,9 @@ describe("EditorParseService", () => {
                     field: "report",
                     targetText: "first source",
                     id: "source1",
-                })
+                }),
             });
-            
+
             // Verify second source
             expect(schemaResult.sources[1]).toMatchObject({
                 href: "https://source2.com",
@@ -572,7 +597,7 @@ describe("EditorParseService", () => {
                     field: "report",
                     targetText: "second source",
                     id: "source2",
-                })
+                }),
             });
         });
 
@@ -586,8 +611,10 @@ describe("EditorParseService", () => {
                 schemaWithLineBreaks
             );
 
-            expect(htmlResult.report).toContain('<p>');
-            expect(htmlResult.report).toBe('<div><p>First paragraph with some text.</p><p>Second paragraph with more text.</p></div>');
+            expect(htmlResult.report).toContain("<p>");
+            expect(htmlResult.report).toBe(
+                "<div><p>First paragraph with some text.</p><p>Second paragraph with more text.</p></div>"
+            );
         });
 
         it("Should use <br> tags for content with empty lines (visual spacing)", async () => {
@@ -600,13 +627,16 @@ describe("EditorParseService", () => {
                 schemaWithEmptyLines
             );
 
-            expect(htmlResult.report).toContain('<br>');
-            expect(htmlResult.report).toBe('<div><p>First paragraph with content.<br><br>Third paragraph after empty line.</p></div>');
+            expect(htmlResult.report).toContain("<br>");
+            expect(htmlResult.report).toBe(
+                "<div><p>First paragraph with content.<br><br>Third paragraph after empty line.</p></div>"
+            );
         });
 
         it("Should handle empty paragraphs in editor conversion", async () => {
             const schemaWithEmptyParagraph = {
-                summary: "First paragraph text.\n\nThird paragraph after empty line.",
+                summary:
+                    "First paragraph text.\n\nThird paragraph after empty line.",
                 sources: [],
             };
 
@@ -616,17 +646,21 @@ describe("EditorParseService", () => {
 
             // Should have 3 paragraphs: content, empty, content
             expect(editorResult.content[0].content).toHaveLength(3);
-            
+
             // First paragraph should have content
             expect(editorResult.content[0].content[0].content).toHaveLength(1);
-            expect(editorResult.content[0].content[0].content[0].text).toBe("First paragraph text.");
-            
+            expect(editorResult.content[0].content[0].content[0].text).toBe(
+                "First paragraph text."
+            );
+
             // Second paragraph should be empty
             expect(editorResult.content[0].content[1].content).toHaveLength(0);
-            
+
             // Third paragraph should have content
             expect(editorResult.content[0].content[2].content).toHaveLength(1);
-            expect(editorResult.content[0].content[2].content[0].text).toBe("Third paragraph after empty line.");
+            expect(editorResult.content[0].content[2].content[0].text).toBe(
+                "Third paragraph after empty line."
+            );
         });
 
         it("Should preserve source text ranges when converting back from schema with line breaks", async () => {
@@ -638,7 +672,7 @@ describe("EditorParseService", () => {
                         props: {
                             field: "report",
                             textRange: [19, 43],
-                            targetText: "marked text", 
+                            targetText: "marked text",
                             sup: 1,
                             id: "sourceA",
                         },
@@ -647,16 +681,22 @@ describe("EditorParseService", () => {
             };
 
             // Convert to editor and back to schema
-            const editorResult = await editorParseService.schema2editor(originalSchemaWithSources);
-            const roundTripSchema = await editorParseService.editor2schema(editorResult);
+            const editorResult = await editorParseService.schema2editor(
+                originalSchemaWithSources
+            );
+            const roundTripSchema = await editorParseService.editor2schema(
+                editorResult
+            );
 
             // Content should be preserved with line breaks
-            expect(roundTripSchema.report).toContain('\n');
-            expect(roundTripSchema.report).toContain('{{sourceA|marked text}}');
-            
+            expect(roundTripSchema.report).toContain("\n");
+            expect(roundTripSchema.report).toContain("{{sourceA|marked text}}");
+
             // Source should be preserved
             expect(roundTripSchema.sources).toHaveLength(1);
-            expect((roundTripSchema.sources[0] as any).props.targetText).toBe("marked text");
+            expect((roundTripSchema.sources[0] as any).props.targetText).toBe(
+                "marked text"
+            );
         });
 
         it("Should handle source annotations across paragraph boundaries correctly", async () => {
@@ -737,14 +777,248 @@ describe("EditorParseService", () => {
             );
 
             // Verify structure with line breaks
-            expect(schemaResult.summary).toBe("Start of summary with {{imp-source|important source}}\nSecond paragraph without sources.\nThird paragraph with {{another-source|another source}} at end.");
-            
+            expect(schemaResult.summary).toBe(
+                "Start of summary with {{imp-source|important source}}\nSecond paragraph without sources.\nThird paragraph with {{another-source|another source}} at end."
+            );
+
             // Should have exactly 2 sources
             expect(schemaResult.sources).toHaveLength(2);
-            
+
             // Both sources should be properly indexed
-            expect((schemaResult.sources[0] as any).props.targetText).toBe("important source");
-            expect((schemaResult.sources[1] as any).props.targetText).toBe("another source");
+            expect((schemaResult.sources[0] as any).props.targetText).toBe(
+                "important source"
+            );
+            expect((schemaResult.sources[1] as any).props.targetText).toBe(
+                "another source"
+            );
+        });
+    });
+
+    describe("removeTrailingParagraph()", () => {
+        /**
+         * Test: Trailing Paragraph Removal - Core Functionality
+         *
+         * Purpose: Validates removal of trailing empty paragraphs added by Remirror's
+         * TrailingNodeExtension before content is persisted to the database.
+         *
+         * Business Context:
+         * Remirror's TrailingNodeExtension appends an empty paragraph at the end of
+         * documents to allow users to insert new nodes. This paragraph is a UX concern
+         * and should not be stored in the database, as it causes conflicts when the
+         * editor reloads content (duplicate trailing nodes, insertion issues).
+         *
+         * The removeTrailingParagraph method is used in two paths:
+         * 1. Write path (frontend): Cleans content before persisting via XState actions
+         * 2. Read path (backend): Cleans legacy data when serving editor content via API
+         */
+
+        it("Should remove a trailing paragraph from editor content", () => {
+            const editorWithTrailing: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "questions",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [{ type: "text", text: "Question 1" }],
+                            },
+                        ],
+                    },
+                    {
+                        type: "summary",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "Summary text" },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: "paragraph",
+                    },
+                ],
+            };
+
+            const result =
+                editorParseService.removeTrailingParagraph(editorWithTrailing);
+
+            expect(result.content).toHaveLength(2);
+            expect(result.content[0].type).toBe("questions");
+            expect(result.content[1].type).toBe("summary");
+        });
+
+        it("Should not modify content when the last node is not a paragraph", () => {
+            const editorWithoutTrailing: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "questions",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [{ type: "text", text: "Question 1" }],
+                            },
+                        ],
+                    },
+                    {
+                        type: "verification",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "Verification" },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const result = editorParseService.removeTrailingParagraph(
+                editorWithoutTrailing
+            );
+
+            expect(result.content).toHaveLength(2);
+            expect(result.content[0].type).toBe("questions");
+            expect(result.content[1].type).toBe("verification");
+        });
+
+        it("Should handle null or undefined input gracefully", () => {
+            expect(editorParseService.removeTrailingParagraph(null)).toBeNull();
+            expect(
+                editorParseService.removeTrailingParagraph(undefined)
+            ).toBeUndefined();
+        });
+
+        it("Should handle content with missing or non-array content field", () => {
+            const noContent: RemirrorJSON = { type: "doc" };
+            const result =
+                editorParseService.removeTrailingParagraph(noContent);
+            expect(result).toEqual({ type: "doc" });
+        });
+
+        it("Should not mutate the original input object", () => {
+            const original: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    { type: "summary", content: [] },
+                    { type: "paragraph" },
+                ],
+            };
+
+            const originalLength = original.content.length;
+            editorParseService.removeTrailingParagraph(original);
+
+            expect(original.content).toHaveLength(originalLength);
+        });
+
+        it("Should handle a document with only a trailing paragraph", () => {
+            const onlyParagraph: RemirrorJSON = {
+                type: "doc",
+                content: [{ type: "paragraph" }],
+            };
+
+            const result =
+                editorParseService.removeTrailingParagraph(onlyParagraph);
+
+            expect(result.content).toHaveLength(0);
+        });
+
+        it("Should only remove the last paragraph, not inner paragraphs within sections", () => {
+            const editorWithInnerParagraphs: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "report",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "Report line 1" },
+                                ],
+                            },
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "Report line 2" },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: "paragraph",
+                    },
+                ],
+            };
+
+            const result = editorParseService.removeTrailingParagraph(
+                editorWithInnerParagraphs
+            );
+
+            expect(result.content).toHaveLength(1);
+            expect(result.content[0].type).toBe("report");
+            expect(result.content[0].content).toHaveLength(2);
+        });
+    });
+
+    describe("removeTrailingParagraph() integration with read path", () => {
+        /**
+         * Test: End-to-End Read Path - Legacy Data Cleanup
+         *
+         * Purpose: Validates that editor content with a trailing paragraph
+         * (as stored in legacy database records) is cleaned when converted
+         * back through the schema2editor pipeline.
+         *
+         * This simulates the backend read path:
+         * DB (legacy data with trailing <p>) → schema2editor → removeTrailingParagraph → frontend
+         */
+
+        it("Should produce clean editor content from schema round-trip", async () => {
+            const schema: ReviewTaskMachineContextReviewData = {
+                sources: [],
+                questions: ["What is the claim?"],
+                summary: "Summary of the report",
+                report: "Report content here",
+                verification: "Verification details",
+            };
+
+            const editorResult = await editorParseService.schema2editor(schema);
+            const cleaned =
+                editorParseService.removeTrailingParagraph(editorResult);
+
+            cleaned.content.forEach((node) => {
+                expect([
+                    "questions",
+                    "summary",
+                    "report",
+                    "verification",
+                ]).toContain(node.type);
+            });
+        });
+
+        it("Should preserve content integrity after trailing paragraph removal", async () => {
+            const schema: ReviewTaskMachineContextReviewData = {
+                sources: [],
+                questions: ["Question A", "Question B"],
+                summary: "A summary",
+                report: "Report content here",
+                verification: "Verified",
+            };
+
+            const editorResult = await editorParseService.schema2editor(schema);
+            const cleaned =
+                editorParseService.removeTrailingParagraph(editorResult);
+            const roundTripSchema = await editorParseService.editor2schema(
+                cleaned
+            );
+
+            expect(roundTripSchema.questions).toEqual(schema.questions);
+            expect(roundTripSchema.summary).toEqual(schema.summary);
+            expect(roundTripSchema.verification).toEqual(schema.verification);
+            expect(roundTripSchema.report).toEqual(schema.report);
         });
     });
 });

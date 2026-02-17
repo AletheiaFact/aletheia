@@ -96,10 +96,10 @@ export class EditorParser {
      */
     private convertToParagraphElements(content: MultiParagraphContent): string {
         const lines = content.split('\n');
-        
+
         // Check if there are any empty lines (for visual spacing)
         const hasEmptyLines = lines.some(line => line.trim() === '');
-        
+
         if (hasEmptyLines) {
             // Use <br> approach for content with intentional empty lines/spacing
             return this.convertLineBreaksToHtml(content);
@@ -157,7 +157,7 @@ export class EditorParser {
         if (this.isMultiParagraphContent(contentStr)) {
             const lines = contentStr.split('\n');
             const hasEmptyLines = lines.some(line => line.trim() === '');
-            
+
             if (hasEmptyLines) {
                 // Use <br> approach for content with intentional empty lines/spacing
                 const htmlContent = this.convertLineBreaksToHtml(contentStr);
@@ -215,7 +215,7 @@ export class EditorParser {
         if (this.isMultiParagraphContent(joinedContent)) {
             const lines = joinedContent.split('\n');
             const hasEmptyLines = lines.some(line => line.trim() === '');
-            
+
             if (hasEmptyLines) {
                 // Use <br> approach for content with intentional empty lines/spacing
                 const finalContent = this.convertLineBreaksToHtml(joinedContent);
@@ -355,10 +355,10 @@ export class EditorParser {
         { type, content: cardContent }: RemirrorJSON
     ): MultiParagraphContent {
         const paragraphContents: ParagraphContent[] = [];
-        
+
         for (const { content } of cardContent) {
             const textFragments: TextFragment[] = [];
-            
+
             if (content) {
                 for (const { text, marks } of content) {
                     if (marks) {
@@ -376,12 +376,12 @@ export class EditorParser {
                     }
                 }
             }
-            
+
             // Combine all fragments within a paragraph into a single paragraph content
             const paragraphContent: ParagraphContent = textFragments.join("");
             paragraphContents.push(paragraphContent);
         }
-        
+
         // Join paragraphs with newlines to create multi-paragraph content
         return paragraphContents.join("\n") as MultiParagraphContent;
     }
@@ -683,5 +683,23 @@ export class EditorParser {
     extractTextFromMarkUp(fragmentText) {
         const match = fragmentText.match(MarkupCleanerRegex);
         return match ? match[1] : "";
+    }
+
+    removeTrailingParagraph(editorJSON: RemirrorJSON): RemirrorJSON {
+        if (!editorJSON?.content || !Array.isArray(editorJSON.content)) {
+            return editorJSON;
+        }
+
+        const content = [...editorJSON.content];
+        const lastItem = content[content.length - 1];
+
+        if (lastItem?.type === "paragraph") {
+            content.pop();
+        }
+
+        return {
+            ...editorJSON,
+            content,
+        };
     }
 }
