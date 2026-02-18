@@ -25,7 +25,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { Public, AdminOnly, RegularUserOnly } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -389,22 +389,32 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    @Get("verification-request/:data_hash/history")
-    public async verificationRequestHistoryPage(
+    @RegularUserOnly()
+    @Get("verification-request/:data_hash/:viewType")
+    public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
+        const { data_hash, viewType } = req.params;
 
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
 
-        const queryObject = Object.assign(parsedUrl.query, {
-            targetId: verificationRequest._id,
-            targetModel: TargetModel.VerificationRequest,
-        });
+        const view = viewType === "history" ? "/history-page" : "/tracking-page";
 
-        await this.viewService.render(req, res, "/history-page", queryObject);
+        const queryObject = Object.assign(
+            parsedUrl.query,
+            viewType === "history"
+                ? {
+                    targetId: verificationRequest._id,
+                    targetModel: TargetModel.VerificationRequest,
+                }
+                : {
+                    verificationRequestId: verificationRequest._id,
+                }
+        );
+
+        await this.viewService.render(req, res, view, queryObject);
     }
 }

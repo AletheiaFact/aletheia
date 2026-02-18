@@ -36,8 +36,16 @@ const assignUser = () => {
 };
 
 const blockAssignedUserReview = () => {
+    // Wait for the form to be fully loaded with review data (including classification)
+    // before interacting. The classification field has a validation rule, and if its value
+    // hasn't been restored via react-hook-form's reset(reviewData) before the submit button
+    // is clicked, validation fails silently and the state transition never happens.
+    cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     cy.checkRecaptcha();
-    cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
+    cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
+        .should("be.visible")
+        .and("be.enabled")
+        .click();
     cy.get(locators.claimReview.INPUT_REVIEWER)
         .should("exist")
         .type(`${review.username}{downarrow}{downarrow}{enter}`, {
@@ -114,8 +122,10 @@ describe("Test claim review", () => {
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
+        cy.intercept("GET", "/api/reviewtask/hash/*").as("getReviewTask");
         cy.login();
         goToClaimReviewPage();
+        cy.wait("@getReviewTask");
         blockAssignedUserReview();
     });
 });
