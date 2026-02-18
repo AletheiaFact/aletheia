@@ -22,4 +22,5 @@ export const mockQuery = {
 export const mockVerificationRequestModel = {
   find: jest.fn().mockReturnValue(mockQuery),
   aggregate: jest.fn().mockReturnThis(),
+  getById: jest.fn(),
 };

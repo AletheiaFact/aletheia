@@ -32,6 +32,7 @@ const TrackingStep = ({
   stepDate,
   isCompleted,
   isDeclined,
+  isMinimal
 }: TrackingStepProps) => {
   const { t } = useTranslation();
 
@@ -42,6 +43,7 @@ const TrackingStep = ({
 
   return (
     <StepLabelStyled
+      sx={{ padding: isMinimal ? 0 : "8px 0" }}
       icon={<Icon style={{ color }} />}
       error={isDeclined}
       backgroundStatusColor={bg}
@@ -52,11 +54,15 @@ const TrackingStep = ({
           {t(`verificationRequest:${translationKey}`)}
         </Typography>
 
-        {stepDate && (
-          <Typography variant="caption" className="dateLabel">
-            <LocalizedDate date={stepDate} showTime />
-          </Typography>
-        )}
+        {stepDate ? (
+            <Typography variant="caption" className="dateLabel">
+               {stepDate === "noData" ? (
+                    t("tracking:noDateFound")
+               ) : (
+                    <LocalizedDate date={stepDate} showTime />
+               )}
+            </Typography>
+          ) : null}
       </Grid>
 
       <Typography variant="body2" className="description">

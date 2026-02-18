@@ -5,5 +5,6 @@
   "description_POSTED": "Denúncia completa e revisada. Resultados publicados.",
   "description_DECLINED": "Denúncia negada após análise detalhada. Não foi possível confirmar a veracidade dos dados fornecidos.",
   "errorInvalidId": "O identificador da denúncia é inválido.",
-  "errorFetchData": "Não foi possível carregar as informações de rastreamento. Tente novamente."
+  "errorFetchData": "Não foi possível carregar as informações de rastreamento. Tente novamente.",
+  "noDateFound": "Nenhum histórico de data encontrado"
 }

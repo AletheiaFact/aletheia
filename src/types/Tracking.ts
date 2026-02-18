@@ -1,11 +1,13 @@
 import { VerificationRequestStatus } from "./enums";
 interface TrackingCardProps {
   verificationRequestId: string;
+  isMinimal?: boolean
 }
 
 interface TrackingResponseDTO {
   currentStatus: VerificationRequestStatus;
   historyEvents: HistoryItem[];
+  isMinimal?: boolean
 }
 
 interface HistoryItem {
@@ -16,9 +18,10 @@ interface HistoryItem {
 
 interface TrackingStepProps {
   stepKey: string;
-  stepDate: Date | null;
+  stepDate: Date | "noData" | null;
   isCompleted: boolean;
   isDeclined: boolean;
+  isMinimal?: boolean
 }
 
 interface StepLabelStyledProps {
