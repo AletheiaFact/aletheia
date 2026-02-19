@@ -16,8 +16,23 @@ import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import colors from "../../styles/colors";
 import reviewColors from "../../constants/reviewColors";
+import { Content } from "../../types/Content";
 
-const KanbanCard = ({ reviewTask, reviewTaskType }) => {
+interface IKanbanCardProps {
+    reviewTask: {
+        targetId: string;
+        personalityId: string;
+        personalityName: string;
+        contentModel: ContentModelEnum;
+        claimTitle: string;
+        value: string;
+        usersName: string[];
+        content: Content & { href?: string };
+    };
+    reviewTaskType: ReviewTaskTypeEnum;
+}
+
+const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -106,22 +121,10 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                         >
                             {reviewTask.personalityName}
                         </Typography>
-                        {reviewTask.value === "published" && (
-                            <Grid
-                                item
-                                style={{
-                                    display: "flex",
-                                    padding: "4px 4px",
-                                    gap: 3,
-                                    marginBottom: 8,
-                                    backgroundColor: colors.logo,
-                                    borderRadius: 20,
-                                    width: "fit-content",
-                                    alignItems: "center",
-                                }}
-                            >
-                                
+                        {reviewTask.value === "published" &&
+                            reviewTask.content?.props?.classification && (
                                 <Chip
+                                    data-cy="testKanbanClassificationChip"
                                     label={t(
                                         `claimReviewForm:${reviewTask.content.props.classification}`
                                     ).toUpperCase()}
@@ -131,11 +134,15 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
                                         color: colors.white,
                                         fontWeight: 700,
                                         padding: "4px 13px",
-                                        backgroundColor:reviewColors[reviewTask.content.props.classification],
+                                        marginBottom: 8,
+                                        backgroundColor:
+                                            reviewColors[
+                                                reviewTask.content.props
+                                                    .classification
+                                            ],
                                     }}
                                 />
-                            </Grid>
-                        )}
+                            )}
                     </Grid>
                     <Grid
                         item
