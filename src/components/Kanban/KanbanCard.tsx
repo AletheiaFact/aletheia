@@ -135,6 +135,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                                         fontWeight: 700,
                                         padding: "4px 13px",
                                         marginBottom: 8,
+                                        alignSelf: "flex-start",
                                         backgroundColor:
                                             reviewColors[
                                                 reviewTask.content.props
