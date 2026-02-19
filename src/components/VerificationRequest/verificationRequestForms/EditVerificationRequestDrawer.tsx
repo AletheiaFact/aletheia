@@ -35,9 +35,10 @@ const EditVerificationRequestDrawer = ({
                 onSave(response);
                 onClose();
             }
-            setIsLoading(false);
         } catch (error) {
             console.error("Edit Verification Request error", error)
+        } finally {
+            setIsLoading(false);
         }
     };
 

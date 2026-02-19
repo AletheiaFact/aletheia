@@ -24,7 +24,6 @@ const NameSpaceModel = MongooseModule.forFeature([
         AbilityModule,
         ConfigModule,
         NotificationModule,
-        ConfigModule,
     ],
     providers: [NameSpaceService],
     exports: [NameSpaceService],
