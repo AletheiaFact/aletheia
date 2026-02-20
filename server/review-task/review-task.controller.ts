@@ -13,6 +13,7 @@ import {
 import { ReviewTaskService } from "./review-task.service";
 import { CreateReviewTaskDTO } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
+import { SaveDraftDTO } from "./dto/save-draft.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
 import type { Request, Response } from "express";
@@ -97,6 +98,22 @@ export class ReviewTaskController {
             throw new Error("Error validating captcha");
         }
         return this.reviewTaskService.create(createReviewTask);
+    }
+
+    @ApiTags("review-task")
+    @Put("api/reviewtask/save-draft/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async saveDraft(
+        @Param("data_hash") data_hash: string,
+        @Body() saveDraftBody: SaveDraftDTO
+    ) {
+        const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
+            data_hash
+        );
+        if (!reviewTask) {
+            throw new Error("Review task not found");
+        }
+        return this.reviewTaskService.saveDraft(data_hash, saveDraftBody);
     }
 
     @ApiTags("review-task")
