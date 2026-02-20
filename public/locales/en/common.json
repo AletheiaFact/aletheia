@@ -15,5 +15,6 @@
     "captchaLabel": "Verification",
     "change": "Change",
     "approve": "Approve",
-    "reject": "Reject"
+    "reject": "Reject",
+    "viewOnly": "View Only"
 }

@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Grid, Box, Chip, Tooltip } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import React, { useContext, useMemo } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -17,6 +17,7 @@ import CTAFolder from "../Home/CTAFolder/CTAFolder";
 =======
 >>>>>>> 0234bfee (feat: implement centralized RBAC permission system with enhanced UX)
 import SentenceReportContent from "./SentenceReportContent";
+import SentenceReportHeader from "./SentenceReportHeader";
 import { useAtom } from "jotai";
 import {
     debugModeAtom,
@@ -24,13 +25,11 @@ import {
     debugRoleAtom,
     debugAssignmentTypeAtom,
     DebugAssignmentType,
+    isUserLoggedIn,
 } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
-import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { useTranslation } from "next-i18next";
-import userApi from "../../api/userApi";
-import { useState, useEffect } from "react";
 import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
 
 const SentenceReportView = ({
@@ -41,6 +40,7 @@ const SentenceReportView = ({
     componentStyle,
 }) => {
     const { t } = useTranslation();
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
     // Debug panel UI controls (setters only)
     const [debugMode, setDebugMode] = useAtom(debugModeAtom);
     const [debugOverrideRole, setDebugOverrideRole] = useAtom(
@@ -51,9 +51,8 @@ const SentenceReportView = ({
         debugAssignmentTypeAtom
     );
 
-    const { machineService, publishedReview, reviewTaskType } = useContext(
-        ReviewTaskMachineContext
-    );
+    const { machineService, publishedReview, reviewTaskType, reportModel } =
+        useContext(ReviewTaskMachineContext);
 
     // Centralized permissions (includes debug overrides for assignments and roles)
     const permissions = useReviewTaskPermissions();
@@ -92,75 +91,6 @@ const SentenceReportView = ({
         if (typeof state === "string") return state;
         return Object.keys(state)[0] || "unknown";
     }, [machineService.state.value]);
-
-    // State for user name resolution
-    const [userNames, setUserNames] = useState({});
-
-    // Get assigned fact-checker info
-    const assignedFactChecker = useMemo(() => {
-        if (context.reviewerId) {
-            return { id: context.reviewerId, type: "Reviewer" };
-        }
-        if (context.crossCheckerId) {
-            return { id: context.crossCheckerId, type: "Cross-Checker" };
-        }
-        if (context.usersId && context.usersId.length > 0) {
-            return { id: context.usersId[0], type: "Assignee" };
-        }
-        return null;
-    }, [context.reviewerId, context.crossCheckerId, context.usersId]);
-
-    // Fetch user names for assigned users
-    useEffect(() => {
-        const fetchUserNames = async () => {
-            const userIds = [];
-            if (context.reviewerId) userIds.push(context.reviewerId);
-            if (context.crossCheckerId) userIds.push(context.crossCheckerId);
-            if (context.usersId) userIds.push(...context.usersId);
-
-            const names = {};
-            await Promise.all(
-                userIds.map(async (id) => {
-                    try {
-                        const user = await userApi.getById(id);
-                        names[id] = user?.name || user?.email || id;
-                    } catch (error) {
-                        names[id] = id; // Fallback to ID if fetch fails
-                    }
-                })
-            );
-            setUserNames(names);
-        };
-
-        if (assignedFactChecker) {
-            fetchUserNames();
-        }
-    }, [
-        context.reviewerId,
-        context.crossCheckerId,
-        context.usersId,
-        assignedFactChecker,
-    ]);
-
-    // State color mapping
-    const getStateColor = (state: string) => {
-        switch (state) {
-            case ReviewTaskStates.unassigned:
-                return "default";
-            case ReviewTaskStates.assigned:
-                return "primary";
-            case ReviewTaskStates.submitted:
-                return "warning";
-            case ReviewTaskStates.crossChecking:
-                return "info";
-            case ReviewTaskStates.reported:
-                return "secondary";
-            case ReviewTaskStates.published:
-                return "success";
-            default:
-                return "default";
-        }
-    };
 
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
@@ -314,82 +244,16 @@ const SentenceReportView = ({
                         </Box>
                     )}
 
-                    {/* Header with status chips - only show when not published */}
-                    {!(isPublished || publishedReview?.review) && (
-                        <Box
-                            style={{
-                                padding: "16px 20px",
-                                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                                marginBottom: "16px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "12px",
-                                flexWrap: "wrap",
-                                backgroundColor: "rgba(245, 245, 245, 0.5)",
-                                borderRadius: "8px",
-                            }}
-                        >
-                            {/* State chip */}
-                            <Chip
-                                label={
-                                    t(`reviewTask:${currentState}`) ||
-                                    currentState
-                                }
-                                color={getStateColor(currentState)}
-                                variant="filled"
-                                size="medium"
-                                style={{
-                                    fontWeight: 600,
-                                    fontSize: "0.875rem",
-                                }}
+                    {/* Header with status chips - only show for logged-in users when not published */}
+                    {isLoggedIn &&
+                        !(isPublished || publishedReview?.review) && (
+                            <SentenceReportHeader
+                                context={context}
+                                currentState={currentState}
+                                editorReadonly={permissions.editorReadonly}
+                                reportModel={reportModel}
                             />
-
-                            {/* Assigned fact-checker chip */}
-                            {assignedFactChecker && (
-                                <Chip
-                                    label={`${assignedFactChecker.type}: ${
-                                        userNames[assignedFactChecker.id] ||
-                                        assignedFactChecker.id
-                                    }`}
-                                    color="primary"
-                                    variant="outlined"
-                                    size="medium"
-                                    style={{
-                                        fontWeight: 500,
-                                        fontSize: "0.875rem",
-                                    }}
-                                />
-                            )}
-
-                            {/* View Only indicator */}
-                            {permissions.editorReadonly && (
-                                <Tooltip
-                                    title={
-                                        t("claimReviewForm:viewOnlyMode") ||
-                                        "You are viewing this report in read-only mode. The content is visible but cannot be edited."
-                                    }
-                                    arrow
-                                    placement="top"
-                                >
-                                    <Chip
-                                        label={
-                                            t("common:viewOnly") || "View Only"
-                                        }
-                                        color="warning"
-                                        variant="outlined"
-                                        size="medium"
-                                        style={{
-                                            backgroundColor:
-                                                "rgba(255, 193, 7, 0.1)",
-                                            cursor: "help",
-                                            fontWeight: 500,
-                                            fontSize: "0.875rem",
-                                        }}
-                                    />
-                                </Tooltip>
-                            )}
-                        </Box>
-                    )}
+                        )}
 
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />

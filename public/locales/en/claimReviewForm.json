@@ -57,5 +57,10 @@
     "isSensitiveLabel": "Sensitve content",
     "isSensitive": "This verification request contains sensitve content",
     "viewPreview": "View preview",
-    "hidePreview": "Hide preview"
+    "hidePreview": "Hide preview",
+    "assigneeChipLabel": "Assignee",
+    "reviewerChipLabel": "Reviewer",
+    "crossCheckerChipLabel": "Cross-Checker",
+    "validationErrorTitle": "Please fix the following errors",
+    "validationErrorDescription": "Some required fields are missing or invalid. Please review the highlighted fields below."
 }

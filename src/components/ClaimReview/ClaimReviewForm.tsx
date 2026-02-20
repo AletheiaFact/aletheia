@@ -51,10 +51,10 @@ const ClaimReviewForm = ({
     const [formCollapsed, setFormCollapsed] = useState(
         isUnassigned && !reportModel
     );
-    
+
     // Use centralized permission system
     const permissions = useReviewTaskPermissions();
-    const showForm = permissions.showForm;
+    const showForm = permissions.showForm || permissions.canViewEditor;
     const canInteractWithForm = permissions.canSubmitActions.length > 0;
 
     useEffect(() => {

@@ -33,10 +33,13 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
     const [role] = useAtom(currentUserRole);
     const [debug] = useAtom(debugInfo);
 
-    // Get current state and review data
+    // Get current state and review data (flatten compound sub-states)
     const currentState = useSelector(
         machineService,
-        (state) => state.value as string
+        (state: { value: string | Record<string, unknown> }) => {
+            const value = state.value;
+            return typeof value === "string" ? value : Object.keys(value)[0];
+        }
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
 

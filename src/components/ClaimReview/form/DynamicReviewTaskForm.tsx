@@ -11,8 +11,8 @@ import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import Typography from "@mui/material/Typography";
 import colors from "../../../styles/colors";
+import AletheiaAlert from "../../AletheiaAlert";
 import {
     isUserLoggedIn,
     currentUserId,
@@ -70,6 +70,7 @@ const DynamicReviewTaskForm = ({
         data: any;
     } | null>(null);
     const pendingCaptchaToken = useRef<string>("");
+    const errorAlertRef = useRef<HTMLDivElement>(null);
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
@@ -268,12 +269,47 @@ const DynamicReviewTaskForm = ({
         return permissions.showForm && canInteract;
     };
 
+    const onValidationError = (formErrors) => {
+        const firstErrorField = Object.keys(formErrors)[0];
+        if (firstErrorField) {
+            const el = document.getElementById(`field-${firstErrorField}`);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+        }
+        errorAlertRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        });
+    };
+
     const showButtons = canUserInteractWithForm();
 
     return (
-        <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+        <form
+            style={{ width: "100%" }}
+            onSubmit={handleSubmit(onSubmit, onValidationError)}
+        >
             {form && (
                 <>
+                    {Object.keys(errors).length > 0 && (
+                        <div
+                            ref={errorAlertRef}
+                            style={{ margin: "0 20px 16px" }}
+                        >
+                            <AletheiaAlert
+                                type="error"
+                                message={t(
+                                    "claimReviewForm:validationErrorTitle"
+                                )}
+                                description={t(
+                                    "claimReviewForm:validationErrorDescription"
+                                )}
+                                showIcon
+                            />
+                        </div>
+                    )}
                     <DynamicForm
                         currentForm={form}
                         machineValues={reviewData}
@@ -282,13 +318,12 @@ const DynamicReviewTaskForm = ({
                     />
                     <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
-                            <Typography
-                                variant="body1"
-                                style={{ color: colors.error, fontSize: 16 }}
+                            <AletheiaAlert
+                                type="error"
+                                message={t("reviewTask:invalidReviewerMessage")}
+                                showIcon
                                 data-cy="testReviewerError"
-                            >
-                                {t("reviewTask:invalidReviewerMessage")}
-                            </Typography>
+                            />
                         )}
                     </div>
                 </>

@@ -11,21 +11,21 @@ export interface UserAssignments {
 export interface PermissionContext {
     // State access
     canAccessState: boolean;
-    
+
     // Editor permissions
     canViewEditor: boolean;
     canEditEditor: boolean;
     canSaveDraft: boolean;
-    
+
     // Form permissions
     canSubmitActions: ReviewTaskEvents[];
     canSelectUsers: boolean;
-    
+
     // UI control
     editorReadonly: boolean;
     showForm: boolean;
     showSaveDraftButton: boolean;
-    formType: 'editor' | 'selection' | 'comment' | 'readonly' | 'none';
+    formType: "editor" | "selection" | "comment" | "readonly" | "none";
 }
 
 export interface PermissionInput {
@@ -36,14 +36,30 @@ export interface PermissionInput {
     availableEvents: ReviewTaskEvents[];
 }
 
+// Read-only view permissions for non-assigned users
+// They can see the editor content but cannot interact with the form
+const READONLY_VIEW_PERMISSIONS: PermissionContext = {
+    canAccessState: true,
+    canViewEditor: true,
+    canEditEditor: false,
+    canSaveDraft: false,
+    canSubmitActions: [],
+    canSelectUsers: false,
+    editorReadonly: true,
+    showForm: false,
+    showSaveDraftButton: false,
+    formType: "readonly",
+};
+
 /**
  * Centralized permission resolver
  * Single source of truth for all permission logic
  */
 export function resolvePermissions(input: PermissionInput): PermissionContext {
-    const { state, userRole, userAssignments, reportModel, availableEvents } = input;
+    const { state, userRole, userAssignments, reportModel, availableEvents } =
+        input;
     const { isAssignee, isReviewer, isCrossChecker, isAdmin } = userAssignments;
-    
+
     // Base permissions - start with most restrictive
     let permissions: PermissionContext = {
         canAccessState: false,
@@ -55,112 +71,144 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
         editorReadonly: true,
         showForm: false,
         showSaveDraftButton: false,
-        formType: 'none'
+        formType: "none",
     };
-    
+
     // State-specific permission logic
     switch (state) {
         case ReviewTaskStates.unassigned:
-            permissions = resolveUnassignedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveUnassignedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.assigned:
-            permissions = resolveAssignedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveAssignedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.reported:
-            permissions = resolveReportedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveReportedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.selectReviewer:
-            permissions = resolveSelectReviewerPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveSelectReviewerPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.selectCrossChecker:
-            permissions = resolveSelectCrossCheckerPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveSelectCrossCheckerPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.crossChecking:
-            permissions = resolveCrossCheckingPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveCrossCheckingPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.addCommentCrossChecking:
-            permissions = resolveAddCommentCrossCheckingPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveAddCommentCrossCheckingPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.submitted:
-            permissions = resolveSubmittedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveSubmittedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.rejected:
-            permissions = resolveRejectedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolveRejectedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         case ReviewTaskStates.published:
-            permissions = resolvePublishedPermissions(userRole, userAssignments, availableEvents);
+            permissions = resolvePublishedPermissions(
+                userRole,
+                userAssignments,
+                availableEvents
+            );
             break;
-            
+
         default:
             // Keep default restrictive permissions
             break;
     }
-    
+
     // Apply admin override (admins can access most things)
     if (isAdmin) {
         permissions = applyAdminOverride(permissions, state, availableEvents);
     }
-    
+
     // Cross-validation: ensure consistent permission state
     permissions = validatePermissionConsistency(permissions);
-    
+
     return permissions;
 }
 
 // State-specific permission resolvers
 function resolveUnassignedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAdmin } = userAssignments;
-    
-    if (isAdmin) {
+    const canAssign =
+        isAdmin ||
+        userRole === Roles.Reviewer ||
+        userRole === Roles.FactChecker;
+
+    if (canAssign) {
         return {
             canAccessState: true,
             canViewEditor: true,
-            canEditEditor: false, // Admin can see content but shouldn't edit during assignment
+            canEditEditor: false, // Should not edit content during assignment
             canSaveDraft: false,
             canSubmitActions: availableEvents,
             canSelectUsers: true,
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'selection'
+            formType: "selection",
         };
     }
-    
-    // Non-admins cannot access unassigned state
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveAssignedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAssignee, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isAssignee) {
         return {
             canAccessState: true,
@@ -172,31 +220,20 @@ function resolveAssignedPermissions(
             editorReadonly: false,
             showForm: true,
             showSaveDraftButton: true,
-            formType: 'editor'
+            formType: "editor",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveReportedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAssignee, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isAssignee) {
         return {
             canAccessState: true,
@@ -208,31 +245,20 @@ function resolveReportedPermissions(
             editorReadonly: false,
             showForm: true,
             showSaveDraftButton: true,
-            formType: 'editor'
+            formType: "editor",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveSelectReviewerPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAssignee, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isAssignee) {
         return {
             canAccessState: true,
@@ -244,31 +270,20 @@ function resolveSelectReviewerPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'selection'
+            formType: "selection",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveSelectCrossCheckerPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAssignee, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isAssignee) {
         return {
             canAccessState: true,
@@ -280,31 +295,20 @@ function resolveSelectCrossCheckerPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'selection'
+            formType: "selection",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveCrossCheckingPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isCrossChecker, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isCrossChecker) {
         return {
             canAccessState: true,
@@ -316,31 +320,20 @@ function resolveCrossCheckingPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'readonly'
+            formType: "readonly",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveAddCommentCrossCheckingPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isCrossChecker, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isCrossChecker) {
         return {
             canAccessState: true,
@@ -352,31 +345,20 @@ function resolveAddCommentCrossCheckingPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'comment'
+            formType: "comment",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveSubmittedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isReviewer, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isReviewer) {
         return {
             canAccessState: true,
@@ -388,31 +370,20 @@ function resolveSubmittedPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'readonly'
+            formType: "readonly",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolveRejectedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isReviewer, isAdmin } = userAssignments;
-    
+
     if (isAdmin || isReviewer) {
         return {
             canAccessState: true,
@@ -424,61 +395,48 @@ function resolveRejectedPermissions(
             editorReadonly: true,
             showForm: true,
             showSaveDraftButton: false,
-            formType: 'comment'
+            formType: "comment",
         };
     }
-    
-    return {
-        canAccessState: false,
-        canViewEditor: false,
-        canEditEditor: false,
-        canSaveDraft: false,
-        canSubmitActions: [],
-        canSelectUsers: false,
-        editorReadonly: true,
-        showForm: false,
-        showSaveDraftButton: false,
-        formType: 'none'
-    };
+
+    return READONLY_VIEW_PERMISSIONS;
 }
 
 function resolvePublishedPermissions(
-    userRole: Roles, 
-    userAssignments: UserAssignments, 
+    userRole: Roles,
+    userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     const { isAdmin } = userAssignments;
-    
-    // Published content is readonly for everyone, but visible to most
-    const canView = isAdmin || userRole !== Roles.Regular;
-    
+
     return {
-        canAccessState: canView,
-        canViewEditor: canView,
+        canAccessState: true,
+        canViewEditor: true,
         canEditEditor: false,
         canSaveDraft: false,
         canSubmitActions: isAdmin ? availableEvents : [],
         canSelectUsers: false,
         editorReadonly: true,
-        showForm: canView,
+        showForm: isAdmin,
         showSaveDraftButton: false,
-        formType: 'readonly'
+        formType: "readonly",
     };
 }
 
 function applyAdminOverride(
-    permissions: PermissionContext, 
-    state: ReviewTaskStates, 
+    permissions: PermissionContext,
+    state: ReviewTaskStates,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
     // Admins can access most states and see content
     // But respect some restrictions (e.g., not editing during selection)
     const restrictedEditStates = [
+        ReviewTaskStates.unassigned,
         ReviewTaskStates.selectReviewer,
         ReviewTaskStates.selectCrossChecker,
-        ReviewTaskStates.published
+        ReviewTaskStates.published,
     ];
-    
+
     return {
         ...permissions,
         canAccessState: true,
@@ -489,25 +447,27 @@ function applyAdminOverride(
         canSelectUsers: true,
         showForm: true,
         showSaveDraftButton: !restrictedEditStates.includes(state),
-        editorReadonly: restrictedEditStates.includes(state)
+        editorReadonly: restrictedEditStates.includes(state),
     };
 }
 
-function validatePermissionConsistency(permissions: PermissionContext): PermissionContext {
+function validatePermissionConsistency(
+    permissions: PermissionContext
+): PermissionContext {
     // Ensure logical consistency between permissions
     if (!permissions.canEditEditor) {
         permissions.canSaveDraft = false;
         permissions.showSaveDraftButton = false;
         permissions.editorReadonly = true;
     }
-    
+
     if (!permissions.canViewEditor) {
         permissions.canEditEditor = false;
         permissions.canSaveDraft = false;
         permissions.showSaveDraftButton = false;
         permissions.editorReadonly = true;
     }
-    
+
     if (!permissions.canAccessState) {
         permissions.canViewEditor = false;
         permissions.canEditEditor = false;
@@ -516,8 +476,8 @@ function validatePermissionConsistency(permissions: PermissionContext): Permissi
         permissions.canSelectUsers = false;
         permissions.showForm = false;
         permissions.showSaveDraftButton = false;
-        permissions.formType = 'none';
+        permissions.formType = "none";
     }
-    
+
     return permissions;
 }
