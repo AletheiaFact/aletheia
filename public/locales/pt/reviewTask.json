@@ -21,6 +21,8 @@
     "SEND_TO_REVIEW_ERROR": "Erro ao enviar para revisão",
     "ADD_REJECTION_COMMENT_SUCCESS": "Rejeição salva com sucesso",
     "ADD_REJECTION_COMMENT_ERROR": "Erro ao salvar rejeição",
+    "CONFIRM_REJECTION_SUCCESS": "Rejeição confirmada com sucesso",
+    "CONFIRM_REJECTION_ERROR": "Erro ao confirmar a rejeição",
     "PARTIAL_REVIEW_SUCCESS": "Resumo salvo com sucesso",
     "PARTIAL_REVIEW_ERROR": "Erro ao salvar resumo",
     "FULL_REVIEW_SUCCESS": "Resumo salvo com sucesso",

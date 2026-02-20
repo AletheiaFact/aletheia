@@ -39,9 +39,8 @@ interface VisualEditorProviderProps {
 
 export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const editorConfig = new EditorConfig();
-    const { machineService, reportModel, reviewTaskType, publishedReview } = useContext(
-        ReviewTaskMachineContext
-    );
+    const { machineService, reportModel, reviewTaskType, publishedReview } =
+        useContext(ReviewTaskMachineContext);
     const {
         enableCollaborativeEdit,
         enableEditorAnnotations,
@@ -103,10 +102,9 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         [reviewTaskType, websocketProvider, enableEditorAnnotations]
     );
 
-<<<<<<< HEAD
     const editorConfiguration = useMemo(
         () => ({
-            readonly,
+            readonly: permissions.editorReadonly,
             extensions: getExtensions,
             isCollaborative,
             core: { excludeExtensions: ["history"] },
@@ -115,20 +113,13 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
                 ? undefined
                 : (editorContentObject as RemirrorContentType),
         }),
-        [readonly, getExtensions, isCollaborative, editorContentObject]
+        [
+            permissions.editorReadonly,
+            getExtensions,
+            isCollaborative,
+            editorContentObject,
+        ]
     );
-=======
-    const editorConfiguration = {
-        readonly: permissions.editorReadonly,
-        extensions,
-        isCollaborative,
-        core: { excludeExtensions: ["history"] },
-        stringHandler: "html",
-        content: isCollaborative
-            ? undefined
-            : (editorContentObject as RemirrorContentType),
-    };
->>>>>>> c442371d (feat: implement centralized RBAC permission system with enhanced UX)
 
     const value = useMemo(
         () => ({
