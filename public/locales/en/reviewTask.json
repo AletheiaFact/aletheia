@@ -71,5 +71,9 @@
     "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
     "seeFullPage": "See full page",
 
-    "sentenceInfo": "This sentence is being checked by AletheiaFact."
+    "sentenceInfo": "This sentence is being checked by AletheiaFact.",
+
+    "recaptchaModalTitle": "Please complete the captcha to continue",
+    "recaptchaModalConfirm": "Confirm",
+    "recaptchaModalCancel": "Cancel"
 }

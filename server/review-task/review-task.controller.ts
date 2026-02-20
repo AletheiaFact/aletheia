@@ -88,14 +88,14 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Post("api/reviewtask")
     @Header("Cache-Control", "no-cache")
-    async create(
-        @Body() createReviewTask: CreateReviewTaskDTO
-    ): Promise<ReviewTaskDocument | UpdateWriteOpResult> {
-        const validateCaptcha = await this.captchaService.validate(
-            createReviewTask.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+    async create(@Body() createReviewTask: CreateReviewTaskDTO) {
+        if (createReviewTask.recaptcha) {
+            const validateCaptcha = await this.captchaService.validate(
+                createReviewTask.recaptcha
+            );
+            if (!validateCaptcha) {
+                throw new Error("Error validating captcha");
+            }
         }
         return this.reviewTaskService.create(createReviewTask);
     }

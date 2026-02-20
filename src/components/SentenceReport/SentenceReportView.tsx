@@ -332,7 +332,7 @@ const SentenceReportView = ({
                             {/* State chip */}
                             <Chip
                                 label={
-                                    t(`reviewTask:state.${currentState}`) ||
+                                    t(`reviewTask:${currentState}`) ||
                                     currentState
                                 }
                                 color={getStateColor(currentState)}
