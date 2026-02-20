@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationCrawlerChainService } from "./summarization-crawler-chain.service";
-import { WebBrowser } from "langchain/tools/webbrowser";
+import { WebBrowser } from "@langchain/classic/tools/webbrowser";
 import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
-import { AgentExecutor, createOpenAIToolsAgent } from "langchain/agents";
+import { AgentExecutor, createOpenAIToolsAgent } from "@langchain/classic/agents";
 import { ConfigService } from "@nestjs/config";
 import colors from "../../src/styles/colors";
 import {

@@ -1,9 +1,9 @@
 import { PromptTemplate } from "@langchain/core/prompts";
 import { Injectable, Logger } from "@nestjs/common";
-import { loadSummarizationChain, StuffDocumentsChain } from "langchain/chains";
+import { loadSummarizationChain, StuffDocumentsChain } from "@langchain/classic/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
