@@ -25,11 +25,11 @@ const TopicDisplay = ({
         const formattedSelectedTags = selectedTags.map((selectedTag) =>
             selectedTag?.value
                 ? {
-                      label: selectedTag?.label,
-                      value: selectedTag?.value,
-                      aliases: selectedTag?.aliases || [],
-                      matchedAlias: selectedTag?.matchedAlias || null,
-                  }
+                    label: selectedTag?.label,
+                    value: selectedTag?.value,
+                    aliases: selectedTag?.aliases || [],
+                    matchedAlias: selectedTag?.matchedAlias || null,
+                }
                 : selectedTag
         );
 
@@ -43,8 +43,6 @@ const TopicDisplay = ({
         );
         setTags(topicsArray?.concat(filterSelectedTags) || []);
     }, [selectedTags, topicsArray]);
-
-    console.log(topicsArray,selectedTags)
 
     const handleClose = async (removedTopicValue: any) => {
         // NOTE: Filtering logic differs due to inconsistent data structures across collections:
@@ -70,10 +68,10 @@ const TopicDisplay = ({
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
             : await SentenceApi.deleteSentenceTopic(
-                  newTopicsArray,
-                  data_hash,
-                  t
-              );
+                newTopicsArray,
+                data_hash,
+                t
+            );
     };
 
     return (

@@ -11,11 +11,14 @@ import { useTranslation } from "next-i18next";
 import { atomUserList } from "../atoms/userEdit";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
+import actions from "../store/actions";
+import { useDispatch } from "react-redux";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
     users,
     nameSpace,
+    sitekey
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const setBadgesList = useSetAtom(atomBadgesList);
     const setUserlist = useSetAtom(atomUserList);
@@ -26,6 +29,8 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
         setUserlist(users);
     }, [badges, setBadgesList, setUserlist, users]);
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+    dispatch(actions.setSitekey(sitekey));
 
     return (
         <>
@@ -45,6 +50,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             badges: JSON.parse(JSON.stringify(query.badges)),
             users: JSON.parse(JSON.stringify(query.users)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
+            sitekey: query.sitekey,
         },
     };
 }

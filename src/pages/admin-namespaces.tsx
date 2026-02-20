@@ -7,8 +7,11 @@ import { useSetAtom } from "jotai";
 import { atomUserList } from "../atoms/userEdit";
 import { atomNameSpacesList } from "../atoms/namespace";
 import NameSpacesFormDrawer from "../components/namespace/NameSpaceFormDrawer";
+import { useDispatch } from "react-redux";
+import actions from "../store/actions";
 
 const AdminNameSpacesPage: NextPage<{ data: string }> = ({
+    sitekey,
     nameSpaces,
     users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -16,6 +19,8 @@ const AdminNameSpacesPage: NextPage<{ data: string }> = ({
     const setUserlist = useSetAtom(atomUserList);
     setNameSpacesList(nameSpaces);
     setUserlist(users);
+    const dispatch = useDispatch();
+    dispatch(actions.setSitekey(sitekey));
 
     return (
         <>
@@ -32,6 +37,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             nameSpaces: JSON.parse(JSON.stringify(query.nameSpaces)),
+            sitekey: query.sitekey,
             users: JSON.parse(JSON.stringify(query.users)),
         },
     };

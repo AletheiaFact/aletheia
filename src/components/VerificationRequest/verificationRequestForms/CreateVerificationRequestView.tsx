@@ -1,23 +1,14 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Grid } from "@mui/material";
+import colors from "../../../styles/colors";
+import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
-import createVerificationRequestForm from "./fieldLists/CreateVerificationRequestForm";
 import verificationRequestApi from "../../../api/verificationRequestApi";
-import moment from "moment";
-import DynamicForm from "../../Form/DynamicForm";
-import SharedFormFooter from "../../SharedFormFooter";
 
-const DynamicVerificationRequestForm = () => {
-    const {
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm();
-    const disabledDate = (current) =>
-        current && current > moment().endOf("day");
+const CreateVerificationRequestView = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -49,24 +40,18 @@ const DynamicVerificationRequestForm = () => {
     };
 
     return (
-        <form
-            style={{ width: "100%", margin: "64px 0" }}
-            onSubmit={handleSubmit(onSubmit)}
-        >
-            <DynamicForm
-                currentForm={createVerificationRequestForm}
-                control={control}
-                errors={errors}
-                disabledDate={disabledDate}
-            />
-
-            <SharedFormFooter
-                isLoading={isLoading}
-                setRecaptchaString={setRecaptchaString}
-                hasCaptcha={hasCaptcha}
-            />
-        </form>
+        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+            <Grid item xs={9} padding="30px 0px">
+                <DynamicVerificationRequestForm
+                    onSubmit={onSubmit}
+                    isLoading={isLoading}
+                    setRecaptchaString={setRecaptchaString}
+                    hasCaptcha={hasCaptcha}
+                    isEdit={false}
+                />
+            </Grid>
+        </Grid>
     );
 };
 
-export default DynamicVerificationRequestForm;
+export default CreateVerificationRequestView;

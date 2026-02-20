@@ -1,6 +1,8 @@
 import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
 import { ActionTypes } from "../store/types";
+import { Topic } from "./Topic";
+import { UnifiedDefaultValue } from "../components/Form/DynamicInput";
 
 export enum FilterType {
   TOPIC = "topic",
@@ -40,6 +42,8 @@ interface VerificationRequest {
   _id?: string;
   publicationDate: string;
   heardFrom: string;
+  reportType?: string;
+  impactArea?: Topic;
 };
 interface FiltersState {
   loading: Record<verificationRequestStatus, boolean>;
@@ -111,6 +115,34 @@ interface StatsSourceChannelsProps {
 interface StatsRecentActivityProps {
   statsRecentActivity: StatsRecentActivity[];
 }
+interface IEditVerificationRequestDrawer {
+    open: boolean;
+    onClose: () => void;
+    verificationRequest: VerificationRequest;
+    onSave: (updatedRequest: VerificationRequest) => void;
+}
+interface IInputExtraSourcesList {
+  sources: UnifiedDefaultValue;
+  onChange: (value: string[]) => void;
+  disabled: boolean;
+  placeholder: string;
+}
+interface IReportTypeSelect {
+  onChange: (value: UnifiedDefaultValue) => void;
+  defaultValue: UnifiedDefaultValue;
+  placeholder: string;
+  style?: React.CSSProperties;
+  isDisabled: boolean;
+}
+
+interface IDynamicVerificationRequestForm {
+    data?: VerificationRequest;
+    onSubmit: (value: VerificationRequest) => void;
+    isLoading: boolean;
+    setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
+    hasCaptcha: boolean;
+    isEdit: boolean;
+}
 
 export type {
   VerificationRequest,
@@ -127,4 +159,8 @@ export type {
   StatsRecentActivity,
   StatsSourceChannelsProps,
   StatsRecentActivityProps,
+  IEditVerificationRequestDrawer,
+  IInputExtraSourcesList,
+  IReportTypeSelect,
+  IDynamicVerificationRequestForm
 };
