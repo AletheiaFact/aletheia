@@ -1,4 +1,3 @@
-import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     reviewingSelector,
@@ -8,12 +7,11 @@ import {
     addCommentCrossCheckingSelector,
 } from "../../../machines/reviewTask/selectors";
 
-import AletheiaCaptcha from "../../AletheiaCaptcha";
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Grid, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import colors from "../../../styles/colors";
 import {
     isUserLoggedIn,
@@ -26,10 +24,12 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
+import RecaptchaModal from "../../Modal/RecaptchaModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
+import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
 
 const DynamicReviewTaskForm = ({
     data_hash,
@@ -62,18 +62,28 @@ const DynamicReviewTaskForm = ({
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState({});
     const [reviewerError, setReviewerError] = useState(false);
-    const [recaptchaString, setRecaptchaString] = useState("");
     const [gobackWarningModal, setGobackWarningModal] = useState(false);
     const [finishReportWarningModal, setFinishReportWarningModal] =
         useState(false);
-    const hasCaptcha = !!recaptchaString;
-    const recaptchaRef = useRef(null);
+    const [pendingAction, setPendingAction] = useState<{
+        event: string;
+        data: any;
+    } | null>(null);
+    const pendingCaptchaToken = useRef<string>("");
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
     // Use centralized permission system as middleware only
     const permissions = useReviewTaskPermissions();
+
+    const currentState = useSelector(
+        machineService,
+        (state: { value: string | Record<string, unknown> }) => {
+            const value = state.value;
+            return typeof value === "string" ? value : Object.keys(value)[0];
+        }
+    );
 
     const resetIsLoading = () => {
         const isLoading = {};
@@ -142,15 +152,14 @@ const DynamicReviewTaskForm = ({
             target,
             type: eventName,
             t,
-            recaptchaString,
+            recaptchaString: pendingCaptchaToken.current,
             setFormAndEvents,
             resetIsLoading,
             currentUserId: userId,
             nameSpace,
         };
         machineService.send(eventName, payload);
-        setRecaptchaString("");
-        recaptchaRef.current?.resetRecaptcha();
+        pendingCaptchaToken.current = "";
     };
 
     const validateSelectedReviewer = (data, event) => {
@@ -213,8 +222,12 @@ const DynamicReviewTaskForm = ({
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (validateSelectedReviewer(data, event)) {
+        if (!validateSelectedReviewer(data, event)) return;
+
+        if (CAPTCHA_EXEMPT_EVENTS.includes(event)) {
             handleSendEvent(event, data);
+        } else {
+            setPendingAction({ event, data });
         }
     };
 
@@ -230,6 +243,20 @@ const DynamicReviewTaskForm = ({
         if (event === ReviewTaskEvents.goback)
             setGobackWarningModal(!gobackWarningModal);
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
+        else if (!CAPTCHA_EXEMPT_EVENTS.includes(event)) {
+            setPendingAction({ event, data: getValues() });
+        }
+    };
+
+    const handleRecaptchaConfirm = (token: string) => {
+        pendingCaptchaToken.current = token;
+        const { event, data } = pendingAction;
+        setPendingAction(null);
+        handleSendEvent(event, data);
+    };
+
+    const handleRecaptchaCancel = () => {
+        setPendingAction(null);
     };
 
     // Check if user can perform any actions as middleware
@@ -264,60 +291,24 @@ const DynamicReviewTaskForm = ({
                             </Typography>
                         )}
                     </div>
-                    {events?.length > 0 && showButtons && (
-                        <AletheiaCaptcha
-                            onChange={setRecaptchaString}
-                            ref={recaptchaRef}
-                        />
-                    )}
                 </>
             )}
             {showButtons && (
-                <Grid
-                    container
-                    style={{
-                        padding: "32px 0 0",
-                        justifyContent: "space-evenly",
-                        gap: "10px",
-                    }}
-                >
-                    {events?.map((event) => {
-                        // Use permissions as middleware to check if user can perform this specific action
-                        const canPerformAction =
-                            permissions.canSubmitActions.includes(event);
-
-                        // Skip rendering button if user can't perform this action
-                        if (!canPerformAction) return null;
-
-                        // Use standard label - confirmRejection event now has its own translation
-                        const eventLabel = t(`reviewTask:${event}`);
-
-                        // Events that don't require reCAPTCHA
-                        const captchaExemptEvents = [
-                            ReviewTaskEvents.draft,
-                            ReviewTaskEvents.goback,
-                            ReviewTaskEvents.viewPreview,
-                        ];
-                        const requiresCaptcha =
-                            !captchaExemptEvents.includes(event);
-
-                        return (
-                            <AletheiaButton
-                                loading={isLoading[event]}
-                                key={event}
-                                type={ButtonType.blue}
-                                htmlType={defineButtonHtmlType(event)}
-                                onClick={() => handleOnClick(event)}
-                                event={event}
-                                disabled={requiresCaptcha && !hasCaptcha}
-                                data-cy={`testClaimReview${event}`}
-                            >
-                                {eventLabel}
-                            </AletheiaButton>
-                        );
-                    })}
-                </Grid>
+                <ActionToolbar
+                    events={events}
+                    permissions={permissions}
+                    isLoading={isLoading}
+                    currentState={currentState}
+                    onButtonClick={handleOnClick}
+                    defineButtonHtmlType={defineButtonHtmlType}
+                />
             )}
+
+            <RecaptchaModal
+                open={pendingAction !== null}
+                onConfirm={handleRecaptchaConfirm}
+                onCancel={handleRecaptchaCancel}
+            />
 
             <WarningModal
                 open={gobackWarningModal}

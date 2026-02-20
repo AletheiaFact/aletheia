@@ -71,5 +71,9 @@
     "invalidReviewerMessage": "O revisor não pode ser um usuário atribuído a essa checagem.",
     "seeFullPage": "Ver página completa",
 
-    "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact."
+    "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact.",
+
+    "recaptchaModalTitle": "Por favor, complete o captcha para continuar",
+    "recaptchaModalConfirm": "Confirmar",
+    "recaptchaModalCancel": "Cancelar"
 }
