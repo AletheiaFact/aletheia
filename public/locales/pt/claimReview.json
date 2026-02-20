@@ -26,5 +26,7 @@
     "unhideSuccess": "Relatório público com sucesso",
     "unhideError": "Erro ao mostrar o relatório",
     "crossCheckingClassification": "Etiqueta cross-check",
-    "crossCheckingComments": "Comentários"
+    "crossCheckingComments": "Comentários",
+    "factCheckingInProgress": "Checagem em andamento",
+    "factCheckingInfoMessage": "Este conteúdo está sendo checado pela nossa equipe. O relatório estará disponível quando o processo de revisão for concluído."
 }

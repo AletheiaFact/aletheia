@@ -57,5 +57,10 @@
     "isSensitiveLabel": "Conteúdo confidencial",
     "isSensitive": "Esta denúncia contém conteúdo confidencial",
     "viewPreview": "Visualizar pré-visualização",
-    "hidePreview": "Ocultar pré-visualização"
+    "hidePreview": "Ocultar pré-visualização",
+    "assigneeChipLabel": "Responsável",
+    "reviewerChipLabel": "Revisor",
+    "crossCheckerChipLabel": "Cross-Checker",
+    "validationErrorTitle": "Por favor, corrija os seguintes erros",
+    "validationErrorDescription": "Alguns campos obrigatórios estão ausentes ou inválidos. Revise os campos destacados abaixo."
 }

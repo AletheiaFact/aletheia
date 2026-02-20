@@ -75,5 +75,13 @@
 
     "recaptchaModalTitle": "Please complete the captcha to continue",
     "recaptchaModalConfirm": "Confirm",
-    "recaptchaModalCancel": "Cancel"
+    "recaptchaModalCancel": "Cancel",
+
+    "unassigned": "Unassigned",
+
+    "stageAssign": "Assign",
+    "stageDraft": "Draft",
+    "stageReview": "Review",
+    "stageApproval": "Approval",
+    "stagePublished": "Published"
 }

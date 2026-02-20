@@ -4,7 +4,7 @@ import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { URL_PATTERN } from "../../../../utils/ValidateFloatingLink";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
@@ -22,8 +22,13 @@ const EditorAddSources = ({
     const [href, setHref] = useState("https://");
     const [showDialog, setShowDialog] = useState(false);
     const [error, setError] = useState(null);
-    const { setEditorSources } = useContext(VisualEditorContext);
+    const { setEditorSources, editorConfiguration } =
+        useContext(VisualEditorContext);
     const [isLoading, setIsLoading] = useState(false);
+
+    if (editorConfiguration?.readonly) {
+        return null;
+    }
 
     const validateFloatingLink = () => {
         if (!URL_PATTERN.test(href)) {
@@ -90,13 +95,13 @@ const EditorAddSources = ({
                     <p className="empty-text">
                         {t("sourceForm:editorEmptySourcesWithButton")}
                     </p>
-                        <AletheiaButton
-                            type={ButtonType.gray}
-                            onClick={() => setShowDialog(true)}
-                            data-cy="testAddEditorSources"
-                        >
-                            <AddIcon style={{ fontSize: "24px" }} />
-                        </AletheiaButton>
+                    <AletheiaButton
+                        type={ButtonType.gray}
+                        onClick={() => setShowDialog(true)}
+                        data-cy="testAddEditorSources"
+                    >
+                        <AddIcon style={{ fontSize: "24px" }} />
+                    </AletheiaButton>
                 </>
             ) : (
                 <SourceDialog
