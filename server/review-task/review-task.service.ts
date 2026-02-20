@@ -10,6 +10,7 @@ import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
+import { SaveDraftDTO } from "./dto/save-draft.dto";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReportService } from "../report/report.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -594,6 +595,46 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findByIdAndUpdate(
             { _id: newReviewTask._id },
             newReviewTask
+        );
+    }
+
+    async saveDraft(data_hash: string, saveDraftBody: SaveDraftDTO) {
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+
+        if (!reviewTask) {
+            return null;
+        }
+
+        const setFields: Record<string, any> = {};
+
+        // Merge reviewData fields individually to preserve existing data
+        if (saveDraftBody.machine.context.reviewData) {
+            const draftReviewData = saveDraftBody.machine.context.reviewData;
+            for (const [key, value] of Object.entries(draftReviewData)) {
+                if (value !== undefined) {
+                    setFields[`machine.context.reviewData.${key}`] = value;
+                }
+            }
+        }
+
+        // Merge review fields individually to preserve existing data
+        if (saveDraftBody.machine.context.review) {
+            const draftReview = saveDraftBody.machine.context.review;
+            for (const [key, value] of Object.entries(draftReview)) {
+                if (value !== undefined) {
+                    setFields[`machine.context.review.${key}`] = value;
+                }
+            }
+        }
+
+        if (Object.keys(setFields).length === 0) {
+            return reviewTask;
+        }
+
+        return this.ReviewTaskModel.findOneAndUpdate(
+            { data_hash },
+            { $set: setFields },
+            { new: true }
         );
     }
 

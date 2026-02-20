@@ -31,7 +31,12 @@ import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = true }) => {
+const DynamicReviewTaskForm = ({
+    data_hash,
+    personality,
+    target,
+    canInteract = true,
+}) => {
     const {
         handleSubmit,
         control,
@@ -94,7 +99,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
-        
+
         // Filter out visualEditor for events that don't need it (navigation, selection, and comment-only events)
         const eventsWithoutVisualEditor = [
             ReviewTaskEvents.addRejectionComment,
@@ -110,13 +115,15 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
             ReviewTaskEvents.submitCrossChecking,
             ReviewTaskEvents.submitComment, // Cross-checking comment submission uses separate form fields
         ];
-        
+
         const filteredFormData = eventsWithoutVisualEditor.includes(eventName)
             ? Object.fromEntries(
-                Object.entries(formData).filter(([key]) => key !== 'visualEditor')
+                  Object.entries(formData).filter(
+                      ([key]) => key !== "visualEditor"
+                  )
               )
             : formData;
-        
+
         const payload = {
             data_hash,
             reportModel,
@@ -229,7 +236,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
     const canUserInteractWithForm = () => {
         // If no events from state machine, no buttons
         if (!events || events.length === 0) return false;
-        
+
         // Use permissions as middleware to check if user can perform any action
         return permissions.showForm && canInteract;
     };
@@ -276,14 +283,24 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
                 >
                     {events?.map((event) => {
                         // Use permissions as middleware to check if user can perform this specific action
-                        const canPerformAction = permissions.canSubmitActions.includes(event);
-                        
+                        const canPerformAction =
+                            permissions.canSubmitActions.includes(event);
+
                         // Skip rendering button if user can't perform this action
                         if (!canPerformAction) return null;
-                        
+
                         // Use standard label - confirmRejection event now has its own translation
                         const eventLabel = t(`reviewTask:${event}`);
-                        
+
+                        // Events that don't require reCAPTCHA
+                        const captchaExemptEvents = [
+                            ReviewTaskEvents.draft,
+                            ReviewTaskEvents.goback,
+                            ReviewTaskEvents.viewPreview,
+                        ];
+                        const requiresCaptcha =
+                            !captchaExemptEvents.includes(event);
+
                         return (
                             <AletheiaButton
                                 loading={isLoading[event]}
@@ -292,7 +309,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target, canInteract = t
                                 htmlType={defineButtonHtmlType(event)}
                                 onClick={() => handleOnClick(event)}
                                 event={event}
-                                disabled={!hasCaptcha}
+                                disabled={requiresCaptcha && !hasCaptcha}
                                 data-cy={`testClaimReview${event}`}
                             >
                                 {eventLabel}

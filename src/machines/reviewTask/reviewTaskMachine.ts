@@ -55,6 +55,32 @@ export const transitionHandler = (state) => {
         return setFormAndEvents(nextState);
     }
 
+    // Draft saves use the dedicated endpoint (no reCAPTCHA, no history)
+    if (event === Events.draft) {
+        const draftContext = {
+            context: {
+                reviewData,
+                review: {
+                    ...review,
+                    isPartialReview: true,
+                },
+            },
+        };
+
+        api.saveDraft(data_hash, draftContext, t)
+            .then(() => {
+                setFormAndEvents(
+                    event,
+                    isSameLabel(state.context, state.event)
+                );
+            })
+            .catch((e) => {
+                console.error("[ReviewTask] Draft save failed:", e);
+            })
+            .finally(() => resetIsLoading());
+        return;
+    }
+
     const reviewTask = {
         data_hash,
         reportModel,
@@ -88,7 +114,7 @@ export const transitionHandler = (state) => {
                   );
         })
         .catch((e) => {
-            // TODO: Track errors with Sentry
+            console.error("[ReviewTask] Create review task failed:", e);
         })
         .finally(() => resetIsLoading());
 
