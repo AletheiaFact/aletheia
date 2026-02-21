@@ -21,7 +21,7 @@ const EditVerificationRequestDrawer = ({
         try {
             const updateData = {
                 publicationDate: data.publicationDate,
-                source: data.source.map(url => ({ href: url })),
+                source: data.source?.map(url => ({ href: url })),
             };
 
             const response = await verificationRequestApi.updateVerificationRequest(
@@ -56,6 +56,8 @@ const EditVerificationRequestDrawer = ({
                     setRecaptchaString={setRecaptchaString}
                     hasCaptcha={hasCaptcha}
                     isEdit={true}
+                    isDrawerOpen={open}
+                    onClose={onClose}
                 />
             </Grid>
         </LargeDrawer>

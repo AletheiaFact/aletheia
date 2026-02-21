@@ -116,6 +116,8 @@ const NameSpacesFormDrawer = () => {
                     onSubmit={onSubmit}
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
+                    isDrawerOpen={open}
+                    onClose={onCloseDrawer}
                     t={t}
                 />
             </Grid>

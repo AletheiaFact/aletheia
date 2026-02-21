@@ -14,6 +14,8 @@ const DynamicNameSpaceForm = ({
     onSubmit,
     isLoading,
     setIsLoading,
+    isDrawerOpen,
+    onClose,
     t,
 }: IDynamicNameSpaceForm) => {
     const {
@@ -56,7 +58,8 @@ const DynamicNameSpaceForm = ({
                     isLoading={isLoading}
                     setRecaptchaString={setRecaptchaString}
                     hasCaptcha={hasCaptcha}
-                    hasCancelButton={false}
+                    isDrawerOpen={isDrawerOpen}
+                    onClose={onClose}
                     extraButton={nameSpace?._id && (
                         <Button
                             onClick={handleDailyReviews}
