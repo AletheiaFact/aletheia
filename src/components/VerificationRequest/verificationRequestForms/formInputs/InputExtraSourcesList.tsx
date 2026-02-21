@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,34 +25,35 @@ const createEmptySource = () => ({
     isNewSource: false
 });
 
-const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IInputExtraSourcesList) => {
+const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder, dataCy }: IInputExtraSourcesList) => {
     const { t } = useTranslation();
-    const [sourcesList, setSourcesList] = useState(() => formatSources(sources as SourceType[]));
+    const [sourcesList, setSourcesList] = useState(() => formatSources(defaultSources as SourceType[]));
 
-    const handleSubmit = (hrefsList: typeof sourcesList) => {
-        const updatedHrefs = [...new Set(hrefsList.map(source => source.href.trim()).filter(Boolean))];
-        onChange(updatedHrefs);
-    };
+    useEffect(() => {
+        const cleanedSources = [...new Set(sourcesList.map(source => source.href.trim()).filter(Boolean))]
+        const updatedSources = cleanedSources.length === 0
+            ? undefined
+            : cleanedSources
+
+        onChange(updatedSources);
+    }, [sourcesList]);
 
     const updateSources = (id: string, newHref: string) => {
-        const newHrefList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        const newSourcesList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
+        setSourcesList(newSourcesList);
     };
 
     const addField = () => {
         if (disabled) return;
-        const newHrefList = [...sourcesList, createEmptySource()];
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        const newSourcesList = [...sourcesList, createEmptySource()];
+        setSourcesList(newSourcesList);
     };
 
     const removeField = (id: string, index: number) => {
         if (disabled || index === 0) return;
-        const newHrefList = sourcesList.filter((source) => source.id !== id);
+        const newSourcesList = sourcesList.filter((source) => source.id !== id);
 
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        setSourcesList(newSourcesList);
     };
 
     return (
@@ -72,12 +73,14 @@ const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IIn
                         disabled={disabled || (index === 0 && source.isNewSource)}
                         onChange={(newHref) => updateSources(source.id, newHref.target.value)}
                         placeholder={t(placeholder)}
+                        data-cy={`${dataCy}Edit-${index}`}
                         white="true"
                     />
 
                     {!disabled && index !== 0 && (
                         <AletheiaButton
                             onClick={() => removeField(source.id, index)}
+                            data-cy={`${dataCy}Remove-${index}`}
                             style={{ minWidth: "40px" }}
                         >
                             <DeleteIcon fontSize="small" />
@@ -91,6 +94,7 @@ const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IIn
                     <AletheiaButton
                         type={ButtonType.blue}
                         onClick={addField}
+                        data-cy={`${dataCy}-addSources`}
                         style={{ marginTop: 12 }}
                     >
                         <AddIcon fontSize="small" />

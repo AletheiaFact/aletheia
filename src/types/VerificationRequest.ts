@@ -122,7 +122,7 @@ interface IEditVerificationRequestDrawer {
     onSave: (updatedRequest: VerificationRequest) => void;
 }
 interface IInputExtraSourcesList {
-  sources: UnifiedDefaultValue;
+  defaultSources: UnifiedDefaultValue;
   onChange: (value: string[]) => void;
   disabled: boolean;
   placeholder: string;
