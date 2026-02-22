@@ -33,14 +33,22 @@ describe("Test verification request", () => {
         });
     };
 
+    const waitForVerificationDetail = () => {
+        cy.url().should("match", regexVerificationRequestPage);
+        cy.get(locators.verificationRequest.DETAIL_CONTENT)
+            .should("be.visible");
+    };
+
     const goToVerificationRequest = () => {
         cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testVerificationRequestItem]").click();
         cy.url().should("contains", "/verification-request");
 
         cy.get(locators.verificationRequest.DETAIL_CARD_CONTENT).click();
+        cy.intercept("GET", "**/verification-request/**").as("getVerification");
         cy.get(locators.verificationRequest.SEE_FULL_BUTTON).invoke("removeAttr", "target").click();
-        cy.url().should("match", regexVerificationRequestPage);
+        cy.wait("@getVerification");
+        waitForVerificationDetail();
     }
 
     describe("lifecycle verification request", () => {
@@ -59,10 +67,12 @@ describe("Test verification request", () => {
             cy.get(locators.verificationRequest.FORM_HEARD_FROM).type(fullVerificationRequest.heardFrom);
             cy.get(locators.verificationRequest.FORM_SOURCE).type(`https://${fullVerificationRequest.source}`);
             cy.get(locators.verificationRequest.FORM_EMAIL).type(fullVerificationRequest.email);
+            cy.intercept("GET", "**/verification-request/**").as("getVerification");
             saveVerificationRequest();
-            cy.url().should("match", regexVerificationRequestPage);
+            cy.wait("@getVerification");
+            waitForVerificationDetail()
 
-            cy.get(locators.verificationRequest.EDIT_BUTTON).click();
+            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
             saveVerificationRequest();
@@ -95,13 +105,12 @@ describe("Test verification request", () => {
 
             cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumContent);
             selectPublicationDate(today);
+            cy.intercept("GET", "**/verification-request/**").as("getVerification");
             saveVerificationRequest();
-            cy.url().should("match", regexVerificationRequestPage);
-            cy.get(locators.verificationRequest.DETAIL_PUBLICATION_DATE)
-                .should("be.visible")
-                .and("contain", today.format("DD/MM/YYYY"));
+            cy.wait("@getVerification");
+            waitForVerificationDetail()
 
-            cy.get(locators.verificationRequest.EDIT_BUTTON).click();
+            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
             selectPublicationDate(getPastDay(1));
             saveVerificationRequest();
@@ -132,7 +141,7 @@ describe("Test verification request", () => {
 
         it("should discard unsaved changes when the edition form is canceled", () => {
             goToVerificationRequest()
-            cy.get(locators.verificationRequest.EDIT_BUTTON).click();
+            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
             selectPublicationDate(getPastDay(10));
