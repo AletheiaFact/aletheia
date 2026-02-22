@@ -113,6 +113,7 @@ const locators = {
         ERROR_VALIDATION_PUBLICATION_DATE: "[data-cy=testClaimReviewErrorpublicationDate]",
 
         DETAIL_CARD_CONTENT: "[data-cy=testVerificationRequestCardContent0]",
+        DETAIL_CARD_CONTENT_1: "[data-cy=testVerificationRequestCardContent1]",
 
         ADD_TOPIC_ICON: "[data-cy=testVerificationRequestTopicsToggle]",
         TYPE_TOPIC_INPUT: "[data-cy=testVerificationRequestTopicsInput]",

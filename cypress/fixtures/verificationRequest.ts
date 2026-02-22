@@ -8,5 +8,7 @@ const fullVerificationRequest = {
 };
 const regexVerificationRequestPage = /\/verification-request\/[\w-]+$/
 const updatedSource = "www.wikidata.org"
+const minimumContent = "Verification Request Content minimium";
 
-export { fullVerificationRequest, regexVerificationRequestPage, updatedSource }
+
+export { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumContent }

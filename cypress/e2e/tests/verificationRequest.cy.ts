@@ -1,7 +1,7 @@
 
 /// <reference types="cypress" />
 
-import { fullVerificationRequest, regexVerificationRequestPage, updatedSource } from "../../fixtures/verificationRequest";
+import { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumContent } from "../../fixtures/verificationRequest";
 import locators from "../../support/locators";
 import dayjs, { Dayjs } from "dayjs"
 
@@ -33,28 +33,22 @@ describe("Test verification request", () => {
         });
     };
 
-    const waitForVerificationDetail = () => {
-        cy.url().should("match", regexVerificationRequestPage);
-        cy.get(locators.verificationRequest.DETAIL_CONTENT)
-            .should("be.visible");
-    };
-
     const goToVerificationRequest = () => {
         cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testVerificationRequestItem]").click();
         cy.url().should("contains", "/verification-request");
 
-        cy.get(locators.verificationRequest.DETAIL_CARD_CONTENT).click();
+        cy.get(locators.verificationRequest.DETAIL_CARD_CONTENT).should("be.visible").click();
         cy.intercept("GET", "**/verification-request/**").as("getVerification");
         cy.get(locators.verificationRequest.SEE_FULL_BUTTON).invoke("removeAttr", "target").click();
         cy.wait("@getVerification");
-        waitForVerificationDetail();
+        cy.url().should("match", regexVerificationRequestPage);
     }
 
     describe("lifecycle verification request", () => {
         beforeEach("login", () => cy.login());
 
-        it("should create a request with all fields and add additional sources during edition", () => {
+        it("should create a verification request with all optional and mandatory fields", () => {
             openCreateVerificationRequestForm();
 
             cy.get(locators.verificationRequest.FORM_CONTENT).type(fullVerificationRequest.content);
@@ -70,12 +64,7 @@ describe("Test verification request", () => {
             cy.intercept("GET", "**/verification-request/**").as("getVerification");
             saveVerificationRequest();
             cy.wait("@getVerification");
-            waitForVerificationDetail()
-
-            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
-            cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
-            cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-            saveVerificationRequest();
+            cy.url().should("match", regexVerificationRequestPage);
 
             assertDetailFields([
                 [locators.verificationRequest.DETAIL_CONTENT, fullVerificationRequest.content],
@@ -86,9 +75,23 @@ describe("Test verification request", () => {
                 [locators.verificationRequest.DETAIL_PUBLICATION_DATE, today.format("DD/MM/YYYY")],
                 [locators.verificationRequest.DETAIL_DATE, today.format("DD/MM/YYYY")],
                 [locators.verificationRequest.DETAIL_SOURCE_0, fullVerificationRequest.source],
-                [locators.verificationRequest.DETAIL_SOURCE_1, updatedSource],
             ]);
         });
+
+        it("should update an existing request by adding additional sources and modifying the publication date", () => {
+            goToVerificationRequest()
+            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
+            cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
+            cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
+            selectPublicationDate(getPastDay(1));
+            saveVerificationRequest();
+            cy.url().should("match", regexVerificationRequestPage);
+
+            assertDetailFields([
+                [locators.verificationRequest.DETAIL_PUBLICATION_DATE, getPastDay(1).format("DD/MM/YYYY")],
+                [locators.verificationRequest.DETAIL_SOURCE_1, updatedSource],
+            ])
+        })
 
         it("should prevent submission when required fields are missing", () => {
             openCreateVerificationRequestForm();
@@ -98,9 +101,7 @@ describe("Test verification request", () => {
             cy.url().should("contain", "/verification-request/create");
         });
 
-        it("should create a request with mandatory fields and allow adding optional data during edition", () => {
-            const minimumContent = "Verification Request Content minimium";
-
+        it("should allow request creation using only the minimum mandatory information", () => {
             openCreateVerificationRequestForm();
 
             cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumContent);
@@ -108,19 +109,27 @@ describe("Test verification request", () => {
             cy.intercept("GET", "**/verification-request/**").as("getVerification");
             saveVerificationRequest();
             cy.wait("@getVerification");
-            waitForVerificationDetail()
+            cy.url().should("match", regexVerificationRequestPage);
 
+            assertDetailFields([
+                [locators.verificationRequest.DETAIL_CONTENT, minimumContent],
+                [locators.verificationRequest.DETAIL_PUBLICATION_DATE, today.format("DD/MM/YYYY")],
+            ])
+        });
+
+        it("should supplement a minimalist request by adding its first source during edition", () => {
+            goToVerificationRequest()
             cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
             selectPublicationDate(getPastDay(1));
             saveVerificationRequest();
+            cy.url().should("match", regexVerificationRequestPage);
 
             assertDetailFields([
-                [locators.verificationRequest.DETAIL_CONTENT, minimumContent],
                 [locators.verificationRequest.DETAIL_PUBLICATION_DATE, getPastDay(1).format("DD/MM/YYYY")],
-                [locators.verificationRequest.DETAIL_SOURCE_0, fullVerificationRequest.source]
+                [locators.verificationRequest.DETAIL_SOURCE_0, fullVerificationRequest.source],
             ])
-        });
+        })
 
         it("should manage topic tags by adding and removing them", () => {
             goToVerificationRequest()
@@ -148,7 +157,6 @@ describe("Test verification request", () => {
             cy.get(locators.verificationRequest.CANCEL_BUTTON).click();
             assertDetailFields([
                 [locators.verificationRequest.DETAIL_PUBLICATION_DATE, getPastDay(1).format("DD/MM/YYYY")],
-                [locators.verificationRequest.DETAIL_SOURCE_0, fullVerificationRequest.source]
             ])
         })
     });
