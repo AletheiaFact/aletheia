@@ -21,6 +21,7 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
 
             {isLoggedIn && (
                 <IconButton
+                    data-cy="testVerificationRequestTopicsToggle"
                     onClick={() => setShowTopicsForm((prev: boolean) => !prev)}
                     style={{
                         color: colors.primary,

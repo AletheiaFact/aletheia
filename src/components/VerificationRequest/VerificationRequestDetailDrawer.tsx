@@ -282,6 +282,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                     </AletheiaButton>
                                     <Grid item xs={vw?.xs ? 4 : 7}>
                                         <AletheiaButton
+                                            data-cy="testSeeFullVerificationRequest"
                                             href={`/verification-request/${currentRequest.data_hash}`}
                                             target="_blank"
                                             type={ButtonType.gray}

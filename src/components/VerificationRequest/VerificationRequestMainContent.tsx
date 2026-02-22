@@ -38,6 +38,7 @@ const VerificationRequestMainContent = ({
                 {role == Roles.Admin && (
                     <IconButton size="small">
                         <EditIcon
+                            data-cy="testVerificationRequestEditButton"
                             className="edit-icon"
                             color="primary"
                             onClick={() => setOpenEditDrawer(true)} />
