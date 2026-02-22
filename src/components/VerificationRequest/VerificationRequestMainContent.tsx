@@ -35,7 +35,7 @@ const VerificationRequestMainContent = ({
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
 
-                {role == Roles.Admin && (
+                {role === Roles.Admin || role === Roles.SuperAdmin && (
                     <IconButton size="small">
                         <EditIcon
                             data-cy="testVerificationRequestEditButton"

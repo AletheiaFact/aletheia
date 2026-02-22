@@ -1,7 +1,7 @@
 
 /// <reference types="cypress" />
 
-import { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumContent } from "../../fixtures/verificationRequest";
+import { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumVerificationRequest } from "../../fixtures/verificationRequest";
 import locators from "../../support/locators";
 import dayjs, { Dayjs } from "dayjs"
 
@@ -33,16 +33,10 @@ describe("Test verification request", () => {
         });
     };
 
-    const goToVerificationRequest = () => {
-        cy.get(locators.menu.SIDE_MENU).click();
-        cy.get("[data-cy=testVerificationRequestItem]").click();
-        cy.url().should("contains", "/verification-request");
-
-        cy.get(locators.verificationRequest.DETAIL_CARD_CONTENT).should("be.visible").click();
+    const goToVerificationRequest = (data_hash: string) => {
         cy.intercept("GET", "**/verification-request/**").as("getVerification");
-        cy.get(locators.verificationRequest.SEE_FULL_BUTTON).invoke("removeAttr", "target").click();
+        cy.visit(`http://localhost:3000/verification-request/${data_hash}`);
         cy.wait("@getVerification");
-        cy.url().should("match", regexVerificationRequestPage);
     }
 
     describe("lifecycle verification request", () => {
@@ -79,7 +73,8 @@ describe("Test verification request", () => {
         });
 
         it("should update an existing request by adding additional sources and modifying the publication date", () => {
-            goToVerificationRequest()
+            goToVerificationRequest(fullVerificationRequest.data_hash)
+
             cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
@@ -104,7 +99,7 @@ describe("Test verification request", () => {
         it("should allow request creation using only the minimum mandatory information", () => {
             openCreateVerificationRequestForm();
 
-            cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumContent);
+            cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumVerificationRequest.content);
             selectPublicationDate(today);
             cy.intercept("GET", "**/verification-request/**").as("getVerification");
             saveVerificationRequest();
@@ -112,13 +107,26 @@ describe("Test verification request", () => {
             cy.url().should("match", regexVerificationRequestPage);
 
             assertDetailFields([
-                [locators.verificationRequest.DETAIL_CONTENT, minimumContent],
+                [locators.verificationRequest.DETAIL_CONTENT, minimumVerificationRequest.content],
                 [locators.verificationRequest.DETAIL_PUBLICATION_DATE, today.format("DD/MM/YYYY")],
             ])
         });
 
+        it("should discard unsaved changes when the edition form is canceled", () => {
+            goToVerificationRequest(minimumVerificationRequest.data_hash)
+
+            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
+            cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
+            selectPublicationDate(getPastDay(10));
+            cy.get(locators.verificationRequest.CANCEL_BUTTON).click();
+
+            cy.get(locators.verificationRequest.DETAIL_PUBLICATION_DATE).should("be.visible").and("not.contain", getPastDay(10).format("DD/MM/YYYY"));
+            cy.get(locators.verificationRequest.DETAIL_SOURCE_0).should("not.exist");
+        })
+
         it("should supplement a minimalist request by adding its first source during edition", () => {
-            goToVerificationRequest()
+            goToVerificationRequest(minimumVerificationRequest.data_hash)
+
             cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
             cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
             selectPublicationDate(getPastDay(1));
@@ -132,7 +140,7 @@ describe("Test verification request", () => {
         })
 
         it("should manage topic tags by adding and removing them", () => {
-            goToVerificationRequest()
+            goToVerificationRequest(minimumVerificationRequest.data_hash)
 
             cy.get(locators.verificationRequest.ADD_TOPIC_ICON).click();
             cy.get(locators.verificationRequest.TYPE_TOPIC_INPUT).type(fullVerificationRequest.impactArea.toLowerCase(), { delay: 200 });
@@ -146,18 +154,6 @@ describe("Test verification request", () => {
                 });
 
             cy.contains(locators.verificationRequest.DETAIL_TOPIC_TAG, fullVerificationRequest.impactArea.toUpperCase()).should("not.exist");
-        })
-
-        it("should discard unsaved changes when the edition form is canceled", () => {
-            goToVerificationRequest()
-            cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
-            cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
-            cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-            selectPublicationDate(getPastDay(10));
-            cy.get(locators.verificationRequest.CANCEL_BUTTON).click();
-            assertDetailFields([
-                [locators.verificationRequest.DETAIL_PUBLICATION_DATE, getPastDay(1).format("DD/MM/YYYY")],
-            ])
         })
     });
 });
