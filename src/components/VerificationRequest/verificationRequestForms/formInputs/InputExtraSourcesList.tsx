@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,13 +7,14 @@ import AletheiaButton, { ButtonType } from "../../../Button";
 import AletheiaInput from "../../../AletheiaInput";
 import { IInputExtraSourcesList } from "../../../../types/VerificationRequest";
 import { SourceType } from "../../../../types/Source";
+import { debounce } from "lodash";
 
 const formatSources = (sources: SourceType[]) => {
     const sourceArray = Array.isArray(sources) ? sources : [];
     if (sourceArray.length === 0) return [createEmptySource()];
 
     return sourceArray.map((source) => ({
-        id: source._id,
+        id: Math.random().toString(),
         href: typeof source === "object" ? source.href : source || "",
         isNewSource: !!(typeof source === "object" ? source.href : source),
     }));
@@ -29,18 +30,23 @@ const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder
     const { t } = useTranslation();
     const [sourcesList, setSourcesList] = useState(() => formatSources(defaultSources as SourceType[]));
 
-    useEffect(() => {
-        const cleanedSources = [...new Set(sourcesList.map(source => source.href.trim()).filter(Boolean))]
-        const updatedSources = cleanedSources.length === 0
-            ? undefined
-            : cleanedSources
+    const handleListChange = useCallback((newSourcesList: typeof sourcesList) => {
+        const cleanedSources = [...new Set(newSourcesList.map(source => source.href.trim()).filter(Boolean))];
+        onChange(cleanedSources);
+    }, [onChange]);
 
-        onChange(updatedSources);
-    }, [sourcesList]);
+    const debouncedOnChange = useMemo(
+        () =>
+            debounce((SourcesList: typeof sourcesList) => {
+                handleListChange(SourcesList)
+            }, 800),
+        [handleListChange]
+    );
 
     const updateSources = (id: string, newHref: string) => {
         const newSourcesList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
         setSourcesList(newSourcesList);
+        debouncedOnChange(newSourcesList)
     };
 
     const addField = () => {
@@ -54,6 +60,9 @@ const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder
         const newSourcesList = sourcesList.filter((source) => source.id !== id);
 
         setSourcesList(newSourcesList);
+        debouncedOnChange.cancel();
+
+        handleListChange(newSourcesList)
     };
 
     return (

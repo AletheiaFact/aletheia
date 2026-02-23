@@ -16,6 +16,12 @@ const EditVerificationRequestDrawer = ({
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const [isLoading, setIsLoading] = useState(false);
+    const sourceMapped = verificationRequest.source?.map(source => source.href);
+
+    const updatedVerificationRequest = {
+        ...verificationRequest,
+        source: sourceMapped?.length > 0 ? sourceMapped : undefined
+    }
 
     const onSubmit = async (data) => {
         try {
@@ -50,7 +56,7 @@ const EditVerificationRequestDrawer = ({
                 </h2>
                 <Divider />
                 <DynamicVerificationRequestForm
-                    data={verificationRequest}
+                    data={updatedVerificationRequest}
                     onSubmit={onSubmit}
                     isLoading={isLoading}
                     setRecaptchaString={setRecaptchaString}

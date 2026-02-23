@@ -38,7 +38,7 @@ interface VerificationRequest {
   rejected: boolean;
   group: Group;
   date: Date;
-  source?: Source[];
+  source?: Source[] | string[];
   _id?: string;
   publicationDate: string;
   heardFrom: string;
