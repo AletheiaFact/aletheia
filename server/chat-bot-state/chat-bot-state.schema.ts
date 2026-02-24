@@ -14,7 +14,7 @@ export interface ChatBotMachineSnapshot {
     };
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class ChatBotState {
     @Prop({ required: true })
     _id: string;

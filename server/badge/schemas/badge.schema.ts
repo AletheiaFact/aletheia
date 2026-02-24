@@ -4,7 +4,7 @@ import * as mongoose from "mongoose";
 
 export type BadgeDocument = Badge & mongoose.Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Badge {
     @Prop({ required: true })
     name: string;
@@ -14,9 +14,6 @@ export class Badge {
 
     @Prop({ type: mongoose.Types.ObjectId, ref: "Image", required: true })
     image: Image;
-
-    @Prop({ required: true })
-    created_at: string;
 }
 
 const BadgeSchemaRaw = SchemaFactory.createForClass(Badge);

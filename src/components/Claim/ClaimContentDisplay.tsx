@@ -1,13 +1,21 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 
 import ImageApi from "../../api/image";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
-import { useDispatch } from "react-redux";
 import ReviewedImage from "../ReviewedImage";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 
-const ClaimContentDisplay = ({
+interface ClaimContentDisplayProps {
+    isImage: boolean;
+    title: string;
+    claimContent: any;
+    showHighlights: boolean;
+    dispatchPersonalityAndClaim: () => void;
+}
+
+const ClaimContentDisplay: React.FC<ClaimContentDisplayProps> = ({
     isImage,
     title,
     claimContent,

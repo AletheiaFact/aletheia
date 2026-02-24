@@ -8,7 +8,7 @@ import { SeverityEnum, VerificationRequestStatus } from "../dto/types";
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class VerificationRequest {
     @Prop({ required: true, unique: true })
     data_hash: string;

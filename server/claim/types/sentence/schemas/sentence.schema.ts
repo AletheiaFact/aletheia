@@ -5,7 +5,7 @@ import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-rev
 
 export type SentenceDocument = Sentence & mongoose.Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Sentence {
     @Prop({
         type: String,

@@ -45,8 +45,8 @@ export class ImageService {
         return newImage;
     }
 
-    async getByDataHash(data_hash) {
-        if (typeof data_hash !== "string" || data_hash.length !== 32) {
+    async getByDataHash(data_hash: string) {
+        if (!data_hash) {
               throw new BadRequestException("Invalid data hash format.");
             }
         const report = await this.reportService.findByDataHash(data_hash);

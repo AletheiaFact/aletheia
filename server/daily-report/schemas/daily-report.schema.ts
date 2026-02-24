@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 export type DailyReportDocument = DailyReport & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
 export class DailyReport {
     @Prop({
         type: mongoose.Types.ObjectId,

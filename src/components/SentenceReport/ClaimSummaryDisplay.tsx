@@ -73,10 +73,13 @@ const ClaimSummaryDisplay = ({
 
     return (
         <>
-            <SentenceReportSummary container className={personality ? "after" : ""}>
+            <SentenceReportSummary
+                container
+                className={personality ? "after" : ""}
+            >
                 <ReviewContent
                     title={isImage ? claim?.title : title}
-                    content={content?.content}
+                    content={content}
                     contentPath={contentPath}
                     isImage={isImage}
                     linkText={t(linkText)}
