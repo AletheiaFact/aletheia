@@ -29,6 +29,7 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
+import { isAdmin } from "../../../utils/GetUserPermission";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const {
@@ -123,9 +124,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                  !reviewData.usersId.includes(data.crossCheckerId)
+                !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                  !reviewData.usersId.includes(data.reviewerId);
+                !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -202,7 +203,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         const userIsReviewer = reviewData.reviewerId === userId;
         const userIsCrossChecker = reviewData.crossCheckerId === userId;
         const userIsAssignee = reviewData.usersId.includes(userId);
-        const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+        const userIsAdmin = isAdmin(role);
 
         if (
             isReported &&

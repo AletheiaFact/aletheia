@@ -19,6 +19,7 @@ import { useAppSelector } from "../../store/store";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
 import SentenceReportPreviewView from "../SentenceReport/SentenceReportPreviewView";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 export interface ClaimReviewViewProps {
     content: Content;
@@ -80,7 +81,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     return (
         <div>
-            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+            {isAdmin(role) && (
                 <>
                     {review?.isPublished ? (
                         <AdminToolBar
@@ -99,17 +100,17 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             )}
             {(isClaimTypeAndNotSmallScreen ||
                 isSourceOrVerificationRequest) && (
-                <ClaimReviewHeader
-                    classification={
-                        review?.report?.classification ||
-                        reviewData?.classification
-                    }
-                    hideDescription={hideDescriptions}
-                    userIsNotRegular={userIsNotRegular}
-                    componentStyle={componentStyle}
-                    {...props}
-                />
-            )}
+                    <ClaimReviewHeader
+                        classification={
+                            review?.report?.classification ||
+                            reviewData?.classification
+                        }
+                        hideDescription={hideDescriptions}
+                        userIsNotRegular={userIsNotRegular}
+                        componentStyle={componentStyle}
+                        {...props}
+                    />
+                )}
 
             {enableViewReportPreview ? (
                 <SentenceReportPreviewView

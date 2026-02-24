@@ -12,6 +12,7 @@ import { Roles } from "../types/enums";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import localConfig from "../../config/localConfig";
+import { isAdmin } from "../utils/GetUserPermission";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -99,7 +100,7 @@ const AletheiaMenu = () => {
                     {t("menu:kanbanItem")}
                 </ListItemButton>
             )}
-            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+            {isAdmin(role) && (
                 <>
                     <ListItemButton
                         data-cy={"testadminItem"}

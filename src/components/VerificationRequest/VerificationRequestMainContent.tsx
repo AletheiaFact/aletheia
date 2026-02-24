@@ -6,10 +6,10 @@ import { useAppSelector } from "../../store/store";
 import ManageVerificationRequestGroup from "./ManageVerificationRequestGroup";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
-import { Roles } from "../../types/enums";
 import EditIcon from '@mui/icons-material/Edit';
 import EditVerificationRequestDrawer from "./verificationRequestForms/EditVerificationRequestDrawer";
 import TrackingCard from "../Tracking/TrackingCard";
+import { isAdmin, isStaff } from "../../utils/GetUserPermission";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,
@@ -35,7 +35,7 @@ const VerificationRequestMainContent = ({
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography>
 
-                {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+                {isAdmin(role) && (
                     <IconButton size="small">
                         <EditIcon
                             data-cy="testVerificationRequestEditButton"
@@ -65,7 +65,7 @@ const VerificationRequestMainContent = ({
                 </Grid>
             </Grid>
             {!vw.xs &&
-                role !== Roles.Regular &&
+                isStaff(role) &&
                 verificationRequestGroup?.length > 0 && (
                     <ManageVerificationRequestGroup
                         label={t(
