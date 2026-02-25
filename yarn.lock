@@ -28946,15 +28946,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-to-json-schema@npm:^3.23.3":
-  version: 3.24.6
-  resolution: "zod-to-json-schema@npm:3.24.6"
-  peerDependencies:
-    zod: ^3.24.1
-  checksum: 5f4d29597cfd88d8fb8a539f0169affb8705d67ee9cbe478aa01bb1d2554e0540ca713fa4ddeb2fd834e87e7cdff61fa396f6d1925a9006de70afe6cd68bf7d2
-  languageName: node
-  linkType: hard
-
 "zod@npm:^3.21.4":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
