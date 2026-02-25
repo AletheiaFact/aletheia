@@ -1,14 +1,14 @@
 import { Controller, Param, Put, Body, Get } from "@nestjs/common";
 import { SentenceService } from "./sentence.service";
 import { ApiTags } from "@nestjs/swagger";
-import { IsPublic } from "../../../auth/decorators/is-public.decorator";
+import { Public } from "../../../auth/decorators/auth.decorator";
 
 @Controller()
 export class SentenceController {
     constructor(private sentenceService: SentenceService) {}
 
     @ApiTags("claim")
-    @IsPublic()
+    @Public()
     @Get("api/sentence/:data_hash")
     getSentenceByHash(@Param("data_hash") data_hash) {
         return this.sentenceService.getByDataHash(data_hash);
