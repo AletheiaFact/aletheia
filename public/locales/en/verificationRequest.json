@@ -81,9 +81,38 @@
     "editVerificationRequestSuccess": "Verification Request edited successfully",
     "editVerificationRequestError": "Error while editing the Verification Request",
     "titleEditVerificationRequest": "Verification Request Edition",
-    "titleEditVerificationRequest": "Verification Request Edition",
     "viewFullPage": "View full page",
     "automated_monitoring": "Automated Monitoring",
     "filterBySourceChannel": "Filter by Source Channel",
-    "errorUpdatingStatus": "Error updating status:"
+    "activity": {
+        "Posted": "Verification request #{{hash}} verified and forwarded",
+        "In Triage": "Verification request #{{hash}} in the verification process",
+        "Pre Triage": "New verification request received by {{source}}",
+        "Declined": "Verification request #{{hash}} checked and archived"
+    },
+    "dashboard": {
+        "title": "Reports Dashboard",
+        "subtitle": "Transparency and public monitoring",
+        "totalReports": "Total Reports",
+        "verified": "Verified",
+        "inAnalysis": "In Analysis",
+        "pending": "Pending",
+        "receivedThisMonth": "Received this month",
+        "ofTotal": "of total",
+        "sourcesTitle": "Report Sources",
+        "sourcesSubtitle": "Distribution by reception channel",
+        "statusTitle": "Report Status",
+        "statusSubtitle": "Distribution by verification status",
+        "activityTitle": "Recent Activity",
+        "activitySubtitle": "Latest updates from the system",
+        "errorLoading": "Error fetching statistics"
+    },
+    "errorUpdatingStatus": "Error updating status:",
+    "identifiedPersonalities": "People Mentioned",
+    "loadingPersonalities": "Loading personalities...",
+    "personalitiesList": "List of identified personalities",
+    "noPersonalitiesFound": "No personalities identified in this request",
+    "errorLoadingPersonalities": "Error loading personalities. Please try again.",
+    "retryLoadingPersonalities": "Retry",
+    "viewPersonalityPage": "View personality page for {{name}}"
 }

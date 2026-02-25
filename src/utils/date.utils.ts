@@ -1,10 +1,19 @@
 export function buildDateQuery(startDate?: string, endDate?: string) {
-    if (startDate && endDate)
-        return { $gte: new Date(startDate), $lte: new Date(endDate) };
+    if (!startDate && !endDate) return undefined;
 
-    if (startDate) return { $gte: new Date(startDate) };
+    const query: any = {};
 
-    if (endDate) return { $lte: new Date(endDate) };
+    if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        query.$gte = start;
+    }
 
-    return undefined;
+    if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.$lte = end;
+    }
+
+    return query;
 }

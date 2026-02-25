@@ -76,6 +76,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 marginTop: 4,
                                 marginBottom: 4,
                                 cursor: "pointer",
+                                maxWidth: "300px",
                             }}
                         />
                     );
