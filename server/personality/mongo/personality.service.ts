@@ -153,7 +153,7 @@ export class MongoPersonalityService {
                     `Attempting to create new personality with data ${personality}`
                 );
 
-                const user = this.req.user;
+                const user = this.req.user?._id;
 
                 const history = this.history.getHistoryParams(
                     newPersonality._id,
@@ -421,7 +421,7 @@ export class MongoPersonalityService {
         );
         this.logger.log(`Updated personality with data ${newPersonality}`);
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.history.getHistoryParams(
             personalityId,
@@ -450,7 +450,7 @@ export class MongoPersonalityService {
         const history = this.historyService.getHistoryParams(
             newPersonality._id,
             TargetModel.Personality,
-            this.req?.user,
+            this.req.user?._id,
             isHidden ? HistoryType.Hide : HistoryType.Unhide,
             after,
             before
@@ -471,7 +471,7 @@ export class MongoPersonalityService {
      * @returns Returns the personality with the param isDeleted equal to true
      */
     async delete(personalityId) {
-        const user = this.req.user;
+        const user = this.req.user?._id;
         const previousPersonality = await this.getById(personalityId);
         const history = this.history.getHistoryParams(
             personalityId,

@@ -30,6 +30,7 @@ import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -37,6 +38,7 @@ export class VerificationRequestController {
 
     constructor(
         private verificationRequestService: VerificationRequestService,
+        private readonly verificationRequestStatsService: VerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
@@ -50,7 +52,7 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=300, must-revalidate")
     @Public()
     public async getStats(): Promise<StatsDto> {
-        return this.verificationRequestService.getStats();
+        return this.verificationRequestStatsService.getStats();
     }
 
     @ApiTags("verification-request")
@@ -387,22 +389,32 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    @Get("verification-request/:data_hash/history")
-    public async verificationRequestHistoryPage(
+    @Public()
+    @Get("verification-request/:data_hash/:viewType")
+    public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
+        const { data_hash, viewType } = req.params;
 
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
 
-        const queryObject = Object.assign(parsedUrl.query, {
-            targetId: verificationRequest._id,
-            targetModel: TargetModel.VerificationRequest,
-        });
+        const view = viewType === "history" ? "/history-page" : "/tracking-page";
 
-        await this.viewService.render(req, res, "/history-page", queryObject);
+        const queryObject = Object.assign(
+            parsedUrl.query,
+            viewType === "history"
+                ? {
+                    targetId: verificationRequest._id,
+                    targetModel: TargetModel.VerificationRequest,
+                }
+                : {
+                    verificationRequestId: verificationRequest._id,
+                }
+        );
+
+        await this.viewService.render(req, res, view, queryObject);
     }
 }

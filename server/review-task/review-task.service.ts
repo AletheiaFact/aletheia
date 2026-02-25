@@ -383,7 +383,7 @@ export class ReviewTaskService {
                     : Object.keys(newReviewTask.machine.value)[0];
         }
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             newReviewTask._id,

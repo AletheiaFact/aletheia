@@ -7,6 +7,18 @@ const locators = {
         BTN_LOGIN: "[data-cy=loginButton]",
     },
 
+    signup: {
+        NAME: "[data-cy=nameInputCreateAccount]",
+        EMAIL: "[data-cy=emailInputCreateAccount]",
+        PASSWORD: "[data-cy=passwordInputCreateAccount]",
+        REPEATED_PASSWORD: "[data-cy=repeatedPasswordInputCreateAccount]",
+        BTN_SUBMIT: "[data-cy=loginButton]",
+        ERROR_NAME: "[data-cy=nameError]",
+        ERROR_EMAIL: "[data-cy=emailError]",
+        ERROR_PASSWORD: "[data-cy=passwordError]",
+        ERROR_REPEATED_PASSWORD: "[data-cy=repeatedPasswordError]",
+    },
+
     personality: {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",

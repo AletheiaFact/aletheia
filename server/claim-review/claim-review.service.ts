@@ -353,7 +353,7 @@ export class ClaimReviewService {
         const history = this.historyService.getHistoryParams(
             newReview._id,
             TargetModel.ClaimReview,
-            this.req?.user,
+            this.req.user?._id,
             hide ? HistoryType.Hide : HistoryType.Unhide,
             after,
             before

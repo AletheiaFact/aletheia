@@ -4,19 +4,13 @@ import {
     Param,
     Put,
     Get,
-    UseGuards,
     Header,
     Delete,
     Query,
 } from "@nestjs/common";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
@@ -31,7 +25,7 @@ export class ClaimReviewController {
         private historyService: HistoryService
     ) {}
 
-    @IsPublic()
+    @Public()
     @ApiTags("claim-review")
     @Get("api/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -67,10 +61,9 @@ export class ClaimReviewController {
         });
     }
 
+    @AdminOnly()
     @ApiTags("claim-review")
     @Put("api/review/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async update(@Param("id") reviewId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
@@ -85,15 +78,14 @@ export class ClaimReviewController {
         );
     }
 
+    @AdminOnly()
     @ApiTags("claim-review")
     @Delete("api/review/:id")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") reviewId) {
         return this.claimReviewService.delete(reviewId);
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("claim-review")
     @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")

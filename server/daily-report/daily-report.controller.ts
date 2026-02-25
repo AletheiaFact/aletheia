@@ -1,9 +1,5 @@
-import { Controller, Param, Post, UseGuards } from "@nestjs/common";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { Controller, Param, Post } from "@nestjs/common";
+import { AdminOnly } from "../auth/decorators/auth.decorator";
 import { DailyReportService } from "../daily-report/daily-report.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NotificationService } from "../notifications/notifications.service";
@@ -27,9 +23,8 @@ export class DailyReportController {
         private sourceService: SourceService
     ) {}
 
+    @AdminOnly()
     @Post("api/daily-report/topic/:topic/send/:nameSpace")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
     async sendDailyReport(
         @Param("topic") topic,
         @Param("nameSpace") nameSpace

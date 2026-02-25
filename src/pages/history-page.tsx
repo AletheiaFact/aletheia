@@ -7,8 +7,8 @@ import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 
 const HistoryPage: NextPage<{
-    targetId: any;
-    targetModel: any;
+    targetId: string;
+    targetModel: string;
     nameSpace: NameSpaceEnum;
 }> = ({ targetId, targetModel, nameSpace }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);

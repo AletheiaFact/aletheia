@@ -1,5 +1,5 @@
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 import AletheiaAlert from "../AletheiaAlert";
 import Input from "../AletheiaInput";
@@ -9,6 +9,7 @@ import { Grid } from "@mui/material";
 import { useForm } from "react-hook-form";
 import Label from "../Label";
 import TextError from "../TextErrorForm";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
 const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
     const { t } = useTranslation();
@@ -19,6 +20,16 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
         formState: { errors },
     } = useForm();
     const senha = watch("password");
+    const captchaRef = useRef(null);
+    const [captchaString, setCaptchaString] = useState("");
+
+    const handleFormSubmit = (values) => {
+        if (!captchaString) {
+            onFinishFailed(t("common:requiredFieldError"));
+            return;
+        }
+        onFinish({ ...values, recaptcha: captchaString });
+    };
 
     return (
         <div>
@@ -37,10 +48,11 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                 }
             />
             <h2>{t("login:signupFormHeader")}</h2>
-            <form onSubmit={handleSubmit(onFinish, onFinishFailed)}>
+            <form onSubmit={handleSubmit(handleFormSubmit, onFinishFailed)}>
                 <Grid container>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:nameLabel") + " :"}
                         />
                     </Grid>
@@ -48,16 +60,18 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <Input
                             data-cy="nameInputCreateAccount"
                             {...register("name", {
-                                required: true
+                                required: true,
                             })}
                         />
                         <TextError
+                            data-cy="nameError"
                             stateError={errors.name}
                             children={t("login:nameErrorMessage")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:emailLabel") + " :"}
                         />
                     </Grid>
@@ -66,10 +80,12 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             data-cy="emailInputCreateAccount"
                             {...register("email", {
                                 required: true,
-                                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+                                pattern:
+                                    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                             })}
                         />
                         <TextError
+                            data-cy="emailError"
                             stateError={errors.email}
                             children={
                                 errors.email?.type === "pattern"
@@ -79,7 +95,8 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:passwordLabel") + " :"}
                         />
                     </Grid>
@@ -87,16 +104,18 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <InputPassword
                             data-cy="passwordInputCreateAccount"
                             {...register("password", {
-                                required: true
+                                required: true,
                             })}
                         />
                         <TextError
+                            data-cy="passwordError"
                             stateError={errors.password}
                             children={t("login:passwordErrorMessage")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Label required
+                        <Label
+                            required
                             children={t("login:repeatPasswordLabel") + " :"}
                         />
                     </Grid>
@@ -105,16 +124,28 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             data-cy="repeatedPasswordInputCreateAccount"
                             {...register("repeatedPassword", {
                                 required: true,
-                                validate: (value) =>
-                                    value === senha
+                                validate: (value) => value === senha,
                             })}
                         />
                         <TextError
+                            data-cy="repeatedPasswordError"
                             stateError={errors.repeatedPassword}
                             children={
                                 errors.repeatedPassword?.type === "required"
                                     ? t("common:requiredFieldError")
-                                    : t("profile:passwordMatchErrorMessage")}
+                                    : t("profile:passwordMatchErrorMessage")
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <Label required>
+                            {t("common:captchaLabel") + " :"}
+                        </Label>
+                    </Grid>
+                    <Grid item xs={12} sm={9}>
+                        <AletheiaCaptcha
+                            ref={captchaRef}
+                            onChange={setCaptchaString}
                         />
                     </Grid>
                 </Grid>

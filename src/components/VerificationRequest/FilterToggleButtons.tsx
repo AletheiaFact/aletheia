@@ -22,6 +22,7 @@ const FilterToggleButtons = ({ viewMode, setViewMode }) => (
         },
       },
       "& .Mui-selected": {
+        backgroundColor: colors.primary,
         "&:hover": {
           backgroundColor: colors.primary,
         },

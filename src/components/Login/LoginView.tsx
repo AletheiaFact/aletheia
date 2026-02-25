@@ -74,7 +74,10 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                 if (err.response?.status === 400) {
                     // Yup, it is!
                     setFlow(err.response?.data);
-                    return MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                    return MessageManager.showMessage(
+                        "error",
+                        `${t("profile:totpIncorectCodeMessage")}`
+                    );
                 }
 
                 return Promise.reject(err);
@@ -122,6 +125,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                 email,
                 password,
                 name: values.name,
+                recaptcha: values.recaptcha,
             };
             userApi.register(payload, t).then((res) => {
                 if (!res?.error) {
@@ -143,15 +147,19 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
 
     const onFinishFailed = (errorInfo) => {
         if (typeof errorInfo === "string") {
-            MessageManager.showMessage("error", errorInfo)
+            MessageManager.showMessage("error", errorInfo);
         } else {
-            MessageManager.showMessage("error", `${t("login:loginFailedMessage")}`);
+            MessageManager.showMessage(
+                "error",
+                `${t("login:loginFailedMessage")}`
+            );
         }
         setIsLoading(false);
     };
 
     return (
-        <Grid container
+        <Grid
+            container
             justifyContent="center"
             style={{ marginTop: 45, height: "100%", padding: "24px" }}
         >
@@ -176,7 +184,8 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                         </Grid>
                         <CTAButton
                             type={ButtonType.blue}
-                            textWhenLoggedOut={t("CTAFolder:button")} />
+                            textWhenLoggedOut={t("CTAFolder:button")}
+                        />
                     </>
                 )}
             </Grid>

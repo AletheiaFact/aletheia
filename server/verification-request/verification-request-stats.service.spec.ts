@@ -1,29 +1,42 @@
 import { Model } from "mongoose";
-import { VerificationRequestService } from "../verification-request.service";
-import { VerificationRequestDocument } from "../schemas/verification-request.schema";
-import { createVRTestingModule, mockQuery, mockVerificationRequestModel } from "./setup/verification-request-test.module";
+import { getModelToken } from "@nestjs/mongoose";
+import { Test, TestingModule } from "@nestjs/testing";
+import { VerificationRequestService } from "./verification-request.service";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
+import { VerificationRequestDocument } from "./schemas/verification-request.schema";
+import { createFakeVerificationRequest, mockQuery, mockVerificationRequestModel } from "../mocks/VerificationRequestMock";
 
-function createFakeRequest(overrides?: Partial<VerificationRequestDocument>) {
-  return {
-    _id: "60c72b2f9f1b2c3d4e5f6a7b",
-    status: "In Triage",
-    sourceChannel: "Whatsapp",
-    data_hash: "AABBCCDD1122334455667788",
-    updatedAt: new Date(),
-    ...overrides,
-  };
-}
-
-describe("VerificationRequestStats (Unit)", () => {
-  let service: VerificationRequestService;
+describe("VerificationRequestStatsService (Unit)", () => {
+  let testingModule: TestingModule;
+  let service: VerificationRequestStatsService;
   let model: Model<VerificationRequestDocument>;
 
+  beforeAll(async () => {
+    testingModule = await Test.createTestingModule({
+      providers: [
+        VerificationRequestStatsService,
+        {
+          provide: getModelToken("VerificationRequest"),
+          useValue: mockVerificationRequestModel,
+        },
+        {
+          provide: "REQUEST",
+          useValue: { user: { id: "test-user" } },
+        },
+        { provide: VerificationRequestService, useValue: {} },
+      ],
+    }).compile();
+
+    model = testingModule.get<Model<VerificationRequestDocument>>(
+      getModelToken("VerificationRequest")
+    );
+  });
+
   beforeEach(async () => {
-    const setup = await createVRTestingModule();
-    
-    service = setup.service;
-    model = setup.model;
-    
+    service = await testingModule.resolve<VerificationRequestStatsService>(
+      VerificationRequestStatsService
+    );
+
     jest.clearAllMocks();
   });
 
@@ -48,7 +61,9 @@ describe("VerificationRequestStats (Unit)", () => {
       });
 
       it("should transform data_hash to the first 8 characters and map _id to id", async () => {
-        const mockDoc = createFakeRequest({ data_hash: "1234567890ABC" });
+        const mockDoc = createFakeVerificationRequest({
+          data_hash: "1234567890ABC",
+        });
         setupMockData([mockDoc]);
 
         const [result] = await (service as any).getStatsRecentActivity();
