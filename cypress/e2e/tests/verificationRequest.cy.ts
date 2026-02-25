@@ -3,13 +3,10 @@
 
 import { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumContent } from "../../fixtures/verificationRequest";
 import locators from "../../support/locators";
-import dayjs, { Dayjs } from "dayjs"
+import { Dayjs } from "dayjs"
+import { getPastDay, today } from "../../utils/dateUtils";
 
 describe("Test verification request", () => {
-    const today = dayjs();
-    const getPastDay = (daysAgo: number) => {
-        return dayjs().subtract(daysAgo, "day");
-    };
     const getHashFromUrl = (interception) => interception.request.url.split("/").pop();
 
     const openCreateVerificationRequestForm = () => {

@@ -2,6 +2,7 @@
 
 import locators from "../../support/locators";
 import claim from "../../fixtures/claim";
+import { today } from "../../utils/dateUtils";
 
 describe("Create image claim", () => {
     beforeEach("login", () => cy.login());
@@ -15,7 +16,7 @@ describe("Create image claim", () => {
             .type(claim.imageTitle);
 
         cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.get(locators.claim.INPUT_DATA_TODAY).should("be.visible").click();
+        cy.contains('[role="gridcell"]', today.format("D")).click();
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")

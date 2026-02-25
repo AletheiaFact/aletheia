@@ -38,7 +38,6 @@ const locators = {
         BTN_SUBMIT_CLAIM: "[data-cy=testSaveButton]",
         INPUT_TITLE: "[data-cy=testTitleClaimForm]",
         INPUT_DATA: "[data-cy=testSelectDate]",
-        INPUT_DATA_TODAY: ".MuiPickersDay-today",
         INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
