@@ -6,18 +6,21 @@ interface RequestDatesProps {
     icon?: React.ReactNode;
     label: string;
     value: string;
+    dataCy?: string;
 }
 
-export const RequestDates: React.FC<RequestDatesProps> = ({ icon, label, value }) => {
+export const RequestDates: React.FC<RequestDatesProps> = ({ icon, label, value, dataCy }) => {
     const publicationDate = new Date(value);
     const isValidDate = !Number.isNaN(publicationDate.getTime());
 
     return (
-        <Box style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "4px"
-        }}>
+        <Box
+            data-cy={dataCy}
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px"
+            }}>
             {icon}
             <Typography variant="body2" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                 {label}

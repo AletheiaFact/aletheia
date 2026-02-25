@@ -11,6 +11,8 @@ const DynamicBadgesForm = ({
     badges,
     onSubmit,
     isLoading,
+    isDrawerOpen,
+    onClose
 }: IDynamicBadgesForm) => {
     const {
         handleSubmit,
@@ -37,7 +39,8 @@ const DynamicBadgesForm = ({
                     isLoading={isLoading}
                     setRecaptchaString={setRecaptchaString}
                     hasCaptcha={hasCaptcha}
-                    hasCancelButton={false}
+                    isDrawerOpen={isDrawerOpen}
+                    onClose={onClose}
                 />
             </form>
         </Grid>

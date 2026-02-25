@@ -4,15 +4,16 @@ import { Box, Typography } from "@mui/material";
 interface VerificationRequestContentProps {
     label: string;
     value: React.ReactNode;
+    dataCy?: string;
 }
 
-export const VerificationRequestContent: React.FC<VerificationRequestContentProps> = ({ label, value }) => {
+export const VerificationRequestContent: React.FC<VerificationRequestContentProps> = ({ label, value, dataCy }) => {
     return (
         <Box style={{
             display: "flex",
             alignItems: "center",
         }}>
-            <Box>
+            <Box data-cy={dataCy}>
                 <Typography variant="body2">
                     <strong>{label}</strong>
                 </Typography>

@@ -21,6 +21,7 @@ const SourceList: React.FC<SourceListProps> = ({ sources, t, id }) => {
             {flatSources.map((source, index) => (
                 <VerificationRequestContent
                     key={`${id}-source-${index}`}
+                    dataCy={`testVerificationRequestSource${index}`}
                     label={
                         index === 0
                             ? t("verificationRequest:tagSource")

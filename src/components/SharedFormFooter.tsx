@@ -11,7 +11,8 @@ interface ISharedFormFooter {
     isLoading: boolean;
     setRecaptchaString: Dispatch<SetStateAction<string>>;
     hasCaptcha: boolean;
-    hasCancelButton?: boolean;
+    isDrawerOpen?: boolean;
+    onClose?: () => void;
     extraButton?: React.ReactNode;
 }
 
@@ -19,7 +20,8 @@ const SharedFormFooter = ({
     isLoading,
     setRecaptchaString,
     hasCaptcha,
-    hasCancelButton = true,
+    isDrawerOpen,
+    onClose,
     extraButton
 }: ISharedFormFooter) => {
     const recaptchaRef = useRef(null);
@@ -35,15 +37,16 @@ const SharedFormFooter = ({
                     justifyContent: "space-evenly",
                 }}
             >
-                {hasCancelButton ?
-                    <AletheiaButton
-                        type={ButtonType.gray}
-                        onClick={() => router.back()}
-                    >
-                        {t("claimForm:cancelButton")}
-                    </AletheiaButton>
-                    : extraButton
-                }
+                <AletheiaButton
+                    type={ButtonType.gray}
+                    onClick={() => isDrawerOpen ? onClose() : router.back()}
+                    data-cy="testCancelButton"
+                >
+                    {t("claimForm:cancelButton")}
+                </AletheiaButton>
+
+                {extraButton}
+
                 <AletheiaButton
                     loading={isLoading}
                     type={ButtonType.blue}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,13 +7,14 @@ import AletheiaButton, { ButtonType } from "../../../Button";
 import AletheiaInput from "../../../AletheiaInput";
 import { IInputExtraSourcesList } from "../../../../types/VerificationRequest";
 import { SourceType } from "../../../../types/Source";
+import { debounce } from "lodash";
 
 const formatSources = (sources: SourceType[]) => {
     const sourceArray = Array.isArray(sources) ? sources : [];
     if (sourceArray.length === 0) return [createEmptySource()];
 
     return sourceArray.map((source) => ({
-        id: source._id,
+        id: Math.random().toString(),
         href: typeof source === "object" ? source.href : source || "",
         isNewSource: !!(typeof source === "object" ? source.href : source),
     }));
@@ -25,34 +26,43 @@ const createEmptySource = () => ({
     isNewSource: false
 });
 
-const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IInputExtraSourcesList) => {
+const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder, dataCy }: IInputExtraSourcesList) => {
     const { t } = useTranslation();
-    const [sourcesList, setSourcesList] = useState(() => formatSources(sources as SourceType[]));
+    const [sourcesList, setSourcesList] = useState(() => formatSources(defaultSources as SourceType[]));
 
-    const handleSubmit = (hrefsList: typeof sourcesList) => {
-        const updatedHrefs = [...new Set(hrefsList.map(source => source.href.trim()).filter(Boolean))];
-        onChange(updatedHrefs);
-    };
+    const handleListChange = useCallback((newSourcesList: typeof sourcesList) => {
+        const cleanedSources = [...new Set(newSourcesList.map(source => source.href.trim()).filter(Boolean))];
+        onChange(cleanedSources);
+    }, [onChange]);
+
+    const debouncedOnChange = useMemo(
+        () =>
+            debounce((SourcesList: typeof sourcesList) => {
+                handleListChange(SourcesList)
+            }, 800),
+        [handleListChange]
+    );
 
     const updateSources = (id: string, newHref: string) => {
-        const newHrefList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        const newSourcesList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
+        setSourcesList(newSourcesList);
+        debouncedOnChange(newSourcesList)
     };
 
     const addField = () => {
         if (disabled) return;
-        const newHrefList = [...sourcesList, createEmptySource()];
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        const newSourcesList = [...sourcesList, createEmptySource()];
+        setSourcesList(newSourcesList);
     };
 
     const removeField = (id: string, index: number) => {
         if (disabled || index === 0) return;
-        const newHrefList = sourcesList.filter((source) => source.id !== id);
+        const newSourcesList = sourcesList.filter((source) => source.id !== id);
 
-        setSourcesList(newHrefList);
-        handleSubmit(newHrefList);
+        setSourcesList(newSourcesList);
+        debouncedOnChange.cancel();
+
+        handleListChange(newSourcesList)
     };
 
     return (
@@ -72,12 +82,14 @@ const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IIn
                         disabled={disabled || (index === 0 && source.isNewSource)}
                         onChange={(newHref) => updateSources(source.id, newHref.target.value)}
                         placeholder={t(placeholder)}
+                        data-cy={`${dataCy}Edit-${index}`}
                         white="true"
                     />
 
                     {!disabled && index !== 0 && (
                         <AletheiaButton
                             onClick={() => removeField(source.id, index)}
+                            data-cy={`${dataCy}Remove-${index}`}
                             style={{ minWidth: "40px" }}
                         >
                             <DeleteIcon fontSize="small" />
@@ -91,6 +103,7 @@ const InputExtraSourcesList = ({ sources, onChange, disabled, placeholder }: IIn
                     <AletheiaButton
                         type={ButtonType.blue}
                         onClick={addField}
+                        data-cy={`${dataCy}-addSources`}
                         style={{ marginTop: 12 }}
                     >
                         <AddIcon fontSize="small" />

@@ -7,8 +7,9 @@ const ImpactAreaSelect = ({
   onChange,
   placeholder,
   isDisabled,
+  dataCy,
 }: IImpactAreaSelect) => {
-  const [value, setValue] = useState<ManualTopic[] | null>(null);
+  const [value, setValue] = useState<ManualTopic | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const ImpactAreaSelect = ({
       setSelectedTags={setValue}
       isMultiple={false}
       isDisabled={isDisabled}
+      dataCy={dataCy}
     />
   );
 };

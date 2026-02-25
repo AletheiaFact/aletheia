@@ -24,7 +24,7 @@ import {
     ReviewTaskEvents,
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
-import { Roles, VerificationRequestStatus } from "../../types/enums";
+import { VerificationRequestStatus } from "../../types/enums";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -47,6 +47,7 @@ import {
     getSeverityColor,
     getSeverityLabel,
 } from "../../helpers/verificationRequestCardHelper";
+import { isStaff } from "../../utils/GetUserPermission";
 
 interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
@@ -83,11 +84,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
             language: i18n.language || "en",
         });
 
-        const canApprove =
-            role === Roles.Admin ||
-            role === Roles.SuperAdmin ||
-            role === Roles.FactChecker ||
-            role === Roles.Reviewer;
+        const canApprove = isStaff(role);
 
         useEffect(() => {
             setCurrentRequest(verificationRequest);
@@ -282,6 +279,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                     </AletheiaButton>
                                     <Grid item xs={vw?.xs ? 4 : 7}>
                                         <AletheiaButton
+                                            data-cy="testSeeFullVerificationRequest"
                                             href={`/verification-request/${currentRequest.data_hash}`}
                                             target="_blank"
                                             type={ButtonType.gray}

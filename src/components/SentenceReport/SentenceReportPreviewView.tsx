@@ -21,6 +21,7 @@ import SentenceReportPreview from "./SentenceReportPreview";
 import { useAppSelector } from "../../store/store";
 import ClaimReviewHeader from "../ClaimReview/ClaimReviewHeader";
 import { Content } from "../../types/Content";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 interface ISentenceReportViewV1Props {
     context: any;
@@ -73,7 +74,7 @@ const SentenceReportPreviewView = ({
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
-    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const userIsAdmin = isAdmin(role);
     const userIsCrossChecker = context.crossCheckerId === userId;
     const userIsAssignee = context.usersId.includes(userId);
 

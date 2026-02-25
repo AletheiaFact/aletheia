@@ -14,6 +14,7 @@ import actions from "../store/actions";
 import { useEffect } from "react";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { isAdmin } from "../utils/GetUserPermission";
 
 const PersonalityPage: NextPage<{
     personality: any;
@@ -49,7 +50,7 @@ const PersonalityPage: NextPage<{
     return (
         <>
             <JsonLd {...jsonldContent} />
-            {(role === Roles.SuperAdmin || role === Roles.Admin) && (
+            {isAdmin(role) && (
                 <AdminToolBar
                     content={personality}
                     deleteApiFunction={personalitiesApi.deletePersonality}

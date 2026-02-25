@@ -14,6 +14,8 @@ const DynamicVerificationRequestForm = ({
     setRecaptchaString,
     hasCaptcha,
     isEdit,
+    isDrawerOpen,
+    onClose
 }: IDynamicVerificationRequestForm) => {
     const {
         handleSubmit,
@@ -40,6 +42,8 @@ const DynamicVerificationRequestForm = ({
                 isLoading={isLoading}
                 setRecaptchaString={setRecaptchaString}
                 hasCaptcha={hasCaptcha}
+                isDrawerOpen={isDrawerOpen}
+                onClose={onClose}
             />
         </form>
     );

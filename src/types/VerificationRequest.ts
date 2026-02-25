@@ -38,7 +38,7 @@ interface VerificationRequest {
   rejected: boolean;
   group: Group;
   date: Date;
-  source?: Source[];
+  source?: Source[] | string[];
   _id?: string;
   publicationDate: string;
   heardFrom: string;
@@ -122,10 +122,11 @@ interface IEditVerificationRequestDrawer {
     onSave: (updatedRequest: VerificationRequest) => void;
 }
 interface IInputExtraSourcesList {
-  sources: UnifiedDefaultValue;
+  defaultSources: UnifiedDefaultValue;
   onChange: (value: string[]) => void;
   disabled: boolean;
   placeholder: string;
+  dataCy?: string;
 }
 interface IReportTypeSelect {
   onChange: (value: UnifiedDefaultValue) => void;
@@ -133,6 +134,7 @@ interface IReportTypeSelect {
   placeholder: string;
   style?: React.CSSProperties;
   isDisabled: boolean;
+  dataCy?: string;
 }
 
 interface IDynamicVerificationRequestForm {
@@ -142,6 +144,8 @@ interface IDynamicVerificationRequestForm {
     setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
     hasCaptcha: boolean;
     isEdit: boolean;
+    isDrawerOpen: boolean;
+    onClose: () => void;
 }
 
 export type {
