@@ -10,20 +10,26 @@ import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
 import { Checkbox, FormControlLabel } from "@mui/material";
-import ReportTypeSelect from "../VerificationRequest/CreateVerificationRequest/ReportTypeSelect";
-import ImpactAreaSelect from "../VerificationRequest/CreateVerificationRequest/ImpactAreaSelect";
 import colors from "../../styles/colors";
+import ReportTypeSelect from "../VerificationRequest/verificationRequestForms/formInputs/ReportTypeSelect";
+import ImpactAreaSelect from "../VerificationRequest/verificationRequestForms/formInputs/ImpactAreaSelect";
+import InputExtraSourcesList from "../VerificationRequest/verificationRequestForms/formInputs/InputExtraSourcesList";
+import { Topic } from "../../types/Topic";
+import { SourceType } from "../../types/Source";
+import ImageUpload, { UploadFile } from "../ImageUpload";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
+
+export type UnifiedDefaultValue = Topic | SourceType[] | UploadFile[] | string
 
 interface DynamicInputProps {
     fieldName: string;
     type: string;
     placeholder: string;
-    value: string | [];
+    value: UnifiedDefaultValue;
     onChange: any;
     addInputLabel: string;
-    defaultValue: string | [];
+    defaultValue: UnifiedDefaultValue;
     "data-cy": string;
     extraProps: any;
     disabledDate?: any;
@@ -83,6 +89,16 @@ const DynamicInput = (props: DynamicInputProps) => {
                     white="true"
                 />
             );
+        case "sourceList":
+            return (
+                <InputExtraSourcesList
+                    defaultSources={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    disabled={props.disabled}
+                    placeholder={props.placeholder}
+                    dataCy={props["data-cy"]}
+                />
+            );
         case "select":
             return (
                 <ClaimReviewSelect
@@ -98,14 +114,25 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
-
+                    isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
                 />
             );
         case "selectImpactArea":
             return (
                 <ImpactAreaSelect
+                    defaultValue={props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
+                    isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
+                />
+            );
+        case "imageUpload":
+            return (
+                <ImageUpload
+                    onChange={(value) => props.onChange(value)}
+                    defaultFileList={props.defaultValue}
                 />
             );
         case "textbox":
@@ -141,9 +168,10 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "date":
             return (
                 <DatePickerInput
+                    defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    data-cy={"testSelectDate"}
+                    data-cy="testSelectDate"
                     disabledDate={props.disabledDate}
                     disabled={props.disabled}
                     style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}

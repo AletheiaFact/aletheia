@@ -3,7 +3,6 @@ import { Grid } from "@mui/material";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Roles } from "../../types/enums";
 import {
     reviewingSelector,
     publishedSelector,
@@ -18,6 +17,7 @@ import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const SentenceReportView = ({
     context,
@@ -44,7 +44,7 @@ const SentenceReportView = ({
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
-    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const userIsAdmin = isAdmin(role);
 
     const canShowClassificationAndCrossChecking =
         ((isCrossChecking || isAddCommentCrossChecking) &&

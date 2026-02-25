@@ -35,7 +35,7 @@ const BadgesView = () => {
         () => [
             {
                 field: "image",
-                headerName: t("badges:imageColumn"),
+                headerName: t("badges:imageFieldLabel"),
                 flex: 1,
                 renderCell: (params) => (
                     <Avatar
@@ -46,12 +46,12 @@ const BadgesView = () => {
             },
             {
                 field: "name",
-                headerName: t("badges:nameColumn"),
+                headerName: t("badges:nameLabel"),
                 flex: 2,
             },
             {
                 field: "description",
-                headerName: t("badges:descriptionColumn"),
+                headerName: t("badges:descriptionLabel"),
                 flex: 4,
             },
             {

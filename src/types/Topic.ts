@@ -1,6 +1,8 @@
 import React from "react";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { ContentModelEnum } from "./enums";
+import { UnifiedDefaultValue } from "../components/Form/DynamicInput";
+
 export interface Topic {
     _id: string;
     name: string;
@@ -43,15 +45,21 @@ export interface ITopicDisplay {
 }
 
 export interface IImpactAreaSelect {
-    onChange: (value: ManualTopic[]) => void;
+    defaultValue: UnifiedDefaultValue;
+    onChange: (value: ManualTopic) => void;
     placeholder?: string;
+    isDisabled: boolean;
+    dataCy?: string;
 }
 
 export interface IMultiSelectAutocomplete {
+    defaultValue?: UnifiedDefaultValue;
     isMultiple?: boolean;
-    onChange: (value: ManualTopic[]) => void;
+    onChange: (value: ManualTopic[] | ManualTopic) => void;
     isLoading: boolean;
     placeholder: string;
-    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[]>>;
+    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[] | ManualTopic>>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    isDisabled?: boolean;
+    dataCy?: string;
 }

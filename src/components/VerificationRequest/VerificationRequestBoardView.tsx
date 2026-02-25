@@ -126,7 +126,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                 <Box
                   sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
-                  {groupedRequests[status.key].map((request) => (
+                  {groupedRequests[status.key].map((request, index) => (
                     <Card
                       key={request._id}
                       sx={{
@@ -164,6 +164,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                         </Box>
 
                         <Typography
+                          data-cy={`testVerificationRequestCardContent${index}`}
                           variant="body1"
                           sx={{ mb: 1, fontWeight: 500 }}
                         >

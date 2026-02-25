@@ -704,15 +704,7 @@ export class VerificationRequestService {
                         return src._id;
                     })
                 );
-
-                updatedVerificationRequestData.source = Array.from(
-                    new Set([
-                        ...(verificationRequest.source || []).map((sourceId) =>
-                            sourceId.toString()
-                        ),
-                        ...newSourceIds.map((id) => id.toString()),
-                    ])
-                ).map((id) => Types.ObjectId(id));
+                updatedVerificationRequestData.source = newSourceIds.map((id) => Types.ObjectId(id));
             }
 
             if (
@@ -743,7 +735,8 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            ).populate("source");
+            ).populate("source")
+             .populate("impactArea");
         } catch (error) {
             this.logger.error("Failed to update verification request:", error);
             throw error;
