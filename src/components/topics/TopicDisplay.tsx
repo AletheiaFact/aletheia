@@ -7,51 +7,57 @@ import TagDisplay from "./TagDisplay";
 import SentenceApi from "../../api/sentenceApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import { ITopicDisplay } from "../../types/Topic";
 
 const TopicDisplay = ({
     data_hash,
     topics,
     reviewTaskType,
     contentModel = null,
-}) => {
+}: ITopicDisplay) => {
     const [showTopicsForm, setShowTopicsForm] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
-    const [inputValue, setInputValue] = useState<any[]>([]);
+    const [selectedTags, setSelectedTags] = useState<any[]>([]);
     const [tags, setTags] = useState<any[]>([]);
     const { t } = useTranslation();
 
     useEffect(() => {
-        const inputValueFormatted = inputValue.map((inputValue) =>
-            inputValue?.value
+        const formattedSelectedTags = selectedTags.map((selectedTag) =>
+            selectedTag?.value
                 ? {
-                      label: inputValue?.label,
-                      value: inputValue?.value,
-                      aliases: inputValue?.aliases || [],
-                      matchedAlias: inputValue?.matchedAlias || null,
+                      label: selectedTag?.label,
+                      value: selectedTag?.value,
+                      aliases: selectedTag?.aliases || [],
+                      matchedAlias: selectedTag?.matchedAlias || null,
                   }
-                : inputValue
+                : selectedTag
         );
 
-        const filterValues = inputValueFormatted.filter(
-            (inputValue) =>
+        const filterSelectedTags = formattedSelectedTags.filter(
+            (selectedTag) =>
                 !topicsArray.some(
                     (topic) =>
                         (topic?.value || topic) ===
-                        (inputValue?.value || inputValue)
+                        (selectedTag?.value || selectedTag)
                 )
         );
-        setTags(topicsArray?.concat(filterValues) || []);
-    }, [inputValue, topicsArray]);
+        setTags(topicsArray?.concat(filterSelectedTags) || []);
+    }, [selectedTags, topicsArray]);
+
+    console.log(topicsArray,selectedTags)
 
     const handleClose = async (removedTopicValue: any) => {
+        // NOTE: Filtering logic differs due to inconsistent data structures across collections:
+        // 1. topicsArray: May contain persisted topics from VerificationRequest, requiring 'wikidataId' as an identifier.
+        // 2. selectedTags: Follows the 'ManualTopic' UI schema, which consistently uses 'value'.
         const newTopicsArray = topicsArray.filter(
-            (topic) => (topic?.value || topic) !== removedTopicValue
+            (topic) => (topic?.value || topic?.wikidataId || topic) !== removedTopicValue
         );
-        const newInputValue = inputValue.filter(
+        const newSelectedTag = selectedTags.filter(
             (topic) => (topic?.value || topic) !== removedTopicValue
         );
         setTopicsArray(newTopicsArray);
-        setInputValue(newInputValue);
+        setSelectedTags(newSelectedTag);
 
         if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
             return await verificationRequestApi.deleteVerificationRequestTopic(
@@ -84,7 +90,7 @@ const TopicDisplay = ({
                     data_hash={data_hash}
                     topicsArray={topicsArray}
                     setTopicsArray={setTopicsArray}
-                    setInputValue={setInputValue}
+                    setSelectedTags={setSelectedTags}
                     tags={tags}
                     reviewTaskType={reviewTaskType}
                 />

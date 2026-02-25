@@ -74,10 +74,10 @@ const ClaimReviewHeader = ({
                         />
                         {showTopicInput && (
                             <TopicDisplay
-                                contentModel={target.contentModel}
                                 data_hash={content.data_hash}
-                                reviewTaskType={reviewTaskType}
                                 topics={content?.topics || []}
+                                reviewTaskType={reviewTaskType}
+                                contentModel={target.contentModel}
                             />
                         )}
                     </Grid>

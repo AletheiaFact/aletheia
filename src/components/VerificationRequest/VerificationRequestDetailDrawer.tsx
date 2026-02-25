@@ -458,11 +458,11 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                     >
                                         <TopicDisplay
                                             data_hash={currentRequest.data_hash}
-                                            reviewTaskType={
-                                                ReviewTaskTypeEnum.VerificationRequest
-                                            }
                                             topics={
                                                 currentRequest?.topics || []
+                                            }
+                                            reviewTaskType={
+                                                ReviewTaskTypeEnum.VerificationRequest
                                             }
                                         />
                                     </Box>
