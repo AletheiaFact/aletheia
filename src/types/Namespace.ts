@@ -17,5 +17,7 @@ export interface IDynamicNameSpaceForm {
     onSubmit: (value: NameSpace) => void;
     isLoading: boolean;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    isDrawerOpen: boolean;
+    onClose: () => void;
     t: TFunction;
 }

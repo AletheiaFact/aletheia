@@ -17,6 +17,7 @@ import claimApi from "../../api/claim";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
 
     return (
         <>
-            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+            {isAdmin(role) && (
                 <AdminToolBar
                     content={claim}
                     deleteApiFunction={claimApi.deleteClaim}

@@ -38,7 +38,6 @@ const locators = {
         BTN_SUBMIT_CLAIM: "[data-cy=testSaveButton]",
         INPUT_TITLE: "[data-cy=testTitleClaimForm]",
         INPUT_DATA: "[data-cy=testSelectDate]",
-        INPUT_DATA_TODAY: ".MuiPickersDay-today",
         INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
@@ -52,6 +51,7 @@ const locators = {
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
         ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
+        ADD_VERIFICATION_REQUEST: "[data-cy=testFloatButtonAddVerificationRequest]"
     },
 
     claimReview: {
@@ -81,6 +81,49 @@ const locators = {
             "[data-cy=testClaimReviewSourcesInput]",
         ADD_EDITOR_SOURCES_DIALOG_BUTTON:
             "[data-cy=testClaimReviewSourcesButton]",
+    },
+
+    verificationRequest: {
+        FORM_CONTENT: "[data-cy=testClaimReviewcontent]",
+        FORM_REPORT_TYPE: "[data-cy=testClaimReviewreportType]",
+        FORM_IMPACT_AREA: "[data-cy=testClaimReviewimpactArea]",
+        FORM_HEARD_FROM: "[data-cy=testClaimReviewheardFrom]",
+        FORM_PUBLICATION_DATE: "[data-cy=testSelectDate]",
+        FORM_SOURCE: "[data-cy=testClaimReviewsource]",
+        FORM_EMAIL: "[data-cy=testClaimReviewemail]",
+
+        FORM_SOURCE_ITEM_0: "[data-cy=testClaimReviewsourceEdit-0]",
+        FORM_SOURCE_ITEM_1: "[data-cy=testClaimReviewsourceEdit-1]",
+        FORM_SOURCE_ADD: "[data-cy=testClaimReviewsource-addSources]",
+        FORM_SOURCE_REMOVE_2: "[data-cy=testClaimReviewsourceRemove-2]",
+
+        DETAIL_CONTENT: "[data-cy=testVerificationRequestContent]",
+        DETAIL_REPORT_TYPE: "[data-cy=testVerificationRequestReportType]",
+        DETAIL_IMPACT_AREA: "[data-cy=testVerificationRequestImpactArea]",
+        DETAIL_SOURCE_CHANNEL: "[data-cy=testVerificationRequestSourceChannel]",
+        DETAIL_SEVERITY: "[data-cy=testVerificationRequestSeverity]",
+        DETAIL_HEARD_FROM: "[data-cy=testVerificationRequestHeardFrom]",
+        DETAIL_PUBLICATION_DATE: "[data-cy=testVerificationRequestPublicationDate]",
+        DETAIL_DATE: "[data-cy=testVerificationRequestDate]",
+        DETAIL_SOURCE_0: "[data-cy=testVerificationRequestSource0]",
+        DETAIL_SOURCE_1: "[data-cy=testVerificationRequestSource1]",
+
+        ERROR_VALIDATION_CONTENT: "[data-cy=testClaimReviewErrorcontent]",
+        ERROR_VALIDATION_PUBLICATION_DATE: "[data-cy=testClaimReviewErrorpublicationDate]",
+
+        DETAIL_CARD_CONTENT: "[data-cy=testVerificationRequestCardContent0]",
+        DETAIL_CARD_CONTENT_1: "[data-cy=testVerificationRequestCardContent1]",
+
+        ADD_TOPIC_ICON: "[data-cy=testVerificationRequestTopicsToggle]",
+        TYPE_TOPIC_INPUT: "[data-cy=testVerificationRequestTopicsInput]",
+        ADD_TOPIC_SUBMIT: "[data-cy=testVerificationRequestAddTopicButton]",
+        DETAIL_TOPIC_TAG: "[data-cy=testVerificationRequestTopicChip0]",
+        REMOVE_TOPIC_ICON: "[data-cy=testVerificationRequestTopicRemoveButton0]",
+
+        SEE_FULL_BUTTON: "[data-cy=testSeeFullVerificationRequest]",
+        EDIT_BUTTON: "[data-cy=testVerificationRequestEditButton]",
+        SAVE_BUTTON: "[data-cy=testSaveButton]",
+        CANCEL_BUTTON: "[data-cy=testCancelButton]",
     },
 
     menu: {

@@ -21,6 +21,7 @@ import { useAtom } from "jotai";
 import { useSelector } from "@xstate/react";
 import ReportModelButtons from "./ReportModelButtons";
 import LoginButton from "../LoginButton";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const ClaimReviewForm = ({
     dataHash,
@@ -48,7 +49,7 @@ const ClaimReviewForm = ({
     const [formCollapsed, setFormCollapsed] = useState(
         isUnassigned && !reportModel
     );
-    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const userIsAdmin = isAdmin(role);
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {

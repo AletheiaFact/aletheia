@@ -92,10 +92,11 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "sourceList":
             return (
                 <InputExtraSourcesList
-                    sources={props.value}
-                    onChange={props.onChange}
+                    defaultSources={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
                     disabled={props.disabled}
                     placeholder={props.placeholder}
+                    dataCy={props["data-cy"]}
                 />
             );
         case "select":
@@ -114,6 +115,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                     isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
                 />
             );
         case "selectImpactArea":
@@ -123,6 +125,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                     isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
                 />
             );
         case "imageUpload":
@@ -168,7 +171,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    data-cy={"testSelectDate"}
+                    data-cy="testSelectDate"
                     disabledDate={props.disabledDate}
                     disabled={props.disabled}
                     style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}

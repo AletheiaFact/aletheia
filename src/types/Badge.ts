@@ -25,6 +25,8 @@ export interface IDynamicBadgesForm {
     badges: Badge;
     onSubmit: (value: IBadgeData) => void;
     isLoading: boolean;
+    isDrawerOpen:boolean;
+    onClose: () => void;
 }
 
 export interface IBadgeData {

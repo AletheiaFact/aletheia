@@ -46,18 +46,20 @@ export interface ITopicDisplay {
 
 export interface IImpactAreaSelect {
     defaultValue: UnifiedDefaultValue;
-    onChange: (value: ManualTopic[]) => void;
+    onChange: (value: ManualTopic) => void;
     placeholder?: string;
     isDisabled: boolean;
+    dataCy?: string;
 }
 
 export interface IMultiSelectAutocomplete {
     defaultValue?: UnifiedDefaultValue;
     isMultiple?: boolean;
-    onChange: (value: ManualTopic[]) => void;
+    onChange: (value: ManualTopic[] | ManualTopic) => void;
     isLoading: boolean;
     placeholder: string;
-    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[]>>;
+    setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[] | ManualTopic>>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     isDisabled?: boolean;
+    dataCy?: string;
 }

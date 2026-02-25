@@ -61,7 +61,7 @@ const DatePickerInput = (props) => {
           <StyledTextField
             {...params}
             onClick={() => setOpen(true)}
-            data-cy={props}
+            data-cy={props.dataCy}
             {...props}
           />}
         PopperProps={{ placement: 'bottom-start', }}

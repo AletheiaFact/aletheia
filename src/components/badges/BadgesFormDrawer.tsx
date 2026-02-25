@@ -126,6 +126,8 @@ const BadgesFormDrawer = () => {
                     badges={updatedBadges}
                     onSubmit={onSubmit}
                     isLoading={isLoading}
+                    isDrawerOpen={open}
+                    onClose={onCloseDrawer}
                 />
             </Grid>
         </LargeDrawer>

@@ -17,7 +17,8 @@ import {
     currentUserRole,
     isUserLoggedIn,
 } from "../../atoms/currentUser";
-import { Roles, TargetModel } from "../../types/enums";
+import { TargetModel } from "../../types/enums";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     const { t } = useTranslation();
@@ -31,7 +32,7 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         reviewNotStartedSelector
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const userIsAdmin = isAdmin(role);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(
         machineService,

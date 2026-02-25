@@ -68,6 +68,7 @@ const VerificationRequestCard = ({
             label_value: t(
                 `claimForm:${verificationRequest.reportType || "undefined"}`
             ),
+            dataCy: "testVerificationRequestReportType",
             style: { backgroundColor: colors.secondary, color: colors.white },
         },
         {
@@ -79,6 +80,7 @@ const VerificationRequestCard = ({
                     `verificationRequest:${verificationRequest.sourceChannel}`,
                     { defaultValue: verificationRequest.sourceChannel },
                 ),
+            dataCy: "testVerificationRequestSourceChannel",
             style: { backgroundColor: colors.primary, color: colors.white },
         },
         {
@@ -86,6 +88,7 @@ const VerificationRequestCard = ({
             key: `${verificationRequest._id}|impactArea`,
             label: t("verificationRequest:tagImpactArea"),
             label_value: verificationRequest.impactArea?.name,
+            dataCy: "testVerificationRequestImpactArea",
             style: {
                 backgroundColor: colors.neutralSecondary,
                 color: colors.white,
@@ -96,6 +99,7 @@ const VerificationRequestCard = ({
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
             label_value: getSeverityLabel(verificationRequest.severity, t),
+            dataCy: "testVerificationRequestSeverity",
             style: {
                 backgroundColor: getSeverityColor(verificationRequest.severity),
                 color: colors.white,
@@ -132,6 +136,7 @@ const VerificationRequestCard = ({
                     </Typography>
                     <AlertTitle>
                         <Typography
+                            data-cy="testVerificationRequestContent"
                             variant="body1"
                             style={{
                                 color: colors.black,
@@ -154,6 +159,7 @@ const VerificationRequestCard = ({
                 >
                     {verificationRequest.publicationDate && (
                         <RequestDates
+                            dataCy="testVerificationRequestPublicationDate"
                             icon={<DateRange style={smallGreyIcon} />}
                             label={t("verificationRequest:tagPublicationDate")}
                             value={verificationRequest.publicationDate}
@@ -162,6 +168,7 @@ const VerificationRequestCard = ({
 
                     {verificationRequest.date && (
                         <RequestDates
+                            dataCy="testVerificationRequestDate"
                             icon={<DateRange style={smallGreyIcon} />}
                             label={t("verificationRequest:tagDate")}
                             value={verificationRequest.date}
@@ -173,6 +180,7 @@ const VerificationRequestCard = ({
                         <VerificationRequestContent
                             label={t("verificationRequest:tagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
+                            dataCy="testVerificationRequestHeardFrom"
                         />
                     )}
                 </Box>
@@ -188,7 +196,7 @@ const VerificationRequestCard = ({
 
                 <MetaChipContainer container>
                     {metaChipData.map(
-                        ({ icon, key, label, label_value, style }) => (
+                        ({ icon, key, label, label_value, style, dataCy }) => (
                             <Grid
                                 item
                                 key={key}
@@ -199,6 +207,7 @@ const VerificationRequestCard = ({
                                     label={label}
                                     label_value={label_value}
                                     style={style}
+                                    dataCy={dataCy}
                                 />
                             </Grid>
                         )

@@ -19,6 +19,7 @@ const MultiSelectAutocomplete = ({
     setSelectedTags,
     setIsLoading,
     isDisabled,
+    dataCy,
 }: IMultiSelectAutocomplete) => {
     const { t } = useTranslation();
     const [options, setOptions] = useState([]);
@@ -86,7 +87,7 @@ const MultiSelectAutocomplete = ({
                     setSelectedTags(inputTag);
                 }}
                 getOptionLabel={(option) =>
-                    option.displayLabel || option.label || option.name || ""
+                    option.displayLabel || option.label || option.name || option || ""
                 }
                 isOptionEqualToValue={(option, value) =>
                     option.value === value.value
@@ -96,6 +97,7 @@ const MultiSelectAutocomplete = ({
                     <TextField
                         {...params}
                         placeholder={placeholder}
+                        data-cy={dataCy}
                         InputProps={{
                             ...params.InputProps,
                             endAdornment: (
