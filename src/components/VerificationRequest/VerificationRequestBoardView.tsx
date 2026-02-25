@@ -99,23 +99,34 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   pb: 1,
                 }}
               >
-                {status.label}
-                <Chip
-                  label={groupedRequests[status.key].length}
-                  size="small"
-                  sx={{ ml: 1 }}
-                />
+                <Grid item>
+                  {status.label}
+                  <Chip
+                    label={groupedRequests[status.key].length}
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                </Grid>
+                <Typography
+                  variant="body2"
+                  color={colors.blackSecondary}
+                  alignContent="flex-end"
+                >
+                  {t("list:totalItems", {
+                    total: groupedTotalRequests[status.key],
+                  })}
+                </Typography>
               </Typography>
 
               {loading[status.key] ? (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color={colors.blackSecondary}>
                   {t("common:loading")}
                 </Typography>
               ) : (
                 <Box
                   sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
-                  {groupedRequests[status.key].map((request, index) => (
+                  {groupedRequests[status.key].map((request) => (
                     <Card
                       key={request._id}
                       sx={{
@@ -153,7 +164,6 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                         </Box>
 
                         <Typography
-                          data-cy={`testVerificationRequestCardContent${index}`}
                           variant="body1"
                           sx={{ mb: 1, fontWeight: 500 }}
                         >
@@ -222,7 +232,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       </CardContent>
                     </Card>
                   ))}
-                  {groupedRequests[status.key].length >= 20 && (
+                  {groupedTotalRequests[status.key] > paginationModel[status.key].pageSize && (
                     <AletheiaButton
                       type={ButtonType.gray}
                       onClick={() => {
@@ -242,7 +252,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       {t("list:loadMoreButton")}
                     </AletheiaButton>
                   )}
-                  {groupedRequests[status.key].length === 0 && (
+                  {groupedTotalRequests[status.key] === 0 && (
                     <Typography
                       variant="body2"
                       color="textSecondary"
