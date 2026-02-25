@@ -27,12 +27,15 @@ import {
 import { z } from "zod";
 
 import { DynamicStructuredTool } from "@langchain/core/tools";
-import { AgentExecutor, createOpenAIFunctionsAgent } from "langchain/agents";
+import {
+    AgentExecutor,
+    createToolCallingAgent,
+} from "@langchain/classic/agents";
 import {
     ChatPromptTemplate,
     MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { HumanMessage, AIMessage } from "langchain/schema";
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { ConfigService } from "@nestjs/config";
@@ -127,8 +130,11 @@ export class CopilotChatService {
                 (message) => this.transformMessage(message)
             );
             const tools = [
-                new DynamicStructuredTool(this.getFactCheckingReportTool),
+                new DynamicStructuredTool(
+                    this.getFactCheckingReportTool as any
+                ),
             ];
+
             const currentMessageContent =
                 contextAwareMessagesDto.messages[
                     contextAwareMessagesDto.messages.length - 1
@@ -175,7 +181,7 @@ export class CopilotChatService {
                 apiKey: this.configService.get<string>("openai.api_key"),
             });
 
-            const agent = await createOpenAIFunctionsAgent({
+            const agent = await createToolCallingAgent({
                 llm,
                 tools,
                 prompt,
