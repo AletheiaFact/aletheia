@@ -103,11 +103,14 @@ export class WikidataService {
             if (props.isAllowedProp === false) {
                 return props;
             }
-            const newWikidataCache = new this.wikidataCache({
-                ...validatedParams,
-                props,
-            });
-            await newWikidataCache.save();
+            await this.wikidataCache.findOneAndUpdate(
+                {
+                    wikidataId: validatedParams.wikidataId,
+                    language: validatedParams.language,
+                },
+                { $setOnInsert: { ...validatedParams, props } },
+                { upsert: true }
+            );
             return props;
         }
 
