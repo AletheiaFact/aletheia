@@ -99,27 +99,16 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   pb: 1,
                 }}
               >
-                <Grid item>
-                  {status.label}
-                  <Chip
-                    label={groupedRequests[status.key].length}
-                    size="small"
-                    sx={{ ml: 1 }}
-                  />
-                </Grid>
-                <Typography
-                  variant="body2"
-                  color={colors.blackSecondary}
-                  alignContent="flex-end"
-                >
-                  {t("list:totalItems", {
-                    total: groupedTotalRequests[status.key],
-                  })}
-                </Typography>
+                {status.label}
+                <Chip
+                  label={groupedRequests[status.key].length}
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
               </Typography>
 
               {loading[status.key] ? (
-                <Typography variant="body2" color={colors.blackSecondary}>
+                <Typography variant="body2" color="textSecondary">
                   {t("common:loading")}
                 </Typography>
               ) : (
@@ -232,7 +221,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       </CardContent>
                     </Card>
                   ))}
-                  {groupedTotalRequests[status.key] > paginationModel[status.key].pageSize && (
+                  {groupedRequests[status.key].length >= 20 && (
                     <AletheiaButton
                       type={ButtonType.gray}
                       onClick={() => {
@@ -252,7 +241,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       {t("list:loadMoreButton")}
                     </AletheiaButton>
                   )}
-                  {groupedTotalRequests[status.key] === 0 && (
+                  {groupedRequests[status.key].length === 0 && (
                     <Typography
                       variant="body2"
                       color="textSecondary"

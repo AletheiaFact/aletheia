@@ -11,6 +11,15 @@ interface Claim {
     slug: string;
 }
 
+interface Personality {
+    slug: string;
+}
+
+interface Claim {
+    _id: string;
+    slug: string;
+}
+
 export const generateReviewContentPath = (
     nameSpace: NameSpaceEnum,
     personality: Personality | null | undefined,
