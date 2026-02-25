@@ -3,7 +3,6 @@ import React from "react";
 
 import HomeContent from "./HomeContent";
 import HomeHeader from "./HomeHeader/HomeHeader";
-import Cop30Section from "./COP30/Cop30Section";
 
 const Home = ({ personalities, stats, href, claims, reviews }) => {
     const { t } = useTranslation();
@@ -11,9 +10,6 @@ const Home = ({ personalities, stats, href, claims, reviews }) => {
     return (
         <>
             <HomeHeader stats={stats} />
-            <Cop30Section
-                reviews={reviews}
-            />
             <HomeContent
                 personalities={personalities}
                 debateClaims={claims}
