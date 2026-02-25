@@ -4,6 +4,7 @@ import { TrackingService } from "./tracking.service";
 import { BadRequestException } from "@nestjs/common";
 import { mockResponse, mockTrackingService } from "../mocks/TrackingMock";
 import { VerificationRequestStatus } from "../verification-request/dto/types";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
 describe("TrackingController (Unit)", () => {
   let controller: TrackingController;
@@ -12,10 +13,11 @@ describe("TrackingController (Unit)", () => {
   beforeEach(async () => {
     const testingModule = await Test.createTestingModule({
       controllers: [TrackingController],
-      providers: [
-        { provide: TrackingService, useValue: mockTrackingService },
-      ],
-    }).compile();
+      providers: [{ provide: TrackingService, useValue: mockTrackingService }],
+    })
+      .overrideGuard(AbilitiesGuard)
+      .useValue({})
+      .compile();
 
     controller = testingModule.get(TrackingController);
     trackingService = testingModule.get(TrackingService);

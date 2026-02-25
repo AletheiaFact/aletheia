@@ -15,6 +15,7 @@ import { canEdit } from "../../../utils/GetUserPermission";
 import UserEditRoles from "./UserEditRoles";
 import { NameSpace, NameSpaceEnum } from "../../../types/Namespace";
 import NameSpacesApi from "../../../api/namespace";
+import { currentNameSpace } from "../../../atoms/namespace";
 
 const UserEditForm = ({ currentUser, setIsLoading }) => {
     const { t } = useTranslation();
@@ -25,6 +26,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
     const [userId] = useAtom(currentUserId);
     const [options, setOptions] = useState<NameSpace[]>([]);
     const [selectedNamespaces, setSelectedNamespaces] = useState<NameSpace[]>([]);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const handleChangeBadges = (_event, newValue: Badge[]) => {
         setBadges(newValue);
@@ -86,32 +88,29 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 updatedRole[slug] ??= Roles.Regular;
             });
 
-            for (const ns of selectedNamespaces) {
-                const { id, __v, ...rest } = ns as any;
-                const userAlreadyExist = ns.users.some(user => user._id === currentUser._id);
+            for (const namespace of selectedNamespaces) {
+                const userAlreadyExist = namespace.users.some(user => user._id === currentUser._id);
 
                 const updatedNamespaces = {
-                    ...rest,
+                    _id: namespace._id,
                     users: userAlreadyExist
-                        ? ns.users
-                        : [...ns.users, currentUser],
+                        ? namespace.users
+                        : [...namespace.users, currentUser],
                 };
 
-                if (!currentIds.includes(ns._id)) {
+                if (!currentIds.includes(namespace._id)) {
                     await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
                 }
             }
 
-            for (const ns of currentNamespacesUser) {
-                if (!selectedIds.includes(ns._id)) {
-                    const updatedUser = ns.users
+            for (const namespace of currentNamespacesUser) {
+                if (!selectedIds.includes(namespace._id)) {
+                    const updatedUser = namespace.users
                         .filter(user => String(user._id || user) !== String(currentUser._id))
                         .map(user => (typeof user === 'string' ? { _id: user } : user));
 
-                    const { id, __v, ...rest } = ns;
-
                     const updatedNamespaces = {
-                        ...rest,
+                        _id: namespace._id,
                         users: updatedUser,
                     };
                     await NameSpacesApi.updateNameSpace(updatedNamespaces, t);
@@ -146,27 +145,32 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     shouldEdit={shouldEdit}
                 />
             </Grid>
-            <Grid item xs={10} mt={2}>
-                <Label>{t("menu:nameSpaceItem")}</Label>
-                <Autocomplete
-                    disabled={!shouldEdit}
-                    multiple
-                    id="namespaces"
-                    options={options}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedNamespaces}
-                    onChange={handleChangeNameSpaces}
-                    disableCloseOnSelect
-                    renderInput={(params) => (
-                        <TextField {...params} placeholder={"Selecione os namespaces"} />
-                    )}
-                    renderOption={(props, option) => (
-                        <Box component={"li"} {...props}>
-                            {option.name}
-                        </Box>
-                    )}
-                />
-            </Grid>
+            {nameSpace === NameSpaceEnum.Main ?
+                <Grid item xs={10} mt={2}>
+                    <Label>{t("menu:nameSpaceItem")}</Label>
+                    <Autocomplete
+                        disabled={!shouldEdit}
+                        multiple
+                        id="namespaces"
+                        options={options}
+                        getOptionLabel={(option) => option.name}
+                        value={selectedNamespaces}
+                        onChange={handleChangeNameSpaces}
+                        disableCloseOnSelect
+                        renderInput={(params) => (
+                            <TextField {...params}
+                                placeholder={t("namespaces:selectNameSpaces")}
+                            />
+                        )}
+                        renderOption={(props, option) => (
+                            <Box component={"li"} {...props}>
+                                {option.name}
+                            </Box>
+                        )}
+                    />
+                </Grid>
+                : null
+            }
             <Grid item xs={10} mt={2}>
                 <Label>{t("menu:badgesItem")}</Label>
                 <Autocomplete

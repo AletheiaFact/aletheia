@@ -18,7 +18,7 @@ const HeaderStatusStyle = styled(Grid)`
     }
 `;
 
-const HeaderUserStatus = ({ status, style }) => {
+const HeaderUserStatus = ({ status, style = {} }) => {
     const { t } = useTranslation();
     const statusColor =
         status === Status.Active ? colors.active : colors.inactive;

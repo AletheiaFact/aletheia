@@ -13,7 +13,6 @@ import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
-import { removeTrailingParagraph } from "./utils/removeTrailingParagraph";
 import {
     crossCheckingSelector,
     addCommentCrossCheckingSelector,
@@ -89,7 +88,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
 
         if (reportModel) {
             fetchEditorContentObject(props.data_hash).then((content) => {
-                setEditorContentObject(removeTrailingParagraph(content));
+                setEditorContentObject(content);
                 setIsFetchingEditor(false);
             });
         }

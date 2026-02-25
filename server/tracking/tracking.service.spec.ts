@@ -3,12 +3,14 @@ import { TrackingService } from "./tracking.service";
 import { HistoryService } from "../history/history.service";
 import { NotFoundException } from "@nestjs/common";
 import { TargetModel } from "../history/schema/history.schema";
-import { 
-  historyServiceMock, 
-  mockHistoryItem, 
-  mockHistoryResponse 
+import {
+  historyServiceMock,
+  mockHistoryItem,
+  mockHistoryResponse
 } from "../mocks/HistoryMock";
 import { VerificationRequestStatus } from "../verification-request/dto/types";
+import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { mockVerificationRequestModel } from "../mocks/VerificationRequestMock";
 
 describe("TrackingService (Unit)", () => {
   let service: TrackingService;
@@ -22,6 +24,10 @@ describe("TrackingService (Unit)", () => {
           provide: HistoryService,
           useValue: historyServiceMock,
         },
+        {
+          provide: VerificationRequestService,
+          useValue: mockVerificationRequestModel,
+        },
       ],
     }).compile();
 
@@ -31,6 +37,11 @@ describe("TrackingService (Unit)", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockVerificationRequestModel.getById.mockResolvedValue({
+      id: String(mockHistoryItem.targetId),
+      status: VerificationRequestStatus.PRE_TRIAGE,
+    });
   });
 
   describe("getTrackingStatus", () => {
@@ -49,6 +60,7 @@ describe("TrackingService (Unit)", () => {
         TargetModel.VerificationRequest,
         expect.objectContaining({ pageSize: 50 })
       );
+      expect(mockVerificationRequestModel.getById).toHaveBeenCalledWith(targetIdStr);
     });
 
     it("should filter out events where status did not change", async () => {
@@ -76,7 +88,7 @@ describe("TrackingService (Unit)", () => {
 
     it("should throw NotFoundException and log warning when no history exists", async () => {
       historyService.getHistoryForTarget.mockResolvedValue({ history: [] });
-      
+
       const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
 
       await expect(service.getTrackingStatus(targetIdStr)).rejects.toThrow(
@@ -90,7 +102,7 @@ describe("TrackingService (Unit)", () => {
     it("should throw a generic error and log error when an unexpected failure occurs", async () => {
       const unexpectedError = new Error("Database connection lost");
       historyService.getHistoryForTarget.mockRejectedValue(unexpectedError);
-      
+
       const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
 
       await expect(service.getTrackingStatus(targetIdStr)).rejects.toThrow(
@@ -102,30 +114,16 @@ describe("TrackingService (Unit)", () => {
       );
     });
 
-    it("should correctly identify the latestStatus as the last item in the array", async () => {
-      const multipleHistory = {
-        ...mockHistoryResponse,
-        history: [
-          {
-            ...mockHistoryItem,
-            details: { after: { status: VerificationRequestStatus.PRE_TRIAGE } }
-          },
-          {
-            ...mockHistoryItem,
-            _id: "latest-id",
-            details: { 
-              before: { status: VerificationRequestStatus.PRE_TRIAGE },
-              after: { status: VerificationRequestStatus.IN_TRIAGE } 
-            }
-          }
-        ],
-      };
-      historyService.getHistoryForTarget.mockResolvedValue(multipleHistory);
+    it("should return currentStatus from the verification request regardless of history", async () => {
+      historyService.getHistoryForTarget.mockResolvedValue(mockHistoryResponse);
+      mockVerificationRequestModel.getById.mockResolvedValue({
+        id: targetIdStr,
+        status: VerificationRequestStatus.IN_TRIAGE,
+      });
 
       const result = await service.getTrackingStatus(targetIdStr);
 
       expect(result.currentStatus).toBe(VerificationRequestStatus.IN_TRIAGE);
-      expect(result.historyEvents.at(-1)?.status).toBe(VerificationRequestStatus.IN_TRIAGE);
     });
   });
 });

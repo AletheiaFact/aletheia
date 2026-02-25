@@ -16,6 +16,7 @@ export type FormField = {
     addInputLabel?: string;
     defaultValue: string | [];
     extraProps?: FormFieldExtraProps;
+    disabled?: boolean;
 };
 
 // Use to add properties specific to one type of field
@@ -38,6 +39,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     i18nNamespace?: string;
     required?: boolean;
     isURLField?: boolean;
+    disabled?: boolean;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -50,6 +52,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         rules,
         required = true,
         isURLField = false,
+        disabled = false,
     } = props;
 
     return {
@@ -58,16 +61,17 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         label: `${i18nNamespace}:${i18nKey}Label`,
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
         defaultValue,
+        disabled,
         ...props,
         rules: {
-            required: required && "common:requiredFieldError",
+            required: !disabled && required && "common:requiredFieldError",
             ...rules,
             validate: {
-                ...(required && {
+                ...(!disabled && required && {
                     notBlank: (v) =>
                         validateBlank(v) || "common:requiredFieldError",
                 }),
-                ...(isURLField && {
+                ...(!disabled && isURLField && {
                     validURL: (v) =>
                         !v ||
                         URL_PATTERN.test(v) ||
@@ -108,6 +112,10 @@ const fieldValidation = (value, validationFunction) => {
 
     if (dayjs.isDayjs(value)) {
         return dayjs(value).isValid() && dayjs(value).isBefore(dayjs());
+    }
+
+    if (Array.isArray(value) && value.length > 0 && (value[0].uid || value[0].originFileObj)) {
+        return true;
     }
 
     if (value instanceof Node) {

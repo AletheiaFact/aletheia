@@ -12,7 +12,7 @@ const VerificationRequestDisplayStyle = styled(Grid)`
   }
 
   .title {
-    font-family: "serif";
+    font-family: initial;
     font-weight: 600;
     font-size: 26px;
     line-height: 1.35;

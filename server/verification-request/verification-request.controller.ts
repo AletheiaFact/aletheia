@@ -25,7 +25,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { Public, AdminOnly, RegularUserOnly } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -389,7 +389,7 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    @Public()
+    @RegularUserOnly()
     @Get("verification-request/:data_hash/:viewType")
     public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,

@@ -764,12 +764,13 @@ export class ReviewTaskService {
         }
     }
 
-    getEditorContentObject(schema, reportModel, reviewTaskType) {
-        return this.editorParseService.schema2editor(
+    async getEditorContentObject(schema, reportModel, reviewTaskType) {
+        const editorContent = await this.editorParseService.schema2editor(
             schema,
             reportModel,
             reviewTaskType
         );
+        return this.editorParseService.removeTrailingParagraph(editorContent);
     }
 
     async addComment(data_hash, comment) {

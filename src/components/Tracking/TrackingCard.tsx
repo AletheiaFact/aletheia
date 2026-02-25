@@ -13,7 +13,7 @@ const initialTrackingState: TrackingResponseDTO = {
   historyEvents: [],
 };
 
-const TrackingCard = ({ verificationRequestId }: TrackingCardProps) => {
+const TrackingCard = ({ verificationRequestId, isMinimal }: TrackingCardProps) => {
   const [trackingData, setTrackingData] = useState<TrackingResponseDTO>(initialTrackingState);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ const TrackingCard = ({ verificationRequestId }: TrackingCardProps) => {
   useEffect(() => {
     const fetchTracking = async () => {
       try {
-        const data = await TrackingApi.getTrackingById(verificationRequestId);
+        const data = await TrackingApi.getTrackingById(verificationRequestId, t);
         setTrackingData(data);
       } catch (error) {
         console.error("Error when searching for tracking:", error);
@@ -49,16 +49,25 @@ const TrackingCard = ({ verificationRequestId }: TrackingCardProps) => {
         flexDirection: "column",
         maxWidth: "100%",
         padding: "24px",
-        margin: "24px 0",
+        height: isMinimal ? "100%" : "auto",
+        margin: isMinimal ? 0 : "24px 0",
         gap: 12
       }}
     >
-      <Typography variant="h5">
+      <Typography
+        style={{
+           fontFamily: "initial",
+           fontSize: 26,
+           lineHeight: 1.35
+        }}
+        variant="h1"
+      >
         {t("tracking:verificationProgress")}
       </Typography>
       <TrackingStep
         currentStatus={currentStatus}
         historyEvents={historyEvents}
+        isMinimal={isMinimal}
       />
     </CardBase>
   );

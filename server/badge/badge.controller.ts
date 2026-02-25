@@ -20,6 +20,7 @@ import { Types } from "mongoose";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
 import { AdminOnly } from "../auth/decorators/auth.decorator";
+import { ConfigService } from "@nestjs/config";
 
 @Controller(":namespace?")
 export class BadgeController {
@@ -28,7 +29,8 @@ export class BadgeController {
         private viewService: ViewService,
         private imageService: ImageService,
         private usersService: UsersService,
-        private util: UtilService
+        private util: UtilService,
+        private configService: ConfigService,
     ) {}
 
     @AdminOnly()
@@ -152,6 +154,7 @@ export class BadgeController {
             badges,
             users,
             nameSpace: req.params.namespace,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
         });
 
         await this.viewService.render(req, res, "/admin-badges", query);
