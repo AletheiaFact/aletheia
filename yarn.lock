@@ -10793,7 +10793,7 @@ __metadata:
     accept-language-parser: ^1.5.0
     ai: 5.0.52
     aws-sdk: ^2.1154.0
-    axios: ^1.12.0
+    axios: ^1.13.5
     babel-eslint: ^10.1.0
     babel-jest: ^29.7.0
     babel-loader: ^8.2.5
@@ -11351,17 +11351,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.0":
-  version: 1.12.2
-  resolution: "axios@npm:1.12.2"
-  dependencies:
-    follow-redirects: ^1.15.6
-    form-data: ^4.0.4
-    proxy-from-env: ^1.1.0
-  checksum: f0331594fe053a4bbff04104edb073973a3aabfad2e56b0aa18de82428aa63f6f0839ca3d837258ec739cb4528014121793b1649a21e5115ffb2bf8237eadca3
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.13.2":
   version: 1.13.4
   resolution: "axios@npm:1.13.4"
@@ -11370,6 +11359,17 @@ __metadata:
     form-data: ^4.0.4
     proxy-from-env: ^1.1.0
   checksum: 1d1f360cf54c8a4b602d4d5af1b13f04612be3876a7958e9cd49c5869448399d75978ce4a099839d55ccb9f9aff9d49a312db879dba9d76fac994479fd1ad11c
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.13.5":
+  version: 1.13.5
+  resolution: "axios@npm:1.13.5"
+  dependencies:
+    follow-redirects: ^1.15.11
+    form-data: ^4.0.5
+    proxy-from-env: ^1.1.0
+  checksum: 985024c4a32f837053f198f02a308fd6f8bfb4053a2f21e39e37992bc6d06917f008679c36b3e7f0f0c9060c85ffe37c61e58d2ac662595d68dc1b89cef78de8
   languageName: node
   linkType: hard
 
@@ -16377,6 +16377,19 @@ __metadata:
     hasown: ^2.0.2
     mime-types: ^2.1.12
   checksum: 9b7788836df9fa5a6999e0c02515b001946b2a868cfe53f026c69e2c537a2ff9fbfb8e9d2b678744628f3dc7a2d6e14e4e45dfaf68aa6239727f0bdb8ce0abf2
+  languageName: node
+  linkType: hard
+
+"form-data@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "form-data@npm:4.0.5"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.8
+    es-set-tostringtag: ^2.1.0
+    hasown: ^2.0.2
+    mime-types: ^2.1.12
+  checksum: af8328413c16d0cded5fccc975a44d227c5120fd46a9e81de8acf619d43ed838414cc6d7792195b30b248f76a65246949a129a4dadd148721948f90cd6d4fb69
   languageName: node
   linkType: hard
 
