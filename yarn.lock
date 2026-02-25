@@ -3275,11 +3275,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/classic@npm:1.0.18":
-  version: 1.0.18
-  resolution: "@langchain/classic@npm:1.0.18"
+"@langchain/classic@npm:1.0.19":
+  version: 1.0.19
+  resolution: "@langchain/classic@npm:1.0.19"
   dependencies:
-    "@langchain/openai": 1.2.8
+    "@langchain/openai": 1.2.9
     "@langchain/textsplitters": 1.0.1
     handlebars: ^4.7.8
     js-yaml: ^4.1.1
@@ -3304,16 +3304,16 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: 0141934d90f8c89fc9fce0ba83c2453979bf741961800cb85d21412e39337426751f85a2be4ee10bb4e492400d06e459dbadbdab67b9aa9606925208a2e2ad94
+  checksum: 379613b98d7204f0dd24910ebc0ab6727d817a9e54f001c9ba899ec315b2ac26ab87f886da52b699041a85a7ba5768537976410aa0d0b508131ff16533175490
   languageName: node
   linkType: hard
 
-"@langchain/community@npm:1.1.16":
-  version: 1.1.16
-  resolution: "@langchain/community@npm:1.1.16"
+"@langchain/community@npm:1.1.18":
+  version: 1.1.18
+  resolution: "@langchain/community@npm:1.1.18"
   dependencies:
-    "@langchain/classic": 1.0.18
-    "@langchain/openai": 1.2.8
+    "@langchain/classic": 1.0.19
+    "@langchain/openai": 1.2.9
     binary-extensions: ^2.2.0
     flat: ^5.0.2
     js-yaml: ^4.1.1
@@ -3346,7 +3346,7 @@ __metadata:
     "@huggingface/transformers": ^3.8.1
     "@ibm-cloud/watsonx-ai": "*"
     "@lancedb/lancedb": ^0.19.1
-    "@langchain/core": ^1.1.25
+    "@langchain/core": ^1.1.27
     "@layerup/layerup-security": ^1.5.12
     "@libsql/client": ^0.17.0
     "@mendable/firecrawl-js": ^4.13.0
@@ -3673,7 +3673,7 @@ __metadata:
       optional: true
     youtubei.js:
       optional: true
-  checksum: de64f5f81cd8ee7533cb81ef25601e1dac1b36b4d2a7403dee7022733f18187c555f68a0f6ebce8cc947afd2d41e47b16318c71f0ddc776fbcb4c4cd5a33abdf
+  checksum: d4224d5ffc80325cf5ff617f15a3e2c130c314ea34d3ed4214cd4976d345819faf3d776bb65cb10e58742caa5f3c40ac0c85d3300273d2c399e0b0c597a404b1
   languageName: node
   linkType: hard
 
@@ -3758,6 +3758,19 @@ __metadata:
   peerDependencies:
     "@langchain/core": ^1.0.0
   checksum: 0f5de0f6a77fd2afa9d6d601123a6d21b7cd09eacab50da2085d1adfe416dfa5a832f5f023a59132423f4c180bb3f88aed61f47309f752c430bf7073999e06e7
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:1.2.9":
+  version: 1.2.9
+  resolution: "@langchain/openai@npm:1.2.9"
+  dependencies:
+    js-tiktoken: ^1.0.12
+    openai: ^6.18.0
+    zod: ^3.25.76 || ^4
+  peerDependencies:
+    "@langchain/core": ^1.1.27
+  checksum: b5b441c8de21a0ad95db5d328e114ec63c2ff96c78d6d2ed1a2c8c0c116e868d3e4aaa3d32c39713c0a9d5701123057cc67b07348066e6ccbb9dbcfbb78f8872
   languageName: node
   linkType: hard
 
@@ -10733,7 +10746,7 @@ __metadata:
     "@eslint/compat": ^2.0.2
     "@eslint/eslintrc": ^3.3.3
     "@eslint/js": ^9.39.2
-    "@langchain/community": 1.1.16
+    "@langchain/community": 1.1.18
     "@langchain/core": 1.1.26
     "@langchain/langgraph": ^1.1.5
     "@langchain/openai": 1.2.8
