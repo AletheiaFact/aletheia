@@ -209,20 +209,27 @@ export class ClaimReviewService {
         return this.util.formatStats(sortedReviews);
     }
 
+    async findPublishedReviewsByClaimId(claimId: string) {
+        const claimReviews = this.ClaimReviewModel
+            .find({
+                target: Types.ObjectId(claimId),
+                isDeleted: false,
+                isPublished: true,
+                isHidden: false,
+                nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
+            })
+            .lean()
+        return claimReviews;
+    }
+
     /**
      * get all personality claim claimIDs
      * @param claimId claim Id
      * @returns
      */
-    async getReviewsByClaimId(claimId) {
+    async getReviewClassificationCountsByClaimId(claimId) {
         const classificationCounts = {};
-        const claimReviews = await this.ClaimReviewModel.find({
-            target: claimId,
-            isDeleted: false,
-            isPublished: true,
-            isHidden: false,
-            nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
-        });
+        const claimReviews = await this.findPublishedReviewsByClaimId(claimId)
 
         claimReviews.forEach((review) => {
             const key = JSON.stringify({

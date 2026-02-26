@@ -26,11 +26,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -219,25 +219,67 @@ export class ClaimService {
     }
 
     /**
-     * This function does a soft deletion, doesn't delete claim in DataBase,
-     * but omit its in the front page
-     * Also creates a History Module that tracks deletion of claims.
-     * @param claimId Claim id which wants to delete
-     * @returns Returns the claim with the param isDeleted equal to true
-     */
-    async delete(claimId) {
+     * Performs a cascade soft delete on a claim and all its associated reviews.
+     * * @param {string} claimId - The ID of the claim to be deleted.
+     * @returns {Promise<Claim>} The updated claim object after the cascade process.
+    */
+    async cascadeSoftDelete(claimId) {
+        this.logger.log(`Starting cascade soft delete for claimId: ${claimId}`);
+        try {
+            const claimReviews = await this.claimReviewService.findPublishedReviewsByClaimId(claimId);
+
+            if (claimReviews.length > 0) {
+                this.logger.log(`Found ${claimReviews.length} associated claim reviews to delete for claimId: ${claimId}`);
+                for (const review of claimReviews) {
+                    await this.claimReviewService.delete(review._id);
+                }
+            }
+
+            const deletedClaim = await this.softDelete(claimId);
+            this.logger.log(`Cascade soft delete completed successfully for claimId: ${claimId}`);
+
+            return deletedClaim;
+
+        } catch (error) {
+            this.logger.error(`Failed to cascade soft delete for claimId: ${claimId}. Error: ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
+     * Executes a soft delete on a specific claim record.
+     * * @param {string} claimId - The ID of the claim to mark as deleted.
+     * @returns {Promise<Claim>} The claim document with isDeleted set to true.
+    */
+    async softDelete(claimId: string) {
         const user = this.req.user?._id;
-        const previousClaim = await this.getById(claimId);
-        const history = this.historyService.getHistoryParams(
-            claimId,
-            TargetModel.Claim,
-            user,
-            HistoryType.Delete,
-            null,
-            previousClaim
-        );
-        await this.historyService.createHistory(history);
-        return this.ClaimModel.softDelete({ _id: claimId });
+        this.logger.log(`Initiating soft delete for claimId: ${claimId} by user: ${user || 'system'}`);
+        try {
+            const previousClaim = await this.getById(claimId);
+            if (!previousClaim) {
+                this.logger.warn(`Attempted to soft delete non-existent claimId: ${claimId}`);
+                return null;
+            }
+
+            const history = this.historyService.getHistoryParams(
+                claimId,
+                TargetModel.Claim,
+                user,
+                HistoryType.Delete,
+                null,
+                previousClaim
+            );
+            await this.historyService.createHistory(history);
+
+            const result = await this.ClaimModel.softDelete({ _id: claimId });
+            this.logger.log(`Claim ${claimId} successfully marked as isDeleted`);
+
+            return result;
+
+        } catch (error) {
+            this.logger.error(`Error during soft delete for claimId: ${claimId}. Details: ${error.message}`);
+            throw error;
+        }
     }
 
     async hideOrUnhideClaim(claimId, isHidden, description) {
@@ -397,7 +439,7 @@ export class ClaimService {
             latestRevision: undefined,
         };
         if (claim) {
-            const reviews = await this.claimReviewService.getReviewsByClaimId(
+            const reviews = await this.claimReviewService.getReviewClassificationCountsByClaimId(
                 claim._id
             );
             const reviewTasks =
