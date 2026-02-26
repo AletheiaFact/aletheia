@@ -29,7 +29,7 @@ export class ClaimReviewController {
     @ApiTags("claim-review")
     @Get("api/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
+    async listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
         const {
             page = 0,
             pageSize = 10,
@@ -39,26 +39,31 @@ export class ClaimReviewController {
             nameSpace = NameSpaceEnum.Main,
         } = getClaimReviewsDto;
 
-        return Promise.all([
-            this.claimReviewService.listAll({
-                page,
-                pageSize,
-                order,
-                query: { isHidden, isDeleted: false, nameSpace },
-                latest,
-            }),
-            this.claimReviewService.count({ isHidden, isDeleted: false }),
-        ]).then(([reviews, totalReviews]) => {
-            const totalPages = Math.ceil(totalReviews / pageSize);
-
-            return {
-                reviews,
-                totalReviews,
-                totalPages,
-                page,
-                pageSize,
-            };
+        const reviews = await this.claimReviewService.listAll({
+            page,
+            pageSize,
+            order,
+            query: {
+                isHidden,
+                nameSpace,
+                isDeleted: false
+            },
+            latest,
         });
+
+        const totalReviews = await this.claimReviewService.count({
+            isHidden: false,
+            isDeleted: false,
+            nameSpace,
+        });
+
+        return {
+            reviews,
+            totalReviews,
+            totalPages: Math.ceil(totalReviews / pageSize),
+            page,
+            pageSize,
+        };
     }
 
     @AdminOnly()

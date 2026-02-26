@@ -18,6 +18,7 @@ import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
+import { IlistAll, IListAllQuery, ClaimReviewAggregated, listAllResponse } from "./types/claim.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -34,51 +35,102 @@ export class ClaimReviewService {
         private wikidata: WikidataService
     ) {}
 
-    async listAll({ page, pageSize, order, query, latest = false }) {
-        // Currently only list claim reviews
-        const pipeline = this.ClaimReviewModel.find({
+    async listAll({
+        page,
+        pageSize,
+        order,
+        query,
+        latest = false
+    }: IlistAll): Promise<listAllResponse[]> {
+        const sort = latest
+            ? { date: -1 }
+            : { _id: order === "asc" ? 1 : -1 };
+
+        const match = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
-        })
-            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
-            .populate({
-                path: "target",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    model: "ClaimRevision",
-                },
-                match: {
-                    isDeleted: false,
-                },
-            })
-            .skip(page * pageSize)
-            .limit(parseInt(pageSize));
-
-        const personalityPopulateOptions: any = {
-            path: "personality",
-            model: "Personality",
-            match: {
-                isDeleted: false,
-            },
         };
 
-        if (!query.isHidden) {
-            personalityPopulateOptions.match = {
-                $or: [
-                    { personality: { $exists: false } },
-                    { isHidden: { $ne: true } },
-                ],
-            };
+        const pipeline: any[] = [
+            { $match: match },
+            {
+                $lookup: {
+                    from: "claims",
+                    let: { claimId: "$target" },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
+                        { $match: { isDeleted: false } }
+                    ],
+                    as: "target"
+                },
+            },
+            { $unwind: "$target" },
+            {
+                $lookup: {
+                    from: "claimrevisions",
+                    localField: "target.latestRevision",
+                    foreignField: "_id",
+                    as: "target.latestRevision",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$target.latestRevision",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$personality",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ];
+
+        if (!query?.isHidden) {
+            pipeline.push({
+                $match: {
+                    $or: [
+                        { personality: { $exists: false } },
+                        { "personality.isHidden": { $ne: true } },
+                    ],
+                },
+            });
         }
 
-        const claimReviews = await pipeline
-            .populate(personalityPopulateOptions)
-            .exec();
-
-        return Promise.all(
-            claimReviews.map(async (review) => this.postProcess(review))
+        pipeline.push(
+            { $sort: sort },
+            { $skip: page * pageSize },
+            { $limit: pageSize }
         );
+
+        const reviews = await this.ClaimReviewModel.aggregate(pipeline);
+
+        return Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+
+    }
+
+    async count(query: IListAllQuery = {}): Promise<number> {
+        const match = {
+            ...query,
+            targetModel: ReviewTaskTypeEnum.Claim,
+        };
+
+        const aggregation = [
+            { $match: match },
+            { $count: "totalCount" }
+        ];
+
+        const result = await this.ClaimReviewModel.aggregate(aggregation);
+        return result[0]?.totalCount || 0;
     }
 
     async listDailyClaimReviews(query) {
@@ -143,54 +195,6 @@ export class ClaimReviewService {
         });
 
         return this.sortReviewStats(claimReviews);
-    }
-
-    async count(query: any = {}) {
-        const aggregation = [];
-
-        aggregation.push(
-            { $match: query },
-            {
-                $lookup: {
-                    from: "personalities",
-                    localField: "personality",
-                    foreignField: "_id",
-                    as: "personality",
-                },
-            },
-            {
-                $lookup: {
-                    from: "claims",
-                    localField: "target",
-                    foreignField: "_id",
-                    as: "target",
-                },
-            },
-            { $unwind: "$target" },
-            {
-                $match: {
-                    "personality.isDeleted": false,
-                    "target.isHidden": query.isHidden,
-                    "target.isDeleted": false,
-                },
-            }
-        );
-
-        if (!query.isHidden) {
-            aggregation.push({
-                $match: {
-                    $or: [
-                        { personality: { $exists: false } },
-                        { "personality.isHidden": { $ne: true } },
-                    ],
-                },
-            });
-        }
-        aggregation.push({ $count: "totalCount" });
-
-        const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
-
-        return claimReviews.length > 0 ? claimReviews[0].totalCount : 0;
     }
 
     async getReviewStatsByClaimId(claimId) {
@@ -465,7 +469,7 @@ export class ClaimReviewService {
             }
 
             return {
-                ...personality.toObject(),
+                ...personality,
                 ...wikidataExtract,
             };
         }
