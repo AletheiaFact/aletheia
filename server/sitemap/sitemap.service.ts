@@ -51,7 +51,7 @@ export class SitemapService {
                 });
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
                 const reviews =
-                    await this.claimReviewService.getReviewsByClaimId(
+                    await this.claimReviewService.getReviewClassificationCountsByClaimId(
                         claim._id
                     );
                 for (const review of reviews) {
