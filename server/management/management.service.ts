@@ -22,11 +22,6 @@ export class ManagementService {
     async deletePersonalityHierarchy(personalityId: string): Promise<void> {
         this.logger.log(`Starting global cascade delete for personalityId: ${personalityId}`);
         try {
-            const personality = await this.personalityService.getById(personalityId);
-            if (!personality) {
-                throw new NotFoundException(`Personality with ID "${personalityId}" not found.`);
-            }
-
             const claims = await this.claimService.getByPersonalityId(personalityId);
 
             if (claims.length > 0) {
@@ -36,9 +31,11 @@ export class ManagementService {
                     await this.deleteClaimHierarchy(claim._id);
                 }
             }
-            await this.personalityService.delete(personalityId);
 
+            const deletedPersonality = await this.personalityService.delete(personalityId);
             this.logger.log(`Full hierarchy for personality ${personalityId} deleted successfully.`);
+
+            return deletedPersonality
         } catch (error) {
             this.handleError(error, personalityId, 'personality');
         }
@@ -61,7 +58,7 @@ export class ManagementService {
                 }
             }
 
-            const deletedClaim = await this.claimService.softDelete(claimId);
+            const deletedClaim = await this.claimService.delete(claimId);
             this.logger.log(`Cascade soft delete completed successfully for claimId: ${claimId}`);
 
             return deletedClaim;

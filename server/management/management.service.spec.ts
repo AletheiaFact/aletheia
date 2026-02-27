@@ -33,29 +33,27 @@ describe("ManagementService (Unit)", () => {
 
     describe("deletePersonalityHierarchy", () => {
         const personalityId = "personality-123";
-        const mockPersonality = { _id: personalityId, name: "Test" };
         const mockClaims = [{ _id: "claim-1" }, { _id: "claim-2" }];
         const mockReviews = [{ _id: "review-1" }];
 
         it("should successfully delete the entire hierarchy (happy path)", async () => {
-            personalityService.getById.mockResolvedValue(mockPersonality);
             claimService.getByPersonalityId.mockResolvedValue(mockClaims);
             claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue(mockReviews);
-
             claimReviewService.delete.mockResolvedValue(true);
-            claimService.softDelete.mockResolvedValue({ _id: "claim-1", isDeleted: true });
+            claimService.delete.mockResolvedValue({ _id: "claim-1", isDeleted: true });
             personalityService.delete.mockResolvedValue(true);
 
-            await service.deletePersonalityHierarchy(personalityId);
+            const result = await service.deletePersonalityHierarchy(personalityId);
 
-            expect(personalityService.getById).toHaveBeenCalledWith(personalityId);
             expect(claimService.getByPersonalityId).toHaveBeenCalledWith(personalityId);
             expect(claimReviewService.findPublishedReviewsByClaimId).toHaveBeenCalledTimes(2);
+            expect(claimService.delete).toHaveBeenCalledTimes(2);
             expect(personalityService.delete).toHaveBeenCalledWith(personalityId);
+            expect(result).toBe(true);
         });
 
         it("should throw NotFoundException and log warning if personality does not exist", async () => {
-            personalityService.getById.mockResolvedValue(null);
+            personalityService.delete.mockRejectedValue(new NotFoundException());
             const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
 
             await expect(service.deletePersonalityHierarchy(personalityId)).rejects.toThrow(
@@ -68,7 +66,7 @@ describe("ManagementService (Unit)", () => {
 
         it("should handle error and log it when unexpected failure occurs", async () => {
             const unexpectedError = new Error("Database error");
-            personalityService.getById.mockRejectedValue(unexpectedError);
+            personalityService.delete.mockRejectedValue(unexpectedError);
             const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
 
             await expect(service.deletePersonalityHierarchy(personalityId)).rejects.toThrow(
@@ -88,18 +86,18 @@ describe("ManagementService (Unit)", () => {
         it("should delete claim and its reviews successfully", async () => {
             claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue(mockReviews);
             claimReviewService.delete.mockResolvedValue(true);
-            claimService.softDelete.mockResolvedValue({ _id: claimId, isDeleted: true });
+            claimService.delete.mockResolvedValue({ _id: claimId, isDeleted: true });
 
             await service.deleteClaimHierarchy(claimId);
 
             expect(claimReviewService.findPublishedReviewsByClaimId).toHaveBeenCalledWith(claimId);
             expect(claimReviewService.delete).toHaveBeenCalledTimes(2);
-            expect(claimService.softDelete).toHaveBeenCalledWith(claimId);
+            expect(claimService.delete).toHaveBeenCalledWith(claimId);
         });
 
         it("should throw NotFoundException and log warning if claim does not exist", async () => {
             claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue([]);
-            claimService.softDelete.mockRejectedValue(new NotFoundException());
+            claimService.delete.mockRejectedValue(new NotFoundException());
 
             const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
 

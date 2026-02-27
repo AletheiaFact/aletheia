@@ -1,11 +1,10 @@
 export const personalityServiceMock = {
-    getById: jest.fn(),
     delete: jest.fn(),
 };
 
 export const claimServiceMock = {
     getByPersonalityId: jest.fn(),
-    softDelete: jest.fn(),
+    delete: jest.fn(),
 };
 
 export const claimReviewServiceMock = {
