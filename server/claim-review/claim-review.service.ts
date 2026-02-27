@@ -209,17 +209,13 @@ export class ClaimReviewService {
         return this.util.formatStats(sortedReviews);
     }
 
-    async findPublishedReviewsByClaimId(claimId: string) {
-        const claimReviews = this.ClaimReviewModel
-            .find({
-                target: Types.ObjectId(claimId),
-                isDeleted: false,
-                isPublished: true,
-                isHidden: false,
-                nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
-            })
-            .lean()
-        return claimReviews;
+    async findAllReviewsForCascadeDelete(claimId: string) {
+        const query = {
+            target: Types.ObjectId(claimId),
+            nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
+        };
+
+        return await this.ClaimReviewModel.find(query).lean();
     }
 
     /**
@@ -229,7 +225,13 @@ export class ClaimReviewService {
      */
     async getReviewClassificationCountsByClaimId(claimId) {
         const classificationCounts = {};
-        const claimReviews = await this.findPublishedReviewsByClaimId(claimId)
+        const claimReviews = await this.ClaimReviewModel.find({
+            target: claimId,
+            isDeleted: false,
+            isPublished: true,
+            isHidden: false,
+            nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
+        });
 
         claimReviews.forEach((review) => {
             const key = JSON.stringify({

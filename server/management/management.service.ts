@@ -49,7 +49,7 @@ export class ManagementService {
         this.logger.log(`Starting cascade soft delete for claimId: ${claimId}`);
 
         try {
-            const claimReviews = await this.claimReviewService.findPublishedReviewsByClaimId(claimId);
+            const claimReviews = await this.claimReviewService.findAllReviewsForCascadeDelete(claimId);
 
             if (claimReviews.length > 0) {
                 this.logger.log(`Found ${claimReviews.length} associated claim reviews to delete for claimId: ${claimId}`);
