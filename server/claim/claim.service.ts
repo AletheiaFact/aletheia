@@ -4,6 +4,7 @@ import {
     Scope,
     NotFoundException,
     Logger,
+    InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
@@ -219,34 +220,6 @@ export class ClaimService {
     }
 
     /**
-     * Performs a cascade soft delete on a claim and all its associated reviews.
-     * * @param {string} claimId - The ID of the claim to be deleted.
-     * @returns {Promise<Claim>} The updated claim object after the cascade process.
-    */
-    async cascadeSoftDelete(claimId) {
-        this.logger.log(`Starting cascade soft delete for claimId: ${claimId}`);
-        try {
-            const claimReviews = await this.claimReviewService.findPublishedReviewsByClaimId(claimId);
-
-            if (claimReviews.length > 0) {
-                this.logger.log(`Found ${claimReviews.length} associated claim reviews to delete for claimId: ${claimId}`);
-                for (const review of claimReviews) {
-                    await this.claimReviewService.delete(review._id);
-                }
-            }
-
-            const deletedClaim = await this.softDelete(claimId);
-            this.logger.log(`Cascade soft delete completed successfully for claimId: ${claimId}`);
-
-            return deletedClaim;
-
-        } catch (error) {
-            this.logger.error(`Failed to cascade soft delete for claimId: ${claimId}. Error: ${error.message}`);
-            throw error;
-        }
-    }
-
-    /**
      * Executes a soft delete on a specific claim record.
      * * @param {string} claimId - The ID of the claim to mark as deleted.
      * @returns {Promise<Claim>} The claim document with isDeleted set to true.
@@ -337,6 +310,42 @@ export class ClaimService {
             this.req
         );
         return this._getClaim(queryOptions, revisionId, true, population);
+    }
+
+
+    /**
+     * Retrieves the claim IDs associated with a specific personality based on the user's role.
+     * This method searches for claims matching the given personality ID and namespace,
+     * selecting only the '_id' field for efficiency.
+     * @param {string} personalityId - The unique identifier of the personality.
+     * @param {NameSpaceEnum} [nameSpace=NameSpaceEnum.Main] - The namespace to filter the claims.
+     * @returns {Promise<Array<{ _id: any }>>} A promise that resolves to an array of claim documents containing only their IDs.
+s    */
+    async getByPersonalityId(personalityId: string, nameSpace = NameSpaceEnum.Main) {
+        this.logger.debug(`Fetching claim IDs for personality: ${personalityId}`);
+        try {
+            const queryOptions = this.util.getParamsBasedOnUserRole(
+                { personalities: personalityId, nameSpace },
+                this.req
+            );
+
+            const result = await this.ClaimModel
+                .find(queryOptions)
+                .select("_id")
+                .lean()
+                .exec();
+
+            this.logger.debug(`Found ${result.length} claims for personality ${personalityId}`);
+            return result;
+        } catch (error) {
+            this.logger.error(
+                `Failed to fetch claims for personality ${personalityId}`,
+                error.stack
+            );
+            throw new InternalServerErrorException(
+                "Error while fetching claims by personality."
+            );
+        }
     }
 
     async getByPersonalityIdAndClaimSlug(

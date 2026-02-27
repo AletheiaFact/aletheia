@@ -1,4 +1,4 @@
-import { Sentence } from "claim/types/sentence/schemas/sentence.schema";
+import { Sentence } from "../../claim/types/sentence/schemas/sentence.schema";
 import { User } from "../../entities/user.entity";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { Report } from "../../report/schemas/report.schema";

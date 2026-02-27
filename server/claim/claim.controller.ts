@@ -1,7 +1,6 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
     Logger,
     Param,
@@ -268,13 +267,6 @@ export class ClaimController {
     @Put("api/claim/:id")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
         return this.claimService.update(claimId, updateClaimDTO);
-    }
-
-    @AdminOnly()
-    @ApiTags("claim")
-    @Delete("api/claim/:id")
-    async delete(@Param("id") claimId) {
-        return this.claimService.cascadeSoftDelete(claimId);
     }
 
     @AdminOnly()
