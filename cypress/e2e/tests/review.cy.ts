@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
 import claim from "../../fixtures/claim";
@@ -28,7 +27,7 @@ const assignUser = () => {
     cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
-        .type(`${review.username}{downarrow}{enter}`, { delay: 200 })
+        .type(`${review.username}{downarrow}{enter}`, { delay: 200 });
     cy.get('[title="reCAPTCHA"]').should("exist");
     cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
     cy.checkRecaptcha();
@@ -37,11 +36,21 @@ const assignUser = () => {
 };
 
 const blockAssignedUserReview = () => {
+    // Wait for the form to be fully loaded with review data (including classification)
+    // before interacting. The classification field has a validation rule, and if its value
+    // hasn't been restored via react-hook-form's reset(reviewData) before the submit button
+    // is clicked, validation fails silently and the state transition never happens.
+    cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     cy.checkRecaptcha();
-    cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
+    cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
+        .should("be.visible")
+        .and("be.enabled")
+        .click();
     cy.get(locators.claimReview.INPUT_REVIEWER)
         .should("exist")
-        .type(`${review.username}{downarrow}{downarrow}{enter}`, { delay: 200 })
+        .type(`${review.username}{downarrow}{downarrow}{enter}`, {
+            delay: 200,
+        });
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
@@ -113,8 +122,10 @@ describe("Test claim review", () => {
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
+        cy.intercept("GET", "/api/reviewtask/hash/*").as("getReviewTask");
         cy.login();
         goToClaimReviewPage();
+        cy.wait("@getReviewTask");
         blockAssignedUserReview();
     });
 });

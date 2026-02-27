@@ -12,7 +12,7 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import AletheiaButton, { ButtonType } from "../Button";
 import { EditOutlined } from "@mui/icons-material";
-import { Roles } from "../../types/enums";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
@@ -49,7 +49,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             style={{
                 paddingTop: "32px",
                 backgroundColor: colors.lightNeutral,
-                justifyContent:"center"
+                justifyContent: "center"
             }}
         >
             <div
@@ -79,7 +79,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                     {title}
                 </Typography>
             </div>
-            {userRole === Roles.Admin && claim?.claimId ? (
+            {isAdmin(userRole) && claim?.claimId ? (
                 <AletheiaButton
                     type={ButtonType.blue}
                     href={href}
@@ -88,7 +88,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                         marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
                     }}
                 >
-                    {t("debates:openEditDebateMode")} <EditOutlined fontSize="small" style={{margin:"0 0 5 5"}} />
+                    {t("debates:openEditDebateMode")} <EditOutlined fontSize="small" style={{ margin: "0 0 5 5" }} />
                 </AletheiaButton>
             ) : null}
             <Grid container

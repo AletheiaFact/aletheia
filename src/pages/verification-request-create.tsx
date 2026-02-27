@@ -8,7 +8,7 @@ import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
-import CreateVerificationRequestView from "../components/VerificationRequest/CreateVerificationRequest/CreateVerificationRequestView";
+import CreateVerificationRequestView from "../components/VerificationRequest/verificationRequestForms/CreateVerificationRequestView";
 
 const CreateVerificationRequestPage: NextPage<any> = ({
     sitekey,

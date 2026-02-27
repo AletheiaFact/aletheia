@@ -1,44 +1,13 @@
 import React from "react";
 import { Grid, Typography, Chip } from "@mui/material";
 import { ActionTypes } from "../../store/types";
+import {
+  FilterItem,
+  FiltersContext,
+  FilterType,
+} from "../../types/VerificationRequest";
 
-enum FilterType {
-    TOPIC = "topic",
-    IMPACT_AREA = "impactArea",
-}
-
-interface TopicOption {
-    name: string;
-    matchedAlias?: string | null;
-}
-
-interface FilterState {
-    topicFilterUsed: string[];
-    impactAreaFilterUsed: string[];
-    autoCompleteTopicsResults?: TopicOption[];
-}
-
-interface FilterActions {
-    dispatch: (action: { type: ActionTypes; [key: string]: any }) => void;
-    t: (key: string) => string;
-    setPaginationModel: React.Dispatch<
-        React.SetStateAction<{ page: number; pageSize: number }>
-    >;
-    setApplyFilters: (value: boolean) => void;
-}
-
-interface ActiveFiltersProps {
-    state: FilterState;
-    actions: FilterActions;
-}
-
-interface FilterItem {
-    label: string;
-    value: string;
-    type: FilterType;
-}
-
-const ActiveFilters: React.FC<ActiveFiltersProps> = ({ state, actions }) => {
+const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults } =
         state;
     const { dispatch, t, setPaginationModel, setApplyFilters } = actions;

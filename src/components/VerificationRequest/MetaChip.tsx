@@ -6,9 +6,10 @@ interface MetaChipProps {
     label: string;
     label_value: string;
     style: React.CSSProperties;
+    dataCy?: string;
 }
 
-export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, style }) => {
+export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, style, dataCy }) => {
     const { t } = useTranslation();
     return (
         <Box
@@ -34,9 +35,10 @@ export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, st
                 </Typography>
             </Box>
             <Chip
-                label={label_value || t("claimForm:undefined")}
+                label={label_value || t("claimForm:noAnswer")}
                 style={style}
                 size="small"
+                data-cy={dataCy}
             />
         </Box>
     );

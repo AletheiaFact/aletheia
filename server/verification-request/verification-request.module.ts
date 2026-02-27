@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from "@nestjs/common";
+import { Module, OnModuleInit, Logger } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ModuleRef } from "@nestjs/core";
 import {
@@ -22,6 +22,8 @@ import { AbilityModule } from "../auth/ability/ability.module";
 import { TopicModule } from "../topic/topic.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { WikidataModule } from "../wikidata/wikidata.module";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -43,20 +45,25 @@ const VerificationRequestModel = MongooseModule.forFeature([
         AiTaskModule,
         CallbackDispatcherModule,
         AbilityModule,
+        WikidataModule,
         TopicModule,
         PersonalityModule.register(),
     ],
     exports: [
         VerificationRequestService,
+        VerificationRequestStatsService,
         VerificationRequestStateMachineService,
     ],
     providers: [
         VerificationRequestService,
+        VerificationRequestStatsService,
         VerificationRequestStateMachineService,
     ],
     controllers: [VerificationRequestController],
 })
 export class VerificationRequestModule implements OnModuleInit {
+    private readonly logger = new Logger(VerificationRequestModule.name);
+
     constructor(
         private readonly dispatcher: CallbackDispatcherService,
         private readonly moduleRef: ModuleRef
@@ -67,9 +74,10 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
             async (params, result) => {
-                console.log(
-                    `[VerificationRequestModule] EMBEDDING callback invoked with params:`,
-                    params
+                this.logger.debug(
+                    `EMBEDDING callback invoked with params: ${JSON.stringify(
+                        params
+                    )}`
                 );
                 const verificationService = await this.moduleRef.resolve(
                     VerificationRequestService
@@ -82,9 +90,10 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
             async (params, result) => {
-                console.log(
-                    `[VerificationRequestModule] IDENTIFYING_DATA callback invoked with params:`,
-                    params
+                this.logger.debug(
+                    `IDENTIFYING_DATA callback invoked with params: ${JSON.stringify(
+                        params
+                    )}`
                 );
                 const verificationService = await this.moduleRef.resolve(
                     VerificationRequestService
@@ -97,9 +106,10 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
             async (params, result) => {
-                console.log(
-                    `[VerificationRequestModule] TOPICS callback invoked with params:`,
-                    params
+                this.logger.debug(
+                    `TOPICS callback invoked with params: ${JSON.stringify(
+                        params
+                    )}`
                 );
                 const verificationService = await this.moduleRef.resolve(
                     VerificationRequestService
@@ -112,9 +122,10 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
             async (params, result) => {
-                console.log(
-                    `[VerificationRequestModule] IMPACT_AREA callback invoked with params:`,
-                    params
+                this.logger.debug(
+                    `IMPACT_AREA callback invoked with params: ${JSON.stringify(
+                        params
+                    )}`
                 );
                 const verificationService = await this.moduleRef.resolve(
                     VerificationRequestService
@@ -127,9 +138,10 @@ export class VerificationRequestModule implements OnModuleInit {
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
             async (params, result) => {
-                console.log(
-                    `[VerificationRequestModule] SEVERITY callback invoked with params:`,
-                    params
+                this.logger.debug(
+                    `SEVERITY callback invoked with params: ${JSON.stringify(
+                        params
+                    )}`
                 );
                 const verificationService = await this.moduleRef.resolve(
                     VerificationRequestService

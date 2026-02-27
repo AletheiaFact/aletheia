@@ -22,7 +22,6 @@ export enum VerificationRequestSourceChannel {
     Website = "Web",
     Instagram = "instagram",
     Whatsapp = "whatsapp",
-    Telegram = "telegram",
     AutomatedMonitoring = "automated_monitoring",
 }
 
@@ -85,3 +84,7 @@ export const EXPECTED_STATES = [
     "impactArea",
     "severity",
 ];
+export interface TimeStamps {
+    createdAt: Date;
+    updatedAt: Date;
+}

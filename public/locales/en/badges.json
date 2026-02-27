@@ -1,7 +1,9 @@
 {
-    "nameColumn": "Name",
-    "descriptionColumn": "Description",
-    "imageColumn": "Image",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter badge name",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Enter description",
+    "imageFieldLabel": "Image",
     "title": "Badges area",
     "addBadge": "Add badge",
     "editBadge": "Edit badge",

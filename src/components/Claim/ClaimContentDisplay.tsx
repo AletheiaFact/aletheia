@@ -1,10 +1,6 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 
-import ImageApi from "../../api/image";
-import actions from "../../store/actions";
-import { useAppSelector } from "../../store/store";
-import ReviewedImage from "../ReviewedImage";
+import ClaimImageBody from "./ClaimImageBody";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 
 interface ClaimContentDisplayProps {
@@ -22,35 +18,20 @@ const ClaimContentDisplay: React.FC<ClaimContentDisplayProps> = ({
     showHighlights,
     dispatchPersonalityAndClaim,
 }) => {
-    const { selectedContent } = useAppSelector((state) => state);
-    const dispatch = useDispatch();
     const imageUrl = claimContent.content;
     const paragraphs = Array.isArray(claimContent)
         ? claimContent
         : [claimContent];
 
-    const handleClickOnImage = () => {
-        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash)
-            .then((image) => {
-                dispatch(actions.setSelectContent(image));
-            })
-            .catch((e) => e);
-        dispatch(actions.openReviewDrawer());
-    };
-
     return (
         <>
             {isImage ? (
-                <div
-                    style={{ paddingBottom: "20px", cursor: "pointer" }}
-                    onClick={handleClickOnImage}
-                >
-                    <ReviewedImage
-                        imageUrl={imageUrl}
-                        title={title}
-                        classification={claimContent?.props?.classification}
-                    />
-                </div>
+                <ClaimImageBody
+                    imageUrl={imageUrl}
+                    title={title}
+                    classification={claimContent?.props?.classification}
+                    dataHash={claimContent?.data_hash}
+                />
             ) : (
                 <cite style={{ fontStyle: "normal" }}>
                     <ClaimSpeechBody

@@ -11,7 +11,7 @@ import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { parse } from "url";
 import { StatsService } from "../stats/stats.service";
-import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { Public } from "../auth/decorators/auth.decorator";
 import type { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
@@ -39,7 +39,7 @@ export class HomeController {
         return res.redirect("/");
     }
 
-    @IsPublic()
+    @Public()
     @ApiTags("pages")
     @Get("/:namespace?")
     @Header("Cache-Control", "max-age=60, must-revalidate")

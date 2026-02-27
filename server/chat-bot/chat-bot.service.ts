@@ -1,4 +1,4 @@
-import { Injectable, Scope } from "@nestjs/common";
+import { Injectable, Scope, Logger } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
@@ -7,6 +7,8 @@ import { createChatBotMachine } from "./chat-bot.machine";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
+import { Roles } from "../auth/ability/ability.factory";
+import { M2M } from "../entities/m2m.entity";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -22,8 +24,23 @@ interface ChatBotContext {
     sourceChannel?: string;
 }
 
+function M2MUser(clientId): M2M {
+    return {
+        isM2M: true,
+        clientId,
+        subject: "chatbot-service",
+        scopes: ["read", "write"],
+        role: {
+            main: Roles.Integration,
+        },
+        namespace: "main",
+    };
+}
+
 @Injectable({ scope: Scope.REQUEST })
 export class ChatbotService {
+    private readonly logger = new Logger(ChatbotService.name);
+
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
@@ -99,7 +116,7 @@ export class ChatbotService {
                 ...chatbotState.machine.context,
                 sourceChannel: channel,
             },
-            chatbotState._id
+            M2MUser(chatbotState._id)
         );
 
         chatBotMachineService.start(chatbotState.machine.value);
@@ -206,7 +223,7 @@ export class ChatbotService {
                 );
                 break;
             default:
-                console.warn(`Unhandled state: ${currentState}`);
+                this.logger.warn(`Unhandled state: ${currentState}`);
         }
     }
 

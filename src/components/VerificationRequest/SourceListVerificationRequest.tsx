@@ -1,15 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { VerificationRequestContent } from "./VerificationRequestContent";
+import { truncateUrl } from "../../helpers/verificationRequestCardHelper";
 
 interface SourceListProps {
     sources: Array<{ href?: string }>;
     t: (key: string) => string;
-    truncateUrl: (url: string) => string;
     id: string;
 }
 
-const SourceList: React.FC<SourceListProps> = ({ sources, t, truncateUrl, id }) => {
+const SourceList: React.FC<SourceListProps> = ({ sources, t, id }) => {
     if (!sources?.length) return null;
 
     const flatSources = sources.flat().filter((source) => !!source.href);
@@ -21,6 +21,7 @@ const SourceList: React.FC<SourceListProps> = ({ sources, t, truncateUrl, id }) 
             {flatSources.map((source, index) => (
                 <VerificationRequestContent
                     key={`${id}-source-${index}`}
+                    dataCy={`testVerificationRequestSource${index}`}
                     label={
                         index === 0
                             ? t("verificationRequest:tagSource")

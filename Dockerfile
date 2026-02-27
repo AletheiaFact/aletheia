@@ -1,4 +1,4 @@
-FROM node:18.19.1-alpine AS package
+FROM node:20.18.0-alpine AS package
 
 ARG NEXT_PUBLIC_UMAMI_SITE_ID
 ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
@@ -37,8 +37,7 @@ COPY config.websocket.$ENVIRONMENT.yaml ./config.websocket.yaml
 COPY config.seed.example.yaml ./config.seed.yaml
 COPY migrate-mongo-config-example.ts ./migrate-mongo-config.ts
 COPY ./migrations ./migrations
-COPY ./.eslintignore ./
-COPY ./.eslintrc.yml ./
+COPY ./eslint.config.mjs ./
 COPY server/jest.config.json ./jest.config.json
 COPY ./next.config.js ./
 COPY ./tsconfig.json ./
@@ -62,7 +61,7 @@ RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_ENABLE_BANNER_DONATION=$NEXT_PUBLIC_ENABLE_BANNER_DONATION \
     yarn build
 
-FROM node:18.19.1-alpine
+FROM node:20.18.0-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 

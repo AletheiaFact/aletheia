@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ReviewTaskApi from "../../api/reviewTaskApi";
@@ -27,6 +34,8 @@ interface ContextType {
 
 export const VisualEditorContext = createContext<ContextType>({});
 
+const editorConfig = new EditorConfig();
+
 interface VisualEditorProviderProps {
     data_hash: string;
     children: React.ReactNode;
@@ -34,7 +43,6 @@ interface VisualEditorProviderProps {
 }
 
 export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
-    const editorConfig = new EditorConfig();
     const { machineService, reportModel, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -101,26 +109,29 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         };
     }, [enableCollaborativeEdit, props.data_hash, websocketUrl]);
 
-    const extensions = useMemo(
+    const getExtensions = useCallback(
         () =>
             editorConfig.getExtensions(
                 reviewTaskType,
                 websocketProvider,
                 enableEditorAnnotations
             ),
-        [websocketProvider, reviewTaskType]
+        [reviewTaskType, websocketProvider, enableEditorAnnotations]
     );
 
-    const editorConfiguration = {
-        readonly,
-        extensions,
-        isCollaborative,
-        core: { excludeExtensions: ["history"] },
-        stringHandler: "html",
-        content: isCollaborative
-            ? undefined
-            : (editorContentObject as RemirrorContentType),
-    };
+    const editorConfiguration = useMemo(
+        () => ({
+            readonly,
+            extensions: getExtensions,
+            isCollaborative,
+            core: { excludeExtensions: ["history"] },
+            stringHandler: "html",
+            content: isCollaborative
+                ? undefined
+                : (editorContentObject as RemirrorContentType),
+        }),
+        [readonly, getExtensions, isCollaborative, editorContentObject]
+    );
 
     const value = useMemo(
         () => ({

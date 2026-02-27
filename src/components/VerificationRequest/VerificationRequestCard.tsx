@@ -21,6 +21,10 @@ import { MetaChip } from "./MetaChip";
 import { VerificationRequestContent } from "./VerificationRequestContent";
 import { RequestDates } from "./RequestDates";
 import SourceList from "./SourceListVerificationRequest";
+import {
+    getSeverityColor,
+    getSeverityLabel,
+} from "../../helpers/verificationRequestCardHelper";
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -28,7 +32,7 @@ const ContentWrapper = styled.div`
     word-wrap: break-word;
     overflow: hidden;
     width: 50vw;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         flex-direction: column;
         width: 70vw;
         flex-wrap: "wrap";
@@ -40,23 +44,10 @@ const MetaChipContainer = styled(Grid)`
     justify-content: space-around;
     margin-top: 16px;
     flex-wrap: wrap;
+    gap: 2px;
 `;
 
 const smallGreyIcon = { fontSize: 18, color: "grey" };
-
-const truncateUrl = (url) => {
-    try {
-        const { hostname, pathname } = new URL(url);
-        const maxLength = 30;
-        const shortPath =
-            pathname.length > maxLength
-                ? `${pathname.substring(0, maxLength)}...`
-                : pathname;
-        return `${hostname}${shortPath}`;
-    } catch (e) {
-        return url;
-    }
-};
 
 const VerificationRequestCard = ({
     verificationRequest,
@@ -77,13 +68,19 @@ const VerificationRequestCard = ({
             label_value: t(
                 `claimForm:${verificationRequest.reportType || "undefined"}`
             ),
+            dataCy: "testVerificationRequestReportType",
             style: { backgroundColor: colors.secondary, color: colors.white },
         },
         {
             icon: <Share style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|receptionChannel`,
             label: t("verificationRequest:tagSourceChannel"),
-            label_value: verificationRequest.sourceChannel,
+            label_value:
+                t(
+                    `verificationRequest:${verificationRequest.sourceChannel}`,
+                    { defaultValue: verificationRequest.sourceChannel },
+                ),
+            dataCy: "testVerificationRequestSourceChannel",
             style: { backgroundColor: colors.primary, color: colors.white },
         },
         {
@@ -91,6 +88,7 @@ const VerificationRequestCard = ({
             key: `${verificationRequest._id}|impactArea`,
             label: t("verificationRequest:tagImpactArea"),
             label_value: verificationRequest.impactArea?.name,
+            dataCy: "testVerificationRequestImpactArea",
             style: {
                 backgroundColor: colors.neutralSecondary,
                 color: colors.white,
@@ -100,8 +98,12 @@ const VerificationRequestCard = ({
             icon: <WarningAmber style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
             label: t("verificationRequest:tagSeverity"),
-            label_value: verificationRequest.severity,
-            style: { backgroundColor: colors.error, color: colors.white },
+            label_value: getSeverityLabel(verificationRequest.severity, t),
+            dataCy: "testVerificationRequestSeverity",
+            style: {
+                backgroundColor: getSeverityColor(verificationRequest.severity),
+                color: colors.white,
+            },
         },
     ];
 
@@ -134,6 +136,7 @@ const VerificationRequestCard = ({
                     </Typography>
                     <AlertTitle>
                         <Typography
+                            data-cy="testVerificationRequestContent"
                             variant="body1"
                             style={{
                                 color: colors.black,
@@ -156,6 +159,7 @@ const VerificationRequestCard = ({
                 >
                     {verificationRequest.publicationDate && (
                         <RequestDates
+                            dataCy="testVerificationRequestPublicationDate"
                             icon={<DateRange style={smallGreyIcon} />}
                             label={t("verificationRequest:tagPublicationDate")}
                             value={verificationRequest.publicationDate}
@@ -164,6 +168,7 @@ const VerificationRequestCard = ({
 
                     {verificationRequest.date && (
                         <RequestDates
+                            dataCy="testVerificationRequestDate"
                             icon={<DateRange style={smallGreyIcon} />}
                             label={t("verificationRequest:tagDate")}
                             value={verificationRequest.date}
@@ -175,6 +180,7 @@ const VerificationRequestCard = ({
                         <VerificationRequestContent
                             label={t("verificationRequest:tagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
+                            dataCy="testVerificationRequestHeardFrom"
                         />
                     )}
                 </Box>
@@ -183,7 +189,6 @@ const VerificationRequestCard = ({
                         <SourceList
                             sources={verificationRequest.source}
                             t={t}
-                            truncateUrl={truncateUrl}
                             id={verificationRequest._id}
                         />
                     )}
@@ -191,7 +196,7 @@ const VerificationRequestCard = ({
 
                 <MetaChipContainer container>
                     {metaChipData.map(
-                        ({ icon, key, label, label_value, style }) => (
+                        ({ icon, key, label, label_value, style, dataCy }) => (
                             <Grid
                                 item
                                 key={key}
@@ -202,6 +207,7 @@ const VerificationRequestCard = ({
                                     label={label}
                                     label_value={label_value}
                                     style={style}
+                                    dataCy={dataCy}
                                 />
                             </Grid>
                         )

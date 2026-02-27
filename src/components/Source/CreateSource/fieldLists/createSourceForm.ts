@@ -5,6 +5,7 @@ const createSourceForm: FormField[] = [
         fieldName: "source",
         type: "text",
         defaultValue: "",
+        isURLField: true,
     }),
 ];
 

@@ -38,5 +38,7 @@
     "hideSuccess": "Afirmação escondida com sucesso",
     "hideError": "Erro ao esconder a afirmação",
     "unhideSuccess": "Afirmação pública com sucesso",
-    "unhideError": "Erro ao mostrar a afirmação"
+    "unhideError": "Erro ao mostrar a afirmação",
+    "reviewImageButton": "Revisar Imagem",
+    "openReportButton": "Ver Relatório"
 }

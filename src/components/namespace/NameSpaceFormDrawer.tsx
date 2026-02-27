@@ -1,117 +1,58 @@
-import {
-    Autocomplete,
-    Divider,
-    Grid,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import { useAtom, useSetAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import {
     finishEditingItem,
     isEditDrawerOpen,
     cancelEditingItem,
 } from "../../atoms/editDrawer";
 import colors from "../../styles/colors";
-import AletheiaInput from "../AletheiaInput";
-import Button from "../Button";
-import Label from "../Label";
 import LargeDrawer from "../LargeDrawer";
-import { useForm } from "react-hook-form";
-import { atomUserList } from "../../atoms/userEdit";
-import { User } from "../../types/User";
-import { currentUserId } from "../../atoms/currentUser";
-import { canEdit } from "../../utils/GetUserPermission";
 import {
     nameSpaceBeeingEdited,
     addNameSpaceToList,
     atomNameSpacesList,
 } from "../../atoms/namespace";
 import NameSpacesApi from "../../api/namespace";
-import DailyReportApi from "../../api/dailyReport";
+import DynamicNameSpaceForm from "./DynamicNameSpaceForm";
+import { atomUserList } from "../../atoms/userEdit";
 
 const NameSpacesFormDrawer = () => {
+    const { t } = useTranslation();
     const [nameSpace] = useAtom(nameSpaceBeeingEdited);
     const [userList] = useAtom(atomUserList);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm({
-        defaultValues: {
-            name: nameSpace?.name,
-            users: nameSpace?.users?.map((user) => user?._id),
-        },
-    });
+    const updatedNamespace = {
+        ...nameSpace,
+        usersId: nameSpace?.users?.map(namespace => namespace._id) || []
+    }
 
-    const { t } = useTranslation();
     const [open, setOpen] = useAtom(isEditDrawerOpen);
     const addNameSpace = useSetAtom(addNameSpaceToList);
     const finishEditing = useSetAtom(finishEditingItem);
     const cancelEditing = useSetAtom(cancelEditingItem);
-    const [userId] = useAtom(currentUserId);
 
     const isEdit = !!nameSpace;
     const [isLoading, setIsLoading] = useState(false);
-    const [users, setUsers] = useState([]);
-
-    const userListFiltered = userList.filter((user) => {
-        return canEdit(user, userId);
-    });
-    useEffect(() => {
-        const userIds = nameSpace?.users?.map((user) => user._id);
-        if (nameSpace) {
-            setUsers(
-                nameSpace?.users?.length
-                    ? userListFiltered.filter((user) =>
-                          userIds.includes(user._id)
-                      )
-                    : []
-            );
-
-            reset({
-                name: nameSpace?.name,
-            });
-        }
-    }, [nameSpace]);
-
-    const resetForm = () => {
-        reset({
-            name: "",
-        });
-        setUsers([]);
-        setIsLoading(false);
-    };
 
     const onSubmit = async (data) => {
         setIsLoading(true);
+        const usersAsObjects = userList.filter(user =>
+            data.usersId?.includes(user._id)
+        );
+
+        const updatedData = {
+            ...data,
+            users: usersAsObjects
+        };
         try {
             if (isEdit) {
-                await handleEditNameSpace(data);
+                await handleEditNameSpace(updatedData);
             } else {
-                await handleCreateNameSpace(data);
+                await handleCreateNameSpace(updatedData);
             }
             setOpen(false);
-            resetForm();
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDailyReviews = async () => {
-        setIsLoading(true);
-        try {
-            await DailyReportApi.sendDailyReportEmail(
-                nameSpace._id,
-                nameSpace.slug,
-                t
-            );
         } catch (err) {
             console.error(err);
         } finally {
@@ -123,7 +64,7 @@ const NameSpacesFormDrawer = () => {
         const newItem = {
             _id: nameSpace._id,
             name: data.name,
-            users,
+            users: data.users,
         };
 
         await NameSpacesApi.updateNameSpace(newItem, t);
@@ -138,18 +79,18 @@ const NameSpacesFormDrawer = () => {
     async function handleCreateNameSpace(data) {
         const values = {
             name: data.name,
-            users,
+            users: data.users,
         };
 
         const createdNameSpace = await NameSpacesApi.createNameSpace(values, t);
         addNameSpace({
             ...createdNameSpace,
-            users,
+            users: data.users,
         });
     }
 
     const onCloseDrawer = () => {
-        resetForm();
+        setOpen(false);
         cancelEditing();
     };
 
@@ -159,13 +100,7 @@ const NameSpacesFormDrawer = () => {
             onClose={onCloseDrawer}
             backgroundColor={colors.lightNeutralSecondary}
         >
-            <Grid
-                container
-                justifyContent="center"
-                alignItems="stretch"
-                spacing={1}
-                mt={2}
-            >
+            <Grid container justifyContent="center">
                 <Grid item xs={10}>
                     <h2>
                         {t(
@@ -176,61 +111,15 @@ const NameSpacesFormDrawer = () => {
                     </h2>
                     <Divider />
                 </Grid>
-                <Grid item xs={10} mt={2}>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Grid item mb={2}>
-                            <Label required>{t("namespaces:nameColumn")}</Label>
-                            <AletheiaInput
-                                {...register("name", { required: true })}
-                                data-cy={"testNameSpaceName"}
-                            />
-                            {errors.name && (
-                                <Typography variant="caption" color="error">
-                                    {t("common:requiredFieldError")}
-                                </Typography>
-                            )}
-                        </Grid>
-                        <Grid item mb={2}>
-                            <Autocomplete
-                                multiple
-                                id="namespaces-users"
-                                options={userListFiltered}
-                                getOptionLabel={(option: User) => option.name}
-                                getOptionKey={(option) => option._id}
-                                disableCloseOnSelect
-                                limitTags={3}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        placeholder="Users"
-                                    />
-                                )}
-                                value={users}
-                                onChange={(_event, newValue) => {
-                                    setUsers(newValue);
-                                }}
-                            />
-                        </Grid>
-                        <Grid container spacing={2} style={{ marginTop: 24 }}>
-                            <Grid item>
-                                <Button loading={isLoading} htmlType="submit">
-                                    {t("admin:saveButtonLabel")}
-                                </Button>
-                            </Grid>
-                            {nameSpace?._id && (
-                                <Grid item>
-                                    <Button
-                                        onClick={handleDailyReviews}
-                                        loading={isLoading}
-                                        htmlType="button"
-                                    >
-                                        {t("notification:dailyReportButton")}
-                                    </Button>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </form>
-                </Grid>
+                <DynamicNameSpaceForm
+                    nameSpace={updatedNamespace}
+                    onSubmit={onSubmit}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    isDrawerOpen={open}
+                    onClose={onCloseDrawer}
+                    t={t}
+                />
             </Grid>
         </LargeDrawer>
     );

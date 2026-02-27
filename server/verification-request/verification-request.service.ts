@@ -15,6 +15,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
+import { buildDateQuery } from "../../src/utils/date.utils";
 import {
     BadRequestException,
     Injectable,
@@ -43,7 +44,7 @@ export class VerificationRequestService {
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
-        private VerificationRequestModel: Model<VerificationRequestDocument>,
+        private readonly VerificationRequestModel: Model<VerificationRequestDocument>,
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         private sourceService: SourceService,
@@ -177,7 +178,9 @@ export class VerificationRequestService {
                 await vr.save();
             }
 
-            const currentUser = user || this.req?.user;
+            const currentUser = user?._id
+                ? user._id
+                : user || this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 vr._id,
@@ -604,7 +607,8 @@ export class VerificationRequestService {
                 .populate("group")
                 .populate("source")
                 .populate("impactArea")
-                .populate("topics");
+                .populate("topics")
+                .populate("identifiedData");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });
@@ -649,7 +653,7 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             );
         } catch (error) {
-            console.error(
+            this.logger.error(
                 "Failed to remove verification request from group:",
                 error
             );
@@ -700,15 +704,7 @@ export class VerificationRequestService {
                         return src._id;
                     })
                 );
-
-                updatedVerificationRequestData.source = Array.from(
-                    new Set([
-                        ...(verificationRequest.source || []).map((sourceId) =>
-                            sourceId.toString()
-                        ),
-                        ...newSourceIds.map((id) => id.toString()),
-                    ])
-                ).map((id) => Types.ObjectId(id));
+                updatedVerificationRequestData.source = newSourceIds.map((id) => Types.ObjectId(id));
             }
 
             if (
@@ -722,7 +718,7 @@ export class VerificationRequestService {
                     );
             }
 
-            const user = this.req.user;
+            const user = this.req.user?._id;
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -739,9 +735,10 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            ).populate("source");
+            ).populate("source")
+             .populate("impactArea");
         } catch (error) {
-            console.error("Failed to update verification request:", error);
+            this.logger.error("Failed to update verification request:", error);
             throw error;
         }
     }
@@ -923,9 +920,9 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(topics, data_hash) {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(topic => topic.value || topic.wikidataId)
+            topics.map((topic) => topic.value || topic.wikidataId)
         );
-        const topicIds = foundTopics.map(topic => topic._id);
+        const topicIds = foundTopics.map((topic) => topic._id);
 
         const latestVerificationRequest = verificationRequest.toObject();
 
@@ -934,7 +931,7 @@ export class VerificationRequestService {
             topics: topicIds,
         };
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
@@ -960,6 +957,8 @@ export class VerificationRequestService {
         sourceChannel?: string;
         status?: string[];
         impactArea?: string[];
+        startDate?: string;
+        endDate?: string;
     }): Promise<Record<string, any>> {
         const {
             contentFilters,
@@ -968,6 +967,8 @@ export class VerificationRequestService {
             sourceChannel,
             status,
             impactArea,
+            startDate,
+            endDate,
         } = filters;
         const query: any = {};
 
@@ -983,8 +984,7 @@ export class VerificationRequestService {
             Types.ObjectId(impactArea._id)
         );
 
-        if (topicIds.length)
-            orConditions.push({ topics: { $in: topicIds } });
+        if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });
 
         if (impactAreaIds.length)
             orConditions.push({ impactArea: { $in: impactAreaIds } });
@@ -995,6 +995,10 @@ export class VerificationRequestService {
             }));
             orConditions.push(...contentConditions);
         }
+
+        const dateQuery = buildDateQuery(startDate, endDate);
+
+        if (dateQuery) query.date = dateQuery;
 
         if (orConditions.length) {
             query.$or = orConditions;

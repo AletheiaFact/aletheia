@@ -14,7 +14,7 @@ export const createChatBotMachine = (
     verificationRequestStateMachineService: VerificationRequestStateMachineService,
     value?,
     context?,
-    chatbotStateId?
+    M2MUser?,
 ) => {
     const chatBotMachine = createMachine<ChatBotContext>(
         {
@@ -199,7 +199,7 @@ export const createChatBotMachine = (
 
                     verificationRequestStateMachineService.request(
                         verificationRequestBody,
-                        chatbotStateId
+                        M2MUser
                     );
                 },
             },

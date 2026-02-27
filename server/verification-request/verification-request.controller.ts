@@ -9,7 +9,6 @@ import {
     Query,
     Param,
     Put,
-    UseGuards,
     Logger,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
@@ -26,13 +25,12 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
+import { Public, AdminOnly, RegularUserOnly } from "../auth/decorators/auth.decorator";
+import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
+import { WikidataService } from "../wikidata/wikidata.service";
+import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
+import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -40,12 +38,22 @@ export class VerificationRequestController {
 
     constructor(
         private verificationRequestService: VerificationRequestService,
+        private readonly verificationRequestStatsService: VerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
         private captchaService: CaptchaService,
-        private verificationRequestStateMachineService: VerificationRequestStateMachineService
+        private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
+        private readonly wikidataService: WikidataService
     ) {}
+
+    @ApiTags("verification-request")
+    @Get("api/verification-request/stats")
+    @Header("Cache-Control", "max-age=300, must-revalidate")
+    @Public()
+    public async getStats(): Promise<StatsDto> {
+        return this.verificationRequestStatsService.getStats();
+    }
 
     @ApiTags("verification-request")
     @Get("api/verification-request")
@@ -57,6 +65,8 @@ export class VerificationRequestController {
             contentFilters = [],
             topics = [],
             order,
+            startDate,
+            endDate,
             severity,
             sourceChannel,
             status,
@@ -71,6 +81,8 @@ export class VerificationRequestController {
                     page,
                     pageSize,
                     order,
+                    startDate,
+                    endDate,
                     severity,
                     sourceChannel,
                     status,
@@ -79,6 +91,8 @@ export class VerificationRequestController {
                 this.verificationRequestService.count({
                     contentFilters,
                     topics,
+                    startDate,
+                    endDate,
                     severity,
                     sourceChannel,
                     status,
@@ -109,6 +123,113 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getById(@Param("id") verificationRequestId: string) {
         return this.verificationRequestService.getById(verificationRequestId);
+    }
+
+    /**
+     * Get personalities associated with a verification request, enriched with Wikidata information
+     * @param verificationRequestId - The verification request ID
+     * @param language - Language code for Wikidata labels (default: 'en')
+     * @returns Array of personalities with Wikidata avatar and metadata
+     */
+    @ApiTags("verification-request")
+    @Get("api/verification-request/:id/personalities")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Public()
+    public async getPersonalitiesWithWikidata(
+        @Param("id") verificationRequestId: string,
+        @Query("language") language: string = "en"
+    ): Promise<PersonalityWithWikidataDto[]> {
+        const verificationRequest =
+            await this.verificationRequestService.getByIdWithPopulatedFields(
+                verificationRequestId,
+                ["identifiedData"]
+            );
+
+        if (
+            !verificationRequest?.identifiedData ||
+            verificationRequest.identifiedData.length === 0
+        ) {
+            this.logger.debug(
+                `No identifiedData found for VR ${verificationRequestId}`
+            );
+            return [];
+        }
+
+        this.logger.debug(
+            `Found ${verificationRequest.identifiedData.length} personalities for VR ${verificationRequestId}`
+        );
+
+        const personalities: PersonalityWithWikidataDto[] = await Promise.all(
+            verificationRequest.identifiedData.map(
+                async (
+                    personality: any
+                ): Promise<PersonalityWithWikidataDto> => {
+                    if (!personality?.name) {
+                        this.logger.warn(
+                            `Personality missing name field for VR ${verificationRequestId}`
+                        );
+                        return {
+                            personalityId: personality._id?.toString() || "",
+                            name: "Unknown",
+                            slug: "",
+                            description: null,
+                            avatar: null,
+                            wikidata: null,
+                        };
+                    }
+
+                    const baseData = {
+                        personalityId: personality._id.toString(),
+                        name: personality.name,
+                        slug: personality.slug || "",
+                        description: personality.description || null,
+                    };
+
+                    if (!personality.wikidata) {
+                        this.logger.debug(
+                            `Personality ${personality.name} has no wikidata ID`
+                        );
+                        return {
+                            ...baseData,
+                            avatar: null,
+                            wikidata: null,
+                        };
+                    }
+
+                    try {
+                        const wikidataProps =
+                            await this.wikidataService.fetchProperties({
+                                wikidataId: personality.wikidata,
+                                language,
+                            });
+
+                        return {
+                            ...baseData,
+                            name: wikidataProps.name || personality.name,
+                            description:
+                                wikidataProps.description ||
+                                personality.description ||
+                                null,
+                            avatar: wikidataProps.avatar || null,
+                            wikidata: personality.wikidata,
+                        };
+                    } catch (error) {
+                        this.logger.error(
+                            `Error fetching wikidata for personality ${personality.name} (${personality.wikidata}):`,
+                            error.message
+                        );
+
+                        return {
+                            ...baseData,
+                            avatar: null,
+                            wikidata: personality.wikidata,
+                        };
+                    }
+                }
+            )
+        );
+
+        return personalities;
     }
 
     @ApiTags("verification-request")
@@ -268,22 +389,32 @@ export class VerificationRequestController {
     }
 
     @ApiTags("pages")
-    @Get("verification-request/:data_hash/history")
-    public async verificationRequestHistoryPage(
+    @RegularUserOnly()
+    @Get("verification-request/:data_hash/:viewType")
+    public async verificationRequestPageHistoryOrTracking(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
+        const { data_hash, viewType } = req.params;
 
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
 
-        const queryObject = Object.assign(parsedUrl.query, {
-            targetId: verificationRequest._id,
-            targetModel: TargetModel.VerificationRequest,
-        });
+        const view = viewType === "history" ? "/history-page" : "/tracking-page";
 
-        await this.viewService.render(req, res, "/history-page", queryObject);
+        const queryObject = Object.assign(
+            parsedUrl.query,
+            viewType === "history"
+                ? {
+                    targetId: verificationRequest._id,
+                    targetModel: TargetModel.VerificationRequest,
+                }
+                : {
+                    verificationRequestId: verificationRequest._id,
+                }
+        );
+
+        await this.viewService.render(req, res, view, queryObject);
     }
 }

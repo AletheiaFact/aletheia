@@ -1,5 +1,7 @@
 {
     "anonymousUserName": "Anonymous",
+    "automatedMonitoring": "Automated Monitoring",
+    "virtualAssistant": "Virtual Assistant",
     "create": "created",
     "update": "updated",
     "delete": "deleted",

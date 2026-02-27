@@ -1,4 +1,10 @@
-import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
+import {
+    ForbiddenException,
+    Inject,
+    Injectable,
+    Scope,
+    Logger,
+} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -59,6 +65,7 @@ export interface IReviewTask {
 
 @Injectable({ scope: Scope.REQUEST })
 export class ReviewTaskService {
+    private readonly logger = new Logger(ReviewTaskService.name);
     fieldMap: { assigned: string; crossChecked: string; reviewed: string };
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
@@ -383,7 +390,7 @@ export class ReviewTaskService {
                     : Object.keys(newReviewTask.machine.value)[0];
         }
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             newReviewTask._id,
@@ -752,17 +759,18 @@ export class ReviewTaskService {
 
             return 0;
         } catch (error) {
-            console.error("Error in countReviewTasksNotDeleted:", error);
+            this.logger.error("Error in countReviewTasksNotDeleted:", error);
             throw error;
         }
     }
 
-    getEditorContentObject(schema, reportModel, reviewTaskType) {
-        return this.editorParseService.schema2editor(
+    async getEditorContentObject(schema, reportModel, reviewTaskType) {
+        const editorContent = await this.editorParseService.schema2editor(
             schema,
             reportModel,
             reviewTaskType
         );
+        return this.editorParseService.removeTrailingParagraph(editorContent);
     }
 
     async addComment(data_hash, comment) {

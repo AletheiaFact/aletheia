@@ -1,0 +1,204 @@
+name: Track Issues on Project Board
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, ready_for_review]
+    branches: [develop, stage]
+  push:
+    branches: [stage, master]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to manually update"
+        required: false
+      target_status:
+        description: "Target status (In Progress, In Review, QA, Deployed)"
+        required: false
+        default: "In Review"
+
+concurrency:
+  group: track-issues-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PROJECT_NUMBER: 1
+
+jobs:
+  update-project-board:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update issue status on project board
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const projectNumber = parseInt('${{ env.PROJECT_NUMBER }}');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const eventName = context.eventName;
+            const ref = context.ref;
+
+            // --- Step 1: Determine target status and extract issue numbers ---
+
+            let targetStatusKey;
+            const issueNumbers = new Set();
+
+            if (eventName === 'pull_request') {
+              const isDraft = context.payload.pull_request.draft;
+              targetStatusKey = isDraft ? 'progress' : 'review';
+
+              const text = `${context.payload.pull_request.body || ''} ${context.payload.pull_request.title || ''}`;
+              const pattern = /related\s+ticket\s*:?\s*#(\d+)/gi;
+              let match;
+              while ((match = pattern.exec(text)) !== null) {
+                issueNumbers.add(match[1]);
+              }
+
+              console.log(`Event: pull_request (${isDraft ? 'draft' : 'ready'})`);
+
+            } else if (eventName === 'push') {
+              const branch = ref.replace('refs/heads/', '');
+              const statusMap = { stage: 'qa', master: 'deployed' };
+              targetStatusKey = statusMap[branch];
+
+              if (!targetStatusKey) {
+                console.log(`Push to unhandled branch: ${branch}`);
+                return;
+              }
+
+              // Find the merged PR for this push
+              const { data: prs } = await github.rest.pulls.list({
+                owner, repo,
+                state: 'closed',
+                sort: 'updated',
+                direction: 'desc',
+                per_page: 20
+              });
+
+              const mergedPR = prs.find(pr =>
+                pr.merge_commit_sha === context.sha && pr.merged_at
+              );
+
+              if (!mergedPR) {
+                console.log('No merged PR found for commit:', context.sha);
+                return;
+              }
+
+              console.log(`Event: push to ${branch} (merged PR #${mergedPR.number}: ${mergedPR.title})`);
+
+              const text = `${mergedPR.body || ''} ${mergedPR.title}`;
+              const pattern = /related\s+ticket\s*:?\s*#(\d+)/gi;
+              let match;
+              while ((match = pattern.exec(text)) !== null) {
+                issueNumbers.add(match[1]);
+              }
+
+            } else if (eventName === 'workflow_dispatch') {
+              const inputIssue = '${{ github.event.inputs.issue_number }}';
+              const inputStatus = '${{ github.event.inputs.target_status }}'.toLowerCase();
+
+              if (!inputIssue) {
+                console.log('No issue number provided');
+                return;
+              }
+
+              targetStatusKey = inputStatus;
+              issueNumbers.add(inputIssue);
+
+              console.log(`Event: manual trigger (issue #${inputIssue} → "${inputStatus}")`);
+
+            } else {
+              console.log(`Unhandled event: ${eventName}`);
+              return;
+            }
+
+            // --- Step 2: Validate we have issues to process ---
+
+            if (issueNumbers.size === 0) {
+              console.log('No linked issues found');
+              return;
+            }
+
+            console.log('Issues to update:', Array.from(issueNumbers).map(n => `#${n}`).join(', '));
+            console.log('Target status:', targetStatusKey);
+
+            // --- Step 3: Get project and status field info ---
+
+            const projectData = await github.graphql(`
+              query($owner: String!, $number: Int!) {
+                organization(login: $owner) {
+                  projectV2(number: $number) {
+                    id
+                    field(name: "Status") {
+                      ... on ProjectV2SingleSelectField {
+                        id
+                        options { id name }
+                      }
+                    }
+                  }
+                }
+              }
+            `, { owner, number: projectNumber });
+
+            const project = projectData.organization.projectV2;
+            const statusField = project.field;
+
+            const targetOption = statusField.options.find(o =>
+              o.name.toLowerCase().includes(targetStatusKey)
+            );
+
+            if (!targetOption) {
+              console.log(`Status option matching "${targetStatusKey}" not found`);
+              console.log('Available options:', statusField.options.map(o => o.name).join(', '));
+              return;
+            }
+
+            // --- Step 4: Update each issue on the project board ---
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const issueNumber of issueNumbers) {
+              try {
+                const issue = await github.rest.issues.get({
+                  owner, repo,
+                  issue_number: parseInt(issueNumber)
+                });
+
+                const addResult = await github.graphql(`
+                  mutation($projectId: ID!, $contentId: ID!) {
+                    addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                      item { id }
+                    }
+                  }
+                `, { projectId: project.id, contentId: issue.data.node_id });
+
+                const itemId = addResult.addProjectV2ItemById.item.id;
+
+                await github.graphql(`
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId
+                      itemId: $itemId
+                      fieldId: $fieldId
+                      value: {singleSelectOptionId: $value}
+                    }) {
+                      projectV2Item { id }
+                    }
+                  }
+                `, {
+                  projectId: project.id,
+                  itemId: itemId,
+                  fieldId: statusField.id,
+                  value: targetOption.id
+                });
+
+                console.log(`Issue #${issueNumber} → "${targetOption.name}"`);
+                successCount++;
+              } catch (error) {
+                console.log(`Error on issue #${issueNumber}: ${error.message}`);
+                errorCount++;
+              }
+            }
+
+            console.log(`Done: ${successCount} updated, ${errorCount} failed`);

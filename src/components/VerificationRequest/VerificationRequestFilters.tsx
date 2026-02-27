@@ -5,12 +5,13 @@ import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import debounce from "lodash.debounce";
-import { FiltersContext } from "../../types/VerificationRequest";
+import { FiltersContext, ViewMode } from "../../types/VerificationRequest";
 
 export const useVerificationRequestFilters = (): FiltersContext => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const [viewMode, setViewMode] = useState<ViewMode>("board");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sourceChannelFilter, setSourceChannelFilter] = useState("all");
   const [filterValue, setFilterValue] = useState([]);
@@ -41,6 +42,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
     Posted: false,
   });
 
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const { autoCompleteTopicsResults, topicFilterUsed, impactAreaFilterUsed } =
     useAppSelector((state) => ({
       autoCompleteTopicsResults: state?.search?.autocompleteTopicsResults || [],
@@ -60,6 +63,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
           sourceChannel: sourceChannelFilter,
           impactArea: impactAreaFilterUsed,
           status: status,
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString(),
         });
 
         if (response) {
@@ -77,13 +82,17 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       } finally {
         setLoading((prev) => ({ ...prev, [status]: false }));
       }
-    }, [
+    },
+    [
       paginationModel,
       topicFilterUsed,
       priorityFilter,
       sourceChannelFilter,
       impactAreaFilterUsed,
-    ]);
+      startDate,
+      endDate,
+    ]
+  );
 
   useEffect(() => {
     if (isInitialLoad || applyFilters) {
@@ -134,6 +143,9 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       impactAreaFilterUsed,
       applyFilters,
       isInitialLoad,
+      viewMode,
+      startDate,
+      endDate,
     },
     actions: {
       setPriorityFilter,
@@ -149,6 +161,9 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       fetchData,
       dispatch,
       t,
+      setViewMode,
+      setStartDate,
+      setEndDate,
     },
   };
 };

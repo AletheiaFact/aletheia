@@ -1,12 +1,8 @@
-import { Controller, Get, Query, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Query, Req } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { SummarizationCrawlerService } from "./summarization-crawler.service";
 import type { BaseRequest } from "../types";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import {
-    CheckAbilities,
-    FactCheckerUserAbility,
-} from "../auth/ability/ability.decorator";
+import { FactCheckerOnly } from "../auth/decorators/auth.decorator";
 
 @Controller()
 export class SummarizationCrawlerController {
@@ -14,10 +10,9 @@ export class SummarizationCrawlerController {
         private summarizationCrawlerService: SummarizationCrawlerService
     ) {}
 
+    @FactCheckerOnly()
     @ApiTags("source")
     @Get("api/summarization")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new FactCheckerUserAbility())
     create(@Req() req: BaseRequest, @Query() query) {
         return this.summarizationCrawlerService.summarizePage(
             query.source,

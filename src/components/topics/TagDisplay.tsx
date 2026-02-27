@@ -6,12 +6,7 @@ import TagsList from "./TagsList";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import TagDisplayStyled from "./TagDisplay.style";
-
-interface ITagDisplay {
-    handleClose: (removedTopicValue: any) => Promise<void>;
-    tags: any[];
-    setShowTopicsForm: (topicsForm: any) => void;
-}
+import { ITagDisplay } from "../../types/Topic";
 
 const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
@@ -26,12 +21,13 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
 
             {isLoggedIn && (
                 <IconButton
+                    data-cy="testVerificationRequestTopicsToggle"
                     onClick={() => setShowTopicsForm((prev: boolean) => !prev)}
                     style={{
                         color: colors.primary,
                     }}
                 >
-                    {tags.length ? <Edit fontSize="small"/> : <AddOutlined fontSize="small"/>}
+                    {tags.length ? <Edit fontSize="small" /> : <AddOutlined fontSize="small" />}
                 </IconButton>
             )}
         </TagDisplayStyled>

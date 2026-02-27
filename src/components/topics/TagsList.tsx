@@ -27,7 +27,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
             {tags.length <= 0 && <span>{t("topics:noTopics")}</span>}
 
             {tags &&
-                tags.map((tag) => {
+                tags.map((tag, index) => {
                     const baseName = tag?.name || tag?.label || tag;
                     const aliasToShow =
                         tag?.matchedAlias ||
@@ -43,6 +43,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
 
                     return (
                         <Chip
+                            data-cy={`testVerificationRequestTopicChip${index}`}
                             label={
                                 typeof displayLabel === "string"
                                     ? displayLabel.toUpperCase()
@@ -62,6 +63,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             }
                             deleteIcon={
                                 <CloseOutlined
+                                    data-cy={`testVerificationRequestTopicRemoveButton${index}`}
                                     style={{
                                         fontSize: 15,
                                         color: colors.white,

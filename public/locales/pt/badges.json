@@ -1,7 +1,9 @@
 {
-    "nameColumn": "Nome",
-    "descriptionColumn": "Descrição",
-    "imageColumn": "Imagem",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Insira o nome da insígnia",
+    "descriptionLabel": "Descrição",
+    "descriptionPlaceholder": "Insira a descrição",
+    "imageFieldLabel": "Imagem",
     "title": "Área de Insígnias",
     "addBadge": "Adicionar Insígnia",
     "editBadge": "Editar Insígnia",

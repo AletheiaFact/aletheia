@@ -1,4 +1,10 @@
-import { Injectable, Inject, Scope, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    Inject,
+    Scope,
+    NotFoundException,
+    Logger,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
@@ -30,6 +36,8 @@ type ClaimMatchParameters = (
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
+    private readonly logger = new Logger(ClaimService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Claim.name)
@@ -140,7 +148,7 @@ export class ClaimService {
         newClaim.latestRevision = newClaimRevision._id;
         newClaim.slug = newClaimRevision.slug;
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             newClaim._id,
@@ -193,7 +201,7 @@ export class ClaimService {
         claim.latestRevision = newClaimRevision._id;
         claim.slug = newClaimRevision.slug;
 
-        const user = this.req.user;
+        const user = this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             claimId,
@@ -218,7 +226,7 @@ export class ClaimService {
      * @returns Returns the claim with the param isDeleted equal to true
      */
     async delete(claimId) {
-        const user = this.req.user;
+        const user = this.req.user?._id;
         const previousClaim = await this.getById(claimId);
         const history = this.historyService.getHistoryParams(
             claimId,
@@ -251,7 +259,7 @@ export class ClaimService {
             const history = this.historyService.getHistoryParams(
                 newClaim._id,
                 TargetModel.Claim,
-                this.req?.user,
+                this.req.user?._id,
                 isHidden ? HistoryType.Hide : HistoryType.Unhide,
                 after,
                 before
@@ -263,7 +271,7 @@ export class ClaimService {
                 newClaim
             );
         } catch (e) {
-            console.error(e);
+            this.logger.error("Failed to update claim:", e);
             throw new NotFoundException();
         }
     }

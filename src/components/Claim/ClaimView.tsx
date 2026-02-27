@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
@@ -17,6 +17,7 @@ import claimApi from "../../api/claim";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
 
     return (
         <>
-            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+            {isAdmin(role) && (
                 <AdminToolBar
                     content={claim}
                     deleteApiFunction={claimApi.deleteClaim}
@@ -67,7 +68,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                         )}
                         <section>
                             <ClaimInfo isImage={isImage} date={claim?.date} />
-                            <Grid container
+                            <Grid
+                                container
                                 style={{ paddingBottom: "15px" }}
                                 justifyContent="center"
                             >
@@ -94,22 +96,37 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         }
                                     />
                                 </Grid>
-                                <AffixButtonV2
-                                    Children={
-                                        <ToggleSection
-                                            defaultValue={showHighlights}
-                                            onChange={(e) => {
-                                                setShowHighlights(e.target.value);
-                                            }}
-                                            labelTrue={t("claim:showHighlightsButton")}
-                                            labelFalse={t("claim:hideHighlightsButton")}
-                                        />
-                                    }
-                                />
+                                {!isImage && (
+                                    <AffixButtonV2
+                                        Children={
+                                            <ToggleSection
+                                                defaultValue={showHighlights}
+                                                onChange={(e) => {
+                                                    setShowHighlights(
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                labelTrue={t(
+                                                    "claim:showHighlightsButton"
+                                                )}
+                                                labelFalse={t(
+                                                    "claim:hideHighlightsButton"
+                                                )}
+                                            />
+                                        }
+                                    />
+                                )}
                             </Grid>
                             {sources.length > 0 && (
                                 <>
-                                    <Typography variant="h4" style={{ fontSize: 24, fontFamily: "initial", fontWeight: 700 }}>
+                                    <Typography
+                                        variant="h4"
+                                        style={{
+                                            fontSize: 24,
+                                            fontFamily: "initial",
+                                            fontWeight: 700,
+                                        }}
+                                    >
                                         {t("claim:sourceSectionTitle")}
                                     </Typography>
                                     <ClaimSourceList

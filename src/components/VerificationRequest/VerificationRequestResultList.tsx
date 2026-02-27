@@ -4,7 +4,6 @@ import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
 import { useTranslation } from "next-i18next";
-import VerificationRequestResultListStyled from "./VerificationRequestRecommedations.style";
 
 const VerificationRequestResultList = ({ results }) => {
     const { t } = useTranslation();
@@ -24,46 +23,47 @@ const VerificationRequestResultList = ({ results }) => {
     };
 
     return (
-        <VerificationRequestResultListStyled>
+        <Grid className="verification-request-list" container xs={12} spacing={2}>
             {results?.length > 0 &&
                 results.map((verificationRequest) => (
-                    <Grid item
-                        style={{ width: "300px" }}
-                        key={verificationRequest._id}
-                    >
+                    <Grid item sm={12} md={6} xl={4} key={verificationRequest._id}>
                         <VerificationRequestCard
                             verificationRequest={verificationRequest}
                             expandable={false}
                             t={t}
                             style={{ minHeight: "100%" }}
                             actions={[
-                                <AletheiaButton
+                                <Grid container
+                                    justifyContent="center"
                                     key={`add-${verificationRequest._id}`}
-                                    disabled={checkIfIsInGroup(
-                                        verificationRequest._id
-                                    )}
-                                    loading={isLoading}
-                                    onClick={async () => {
-                                        setIsLoading(true);
-                                        await addRecommendation(
-                                            verificationRequest
-                                        );
-                                        setIsLoading(false);
-                                    }}
                                 >
-                                    {checkIfIsInGroup(verificationRequest._id)
-                                        ? t(
-                                              "verificationRequest:alreadyInGroupMessage"
-                                          )
-                                        : t(
-                                              "verificationRequest:addInGroupButton"
-                                          )}
-                                </AletheiaButton>,
+                                    <AletheiaButton
+                                        disabled={checkIfIsInGroup(
+                                            verificationRequest._id
+                                        )}
+                                        loading={isLoading}
+                                        onClick={async () => {
+                                            setIsLoading(true);
+                                            await addRecommendation(
+                                                verificationRequest
+                                            );
+                                            setIsLoading(false);
+                                        }}
+                                    >
+                                        {checkIfIsInGroup(verificationRequest._id)
+                                            ? t(
+                                                "verificationRequest:alreadyInGroupMessage"
+                                            )
+                                            : t(
+                                                "verificationRequest:addInGroupButton"
+                                            )}
+                                    </AletheiaButton>
+                                </Grid>
                             ]}
                         />
                     </Grid>
                 ))}
-        </VerificationRequestResultListStyled>
+        </Grid>
     );
 };
 

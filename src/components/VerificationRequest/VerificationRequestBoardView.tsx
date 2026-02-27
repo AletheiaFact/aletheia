@@ -11,28 +11,24 @@ import {
 } from "@mui/material";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import { SeverityEnum } from "../../../server/verification-request/dto/types";
-import { SeverityLevel } from "../../types/VerificationRequest";
+import { VerificationRequestStatus } from "../../types/enums";
 import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
-
-const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
-  low: colors.low,
-  medium: colors.medium,
-  high: colors.high,
-  critical: colors.critical,
-};
+import {
+  getSeverityColor,
+  getSeverityLabel,
+} from "../../helpers/verificationRequestCardHelper";
 
 const VerificationRequestBoardView = ({ state, actions }) => {
-  const { loading, filteredRequests, paginationModel } = state;
+  const { loading, filteredRequests, totalVerificationRequests, paginationModel } = state;
   const { fetchData, setPaginationModel } = actions;
   const { t } = useTranslation();
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const statuses = [
-    { key: "Pre Triage", label: t("verificationRequest:statusPreTriage") },
-    { key: "In Triage", label: t("verificationRequest:statusInTriage") },
-    { key: "Posted", label: t("verificationRequest:statusPosted") },
+    { key: VerificationRequestStatus.PRE_TRIAGE, label: t("verificationRequest:PRE_TRIAGE") },
+    { key: VerificationRequestStatus.IN_TRIAGE, label: t("verificationRequest:IN_TRIAGE") },
+    { key: VerificationRequestStatus.POSTED, label: t("verificationRequest:POSTED") },
   ];
 
   const handleCardClick = (request: any) => {
@@ -46,9 +42,9 @@ const VerificationRequestBoardView = ({ state, actions }) => {
   };
 
   const handleRequestUpdate = (newStatus) => {
-  setSelectedRequest(null);
-  fetchData(newStatus);
-};
+    setSelectedRequest(null);
+    fetchData(newStatus);
+  };
 
   useEffect(() => {
     for (const status in paginationModel) {
@@ -56,38 +52,13 @@ const VerificationRequestBoardView = ({ state, actions }) => {
     }
   }, [paginationModel]);
 
-  const groupedRequests = {
-    "Pre Triage": filteredRequests["Pre Triage"],
-    "In Triage": filteredRequests["In Triage"],
-    Posted: filteredRequests.Posted,
-  };
+  const groupedRequests = Object.fromEntries(
+    statuses.map(({ key }) => [key, filteredRequests[key]])
+  );
 
-  const getSeverityColor = (severity: SeverityEnum | undefined): string => {
-    if (!severity) return colors.neutralSecondary;
-
-    const severityStr = String(severity);
-
-    let severityLevel: SeverityLevel;
-
-    if (severityStr.startsWith("low")) severityLevel = "low";
-    else if (severityStr.startsWith("medium")) severityLevel = "medium";
-    else if (severityStr.startsWith("high")) severityLevel = "high";
-    else if (severityStr === "critical") severityLevel = "critical";
-    else severityLevel = "low";
-
-    return SEVERITY_COLOR_MAP[severityLevel];
-  };
-
-  const formatSeverityLabel = (severity: string) => {
-    if (!severity) return "N/A";
-    const parts = severity.split("_");
-    if (parts.length === 2) {
-      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${
-        parts[1]
-      })`;
-    }
-    return severity.charAt(0).toUpperCase() + severity.slice(1);
-  };
+  const groupedTotalRequests = Object.fromEntries(
+    statuses.map(({ key }) => [key, totalVerificationRequests[key]])
+  );
 
   const truncateText = (text: string, maxLength: number) => {
     if (!text) return "";
@@ -120,27 +91,40 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                 variant="h6"
                 sx={{
                   mb: 2,
+                  display: "flex",
                   fontWeight: "bold",
+                  justifyContent: "space-between",
                   color: colors.primary,
                   borderBottom: `2px solid ${colors.secondary}`,
                   pb: 1,
                 }}
               >
-                {status.label}
-                <Chip
-                  label={groupedRequests[status.key].length}
-                  size="small"
-                  sx={{ ml: 1 }}
-                />
+                <Grid item>
+                  {status.label}
+                  <Chip
+                    label={groupedRequests[status.key].length}
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                </Grid>
+                <Typography
+                  variant="body2"
+                  color={colors.blackSecondary}
+                  alignContent="flex-end"
+                >
+                  {t("list:totalItems", {
+                    total: groupedTotalRequests[status.key],
+                  })}
+                </Typography>
               </Typography>
 
               {loading[status.key] ? (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color={colors.blackSecondary}>
                   {t("common:loading")}
                 </Typography>
               ) : (
-                <Box 
-                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
                   {groupedRequests[status.key].map((request) => (
                     <Card
@@ -164,7 +148,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                           }}
                         >
                           <Chip
-                            label={formatSeverityLabel(request.severity)}
+                            label={getSeverityLabel(request.severity, t)}
                             size="small"
                             sx={{
                               backgroundColor: getSeverityColor(
@@ -221,7 +205,13 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             <strong>
                               {t("verificationRequest:tagSourceChannel")}:
                             </strong>{" "}
-                            {truncateText(request.sourceChannel, 30)}
+                            {truncateText(
+                              t(
+                                `verificationRequest:${request.sourceChannel}`,
+                                { defaultValue: request.sourceChannel },
+                              ),
+                              30,
+                            )}
                           </Typography>
                         )}
 
@@ -242,7 +232,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       </CardContent>
                     </Card>
                   ))}
-                  {groupedRequests[status.key].length >= 20 && (
+                  {groupedTotalRequests[status.key] > paginationModel[status.key].pageSize && (
                     <AletheiaButton
                       type={ButtonType.gray}
                       onClick={() => {
@@ -262,7 +252,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       {t("list:loadMoreButton")}
                     </AletheiaButton>
                   )}
-                  {groupedRequests[status.key].length === 0 && (
+                  {groupedTotalRequests[status.key] === 0 && (
                     <Typography
                       variant="body2"
                       color="textSecondary"

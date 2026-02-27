@@ -1,9 +1,9 @@
-/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
 import locators from "../../support/locators";
 import claim from "../../fixtures/claim";
 import personality from "../../fixtures/personality";
+import { today } from "../../utils/dateUtils";
 
 describe("Create personality and claim", () => {
     beforeEach("login", () => cy.login());
@@ -48,7 +48,7 @@ describe("Create personality and claim", () => {
             .type(claim.content);
 
         cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.get(locators.claim.INPUT_DATA_TODAY).should("be.visible").click();
+        cy.contains('[role="gridcell"]', today.format("D")).click();
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
@@ -79,7 +79,7 @@ describe("Create personality and claim", () => {
             .should("be.visible")
             .type(claim.imageTitle);
         cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.get(locators.claim.INPUT_DATA_TODAY).should("be.visible").click();
+        cy.contains('[role="gridcell"]', today.format("D")).click();
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
             .type(claim.source);

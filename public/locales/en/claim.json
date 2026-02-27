@@ -38,5 +38,7 @@
     "hideSuccess": "Claim hidden succesfully",
     "hideError": "Error while hidden claim",
     "unhideSuccess": "Claim unhide succesfully",
-    "unhideError": "Error while unhide claim"
+    "unhideError": "Error while unhide claim",
+    "reviewImageButton": "Review Image",
+    "openReportButton": "View Report"
 }
