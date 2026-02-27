@@ -38,7 +38,7 @@ describe("ManagementService (Unit)", () => {
 
         it("should successfully delete the entire hierarchy (happy path)", async () => {
             claimService.getByPersonalityId.mockResolvedValue(mockClaims);
-            claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue(mockReviews);
+            claimReviewService.findAllReviewsForCascadeDelete.mockResolvedValue(mockReviews);
             claimReviewService.delete.mockResolvedValue(true);
             claimService.delete.mockResolvedValue({ _id: "claim-1", isDeleted: true });
             personalityService.delete.mockResolvedValue(true);
@@ -46,7 +46,7 @@ describe("ManagementService (Unit)", () => {
             const result = await service.deletePersonalityHierarchy(personalityId);
 
             expect(claimService.getByPersonalityId).toHaveBeenCalledWith(personalityId);
-            expect(claimReviewService.findPublishedReviewsByClaimId).toHaveBeenCalledTimes(2);
+            expect(claimReviewService.findAllReviewsForCascadeDelete).toHaveBeenCalledTimes(2);
             expect(claimService.delete).toHaveBeenCalledTimes(2);
             expect(personalityService.delete).toHaveBeenCalledWith(personalityId);
             expect(result).toBe(true);
@@ -84,19 +84,19 @@ describe("ManagementService (Unit)", () => {
         const mockReviews = [{ _id: "review-1" }, { _id: "review-2" }];
 
         it("should delete claim and its reviews successfully", async () => {
-            claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue(mockReviews);
+            claimReviewService.findAllReviewsForCascadeDelete.mockResolvedValue(mockReviews);
             claimReviewService.delete.mockResolvedValue(true);
             claimService.delete.mockResolvedValue({ _id: claimId, isDeleted: true });
 
             await service.deleteClaimHierarchy(claimId);
 
-            expect(claimReviewService.findPublishedReviewsByClaimId).toHaveBeenCalledWith(claimId);
+            expect(claimReviewService.findAllReviewsForCascadeDelete).toHaveBeenCalledWith(claimId);
             expect(claimReviewService.delete).toHaveBeenCalledTimes(2);
             expect(claimService.delete).toHaveBeenCalledWith(claimId);
         });
 
         it("should throw NotFoundException and log warning if claim does not exist", async () => {
-            claimReviewService.findPublishedReviewsByClaimId.mockResolvedValue([]);
+            claimReviewService.findAllReviewsForCascadeDelete.mockResolvedValue([]);
             claimService.delete.mockRejectedValue(new NotFoundException());
 
             const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
@@ -111,7 +111,7 @@ describe("ManagementService (Unit)", () => {
 
         it("should handle error and log it when unexpected failure occurs in claim hierarchy", async () => {
             const unexpectedError = new Error("Database connection lost");
-            claimReviewService.findPublishedReviewsByClaimId.mockRejectedValue(unexpectedError);
+            claimReviewService.findAllReviewsForCascadeDelete.mockRejectedValue(unexpectedError);
 
             const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
 

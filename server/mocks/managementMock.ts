@@ -8,7 +8,7 @@ export const claimServiceMock = {
 };
 
 export const claimReviewServiceMock = {
-    findPublishedReviewsByClaimId: jest.fn(),
+    findAllReviewsForCascadeDelete: jest.fn(),
     delete: jest.fn(),
 };
 
