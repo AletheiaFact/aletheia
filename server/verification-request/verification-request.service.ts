@@ -1,4 +1,4 @@
-import { isValidObjectId, Model, Types } from "mongoose";
+import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
 import { SourceService } from "../source/source.service";
 import {
     VerificationRequest,
@@ -118,7 +118,7 @@ export class VerificationRequestService {
         );
 
         fieldsToPopulate.forEach((field) => {
-            query = query.populate(field);
+            query.populate(field);
         });
 
         return query.exec();
@@ -177,7 +177,7 @@ export class VerificationRequestService {
                     topics: topicWikidataEntities,
                 });
 
-                vr.impactArea = Types.ObjectId(createdTopic[0].id);
+                vr.impactArea = new Types.ObjectId(createdTopic[0].id);
                 await vr.save();
             }
 
@@ -688,13 +688,14 @@ export class VerificationRequestService {
 
             const latestVerificationRequest = verificationRequest.toObject();
 
-            const updatedVerificationRequestData = {
-                ...latestVerificationRequest,
-                ...verificationRequestBodyUpdate,
-                publicationDate:
-                    verificationRequestBodyUpdate.publicationDate ??
-                    verificationRequest.publicationDate,
-            };
+            const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
+                {
+                    ...latestVerificationRequest,
+                    ...verificationRequestBodyUpdate,
+                    publicationDate:
+                        verificationRequestBodyUpdate.publicationDate ??
+                        verificationRequest.publicationDate,
+                };
 
             if (verificationRequestBodyUpdate.source?.length) {
                 const newSourceIds = await Promise.all(
@@ -707,7 +708,9 @@ export class VerificationRequestService {
                         return src._id;
                     })
                 );
-                updatedVerificationRequestData.source = newSourceIds.map((id) => Types.ObjectId(id));
+                updatedVerificationRequestData.source = newSourceIds.map(
+                    (id) => new Types.ObjectId(id)
+                );
             }
 
             if (
@@ -738,8 +741,9 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 updatedVerificationRequestData,
                 { new: true, upsert: true }
-            ).populate("source")
-             .populate("impactArea");
+            )
+                .populate("source")
+                .populate("impactArea");
         } catch (error) {
             this.logger.error("Failed to update verification request:", error);
             throw error;
@@ -810,8 +814,8 @@ export class VerificationRequestService {
         updatedVerificationRequest
     ) {
         const contentIds =
-            updatedVerificationRequest?.group?.map((item) =>
-                Types.ObjectId(item?._id || item)
+            updatedVerificationRequest?.group?.map(
+                (item) => new Types.ObjectId(item?._id || item)
             ) || [];
 
         const groupId = (
@@ -862,8 +866,8 @@ export class VerificationRequestService {
         if (!queryEmbedding || queryEmbedding.length === 0) {
             return [];
         }
-        const filterIds = filter.map((verificationRequestId) =>
-            Types.ObjectId(verificationRequestId)
+        const filterIds = filter.map(
+            (verificationRequestId) => new Types.ObjectId(verificationRequestId)
         );
 
         return await this.VerificationRequestModel.aggregate([
@@ -920,7 +924,10 @@ export class VerificationRequestService {
         ]);
     }
 
-    async updateVerificationRequestWithTopics(topics, data_hash) {
+    async updateVerificationRequestWithTopics(
+        topics,
+        data_hash
+    ): Promise<VerificationRequestDocument> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         const foundTopics = await this.topicService.findByWikidataIds(
             topics.map((topic) => topic.value || topic.wikidataId)
@@ -947,7 +954,7 @@ export class VerificationRequestService {
 
         await this.historyService.createHistory(history);
 
-        return this.VerificationRequestModel.updateOne(
+        return this.VerificationRequestModel.findByIdAndUpdate(
             { _id: verificationRequest._id },
             newVerificationRequest
         );
@@ -983,8 +990,8 @@ export class VerificationRequestService {
         ]);
 
         const topicIds = topicsObj.map((topics) => topics._id);
-        const impactAreaIds = impactAreasObj.map((impactArea) =>
-            Types.ObjectId(impactArea._id)
+        const impactAreaIds = impactAreasObj.map(
+            (impactArea) => new Types.ObjectId(impactArea._id)
         );
 
         if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });

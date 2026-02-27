@@ -43,7 +43,7 @@ export class UsersService {
                   ...(badges ? { badges } : {}),
               }
             : {
-                  _id: Types.ObjectId(userId),
+                  _id: new Types.ObjectId(userId),
               };
 
         pipeline.match(matchCondition);

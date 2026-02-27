@@ -76,7 +76,7 @@ export class ImageService {
         }
     }
 
-    async updateImageWithTopics(topics, data_hash) {
+    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument> {
         const image = await this.getByDataHash(data_hash);
 
         const newImage = {
@@ -84,6 +84,6 @@ export class ImageService {
             topics,
         };
 
-        return this.ImageModel.updateOne({ _id: image._id }, newImage);
+        return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
     }
 }

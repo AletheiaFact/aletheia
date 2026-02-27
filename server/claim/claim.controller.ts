@@ -229,10 +229,10 @@ export class ClaimController {
         let newSpeech;
 
         const claimRevision = await this.claimRevisionService.getByContentId(
-            Types.ObjectId(debateId)
+            new Types.ObjectId(debateId)
         );
 
-        const claimRevisionId = Types.ObjectId(claimRevision._id);
+        const claimRevisionId = new Types.ObjectId(claimRevision._id);
 
         if (content && personality) {
             newSpeech = await this.parserService.parse(
