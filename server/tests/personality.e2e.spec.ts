@@ -20,7 +20,7 @@ jest.setTimeout(10000);
 
 /**
  * PersonalityController E2E Test Suite
- * 
+ *
  * Tests the complete personality lifecycle management including:
  * - Personality listing and pagination
  * - Personality creation with Wikidata integration
@@ -28,11 +28,11 @@ jest.setTimeout(10000);
  * - Personality visibility management (hide/unhide for moderation)
  * - Personality deletion and soft-delete behavior
  * - Multi-language support for personality data
- * 
+ *
  * Business Context:
  * Personalities represent public figures being fact-checked in the Aletheia platform.
  * They are linked to Wikidata for standardized information and support multiple languages.
- * 
+ *
  * Data Flow:
  * 1. Empty state validation → personality creation → listing verification
  * 2. Individual retrieval → moderation actions (hide/unhide) → deletion
@@ -45,7 +45,7 @@ describe("PersonalityController (e2e)", () => {
     beforeAll(async () => {
         // Use shared MongoDB instance from global setup
         const mongoUri = process.env.MONGO_URI!;
-        
+
         await SeedTestUser(mongoUri);
 
         // Update test config with actual MongoDB URI
@@ -86,14 +86,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: GET /api/personality - Empty State Validation
-     * 
+     *
      * Purpose: Validates the personality listing endpoint returns empty results initially
      * Business Logic:
      * - Tests clean slate before personality creation
      * - Validates pagination parameters work correctly
      * - Confirms multi-language support (pt = Portuguese)
      * - Ensures proper response structure for empty collections
-     * 
+     *
      * Validates:
      * - HTTP 200 response
      * - Empty personalities array (length = 0)
@@ -119,14 +119,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: POST /api/personality - Create Personality with Wikidata Integration
-     * 
+     *
      * Purpose: Validates personality creation with Wikidata linkage for standardized data
      * Business Logic:
      * - Creates new personality with required fields (name, description, wikidata)
      * - Links to Wikidata entity Q76 (Barack Obama) for data consistency
      * - Generates unique ObjectId for database storage
      * - Returns created personality with all provided data
-     * 
+     *
      * Validates:
      * - HTTP 201 response for successful creation
      * - Response contains generated _id field
@@ -155,14 +155,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: GET /api/personality - List All Personalities After Creation
-     * 
+     *
      * Purpose: Validates personality listing after creation shows the new personality
      * Business Logic:
      * - Confirms created personality appears in listing
      * - Tests pagination with populated data
      * - Validates multi-language query parameter handling
      * - Ensures data consistency between creation and retrieval
-     * 
+     *
      * Validates:
      * - HTTP 200 response
      * - Personalities array contains exactly 1 item (our created personality)
@@ -194,14 +194,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: GET /api/personality/:id - Get Personality by ID
-     * 
+     *
      * Purpose: Validates individual personality retrieval by unique identifier
      * Business Logic:
      * - Retrieves specific personality using ObjectId
      * - Supports language-specific data retrieval
      * - Returns complete personality object with all fields
      * - Maintains data integrity and consistency
-     * 
+     *
      * Validates:
      * - HTTP 200 response for existing personality
      * - Response _id matches requested personalityId
@@ -227,14 +227,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: PUT /api/personality/hidden/:id - Hide Personality for Moderation
-     * 
+     *
      * Purpose: Validates personality hiding functionality for content moderation
      * Business Logic:
      * - Allows moderators to hide personalities from public listings
      * - Requires description explaining why personality was hidden
      * - Sets isHidden flag to true while preserving personality data
      * - Maintains audit trail for moderation actions
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful hide operation
      * - Accepts isHidden: true and description payload
@@ -253,14 +253,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: PUT /api/personality/hidden/:id - Unhide Personality
-     * 
+     *
      * Purpose: Validates personality unhiding functionality to restore visibility
      * Business Logic:
      * - Allows moderators to restore hidden personalities to public visibility
      * - Clears hide description when restoring visibility
      * - Sets isHidden flag to false to re-enable public access
      * - Allows recovery from moderation actions
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful unhide operation
      * - Accepts isHidden: false and empty description
@@ -283,20 +283,21 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: DELETE /api/personality/:id - Delete Personality
-     * 
+     *
      * Purpose: Validates personality deletion functionality with soft-delete behavior
      * Business Logic:
      * - Implements soft delete (sets isDeleted flag rather than removing record)
      * - Preserves personality data for audit trails and referential integrity
      * - Removes personality from all public API responses
      * - Maintains data consistency for existing claims/reviews that reference this personality
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful deletion
      * - Personality becomes inaccessible via public APIs
      * - Soft delete implementation preserves data integrity
      */
     it("/api/personality/:id (DELETE) - Delete Personality", () => {
+        expect(personalityId).toBeDefined();
         return request(app.getHttpServer())
             .delete(`/api/personality/${personalityId}`)
             .expect(200);
@@ -304,14 +305,14 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: GET /api/personality/:id - Verify Deleted Personality Inaccessibility
-     * 
+     *
      * Purpose: Validates that soft-deleted personalities are not accessible via public API
      * Business Logic:
      * - Deleted personalities should not return meaningful data
      * - API maintains consistent response format while hiding deleted content
      * - Confirms soft delete implementation works correctly
      * - Prevents data exposure after deletion
-     * 
+     *
      * Validates:
      * - HTTP 200 response (endpoint handles deleted resources gracefully)
      * - Response body is empty object {} (indicating personality is no longer accessible)
@@ -331,13 +332,13 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: GET /api/personality/:id - Handle Non-existent Personality ID
-     * 
+     *
      * Purpose: Validates API behavior when requesting non-existent personality
      * Business Logic:
      * - Should handle requests for non-existent personalities gracefully
      * - Returns empty object instead of throwing errors
      * - Maintains consistent API response format
-     * 
+     *
      * Validates:
      * - HTTP 200 response (not 404)
      * - Response body is empty object {}
@@ -346,7 +347,7 @@ describe("PersonalityController (e2e)", () => {
     it("/api/personality/:id (GET) - Should handle non-existent personality ID", () => {
         const { ObjectId } = require("mongodb");
         const nonExistentId = new ObjectId().toString();
-        
+
         return request(app.getHttpServer())
             .get(`/api/personality/${nonExistentId}`)
             .query({ language: "pt" })
@@ -359,13 +360,13 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: POST /api/personality - Validation Error for Missing Required Fields
-     * 
+     *
      * Purpose: Validates request validation for personality creation
      * Business Logic:
      * - Should reject payloads missing required fields
      * - Validates name, description, and wikidata requirements
      * - Maintains data integrity through validation
-     * 
+     *
      * Validates:
      * - HTTP 400 response for invalid payload
      * - Validation error messages for missing required fields
@@ -382,13 +383,13 @@ describe("PersonalityController (e2e)", () => {
 
     /**
      * Test: PUT /api/personality/hidden/:id - Handle Non-existent Personality for Hide
-     * 
+     *
      * Purpose: Validates API behavior when attempting to hide non-existent personality
      * Business Logic:
      * - Should handle hide attempts for non-existent personalities
      * - Currently returns 500 due to null pointer error (actual API behavior)
      * - Demonstrates need for better error handling in service layer
-     * 
+     *
      * Validates:
      * - HTTP 500 response for non-existent resource (actual behavior)
      * - API error handling for missing resources
@@ -396,7 +397,7 @@ describe("PersonalityController (e2e)", () => {
     it("/api/personality/hidden/:id (PUT) - Should handle non-existent personality ID", () => {
         const { ObjectId } = require("mongodb");
         const nonExistentId = new ObjectId().toString();
-        
+
         return request(app.getHttpServer())
             .put(`/api/personality/hidden/${nonExistentId}`)
             .send({

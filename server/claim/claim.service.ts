@@ -224,7 +224,7 @@ export class ClaimService {
      * * @param {string} claimId - The ID of the claim to mark as deleted.
      * @returns {Promise<Claim>} The claim document with isDeleted set to true.
     */
-    async softDelete(claimId: string) {
+    async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(`Initiating soft delete for claimId: ${claimId} by user: ${user || 'system'}`);
         try {
