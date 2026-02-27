@@ -30,6 +30,7 @@ const HomePage: NextPage<{
     );
 };
 export async function getServerSideProps({ query, locale, locales, req }) {
+    const currentHref = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}${req.url}`;
     locale = GetLocale(req, locale, locales);
     query = JSON.parse(query.props);
     return {
@@ -42,6 +43,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
+            href: currentHref,
         },
     };
 }
