@@ -258,17 +258,19 @@ export class ClaimReviewService {
      */
     async create(claimReview, data_hash, reportModel) {
         if (claimReview.personality) {
-            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.personality = new Types.ObjectId(
+                claimReview.personality
+            );
         }
 
         if (claimReview.target) {
-            claimReview.target = Types.ObjectId(claimReview.target);
+            claimReview.target = new Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {
-            return Types.ObjectId(userId);
+            return new Types.ObjectId(userId);
         });
-        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.report = new Types.ObjectId(claimReview.report._id);
         claimReview.data_hash = data_hash;
         claimReview.reportModel = reportModel;
         claimReview.date = new Date();
@@ -345,10 +347,14 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 
-    async hideOrUnhideReview(_id, hide, description) {
+    async hideOrUnhideReview(
+        _id,
+        hide,
+        description
+    ): Promise<ClaimReviewDocument> {
         const review = await this.getById(_id);
         const newReview = {
-            ...review.toObject(),
+            ...review,
             ...{
                 report: review?.report?._id,
                 isHidden: hide,
@@ -371,7 +377,10 @@ export class ClaimReviewService {
         );
         this.historyService.createHistory(history);
 
-        return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
+        return this.ClaimReviewModel.findByIdAndUpdate(
+            { _id: review._id },
+            newReview
+        );
     }
 
     private async postProcess(review) {

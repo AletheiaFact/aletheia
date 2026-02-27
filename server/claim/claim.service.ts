@@ -56,7 +56,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = Types.ObjectId(query.personalities);
+            query.personalities = new Types.ObjectId(query.personalities);
         }
 
         const [claims, total] = await Promise.all([
@@ -97,11 +97,11 @@ export class ClaimService {
      */
     async create(claim) {
         claim.personalities = claim.personalities.map((personality) => {
-            return Types.ObjectId(personality);
+            return new Types.ObjectId(personality);
         });
 
         if (claim.group) {
-            claim.group = Types.ObjectId(claim.group);
+            claim.group = new Types.ObjectId(claim.group);
         }
 
         const newClaim = new this.ClaimModel(claim);
@@ -218,7 +218,11 @@ export class ClaimService {
         }
     }
 
-    async hideOrUnhideClaim(claimId, isHidden, description) {
+    async hideOrUnhideClaim(
+        claimId,
+        isHidden,
+        description
+    ): Promise<ClaimDocument> {
         try {
             const claim = await this.ClaimModel.findById(claimId);
 
@@ -227,7 +231,7 @@ export class ClaimService {
             }
 
             const newClaim = {
-                ...claim.toObject(),
+                ...claim,
                 isHidden,
             };
 
@@ -244,7 +248,7 @@ export class ClaimService {
             );
             this.historyService.createHistory(history);
 
-            return await this.ClaimModel.updateOne(
+            return await this.ClaimModel.findByIdAndUpdate(
                 { _id: claim._id },
                 newClaim
             );

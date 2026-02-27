@@ -3,7 +3,7 @@ import {
     Injectable,
     NotFoundException,
 } from "@nestjs/common";
-import { Model } from "mongoose";
+import { Model, PipelineStage } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
@@ -105,13 +105,16 @@ export class SentenceService {
         }
     }
 
-    async updateSentenceWithTopics(topics, data_hash) {
+    async updateSentenceWithTopics(
+        topics,
+        data_hash
+    ): Promise<SentenceDocument> {
         const sentence = await this.getByDataHash(data_hash);
 
         if (!Array.isArray(topics)) {
             throw new BadRequestException("Invalid topics array.");
         }
-        return this.SentenceModel.updateOne(
+        return this.SentenceModel.findByIdAndUpdate(
             { _id: sentence._id },
             { $set: { topics } }
         );
@@ -124,7 +127,7 @@ export class SentenceService {
         filter,
         nameSpace,
     }: FindAllOptionsFilters) {
-        let pipeline: object[] = [];
+        let pipeline: PipelineStage[] = [];
 
         if (searchText) {
             pipeline.push({

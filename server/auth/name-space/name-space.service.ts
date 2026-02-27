@@ -38,7 +38,10 @@ export class NameSpaceService {
         return newNameSpace;
     }
 
-    async update(id, newNameSpace: UpdateNameSpaceDTO) {
+    async update(
+        id,
+        newNameSpace: UpdateNameSpaceDTO
+    ): Promise<NameSpaceDocument> {
         const isNameSpaceTopic = await this.notificationService.getTopic(
             newNameSpace._id
         );
@@ -50,7 +53,7 @@ export class NameSpaceService {
             isNameSpaceTopic
         );
 
-        return await this.NameSpaceModel.updateOne(
+        return await this.NameSpaceModel.findByIdAndUpdate(
             { _id: newNameSpace._id },
             newNameSpace
         );

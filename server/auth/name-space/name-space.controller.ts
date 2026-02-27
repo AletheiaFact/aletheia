@@ -18,7 +18,7 @@ import { ViewService } from "../../view/view.service";
 import { CreateNameSpaceDTO } from "./dto/create-namespace.dto";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
 import { AdminOnly } from "../decorators/auth.decorator";
-import { Types } from "mongoose";
+import { Types, UpdateWriteOpResult } from "mongoose";
 import { Roles } from "../../auth/ability/ability.factory";
 import { NotificationService } from "../../notifications/notifications.service";
 import slugify from "slugify";
@@ -31,7 +31,7 @@ export class NameSpaceController {
         private usersService: UsersService,
         private viewService: ViewService,
         private notificationService: NotificationService,
-        private configService: ConfigService,
+        private configService: ConfigService
     ) {}
 
     @AdminOnly()
@@ -85,9 +85,7 @@ export class NameSpaceController {
     @AdminOnly()
     @ApiTags("name-space")
     @Get("api/name-space")
-    async findAllOrFiltered(
-        @Query("userId") userId?: string,
-    ) {
+    async findAllOrFiltered(@Query("userId") userId?: string) {
         if (userId) {
             return this.nameSpaceService.findByUser(userId);
         }
@@ -103,21 +101,18 @@ export class NameSpaceController {
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
 
-        const query = Object.assign(
-            parsedUrl.query,
-            {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpaces,
-                users
-            }
-        );
+        const query = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpaces,
+            users,
+        });
 
         await this.viewService.render(req, res, "/admin-namespaces", query);
     }
 
     private async updateNameSpaceUsers(users, newKey, oldKey = null) {
         const promises = users.map(async (user) => {
-            const userId = Types.ObjectId(user._id);
+            const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
 
             let updatedRoles = { ...existingUser.role };
@@ -163,7 +158,7 @@ export class NameSpaceController {
 
     private async deleteUsersNameSpace(usersId, key) {
         const updatePromises = usersId.map(async (userId) => {
-            const id = Types.ObjectId(userId);
+            const id = new Types.ObjectId(userId);
             const user = await this.usersService.getById(id);
             delete user.role[key];
             return this.usersService.updateUser(user._id, { role: user.role });

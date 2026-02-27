@@ -1,17 +1,18 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import * as mongoose from "mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import type { ReportDocument } from "../../report/schemas/report.schema";
-import { User } from "../../users/schemas/user.schema";
 import { ReportModelEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
-import { Source } from "../../source/schemas/source.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -28,11 +29,11 @@ export class ClaimReview {
     target: mongoose.Types.ObjectId;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         required: true,
         ref: "User",
     })
-    usersId: User[];
+    usersId: mongoose.Types.ObjectId[];
 
     @Prop({ required: true })
     data_hash: string;
