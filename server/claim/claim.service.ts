@@ -59,14 +59,18 @@ export class ClaimService {
             query.personalities = Types.ObjectId(query.personalities);
         }
 
-        const claims = await this.ClaimModel.find(query)
-            .populate("latestRevision")
-            .skip(page * parseInt(pageSize, 10))
-            .limit(parseInt(pageSize, 10))
-            .sort({ _id: order })
-            .lean();
+        const [claims, total] = await Promise.all([
+            this.ClaimModel.find(query)
+                .populate("latestRevision")
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .sort({ _id: order })
+                .lean(),
 
-        return Promise.all(
+            this.ClaimModel.countDocuments(query)
+        ]);
+
+        const processedClaim = await Promise.all(
             claims.map((claim) => {
                 return this.postProcess({
                     ...claim.latestRevision,
@@ -74,56 +78,15 @@ export class ClaimService {
                 });
             })
         );
+
+        return {
+            data: processedClaim,
+            total
+        }
     }
 
     async count(query: any = {}) {
-        const claims = await this.ClaimModel.aggregate([
-            {
-                $match: query,
-            },
-            {
-                $lookup: {
-                    from: "personalities",
-                    localField: "personalities",
-                    foreignField: "_id",
-                    as: "personalities",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$personalities",
-                    preserveNullAndEmptyArrays: true,
-                    includeArrayIndex: "arrayIndex",
-                },
-            },
-            {
-                $group: {
-                    _id: "$_id",
-                    doc: { $first: "$$ROOT" },
-                },
-            },
-            {
-                $replaceRoot: { newRoot: "$doc" },
-            },
-            {
-                $match: {
-                    $or: [
-                        {
-                            $and: [
-                                { "personalities.isHidden": { $ne: true } },
-                                { "personalities.isDeleted": { $ne: true } },
-                            ],
-                        },
-                        { personalities: { $exists: false } },
-                    ],
-                },
-            },
-            {
-                $count: "totalCount",
-            },
-        ]);
-
-        return claims.length > 0 ? claims[0].totalCount : 0;
+        return this.ClaimModel.countDocuments(query);
     }
 
     /**

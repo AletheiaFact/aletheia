@@ -93,29 +93,35 @@ export class ClaimController {
     @ApiTags("claim")
     @Get("api/claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    listAll(@Query() getClaimsDTO: GetClaimsDTO) {
+    async listAll(@Query() getClaimsDTO: GetClaimsDTO) {
         const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
-        return Promise.all([
-            this.claimService.listAll(page, pageSize, order, queryInputs),
-            this.claimService.count(queryInputs),
-        ])
-            .then(([claims, totalClaims]) => {
-                const totalPages = Math.ceil(totalClaims / pageSize);
 
-                this.logger.log(
-                    `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
-                );
+        try {
+            const claims = await this.claimService.listAll(
+                page,
+                pageSize,
+                order,
+                queryInputs
+            );
 
-                return {
-                    claims,
-                    totalClaims,
-                    totalPages,
-                    page,
-                    pageSize,
-                };
-            })
-            .catch((error) => this.logger.error(error));
+            const totalPages = Math.ceil(claims.total / pageSize);
+
+            this.logger.log(
+                `Found ${claims.total} claims. Page ${page} of ${totalPages}`
+            );
+
+            return {
+                claims: claims.data,
+                totalClaims: claims.total,
+                totalPages,
+                page,
+                pageSize,
+            };
+        } catch (error) {
+            this.logger.error(error);
+            throw error;
+        }
     }
 
     @ApiTags("claim")
