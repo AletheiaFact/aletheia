@@ -119,6 +119,17 @@ export class CopilotChatService {
             const localizedDate = date.toLocaleDateString();
             language = language === "pt" ? "Portuguese" : "English";
 
+            // Build rich context strings
+            const personalities =
+                context.personalityNames?.length > 0
+                    ? context.personalityNames.join(", ")
+                    : context.personalityName || "unknown";
+            const contentModel = context.contentModel || "";
+            const topics =
+                context.topics?.length > 0
+                    ? context.topics.join(", ")
+                    : "";
+
             // Persist the user message
             await this.copilotSessionService.addMessage(sessionId, {
                 sender: SenderEnum.User,
@@ -142,32 +153,38 @@ export class CopilotChatService {
             const prompt = ChatPromptTemplate.fromMessages([
                 [
                     "system",
-                    `
-                    You are the Fact-checker Aletheia's Assistant, working with a fact-checker who requires assistance.
-                    Your primary goal is to gather all relevant information from the user about the claim: {claim} that needs to be fact-checked.
+                    `You are the Fact-checker Aletheia's Assistant, working with a fact-checker who requires assistance.
+Your primary goal is to gather all relevant information from the user about the claim that needs to be fact-checked.
 
-                    Please follow these steps carefully
+## Claim Context
+- **Claim**: {claim}
+- **Stated by**: {personalities}
+- **Claim title**: {claimTitle}
+- **Date stated**: {date}
+- **Content type**: {contentModel}
+- **Related topics**: {topics}
 
-                    1. Confirm the claim for fact-checking:
-                    - If the user requests assistance with fact-checking, ask the user to confirm the claim that he wants to review is the claim: {claim} stated by {personality}, assure to always compose this specific question using these values {claim} and {personality} if they exists.
+## Steps to follow
 
-                    2. Confirm the type of research:
-                    - Ask the user how should we proceed the research by either searching on internet or searching in public gazettes
+1. **Confirm the claim for fact-checking**:
+   - Ask the user to confirm the claim they want to review is: "{claim}" stated by {personalities}.
+   - Always compose this question using the claim and personalities values above if they exist.
 
-                    3. Based on the type of research, proceed gathering the necessary information:
-                        **public gazettes**: ask the following questions sequentially:
-                             - "In which Brazilian city or state was the claim made?"
-                            - "Do you have a specific time period during which we should search in the public gazettes (e.g. January 2022 to December 2022), or should we search up to the date the claim was stated: {date}?"
+2. **Confirm the type of research**:
+   - Ask the user how to proceed: searching on the internet or searching in public gazettes.
 
-                        **online search**: ask the following question:
-                            - "Do you have any specific sources you suggest we consult for verifying this claim?"
+3. **Gather information based on the type of research**:
+   - **Public gazettes**: ask the following questions sequentially:
+     - "In which Brazilian city or state was the claim made?"
+     - "Do you have a specific time period during which we should search in the public gazettes (e.g. January 2022 to December 2022), or should we search up to the date the claim was stated: {date}?"
+   - **Online search**: ask the following question:
+     - "Do you have any specific sources you suggest we consult for verifying this claim?"
 
-
-                    Always pose your questions one at a time and in the specified order.
-
-                    Persist in asking all necessary questions. Do not use the tool until you have thoroughly completed all preceding steps.
-                    Maintain the use of formal language in your responses, ensuring that all communication is conducted in {language}.
-                    Only after all questions have been addressed and all relevant information has been gathered from the user you should proceed to use the get-fact-checking-report tool.`,
+## Rules
+- Always pose your questions one at a time and in the specified order.
+- Persist in asking all necessary questions. Do not use the tool until you have thoroughly completed all preceding steps.
+- Maintain the use of formal language in your responses, ensuring that all communication is conducted in {language}.
+- Only after all questions have been addressed and all relevant information has been gathered from the user you should proceed to use the get-fact-checking-report tool.`,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
                 ["user", "{input}"],
@@ -195,7 +212,10 @@ export class CopilotChatService {
                 language: language,
                 date: localizedDate,
                 claim: context.sentence,
-                personality: context.personalityName,
+                personalities: personalities,
+                claimTitle: context.claimTitle || "",
+                contentModel: contentModel || "not specified",
+                topics: topics || "none",
                 input: message,
                 chat_history: messagesHistory,
             });

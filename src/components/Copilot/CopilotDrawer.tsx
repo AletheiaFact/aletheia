@@ -45,13 +45,16 @@ const CopilotDrawer = ({
     dataHash,
 }: CopilotDrawerProps) => {
     const { t } = useTranslation();
-    const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
-        vw: state?.vw,
-        copilotDrawerCollapsed:
-            state?.copilotDrawerCollapsed !== undefined
-                ? state?.copilotDrawerCollapsed
-                : true,
-    }));
+    const { vw, copilotDrawerCollapsed, selectedContent } = useAppSelector(
+        (state) => ({
+            vw: state?.vw,
+            copilotDrawerCollapsed:
+                state?.copilotDrawerCollapsed !== undefined
+                    ? state?.copilotDrawerCollapsed
+                    : true,
+            selectedContent: state?.selectedContent,
+        })
+    );
 
     const CHAT_DEFAULT_CONVERSATION: ChatMessage[] = useMemo(
         () => [
@@ -83,10 +86,17 @@ const CopilotDrawer = ({
         () => ({
             claimDate: claim?.date,
             sentence: sentence,
-            personalityName: claim?.personalities[0]?.name || null,
+            personalityName: claim?.personalities?.[0]?.name || "",
+            personalityNames:
+                claim?.personalities?.map((p) => p.name).filter(Boolean) || [],
             claimTitle: claim?.title,
+            contentModel: claim?.contentModel || "",
+            topics:
+                selectedContent?.topics?.map((t: any) =>
+                    typeof t === "string" ? t : t.label || t.name || ""
+                ).filter(Boolean) || [],
         }),
-        [claim, sentence]
+        [claim, sentence, selectedContent]
     );
 
     // Load or create session on mount
