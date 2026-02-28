@@ -18,7 +18,7 @@ import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
-import { IlistAll, IListAllQuery, ClaimReviewAggregated, ClaimReviewList } from "./types/claim.interfaces";
+import { IlistAll, IListAllQuery, ClaimReviewAggregated, ClaimReviewList } from "./types/claim-review.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {

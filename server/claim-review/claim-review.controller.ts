@@ -1,12 +1,12 @@
 import {
-    Body,
-    Controller,
-    Param,
-    Put,
-    Get,
-    Header,
-    Delete,
-    Query,
+  Body,
+  Controller,
+  Param,
+  Put,
+  Get,
+  Header,
+  Delete,
+  Query,
 } from "@nestjs/common";
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -16,89 +16,89 @@ import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { listAllResponse } from "./types/claim.interfaces";
+import { listAllResponse } from "./types/claim-review.interfaces";
 
 @Controller()
 export class ClaimReviewController {
-    constructor(
-        private claimReviewService: ClaimReviewService,
-        private captchaService: CaptchaService,
-        private historyService: HistoryService
-    ) {}
+  constructor(
+    private claimReviewService: ClaimReviewService,
+    private captchaService: CaptchaService,
+    private historyService: HistoryService
+  ) {}
 
-    @Public()
-    @ApiTags("claim-review")
-    @Get("api/review")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
-    async listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO): Promise<listAllResponse> {
-        const {
-            page = 0,
-            pageSize = 10,
-            order = "asc",
-            isHidden = false,
-            latest = false,
-            nameSpace = NameSpaceEnum.Main,
-        } = getClaimReviewsDto;
+  @Public()
+  @ApiTags("claim-review")
+  @Get("api/review")
+  @Header("Cache-Control", "max-age=60, must-revalidate")
+  async listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO): Promise<listAllResponse> {
+    const {
+      page = 0,
+      pageSize = 10,
+      order = "asc",
+      isHidden = false,
+      latest = false,
+      nameSpace = NameSpaceEnum.Main,
+    } = getClaimReviewsDto;
 
-        const reviews = await this.claimReviewService.listAll({
-            page,
-            pageSize,
-            order,
-            query: {
-                isHidden,
-                nameSpace,
-                isDeleted: false
-            },
-            latest,
-        });
+    const reviews = await this.claimReviewService.listAll({
+      page,
+      pageSize,
+      order,
+      query: {
+        isHidden,
+        nameSpace,
+        isDeleted: false
+      },
+      latest,
+    });
 
-        return {
-            reviews: reviews.data,
-            totalReviews: reviews.total,
-            totalPages: Math.ceil(reviews.total / pageSize),
-            page: page,
-            pageSize: pageSize,
-        };
+    return {
+      reviews: reviews.data,
+      totalReviews: reviews.total,
+      totalPages: Math.ceil(reviews.total / pageSize),
+      page: page,
+      pageSize: pageSize,
+    };
+  }
+
+  @AdminOnly()
+  @ApiTags("claim-review")
+  @Put("api/review/:id")
+  async update(@Param("id") reviewId, @Body() body) {
+    const validateCaptcha = await this.captchaService.validate(
+      body.recaptcha
+    );
+    if (!validateCaptcha) {
+      throw new Error("Error validating captcha");
     }
+    return this.claimReviewService.hideOrUnhideReview(
+      reviewId,
+      body.isHidden,
+      body.description
+    );
+  }
 
-    @AdminOnly()
-    @ApiTags("claim-review")
-    @Put("api/review/:id")
-    async update(@Param("id") reviewId, @Body() body) {
-        const validateCaptcha = await this.captchaService.validate(
-            body.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
-        }
-        return this.claimReviewService.hideOrUnhideReview(
-            reviewId,
-            body.isHidden,
-            body.description
-        );
-    }
+  @AdminOnly()
+  @ApiTags("claim-review")
+  @Delete("api/review/:id")
+  async delete(@Param("id") reviewId) {
+    return this.claimReviewService.delete(reviewId);
+  }
 
-    @AdminOnly()
-    @ApiTags("claim-review")
-    @Delete("api/review/:id")
-    async delete(@Param("id") reviewId) {
-        return this.claimReviewService.delete(reviewId);
-    }
+  @Public()
+  @ApiTags("claim-review")
+  @Get("api/review/:data_hash")
+  @Header("Cache-Control", "max-age=60, must-revalidate")
+  async getReviewByDataHash(@Param("data_hash") data_hash) {
+    const review = await this.claimReviewService.getReviewByDataHash(
+      data_hash
+    );
 
-    @Public()
-    @ApiTags("claim-review")
-    @Get("api/review/:data_hash")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
-    async getReviewByDataHash(@Param("data_hash") data_hash) {
-        const review = await this.claimReviewService.getReviewByDataHash(
-            data_hash
-        );
-
-        const descriptionForHide =
-            await this.historyService.getDescriptionForHide(
-                review,
-                TargetModel.ClaimReview
-            );
-        return { review, descriptionForHide };
-    }
+    const descriptionForHide =
+      await this.historyService.getDescriptionForHide(
+        review,
+        TargetModel.ClaimReview
+      );
+    return { review, descriptionForHide };
+  }
 }

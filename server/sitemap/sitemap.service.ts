@@ -45,7 +45,7 @@ export class SitemapService {
                 personality: personality._id,
             });
 
-            for (const claim of claims) {
+            for (const claim of claims.data) {
                 sites.push({
                     url: `/personality/${personality.slug}/claim/${claim.slug}`,
                 });
