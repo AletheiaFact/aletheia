@@ -49,10 +49,23 @@ export interface ClaimReviewAggregated {
     __v?: number;
 }
 
-export interface listAllResponse {
+interface listAllData {
     content: Image | Sentence;
     personality?: Personality;
     reviewHref: string;
     claim: claim;
     report: Report;
+}
+
+export interface ClaimReviewList {
+    data: listAllData[];
+    total: number;
+}
+
+export interface listAllResponse {
+    reviews: listAllData[];
+    totalReviews: number;
+    totalPages: number;
+    page: number;
+    pageSize: number;
 }
