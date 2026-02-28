@@ -21,7 +21,10 @@ type MessageContext = {
     claimDate: string | Date;
     sentence: string;
     personalityName: string;
+    personalityNames: string[];
     claimTitle: string;
+    contentModel: string;
+    topics: string[];
 };
 
 interface CopilotSessionMessage {

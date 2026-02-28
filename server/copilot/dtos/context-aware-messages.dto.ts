@@ -25,7 +25,10 @@ export type Context = {
     claimDate: Date;
     claimTitle: string;
     personalityName: string;
+    personalityNames: string[];
     sentence: string;
+    contentModel: string;
+    topics: string[];
 };
 
 export type Message = {
