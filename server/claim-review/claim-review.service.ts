@@ -128,13 +128,7 @@ export class ClaimReviewService {
             targetModel: ReviewTaskTypeEnum.Claim,
         };
 
-        const aggregation = [
-            { $match: match },
-            { $count: "totalCount" }
-        ];
-
-        const result = await this.ClaimReviewModel.aggregate(aggregation);
-        return result[0]?.totalCount || 0;
+        return await this.ClaimReviewModel.countDocuments(match);
     }
 
     async listDailyClaimReviews(query) {
