@@ -1,28 +1,12 @@
-/**
- * Service for handling Langchain Chat operations.
- *
- * This service facilitates various types of chat interactions using OpenAI's language models.
- * It supports context-aware chat.
- * Basic context-aware chat utilize pre-defined templates for processing user queries,
- *
- * @class CopilotChatService
- *
- * @method contextAwareChat - Processes messages with consideration for the context of previous interactions, using a context-aware template for coherent responses. Handles errors with HttpExceptions.
- * @param {ContextAwareMessagesDto} contextAwareMessagesDto - Data Transfer Object containing the user’s current message and the chat history.
- * @returns Contextually relevant response from the OpenAI model.
- *
- * The class utilizes several internal methods for operations such as loading chat chains, formatting messages, generating success responses, and handling exceptions.
- * These methods interact with external libraries and services, including the OpenAI API, file system operations, and custom utilities for message formatting and response generation.
- */
-
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ChatOpenAI } from "@langchain/openai";
 import customMessage from "./customMessage.response";
 import { MESSAGES } from "./messages.constants";
 import { openAI } from "./openAI.constants";
 import {
-    ContextAwareMessagesDto,
+    SessionAgentChatDto,
     SenderEnum,
+    Context,
 } from "./dtos/context-aware-messages.dto";
 import { z } from "zod";
 
@@ -39,6 +23,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { ConfigService } from "@nestjs/config";
+import { CopilotSessionService } from "./copilot-session.service";
 
 enum SearchType {
     online = "online",
@@ -51,94 +36,108 @@ export class CopilotChatService {
     constructor(
         private automatedFactCheckingService: AutomatedFactCheckingService,
         private editorParseService: EditorParseService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private copilotSessionService: CopilotSessionService
     ) {}
-    editorReport = null;
 
-    getFactCheckingReportTool = {
-        name: "get-fact-checking-report",
-        description:
-            "Use this tool to create a fact-checking report providing the information to the automated fact checking agents",
-        schema: z.object({
-            claim: z.string().describe("The claim provided by the user"),
-            context: z
-                .object({
-                    //Bad behavior: When the user do not pass a value, the agent assumes the value from the date context
-                    published_since: z
-                        .string()
-                        .describe(
-                            "the oldest date provided specifically and just by the user"
-                        ),
-                    published_until: z
-                        .string()
-                        .describe(
-                            "the newest date provided or if it's not provided the date that the claim was stated"
-                        ),
-                    city: z
-                        .string()
-                        .describe(
-                            "the city location provided specifically and just by the user"
-                        ),
-                    sources: z
-                        .array(z.string())
-                        .describe(
-                            "the suggested sources as an array provided specifically and just by the user"
-                        ),
-                })
-                .describe(
-                    "Context provided by the user to construct the fact-checking report"
-                ),
-            searchType: z
-                .nativeEnum(SearchType)
-                .describe(
-                    "The search type provided by the user, must be a valid enum value"
-                )
-                .default(SearchType.online),
-        }),
-        func: async (data) => {
-            try {
-                const { stream, json } =
-                    await this.automatedFactCheckingService.getResponseFromAgents(
-                        data
-                    );
+    private createFactCheckingReportTool(editorReportRef: { value: any }) {
+        return {
+            name: "get-fact-checking-report",
+            description:
+                "Use this tool to create a fact-checking report providing the information to the automated fact checking agents",
+            schema: z.object({
+                claim: z.string().describe("The claim provided by the user"),
+                context: z
+                    .object({
+                        published_since: z
+                            .string()
+                            .describe(
+                                "the oldest date provided specifically and just by the user"
+                            ),
+                        published_until: z
+                            .string()
+                            .describe(
+                                "the newest date provided or if it's not provided the date that the claim was stated"
+                            ),
+                        city: z
+                            .string()
+                            .describe(
+                                "the city location provided specifically and just by the user"
+                            ),
+                        sources: z
+                            .array(z.string())
+                            .describe(
+                                "the suggested sources as an array provided specifically and just by the user"
+                            ),
+                    })
+                    .describe(
+                        "Context provided by the user to construct the fact-checking report"
+                    ),
+                searchType: z
+                    .nativeEnum(SearchType)
+                    .describe(
+                        "The search type provided by the user, must be a valid enum value"
+                    )
+                    .default(SearchType.online),
+            }),
+            func: async (data) => {
+                try {
+                    const { stream, json } =
+                        await this.automatedFactCheckingService.getResponseFromAgents(
+                            data
+                        );
 
-                if (json?.messages) {
-                    this.editorReport =
-                        await this.editorParseService.schema2editor({
-                            ...json.messages,
-                            sources: [],
-                        });
+                    if (json?.messages) {
+                        editorReportRef.value =
+                            await this.editorParseService.schema2editor({
+                                ...json.messages,
+                                sources: [],
+                            });
+                    }
+
+                    return stream;
+                } catch (error) {
+                    this.logger.error(error);
+                    return String(error);
                 }
+            },
+        };
+    }
 
-                return stream;
-            } catch (error) {
-                this.logger.error(error);
-                return error;
-            }
-        },
-    };
-
-    async agentChat(
-        contextAwareMessagesDto: ContextAwareMessagesDto,
-        language
-    ) {
+    async agentChat(sessionAgentChatDto: SessionAgentChatDto, language) {
         try {
-            const date = new Date(contextAwareMessagesDto.context.claimDate);
+            const { sessionId, message } = sessionAgentChatDto;
+
+            const session =
+                await this.copilotSessionService.getSessionById(sessionId);
+            if (!session) {
+                throw new Error("Session not found");
+            }
+
+            const context = session.context as Context;
+            const date = new Date(context.claimDate);
             const localizedDate = date.toLocaleDateString();
             language = language === "pt" ? "Portuguese" : "English";
-            const messagesHistory = contextAwareMessagesDto.messages.map(
-                (message) => this.transformMessage(message)
+
+            // Persist the user message
+            await this.copilotSessionService.addMessage(sessionId, {
+                sender: SenderEnum.User,
+                content: message,
+                type: "info",
+            });
+
+            // Build chat history from stored session messages (excluding the one we just added)
+            const messagesHistory = session.messages.map((msg) =>
+                this.transformMessage(msg)
             );
+
+            // Use a local ref object instead of instance variable (fixes concurrency bug)
+            const editorReportRef = { value: null };
             const tools = [
                 new DynamicStructuredTool(
-                    this.getFactCheckingReportTool as any
+                    this.createFactCheckingReportTool(editorReportRef) as any
                 ),
             ];
-
-            const currentMessageContent =
-                contextAwareMessagesDto.messages[
-                    contextAwareMessagesDto.messages.length - 1
-                ];
 
             const prompt = ChatPromptTemplate.fromMessages([
                 [
@@ -146,7 +145,7 @@ export class CopilotChatService {
                     `
                     You are the Fact-checker Aletheia's Assistant, working with a fact-checker who requires assistance.
                     Your primary goal is to gather all relevant information from the user about the claim: {claim} that needs to be fact-checked.
-                    
+
                     Please follow these steps carefully
 
                     1. Confirm the claim for fact-checking:
@@ -154,7 +153,7 @@ export class CopilotChatService {
 
                     2. Confirm the type of research:
                     - Ask the user how should we proceed the research by either searching on internet or searching in public gazettes
-                    
+
                     3. Based on the type of research, proceed gathering the necessary information:
                         **public gazettes**: ask the following questions sequentially:
                              - "In which Brazilian city or state was the claim made?"
@@ -163,7 +162,7 @@ export class CopilotChatService {
                         **online search**: ask the following question:
                             - "Do you have any specific sources you suggest we consult for verifying this claim?"
 
-                    
+
                     Always pose your questions one at a time and in the specified order.
 
                     Persist in asking all necessary questions. Do not use the tool until you have thoroughly completed all preceding steps.
@@ -177,7 +176,7 @@ export class CopilotChatService {
 
             const llm = new ChatOpenAI({
                 temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-                modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+                modelName: openAI.GPT_5_MINI.toString(),
                 apiKey: this.configService.get<string>("openai.api_key"),
             });
 
@@ -195,16 +194,30 @@ export class CopilotChatService {
             const response = await agentExecutor.invoke({
                 language: language,
                 date: localizedDate,
-                claim: contextAwareMessagesDto.context.sentence,
-                personality: contextAwareMessagesDto.context.personalityName,
-                input: currentMessageContent,
+                claim: context.sentence,
+                personality: context.personalityName,
+                input: message,
                 chat_history: messagesHistory,
             });
+
+            // Persist the assistant response (include editorReport if the tool produced one)
+            const assistantMessage: any = {
+                sender: SenderEnum.Assistant,
+                content: response.output,
+                type: "info",
+            };
+            if (editorReportRef.value) {
+                assistantMessage.editorReport = editorReportRef.value;
+            }
+            await this.copilotSessionService.addMessage(
+                sessionId,
+                assistantMessage
+            );
 
             return customMessage(HttpStatus.OK, MESSAGES.SUCCESS, {
                 sender: SenderEnum.Assistant,
                 content: response.output,
-                editorReport: this.editorReport,
+                editorReport: editorReportRef.value,
             });
         } catch (e: unknown) {
             this.exceptionHandling(e);

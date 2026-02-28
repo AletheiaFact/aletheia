@@ -39,7 +39,7 @@ const AffixCopilotButton = () => {
                     right:
                         copilotDrawerCollapsed || vw?.md
                             ? "2%"
-                            : `calc(2% + 350px)`,
+                            : `calc(2% + 50vw)`,
                     display: "flex",
                     flexDirection: "column-reverse",
                     alignItems: "center",

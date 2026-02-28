@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsObject } from "class-validator";
+import { IsArray, IsObject, IsString } from "class-validator";
 
 /**
  * Data Transfer Object for an individual message.
@@ -37,6 +37,26 @@ export class ContextAwareMessagesDto {
     @ApiProperty()
     @IsArray()
     messages: Message[];
+
+    @ApiProperty()
+    @IsObject()
+    context: Context;
+}
+
+export class SessionAgentChatDto {
+    @ApiProperty()
+    @IsString()
+    sessionId: string;
+
+    @ApiProperty()
+    @IsString()
+    message: string;
+}
+
+export class CreateSessionDto {
+    @ApiProperty()
+    @IsString()
+    claimReviewDataHash: string;
 
     @ApiProperty()
     @IsObject()

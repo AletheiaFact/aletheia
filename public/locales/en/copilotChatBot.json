@@ -12,6 +12,9 @@
     "rateQuestion": "How would you rate this conversation ?",
     "copilotWarning": "Assistant visible only in full page.",
     "copilotChatBotErrorMessage": "An unexpected error occured while creating the report. Refresh the page and try again.",
+    "copilotTitle": "Aletheia Copilot",
     "copilotClearHistoryTooltip": "Clear conversation history",
-    "copilotCloseSidebarTooltip": "Close sidebar"
+    "copilotCloseSidebarTooltip": "Close sidebar",
+    "sessionLoadingError": "Failed to load conversation. Please try again.",
+    "sessionCreateError": "Failed to start a new conversation. Please try again."
 }

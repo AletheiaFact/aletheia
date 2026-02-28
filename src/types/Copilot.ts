@@ -24,4 +24,28 @@ type MessageContext = {
     claimTitle: string;
 };
 
-export type { ChatResponse, ChatMessage, MessageContext };
+interface CopilotSessionMessage {
+    sender: string;
+    content: string;
+    type: string;
+    editorReport?: any;
+}
+
+interface CopilotSession {
+    _id: string;
+    userId: string;
+    claimReviewDataHash: string;
+    messages: CopilotSessionMessage[];
+    context: MessageContext;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export type {
+    ChatResponse,
+    ChatMessage,
+    MessageContext,
+    CopilotSession,
+    CopilotSessionMessage,
+};

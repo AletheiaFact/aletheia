@@ -12,5 +12,6 @@
  */
 export enum openAI {
     GPT_3_5_TURBO_1106 = "gpt-3.5-turbo-1106",
-    BASIC_CHAT_OPENAI_TEMPERATURE = "0",
+    BASIC_CHAT_OPENAI_TEMPERATURE = "1",
+    GPT_5_MINI = "gpt-5-mini-2025-08-07",
 }

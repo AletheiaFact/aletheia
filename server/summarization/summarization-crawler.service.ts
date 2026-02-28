@@ -20,7 +20,7 @@ export class SummarizationCrawlerService {
     constructor(
         private chainService: SummarizationCrawlerChainService,
         private configService: ConfigService
-    ) {}
+    ) { }
 
     async getSummarizedReviews(dailyReviews: any[]): Promise<any[]> {
         try {
@@ -63,17 +63,16 @@ export class SummarizationCrawlerService {
         const reportContent =
             summarizedReviews.length > 0
                 ? summarizedReviews
-                      .map(
-                          (review) => `
+                    .map(
+                        (review) => `
                 <div class="claim-review">
-                    <p><span class="classification ${review.classification}">${
-                              classificationTranslations[review.classification]
-                          }</span> | ${review.summary}</p>
+                    <p><span class="classification ${review.classification}">${classificationTranslations[review.classification]
+                            }</span> | ${review.summary}</p>
                     <p><a href="${review.href}">Link para Checagem</a></p>
                 </div>
             `
-                      )
-                      .join("")
+                    )
+                    .join("")
                 : `<div class="claim-review">
                 <p>Nenhuma informação disponível na atualização de hoje. Caso tenha encontrado um problema, por favor, entre em contato conosco através do email contato@aletheiafact.org</p>
             </div>`;
@@ -92,31 +91,31 @@ export class SummarizationCrawlerService {
                             color: ${colors.primary};
                         }
                         .not-fact {
-                            color: #006060;   
+                            color: #006060;
                         }
                         .trustworthy {
-                            color: #008000;   
+                            color: #008000;
                         }
                         .trustworthy-but {
-                            color: #5A781D;   
+                            color: #5A781D;
                         }
                         .arguable {
-                            color: #9F6B3F;   
+                            color: #9F6B3F;
                         }
                         .misleading {
-                            color: #D6395F;   
+                            color: #D6395F;
                         }
                         .false {
-                            color: #D32B20;   
+                            color: #D32B20;
                         }
                         .unsustainable {
-                            color: #A74165;   
+                            color: #A74165;
                         }
                         .exaggerated {
-                            color: #B8860B;   
+                            color: #B8860B;
                         }
                         .unverifiable {
-                            color: #C9502A;   
+                            color: #C9502A;
                         }
                     </style>
                 </head>
@@ -147,7 +146,7 @@ export class SummarizationCrawlerService {
 
         const llm = new ChatOpenAI({
             temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-            modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+            modelName: openAI.GPT_5_MINI.toString(),
             apiKey: this.configService.get<string>("openai.api_key"),
         });
 

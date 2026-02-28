@@ -5,22 +5,26 @@ import Drawer from "@mui/material/Drawer";
 const CopilotDrawerStyled = styled(Drawer)`
     width: ${(props) => props.width};
     flex-shrink: 0;
-    zindex: 999999;
+    z-index: 999999;
     max-height: 100vh;
     overflow: hidden;
     position: absolute;
 
     & .MuiDrawer-paper {
         width: ${(props) => props.width};
+        min-width: 350px;
         height: ${(props) => props.height};
         padding: 32px 16px 16px 16px;
         background: ${colors.lightNeutralSecondary};
+        display: flex;
+        flex-direction: column;
     }
 
     .footer {
         font-size: 10px;
         text-align: center;
         margin-top: 8px;
+        flex-shrink: 0;
     }
 
     .copilot-form {
@@ -30,6 +34,8 @@ const CopilotDrawerStyled = styled(Drawer)`
         padding: 8px;
         gap: 8px;
         border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 8px;
     }
 
     .submit-message-button {
