@@ -18,7 +18,7 @@ import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
-import { IlistAll, IListAllQuery, ClaimReviewAggregated, listAllResponse } from "./types/claim.interfaces";
+import { IlistAll, IListAllQuery, ClaimReviewAggregated, ClaimReviewList } from "./types/claim.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -41,7 +41,7 @@ export class ClaimReviewService {
         order,
         query,
         latest = false
-    }: IlistAll): Promise<listAllResponse[]> {
+    }: IlistAll): Promise<ClaimReviewList> {
         const sort = latest
             ? { date: -1 }
             : { _id: order === "asc" ? 1 : -1 };
@@ -106,6 +106,9 @@ export class ClaimReviewService {
             });
         }
 
+        const countResult = await this.ClaimReviewModel.aggregate([...pipeline, { $count: "totalCount" }]);
+        const total = countResult[0]?.totalCount || 0;
+
         pipeline.push(
             { $sort: sort },
             { $skip: page * pageSize },
@@ -113,8 +116,9 @@ export class ClaimReviewService {
         );
 
         const reviews = await this.ClaimReviewModel.aggregate(pipeline);
+        const data = await Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
 
-        return Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+        return { data, total };
 
     }
 

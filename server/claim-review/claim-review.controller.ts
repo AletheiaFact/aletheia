@@ -16,6 +16,7 @@ import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { listAllResponse } from "./types/claim.interfaces";
 
 @Controller()
 export class ClaimReviewController {
@@ -29,7 +30,7 @@ export class ClaimReviewController {
     @ApiTags("claim-review")
     @Get("api/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
+    async listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO): Promise<listAllResponse> {
         const {
             page = 0,
             pageSize = 10,
@@ -51,18 +52,12 @@ export class ClaimReviewController {
             latest,
         });
 
-        const totalReviews = await this.claimReviewService.count({
-            isHidden: false,
-            isDeleted: false,
-            nameSpace,
-        });
-
         return {
-            reviews,
-            totalReviews,
-            totalPages: Math.ceil(totalReviews / pageSize),
-            page,
-            pageSize,
+            reviews: reviews.data,
+            totalReviews: reviews.total,
+            totalPages: Math.ceil(reviews.total / pageSize),
+            page: page,
+            pageSize: pageSize,
         };
     }
 
