@@ -1,7 +1,7 @@
 import { LoggerService } from "@nestjs/common";
 import * as winston from "winston";
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.LOG_FORMAT === "pretty";
 
 const devFormat = winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
