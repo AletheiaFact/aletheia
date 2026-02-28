@@ -21,7 +21,7 @@ const CopilotForm = ({ handleSendMessage }) => {
     return (
         <form className="copilot-form" onSubmit={handleSubmit}>
             <AletheiaTextAreaAutoSize
-                style={{ maxHeight: "400px", minHeight: "100px" }}
+                style={{ maxHeight: "400px", minHeight: "44px" }}
                 value={message}
                 placeholder={t("copilotChatBot:inputPlaceholder")}
                 onChange={({ target }) => setMessage(target.value)}

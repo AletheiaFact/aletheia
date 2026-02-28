@@ -48,26 +48,40 @@ export class AutomatedFactCheckingService {
                 keepalive: true,
             });
 
-            let reader = response.body.getReader();
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(
+                    `Agencia returned HTTP ${response.status}: ${errorBody.substring(0, 200)}`
+                );
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
 
             let streamResponse = "";
             let done, value;
 
             while (!done) {
                 ({ done, value } = await reader.read());
-                streamResponse += new TextDecoder().decode(value, {
-                    stream: true,
-                });
+                streamResponse += decoder.decode(value, { stream: true });
             }
 
-            const jsonResponse = JSON.parse(streamResponse);
+            // Parse NDJSON: each line is a JSON object, last line has the final result
+            const lines = streamResponse.trim().split("\n").filter(Boolean);
+            const lastLine = JSON.parse(lines[lines.length - 1]);
 
-            if (jsonResponse?.detail) {
-                return { stream: jsonResponse.detail, json: {} };
+            if (lastLine.status === "error") {
+                throw new Error(lastLine.detail || "Agencia processing error");
             }
 
-            if (jsonResponse?.message) {
-                const report = JSON.parse(jsonResponse?.message?.messages);
+            const result = lastLine.message;
+
+            if (result?.detail) {
+                return { stream: result.detail, json: {} };
+            }
+
+            if (result?.messages) {
+                const report = JSON.parse(result.messages);
                 return { stream: streamResponse, json: { messages: report } };
             }
 

@@ -12,6 +12,9 @@
     "rateQuestion": "Como você avaliaria esta conversa ?",
     "copilotWarning": "Assistente apenas disponivel na página completa.",
     "copilotChatBotErrorMessage": "Ocorreu um erro inesperado ao criar o relatório. Atualize a página e tente novamente.",
+    "copilotTitle": "Aletheia Copilot",
     "copilotClearHistoryTooltip": "Limpar histórico de conversa",
-    "copilotCloseSidebarTooltip": "Fechar menu lateral"
+    "copilotCloseSidebarTooltip": "Fechar menu lateral",
+    "sessionLoadingError": "Falha ao carregar conversa. Por favor, tente novamente.",
+    "sessionCreateError": "Falha ao iniciar nova conversa. Por favor, tente novamente."
 }

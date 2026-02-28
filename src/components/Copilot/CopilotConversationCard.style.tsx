@@ -18,13 +18,12 @@ const CopilotConversationCardStyle = styled(Grid)`
         padding: 16px;
         border-radius: 10px;
         background-color: ${colors.white};
-        marginleft: 40px;
-        wordbreak: break-word;
+        margin-left: 40px;
+        word-break: break-word;
         color: ${colors.primary};
         &:after {
-            border: 1px solid red;
-            width: 10px;
-            height: 10px;
+            width: 0;
+            height: 0;
             content: " ";
             position: absolute;
             border-top: none;
