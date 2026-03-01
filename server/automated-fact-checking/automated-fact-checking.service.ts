@@ -134,12 +134,45 @@ export class AutomatedFactCheckingService {
      * List all executions for a given session.
      * Calls GET /executions/{session_id} on Agencia.
      */
+    private validateSessionId(sessionId: string): void {
+        // Allow only a safe subset of characters for session identifiers.
+        // Adjust this regex to match the actual expected format if needed.
+        const SESSION_ID_REGEX = /^[A-Za-z0-9_-]+$/;
+        if (
+            typeof sessionId !== "string" ||
+            sessionId.length === 0 ||
+            sessionId.length > 256 ||
+            !SESSION_ID_REGEX.test(sessionId)
+        ) {
+            throw new Error("Invalid sessionId");
+        }
+    }
+
+    private validateExecutionId(executionId: string): void {
+        // Allow only a safe subset of characters for execution identifiers.
+        const EXECUTION_ID_REGEX = /^[A-Za-z0-9_-]+$/;
+        if (
+            typeof executionId !== "string" ||
+            executionId.length === 0 ||
+            executionId.length > 256 ||
+            !EXECUTION_ID_REGEX.test(executionId)
+        ) {
+            throw new Error("Invalid executionId");
+        }
+    }
+
+    /**
+     * List all executions for a given session.
+     * Calls GET /executions/{session_id} on Agencia.
+     */
     async getExecutions(sessionId: string): Promise<any> {
         try {
+            this.validateSessionId(sessionId);
+            const safeSessionId = encodeURIComponent(sessionId);
             const agenciaAccessToken = this.getAgenciaToken();
 
             const response = await fetch(
-                `${this.agenciaURL}/executions/${sessionId}`,
+                `${this.agenciaURL}/executions/${safeSessionId}`,
                 {
                     method: "GET",
                     headers: {
@@ -168,6 +201,10 @@ export class AutomatedFactCheckingService {
      * Get a specific execution by session and execution ID.
      * Calls GET /executions/{session_id}/{execution_id} on Agencia.
      */
+            this.validateSessionId(sessionId);
+            this.validateExecutionId(executionId);
+            const safeSessionId = encodeURIComponent(sessionId);
+            const safeExecutionId = encodeURIComponent(executionId);
     async getExecution(
         sessionId: string,
         executionId: string
@@ -176,7 +213,7 @@ export class AutomatedFactCheckingService {
             const agenciaAccessToken = this.getAgenciaToken();
 
             const response = await fetch(
-                `${this.agenciaURL}/executions/${sessionId}/${executionId}`,
+                `${this.agenciaURL}/executions/${safeSessionId}/${safeExecutionId}`,
                 {
                     method: "GET",
                     headers: {
