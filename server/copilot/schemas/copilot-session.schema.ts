@@ -17,6 +17,9 @@ export class CopilotSessionMessage {
 
     @Prop({ type: Object, required: false })
     editorReport?: object;
+
+    @Prop({ required: false })
+    executionId?: string;
 }
 
 const CopilotSessionMessageSchema =

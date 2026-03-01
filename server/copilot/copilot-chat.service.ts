@@ -44,7 +44,9 @@ export class CopilotChatService {
 
     private createFactCheckingReportTool(
         editorReportRef: { value: any },
-        userId: string
+        executionIdRef: { value: string | null },
+        userId: string,
+        sessionId: string
     ) {
         return {
             name: "get-fact-checking-report",
@@ -87,10 +89,16 @@ export class CopilotChatService {
             }),
             func: async (data) => {
                 try {
-                    const { stream, json } =
+                    const { stream, json, executionId } =
                         await this.automatedFactCheckingService.getResponseFromAgents(
-                            data
+                            data,
+                            sessionId
                         );
+
+                    // Capture execution_id for storage in the session message
+                    if (executionId) {
+                        executionIdRef.value = executionId;
+                    }
 
                     if (json?.messages) {
                         const agenciaSources =
@@ -159,13 +167,16 @@ export class CopilotChatService {
                 this.transformMessage(msg)
             );
 
-            // Use a local ref object instead of instance variable (fixes concurrency bug)
+            // Use local ref objects instead of instance variables (fixes concurrency bug)
             const editorReportRef = { value: null };
+            const executionIdRef: { value: string | null } = { value: null };
             const tools = [
                 new DynamicStructuredTool(
                     this.createFactCheckingReportTool(
                         editorReportRef,
-                        userId
+                        executionIdRef,
+                        userId,
+                        sessionId
                     ) as any
                 ),
             ];
@@ -240,7 +251,7 @@ Your primary goal is to gather all relevant information from the user about the 
                 chat_history: messagesHistory,
             });
 
-            // Persist the assistant response (include editorReport if the tool produced one)
+            // Persist the assistant response (include editorReport and executionId if produced)
             const assistantMessage: any = {
                 sender: SenderEnum.Assistant,
                 content: response.output,
@@ -248,6 +259,9 @@ Your primary goal is to gather all relevant information from the user about the 
             };
             if (editorReportRef.value) {
                 assistantMessage.editorReport = editorReportRef.value;
+            }
+            if (executionIdRef.value) {
+                assistantMessage.executionId = executionIdRef.value;
             }
             await this.copilotSessionService.addMessage(
                 sessionId,
@@ -258,6 +272,7 @@ Your primary goal is to gather all relevant information from the user about the 
                 sender: SenderEnum.Assistant,
                 content: response.output,
                 editorReport: editorReportRef.value,
+                executionId: executionIdRef.value,
             });
         } catch (e: unknown) {
             this.exceptionHandling(e);

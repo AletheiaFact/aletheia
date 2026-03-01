@@ -14,12 +14,14 @@ import {
 } from "./dtos/context-aware-messages.dto";
 import { FactCheckerOnly } from "../auth/decorators/auth.decorator";
 import { CopilotSessionService } from "./copilot-session.service";
+import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 
 @Controller()
 export class CopilotChatController {
     constructor(
         private readonly copilotChatService: CopilotChatService,
-        private readonly copilotSessionService: CopilotSessionService
+        private readonly copilotSessionService: CopilotSessionService,
+        private readonly automatedFactCheckingService: AutomatedFactCheckingService
     ) {}
 
     @FactCheckerOnly()
@@ -71,5 +73,27 @@ export class CopilotChatController {
         } catch (e) {
             throw new Error(e);
         }
+    }
+
+    @FactCheckerOnly()
+    @Get("api/copilot-session/:sessionId/executions")
+    async getExecutions(@Param("sessionId") sessionId: string) {
+        const executions =
+            await this.automatedFactCheckingService.getExecutions(sessionId);
+        return { executions };
+    }
+
+    @FactCheckerOnly()
+    @Get("api/copilot-session/:sessionId/executions/:executionId")
+    async getExecution(
+        @Param("sessionId") sessionId: string,
+        @Param("executionId") executionId: string
+    ) {
+        const execution =
+            await this.automatedFactCheckingService.getExecution(
+                sessionId,
+                executionId
+            );
+        return { execution };
     }
 }
