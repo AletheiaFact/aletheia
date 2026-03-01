@@ -3,8 +3,13 @@ import { SourceService } from "../source/source.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 /**
- * Agencia returns sources with `url` (not `href`), plus `title` and `type`.
- * Example: { url: "https://...", title: "Page Title", type: "web_search" }
+ * Normalized source format used throughout the copilot module.
+ *
+ * Agencia returns sources in two formats depending on search type:
+ * - Web search: objects like { url: "https://...", title: "Page Title", type: "web_search" }
+ * - Gazette search: plain strings like "Porto Alegre (2024-06-11): https://..."
+ *
+ * Both are normalized to this interface for downstream processing.
  */
 export interface AgenciaSource {
     url?: string;
@@ -14,6 +19,9 @@ export interface AgenciaSource {
     props?: Record<string, any>;
 }
 
+// Matches http:// or https:// URLs in a string
+const URL_REGEX = /https?:\/\/[^\s,)}\]]+/i;
+
 @Injectable()
 export class CopilotSourceService {
     private readonly logger = new Logger("CopilotSourceService");
@@ -21,25 +29,72 @@ export class CopilotSourceService {
     constructor(private readonly sourceService: SourceService) {}
 
     /**
+     * Parses a plain-string source into a normalized AgenciaSource object.
+     *
+     * Gazette search returns sources like:
+     *   "Porto Alegre (2024-06-11): https://data.queridodiario.ok.org.br/..."
+     *   "PDF da Lei nº 13.947/2024: http://dopaonlineupload.procempa.com.br/..."
+     *
+     * Extracts the URL and uses the remaining text as the title.
+     */
+    private parseStringSource(source: string): AgenciaSource | null {
+        const match = source.match(URL_REGEX);
+        if (!match) {
+            return null;
+        }
+
+        const href = match[0];
+        // Everything before the URL becomes the title (trimmed of trailing separators)
+        const title = source
+            .substring(0, match.index)
+            .replace(/[:\s]+$/, "")
+            .trim();
+
+        return {
+            href,
+            title: title || href,
+            type: "gazette",
+        };
+    }
+
+    /**
+     * Normalizes a single source entry (string or object) into an AgenciaSource.
+     * Returns null if no valid URL can be extracted.
+     */
+    private normalizeSource(source: string | AgenciaSource): AgenciaSource | null {
+        if (typeof source === "string") {
+            return this.parseStringSource(source);
+        }
+
+        const sourceHref = source.href || source.url;
+        if (!sourceHref) {
+            return null;
+        }
+
+        return { ...source, href: sourceHref };
+    }
+
+    /**
      * Processes sources returned by Agencia and persists them as Source documents.
      *
-     * Agencia sources use `url` field (not `href`), so we normalize to `href`
-     * for compatibility with the Source schema and editor-parser.
+     * Handles both formats returned by Agencia:
+     * - Plain strings (gazette search): parsed to extract URL and description
+     * - Objects with url/href (web search): normalized to use `href`
      *
      * For each source:
-     * - Normalizes `url` → `href`
+     * - Normalizes to AgenciaSource with `href` field
      * - Validates and deduplicates via SourceService.create() (md5 hash of href)
      * - Stores Agencia metadata (title, type) in the Source `props` field
-     * - Gracefully skips invalid URLs or sources without url/href
-     * - Returns normalized sources array (with `href` field) for schema2editor
+     * - Gracefully skips invalid URLs or sources without extractable URL
+     * - Returns normalized sources array for downstream use
      *
-     * @param sources - Array of sources from Agencia's response
+     * @param sources - Array of sources from Agencia (strings or objects)
      * @param userId - The ID of the user who initiated the copilot session
      * @param nameSpace - Optional namespace (defaults to Main)
-     * @returns Normalized sources array with `href` field added
+     * @returns Normalized sources array with `href` field
      */
     async processAgenciaSources(
-        sources: AgenciaSource[],
+        sources: (string | AgenciaSource)[],
         userId: string,
         nameSpace: string = NameSpaceEnum.Main
     ): Promise<AgenciaSource[]> {
@@ -50,41 +105,39 @@ export class CopilotSourceService {
         const normalizedSources: AgenciaSource[] = [];
 
         for (const source of sources) {
-            // Agencia uses `url`, Source schema uses `href` — normalize
-            const sourceHref = source.href || source.url;
+            const normalized = this.normalizeSource(source);
 
-            if (!sourceHref) {
+            if (!normalized?.href) {
                 this.logger.warn(
-                    "Skipping Agencia source without url/href"
+                    `Skipping Agencia source without extractable URL: ${
+                        typeof source === "string"
+                            ? source.substring(0, 80)
+                            : JSON.stringify(source)
+                    }`
                 );
                 continue;
             }
 
-            // Build the normalized source with `href` for schema2editor
-            const normalized: AgenciaSource = {
-                ...source,
-                href: sourceHref,
-            };
             normalizedSources.push(normalized);
 
             try {
                 await this.sourceService.create({
-                    href: sourceHref,
+                    href: normalized.href,
                     user: userId,
                     nameSpace,
                     props: {
-                        ...(source.props || {}),
-                        title: source.title,
-                        type: source.type,
+                        ...(normalized.props || {}),
+                        title: normalized.title,
+                        type: normalized.type,
                     },
                 });
 
                 this.logger.log(
-                    `Persisted Agencia source: ${sourceHref}`
+                    `Persisted Agencia source: ${normalized.href}`
                 );
             } catch (error) {
                 this.logger.warn(
-                    `Failed to process Agencia source ${sourceHref}: ${error.message}`
+                    `Failed to process Agencia source ${normalized.href}: ${error.message}`
                 );
             }
         }

@@ -113,11 +113,30 @@ export class CopilotChatService {
                                   )
                                 : [];
 
+                        // Build the schema for the editor.
+                        // Agencia sources don't have field/textRange data needed
+                        // for inline citations, so we append them as a reference
+                        // list at the end of the report text instead.
+                        const schemaForEditor = {
+                            ...json.messages,
+                            sources: [],
+                        };
+
+                        if (
+                            normalizedSources.length > 0 &&
+                            schemaForEditor.report
+                        ) {
+                            schemaForEditor.report =
+                                this.appendSourcesToContent(
+                                    schemaForEditor.report,
+                                    normalizedSources
+                                );
+                        }
+
                         editorReportRef.value =
-                            await this.editorParseService.schema2editor({
-                                ...json.messages,
-                                sources: normalizedSources,
-                            });
+                            await this.editorParseService.schema2editor(
+                                schemaForEditor
+                            );
                     }
 
                     return stream;
@@ -127,6 +146,33 @@ export class CopilotChatService {
                 }
             },
         };
+    }
+
+    /**
+     * Appends a reference list of sources to the end of a report content string.
+     *
+     * Agencia sources don't include the field/textRange metadata required for
+     * inline citations in the editor, so we present them as a numbered list
+     * appended to the report text. The fact-checker can then reorganize or
+     * integrate them as needed.
+     */
+    private appendSourcesToContent(
+        content: string,
+        sources: { href?: string; title?: string }[]
+    ): string {
+        if (!sources || sources.length === 0) {
+            return content;
+        }
+
+        const sourceLines = sources.map((source, index) => {
+            const num = index + 1;
+            if (source.title && source.title !== source.href) {
+                return `${num}. ${source.title}: ${source.href}`;
+            }
+            return `${num}. ${source.href}`;
+        });
+
+        return `${content}\n\nFontes:\n${sourceLines.join("\n")}`;
     }
 
     async agentChat(sessionAgentChatDto: SessionAgentChatDto, language, userId: string) {
