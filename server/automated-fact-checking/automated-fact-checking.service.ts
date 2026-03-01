@@ -130,10 +130,6 @@ export class AutomatedFactCheckingService {
         }
     }
 
-    /**
-     * List all executions for a given session.
-     * Calls GET /executions/{session_id} on Agencia.
-     */
     private validateSessionId(sessionId: string): void {
         // Allow only a safe subset of characters for session identifiers.
         // Adjust this regex to match the actual expected format if needed.
@@ -201,15 +197,15 @@ export class AutomatedFactCheckingService {
      * Get a specific execution by session and execution ID.
      * Calls GET /executions/{session_id}/{execution_id} on Agencia.
      */
-            this.validateSessionId(sessionId);
-            this.validateExecutionId(executionId);
-            const safeSessionId = encodeURIComponent(sessionId);
-            const safeExecutionId = encodeURIComponent(executionId);
     async getExecution(
         sessionId: string,
         executionId: string
     ): Promise<any> {
         try {
+            this.validateSessionId(sessionId);
+            this.validateExecutionId(executionId);
+            const safeSessionId = encodeURIComponent(sessionId);
+            const safeExecutionId = encodeURIComponent(executionId);
             const agenciaAccessToken = this.getAgenciaToken();
 
             const response = await fetch(
