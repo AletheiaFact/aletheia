@@ -35,10 +35,18 @@ export class CopilotSessionService {
         userId: string,
         claimReviewDataHash: string
     ): Promise<CopilotSessionDocument | null> {
+        // Ensure claimReviewDataHash is treated as a literal value and not a query object
+        if (typeof claimReviewDataHash !== "string") {
+            this.logger.warn(
+                `Invalid claimReviewDataHash type in getActiveSession: ${typeof claimReviewDataHash}`
+            );
+            return null;
+        }
+
         return this.copilotSessionModel
             .findOne({
                 userId,
-                claimReviewDataHash,
+                claimReviewDataHash: { $eq: claimReviewDataHash },
                 isActive: true,
             })
             .sort({ createdAt: -1 })
