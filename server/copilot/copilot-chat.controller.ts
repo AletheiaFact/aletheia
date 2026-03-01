@@ -65,7 +65,8 @@ export class CopilotChatController {
         try {
             return await this.copilotChatService.agentChat(
                 sessionAgentChatDto,
-                req.language
+                req.language,
+                req.user._id
             );
         } catch (e) {
             throw new Error(e);

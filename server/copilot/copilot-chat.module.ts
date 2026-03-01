@@ -7,10 +7,12 @@ import { EditorParseModule } from "../editor-parse/editor-parse.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { ConfigModule } from "@nestjs/config";
 import { CopilotSessionService } from "./copilot-session.service";
+import { CopilotSourceService } from "./copilot-source.service";
 import {
     CopilotSession,
     CopilotSessionSchema,
 } from "./schemas/copilot-session.schema";
+import { SourceModule } from "../source/source.module";
 
 @Module({
     imports: [
@@ -21,8 +23,9 @@ import {
         EditorParseModule,
         AbilityModule,
         ConfigModule,
+        SourceModule,
     ],
     controllers: [CopilotChatController],
-    providers: [CopilotChatService, CopilotSessionService],
+    providers: [CopilotChatService, CopilotSessionService, CopilotSourceService],
 })
 export class CopilotChatModule {}

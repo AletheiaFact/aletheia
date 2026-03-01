@@ -24,6 +24,7 @@ import { AutomatedFactCheckingService } from "../automated-fact-checking/automat
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { ConfigService } from "@nestjs/config";
 import { CopilotSessionService } from "./copilot-session.service";
+import { CopilotSourceService } from "./copilot-source.service";
 
 enum SearchType {
     online = "online",
@@ -37,10 +38,14 @@ export class CopilotChatService {
         private automatedFactCheckingService: AutomatedFactCheckingService,
         private editorParseService: EditorParseService,
         private configService: ConfigService,
-        private copilotSessionService: CopilotSessionService
+        private copilotSessionService: CopilotSessionService,
+        private copilotSourceService: CopilotSourceService
     ) {}
 
-    private createFactCheckingReportTool(editorReportRef: { value: any }) {
+    private createFactCheckingReportTool(
+        editorReportRef: { value: any },
+        userId: string
+    ) {
         return {
             name: "get-fact-checking-report",
             description:
@@ -88,10 +93,22 @@ export class CopilotChatService {
                         );
 
                     if (json?.messages) {
+                        const agenciaSources =
+                            json.messages?.sources || [];
+
+                        // Persist Agencia sources and normalize url→href
+                        const normalizedSources =
+                            agenciaSources.length > 0
+                                ? await this.copilotSourceService.processAgenciaSources(
+                                      agenciaSources,
+                                      userId
+                                  )
+                                : [];
+
                         editorReportRef.value =
                             await this.editorParseService.schema2editor({
                                 ...json.messages,
-                                sources: [],
+                                sources: normalizedSources,
                             });
                     }
 
@@ -104,7 +121,7 @@ export class CopilotChatService {
         };
     }
 
-    async agentChat(sessionAgentChatDto: SessionAgentChatDto, language) {
+    async agentChat(sessionAgentChatDto: SessionAgentChatDto, language, userId: string) {
         try {
             const { sessionId, message } = sessionAgentChatDto;
 
@@ -146,7 +163,10 @@ export class CopilotChatService {
             const editorReportRef = { value: null };
             const tools = [
                 new DynamicStructuredTool(
-                    this.createFactCheckingReportTool(editorReportRef) as any
+                    this.createFactCheckingReportTool(
+                        editorReportRef,
+                        userId
+                    ) as any
                 ),
             ];
 
