@@ -2,6 +2,7 @@ import { Grid } from "@mui/material"
 import React from "react";
 import ClaimList from "./ClaimList";
 import { useTranslation } from "react-i18next";
+// import SourceList from "../Source/SourceList";
 
 const ClaimListView = () => {
     const { t } = useTranslation();
