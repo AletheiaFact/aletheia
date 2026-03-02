@@ -45,13 +45,13 @@ export class SitemapService {
                 personality: personality._id,
             });
 
-            for (const claim of claims) {
+            for (const claim of claims.data) {
                 sites.push({
                     url: `/personality/${personality.slug}/claim/${claim.slug}`,
                 });
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
                 const reviews =
-                    await this.claimReviewService.getReviewsByClaimId(
+                    await this.claimReviewService.getReviewClassificationCountsByClaimId(
                         claim._id
                     );
                 for (const review of reviews) {

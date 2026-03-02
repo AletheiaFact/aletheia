@@ -1,7 +1,6 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
     Header,
     Inject,
@@ -100,14 +99,6 @@ export class PersonalityController {
         );
     }
 
-    @AdminOnly()
-    @ApiTags("personality")
-    @Delete("api/personality/:id")
-    async delete(@Param("id") personalityId) {
-        return this.personalityService.delete(personalityId).catch((err) => {
-            this.logger.error(err);
-        });
-    }
 
     @Public()
     @ApiTags("personality")

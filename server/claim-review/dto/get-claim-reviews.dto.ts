@@ -15,7 +15,7 @@ export class GetClaimReviewsDTO {
 
     @IsString()
     @ApiProperty()
-    order: string;
+    order: "asc" | "desc";
 
     @IsOptional()
     @ApiProperty()

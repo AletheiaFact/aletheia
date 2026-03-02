@@ -104,7 +104,7 @@ export class HomeController {
             personalities,
             stats,
             claims,
-            reviews,
+            reviews: reviews.data,
             nameSpace: req.params.namespace || NameSpaceEnum.Main,
         });
 

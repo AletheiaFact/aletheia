@@ -45,7 +45,7 @@ export type IPersonalityService = {
         isHidden: boolean,
         description: string
     ): Promise<any>;
-    delete(personalityId: string): Promise<IPersonality>;
+    delete(personalityId: string): Promise<void>;
     count(query?: any);
     extractClaimWithTextSummary(claims: any): any;
     verifyInputsQuery(query: any): any;
