@@ -1,6 +1,8 @@
-import React from "react";
-import { Grid } from "@mui/material";
+import React, { useMemo } from "react";
+import { Box } from "@mui/material";
 import { useTranslation } from "next-i18next";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import AletheiaButton, { ButtonType } from "../../Button";
 import {
     ReviewTaskEvents,
@@ -26,16 +28,6 @@ const PRIMARY_ACTIONS: Partial<Record<ReviewTaskStates, ReviewTaskEvents>> = {
     [ReviewTaskStates.rejected]: ReviewTaskEvents.addRejectionComment,
 };
 
-function getButtonType(
-    event: ReviewTaskEvents,
-    currentState: string
-): ButtonType {
-    if (event === ReviewTaskEvents.goback) return ButtonType.gray;
-    const primaryEvent = PRIMARY_ACTIONS[currentState as ReviewTaskStates];
-    if (primaryEvent && event === primaryEvent) return ButtonType.blue;
-    return ButtonType.whiteBlue;
-}
-
 interface ActionToolbarProps {
     events: ReviewTaskEvents[];
     permissions: PermissionContext;
@@ -55,51 +47,127 @@ const ActionToolbar = ({
 }: ActionToolbarProps) => {
     const { t } = useTranslation();
 
-    const filteredEvents = events.filter(
-        (event) =>
-            event !== ReviewTaskEvents.draft &&
-            permissions.canSubmitActions.includes(event)
-    );
+    const primaryEvent = PRIMARY_ACTIONS[currentState as ReviewTaskStates];
+
+    // Separate events into groups for proper layout
+    const { goBackEvent, secondaryEvents, primaryActionEvent } = useMemo(() => {
+        const allowed = events.filter(
+            (event) =>
+                event !== ReviewTaskEvents.draft &&
+                permissions.canSubmitActions.includes(event)
+        );
+
+        const goBack = allowed.find((e) => e === ReviewTaskEvents.goback);
+        const primary = allowed.find((e) => e === primaryEvent);
+        const secondary = allowed.filter(
+            (e) => e !== ReviewTaskEvents.goback && e !== primary
+        );
+
+        return {
+            goBackEvent: goBack,
+            secondaryEvents: secondary,
+            primaryActionEvent: primary,
+        };
+    }, [events, permissions.canSubmitActions, primaryEvent]);
+
+    const showSaveDraft =
+        permissions.showSaveDraftButton &&
+        permissions.canSubmitActions.includes(ReviewTaskEvents.draft);
 
     return (
-        <Grid
-            container
-            style={{
-                padding: "32px 0 0",
-                justifyContent: "space-evenly",
-                gap: "10px",
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 20px",
+                position: "sticky",
+                bottom: 0,
+                backgroundColor: "inherit",
+                borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+                zIndex: 10,
+                gap: "12px",
             }}
         >
-            {permissions.showSaveDraftButton &&
-                permissions.canSubmitActions.includes(
-                    ReviewTaskEvents.draft
-                ) && (
+            {/* Left group: navigation actions */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {goBackEvent && (
+                    <AletheiaButton
+                        loading={isLoading[goBackEvent]}
+                        type={ButtonType.gray}
+                        htmlType="button"
+                        onClick={() => onButtonClick(goBackEvent)}
+                        event={goBackEvent}
+                        data-cy={`testClaimReview${goBackEvent}`}
+                        icon={<ArrowBackIcon style={{ fontSize: 16 }} />}
+                        style={{ textTransform: "none", fontWeight: 500 }}
+                    >
+                        {t(`reviewTask:${goBackEvent}`)}
+                    </AletheiaButton>
+                )}
+            </Box>
+
+            {/* Right group: save + secondary + primary action */}
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    flexWrap: "wrap",
+                    justifyContent: "flex-end",
+                }}
+            >
+                {showSaveDraft && (
                     <AletheiaButton
                         loading={isLoading[ReviewTaskEvents.draft]}
-                        type={ButtonType.whiteBlue}
+                        type={ButtonType.whiteBlack}
                         htmlType="button"
                         onClick={() => onButtonClick(ReviewTaskEvents.draft)}
                         event={ReviewTaskEvents.draft}
                         data-cy={`testClaimReview${ReviewTaskEvents.draft}`}
+                        icon={<SaveOutlinedIcon style={{ fontSize: 16 }} />}
+                        style={{ textTransform: "none", fontWeight: 500 }}
                     >
                         {t(`reviewTask:${ReviewTaskEvents.draft}`)}
                     </AletheiaButton>
                 )}
 
-            {filteredEvents.map((event) => (
-                <AletheiaButton
-                    loading={isLoading[event]}
-                    key={event}
-                    type={getButtonType(event, currentState)}
-                    htmlType={defineButtonHtmlType(event)}
-                    onClick={() => onButtonClick(event)}
-                    event={event}
-                    data-cy={`testClaimReview${event}`}
-                >
-                    {t(`reviewTask:${event}`)}
-                </AletheiaButton>
-            ))}
-        </Grid>
+                {secondaryEvents.map((event) => (
+                    <AletheiaButton
+                        loading={isLoading[event]}
+                        key={event}
+                        type={ButtonType.whiteBlack}
+                        htmlType={defineButtonHtmlType(event)}
+                        onClick={() => onButtonClick(event)}
+                        event={event}
+                        data-cy={`testClaimReview${event}`}
+                        style={{ textTransform: "none", fontWeight: 500 }}
+                    >
+                        {t(`reviewTask:${event}`)}
+                    </AletheiaButton>
+                ))}
+
+                {primaryActionEvent && (
+                    <AletheiaButton
+                        loading={isLoading[primaryActionEvent]}
+                        type={ButtonType.blue}
+                        htmlType={defineButtonHtmlType(primaryActionEvent)}
+                        onClick={() => onButtonClick(primaryActionEvent)}
+                        event={primaryActionEvent}
+                        data-cy={`testClaimReview${primaryActionEvent}`}
+                        style={{
+                            textTransform: "none",
+                            fontWeight: 600,
+                            minWidth: 140,
+                            height: 44,
+                            fontSize: "13px",
+                        }}
+                    >
+                        {t(`reviewTask:${primaryActionEvent}`)}
+                    </AletheiaButton>
+                )}
+            </Box>
+        </Box>
     );
 };
 

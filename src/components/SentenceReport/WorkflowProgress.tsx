@@ -57,6 +57,23 @@ const WORKFLOW_STAGES: Record<string, StageConfig[]> = {
             states: [ReviewTaskStates.published],
         },
     ],
+    [ReportModelEnum.Request]: [
+        {
+            labelKey: "stageAssign",
+            states: [ReviewTaskStates.unassigned],
+        },
+        {
+            labelKey: "stageAssigned",
+            states: [ReviewTaskStates.assignedRequest],
+        },
+        {
+            labelKey: "stagePublished",
+            states: [
+                ReviewTaskStates.published,
+                ReviewTaskStates.rejectedRequest,
+            ],
+        },
+    ],
 };
 
 interface WorkflowProgressProps {
@@ -143,7 +160,7 @@ const WorkflowProgress = ({
                                     whiteSpace: "nowrap",
                                 }}
                             >
-                                {t(`reviewTask:${stage.labelKey}`)}
+                                {t(stage.labelKey)}
                             </Typography>
                         </Box>
                         {/* Connecting line */}

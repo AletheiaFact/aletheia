@@ -45,9 +45,14 @@ const DynamicReviewTaskForm = ({
         formState: { errors },
         watch,
     } = useForm();
-    const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { machineService, events, form, setFormAndEvents, reviewTaskType } =
-        useContext(ReviewTaskMachineContext);
+    const {
+        reportModel,
+        machineService,
+        events,
+        form,
+        setFormAndEvents,
+        reviewTaskType,
+    } = useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(

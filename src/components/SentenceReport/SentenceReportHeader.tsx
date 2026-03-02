@@ -81,12 +81,18 @@ const SentenceReportHeader = ({
                 return "default";
             case ReviewTaskStates.assigned:
                 return "primary";
-            case ReviewTaskStates.submitted:
-                return "warning";
-            case ReviewTaskStates.crossChecking:
-                return "info";
             case ReviewTaskStates.reported:
                 return "secondary";
+            case ReviewTaskStates.selectReviewer:
+            case ReviewTaskStates.selectCrossChecker:
+                return "secondary";
+            case ReviewTaskStates.crossChecking:
+            case ReviewTaskStates.addCommentCrossChecking:
+                return "info";
+            case ReviewTaskStates.submitted:
+                return "warning";
+            case ReviewTaskStates.rejected:
+                return "error";
             case ReviewTaskStates.published:
                 return "success";
             default:
@@ -104,8 +110,6 @@ const SentenceReportHeader = ({
                 alignItems: "center",
                 gap: "12px",
                 flexWrap: "wrap",
-                backgroundColor: "rgba(245, 245, 245, 0.5)",
-                borderRadius: "8px",
             }}
         >
             {/* State chip */}
