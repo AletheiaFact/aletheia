@@ -18,39 +18,38 @@ const FactCheckingInfo = () => {
                 borderRadius: "8px",
             }}
         >
-            <Box 
-                style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: "12px" 
+            <Box
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
                 }}
             >
-                <InfoIcon 
-                    style={{ 
+                <InfoIcon
+                    style={{
                         color: colors.blue,
-                        fontSize: "24px" 
-                    }} 
+                        fontSize: "24px",
+                    }}
                 />
                 <div>
-                    <Typography 
-                        variant="h6" 
-                        style={{ 
+                    <Typography
+                        variant="h6"
+                        style={{
                             color: colors.blue,
                             fontWeight: 600,
-                            marginBottom: "4px"
+                            marginBottom: "4px",
                         }}
                     >
-                        {t("claimReview:factCheckingInProgress") || "Fact-checking in progress"}
+                        {t("claimReview:factCheckingInProgress")}
                     </Typography>
-                    <Typography 
-                        variant="body2" 
-                        style={{ 
+                    <Typography
+                        variant="body2"
+                        style={{
                             color: colors.blackSecondary,
-                            lineHeight: 1.5 
+                            lineHeight: 1.5,
                         }}
                     >
-                        {t("claimReview:factCheckingInfoMessage") || 
-                         "This content is currently being fact-checked by our team. The report will be available once the review process is complete."}
+                        {t("claimReview:factCheckingInfoMessage")}
                     </Typography>
                 </div>
             </Box>

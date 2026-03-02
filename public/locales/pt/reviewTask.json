@@ -78,8 +78,14 @@
     "recaptchaModalCancel": "Cancelar",
 
     "unassigned": "Não atribuído",
+    "cross-checking": "Cross-checking",
+    "selectReviewer": "Selecionando revisor",
+    "selectCrossChecker": "Selecionando cross-checker",
+    "addCommentCrossChecking": "Adicionando comentário",
+    "rejected": "Rejeitado",
 
     "stageAssign": "Atribuição",
+    "stageAssigned": "Atribuído",
     "stageDraft": "Rascunho",
     "stageReview": "Revisão",
     "stageApproval": "Aprovação",
