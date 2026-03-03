@@ -5,7 +5,7 @@ import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import type { ReportDocument } from "../../report/schemas/report.schema";
 import { ReportModelEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
-import { User } from "users/schemas/user.schema";
+import { User } from "../../users/schemas/user.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 

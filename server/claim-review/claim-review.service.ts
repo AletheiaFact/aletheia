@@ -45,11 +45,9 @@ export class ClaimReviewService {
         pageSize,
         order,
         query,
-        latest = false
+        latest = false,
     }: IlistAll): Promise<ClaimReviewList> {
-        const sort = latest
-            ? { date: -1 }
-            : { _id: order === "asc" ? 1 : -1 };
+        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
 
         const match = {
             ...query,
@@ -64,9 +62,9 @@ export class ClaimReviewService {
                     let: { claimId: "$target" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                        { $match: { isDeleted: false } }
+                        { $match: { isDeleted: false } },
                     ],
-                    as: "target"
+                    as: "target",
                 },
             },
             { $unwind: "$target" },
@@ -111,7 +109,10 @@ export class ClaimReviewService {
             });
         }
 
-        const countResult = await this.ClaimReviewModel.aggregate([...pipeline, { $count: "totalCount" }]);
+        const countResult = await this.ClaimReviewModel.aggregate([
+            ...pipeline,
+            { $count: "totalCount" },
+        ]);
         const total = countResult[0]?.totalCount || 0;
 
         pipeline.push(
@@ -121,10 +122,13 @@ export class ClaimReviewService {
         );
 
         const reviews = await this.ClaimReviewModel.aggregate(pipeline);
-        const data = await Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+        const data = await Promise.all(
+            reviews.map(async (review: ClaimReviewAggregated) =>
+                this.postProcess(review)
+            )
+        );
 
         return { data, total };
-
     }
 
     async count(query: IListAllQuery = {}): Promise<number> {
@@ -214,7 +218,7 @@ export class ClaimReviewService {
 
     async findAllReviewsForCascadeDelete(claimId: string) {
         const query = {
-            target: Types.ObjectId(claimId),
+            target: new Types.ObjectId(claimId),
             nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
         };
 
