@@ -2,6 +2,7 @@ import { Grid } from "@mui/material"
 import React from "react";
 import ClaimList from "./ClaimList";
 import { useTranslation } from "react-i18next";
+import Paragraph from "../Paragraph";
 // import SourceList from "../Source/SourceList";
 
 const ClaimListView = () => {
@@ -13,6 +14,7 @@ const ClaimListView = () => {
                     <h1 style={{ fontSize: 32 }}>
                         {t("claim:claimListTitle")}
                     </h1>
+                    <Paragraph>{t("claim:claimListDescription")}</Paragraph>
                 </Grid>
 
                 {/* The sourcelist has been temporarily removed. */}
