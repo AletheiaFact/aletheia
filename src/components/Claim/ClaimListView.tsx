@@ -9,19 +9,19 @@ const ClaimListView = () => {
     return (
         <>
             <Grid container style={{ marginTop: "64px", justifyContent: "center" }} >
-                <Grid item sm={7} md={7} lg={10.5}>
+                <Grid item sm={7} md={7} lg={7}>
                     <h1 style={{ fontSize: 32 }}>
                         {t("claim:claimListTitle")}
                     </h1>
                 </Grid>
 
-                // The sourcelist has been temporarily removed.
+                {/* The sourcelist has been temporarily removed. */}
                 {/* <Grid item sm={7} md={7} lg={6}>
                     <SourceList />
                 </Grid> */}
 
-                <Grid item style={{ margin: "0 20px" }} sm={7} md={7} lg={10.5}>
-                    <ClaimList columns={4} personality={{ _id: null }} />
+                <Grid item style={{ margin: "0 20px" }} sm={7} md={7} lg={7}>
+                    <ClaimList columns={6} personality={{ _id: null }} />
                 </Grid>
             </Grid>
         </>
