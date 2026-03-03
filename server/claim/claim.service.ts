@@ -7,7 +7,7 @@ import {
     InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Model, Types } from "mongoose";
+import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
@@ -222,7 +222,7 @@ export class ClaimService {
         claimId,
         isHidden,
         description
-    ): Promise<ClaimDocument> {
+    ): Promise<UpdateWriteOpResult> {
         try {
             const claim = await this.ClaimModel.findById(claimId);
 
@@ -231,7 +231,7 @@ export class ClaimService {
             }
 
             const newClaim = {
-                ...claim,
+                ...claim.toObject(),
                 isHidden,
             };
 
@@ -239,7 +239,7 @@ export class ClaimService {
             const after = isHidden ? { isHidden, description } : { isHidden };
 
             const history = this.historyService.getHistoryParams(
-                newClaim._id,
+                newClaim._id as string,
                 TargetModel.Claim,
                 this.req.user?._id,
                 isHidden ? HistoryType.Hide : HistoryType.Unhide,
@@ -248,7 +248,7 @@ export class ClaimService {
             );
             this.historyService.createHistory(history);
 
-            return await this.ClaimModel.findByIdAndUpdate(
+            return await this.ClaimModel.updateOne(
                 { _id: claim._id },
                 newClaim
             );

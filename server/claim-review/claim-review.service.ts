@@ -1,5 +1,10 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
-import { LeanDocument, Model, Types } from "mongoose";
+import mongoose, {
+    LeanDocument,
+    Model,
+    Types,
+    UpdateWriteOpResult,
+} from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -335,10 +340,15 @@ export class ClaimReviewService {
     async delete(claimReviewId) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId);
+
+        if (!claimReview) {
+            return null;
+        }
+
         const history = this.historyService.getHistoryParams(
             claimReview._id,
             TargetModel.ClaimReview,
-            claimReview.usersId,
+            claimReview.usersId as mongoose.Types.ObjectId[] as PerformedBy,
             HistoryType.Delete,
             null,
             claimReview
@@ -351,10 +361,10 @@ export class ClaimReviewService {
         _id,
         hide,
         description
-    ): Promise<ClaimReviewDocument> {
+    ): Promise<UpdateWriteOpResult> {
         const review = await this.getById(_id);
         const newReview = {
-            ...review,
+            ...review.toObject(),
             ...{
                 report: review?.report?._id,
                 isHidden: hide,
@@ -368,7 +378,7 @@ export class ClaimReviewService {
             : { isHidden: hide };
 
         const history = this.historyService.getHistoryParams(
-            newReview._id,
+            newReview._id as string,
             TargetModel.ClaimReview,
             this.req.user?._id,
             hide ? HistoryType.Hide : HistoryType.Unhide,
@@ -377,10 +387,7 @@ export class ClaimReviewService {
         );
         this.historyService.createHistory(history);
 
-        return this.ClaimReviewModel.findByIdAndUpdate(
-            { _id: review._id },
-            newReview
-        );
+        return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
 
     private async postProcess(review) {

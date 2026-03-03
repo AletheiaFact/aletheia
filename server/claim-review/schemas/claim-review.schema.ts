@@ -5,6 +5,7 @@ import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import type { ReportDocument } from "../../report/schemas/report.schema";
 import { ReportModelEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { User } from "users/schemas/user.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -33,7 +34,7 @@ export class ClaimReview {
         required: true,
         ref: "User",
     })
-    usersId: mongoose.Types.ObjectId[];
+    usersId: User[] | mongoose.Types.ObjectId[];
 
     @Prop({ required: true })
     data_hash: string;
@@ -85,6 +86,12 @@ ClaimReviewSchemaRaw.virtual("sources", {
     ref: "Source",
     localField: "_id",
     foreignField: "targetId",
+});
+
+ClaimReviewSchemaRaw.virtual("claims", {
+    ref: "Claim",
+    localField: "target",
+    foreignField: "_id",
 });
 
 ClaimReviewSchemaRaw.plugin(softDeletePlugin);

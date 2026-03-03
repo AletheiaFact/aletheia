@@ -45,7 +45,7 @@ import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
-import { Types } from "mongoose";
+import { Types, UpdateWriteOpResult } from "mongoose";
 import { GroupService } from "../group/group.service";
 import { GetByDataHashDto } from "../claim/dto/get-by-datahash.dto";
 
@@ -278,7 +278,10 @@ export class ClaimController {
     @AdminOnly()
     @ApiTags("claim")
     @Put("api/claim/hidden/:id")
-    async updateHiddenStatus(@Param("id") claimId, @Body() body) {
+    async updateHiddenStatus(
+        @Param("id") claimId,
+        @Body() body
+    ): Promise<UpdateWriteOpResult> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
