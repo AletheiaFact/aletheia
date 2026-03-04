@@ -15,14 +15,14 @@ const FooterBox = styled(Box) <FooterBoxProps>`
             color-mix(in srgb, ${colors.lightSecondary} 2%, transparent) 34%,
             transparent 55%
         ),
-        ${colors.primary};
+        ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)};
     color: ${colors.white};
     padding: ${({ $isMobile }) => ($isMobile ? "36px 20px 18px" : "64px 48px 22px")};
     align-self: flex-end;
     border-top: 1px solid color-mix(in srgb, ${colors.white} 8%, transparent);
 
     .footer-inner-container {
-        max-width: ${({ $mediumDevice }) => ($mediumDevice ? "100%" : "75%")};;
+        max-width: ${({ $mediumDevice }) => ($mediumDevice ? "100%" : "75%")};
         margin: 0 auto;
     }
 
@@ -33,7 +33,7 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         background: linear-gradient(
             90deg,
             color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 0%,
-            color-mix(in srgb, ${colors.primary} 2%, transparent) 56%,
+            color-mix(in srgb, ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)} 2%, transparent) 56%,
             color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 100%
         );
     }
@@ -66,8 +66,8 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         padding: 10px 16px;
         font-size: 14px;
         font-weight: 600;
-        color: ${colors.primary};
-        background-color: ${colors.lightSecondary};
+        color: ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)};
+        background-color: ${({ $namespacePrefix }) => ($namespacePrefix ? colors.lightSecondary : colors.white)};
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -184,12 +184,11 @@ const FooterBox = styled(Box) <FooterBoxProps>`
     }
 
     .footer-legal-container {
-        padding-top: ${({ $isMobile }) => ($isMobile ? "16  px" : "20px")};
+        padding-top: ${({ $isMobile }) => ($isMobile ? "16px" : "20px")};
         color: color-mix(in srgb, ${colors.white} 58%, transparent);
         flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
         gap: ${({ $isMobile }) => ($isMobile ? "9.6px" : "16px")};
         border-top: 1px solid color-mix(in srgb, ${colors.white} 10%, transparent);
-
     }
 
     .footer-legal-text {
