@@ -12,30 +12,90 @@ const FooterMainContent = () => {
 
 
     const platformLinks: FooterLink[] = [
-        { label: t("footer:sections.platform.links.access"), href: `${namespacePrefix}/verification-request` },
-        { label: t("footer:sections.platform.links.manual"), href: "/supportive-materials" },
-        { label: t("footer:sections.platform.links.docs"), href: "https://docs.aletheiafact.org", external: true },
-        { label: t("footer:sections.platform.links.kit"), href: "/supportive-materials" },
+        {
+            label: t("footer:sections.platform.links.access"),
+            href: `${namespacePrefix}/verification-request`,
+            dataCy: "testFooterLinkPlatformAccess"
+        },
+        {
+            label: t("footer:sections.platform.links.manual"),
+            href: "/supportive-materials",
+            dataCy: "testFooterLinkPlatformManual"
+        },
+        {
+            label: t("footer:sections.platform.links.docs"),
+            href: "https://docs.aletheiafact.org", external: true,
+            dataCy: "testFooterLinkPlatformDocs"
+        },
+        {
+            label: t("footer:sections.platform.links.kit"),
+            href: "/supportive-materials",
+            dataCy: "testFooterLinkPlatformKit"
+        },
     ];
 
     const institutionalLinks: FooterLink[] = [
-        { label: t("footer:sections.institutional.links.about"), href: "/about" },
-        { label: t("footer:sections.institutional.links.partners"), href: "/about#partners-section" },
-        { label: t("footer:sections.institutional.links.awards"), href: "/about#awards-section" },
+        {
+            label: t("footer:sections.institutional.links.about"),
+            href: "/about",
+            dataCy: "testFooterLinkInstitutionalAbout"
+        },
+        {
+            label: t("footer:sections.institutional.links.partners"),
+            href: "/about#partners-section",
+            dataCy: "testFooterLinkInstitutionalPartners"
+        },
+        {
+            label: t("footer:sections.institutional.links.awards"),
+            href: "/about#awards-section",
+            dataCy: "testFooterLinkInstitutionalAwards"
+        },
     ];
 
     const communityLinks: FooterLink[] = [
-        { label: t("footer:sections.community.links.collaboration"), href: t("footer:sendEmailButton") },
-        { label: t("footer:sections.community.links.training"), href: t("footer:sendEmailButton") },
-        { label: t("footer:sections.community.links.universities"), href: "/about#partners-section" },
-        { label: t("footer:sections.community.links.volunteering"), href: t("footer:sendEmailButton") },
+        {
+            label: t("footer:sections.community.links.collaboration"),
+            href: t("footer:sections.community.links.sendEmailButton"),
+            dataCy: "testFooterLinkCommunityCollaboration",
+        },
+        {
+            label: t("footer:sections.community.links.training"),
+            href: t("footer:sections.community.links.sendEmailButton"),
+            dataCy: "testFooterLinkCommunityTraining",
+        },
+        {
+            label: t("footer:sections.community.links.universities"),
+            href: "/about#partners-section",
+            dataCy: "testFooterLinkCommunityUniversities",
+        },
+        {
+            label: t("footer:sections.community.links.volunteering"),
+            href: t("footer:sections.community.links.sendEmailButton"),
+            dataCy: "testFooterLinkCommunityVolunteering",
+        },
     ];
 
     const socialLinks: FooterSocialLink[] = [
-        { href: t("footer:instagram"), Icon: Instagram, label: "Instagram" },
-        { href: t("footer:facebook"), Icon: FacebookOutlined, label: "Facebook" },
-        { href: t("footer:linkedin"), Icon: LinkedIn, label: "LinkedIn" },
-        { href: "https://github.com/AletheiaFact/aletheia", Icon: GitHub, label: "GitHub" },
+        {
+            href: t("footer:instagram"),
+            Icon: Instagram, label: "Instagram",
+            dataCy: "testFooterSocialInstagram"
+        },
+        {
+            href: t("footer:facebook"),
+            Icon: FacebookOutlined, label: "Facebook",
+            dataCy: "testFooterSocialFacebook"
+        },
+        {
+            href: t("footer:linkedin"),
+            Icon: LinkedIn, label: "LinkedIn",
+            dataCy: "testFooterSocialLinkedIn"
+        },
+        {
+            href: "https://github.com/AletheiaFact/aletheia",
+            Icon: GitHub, label: "GitHub",
+            dataCy: "testFooterSocialGithub"
+        },
     ];
 
     return (

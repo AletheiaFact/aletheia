@@ -17,6 +17,7 @@ const FooterCtaActions = () => {
                 href="/about"
                 underline="none"
                 className="footer-primary-cta-link"
+                data-cy="testFooterCtaPrimaryLink"
             >
                 {t("footer:cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
@@ -26,6 +27,7 @@ const FooterCtaActions = () => {
                 target="_blank"
                 rel="noreferrer"
                 className="footer-secondary-cta-link"
+                data-cy="testFooterCtaSecondaryLink"
             >
                 {t("footer:cta.secondaryButton")}
             </Link>
