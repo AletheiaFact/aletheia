@@ -38,7 +38,7 @@ const MESSAGES = {
     noTextMessageAskForEmail:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPara que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
     thanks: (trackingLink: string) =>
-        `Obrigado por colaborar com o combate à desinformação!\n\nVamos verificar sua denúncia e, caso ela seja selecionada pela nossa equipe de triagem, o resultado será enviado por e-mail.\n\nVocê pode acompanhar o status da sua denúncia por meio do link de acompanhamento abaixo:\n${trackingLink}\n\nAcompanhe também as publicações da Aletheia nas redes sociais e na nossa plataforma, lá divulgamos relatórios e investigações verificadas 😉.\n\nSe deseja relatar outra denúncia, responda SIM para continuar. Se preferir falar com uma pessoa real, responda CONVERSA.`,
+        `Obrigado por colaborar com o combate à desinformação!\n\nVamos verificar sua denúncia e, caso ela seja selecionada pela nossa equipe de triagem, o resultado será enviado para o e-mail fornecido ou você pode acompanhar status da sua denúncia a qualquer momento por meio do link de acompanhamento abaixo:\n${trackingLink}\n\nAcompanhe também as publicações da Aletheia nas redes sociais e na nossa plataforma, lá divulgamos relatórios e investigações verificadas 😉.\n\nSe deseja relatar outra denúncia, responda SIM para continuar. Se preferir falar com uma pessoa real, responda CONVERSA.`,
 };
 
 export const sendGreeting = assign<ChatBotContext>({
