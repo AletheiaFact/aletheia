@@ -27,11 +27,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-        personalities: string;
-        slug: string;
-        isHidden?: boolean;
-        nameSpace?: string;
-    }
+          personalities: string;
+          slug: string;
+          isHidden?: boolean;
+          nameSpace?: string;
+      }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -67,7 +67,7 @@ export class ClaimService {
                 .sort({ _id: order })
                 .lean(),
 
-            this.ClaimModel.countDocuments(query)
+            this.ClaimModel.countDocuments(query),
         ]);
 
         const processedClaim = await Promise.all(
@@ -81,8 +81,8 @@ export class ClaimService {
 
         return {
             data: processedClaim,
-            total
-        }
+            total,
+        };
     }
 
     async count(query: any = {}) {
@@ -186,14 +186,20 @@ export class ClaimService {
      * Executes a soft delete on a specific claim record.
      * * @param {string} claimId - The ID of the claim to mark as deleted.
      * @returns {Promise<Claim>} The claim document with isDeleted set to true.
-    */
+     */
     async delete(claimId: string) {
         const user = this.req.user?._id;
-        this.logger.log(`Initiating soft delete for claimId: ${claimId} by user: ${user || 'system'}`);
+        this.logger.log(
+            `Initiating soft delete for claimId: ${claimId} by user: ${
+                user || "system"
+            }`
+        );
         try {
             const previousClaim = await this.getById(claimId);
             if (!previousClaim) {
-                this.logger.warn(`Attempted to soft delete non-existent claimId: ${claimId}`);
+                this.logger.warn(
+                    `Attempted to soft delete non-existent claimId: ${claimId}`
+                );
                 return null;
             }
 
@@ -208,12 +214,15 @@ export class ClaimService {
             await this.historyService.createHistory(history);
 
             const result = await this.ClaimModel.softDelete({ _id: claimId });
-            this.logger.log(`Claim ${claimId} successfully marked as isDeleted`);
+            this.logger.log(
+                `Claim ${claimId} successfully marked as isDeleted`
+            );
 
             return result;
-
         } catch (error) {
-            this.logger.error(`Error during soft delete for claimId: ${claimId}. Details: ${error.message}`);
+            this.logger.error(
+                `Error during soft delete for claimId: ${claimId}. Details: ${error.message}`
+            );
             throw error;
         }
     }
@@ -230,16 +239,11 @@ export class ClaimService {
                 throw new Error("Claim not found");
             }
 
-            const newClaim = {
-                ...claim.toObject(),
-                isHidden,
-            };
-
             const before = { isHidden: !isHidden };
             const after = isHidden ? { isHidden, description } : { isHidden };
 
             const history = this.historyService.getHistoryParams(
-                newClaim._id as string,
+                claim._id,
                 TargetModel.Claim,
                 this.req.user?._id,
                 isHidden ? HistoryType.Hide : HistoryType.Unhide,
@@ -250,7 +254,7 @@ export class ClaimService {
 
             return await this.ClaimModel.updateOne(
                 { _id: claim._id },
-                newClaim
+                { $set: { isHidden } }
             );
         } catch (e) {
             this.logger.error("Failed to update claim:", e);
@@ -279,7 +283,6 @@ export class ClaimService {
         return this._getClaim(queryOptions, revisionId, true, population);
     }
 
-
     /**
      * Retrieves the claim IDs associated with a specific personality based on the user's role.
      * This method searches for claims matching the given personality ID and namespace,
@@ -288,21 +291,27 @@ export class ClaimService {
      * @param {NameSpaceEnum} [nameSpace=NameSpaceEnum.Main] - The namespace to filter the claims.
      * @returns {Promise<Array<{ _id: any }>>} A promise that resolves to an array of claim documents containing only their IDs.
 s    */
-    async getByPersonalityId(personalityId: string, nameSpace = NameSpaceEnum.Main) {
-        this.logger.debug(`Fetching claim IDs for personality: ${personalityId}`);
+    async getByPersonalityId(
+        personalityId: string,
+        nameSpace = NameSpaceEnum.Main
+    ) {
+        this.logger.debug(
+            `Fetching claim IDs for personality: ${personalityId}`
+        );
         try {
             const queryOptions = this.util.getParamsBasedOnUserRole(
                 { personalities: personalityId, nameSpace },
                 this.req
             );
 
-            const result = await this.ClaimModel
-                .find(queryOptions)
+            const result = await this.ClaimModel.find(queryOptions)
                 .select("_id")
                 .lean()
                 .exec();
 
-            this.logger.debug(`Found ${result.length} claims for personality ${personalityId}`);
+            this.logger.debug(
+                `Found ${result.length} claims for personality ${personalityId}`
+            );
             return result;
         } catch (error) {
             this.logger.error(
@@ -415,9 +424,10 @@ s    */
             latestRevision: undefined,
         };
         if (claim) {
-            const reviews = await this.claimReviewService.getReviewClassificationCountsByClaimId(
-                claim._id
-            );
+            const reviews =
+                await this.claimReviewService.getReviewClassificationCountsByClaimId(
+                    claim._id
+                );
             const reviewTasks =
                 await this.reviewTaskService.getReviewTasksByClaimId(claim._id);
 
