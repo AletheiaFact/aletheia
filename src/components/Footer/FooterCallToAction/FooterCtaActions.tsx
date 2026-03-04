@@ -4,7 +4,8 @@ import React from "react";
 import { useFooterData } from "../hooks/useFooterData";
 
 const FooterCtaActions = () => {
-    const { t, namespacePrefix } = useFooterData();
+    const { t } = useFooterData();
+    const callToActionRedirect = t("footer:cta.callToActionRedirect")
 
     return (
         <Stack
@@ -20,8 +21,10 @@ const FooterCtaActions = () => {
                 {t("footer:cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
             <Link
-                href={`${namespacePrefix}/verification-request`}
+                href={callToActionRedirect}
                 underline="none"
+                target="_blank"
+                rel="noreferrer"
                 className="footer-secondary-cta-link"
             >
                 {t("footer:cta.secondaryButton")}

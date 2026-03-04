@@ -2,6 +2,7 @@ import { ArrowOutwardRounded, Business, EmailOutlined, LocationOnOutlined } from
 import { Box, Grid, Link, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useFooterData } from "../hooks/useFooterData";
+import localConfig from "../../../../config/localConfig";
 
 type FooterContactColumnProps = {
     statuteUrl: string;
@@ -37,15 +38,17 @@ const FooterContactColumn = ({ statuteUrl }: FooterContactColumnProps) => {
                         {t("footer:legalRegistration")}
                     </Typography>
                 </Stack>
-                <Link
-                    href={statuteUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    underline="none"
-                    className="footer-statute-link"
-                >
-                    {t("footer:sections.contact.statuteCta")} <ArrowOutwardRounded className="footer-statute-arrow" />
-                </Link>
+                {localConfig.footer.showStatuteButton.show ?
+                    <Link
+                        href={statuteUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        underline="none"
+                        className="footer-statute-link"
+                    >
+                        {t("footer:sections.contact.statuteCta")} <ArrowOutwardRounded className="footer-statute-arrow" />
+                    </Link>
+                    : null}
             </Stack>
         </Grid>
     );

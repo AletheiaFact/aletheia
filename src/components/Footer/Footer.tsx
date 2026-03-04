@@ -5,6 +5,7 @@ import FooterMainContent from "./FooterMainContent/FooterMainContent";
 import FooterLegal from "./FooterLegal";
 import FooterBox from "./Footer.style";
 import { useFooterData } from "./hooks/useFooterData";
+import localConfig from "../../../config/localConfig";
 
 const Footer = () => {
     const { mediumDevice, isMobile, isNameSpaceColor } = useFooterData();
@@ -17,7 +18,7 @@ const Footer = () => {
             $mediumDevice={mediumDevice}
         >
             <Box className="footer-inner-container">
-                <FooterCta />
+                {localConfig.footer.showCallToAction ? <FooterCta /> : null}
 
                 <FooterMainContent />
 
