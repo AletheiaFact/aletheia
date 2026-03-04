@@ -4,7 +4,11 @@ const localConfig: LocalConfig = {
     theme: {},
     Logo: false,
     footer: {
-        socialMedias: [],
+        showCallToAction: true,
+        socialMedias: {
+            newOnes: false,
+            urls: []
+        },
         showStatuteButton: {
             show: true,
         },

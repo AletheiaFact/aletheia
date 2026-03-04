@@ -20,22 +20,21 @@ const FooterMainContent = () => {
 
     const institutionalLinks: FooterLink[] = [
         { label: t("footer:sections.institutional.links.about"), href: "/about" },
-        { label: t("footer:sections.institutional.links.statute"), href: statuteUrl, external: true },
         { label: t("footer:sections.institutional.links.partners"), href: "/about#partners-section" },
         { label: t("footer:sections.institutional.links.awards"), href: "/about#awards-section" },
     ];
 
     const communityLinks: FooterLink[] = [
-        { label: t("footer:sections.community.links.collaboration"), href: "mailto:contact@aletheiafact.org" },
-        { label: t("footer:sections.community.links.training"), href: "mailto:contact@aletheiafact.org" },
+        { label: t("footer:sections.community.links.collaboration"), href: t("footer:sendEmailButton") },
+        { label: t("footer:sections.community.links.training"), href: t("footer:sendEmailButton") },
         { label: t("footer:sections.community.links.universities"), href: "/about#partners-section" },
-        { label: t("footer:sections.community.links.volunteering"), href: "mailto:contact@aletheiafact.org" },
+        { label: t("footer:sections.community.links.volunteering"), href: t("footer:sendEmailButton") },
     ];
 
     const socialLinks: FooterSocialLink[] = [
-        { href: "https://www.instagram.com/aletheiafact", Icon: Instagram, label: "Instagram" },
-        { href: "https://www.facebook.com/AletheiaFactorg-107521791638412", Icon: FacebookOutlined, label: "Facebook" },
-        { href: "https://www.linkedin.com/company/aletheiafact-org", Icon: LinkedIn, label: "LinkedIn" },
+        { href: t("footer:instagram"), Icon: Instagram, label: "Instagram" },
+        { href: t("footer:facebook"), Icon: FacebookOutlined, label: "Facebook" },
+        { href: t("footer:linkedin"), Icon: LinkedIn, label: "LinkedIn" },
         { href: "https://github.com/AletheiaFact/aletheia", Icon: GitHub, label: "GitHub" },
     ];
 
