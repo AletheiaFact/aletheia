@@ -63,7 +63,8 @@ const AletheiaMenu = () => {
                 {t("menu:claimItem")}
             </ListItemButton>
 
-            <ListItemButton
+            {/*Temporarily removing source redirect from the hamburger menu.*/}
+            {/* <ListItemButton
                 onClick={() => handleClick({
                     key:
                         nameSpace !== NameSpaceEnum.Main
@@ -73,7 +74,7 @@ const AletheiaMenu = () => {
                 data-cy={"testSourcetItem"}
             >
                 {t("menu:sourcesItem")}
-            </ListItemButton>
+            </ListItemButton> */}
 
             <ListItemButton
                 onClick={() => handleClick({
