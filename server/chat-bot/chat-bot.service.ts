@@ -9,6 +9,7 @@ import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { M2M } from "../entities/m2m.entity";
+import * as crypto from "crypto";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -49,12 +50,11 @@ export class ChatbotService {
         private chatBotStateService: ChatBotStateService
     ) {}
 
-    private async getOrCreateChatBotMachine(from: string, channel: string) {
-        const id = `${channel}-${from}`;
-        let chatbotState = await this.chatBotStateService.getById(id);
+    private async getOrCreateChatBotMachine(data_hash: string) {
+        let chatbotState = await this.chatBotStateService.getByDataHash(data_hash);
 
         if (!chatbotState) {
-            chatbotState = await this.createNewChatBotState(id);
+            chatbotState = await this.createNewChatBotState(data_hash);
         } else {
             chatbotState = this.rehydrateChatBotState(chatbotState);
         }
@@ -62,7 +62,7 @@ export class ChatbotService {
         return chatbotState;
     }
 
-    private async createNewChatBotState(id: string) {
+    private async createNewChatBotState(data_hash: string) {
         const newMachine = createChatBotMachine(
             this.verificationRequestStateMachineService
         );
@@ -72,7 +72,7 @@ export class ChatbotService {
                 value: snapshot.value,
                 context: snapshot.context as ChatBotContext,
             },
-            id
+            data_hash
         );
     }
 
@@ -104,12 +104,14 @@ export class ChatbotService {
         const { api_url, api_token } = this.configService.get("zenvia");
         const { from, to, channel, contents } = message;
 
+        const data_hash = crypto
+            .createHash("sha256")
+            .update(`${channel}-${from}`)
+            .digest("hex");
+
         const channel_api_url = `${api_url}/${channel}/messages`;
 
-        const chatbotState = await this.getOrCreateChatBotMachine(
-            from,
-            channel
-        );
+        const chatbotState = await this.getOrCreateChatBotMachine(data_hash);
         const chatBotMachineService = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
