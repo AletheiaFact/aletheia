@@ -192,9 +192,8 @@ describe("ParserService", () => {
                 },
             });
 
-            expect(Object.keys(parseOutput)).toEqual(
-                expect.arrayContaining(["content", "type"])
-            );
+            expect(parseOutput).toHaveProperty("content");
+            expect(parseOutput).toHaveProperty("type");
             expect(parseOutput.type).toEqual("speech");
         });
 
