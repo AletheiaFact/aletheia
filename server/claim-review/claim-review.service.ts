@@ -345,10 +345,6 @@ export class ClaimReviewService {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId);
 
-        if (!claimReview) {
-            return null;
-        }
-
         const history = this.historyService.getHistoryParams(
             claimReview._id,
             TargetModel.ClaimReview,
