@@ -1,11 +1,50 @@
 {
-    "copyright": "AletheiaFact.org ©{{date}}",
-    "creativeCommons": "Todo conteúdo dessa plataforma é licenciado através da licença ",
-    "socialMedia": "Siga nossas redes sociais",
-    "contactEmail": "contato@aletheiafact.org",
-    "platformInfoTittle": "Movimento Aletheia Fact",
-    "adressStreet": "Av Maria Ranieri, Nº 7-50",
-    "adressZipcode":"17.055-175 - Parque Viaduto - Bauru/SP",
-    "legalRegistration":"46.428.905/0001-68",
-    "statuteUrlButton": "https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
+  "copyright": "AletheiaFact.org ©{{date}}",
+  "creativeCommonsLabel": "CC BY-SA 4.0 Internacional",
+  "contactEmail": "contato@aletheiafact.org",
+  "adressStreet": "Av Maria Ranieri, N 7-50, 17.055-175 - Parque Viaduto - Bauru/SP",
+  "legalRegistration": "CNPJ: 46.428.905/0001-68",
+  "brand": "AletheiaFact.org",
+  "description": "Organização brasileira sem fins lucrativos dedicada a combater a desinformação e promover a alfabetização midiática por meio de ferramentas colaborativas de código aberto.",
+  "openSource": "100% Código Aberto",
+  "award": "Finalista WSIS 2025 (ONU)",
+  "cta": {
+    "title": "A Aletheia agora tem um fórum!",
+    "description": "Participe da nossa comunidade e compartilhe suas dúvidas, descobertas e experiências com outros usuários.",
+    "primaryButton": "Conheça Nossa Missão",
+    "secondaryButton": "Participe do nosso fórum"
+  },
+  "sections": {
+    "platform": {
+      "title": "PLATAFORMA",
+      "links": {
+        "access": "Acessar Plataforma",
+        "manual": "Manual de Checagem",
+        "docs": "Documentação Técnica",
+        "kit": "Kit Educacional"
+      }
+    },
+    "institutional": {
+      "title": "INSTITUCIONAL",
+      "links": {
+        "about": "Sobre Nós",
+        "statute": "Nosso Estatuto",
+        "partners": "Parceiros",
+        "awards": "Prêmios e Reconhecimento"
+      }
+    },
+    "community": {
+      "title": "COMUNIDADE",
+      "links": {
+        "collaboration": "Propor Colaboração",
+        "training": "Treinamento",
+        "universities": "Universidades Parceiras",
+        "volunteering": "Voluntariado"
+      }
+    },
+    "contact": {
+      "title": "CONTATO",
+      "statuteCta": "Acesse Nosso Estatuto"
+    }
+  }
 }

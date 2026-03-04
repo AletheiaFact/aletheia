@@ -17,7 +17,7 @@ export default function AwardsSection() {
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ py: { xs: 8, md: 12 } }}>
+    <Box id="awards-section" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
           <Chip label={t("about:awardsChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
@@ -51,8 +51,8 @@ export default function AwardsSection() {
             {t("about:wsisDescription")}
           </Typography>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               endIcon={<ArrowForward />}
               href="https://www.itu.int/net4/wsis/forum/2025/"
               component="a"
@@ -62,7 +62,7 @@ export default function AwardsSection() {
             >
               {t("about:learnAboutWSIS")}
             </Button>
-            <Button 
+            <Button
               variant="outlined"
               href="https://sustainabledevelopment.un.org/index.php?page=view&type=30022&nr=102&menu=3170"
               component="a"
