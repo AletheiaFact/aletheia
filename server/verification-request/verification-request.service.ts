@@ -136,6 +136,7 @@ export class VerificationRequestService {
             content: string;
             impactArea?: { label: string; value: string } | string;
             source?: Array<{ href: string }>;
+            data_hash?: string
         },
         user?: any
     ): Promise<VerificationRequestDocument> {
@@ -144,7 +145,7 @@ export class VerificationRequestService {
 
             const vr = await this.VerificationRequestModel.create({
                 ...data,
-                data_hash: md5(data.content),
+                data_hash: data.data_hash || md5(data.content),
                 embedding: null,
                 source: null,
                 impactArea: null,
