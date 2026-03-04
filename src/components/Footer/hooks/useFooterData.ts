@@ -15,7 +15,7 @@ export const useFooterData = () => {
         ? `/${nameSpace}`
         : "";
 
-    const statuteUrl = t("footer:sections.institutional.statuteUrl");
+    const statuteUrl = t("footer:sections.institutional.links.statuteUrl");
 
     return {
         mediumDevice,

@@ -37,7 +37,7 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
                                 className="footer-social-link"
                             />
                         ))
-                        : socialLinks.map(({ href, Icon, label }) => (
+                        : socialLinks.map(({ href, Icon, label, dataCy }) => (
                             <Link
                                 key={href}
                                 href={href}
@@ -45,6 +45,7 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
                                 rel="noreferrer"
                                 aria-label={label}
                                 className="footer-social-link"
+                                data-cy={dataCy}
                             >
                                 <Icon />
                             </Link>

@@ -22,6 +22,7 @@ const FooterLinksColumn = ({ title, links }: FooterLinksColumnProps) => {
                         rel={link.external ? "noreferrer" : undefined}
                         underline="none"
                         className="footer-column-link"
+                        data-cy={link.dataCy}
                     >
                         {link.label}
                     </Link>

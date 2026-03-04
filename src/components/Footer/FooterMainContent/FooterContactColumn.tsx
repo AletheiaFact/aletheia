@@ -45,6 +45,7 @@ const FooterContactColumn = ({ statuteUrl }: FooterContactColumnProps) => {
                         rel="noreferrer"
                         underline="none"
                         className="footer-statute-link"
+                        data-cy="testFooterStatuteLink"
                     >
                         {t("footer:sections.contact.statuteCta")} <ArrowOutwardRounded className="footer-statute-arrow" />
                     </Link>

@@ -32,6 +32,7 @@ const FooterLegal = () => {
                     href="https://creativecommons.org/licenses/by-sa/4.0/"
                     target="_blank"
                     rel="noopener"
+                    data-cy="testFooterCreativeCommonsLink"
                 >
                     <OpenInNewRounded className="footer-icon" />
                 </Link>
