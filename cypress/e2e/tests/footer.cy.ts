@@ -41,7 +41,7 @@ describe("Footer Navigation", () => {
 
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_SECONDARY).length > 0) {
-                expectExternalLink(locators.footer.CTA_SECONDARY, "https://forum.aletheiafact.org/");
+                expectExternalLink(locators.footer.CTA_SECONDARY, "https://forms.gle/AnTuCzXtPTrsXHGVA");
             }
         });
     });
@@ -57,21 +57,17 @@ describe("Footer Navigation", () => {
         cy.get(locators.footer.PLATFORM_ACCESS)
             .should("be.visible")
             .and("have.attr", "href")
-            .and("include", "/verification-request");
+            .and("include", "");
 
-        expectInternalNavigation(locators.footer.PLATFORM_ACCESS, "/verification-request");
+        expectInternalNavigation(locators.footer.PLATFORM_ACCESS, "/");
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectInternalNavigation(locators.footer.PLATFORM_MANUAL, "/supportive-materials");
+        expectInternalNavigation(locators.footer.PLATFORM_MANUAL, "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf");
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
         expectExternalLink(locators.footer.PLATFORM_DOCS, "https://docs.aletheiafact.org");
-
-        cy.visit("/");
-        cy.get("footer").scrollIntoView();
-        expectInternalNavigation(locators.footer.PLATFORM_KIT, "/supportive-materials");
     });
 
     it("validates institutional links", () => {
@@ -87,7 +83,7 @@ describe("Footer Navigation", () => {
     });
 
     it("validates community links", () => {
-        expectMailtoLink(locators.footer.COMMUNITY_COLLABORATION, "contact@aletheiafact.org");
+        expectMailtoLink(locators.footer.COMMUNITY_COLLABORATION, "tvolcean@aletheiafact.org");
         expectMailtoLink(locators.footer.COMMUNITY_TRAINING, "contact@aletheiafact.org");
 
         expectInternalNavigation(locators.footer.COMMUNITY_UNIVERSITIES, "/about#partners-section");

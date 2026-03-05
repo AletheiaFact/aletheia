@@ -14,24 +14,19 @@ const FooterMainContent = () => {
     const platformLinks: FooterLink[] = [
         {
             label: t("footer:sections.platform.links.access"),
-            href: `${namespacePrefix}/verification-request`,
+            href: `${namespacePrefix}`,
             dataCy: "testFooterLinkPlatformAccess"
         },
         {
             label: t("footer:sections.platform.links.manual"),
-            href: "/supportive-materials",
+            href: t("footer:sections.platform.links.manualUrl"),
             dataCy: "testFooterLinkPlatformManual"
         },
         {
             label: t("footer:sections.platform.links.docs"),
             href: "https://docs.aletheiafact.org", external: true,
             dataCy: "testFooterLinkPlatformDocs"
-        },
-        {
-            label: t("footer:sections.platform.links.kit"),
-            href: "/supportive-materials",
-            dataCy: "testFooterLinkPlatformKit"
-        },
+        }
     ];
 
     const institutionalLinks: FooterLink[] = [
@@ -55,7 +50,7 @@ const FooterMainContent = () => {
     const communityLinks: FooterLink[] = [
         {
             label: t("footer:sections.community.links.collaboration"),
-            href: t("footer:sections.community.links.sendEmailButton"),
+            href: t("footer:sections.community.links.sendEmailCollaborationButton"),
             dataCy: "testFooterLinkCommunityCollaboration",
         },
         {

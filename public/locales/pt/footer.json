@@ -16,7 +16,7 @@
     "description": "Participe da nossa comunidade e compartilhe suas dúvidas, descobertas e experiências com outros usuários.",
     "primaryButton": "Conheça Nossa Missão",
     "secondaryButton": "Participe do nosso fórum",
-    "callToActionRedirect": "https://forum.aletheiafact.org/"
+    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
   },
   "sections": {
     "platform": {
@@ -24,8 +24,8 @@
       "links": {
         "access": "Acessar Plataforma",
         "manual": "Manual de Checagem",
-        "docs": "Documentação Técnica",
-        "kit": "Kit Educacional"
+        "manualUrl": "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf",
+        "docs": "Documentação Técnica"
       }
     },
     "institutional": {
@@ -44,8 +44,9 @@
         "collaboration": "Propor Colaboração",
         "training": "Treinamento",
         "universities": "Universidades Parceiras",
-        "volunteering": "Voluntariado",
-        "sendEmailButton": "mailto:contact@aletheiafact.org"
+        "volunteering": "Quero ser um voluntário",
+        "sendEmailButton": "mailto:contact@aletheiafact.org",
+        "sendEmailCollaborationButton": "mailto:tvolcean@aletheiafact.org"
       }
     },
     "contact": {
