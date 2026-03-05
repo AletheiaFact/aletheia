@@ -13,7 +13,7 @@ const LegendColor = styled(Box)(({ color }) => ({
   backgroundColor: color,
 }));
 
-const Bar = styled(Box)<{ height: number; color: string }>`
+const Bar = styled(Box) <{ height: number; color: string }>`
   width: 80px;
   height: ${(props) => props.height}%;
   background-color: ${(props) => props.color};
@@ -27,10 +27,9 @@ const Bar = styled(Box)<{ height: number; color: string }>`
 `;
 
 const Dashboard = styled(Box)`
-  width: 90%;
-  margin-top: 16px;
+  width: 100%;
   padding: 24px;
-  background-color: ${colors.lightNeutral};
+  background-color: ${colors.lightNeutralSecondary};
 
   .title {
     font-size: 18px;
