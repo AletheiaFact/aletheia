@@ -1,7 +1,8 @@
 import { LoggerService } from "@nestjs/common";
 import * as winston from "winston";
+import { Environments } from "./types/enums";
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.ENVIRONMENT === Environments.WATCH_DEV;
 
 const devFormat = winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),

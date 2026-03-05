@@ -3,6 +3,7 @@ import createServer from "next";
 import { NextServer, RequestHandler } from "next/dist/server/next";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
+import { Environments } from "../types/enums";
 
 @Injectable()
 export class ViewService implements OnModuleInit {
@@ -14,7 +15,7 @@ export class ViewService implements OnModuleInit {
     async onModuleInit(): Promise<void> {
         try {
             this.server = createServer({
-                dev: process.env.ENVIRONMENT === "watch-dev",
+                dev: process.env.ENVIRONMENT === Environments.WATCH_DEV,
                 dir: this.configService.get<string>("nextjs.dir") || "./",
             });
             await this.server.prepare();

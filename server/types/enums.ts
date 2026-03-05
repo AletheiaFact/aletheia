@@ -17,4 +17,11 @@ enum ReviewTaskTypeEnum {
     VerificationRequest = "VerificationRequest",
 }
 
-export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum };
+enum Environments {
+    WATCH_DEV = "watch-dev",
+    DEVELOPMENT = "development",
+    PRODUCTION = "production",
+    TEST_CI = "test.ci",
+}
+
+export { ContentModelEnum, Environments, ReportModelEnum, ReviewTaskTypeEnum };
