@@ -105,7 +105,7 @@ export class ChatbotService {
         const { from, to, channel, contents } = message;
 
         const data_hash = crypto
-            .createHash("sha256")
+            .createHmac("sha256", process.env.HASH_SECRET_KEY)
             .update(`${channel}-${from}`)
             .digest("hex");
 
