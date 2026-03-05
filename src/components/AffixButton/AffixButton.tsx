@@ -3,8 +3,8 @@ import {
     AddCircle,
     AddOutlined,
     PersonAddAlt1Outlined,
-    Source,
-    Report
+    Report,
+    // Source,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
@@ -69,15 +69,18 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         : `/claim/create${hrefPersonalitySlug}`,
                 dataCy: "testFloatButtonAddClaim",
             },
-            {
-                icon: <Source />,
-                tooltip: t("affix:affixButtonCreateVerifiedSources"),
-                href:
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/source/create`
-                        : `/source/create`,
-                dataCy: "testFloatButtonAddSources",
-            },
+
+            // Temporarily removing the "add checked information" button from the affixbutton.
+            // {
+            //     icon: <Source />,
+            //     tooltip: t("affix:affixButtonCreateVerifiedSources"),
+            //     href:
+            //         nameSpace !== NameSpaceEnum.Main
+            //             ? `/${nameSpace}/source/create`
+            //             : `/source/create`,
+            //     dataCy: "testFloatButtonAddSources",
+            // },
+
             {
                 icon: <Report />,
                 tooltip: t("affix:affixButtonCreateVerificationRequest"),
@@ -203,10 +206,10 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
+                        components={[<AddCircle style={{ marginBottom: "-5px", fontSize: "18px" }} key={"icon"} />]}
                     />
                 </p>
-                
+
                 <div
                     style={{
                         marginTop: 24,
