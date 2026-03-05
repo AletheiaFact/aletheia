@@ -2,6 +2,7 @@ import ArrowOutwardRounded from "@mui/icons-material/ArrowOutwardRounded";
 import { Link, Stack } from "@mui/material";
 import React from "react";
 import { useFooterData } from "../hooks/useFooterData";
+import { trackUmamiEvent } from "../../../lib/umami";
 
 const FooterCtaActions = () => {
     const { t } = useFooterData();
@@ -22,6 +23,7 @@ const FooterCtaActions = () => {
                 {t("footer:cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
             <Link
+                onClick={() => trackUmamiEvent("cta-footer-forum-form-button", "forumForm")}
                 href={callToActionRedirect}
                 underline="none"
                 target="_blank"
