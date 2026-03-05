@@ -143,9 +143,11 @@ export class VerificationRequestService {
         try {
             this.logger.debug("Creating verification request", { data });
 
+            const data_hash = data.data_hash || md5(data.content)
+
             const vr = await this.VerificationRequestModel.create({
                 ...data,
-                data_hash: data.data_hash || md5(data.content),
+                data_hash: data_hash,
                 embedding: null,
                 source: null,
                 impactArea: null,
