@@ -16,7 +16,7 @@
     "description": "Join our community and share your questions, findings, and experiences with other users.",
     "primaryButton": "Learn About Our Mission",
     "secondaryButton": "Join Our Forum",
-    "callToActionRedirect": "https://forum.aletheiafact.org/"
+    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
   },
   "sections": {
     "platform": {
@@ -24,8 +24,8 @@
       "links": {
         "access": "Access Platform",
         "manual": "Fact-checking Manual",
-        "docs": "Technical Documentation",
-        "kit": "Educational Kit"
+        "manualUrl": "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf",
+        "docs": "Technical Documentation"
       }
     },
     "institutional": {
@@ -44,8 +44,9 @@
         "collaboration": "Collaboration Proposals",
         "training": "Training",
         "universities": "Partner Universities",
-        "volunteering": "Volunteering",
-        "sendEmailButton": "mailto:contact@aletheiafact.org"
+        "volunteering": "I want to be a volunteer",
+        "sendEmailButton": "mailto:contact@aletheiafact.org",
+        "sendEmailCollaborationButton": "mailto:tvolcean@aletheiafact.org"
       }
     },
     "contact": {

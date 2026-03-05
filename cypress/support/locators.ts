@@ -145,7 +145,6 @@ const locators = {
         PLATFORM_ACCESS: "[data-cy=testFooterLinkPlatformAccess]",
         PLATFORM_MANUAL: "[data-cy=testFooterLinkPlatformManual]",
         PLATFORM_DOCS: "[data-cy=testFooterLinkPlatformDocs]",
-        PLATFORM_KIT: "[data-cy=testFooterLinkPlatformKit]",
 
         INSTITUTIONAL_ABOUT: "[data-cy=testFooterLinkInstitutionalAbout]",
         INSTITUTIONAL_PARTNERS: "[data-cy=testFooterLinkInstitutionalPartners]",
