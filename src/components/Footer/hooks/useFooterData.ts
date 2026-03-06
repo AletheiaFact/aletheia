@@ -10,17 +10,17 @@ export const useFooterData = () => {
     const mediumDevice = vw?.lg;
     const isMobile = !!vw?.sm;
     const [nameSpace] = useAtom(currentNameSpace);
-    const isNameSpaceColor = nameSpace === NameSpaceEnum.Main
-    const namespacePrefix = !isNameSpaceColor
+    const isMainNamespace = nameSpace === NameSpaceEnum.Main
+    const namespacePrefix = !isMainNamespace
         ? `/${nameSpace}`
-        : "";
+        : "/";
 
     const statuteUrl = t("footer:sections.institutional.links.statuteUrl");
 
     return {
         mediumDevice,
         isMobile,
-        isNameSpaceColor,
+        isMainNamespace,
         namespacePrefix,
         statuteUrl,
         t

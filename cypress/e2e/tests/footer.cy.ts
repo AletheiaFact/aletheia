@@ -57,13 +57,13 @@ describe("Footer Navigation", () => {
         cy.get(locators.footer.PLATFORM_ACCESS)
             .should("be.visible")
             .and("have.attr", "href")
-            .and("include", "");
+            .and("include", "/");
 
         expectInternalNavigation(locators.footer.PLATFORM_ACCESS, "/");
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectInternalNavigation(locators.footer.PLATFORM_MANUAL, "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf");
+        expectExternalLink(locators.footer.PLATFORM_MANUAL, "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf");
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();

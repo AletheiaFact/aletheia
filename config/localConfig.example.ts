@@ -6,7 +6,7 @@ const localConfig: LocalConfig = {
     footer: {
         showCallToAction: true,
         socialMedias: {
-            newOnes: false,
+            useCustomUrls: false,
             urls: []
         },
         showStatuteButton: {

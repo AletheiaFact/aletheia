@@ -8,13 +8,13 @@ import { useFooterData } from "./hooks/useFooterData";
 import localConfig from "../../../config/localConfig";
 
 const Footer = () => {
-    const { mediumDevice, isMobile, isNameSpaceColor } = useFooterData();
+    const { mediumDevice, isMobile, isMainNamespace } = useFooterData();
 
     return (
         <FooterBox
             component="footer"
             $isMobile={isMobile}
-            $namespacePrefix={isNameSpaceColor}
+            $namespacePrefix={isMainNamespace}
             $mediumDevice={mediumDevice}
         >
             <Box className="footer-inner-container">
