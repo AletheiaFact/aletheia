@@ -22,7 +22,8 @@ describe("Test the header menus", () => {
             cy.url().should("contains", "claim");
         });
 
-        it("Open side bar and click source", () => {
+        //functionality temporarily removed
+        it.skip("Open side bar and click source", () => {
             cy.get(locators.menu.SIDE_MENU).click();
             cy.get("[data-cy=testSourcetItem]").click();
             cy.url().should("contains", "source");
