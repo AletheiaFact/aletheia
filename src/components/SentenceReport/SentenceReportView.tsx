@@ -1,6 +1,7 @@
 import { useSelector } from "@xstate/react";
-import { Grid } from "@mui/material";
+import { Grid, Paper, Box, Typography } from "@mui/material";
 import React, { useContext, useMemo } from "react";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
@@ -22,6 +23,7 @@ import { isUserLoggedIn } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
+import { useTranslation } from "next-i18next";
 
 const SentenceReportView = ({
     context,
@@ -31,6 +33,7 @@ const SentenceReportView = ({
     componentStyle,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const { t } = useTranslation();
 
     const { machineService, publishedReview, reviewTaskType, reportModel } =
         useContext(ReviewTaskMachineContext);
@@ -90,6 +93,83 @@ const SentenceReportView = ({
                                 reportModel={reportModel}
                             />
                         )}
+
+                    {/* Reviewer instructions banner */}
+                    {isLoggedIn &&
+                        isReviewing &&
+                        (permissions.isReviewer || permissions.isAdmin) && (
+                            <Paper
+                                elevation={0}
+                                style={{
+                                    padding: "12px 20px",
+                                    margin: "0 0 16px",
+                                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                                    border: "1px solid rgba(25, 118, 210, 0.3)",
+                                    borderRadius: "8px",
+                                }}
+                            >
+                                <Typography
+                                    variant="body2"
+                                    style={{
+                                        color: "rgb(25, 118, 210)",
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    {t("reviewTask:reviewerInstructions")}
+                                </Typography>
+                            </Paper>
+                        )}
+
+                    {/* Rejection comment banner */}
+                    {isLoggedIn && context?.rejectionComment && (
+                        <Paper
+                            elevation={0}
+                            style={{
+                                padding: "16px 20px",
+                                margin: "0 0 16px",
+                                backgroundColor: colors.errorTranslucent,
+                                border: `1px solid ${colors.error}`,
+                                borderRadius: "8px",
+                            }}
+                        >
+                            <Box
+                                style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: "12px",
+                                }}
+                            >
+                                <ErrorOutlineIcon
+                                    style={{
+                                        color: colors.error,
+                                        fontSize: "22px",
+                                        marginTop: "2px",
+                                    }}
+                                />
+                                <div>
+                                    <Typography
+                                        variant="subtitle2"
+                                        style={{
+                                            color: colors.error,
+                                            fontWeight: 600,
+                                            marginBottom: "4px",
+                                        }}
+                                    >
+                                        {t("reviewTask:rejectionCommentTitle")}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        style={{
+                                            color: colors.blackSecondary,
+                                            lineHeight: 1.5,
+                                        }}
+                                    >
+                                        {context.rejectionComment}
+                                    </Typography>
+                                </div>
+                            </Box>
+                        </Paper>
+                    )}
 
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />

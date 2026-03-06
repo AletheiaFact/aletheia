@@ -18,6 +18,7 @@ import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 export interface ClaimReviewViewProps {
     content: Content;
@@ -31,14 +32,13 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
-    const { vw, reviewDrawerCollapsed } =
-        useAppSelector((state) => ({
-            vw: state?.vw,
-            reviewDrawerCollapsed:
-                state?.reviewDrawerCollapsed !== undefined
-                    ? state?.reviewDrawerCollapsed
-                    : true,
-        }));
+    const { vw, reviewDrawerCollapsed } = useAppSelector((state) => ({
+        vw: state?.vw,
+        reviewDrawerCollapsed:
+            state?.reviewDrawerCollapsed !== undefined
+                ? state?.reviewDrawerCollapsed
+                : true,
+    }));
     const { review } = publishedReview || {};
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
@@ -97,22 +97,21 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             )}
             {(isClaimTypeAndNotSmallScreen ||
                 isSourceOrVerificationRequest) && (
-                    <ClaimReviewHeader
-                        classification={
-                            review?.report?.classification ||
-                            reviewData?.classification
-                        }
-                        hideDescription={hideDescriptions}
-                        userIsNotRegular={userIsNotRegular}
-                        componentStyle={componentStyle}
-                        {...props}
-                    />
-                )}
+                <ClaimReviewHeader
+                    classification={
+                        review?.report?.classification ||
+                        reviewData?.classification
+                    }
+                    hideDescription={hideDescriptions}
+                    userIsNotRegular={userIsNotRegular}
+                    componentStyle={componentStyle}
+                    {...props}
+                />
+            )}
 
             <SentenceReportView
                 context={review?.report || reviewData}
                 userIsNotRegular={userIsNotRegular}
-                userIsReviewer={userIsReviewer}
                 isHidden={review?.isHidden}
                 href={href}
                 componentStyle={componentStyle}

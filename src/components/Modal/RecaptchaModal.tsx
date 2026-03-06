@@ -77,6 +77,7 @@ const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
                         onClick={() => onConfirm(token)}
                         type={ButtonType.blue}
                         disabled={!token}
+                        data-cy="testRecaptchaConfirm"
                     >
                         {t("reviewTask:recaptchaModalConfirm")}
                     </AletheiaButton>

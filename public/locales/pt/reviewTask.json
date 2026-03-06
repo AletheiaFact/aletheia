@@ -89,5 +89,8 @@
     "stageDraft": "Rascunho",
     "stageReview": "Revisão",
     "stageApproval": "Aprovação",
-    "stagePublished": "Publicado"
+    "stagePublished": "Publicado",
+
+    "rejectionCommentTitle": "Revisão rejeitada",
+    "reviewerInstructions": "Revise o relatório e aprove ou rejeite com um comentário."
 }

@@ -45,6 +45,8 @@ const SentenceReportHeader = ({
     }, [context.reviewerId, context.crossCheckerId, context.usersId, t]);
 
     useEffect(() => {
+        let cancelled = false;
+
         const fetchUserNames = async () => {
             const userIds = [];
             if (context.reviewerId) userIds.push(context.reviewerId);
@@ -62,12 +64,18 @@ const SentenceReportHeader = ({
                     }
                 })
             );
-            setUserNames(names);
+            if (!cancelled) {
+                setUserNames(names);
+            }
         };
 
         if (assignedFactChecker) {
             fetchUserNames();
         }
+
+        return () => {
+            cancelled = true;
+        };
     }, [
         context.reviewerId,
         context.crossCheckerId,
@@ -124,6 +132,21 @@ const SentenceReportHeader = ({
                 }}
             />
 
+            {/* Rejected indicator when task was returned from rejection */}
+            {context?.rejectionComment &&
+                currentState !== ReviewTaskStates.rejected && (
+                    <Chip
+                        label={t("reviewTask:rejected")}
+                        color="error"
+                        variant="filled"
+                        size="medium"
+                        style={{
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
+                        }}
+                    />
+                )}
+
             {/* Assigned fact-checker chip */}
             {assignedFactChecker && (
                 <Chip
@@ -172,6 +195,7 @@ const SentenceReportHeader = ({
                     <WorkflowProgress
                         currentState={currentState}
                         reportModel={reportModel}
+                        hasRejection={!!context?.rejectionComment}
                     />
                 </Box>
             )}

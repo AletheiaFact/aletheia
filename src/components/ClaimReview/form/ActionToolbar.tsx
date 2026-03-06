@@ -14,6 +14,9 @@ export const CAPTCHA_EXEMPT_EVENTS = [
     ReviewTaskEvents.draft,
     ReviewTaskEvents.goback,
     ReviewTaskEvents.viewPreview,
+    ReviewTaskEvents.selectedReview,
+    ReviewTaskEvents.selectedCrossChecking,
+    ReviewTaskEvents.addComment,
 ];
 
 const PRIMARY_ACTIONS: Partial<Record<ReviewTaskStates, ReviewTaskEvents>> = {
@@ -25,7 +28,7 @@ const PRIMARY_ACTIONS: Partial<Record<ReviewTaskStates, ReviewTaskEvents>> = {
     [ReviewTaskStates.crossChecking]: ReviewTaskEvents.submitCrossChecking,
     [ReviewTaskStates.addCommentCrossChecking]: ReviewTaskEvents.submitComment,
     [ReviewTaskStates.submitted]: ReviewTaskEvents.publish,
-    [ReviewTaskStates.rejected]: ReviewTaskEvents.addRejectionComment,
+    [ReviewTaskStates.rejected]: ReviewTaskEvents.confirmRejection,
 };
 
 interface ActionToolbarProps {

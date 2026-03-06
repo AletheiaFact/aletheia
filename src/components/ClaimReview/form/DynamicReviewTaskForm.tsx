@@ -109,7 +109,7 @@ const DynamicReviewTaskForm = ({
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
-    }, [events]);
+    }, [events, form]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
 
@@ -150,6 +150,9 @@ const DynamicReviewTaskForm = ({
                         (comment) => comment.type === CommentEnum.review
                     ) || reviewData.reviewComments,
                 crossCheckingComments: reviewData.crossCheckingComments,
+                ...(eventName === ReviewTaskEvents.sendToReview && {
+                    rejectionComment: "",
+                }),
             },
             review: {
                 personality,
@@ -172,9 +175,9 @@ const DynamicReviewTaskForm = ({
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                !reviewData.usersId.includes(data.crossCheckerId)
+                  !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                !reviewData.usersId.includes(data.reviewerId);
+                  !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -249,9 +252,8 @@ const DynamicReviewTaskForm = ({
         if (event === ReviewTaskEvents.goback)
             setGobackWarningModal(!gobackWarningModal);
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
-        else if (!CAPTCHA_EXEMPT_EVENTS.includes(event)) {
-            setPendingAction({ event, data: getValues() });
-        }
+        // Non-exempt submit buttons are handled by onSubmit (after form validation),
+        // so we don't open the captcha modal here to avoid showing errors + modal together
     };
 
     const handleRecaptchaConfirm = (token: string) => {

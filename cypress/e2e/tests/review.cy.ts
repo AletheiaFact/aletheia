@@ -23,25 +23,33 @@ const goToClaimReviewPage = () => {
     cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 };
 
+/**
+ * Completes the reCAPTCHA inside the RecaptchaModal and clicks confirm.
+ * The modal opens automatically when a non-exempt action button is clicked.
+ */
+const completeRecaptchaModal = () => {
+    cy.checkRecaptcha();
+    cy.get(locators.claimReview.BTN_RECAPTCHA_CONFIRM)
+        .should("be.visible")
+        .and("be.enabled")
+        .click();
+};
+
 const assignUser = () => {
     cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
         .type(`${review.username}{downarrow}{enter}`, { delay: 200 });
-    cy.get('[title="reCAPTCHA"]').should("exist");
-    cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
-    cy.checkRecaptcha();
-    cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.enabled").click();
+    // Click the assign button which opens the recaptcha modal
+    cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.visible").click();
+    completeRecaptchaModal();
     cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
 };
 
 const blockAssignedUserReview = () => {
     // Wait for the form to be fully loaded with review data (including classification)
-    // before interacting. The classification field has a validation rule, and if its value
-    // hasn't been restored via react-hook-form's reset(reviewData) before the submit button
-    // is clicked, validation fails silently and the state transition never happens.
     cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
-    cy.checkRecaptcha();
+    // SELECTED_REVIEW is captcha-exempt (navigation only), so it works directly
     cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
         .should("be.visible")
         .and("be.enabled")
@@ -51,8 +59,9 @@ const blockAssignedUserReview = () => {
         .type(`${review.username}{downarrow}{downarrow}{enter}`, {
             delay: 200,
         });
-    cy.checkRecaptcha();
-    cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
+    // SEND_TO_REVIEW requires captcha, so clicking it opens the modal
+    cy.get(locators.claimReview.BTN_SUBMIT).should("be.visible").click();
+    completeRecaptchaModal();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
 };
 
@@ -114,10 +123,11 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.ADD_EDITOR_SOURCES_DIALOG_BUTTON)
             .should("be.visible")
             .click();
-        cy.checkRecaptcha();
+        // FINISH_REPORT requires captcha, clicking opens the modal
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
-            .should("be.enabled")
+            .should("be.visible")
             .click();
+        completeRecaptchaModal();
         cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist");
     });
 

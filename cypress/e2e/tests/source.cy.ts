@@ -8,6 +8,17 @@ const goToSourceReviewPage = () => {
     cy.visit(`http://localhost:3000/source/${source.data_hash}`);
 };
 
+/**
+ * Completes the reCAPTCHA inside the RecaptchaModal and clicks confirm.
+ * The modal opens automatically when a non-exempt action button is clicked.
+ */
+const completeRecaptchaModal = () => {
+    cy.checkRecaptcha();
+    cy.get(locators.claimReview.BTN_RECAPTCHA_CONFIRM)
+        .should("be.visible")
+        .and("be.enabled")
+        .click();
+};
 //functionality temporarily removed
 describe.skip("Create source and source review", () => {
     beforeEach("login", () => cy.login());
@@ -35,12 +46,11 @@ describe.skip("Create source and source review", () => {
         cy.get(locators.claimReview.INPUT_USER)
             .should("exist")
             .type(`${review.username}{downarrow}{enter}`, { delay: 200 });
-        cy.get('[title="reCAPTCHA"]').should("exist");
-        cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
-        cy.checkRecaptcha();
+        // Click the assign button which opens the recaptcha modal
         cy.get(locators.claimReview.BTN_ASSIGN_USER)
-            .should("be.enabled")
+            .should("be.visible")
             .click();
+        completeRecaptchaModal();
         cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     });
 
@@ -57,24 +67,26 @@ describe.skip("Create source and source review", () => {
             .should("exist")
             .type(review.summary);
 
-        cy.checkRecaptcha();
+        // FINISH_REPORT requires captcha, clicking opens the modal
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
-            .should("be.enabled")
+            .should("be.visible")
             .click();
+        completeRecaptchaModal();
         cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist");
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
         goToSourceReviewPage();
-        cy.checkRecaptcha();
+        // SELECTED_REVIEW is captcha-exempt (navigation only)
         cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
             .should("exist")
             .click();
         cy.get(locators.claimReview.INPUT_REVIEWER)
             .should("exist")
             .type(`${review.username}{downarrow}{enter}`, { delay: 200 });
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
+        // SEND_TO_REVIEW requires captcha
+        cy.get(locators.claimReview.BTN_SUBMIT).should("be.visible").click();
+        completeRecaptchaModal();
         cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
     });
 });

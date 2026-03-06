@@ -51,7 +51,8 @@ const locators = {
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
         ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
-        ADD_VERIFICATION_REQUEST: "[data-cy=testFloatButtonAddVerificationRequest]"
+        ADD_VERIFICATION_REQUEST:
+            "[data-cy=testFloatButtonAddVerificationRequest]",
     },
 
     claimReview: {
@@ -81,6 +82,7 @@ const locators = {
             "[data-cy=testClaimReviewSourcesInput]",
         ADD_EDITOR_SOURCES_DIALOG_BUTTON:
             "[data-cy=testClaimReviewSourcesButton]",
+        BTN_RECAPTCHA_CONFIRM: "[data-cy=testRecaptchaConfirm]",
     },
 
     verificationRequest: {
@@ -102,13 +104,15 @@ const locators = {
         DETAIL_SOURCE_CHANNEL: "[data-cy=testVerificationRequestSourceChannel]",
         DETAIL_SEVERITY: "[data-cy=testVerificationRequestSeverity]",
         DETAIL_HEARD_FROM: "[data-cy=testVerificationRequestHeardFrom]",
-        DETAIL_PUBLICATION_DATE: "[data-cy=testVerificationRequestPublicationDate]",
+        DETAIL_PUBLICATION_DATE:
+            "[data-cy=testVerificationRequestPublicationDate]",
         DETAIL_DATE: "[data-cy=testVerificationRequestDate]",
         DETAIL_SOURCE_0: "[data-cy=testVerificationRequestSource0]",
         DETAIL_SOURCE_1: "[data-cy=testVerificationRequestSource1]",
 
         ERROR_VALIDATION_CONTENT: "[data-cy=testClaimReviewErrorcontent]",
-        ERROR_VALIDATION_PUBLICATION_DATE: "[data-cy=testClaimReviewErrorpublicationDate]",
+        ERROR_VALIDATION_PUBLICATION_DATE:
+            "[data-cy=testClaimReviewErrorpublicationDate]",
 
         DETAIL_CARD_CONTENT: "[data-cy=testVerificationRequestCardContent0]",
         DETAIL_CARD_CONTENT_1: "[data-cy=testVerificationRequestCardContent1]",
@@ -117,7 +121,8 @@ const locators = {
         TYPE_TOPIC_INPUT: "[data-cy=testVerificationRequestTopicsInput]",
         ADD_TOPIC_SUBMIT: "[data-cy=testVerificationRequestAddTopicButton]",
         DETAIL_TOPIC_TAG: "[data-cy=testVerificationRequestTopicChip0]",
-        REMOVE_TOPIC_ICON: "[data-cy=testVerificationRequestTopicRemoveButton0]",
+        REMOVE_TOPIC_ICON:
+            "[data-cy=testVerificationRequestTopicRemoveButton0]",
 
         SEE_FULL_BUTTON: "[data-cy=testSeeFullVerificationRequest]",
         EDIT_BUTTON: "[data-cy=testVerificationRequestEditButton]",
