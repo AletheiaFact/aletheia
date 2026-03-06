@@ -35,7 +35,7 @@ const LocalConfigSchema = z.object({
     footer: z.object({
         showCallToAction: z.boolean(),
         socialMedias: z.object({
-            newOnes: z.boolean(),
+            useCustomUrls: z.boolean(),
             urls: z.array(z.string().url()).optional(),
         }),
         showStatuteButton: z.object({

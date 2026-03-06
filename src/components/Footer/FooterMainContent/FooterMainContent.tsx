@@ -19,7 +19,7 @@ const FooterMainContent = () => {
         },
         {
             label: t("footer:sections.platform.links.manual"),
-            href: t("footer:sections.platform.links.manualUrl"),
+            href: t("footer:sections.platform.links.manualUrl"), external: true,
             dataCy: "testFooterLinkPlatformManual"
         },
         {

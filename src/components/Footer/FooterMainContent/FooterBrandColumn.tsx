@@ -25,14 +25,14 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
 
             <Stack direction="row" spacing={1} className="footer-social-stack">
                 {
-                    localConfig.footer.socialMedias.newOnes
+                    localConfig.footer.socialMedias.useCustomUrls
                         ? localConfig.footer.socialMedias.urls.map((url) => url! && (
                             <SocialIcon
                                 key={url}
                                 url={url}
                                 bgColor={colors.primary}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                                 fgColor="white"
                                 className="footer-social-link"
                             />
@@ -42,7 +42,7 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
                                 key={href}
                                 href={href}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                                 aria-label={label}
                                 className="footer-social-link"
                                 data-cy={dataCy}
@@ -57,7 +57,7 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
                 <GitHub className="footer-icon" />
                 {t("footer:openSource")}
             </Box>
-        </Grid>
+        </Grid >
     );
 };
 
