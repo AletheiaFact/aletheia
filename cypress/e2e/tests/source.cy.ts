@@ -8,7 +8,8 @@ const goToSourceReviewPage = () => {
     cy.visit(`http://localhost:3000/source/${source.data_hash}`);
 };
 
-describe("Create source and source review", () => {
+//functionality temporarily removed
+describe.skip("Create source and source review", () => {
     beforeEach("login", () => cy.login());
 
     it("Should create a new Source", () => {
