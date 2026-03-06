@@ -54,11 +54,6 @@ const FooterMainContent = () => {
             dataCy: "testFooterLinkCommunityCollaboration",
         },
         {
-            label: t("footer:sections.community.links.training"),
-            href: t("footer:sections.community.links.sendEmailButton"),
-            dataCy: "testFooterLinkCommunityTraining",
-        },
-        {
             label: t("footer:sections.community.links.universities"),
             href: "/about#partners-section",
             dataCy: "testFooterLinkCommunityUniversities",
