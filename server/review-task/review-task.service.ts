@@ -851,9 +851,10 @@ export class ReviewTaskService {
         reviewData.reviewComments = reviewData.reviewComments.filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
-        reviewData.reviewComments = reviewData.crossCheckingComments.filter(
-            (comment) => !comment._id.equals(commentIdObject)
-        );
+        reviewData.crossCheckingComments =
+            reviewData.crossCheckingComments.filter(
+                (comment) => !comment._id.equals(commentIdObject)
+            );
 
         return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
             "machine.context.reviewData": reviewData,

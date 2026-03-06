@@ -25,6 +25,7 @@ const WORKFLOW_STAGES: Record<string, StageConfig[]> = {
                 ReviewTaskStates.reported,
                 ReviewTaskStates.selectReviewer,
                 ReviewTaskStates.selectCrossChecker,
+                ReviewTaskStates.rejected,
             ],
         },
         {
@@ -36,7 +37,7 @@ const WORKFLOW_STAGES: Record<string, StageConfig[]> = {
         },
         {
             labelKey: "stageApproval",
-            states: [ReviewTaskStates.submitted, ReviewTaskStates.rejected],
+            states: [ReviewTaskStates.submitted],
         },
         {
             labelKey: "stagePublished",
@@ -79,11 +80,13 @@ const WORKFLOW_STAGES: Record<string, StageConfig[]> = {
 interface WorkflowProgressProps {
     currentState: string;
     reportModel: string;
+    hasRejection?: boolean;
 }
 
 const WorkflowProgress = ({
     currentState,
     reportModel,
+    hasRejection,
 }: WorkflowProgressProps) => {
     const { t } = useTranslation("reviewTask");
 
@@ -108,6 +111,11 @@ const WorkflowProgress = ({
             {stages.map((stage, index) => {
                 const isCompleted = index < activeIndex;
                 const isActive = index === activeIndex;
+                const isRejected =
+                    isActive &&
+                    (currentState === ReviewTaskStates.rejected ||
+                        hasRejection);
+                const dotColor = isRejected ? colors.error : colors.primary;
 
                 return (
                     <React.Fragment key={stage.labelKey}>
@@ -129,15 +137,21 @@ const WorkflowProgress = ({
                                     backgroundColor: isCompleted
                                         ? colors.primary
                                         : isActive
-                                        ? colors.primary
+                                        ? dotColor
                                         : "transparent",
                                     border: `2px solid ${
-                                        isCompleted || isActive
+                                        isCompleted
                                             ? colors.primary
+                                            : isActive
+                                            ? dotColor
                                             : colors.neutralTertiary
                                     }`,
                                     boxShadow: isActive
-                                        ? `0 0 0 3px rgba(17, 39, 58, 0.2)`
+                                        ? `0 0 0 3px ${
+                                              isRejected
+                                                  ? "rgba(211, 47, 47, 0.2)"
+                                                  : "rgba(17, 39, 58, 0.2)"
+                                          }`
                                         : "none",
                                     transition: "all 0.2s ease",
                                     flexShrink: 0,
@@ -149,7 +163,9 @@ const WorkflowProgress = ({
                                 sx={{
                                     display: { xs: "none", sm: "block" },
                                     color: isActive
-                                        ? colors.primary
+                                        ? isRejected
+                                            ? colors.error
+                                            : colors.primary
                                         : isCompleted
                                         ? colors.secondary
                                         : colors.neutralSecondary,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { CircularProgress, Grid } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditorSourcePopover from "./EditorSourcePopover";
@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../../atoms/namespace";
 import { ProsemirrorNode } from "remirror";
 import { SourceType } from "../../../../types/Source";
+import { VisualEditorContext } from "../../VisualEditorProvider";
 
 const WEB_ARCHIVE_POSITION_OFFSET: number = 42;
 
@@ -19,6 +20,7 @@ interface EditorSouceListProps {
 
 const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
+    const { editorConfiguration } = useContext(VisualEditorContext);
     const { href } = source;
     const [isLoading, setIsLoading] = useState(false);
     const [isArchive, setIsArchive] = useState(false);
@@ -49,19 +51,25 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
 
     return (
         <>
-            <Grid item style={{ opacity: isLoading && "0.4" }} className="source-card">
+            <Grid
+                item
+                style={{ opacity: isLoading && "0.4" }}
+                className="source-card"
+            >
                 <Grid item className="source-card-header">
                     <h3>
                         {sup}. {title}
                     </h3>
-                    <EditorSourcePopover
-                        node={node}
-                        source={source}
-                        setIsLoading={setIsLoading}
-                        isArchive={isArchive}
-                    >
-                        <MoreVertIcon style={{ cursor: "pointer" }} />
-                    </EditorSourcePopover>
+                    {!editorConfiguration?.readonly && (
+                        <EditorSourcePopover
+                            node={node}
+                            source={source}
+                            setIsLoading={setIsLoading}
+                            isArchive={isArchive}
+                        >
+                            <MoreVertIcon style={{ cursor: "pointer" }} />
+                        </EditorSourcePopover>
+                    )}
                 </Grid>
                 <Grid item className="source-card-content">
                     <a href={href} target="_blank" rel="noopener noreferrer">
@@ -69,8 +77,9 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
                     </a>
                 </Grid>
             </Grid>
-            {isLoading &&
-                <Grid item
+            {isLoading && (
+                <Grid
+                    item
                     style={{
                         position: "absolute",
                         top: 0,
@@ -91,8 +100,8 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
                                     : colors.secondary,
                         }}
                     />
-                </Grid >
-            }
+                </Grid>
+            )}
         </>
     );
 };

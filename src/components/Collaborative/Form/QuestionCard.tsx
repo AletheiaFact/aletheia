@@ -4,16 +4,13 @@ import Button from "../../Button";
 import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { reviewingSelector } from "../../../machines/reviewTask/selectors";
-import { useSelector } from "@xstate/react";
 import EditorCard from "./EditorCard";
 import { uniqueId } from "remirror";
+import { VisualEditorContext } from "../VisualEditorProvider";
 
 const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
-    const { machineService } = useContext(ReviewTaskMachineContext);
-    const editable = useSelector(machineService, reviewingSelector);
+    const { editorConfiguration } = useContext(VisualEditorContext);
     const command = useCommands();
 
     const handleDelete = useCallback(
@@ -33,17 +30,16 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
             forwardRef={forwardRef}
             inputSize={40}
             extra={
-                <Grid item xs={1}
-                    style={{alignContent:"center"}}>
+                <Grid item xs={1} style={{ alignContent: "center" }}>
                     <Button
                         style={{ height: "40px", margin: "0 auto" }}
                         onClick={handleDelete}
-                        disabled={editable}
+                        disabled={editorConfiguration?.readonly}
                         data-cy="testClaimReviewquestionsRemove1"
-                        contentEditable={false} 
+                        contentEditable={false}
                         suppressContentEditableWarning
                     >
-                        <DeleteOutlined fontSize="small"/>
+                        <DeleteOutlined fontSize="small" />
                     </Button>
                 </Grid>
             }

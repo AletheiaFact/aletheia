@@ -4,6 +4,7 @@ import {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from "react";
 import { useAppSelector } from "../../store/store";
@@ -39,8 +40,13 @@ interface VisualEditorProviderProps {
 
 export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const editorConfig = new EditorConfig();
-    const { machineService, reportModel, reviewTaskType, publishedReview } =
-        useContext(ReviewTaskMachineContext);
+    const {
+        machineService,
+        reportModel,
+        reviewTaskType,
+        publishedReview,
+        form,
+    } = useContext(ReviewTaskMachineContext);
     const {
         enableCollaborativeEdit,
         enableEditorAnnotations,
@@ -62,20 +68,59 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     // Use centralized permission system
     const permissions = useReviewTaskPermissions();
 
+    const isInitialFormLoad = useRef(true);
+
     useEffect(() => {
         const params = { reportModel, reviewTaskType };
-        const fetchEditorContentObject = (data_hash) => {
-            setIsFetchingEditor(true);
-            return ReviewTaskApi.getEditorContentObject(data_hash, params);
-        };
 
         if (reportModel) {
-            fetchEditorContentObject(props.data_hash).then((content) => {
-                setEditorContentObject(content);
-                setIsFetchingEditor(false);
-            });
+            setIsFetchingEditor(true);
+            ReviewTaskApi.getEditorContentObject(props.data_hash, params).then(
+                (content) => {
+                    setEditorContentObject(content);
+                    // Sync editor sources from machine context to ensure
+                    // sources display correctly after state transitions
+                    const currentSources =
+                        machineService.state.context.reviewData.sources;
+                    if (currentSources) {
+                        setEditorSources(currentSources);
+                    }
+                    setIsFetchingEditor(false);
+                }
+            );
         }
     }, [props.data_hash, reportModel]);
+
+    // Re-fetch editor content when the form changes (e.g., after state transitions).
+    // This ensures the editor shows up-to-date content when it remounts after
+    // unmounting during non-editor form states (like selectReviewer).
+    useEffect(() => {
+        if (isInitialFormLoad.current) {
+            isInitialFormLoad.current = false;
+            return;
+        }
+
+        if (!form || !reportModel) return;
+
+        const hasVisualEditor = form.some(
+            (field) => field.fieldName === "visualEditor"
+        );
+        if (!hasVisualEditor) return;
+
+        const params = { reportModel, reviewTaskType };
+        setIsFetchingEditor(true);
+        ReviewTaskApi.getEditorContentObject(props.data_hash, params).then(
+            (content) => {
+                setEditorContentObject(content);
+                const currentSources =
+                    machineService.state.context.reviewData.sources;
+                if (currentSources) {
+                    setEditorSources(currentSources);
+                }
+                setIsFetchingEditor(false);
+            }
+        );
+    }, [form]);
 
     const { websocketProvider, isCollaborative } = useMemo(() => {
         if (!enableCollaborativeEdit) {

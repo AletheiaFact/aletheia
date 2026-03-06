@@ -454,30 +454,32 @@ function applyAdminOverride(
 function validatePermissionConsistency(
     permissions: PermissionContext
 ): PermissionContext {
+    const result = { ...permissions };
+
     // Ensure logical consistency between permissions
-    if (!permissions.canEditEditor) {
-        permissions.canSaveDraft = false;
-        permissions.showSaveDraftButton = false;
-        permissions.editorReadonly = true;
+    if (!result.canEditEditor) {
+        result.canSaveDraft = false;
+        result.showSaveDraftButton = false;
+        result.editorReadonly = true;
     }
 
-    if (!permissions.canViewEditor) {
-        permissions.canEditEditor = false;
-        permissions.canSaveDraft = false;
-        permissions.showSaveDraftButton = false;
-        permissions.editorReadonly = true;
+    if (!result.canViewEditor) {
+        result.canEditEditor = false;
+        result.canSaveDraft = false;
+        result.showSaveDraftButton = false;
+        result.editorReadonly = true;
     }
 
-    if (!permissions.canAccessState) {
-        permissions.canViewEditor = false;
-        permissions.canEditEditor = false;
-        permissions.canSaveDraft = false;
-        permissions.canSubmitActions = [];
-        permissions.canSelectUsers = false;
-        permissions.showForm = false;
-        permissions.showSaveDraftButton = false;
-        permissions.formType = "none";
+    if (!result.canAccessState) {
+        result.canViewEditor = false;
+        result.canEditEditor = false;
+        result.canSaveDraft = false;
+        result.canSubmitActions = [];
+        result.canSelectUsers = false;
+        result.showForm = false;
+        result.showSaveDraftButton = false;
+        result.formType = "none";
     }
 
-    return permissions;
+    return result;
 }
