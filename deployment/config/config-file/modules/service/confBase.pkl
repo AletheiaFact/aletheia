@@ -18,6 +18,7 @@ app_affiliation: String
 websocketUrl: String
 baseUrl: String
 automatedFactCheckingAPIUrl: String
+hashSecretKey: String
 recaptcha_secret: String
 recaptcha_sitekey: String
 throttle: Throttle
