@@ -151,7 +151,6 @@ const locators = {
         INSTITUTIONAL_AWARDS: "[data-cy=testFooterLinkInstitutionalAwards]",
 
         COMMUNITY_COLLABORATION: "[data-cy=testFooterLinkCommunityCollaboration]",
-        COMMUNITY_TRAINING: "[data-cy=testFooterLinkCommunityTraining]",
         COMMUNITY_UNIVERSITIES: "[data-cy=testFooterLinkCommunityUniversities]",
         COMMUNITY_VOLUNTEERING: "[data-cy=testFooterLinkCommunityVolunteering]",
 

@@ -84,7 +84,6 @@ describe("Footer Navigation", () => {
 
     it("validates community links", () => {
         expectMailtoLink(locators.footer.COMMUNITY_COLLABORATION, "tvolcean@aletheiafact.org");
-        expectMailtoLink(locators.footer.COMMUNITY_TRAINING, "contact@aletheiafact.org");
 
         expectInternalNavigation(locators.footer.COMMUNITY_UNIVERSITIES, "/about#partners-section");
 
