@@ -14,6 +14,7 @@ hidden var = new {
         websocketUrl = read("env:WEBSOCKET_URL")
         baseUrl = read("env:BASE_URL")
         automatedFactCheckingAPIUrl = read("env:AGENTS_API_URL")
+        hashSecretKey = read("env:HASH_SECRET_KEY")
         recaptcha_secret = read("env:RECAPTCHA_SECRET")
         throttle = new confBase.Throttle {
             ttl = 60
