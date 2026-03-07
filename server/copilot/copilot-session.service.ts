@@ -63,9 +63,17 @@ export class CopilotSessionService {
     async getSessionById(
         sessionId: string
     ): Promise<CopilotSessionDocument | null> {
-        if (!this.isValidObjectId(sessionId)) {
+        // Ensure sessionId is treated as a literal value and not a query object
+        if (typeof sessionId !== "string") {
             this.logger.warn(
-                `Invalid sessionId provided to getSessionById: ${sessionId}`
+                `Invalid sessionId type in addMessage: ${typeof sessionId}`
+            );
+            return null;
+        }
+
+        if (!this.isValidObjectId(sessionId)) {
+            .findOneAndUpdate(
+                { _id: { $eq: sessionId } },
             );
             return null;
         }
@@ -75,9 +83,17 @@ export class CopilotSessionService {
     }
 
     async addMessage(
+        // Ensure sessionId is treated as a literal value and not a query object
+        if (typeof sessionId !== "string") {
+            this.logger.warn(
+                `Invalid sessionId type in deactivateSession: ${typeof sessionId}`
+            );
+            return null;
+        }
+
         sessionId: string,
-        message: CopilotSessionMessage
-    ): Promise<CopilotSessionDocument | null> {
+            .findOneAndUpdate(
+                { _id: { $eq: sessionId } },
         if (!this.isValidObjectId(sessionId)) {
             this.logger.warn(
                 `Invalid sessionId provided to addMessage: ${sessionId}`
