@@ -4,9 +4,11 @@ import EditorSourcesList from "./Source/EditorSourceList";
 import CopilotDrawer from "../../Copilot/CopilotDrawer";
 import { useAppSelector } from "../../../store/store";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 
 const ClaimReviewEditor = ({ manager, state, editorSources }) => {
     const { claim, sentenceContent } = useContext(ReviewTaskMachineContext);
+    const { data_hash } = useContext(VisualEditorContext);
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({
             enableCopilotChatBot: state?.enableCopilotChatBot,
@@ -31,6 +33,7 @@ const ClaimReviewEditor = ({ manager, state, editorSources }) => {
                     manager={manager}
                     claim={claim}
                     sentence={sentenceContent}
+                    dataHash={data_hash}
                 />
             )}
         </>

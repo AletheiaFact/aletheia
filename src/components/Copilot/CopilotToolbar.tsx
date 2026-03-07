@@ -10,14 +10,27 @@ import { useTranslation } from "next-i18next";
 
 const CopilotToolbarStyled = styled.div`
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     padding-bottom: 8px;
+
+    .toolbar-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: ${colors.primary};
+    }
+
+    .toolbar-actions {
+        display: flex;
+        align-items: center;
+    }
 
     .toolbar-item,
     .toolbar-item:active,
     .toolbar-item:focus {
         background-color: transparent;
         color: ${colors.primary};
+        min-width: unset;
     }
 
     .toolbar-item:hover {
@@ -38,31 +51,36 @@ const CopilotToolbar = ({ handleClearConversation }) => {
 
     return (
         <CopilotToolbarStyled>
-            <Tooltip
-                placement="top"
-                title={t("copilotChatBot:copilotClearHistoryTooltip")}
-            >
-                <Button
-                    className="toolbar-item"
-                    onClick={handleClearConversation}
-                    style={{ outline: "none", border: "none" }}
+            <span className="toolbar-title">
+                {t("copilotChatBot:copilotTitle")}
+            </span>
+            <div className="toolbar-actions">
+                <Tooltip
+                    placement="top"
+                    title={t("copilotChatBot:copilotClearHistoryTooltip")}
                 >
-                    <RestoreIcon style={{ fontSize: "27px" }} />
-                </Button>
-            </Tooltip>
+                    <Button
+                        className="toolbar-item"
+                        onClick={handleClearConversation}
+                        style={{ outline: "none", border: "none" }}
+                    >
+                        <RestoreIcon style={{ fontSize: "24px" }} />
+                    </Button>
+                </Tooltip>
 
-            <Tooltip
-                placement="top"
-                title={t("copilotChatBot:copilotCloseSidebarTooltip")}
-            >
-                <Button
-                    className="toolbar-item"
-                    onClick={handleCloseSidebarClick}
-                    style={{ outline: "none", border: "none" }}
+                <Tooltip
+                    placement="top"
+                    title={t("copilotChatBot:copilotCloseSidebarTooltip")}
                 >
-                    <ViewSidebarRoundedIcon style={{ fontSize: "27px" }} />
-                </Button>
-            </Tooltip>
+                    <Button
+                        className="toolbar-item"
+                        onClick={handleCloseSidebarClick}
+                        style={{ outline: "none", border: "none" }}
+                    >
+                        <ViewSidebarRoundedIcon style={{ fontSize: "24px" }} />
+                    </Button>
+                </Tooltip>
+            </div>
         </CopilotToolbarStyled>
     );
 };

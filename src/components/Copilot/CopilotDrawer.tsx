@@ -1,4 +1,10 @@
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, {
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useAppSelector } from "../../store/store";
 import CopilotForm from "./CopilotForm";
 import { useTranslation } from "next-i18next";
@@ -29,64 +35,155 @@ interface CopilotDrawerProps {
     claim: Claim;
     sentence: string;
     manager: RemirrorManager<ReactExtensions<AnyExtension>>;
+    dataHash: string;
 }
 
-const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
+const CopilotDrawer = ({
+    manager,
+    claim,
+    sentence,
+    dataHash,
+}: CopilotDrawerProps) => {
     const { t } = useTranslation();
-    const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
-        vw: state?.vw,
-        copilotDrawerCollapsed:
-            state?.copilotDrawerCollapsed !== undefined
-                ? state?.copilotDrawerCollapsed
-                : true,
-    }));
+    const { vw, copilotDrawerCollapsed, selectedContent } = useAppSelector(
+        (state) => ({
+            vw: state?.vw,
+            copilotDrawerCollapsed:
+                state?.copilotDrawerCollapsed !== undefined
+                    ? state?.copilotDrawerCollapsed
+                    : true,
+            selectedContent: state?.selectedContent,
+        })
+    );
 
-    const CHAT_DEFAULT_CONVERSATION = [
-        {
-            type: ChatMessageType.info,
-            content: t("copilotChatBot:chatBotGreetings"),
-            sender: SenderEnum.Assistant,
-        },
-    ];
+    const CHAT_DEFAULT_CONVERSATION: ChatMessage[] = useMemo(
+        () => [
+            {
+                type: ChatMessageType.info,
+                content: t("copilotChatBot:chatBotGreetings"),
+                sender: SenderEnum.Assistant,
+            },
+        ],
+        [t]
+    );
 
     const [open, setOpen] = useState<boolean>(!copilotDrawerCollapsed);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isSessionLoading, setIsSessionLoading] = useState<boolean>(true);
     const [editorReport, setEditorReport] = useState<Report | null>(null);
     const [size, setSize] = useState<Size>({ width: "350px", height: "100%" });
     const [messages, setMessages] = useState<ChatMessage[]>(
         CHAT_DEFAULT_CONVERSATION
     );
+    const [sessionId, setSessionId] = useState<string | null>(null);
+
     const { topPosition, rightPosition, rotate } = useMemo(
         () => calculatePosition(open, vw),
         [open, vw.sm, vw.md]
     );
 
-    const handleClearConversation = () => {
-        setMessages(CHAT_DEFAULT_CONVERSATION);
-    };
-
     const context: MessageContext = useMemo(
         () => ({
             claimDate: claim?.date,
             sentence: sentence,
-            personalityName: claim?.personalities[0]?.name || null,
+            personalityName: claim?.personalities?.[0]?.name || "",
+            personalityNames:
+                claim?.personalities?.map((p) => p.name).filter(Boolean) || [],
             claimTitle: claim?.title,
+            contentModel: claim?.contentModel || "",
+            topics:
+                selectedContent?.topics?.map((t: any) =>
+                    typeof t === "string" ? t : t.label || t.name || ""
+                ).filter(Boolean) || [],
         }),
-        [claim, sentence]
+        [claim, sentence, selectedContent]
     );
+
+    // Load or create session on mount
+    useEffect(() => {
+        if (!dataHash) return;
+
+        const initSession = async () => {
+            try {
+                setIsSessionLoading(true);
+                const { session } = await copilotApi.getSession(dataHash);
+
+                if (session) {
+                    setSessionId(session._id);
+                    // Restore messages from session
+                    if (session.messages?.length > 0) {
+                        const restoredMessages: ChatMessage[] =
+                            session.messages.map((msg) => ({
+                                type:
+                                    msg.type === "error"
+                                        ? ChatMessageType.error
+                                        : ChatMessageType.info,
+                                sender: msg.sender,
+                                content: msg.content,
+                            }));
+                        setMessages([
+                            ...CHAT_DEFAULT_CONVERSATION,
+                            ...restoredMessages,
+                        ]);
+
+                        // Restore the last editorReport if one was saved
+                        const lastReportMsg = [...session.messages]
+                            .reverse()
+                            .find((msg) => msg.editorReport);
+                        if (lastReportMsg?.editorReport) {
+                            setEditorReport(lastReportMsg.editorReport);
+                        }
+                    }
+                } else {
+                    // Create a new session
+                    const { session: newSession } =
+                        await copilotApi.createSession(dataHash, context);
+                    setSessionId(newSession._id);
+                }
+            } catch (error) {
+                console.error("Failed to initialize copilot session:", error);
+            } finally {
+                setIsSessionLoading(false);
+            }
+        };
+
+        initSession();
+    }, [dataHash]);
+
+    const handleClearConversation = useCallback(async () => {
+        try {
+            if (sessionId) {
+                await copilotApi.clearSession(sessionId);
+            }
+            // Create a new session
+            const { session: newSession } = await copilotApi.createSession(
+                dataHash,
+                context
+            );
+            setSessionId(newSession._id);
+            setMessages(CHAT_DEFAULT_CONVERSATION);
+            setEditorReport(null);
+        } catch (error) {
+            console.error("Failed to clear conversation:", error);
+        }
+    }, [sessionId, dataHash, context, CHAT_DEFAULT_CONVERSATION]);
 
     const handleSendMessage = async (
         newChatMessage: ChatMessage
     ): Promise<void> => {
+        if (!sessionId) return;
+
         try {
             setIsLoading(true);
             addNewMessage(newChatMessage);
+
             const {
                 data: { sender, content, editorReport },
-            } = (await copilotApi.agentChat({
-                messages: [...messages, newChatMessage],
-                context: context,
-            })) as { data: ChatResponse };
+            } = (await copilotApi.sendMessage(
+                sessionId,
+                newChatMessage.content
+            )) as { data: ChatResponse };
+
             setEditorReport(editorReport);
             addNewMessage({ type: ChatMessageType.info, sender, content });
         } catch (error) {
@@ -108,7 +205,7 @@ const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
         if (open && vw?.sm) {
             setSize({ width: "100%", height: "50%" });
         } else if (open) {
-            setSize({ width: "350px", height: "100%" });
+            setSize({ width: "50vw", height: "100%" });
         }
     }, [open, vw?.sm]);
 
@@ -126,15 +223,19 @@ const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
             aria-hidden={!open}
         >
             <CopilotToolbar handleClearConversation={handleClearConversation} />
-            <Suspense fallback={<Loading />}>
-                <CopilotConversation
-                    manager={manager}
-                    handleSendMessage={handleSendMessage}
-                    messages={messages}
-                    isLoading={isLoading}
-                    editorReport={editorReport}
-                />
-            </Suspense>
+            {isSessionLoading ? (
+                <Loading />
+            ) : (
+                <Suspense fallback={<Loading />}>
+                    <CopilotConversation
+                        manager={manager}
+                        handleSendMessage={handleSendMessage}
+                        messages={messages}
+                        isLoading={isLoading}
+                        editorReport={editorReport}
+                    />
+                </Suspense>
+            )}
             <CopilotForm handleSendMessage={handleSendMessage} />
             <span className="footer">{t("copilotChatBot:footer")}</span>
         </CopilotDrawerStyled>
