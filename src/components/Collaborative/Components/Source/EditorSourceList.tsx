@@ -18,7 +18,7 @@ const EditorSourcesList = ({
 }) => {
     return (
         <EditorSourcesListStyle>
-            {sources.length > 0 ? (
+            {sources?.length > 0 ? (
                 <>
                     {sources.map((source, index) => (
                         <Grid container

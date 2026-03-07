@@ -83,4 +83,41 @@ export class CopilotSessionService {
             )
             .exec();
     }
+
+    async listSessionsByUser(
+        userId: string,
+        page: number = 1,
+        pageSize: number = 20,
+        claimReviewDataHash?: string
+    ): Promise<{
+        sessions: CopilotSessionDocument[];
+        total: number;
+        page: number;
+        pageSize: number;
+    }> {
+        const skip = (page - 1) * pageSize;
+        const filter: Record<string, any> = { userId };
+        if (claimReviewDataHash) {
+            filter.claimReviewDataHash = { $eq: claimReviewDataHash };
+        }
+        const [sessions, total] = await Promise.all([
+            this.copilotSessionModel
+                .find(filter)
+                .sort({ updatedAt: -1 })
+                .skip(skip)
+                .limit(pageSize)
+                .exec(),
+            this.copilotSessionModel.countDocuments(filter).exec(),
+        ]);
+        return { sessions, total, page, pageSize };
+    }
+
+    async updateSession(
+        sessionId: string,
+        updateData: { title?: string; status?: string }
+    ): Promise<CopilotSessionDocument> {
+        return this.copilotSessionModel
+            .findByIdAndUpdate(sessionId, { $set: updateData }, { new: true })
+            .exec();
+    }
 }

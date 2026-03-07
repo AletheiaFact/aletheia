@@ -17,6 +17,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import CopilotReviewV2Layout from "../components/CopilotReviewV2/CopilotReviewV2Layout";
 
 export interface ClaimReviewPageProps {
     personality?: any;
@@ -28,6 +29,7 @@ export interface ClaimReviewPageProps {
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
+    enableCopilotReviewV2: boolean;
     enableEditorAnnotations: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
@@ -48,6 +50,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         sitekey,
         enableCollaborativeEditor,
         enableCopilotChatBot,
+        enableCopilotReviewV2,
         enableEditorAnnotations,
         enableReviewersUpdateReport,
         enableViewReportPreview,
@@ -130,15 +133,27 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 sentenceContent={content.content}
             >
                 <VisualEditorProvider data_hash={content.data_hash}>
-                    <ClaimReviewView
-                        personality={personality}
-                        target={claim}
-                        content={content}
-                        hideDescriptions={hideDescriptions}
-                    />
+                    {enableCopilotReviewV2 ? (
+                        <CopilotReviewV2Layout
+                            claim={claim}
+                            content={content}
+                            personality={personality}
+                            claimReview={claimReview}
+                            dataHash={content.data_hash}
+                        />
+                    ) : (
+                        <ClaimReviewView
+                            personality={personality}
+                            target={claim}
+                            content={content}
+                            hideDescriptions={hideDescriptions}
+                        />
+                    )}
                 </VisualEditorProvider>
             </ReviewTaskMachineProvider>
-            {enableCopilotChatBot && <AffixCopilotButton />}
+            {!enableCopilotReviewV2 && enableCopilotChatBot && (
+                <AffixCopilotButton />
+            )}
         </>
     );
 };
@@ -165,6 +180,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             enableViewReportPreview: query?.enableViewReportPreview,
+            enableCopilotReviewV2: query?.enableCopilotReviewV2,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

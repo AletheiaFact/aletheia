@@ -360,6 +360,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -387,6 +389,7 @@ export class ClaimController {
             enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,
         });
@@ -467,6 +470,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
@@ -478,6 +483,7 @@ export class ClaimController {
             enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
         });
 
         await this.viewService.render(req, res, "/debate-page", queryObject);
@@ -598,6 +604,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         this.redirectBasedOnPersonality(res, claim, namespace);
 
@@ -609,6 +617,7 @@ export class ClaimController {
             enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: namespace,
         });
@@ -635,6 +644,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         const claim = await this.claimService.getByClaimSlug(
             claimSlug,
@@ -649,6 +660,7 @@ export class ClaimController {
             enableCopilotChatBot: enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: namespace,
         });
@@ -678,6 +690,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -708,6 +722,7 @@ export class ClaimController {
             enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             hideDescriptions,
             nameSpace: namespace,
@@ -744,6 +759,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableCopilotReviewV2 =
+            this.featureFlagService.isEnableCopilotReviewV2();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -759,6 +776,7 @@ export class ClaimController {
             enableCopilotChatBot: enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableCopilotReviewV2,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: namespace,
         });

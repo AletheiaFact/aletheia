@@ -133,5 +133,19 @@ const locators = {
         MY_ACCOUNT_MENU: "[data-cy=testMyAccountItem]",
         LOGOUT_MENU: "[data-cy=testLogout]",
     },
+
+    copilotReviewV2: {
+        SHELL: "[data-cy=copilotV2Shell]",
+        SESSION_SIDEBAR: "[data-cy=copilotV2SessionSidebar]",
+        SESSION_ITEM: "[data-cy=copilotV2SessionItem]",
+        SIDEBAR_TOGGLE: "[data-cy=copilotV2SidebarToggle]",
+        MODE_CHAT: "[data-cy=copilotV2ModeChat]",
+        MODE_FORM: "[data-cy=copilotV2ModeForm]",
+        ASSIGNMENT_BANNER: "[data-cy=copilotV2AssignmentBanner]",
+        ASSIGN_BUTTON: "[data-cy=copilotV2AssignButton]",
+        NEW_CHAT_BUTTON: "[data-cy=copilotV2NewChat]",
+        REPORT_PREVIEW: "[data-cy=copilotV2ReportPreview]",
+        FORM_VIEW: "[data-cy=copilotV2FormView]",
+    },
 };
 export default locators;
