@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import {
     CopilotSession,
     CopilotSessionDocument,
@@ -10,6 +10,13 @@ import {
 @Injectable()
 export class CopilotSessionService {
     private readonly logger = new Logger("CopilotSessionService");
+
+    /**
+     * Ensures the provided id is a valid MongoDB ObjectId string.
+     */
+    private isValidObjectId(id: unknown): id is string {
+        return typeof id === "string" && Types.ObjectId.isValid(id);
+    }
 
     constructor(
         @InjectModel(CopilotSession.name)
@@ -56,16 +63,32 @@ export class CopilotSessionService {
     async getSessionById(
         sessionId: string
     ): Promise<CopilotSessionDocument | null> {
-        return this.copilotSessionModel.findById(sessionId).exec();
+        if (!this.isValidObjectId(sessionId)) {
+            this.logger.warn(
+                `Invalid sessionId provided to getSessionById: ${sessionId}`
+            );
+            return null;
+        }
+
+        const objectId = new Types.ObjectId(sessionId);
+        return this.copilotSessionModel.findById(objectId).exec();
     }
 
     async addMessage(
         sessionId: string,
         message: CopilotSessionMessage
-    ): Promise<CopilotSessionDocument> {
+    ): Promise<CopilotSessionDocument | null> {
+        if (!this.isValidObjectId(sessionId)) {
+            this.logger.warn(
+                `Invalid sessionId provided to addMessage: ${sessionId}`
+            );
+            return null;
+        }
+
+        const objectId = new Types.ObjectId(sessionId);
         return this.copilotSessionModel
             .findByIdAndUpdate(
-                sessionId,
+                objectId,
                 { $push: { messages: message } },
                 { new: true }
             )
@@ -74,10 +97,18 @@ export class CopilotSessionService {
 
     async deactivateSession(
         sessionId: string
-    ): Promise<CopilotSessionDocument> {
+    ): Promise<CopilotSessionDocument | null> {
+        if (!this.isValidObjectId(sessionId)) {
+            this.logger.warn(
+                `Invalid sessionId provided to deactivateSession: ${sessionId}`
+            );
+            return null;
+        }
+
+        const objectId = new Types.ObjectId(sessionId);
         return this.copilotSessionModel
             .findByIdAndUpdate(
-                sessionId,
+                objectId,
                 { isActive: false },
                 { new: true }
             )
