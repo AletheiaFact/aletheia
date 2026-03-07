@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { Model, isValidObjectId } from "mongoose";
 import {
     CopilotSession,
     CopilotSessionDocument,
@@ -14,8 +14,8 @@ export class CopilotSessionService {
     /**
      * Ensures the provided id is a valid MongoDB ObjectId string.
      */
-    private isValidObjectId(id: unknown): id is string {
-        return typeof id === "string" && Types.ObjectId.isValid(id);
+    private isValidObjectIdString(id: unknown): id is string {
+        return typeof id === "string" && isValidObjectId(id);
     }
 
     constructor(
@@ -66,45 +66,43 @@ export class CopilotSessionService {
         // Ensure sessionId is treated as a literal value and not a query object
         if (typeof sessionId !== "string") {
             this.logger.warn(
+                `Invalid sessionId type in getSessionById: ${typeof sessionId}`
+            );
+            return null;
+        }
+
+        if (!this.isValidObjectIdString(sessionId)) {
+            this.logger.warn(
+                `Invalid sessionId provided to getSessionById: ${sessionId}`
+            );
+            return null;
+        }
+
+        return this.copilotSessionModel.findById(sessionId).exec();
+    }
+
+    async addMessage(
+        sessionId: string,
+        message: CopilotSessionMessage
+    ): Promise<CopilotSessionDocument | null> {
+        // Ensure sessionId is treated as a literal value and not a query object
+        if (typeof sessionId !== "string") {
+            this.logger.warn(
                 `Invalid sessionId type in addMessage: ${typeof sessionId}`
             );
             return null;
         }
 
-        if (!this.isValidObjectId(sessionId)) {
-            .findOneAndUpdate(
-                { _id: { $eq: sessionId } },
-            );
-            return null;
-        }
-
-        const objectId = new Types.ObjectId(sessionId);
-        return this.copilotSessionModel.findById(objectId).exec();
-    }
-
-    async addMessage(
-        // Ensure sessionId is treated as a literal value and not a query object
-        if (typeof sessionId !== "string") {
-            this.logger.warn(
-                `Invalid sessionId type in deactivateSession: ${typeof sessionId}`
-            );
-            return null;
-        }
-
-        sessionId: string,
-            .findOneAndUpdate(
-                { _id: { $eq: sessionId } },
-        if (!this.isValidObjectId(sessionId)) {
+        if (!this.isValidObjectIdString(sessionId)) {
             this.logger.warn(
                 `Invalid sessionId provided to addMessage: ${sessionId}`
             );
             return null;
         }
 
-        const objectId = new Types.ObjectId(sessionId);
         return this.copilotSessionModel
             .findByIdAndUpdate(
-                objectId,
+                sessionId,
                 { $push: { messages: message } },
                 { new: true }
             )
@@ -114,17 +112,16 @@ export class CopilotSessionService {
     async deactivateSession(
         sessionId: string
     ): Promise<CopilotSessionDocument | null> {
-        if (!this.isValidObjectId(sessionId)) {
+        if (!this.isValidObjectIdString(sessionId)) {
             this.logger.warn(
                 `Invalid sessionId provided to deactivateSession: ${sessionId}`
             );
             return null;
         }
 
-        const objectId = new Types.ObjectId(sessionId);
         return this.copilotSessionModel
             .findByIdAndUpdate(
-                objectId,
+                sessionId,
                 { isActive: false },
                 { new: true }
             )
