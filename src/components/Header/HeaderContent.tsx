@@ -1,12 +1,7 @@
-import { SearchOutlined } from "@mui/icons-material";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
-import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
-import HeaderActionsStyle from "./HeaderActions.style";
 import Logo from "./Logo";
 import SelectLanguage from "./SelectLanguage";
 import UserMenu from "./UserMenu";
@@ -18,12 +13,11 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserId } from "../../atoms/currentUser";
-import { useRouter } from "next/router";
 import localConfig from "../../../config/localConfig";
+import { Grid, Link } from "@mui/material";
+import HeaderGridStyle from "./HeaderActions.style";
 
 const HeaderContent = () => {
-    const dispatch = useDispatch();
-    const router = useRouter();
     const { vw } = useAppSelector((state) => state);
     const [userId] = useAtom(currentUserId);
     const hasSession = !!userId;
@@ -43,46 +37,14 @@ const HeaderContent = () => {
         }
     }, [hasSession, userId]);
 
-    const handleClickSearchIcon = () => {
-        dispatch(actions.openResultsOverlay());
-    };
-
     return (
-        <div
-            style={{
-                display: "flex",
-                alignItems: "center",
-                padding: vw?.xs ? "0" : "0 15px",
-                justifyContent: "space-evenly",
-            }}
-        >
+        <HeaderGridStyle container>
             <Menu />
-            <a
-                href={href}
-                style={{
-                    height: "56px",
-                    display: "grid",
-                    placeContent: "center",
-                }}
-            >
+            <Link href={href} className="headerLogo">
                 <Logo />
-            </a>
+            </Link>
             <SearchOverlay />
-            <HeaderActionsStyle item xs={7} sm={5} md={3}>
-                {vw?.xs && !router.pathname.includes("/home-page") && (
-                    <AletheiaButton
-                        onClick={handleClickSearchIcon}
-                        data-cy={"testSearchPersonality"}
-                        style={{ padding: "4px 15px 0 15px" }}
-                    >
-                        <SearchOutlined
-                            style={{
-                                fontSize: "25px",
-                                color: "white",
-                            }}
-                        />
-                    </AletheiaButton>
-                )}
+            <Grid item className="headerActions">
                 {localConfig.header.donateButton.show
                     ? !hasSession && <DonateButton header={true} />
                     : null}
@@ -95,8 +57,8 @@ const HeaderContent = () => {
                         defaultLanguage="pt"
                     />
                 )}
-            </HeaderActionsStyle>
-        </div>
+            </Grid >
+        </HeaderGridStyle >
     );
 };
 

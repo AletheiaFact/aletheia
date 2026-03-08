@@ -1,5 +1,5 @@
-import { ArrowCircleLeft } from "@mui/icons-material";
-import { Grid } from "@mui/material";
+import { ArrowCircleLeft, SearchOutlined } from "@mui/icons-material";
+import { Grid, IconButton } from "@mui/material";
 import React, { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -57,9 +57,28 @@ const SearchOverlay = () => {
     });
     const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
 
+    const handleClickSearchIcon = () => {
+        dispatch(actions.openResultsOverlay());
+    };
+
     useLayoutEffect(() => {
         setNameSpaceProp(nameSpace);
     }, [nameSpace]);
+
+    if (vw?.xs && !router.pathname.includes("/home-page")) {
+        return (
+            <>
+                <IconButton
+                    onClick={handleClickSearchIcon}
+                    data-cy={"testSearchPersonality"}
+                    size="large"
+                    sx={{ color: "white", padding: "0px" }}
+                >
+                    <SearchOutlined />
+                </IconButton>
+            </>
+        )
+    }
 
     return (
         <OverlayGrid container item namespace={nameSpaceProp} xs={0.5} sm={4} md={5}>
