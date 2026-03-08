@@ -3,7 +3,6 @@
 
 import { fullVerificationRequest, regexVerificationRequestPage, updatedSource, minimumContent } from "../../fixtures/verificationRequest";
 import locators from "../../support/locators";
-import { Dayjs } from "dayjs"
 import { getPastDay, today } from "../../utils/dateUtils";
 
 describe("Test verification request", () => {
@@ -13,11 +12,6 @@ describe("Test verification request", () => {
         cy.get(locators.floatButton.FLOAT_BUTTON).click();
         cy.get(locators.floatButton.ADD_VERIFICATION_REQUEST).click();
         cy.url().should("contain", "/verification-request/create");
-    };
-
-    const selectPublicationDate = (date: Dayjs) => {
-        cy.get(locators.verificationRequest.FORM_PUBLICATION_DATE).click();
-        cy.contains('[role="gridcell"]', date.format("D")).click();
     };
 
     const saveVerificationRequest = () => {
@@ -56,7 +50,7 @@ describe("Test verification request", () => {
                 cy.intercept("GET", "**/verification-request/**").as("getVerification");
 
                 cy.get(locators.verificationRequest.FORM_CONTENT).type(fullVerificationRequest.content);
-                selectPublicationDate(today);
+                cy.selectDatePickerDate(today);
                 cy.get(locators.verificationRequest.FORM_REPORT_TYPE).click();
                 cy.contains(fullVerificationRequest.reportType).click();
                 cy.get(locators.verificationRequest.FORM_IMPACT_AREA).type(fullVerificationRequest.impactArea, { delay: 200 });
@@ -91,7 +85,7 @@ describe("Test verification request", () => {
                     cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                     cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
                     cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-                    selectPublicationDate(getPastDay(1));
+                    cy.selectDatePickerDate(getPastDay(1));
                     saveVerificationRequest();
                     cy.url().should("match", regexVerificationRequestPage);
 
@@ -131,7 +125,7 @@ describe("Test verification request", () => {
                 cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-                selectPublicationDate(getPastDay(10));
+                cy.selectDatePickerDate(getPastDay(10));
                 cy.get(locators.verificationRequest.CANCEL_BUTTON).click();
 
                 cy.get(locators.verificationRequest.DETAIL_PUBLICATION_DATE).should("be.visible").and("not.contain", getPastDay(10).format("DD/MM/YYYY"));
@@ -147,7 +141,7 @@ describe("Test verification request", () => {
                 cy.intercept("GET", "**/verification-request/**").as("getVerification");
 
                 cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumContent);
-                selectPublicationDate(today);
+                cy.selectDatePickerDate(today);
                 saveVerificationRequest();
                 cy.wait("@getVerification").then((interception) => {
                     getHashFromUrl(interception)
@@ -168,7 +162,7 @@ describe("Test verification request", () => {
 
                 cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
-                selectPublicationDate(getPastDay(1));
+                cy.selectDatePickerDate(getPastDay(1));
                 saveVerificationRequest();
                 cy.url().should("match", regexVerificationRequestPage);
 

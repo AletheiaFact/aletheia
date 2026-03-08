@@ -22,6 +22,7 @@ interface ChatBotContext {
     additionalInfo?: string;
     email?: string;
     sourceChannel?: string;
+    dataHash?: string;
 }
 
 function M2MUser(clientId): M2M {

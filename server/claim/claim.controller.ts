@@ -1,7 +1,6 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
     Logger,
     Param,
@@ -94,29 +93,35 @@ export class ClaimController {
     @ApiTags("claim")
     @Get("api/claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    listAll(@Query() getClaimsDTO: GetClaimsDTO) {
+    async listAll(@Query() getClaimsDTO: GetClaimsDTO) {
         const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
-        return Promise.all([
-            this.claimService.listAll(page, pageSize, order, queryInputs),
-            this.claimService.count(queryInputs),
-        ])
-            .then(([claims, totalClaims]) => {
-                const totalPages = Math.ceil(totalClaims / pageSize);
 
-                this.logger.log(
-                    `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
-                );
+        try {
+            const claims = await this.claimService.listAll(
+                page,
+                pageSize,
+                order,
+                queryInputs
+            );
 
-                return {
-                    claims,
-                    totalClaims,
-                    totalPages,
-                    page,
-                    pageSize,
-                };
-            })
-            .catch((error) => this.logger.error(error));
+            const totalPages = Math.ceil(claims.total / pageSize);
+
+            this.logger.log(
+                `Found ${claims.total} claims. Page ${page} of ${totalPages}`
+            );
+
+            return {
+                claims: claims.data,
+                totalClaims: claims.total,
+                totalPages,
+                page,
+                pageSize,
+            };
+        } catch (error) {
+            this.logger.error(error);
+            throw error;
+        }
     }
 
     @ApiTags("claim")
@@ -180,7 +185,7 @@ export class ClaimController {
 
             const path =
                 req.user.role[claim.nameSpace] === Roles.Admin ||
-                req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return {
@@ -268,13 +273,6 @@ export class ClaimController {
     @Put("api/claim/:id")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
         return this.claimService.update(claimId, updateClaimDTO);
-    }
-
-    @AdminOnly()
-    @ApiTags("claim")
-    @Delete("api/claim/:id")
-    async delete(@Param("id") claimId) {
-        return this.claimService.delete(claimId);
     }
 
     @AdminOnly()
@@ -546,12 +544,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                  {
-                      slug: query.personality,
-                      isDeleted: false,
-                  },
-                  req.language
-              )
+                {
+                    slug: query.personality,
+                    isDeleted: false,
+                },
+                req.language
+            )
             : null;
 
         const queryObject = Object.assign(parsedUrl.query, {

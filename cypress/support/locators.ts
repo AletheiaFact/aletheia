@@ -88,7 +88,6 @@ const locators = {
         FORM_REPORT_TYPE: "[data-cy=testClaimReviewreportType]",
         FORM_IMPACT_AREA: "[data-cy=testClaimReviewimpactArea]",
         FORM_HEARD_FROM: "[data-cy=testClaimReviewheardFrom]",
-        FORM_PUBLICATION_DATE: "[data-cy=testSelectDate]",
         FORM_SOURCE: "[data-cy=testClaimReviewsource]",
         FORM_EMAIL: "[data-cy=testClaimReviewemail]",
 

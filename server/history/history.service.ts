@@ -4,13 +4,13 @@ import { Model, Types, isValidObjectId } from "mongoose";
 import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
 import {
     AfterAndBeforeType,
-    HEX24,
     HistoryItem,
     HistoryQuery,
     HistoryResponse,
     IHideableContent,
     PerformedBy,
 } from "./types/history.interfaces";
+import { HEX24_REGEX } from "../util/regex.util";
 
 @Injectable()
 export class HistoryService {
@@ -58,7 +58,7 @@ export class HistoryService {
         const targetId = Types.ObjectId(dataId);
         let currentPerformedBy = null;
 
-        if (typeof performedBy === "string" && HEX24.test(performedBy)) {
+        if (typeof performedBy === "string" && HEX24_REGEX.test(performedBy)) {
             currentPerformedBy = Types.ObjectId(performedBy);
         } else {
             currentPerformedBy = performedBy;

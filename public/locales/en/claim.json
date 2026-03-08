@@ -24,6 +24,7 @@
     "cardLinkToDebate": "see full debate",
     "claimListTitle": "Repository",
     "claimListHeader": "Claims",
+    "claimListDescription": "Explore the claims already registered in our platform.",
     "imageAlreadyExists": "Image already exists in the platform",
 
     "hideModalTitle": "Hide claim",
