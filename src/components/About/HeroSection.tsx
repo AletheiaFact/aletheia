@@ -35,7 +35,7 @@ export default function HeroSection() {
               <Typography
                 variant="h1"
                 sx={{
-                  fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4.5rem" },
+                  fontSize: { xs: "2.4rem", sm: "3.5rem", md: "4.5rem" },
                   fontWeight: 300,
                   lineHeight: 1.1,
                   mb: 3,
@@ -47,7 +47,7 @@ export default function HeroSection() {
                   variant="h1"
                   sx={{
                     display: "block",
-                    fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4.5rem" },
+                    fontSize: { xs: "2.4rem", sm: "3.5rem", md: "4.5rem" },
                     fontWeight: 500,
                   }}
                 >
@@ -71,10 +71,10 @@ export default function HeroSection() {
               >
                 {t("about:accessPlatform")}
               </Button>
-              <Button 
-                variant="outlined" 
-                size="large" 
-                startIcon={<Download />} 
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<Download />}
                 sx={{ px: 3, py: 1.5 }}
                 href="/supportive-materials"
                 component="a"
