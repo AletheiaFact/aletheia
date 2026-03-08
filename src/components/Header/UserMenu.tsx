@@ -2,7 +2,6 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
-import AletheiaButton from "../Button";
 import { CreateLogoutHandler } from "../Login/LogoutAction";
 import SelectLanguage from "./SelectLanguage";
 import { useAppSelector } from "../../store/store";
@@ -19,6 +18,7 @@ import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
 import UserMenuHeader from "./UserMenuHeader";
 import colors from "../../styles/colors";
+import { IconButton } from "@mui/material";
 
 const menuSlotProps = {
     paper: {
@@ -104,13 +104,15 @@ const UserMenu = ({ hasSession, user }) => {
 
     return (
         <>
-            <AletheiaButton
-                style={{ padding: "0 12px" }}
-                data-cy="testUserIcon"
-                onClick={handleClick}
-            >
-                <AccountCircleIcon sx={{ width: 28, height: 28 }} />
-            </AletheiaButton>
+            {!router.pathname.includes("/login") &&
+                <IconButton
+                    data-cy="testUserIcon"
+                    onClick={handleClick}
+                    sx={{ color: "white", padding: vw?.xs ? "0px" : "0px 12px" }}
+                >
+                    <AccountCircleIcon sx={{ width: 28, height: 28 }} />
+                </IconButton>
+            }
 
             <UserMenuStyle
                 anchorEl={anchorEl}

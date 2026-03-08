@@ -4,6 +4,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useLayoutEffect, useState } from "react";
+import { useAppSelector } from "../store/store";
 
 export enum ButtonType {
     blue = "blue",
@@ -32,6 +33,8 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
 
     const [backgroundColor, setBackgroundColor] = useState(colors.primary);
 
+    const { vw } = useAppSelector((state) => state);
+
     useLayoutEffect(() => {
         setBackgroundColor(
             nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
@@ -45,7 +48,8 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         alignItems: "center",
         height: 40,
         borderRadius: props.rounded ? "30px" : "4px",
-        fontSize: "12px",
+        fontSize: vw?.xs ? "10px" : "12px",
+        padding: vw?.xs ? "6px 4px" : "6px 16px",
         lineHeight: "16px",
         ...props.style,
     };
