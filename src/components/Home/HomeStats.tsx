@@ -29,7 +29,7 @@ const StatsGrid = styled(Grid)`
   }
 
   @media ${queries.sm} {
-    padding: 40px 0px;
+    padding: 30px 0px;
 
     .statsNumber {
       font-size: 36px;
@@ -42,6 +42,7 @@ const StatsGrid = styled(Grid)`
 
   @media ${queries.xs} {
     justify-content: space-around;
+    padding: 20px 0px;
 
     .statsContainer {
       gap: 12px;

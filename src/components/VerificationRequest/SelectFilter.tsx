@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { VerificationRequestSourceChannel } from "../../../server/verification-request/dto/types";
+import { useAppSelector } from "../../store/store";
 
 interface SelectOption {
   value: string;
@@ -19,7 +20,6 @@ interface SelectFilterProps {
   filterType: string;
   currentValue: string;
   onValueChange: (newValue: string) => void;
-  minWidth?: number;
 }
 
 const filterActions: Record<string, () => SelectOption[]> = {
@@ -60,16 +60,16 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
   filterType,
   currentValue,
   onValueChange,
-  minWidth = 200,
 }) => {
   const { t } = useTranslation();
   const filterItem = getOptionsByFilterType(filterType);
+  const { vw } = useAppSelector((state) => state);
 
   const labelId = `${filterType}-label`;
   const label = t(`verificationRequest:${filterType}`);
 
   return (
-    <FormControl sx={{ minWidth: minWidth }} size="small">
+    <FormControl sx={{ minWidth: vw?.xs ? "100%" : "200px" }} size="small">
       <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         labelId={labelId}
