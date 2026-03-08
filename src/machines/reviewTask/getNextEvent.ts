@@ -48,7 +48,7 @@ const getNextEvents = (
             Events.sendToCrossChecking,
         ],
 
-        [Events.selectedReview]: [Events.goback, Events.sendToCrossChecking],
+        [Events.selectedReview]: [Events.goback, Events.sendToReview],
         [States.selectReviewer]: [Events.goback, Events.sendToReview],
 
         [Events.sendToCrossChecking]: [

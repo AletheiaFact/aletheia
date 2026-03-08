@@ -48,6 +48,12 @@ export class CopilotSession {
 
     @Prop({ default: true })
     isActive: boolean;
+
+    @Prop({ required: false })
+    title: string;
+
+    @Prop({ required: false, default: "active" })
+    status: string;
 }
 
 export const CopilotSessionSchema =

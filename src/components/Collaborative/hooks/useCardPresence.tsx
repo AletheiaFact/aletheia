@@ -10,7 +10,7 @@ export default function useCardPresence(
 
     useEffect(() => {
         const json = getJSON();
-        const hasCard = json.content.some(({ type }) => type === cardType);
+        const hasCard = json?.content?.some(({ type }) => type === cardType) ?? false;
         if (isDisabled !== hasCard) {
             setIsDisabled(hasCard);
         }

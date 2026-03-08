@@ -554,6 +554,12 @@ export class ReviewTaskService {
         }
     }
 
+    async createDraft(reviewTaskBody: any) {
+        const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
+        await newReviewTask.save();
+        return newReviewTask;
+    }
+
     async update(
         data_hash: string,
         { machine }: UpdateReviewTaskDTO,
@@ -806,7 +812,7 @@ export class ReviewTaskService {
         reviewData.reviewComments = reviewData.reviewComments.filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
-        reviewData.reviewComments = reviewData.crossCheckingComments.filter(
+        reviewData.crossCheckingComments = reviewData.crossCheckingComments.filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
 

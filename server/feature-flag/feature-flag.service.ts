@@ -46,4 +46,16 @@ export class FeatureFlagService {
             ? this.unleash.isEnabled("enable_view_report_preview")
             : false;
     }
+
+    isEnableCopilotReviewV2() {
+        // TODO: Remove dev override before merging
+        if (process.env.ENVIRONMENT === "watch-dev") {
+            return true;
+        }
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_copilot_review_v2")
+            : false;
+    }
 }

@@ -103,19 +103,22 @@ export class ReviewTaskController {
         @Body() reviewTaskBody: UpdateReviewTaskDTO
     ) {
         const history = false;
-        return this.reviewTaskService
-            .getReviewTaskByDataHash(data_hash)
-            .then((review) => {
-                if (review) {
-                    return this.reviewTaskService.update(
-                        data_hash,
-                        reviewTaskBody,
-                        reviewTaskBody.nameSpace,
-                        reviewTaskBody.reportModel,
-                        history
-                    );
-                }
+        const review =
+            await this.reviewTaskService.getReviewTaskByDataHash(data_hash);
+        if (review) {
+            return this.reviewTaskService.update(
+                data_hash,
+                reviewTaskBody,
+                reviewTaskBody.nameSpace,
+                reviewTaskBody.reportModel,
+                history
+            );
+        } else {
+            return this.reviewTaskService.createDraft({
+                data_hash,
+                ...reviewTaskBody,
             });
+        }
     }
 
     // TODO: remove hash from the url

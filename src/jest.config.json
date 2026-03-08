@@ -1,0 +1,19 @@
+{
+    "displayName": "frontend",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+        "^.+\\.(t|j)sx?$": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "preset": "ts-jest",
+    "rootDir": "./",
+    "modulePathIgnorePatterns": ["../dist/"],
+    "moduleNameMapper": {
+        "^.*/components/ClaimReview/form/fieldLists/(.*)$": "<rootDir>/machines/reviewTask/__mocks__/fieldListMock.ts"
+    },
+    "collectCoverageFrom": [
+        "machines/**/*.ts",
+        "!machines/**/*.spec.ts",
+        "!machines/**/__mocks__/**"
+    ]
+}

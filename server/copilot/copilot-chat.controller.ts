@@ -3,6 +3,7 @@ import {
     Controller,
     Get,
     Param,
+    Patch,
     Post,
     Query,
     Req,
@@ -33,6 +34,42 @@ export class CopilotChatController {
         const session = await this.copilotSessionService.getActiveSession(
             req.user._id,
             claimReviewDataHash
+        );
+        return { session };
+    }
+
+    @FactCheckerOnly()
+    @Get("api/copilot-session/list")
+    async listSessions(
+        @Query("page") page: string = "1",
+        @Query("pageSize") pageSize: string = "20",
+        @Query("claimReviewDataHash") claimReviewDataHash: string,
+        @Req() req
+    ) {
+        return this.copilotSessionService.listSessionsByUser(
+            req.user._id,
+            parseInt(page, 10),
+            parseInt(pageSize, 10),
+            claimReviewDataHash
+        );
+    }
+
+    @FactCheckerOnly()
+    @Get("api/copilot-session/:id/detail")
+    async getSessionById(@Param("id") id: string) {
+        const session = await this.copilotSessionService.getSessionById(id);
+        return { session };
+    }
+
+    @FactCheckerOnly()
+    @Patch("api/copilot-session/:id")
+    async updateSession(
+        @Param("id") id: string,
+        @Body() updateData: { title?: string; status?: string }
+    ) {
+        const session = await this.copilotSessionService.updateSession(
+            id,
+            updateData
         );
         return { session };
     }

@@ -1,5 +1,8 @@
 import axios from "axios";
 
+const isAuthError = (err: unknown) =>
+    axios.isAxiosError(err) && err.response?.status === 403;
+
 const chatRequest = axios.create({
     withCredentials: true,
     baseURL: `/api/agent-chat`,
@@ -15,7 +18,8 @@ const getSession = (claimReviewDataHash: string) => {
         .get("/", { params: { claimReviewDataHash } })
         .then((response) => response.data)
         .catch((err) => {
-            console.error("Error fetching copilot session: ", err);
+            if (!isAuthError(err))
+                console.error("Error fetching copilot session: ", err);
             throw err;
         });
 };
@@ -25,7 +29,8 @@ const createSession = (claimReviewDataHash: string, context: object) => {
         .post("/", { claimReviewDataHash, context })
         .then((response) => response.data)
         .catch((err) => {
-            console.error("Error creating copilot session: ", err);
+            if (!isAuthError(err))
+                console.error("Error creating copilot session: ", err);
             throw err;
         });
 };
@@ -53,11 +58,53 @@ const sendMessage = (sessionId: string, message: string) => {
         });
 };
 
+const listSessions = (
+    page: number = 1,
+    pageSize: number = 20,
+    claimReviewDataHash?: string
+) => {
+    return sessionRequest
+        .get("/list", { params: { page, pageSize, claimReviewDataHash } })
+        .then((response) => response.data)
+        .catch((err) => {
+            if (!isAuthError(err))
+                console.error("Error listing copilot sessions: ", err);
+            throw err;
+        });
+};
+
+const getSessionById = (sessionId: string) => {
+    return sessionRequest
+        .get(`/${sessionId}/detail`)
+        .then((response) => response.data)
+        .catch((err) => {
+            if (!isAuthError(err))
+                console.error("Error fetching copilot session by id: ", err);
+            throw err;
+        });
+};
+
+const updateSession = (
+    sessionId: string,
+    data: { title?: string; status?: string }
+) => {
+    return sessionRequest
+        .patch(`/${sessionId}`, data)
+        .then((response) => response.data)
+        .catch((err) => {
+            console.error("Error updating copilot session: ", err);
+            throw err;
+        });
+};
+
 const copilotApi = {
     getSession,
     createSession,
     clearSession,
     sendMessage,
+    listSessions,
+    getSessionById,
+    updateSession,
 };
 
 export default copilotApi;

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 import { VisualEditorContext } from "./VisualEditorProvider";
 import VisualEditorStyled from "./VisualEditor.style";
@@ -8,14 +8,16 @@ import Editor from "./Components/Editor";
 import FloatingMenu from "./Components/FloatingMenu";
 import AffixPreviewButton from "./Components/AffixPreviewButton";
 import { useAppSelector } from "../../store/store";
+import { Report } from "../../types/Report";
 
 interface VisualEditorProps {
-    onContentChange: (state: any, type: string) => void;
+    onContentChange?: (state: any, type: string) => void;
+    initialReport?: Report;
 }
 
 const editorConfig = new EditorConfig();
 
-const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
+const VisualEditor = ({ onContentChange, initialReport }: VisualEditorProps) => {
     const { getComponents } = editorConfig;
     const { editorConfiguration, editorSources } =
         useContext(VisualEditorContext);
@@ -26,10 +28,25 @@ const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
     const enableViewReportPreview = useAppSelector(
         (state) => state?.enableViewReportPreview
     );
+    const injectedReportRef = useRef<Report | null>(null);
+
+    // Inject editorReport into Remirror when provided
+    useEffect(() => {
+        if (
+            initialReport &&
+            manager?.view &&
+            initialReport !== injectedReportRef.current
+        ) {
+            injectedReportRef.current = initialReport;
+            manager.view.updateState(
+                manager.createState({ content: { ...initialReport } })
+            );
+        }
+    }, [initialReport, manager]);
 
     const handleChange = useCallback(
         ({ state }) => {
-            onContentChange(state, reviewTaskType);
+            onContentChange?.(state, reviewTaskType);
             setState(state);
         },
         [setState, onContentChange, reviewTaskType]
