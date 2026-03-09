@@ -1,4 +1,7 @@
+import { SearchOutlined } from "@mui/icons-material";
 import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
 import SearchOverlay from "../Search/SearchOverlay";
@@ -13,11 +16,14 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserId } from "../../atoms/currentUser";
+import { useRouter } from "next/router";
 import localConfig from "../../../config/localConfig";
-import { Grid, Link } from "@mui/material";
+import { Grid, IconButton, Link } from "@mui/material";
 import HeaderGridStyle from "./HeaderActions.style";
 
 const HeaderContent = () => {
+    const dispatch = useDispatch();
+    const router = useRouter();
     const { vw } = useAppSelector((state) => state);
     const [userId] = useAtom(currentUserId);
     const hasSession = !!userId;
@@ -45,6 +51,16 @@ const HeaderContent = () => {
             </Link>
             <SearchOverlay />
             <Grid item className="headerActions">
+                {vw?.xs && !router.pathname.includes("/home-page") && (
+                    <IconButton
+                        onClick={() => { dispatch(actions.openResultsOverlay()) }}
+                        data-cy={"testSearchPersonality"}
+                        size="large"
+                        sx={{ color: "white", padding: "0px" }}
+                    >
+                        <SearchOutlined />
+                    </IconButton>
+                )}
                 {localConfig.header.donateButton.show
                     ? !hasSession && <DonateButton header={true} />
                     : null}
