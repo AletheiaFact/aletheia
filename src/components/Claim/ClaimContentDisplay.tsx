@@ -2,7 +2,7 @@ import React from "react";
 
 import ClaimImageBody from "./ClaimImageBody";
 import ClaimSpeechBody from "./ClaimSpeechBody";
-import { ViewMode } from "../../types/VerificationRequest";
+import { ViewMode } from "../FilterToggleButtons";
 
 interface ClaimContentDisplayProps {
     isImage: boolean;

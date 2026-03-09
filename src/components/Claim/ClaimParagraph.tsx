@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import SentenceApi from "../../api/sentenceApi";
-import { ViewMode } from "../../types/VerificationRequest";
+import { ViewMode } from "../FilterToggleButtons";
 
 type ClaimParagraphProps = {
     paragraph: any;

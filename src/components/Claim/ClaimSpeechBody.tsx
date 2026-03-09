@@ -1,4 +1,4 @@
-import { ViewMode } from "../../types/VerificationRequest";
+import { ViewMode } from "../FilterToggleButtons";
 import ClaimParagraph from "./ClaimParagraph";
 import React from "react";
 

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import InfoTooltip from "./InfoTooltip";
 import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { ViewMode } from "../../types/VerificationRequest";
+import { ViewMode } from "../FilterToggleButtons";
 
 const Sentence = styled.a`
     color: ${colors.primary};

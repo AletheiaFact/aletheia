@@ -53,9 +53,8 @@ const MainApp = ({ children }) => {
                 minHeight: "100dvh",
                 background: colors.white,
                 gridTemplateColumns: "minmax(0, 1fr)",
-                width: "100%",
             }}>
-                <Box sx={{ width: "100%", overflowX: "hidden" }}>
+                <Box>
                     <Header />
                     <DonationBanner />
                     {renderCTAButton()}

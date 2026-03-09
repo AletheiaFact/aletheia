@@ -1,7 +1,7 @@
 import React from "react";
 import { ActionTypes } from "../../store/types";
 import { Grid } from "@mui/material";
-import FilterToggleButtons from "./FilterToggleButtons";
+import FilterToggleButtons from "../FilterToggleButtons";
 import FilterBar from "./FilterBar";
 import AletheiaButton, { ButtonType } from "../Button";
 import FilterPopover from "./FilterPopover";
