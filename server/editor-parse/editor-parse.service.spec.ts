@@ -962,6 +962,57 @@ describe("EditorParseService", () => {
             expect(result.content[0].type).toBe("report");
             expect(result.content[0].content).toHaveLength(2);
         });
+
+        it("Should NOT remove a trailing paragraph that has content (e.g., source links)", () => {
+            const editorWithSourceInTrailing: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "summary",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "Summary text" },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: "paragraph",
+                        content: [
+                            {
+                                type: "text",
+                                marks: [
+                                    {
+                                        type: "link",
+                                        attrs: {
+                                            id: "source-1",
+                                            href: "https://example.com",
+                                            target: null,
+                                            auto: true,
+                                        },
+                                    },
+                                ],
+                                text: " ",
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const result = editorParseService.removeTrailingParagraph(
+                editorWithSourceInTrailing
+            );
+
+            expect(result.content).toHaveLength(2);
+            expect(result.content[0].type).toBe("summary");
+            expect(result.content[1].type).toBe("paragraph");
+            expect(result.content[1].content).toHaveLength(1);
+            expect(
+                (result.content[1].content[0].marks[0] as any).attrs.href
+            ).toBe("https://example.com");
+        });
     });
 
     describe("removeTrailingParagraph() integration with read path", () => {
