@@ -3,8 +3,16 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import SentenceApi from "../../api/sentenceApi";
+import { ViewMode } from "../../types/VerificationRequest";
 
-const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
+type ClaimParagraphProps = {
+    paragraph: any;
+    showHighlights: ViewMode;
+    handleSentenceClick: any;
+
+}
+
+const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }: ClaimParagraphProps) => {
     const dispatch = useDispatch();
     const sentences = paragraph.content;
     return (

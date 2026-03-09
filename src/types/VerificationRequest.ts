@@ -23,7 +23,7 @@ interface FilterItem {
   type: FilterType;
 }
 
-type ViewMode = "board" | "dashboard";
+type ViewMode = "left" | "right";
 
 type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
 
