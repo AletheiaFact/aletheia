@@ -7,11 +7,13 @@ import { useVerificationRequestFilters } from "./VerificationRequestFilters";
 import VerificationRequestDashboard from "./Dashboard/VerificationRequestDashboard";
 import { useTranslation } from "react-i18next";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
 const VerificationRequestView = () => {
   const { state, actions } = useVerificationRequestFilters();
   const { viewMode } = state;
   const { t } = useTranslation();
+  const { vw } = useAppSelector((state) => state);
 
   return (
     <Grid container style={{ marginTop: "64px", justifyContent: "center" }}>
@@ -19,7 +21,7 @@ const VerificationRequestView = () => {
         <Typography variant="h1" style={{ fontWeight: "bold", maxWidth: 900, fontSize: "40px" }}>
           {t("verificationRequest:verificationRequestListHeader")}
         </Typography>
-        <Typography variant="body1" textAlign={"center"}>
+        <Typography variant="body1" style={{ textAlign: "center", padding: vw?.xs ? "0 16px" : "0" }}>
           {t("verificationRequest:verificationRequestDescription")}
         </Typography>
       </Grid>
