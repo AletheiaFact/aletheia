@@ -5,7 +5,6 @@ import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import ClaimSourceList from "../Source/ClaimSourceList";
-import ToggleSection from "../ToggleSection";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
@@ -18,6 +17,8 @@ import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
 import { isAdmin } from "../../utils/GetUserPermission";
+import FilterToggleButtons from "../VerificationRequest/FilterToggleButtons";
+import { ViewMode } from "../../types/VerificationRequest";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    const [showHighlights, setShowHighlights] = useState(true);
+    const [showHighlights, setShowHighlights] = useState<ViewMode>("left");
 
     useEffect(() => {
         dispatch(actions.setSelectTarget(claim));
@@ -99,19 +100,12 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                 {!isImage && (
                                     <AffixButtonV2
                                         Children={
-                                            <ToggleSection
-                                                defaultValue={showHighlights}
-                                                onChange={(e) => {
-                                                    setShowHighlights(
-                                                        e.target.value
-                                                    );
-                                                }}
-                                                labelTrue={t(
-                                                    "claim:showHighlightsButton"
-                                                )}
-                                                labelFalse={t(
-                                                    "claim:hideHighlightsButton"
-                                                )}
+                                            <FilterToggleButtons
+                                                viewMode={showHighlights}
+                                                setViewMode={setShowHighlights}
+                                                leftOption={t("claim:showHighlightsButton")}
+                                                rightOption={t("claim:hideHighlightsButton")}
+                                                isRounded={true}
                                             />
                                         }
                                     />

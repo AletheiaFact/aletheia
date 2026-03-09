@@ -14,10 +14,10 @@ const VerificationRequestView = () => {
     <VerificationRequestGrid container>
       <FilterManager state={state} actions={actions} />
       <ActiveFilters state={state} actions={actions} />
-      {viewMode === "board" && (
+      {viewMode === "left" && (
         <VerificationRequestBoardView state={state} actions={actions} />
       )}
-      {viewMode === "dashboard" && <VerificationRequestDashboard />}
+      {viewMode === "right" && <VerificationRequestDashboard />}
     </VerificationRequestGrid>
   );
 };

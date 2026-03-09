@@ -11,7 +11,7 @@ export const useVerificationRequestFilters = (): FiltersContext => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [viewMode, setViewMode] = useState<ViewMode>("board");
+  const [viewMode, setViewMode] = useState<ViewMode>("left");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sourceChannelFilter, setSourceChannelFilter] = useState("all");
   const [filterValue, setFilterValue] = useState([]);

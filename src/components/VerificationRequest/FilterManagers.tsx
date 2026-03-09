@@ -4,6 +4,8 @@ import { Grid } from "@mui/material";
 import FilterToggleButtons from "./FilterToggleButtons";
 import FilterBar from "./FilterBar";
 import AletheiaButton, { ButtonType } from "../Button";
+import FilterPopover from "./FilterPopover";
+import { ViewList, ViewModule } from "@mui/icons-material";
 
 const FilterManager = ({ state, actions }) => {
     const {
@@ -53,22 +55,23 @@ const FilterManager = ({ state, actions }) => {
         >
             <Grid className="filterToggleContainer">
                 <FilterToggleButtons
-                    state={state}
-                    actions={actions}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
+                    leftOption={<ViewModule />}
+                    rightOption={<ViewList />}
                 />
+                <FilterPopover state={state} actions={actions} />
             </Grid>
 
             <Grid className="filterBarContainer">
-                {viewMode === "board" && (
+                {viewMode === "left" && (
                     <FilterBar
                         state={state}
                         actions={actions}
                     />
                 )}
 
-                {viewMode === "board" &&
+                {viewMode === "left" &&
                     (topicFilterUsed.length > 0 ||
                         priorityFilter !== "all" ||
                         sourceChannelFilter !== "all" ||
