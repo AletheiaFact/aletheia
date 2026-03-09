@@ -1,6 +1,7 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import colors from "../../styles/colors";
-import { ViewMode } from "../../types/VerificationRequest";
+import colors from "../styles/colors";
+
+export type ViewMode = "left" | "right";
 
 type FilterToggleProps = {
     viewMode: ViewMode;

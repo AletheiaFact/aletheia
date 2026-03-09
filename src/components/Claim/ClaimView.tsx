@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
+import { ContentModelEnum, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import ClaimSourceList from "../Source/ClaimSourceList";
@@ -17,8 +17,8 @@ import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
 import { isAdmin } from "../../utils/GetUserPermission";
-import FilterToggleButtons from "../VerificationRequest/FilterToggleButtons";
-import { ViewMode } from "../../types/VerificationRequest";
+import FilterToggleButtons from "../FilterToggleButtons";
+import { ViewMode } from "../FilterToggleButtons";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();

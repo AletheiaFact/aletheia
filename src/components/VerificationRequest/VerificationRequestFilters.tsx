@@ -5,7 +5,8 @@ import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import debounce from "lodash.debounce";
-import { FiltersContext, ViewMode } from "../../types/VerificationRequest";
+import { FiltersContext } from "../../types/VerificationRequest";
+import { ViewMode } from "../FilterToggleButtons";
 
 export const useVerificationRequestFilters = (): FiltersContext => {
   const { t } = useTranslation();
