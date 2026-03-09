@@ -5,6 +5,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { useState } from "react";
+import { useAppSelector } from "../store/store";
 
 const StyledButton = styled(Button)<{ namespace: NameSpaceEnum; selected: boolean }>`
   background: ${({ namespace, selected }) =>
@@ -49,6 +50,8 @@ interface ToggleSectionProps {
 const ToggleSection = (props: ToggleSectionProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const [selectedValue, setSelectedValue] = useState<boolean>(props.defaultValue);
+    const { vw } = useAppSelector((state) => state);
+    const smallDevice = vw?.xs;
 
     const handleChange = (value: boolean) => {
     setSelectedValue(value);
@@ -62,7 +65,11 @@ const ToggleSection = (props: ToggleSectionProps) => {
         selected={selectedValue === true}
         onClick={() => handleChange(true)}
         namespace={nameSpace}
-        style={{ borderRadius: "30px 0px 0px 30px" }}
+        style={{
+          borderRadius: "30px 0px 0px 30px",
+          padding: smallDevice ? "6px 10px" : "8px 16px",
+          fontSize: smallDevice ? "12px" : "14px",
+        }}
         >
         {props.labelTrue}
         </StyledButton>
@@ -70,7 +77,11 @@ const ToggleSection = (props: ToggleSectionProps) => {
         selected={selectedValue === false}
         onClick={() => handleChange(false)}
         namespace={nameSpace}
-        style={{ borderRadius: "0px 30px 30px 0px" }}
+        style={{
+          borderRadius: "0px 30px 30px 0px",
+          padding: smallDevice ? "6px 10px" : "8px 16px",
+          fontSize: smallDevice ? "12px" : "14px",
+        }}
         >
        {props.labelFalse}
       </StyledButton>

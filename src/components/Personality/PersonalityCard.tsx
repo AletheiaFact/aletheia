@@ -95,7 +95,7 @@ const PersonalityCard = ({
         componentStyle.avatarSize = 43;
     }
     if (header) {
-        componentStyle.avatarSize = 144;
+        componentStyle.avatarSize = 128;
         componentStyle.hiddenIconSize = 22;
     }
 
@@ -135,14 +135,15 @@ const PersonalityCard = ({
                     style={{
                         width: "100%",
                         textAlign: hoistAvatar ? "center" : "inherit",
+                        justifyItems: "center",
                     }}
                 >
                     <Grid container
                         columnSpacing={summarized ? 0 : 1.5}
                         style={{
-                            alignContent: summarized ? "center": undefined,
+                            alignContent: summarized ? "center" : undefined,
                             width: "100%",
-                            padding: "12px",
+                            padding: vw?.xs ? "12px 0px" : "12px",
                         }}
                     >
                         <PersonalityCardAvatar

@@ -22,7 +22,7 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
         },
     }));
 
-    const { sitekey } = useAppSelector((state) => state);
+    const { sitekey, vw } = useAppSelector((state) => state);
 
     const handleChangeCaptcha = async () => {
         const recaptchaString: string = recaptchaRef.current.getValue();
@@ -40,6 +40,7 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
             <ReCAPTCHA
                 ref={recaptchaRef}
                 sitekey={sitekey}
+                size={vw?.xs ? "compact" : "normal"}
                 onChange={handleChangeCaptcha}
                 onExpired={onExpiredCaptcha}
             />
