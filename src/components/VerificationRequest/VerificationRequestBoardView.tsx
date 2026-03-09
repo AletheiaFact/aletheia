@@ -76,7 +76,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
     <Box sx={{ width: "100%", p: 2, backgroundColor: colors.lightNeutralSecondary }}>
       <Grid container spacing={2} justifyContent="center">
         {statuses.map((status) => (
-          <Grid item xs={12} md={3} lg={3.25} key={status.key}>
+          <Grid item xs={12} md={4} key={status.key}>
             <Paper
               elevation={0}
               sx={{

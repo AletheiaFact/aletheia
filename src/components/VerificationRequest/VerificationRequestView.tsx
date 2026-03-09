@@ -15,11 +15,11 @@ const VerificationRequestView = () => {
 
   return (
     <Grid container style={{ marginTop: "64px", justifyContent: "center" }}>
-      <Grid item xs={12} md={9.5}>
-        <Typography variant="h1" fontSize={32}>
+      <Grid item xs={12} md={5} style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: "16px" }} >
+        <Typography variant="h1" style={{ fontWeight: "bold", maxWidth: 900, fontSize: "40px" }}>
           {t("verificationRequest:verificationRequestListHeader")}
         </Typography>
-        <Typography variant="body1">
+        <Typography variant="body1" textAlign={"center"}>
           {t("verificationRequest:verificationRequestDescription")}
         </Typography>
       </Grid>
@@ -35,7 +35,7 @@ const VerificationRequestView = () => {
           alignItems: "center",
         }}>
         <Grid container justifyContent={"center"}>
-          <Grid item xs={12} md={9.5} style={{ display: "flex", alignItems: "center", }}>
+          <Grid item xs={12} md={8} style={{ display: "flex", alignItems: "center", }}>
             <FilterManager state={state} actions={actions} />
             <ActiveFilters state={state} actions={actions} />
           </Grid>

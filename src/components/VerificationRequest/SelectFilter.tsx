@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { VerificationRequestSourceChannel } from "../../../server/verification-request/dto/types";
+import colors from "../../styles/colors";
 
 interface SelectOption {
   value: string;
@@ -69,7 +70,7 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
   const label = t(`verificationRequest:${filterType}`);
 
   return (
-    <FormControl sx={{ minWidth: minWidth }} size="small">
+    <FormControl sx={{ minWidth: minWidth, backgroundColor: colors.white }} size="small">
       <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         labelId={labelId}
