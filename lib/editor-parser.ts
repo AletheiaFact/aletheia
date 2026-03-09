@@ -86,7 +86,7 @@ export class EditorParser {
      * Converts MultiParagraphContent (with \n separators) to HTML with <br> tags
      */
     private convertLineBreaksToHtml(content: MultiParagraphContent): string {
-        return content.replace(/\n/g, '<br>');
+        return content.replace(/\n/g, "<br>");
     }
 
     /**
@@ -95,34 +95,38 @@ export class EditorParser {
      * - Content with empty lines: <br> tags for visual spacing
      */
     private convertToParagraphElements(content: MultiParagraphContent): string {
-        const lines = content.split('\n');
+        const lines = content.split("\n");
 
         // Check if there are any empty lines (for visual spacing)
-        const hasEmptyLines = lines.some(line => line.trim() === '');
+        const hasEmptyLines = lines.some((line) => line.trim() === "");
 
         if (hasEmptyLines) {
             // Use <br> approach for content with intentional empty lines/spacing
             return this.convertLineBreaksToHtml(content);
         } else {
             // Use separate <p> elements for semantic HTML when no empty lines
-            return lines
-                .map(line => `<p>${line}</p>`)
-                .join('');
+            return lines.map((line) => `<p>${line}</p>`).join("");
         }
     }
 
     /**
      * Checks if content contains multiple paragraphs
      */
-    private isMultiParagraphContent(content: string): content is MultiParagraphContent {
-        return typeof content === 'string' && content.includes('\n');
+    private isMultiParagraphContent(
+        content: string
+    ): content is MultiParagraphContent {
+        return typeof content === "string" && content.includes("\n");
     }
 
     /**
      * Converts MultiParagraphContent to RemirrorJSON paragraph nodes for the editor
      */
-    private convertMultiParagraphToEditorNodes(content: MultiParagraphContent): RemirrorJSON[] {
-        return content.split('\n').map(line => this.createParagraphNode(line));
+    private convertMultiParagraphToEditorNodes(
+        content: MultiParagraphContent
+    ): RemirrorJSON[] {
+        return content
+            .split("\n")
+            .map((line) => this.createParagraphNode(line));
     }
 
     private createParagraphNode(line: string): RemirrorJSON {
@@ -155,8 +159,8 @@ export class EditorParser {
 
     private buildSingleHtmlContent(contentStr: string): string {
         if (this.isMultiParagraphContent(contentStr)) {
-            const lines = contentStr.split('\n');
-            const hasEmptyLines = lines.some(line => line.trim() === '');
+            const lines = contentStr.split("\n");
+            const hasEmptyLines = lines.some((line) => line.trim() === "");
 
             if (hasEmptyLines) {
                 // Use <br> approach for content with intentional empty lines/spacing
@@ -164,7 +168,9 @@ export class EditorParser {
                 return `<div><p>${htmlContent}</p></div>`;
             } else {
                 // Use separate <p> elements for semantic HTML when no empty lines
-                const htmlContent = lines.map(line => `<p>${line}</p>`).join('');
+                const htmlContent = lines
+                    .map((line) => `<p>${line}</p>`)
+                    .join("");
                 return `<div>${htmlContent}</div>`;
             }
         }
@@ -213,16 +219,19 @@ export class EditorParser {
 
     private buildHtmlContentFromJoined(joinedContent: string): string {
         if (this.isMultiParagraphContent(joinedContent)) {
-            const lines = joinedContent.split('\n');
-            const hasEmptyLines = lines.some(line => line.trim() === '');
+            const lines = joinedContent.split("\n");
+            const hasEmptyLines = lines.some((line) => line.trim() === "");
 
             if (hasEmptyLines) {
                 // Use <br> approach for content with intentional empty lines/spacing
-                const finalContent = this.convertLineBreaksToHtml(joinedContent);
+                const finalContent =
+                    this.convertLineBreaksToHtml(joinedContent);
                 return `<div><p>${finalContent}</p></div>`;
             } else {
                 // Use separate <p> elements for semantic HTML when no empty lines
-                const finalContent = lines.map(line => `<p>${line}</p>`).join('');
+                const finalContent = lines
+                    .map((line) => `<p>${line}</p>`)
+                    .join("");
                 return `<div>${finalContent}</div>`;
             }
         }
@@ -641,7 +650,10 @@ export class EditorParser {
         }));
     }
 
-    private buildEditorContentFromValue(c: any, isEmpty: boolean): RemirrorJSON[] {
+    private buildEditorContentFromValue(
+        c: any,
+        isEmpty: boolean
+    ): RemirrorJSON[] {
         if (isEmpty) {
             return [{ type: "paragraph" }];
         }
@@ -693,7 +705,11 @@ export class EditorParser {
         const content = [...editorJSON.content];
         const lastItem = content[content.length - 1];
 
-        if (lastItem?.type === "paragraph") {
+        const isEmptyParagraph =
+            lastItem?.type === "paragraph" &&
+            (!lastItem.content || lastItem.content.length === 0);
+
+        if (isEmptyParagraph) {
             content.pop();
         }
 
