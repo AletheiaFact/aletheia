@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import CTAFolder from '../../components/Home/CTAFolder';
+import CTAFolder from '../../components/Home/CTAFolder/CTAFolder';
 
 export default {
     title: 'Components/CTAFolder',
