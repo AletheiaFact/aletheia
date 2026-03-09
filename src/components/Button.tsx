@@ -45,6 +45,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         alignItems: "center",
         height: 40,
         borderRadius: props.rounded ? "30px" : "4px",
+        fontSize: "12px",
         lineHeight: "16px",
         ...props.style,
     };

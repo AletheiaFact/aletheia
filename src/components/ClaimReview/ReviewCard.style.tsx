@@ -53,6 +53,7 @@ const ReviewCardStyled = styled.div`
     .review-actions {
       margin-top: 8px;
       display: grid;
+      justify-content: center;
       justify-items: center;
       gap: 0px;
     }
