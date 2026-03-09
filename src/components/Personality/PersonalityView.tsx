@@ -31,7 +31,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 </Grid>
             </Grid>
 
-            <Grid container justifyContent="center"style={{ marginTop: "64px" }}>
+            <Grid container justifyContent="center" style={{ marginTop: "64px" }}>
                 <Grid item sm={11} md={7} lg={6}>
                     <ClaimList personality={personality} />
                 </Grid>
