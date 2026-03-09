@@ -46,7 +46,6 @@ const FilterManager = ({ state, actions }) => {
   return (
     <Grid
       container
-      xs={10}
       alignItems="center"
       justifyContent="space-between"
       style={{ padding: "16px 0" }}
