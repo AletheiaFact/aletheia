@@ -28,7 +28,7 @@ const PersonalityCardButton = ({
                 style={{
                     height: "auto",
                     fontSize: isMobileDevice ? "12px" : "14px",
-                    padding: isMobileDevice ? "4px 6px" : "4px 12px",
+                    padding: isMobileDevice ? "4px 8px" : "4px 12px",
                     textAlign: "center",
                     justifyContent: "center",
                 }}
@@ -55,7 +55,7 @@ const PersonalityCardButton = ({
                     alignItems: "center",
                     height: "auto",
                     fontSize: isMobileDevice ? "12px" : "14px",
-                    padding: isMobileDevice ? "2px 6px" : "4px 12px",
+                    padding: isMobileDevice ? "2px 8px" : "4px 12px",
                 }}
             >
                 <AddOutlinedIcon style={{ margin: "0 3px 3px 0", fontSize: isMobileDevice ? "18px" : "24px", }} />
