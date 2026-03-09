@@ -1,6 +1,7 @@
 {
     "verificationRequestListHeader": "Denúncias",
     "verificationRequestTitle": "Denúncia",
+    "verificationRequestDescription": "Esta página reúne denúncias enviadas por usuários ou geradas por nosso sistema de monitoramento. Cada denúncia dá início ao processo que pode resultar na criação de uma Afirmação no Repositório e posterior verificação.",
     "manageVerificationRequests": "Gerenciar denúncias selecionadas",
     "noVerificationRequestsMessage": "Nenhuma denúncia",
     "manageVerificationRequestsGroup": "Gerenciar grupo de denúncias",

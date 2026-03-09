@@ -59,33 +59,35 @@ const VerificationRequestDashboard: React.FC = () => {
 
     return (
         <Dashboard>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Typography className="title">
-                        {t("dashboard.title")}
-                    </Typography>
-                    <Typography className="subtitle">
-                        {t("dashboard.subtitle")}
-                    </Typography>
-                </Grid>
+            <Grid item xs={12} style={{ margin: "0 auto" }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Typography className="title">
+                            {t("dashboard.title")}
+                        </Typography>
+                        <Typography className="subtitle">
+                            {t("dashboard.subtitle")}
+                        </Typography>
+                    </Grid>
 
-                <Grid
-                    item
-                    xs={12}
-                    lg={7}
-                    style={{ display: "flex", flexDirection: "column" }}
-                >
-                    <VerificationRequestCounts {...stats.statsCount} />
-                    <VerificationRequestOverview
-                        statsCounts={stats.statsCount}
-                        statsSourceChannels={stats.statsSourceChannels}
-                    />
-                </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        lg={7}
+                        style={{ display: "flex", flexDirection: "column" }}
+                    >
+                        <VerificationRequestCounts {...stats.statsCount} />
+                        <VerificationRequestOverview
+                            statsCounts={stats.statsCount}
+                            statsSourceChannels={stats.statsSourceChannels}
+                        />
+                    </Grid>
 
-                <Grid item xs={12} lg={5}>
-                    <VerificationRequestActivity
-                        statsRecentActivity={stats.statsRecentActivity}
-                    />
+                    <Grid item xs={12} lg={5}>
+                        <VerificationRequestActivity
+                            statsRecentActivity={stats.statsRecentActivity}
+                        />
+                    </Grid>
                 </Grid>
             </Grid>
         </Dashboard>

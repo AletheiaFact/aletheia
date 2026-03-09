@@ -45,12 +45,10 @@ const FilterManager = ({ state, actions }) => {
 
   return (
     <Grid
-      item
-      xs={10}
       container
       alignItems="center"
       justifyContent="space-between"
-      style={{ marginTop: 30 }}
+      style={{ padding: "16px 0" }}
     >
       <Grid item sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <FilterToggleButtons viewMode={viewMode} setViewMode={setViewMode} />
