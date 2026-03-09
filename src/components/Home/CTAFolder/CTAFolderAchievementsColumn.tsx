@@ -1,6 +1,6 @@
 import React from "react";
 import CheckIcon from "@mui/icons-material/Check";
-import { Grid, List, ListItemIcon, Typography } from "@mui/material";
+import { Grid, List, ListItem, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 
 const CTAFolderAchievementsColumn = () => {
@@ -22,15 +22,12 @@ const CTAFolderAchievementsColumn = () => {
             </Typography>
             <List className="ctaAchievementsList">
                 {achievements.map((achievement) => (
-                    <ListItemIcon
-                        key={achievement}
-                        className="ctaAchievementsItem"
-                    >
+                    <ListItem key={achievement} disablePadding className="ctaAchievementsItem">
                         <CheckIcon className="ctaAchievementsIcon" aria-hidden />
                         <Typography variant="body1">
                             {achievement}
                         </Typography>
-                    </ListItemIcon>
+                    </ListItem>
                 ))}
             </List>
         </Grid>
