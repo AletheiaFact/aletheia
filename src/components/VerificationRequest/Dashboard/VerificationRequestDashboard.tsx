@@ -59,7 +59,7 @@ const VerificationRequestDashboard: React.FC = () => {
 
     return (
         <Dashboard>
-            <Grid item xs={12} md={9.7} style={{ margin: "0 auto" }}>
+            <Grid item xs={12} style={{ margin: "0 auto" }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Typography className="title">
