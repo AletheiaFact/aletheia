@@ -8,11 +8,12 @@ type EventViewProps = {
 };
 
 const EventView = ({ fullEvent }: EventViewProps) => {
-    const { name, description } = fullEvent
+    const { badge, name, description } = fullEvent
     return (
         <EventBox>
             <Grid container className="eventMainContent">
                 <EventHeaderContent
+                    badge={badge}
                     title={name}
                     description={description}
                 />

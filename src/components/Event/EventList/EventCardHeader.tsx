@@ -9,7 +9,7 @@ interface EventCardHeaderProps {
 
 const EventCardHeader = ({ badge, location }: EventCardHeaderProps) => {
     return (
-        <Grid item xs={12} display="flex" alignItems="center" gap={1}>
+        <Grid item xs={12} display="flex" alignItems="center" gap={1} flexWrap="wrap">
             <Typography
                 variant="h2"
                 style={{

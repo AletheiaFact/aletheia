@@ -69,7 +69,7 @@ const EventsList = () => {
                     onStatusChange={(status) => setQuery(prev => ({ ...prev, status, page: 1 }))}
                     t={t}
                 />
-                <Grid xs={8}>
+                <Grid xs={11} sm={8}>
                     <GridList
                         title={
                             <EventTitle

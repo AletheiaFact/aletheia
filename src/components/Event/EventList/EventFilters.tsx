@@ -19,7 +19,7 @@ const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) 
     ];
 
     return (
-        <Grid item xs={8} display="flex" justifyContent="center" padding={2}>
+        <Grid item xs={12} sm={8} display="flex" justifyContent="center" padding={2}>
             {filterOptions.map(({ status, label }) => (
                 <AletheiaButton
                     key={status}

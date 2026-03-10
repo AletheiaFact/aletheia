@@ -10,7 +10,7 @@ const EventBox = styled(Box)`
         display: flex;
         background: linear-gradient(180deg, ${colors.blackTertiary} 0%, ${colors.primary} 100%);
         align-items: center;
-        padding: 68px 0 72px;
+        padding: 56px 0 72px;
         flex-wrap: wrap;
         justify-content: center;
     }
@@ -22,6 +22,18 @@ const EventBox = styled(Box)`
         align-items: flex-start;
         gap: 18px;
         padding: 0 24px;
+    }
+
+    .eventChip{
+        font-size: 12px;
+        color: ${colors.white};
+        background-color: ${colors.lightSecondary};
+        font-weight: 700;
+        box-shadow: 0px 2px 4px ${colors.lightPrimary};
+    }
+
+    .eventChip:hover {
+      box-shadow: 0px 3px 8px ${colors.lightPrimary};
     }
 
     .title {

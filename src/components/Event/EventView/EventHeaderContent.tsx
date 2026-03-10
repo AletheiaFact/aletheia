@@ -1,12 +1,13 @@
 import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 
 type EventHeaderContentProps = {
+    badge: string;
     title: string;
     description: string;
 };
 
-const EventHeaderContent = ({ title, description }: EventHeaderContentProps) => {
+const EventHeaderContent = ({ badge, title, description }: EventHeaderContentProps) => {
     return (
         <Grid
             item
@@ -15,6 +16,11 @@ const EventHeaderContent = ({ title, description }: EventHeaderContentProps) => 
             xs={12}
             className="eventHeaderContent"
         >
+            <Chip
+                className="eventChip"
+                size="small"
+                label={badge}
+            />
             <Typography
                 variant="h1"
                 className="title"
