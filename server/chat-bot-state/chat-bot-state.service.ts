@@ -14,9 +14,9 @@ export class ChatBotStateService {
         private ChatBotStateModel: Model<ChatBotStateDocument>
     ) {}
 
-    async create(snapshot: ChatBotMachineSnapshot, id: string) {
+    async create(snapshot: ChatBotMachineSnapshot, data_hash: string) {
         const newChatBotState = new this.ChatBotStateModel({
-            _id: id,
+            data_hash: data_hash,
             machine: snapshot,
         });
         return await newChatBotState.save();
@@ -33,8 +33,10 @@ export class ChatBotStateService {
         ).exec();
     }
 
-    async getById(id: string) {
-        const chatBotState = this.ChatBotStateModel.findById(id);
+    async getByDataHash(data_hash: string) {
+        const chatBotState = this.ChatBotStateModel.findOne({
+            data_hash: data_hash
+        });
         return chatBotState;
     }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import CTAFolder from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder/CTAFolder";
 import { Grid } from "@mui/material";
 import SentenceReportComments from "./SentenceReportComments";
 import SentenceReportContent from "./SentenceReportContent";

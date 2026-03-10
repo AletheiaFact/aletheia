@@ -5,6 +5,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ptBR } from "date-fns/locale";
+import colors from "../styles/colors";
 
 interface DateRangePickerProps {
     startDate: Date | null;
@@ -36,6 +37,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                     onChange={(newValue) => setStartDate(newValue)}
                     renderInput={(params) => (
                         <TextField
+                            sx={{ backgroundColor: colors.white }}
                             size="small"
                             {...params}
                             onClick={() => setOpenStart(true)}
@@ -52,6 +54,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                     onChange={(newValue) => setEndDate(newValue)}
                     renderInput={(params) => (
                         <TextField
+                            sx={{ backgroundColor: colors.white }}
                             size="small"
                             {...params}
                             onClick={() => setOpenEnd(true)}

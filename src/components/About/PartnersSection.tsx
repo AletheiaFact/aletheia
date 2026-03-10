@@ -25,7 +25,7 @@ export default function PartnersSection() {
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
+    <Box id="partners-section" sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
           <Chip label={t("about:partnersChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />

@@ -17,7 +17,7 @@ export default function AwardsSection() {
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ py: { xs: 8, md: 12 } }}>
+    <Box id="awards-section" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
           <Chip label={t("about:awardsChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />

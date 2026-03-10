@@ -11,7 +11,7 @@ import {
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
-import CTAFolder from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder/CTAFolder";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
