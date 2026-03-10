@@ -23,7 +23,7 @@ export const Stats = ({ info, title, style = {} }) => {
                     fontSize: vw?.sm ? "28px" : "40px",
                 }}
             >
-                <CountUp end={info} duration={3} separator="." />
+                <CountUp start={0} end={info} duration={2} separator="." />
             </h3>{" "}
             <span
                 style={{
