@@ -51,9 +51,7 @@ const FilterManager = ({ state, actions }) => {
     return (
         <Grid
             item
-            xs={11}
-            xl={10}
-            className="filterGrid"
+            className="filterActions"
         >
             <Grid className="filterToggleContainer">
                 <FilterToggleButtons
