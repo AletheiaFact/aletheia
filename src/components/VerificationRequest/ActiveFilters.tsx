@@ -74,7 +74,7 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     return (
         viewMode === "left" &&
         (topicFilterUsed.length > 0 || impactAreaFilterUsed.length > 0) && (
-            <Grid item xs={11} lg={10} marginTop={1}>
+            <Grid item marginTop={1}>
                 <Typography variant="subtitle1" gutterBottom>
                     {t("verificationRequest:activeFiltersLabel")}
                 </Typography>
