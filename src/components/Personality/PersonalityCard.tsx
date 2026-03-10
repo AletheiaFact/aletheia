@@ -96,9 +96,8 @@ const PersonalityCard = ({
         componentStyle.avatarSize = 43;
     }
     if (header) {
-        componentStyle.avatarSpan = mobileDevice ? 12 : 4;
-        componentStyle.titleSpan = mobileDevice ? 12 : 7;
-        componentStyle.avatarSize = 144;
+        componentStyle.avatarSpan = mobileDevice ? 6 : 4;
+        componentStyle.avatarSize = mobileDevice ? 114 : 144;
         componentStyle.hiddenIconSize = 22;
     }
 
@@ -138,7 +137,6 @@ const PersonalityCard = ({
                     style={{
                         width: "100%",
                         textAlign: hoistAvatar ? "center" : "inherit",
-                        justifyItems: "center",
                     }}
                 >
                     <Grid container
@@ -146,8 +144,7 @@ const PersonalityCard = ({
                         style={{
                             alignContent: summarized ? "center" : undefined,
                             width: "100%",
-                            padding: !summarized && mobileDevice ? "12px 0px" : "12px",
-                            justifyContent: mobileDevice ? "center" : "flex-start",
+                            padding: !summarized && mobileDevice ? "12px 6px" : "12px",
                         }}
                     >
                         <PersonalityCardAvatar

@@ -8,7 +8,7 @@ import {
 } from "../../types/VerificationRequest";
 
 const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
-    const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults } =
+    const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults, viewMode } =
         state;
     const { dispatch, t, setPaginationModel, setApplyFilters } = actions;
 
@@ -72,6 +72,7 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     };
 
     return (
+        viewMode === "left" &&
         (topicFilterUsed.length > 0 || impactAreaFilterUsed.length > 0) && (
             <Grid item xs={11} lg={10} marginTop={1}>
                 <Typography variant="subtitle1" gutterBottom>

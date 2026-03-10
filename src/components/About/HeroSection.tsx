@@ -24,7 +24,7 @@ export default function HeroSection() {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
-      <Grid container spacing={6} alignItems="center" sx={{ minHeight: { md: "70vh" } }}>
+      <Grid container spacing={6} alignItems="center" >
         <Grid item xs={12} lg={6}>
           <Stack spacing={4}>
             <Box>

@@ -29,6 +29,8 @@ const FilterManager = ({ state, actions }) => {
         setEndDate,
     } = actions;
 
+    const isBoard = viewMode === "left"
+
     const handleResetFilters = () => {
         setFilterValue([]);
         setPriorityFilter("all");
@@ -60,18 +62,18 @@ const FilterManager = ({ state, actions }) => {
                     leftOption={<ViewModule />}
                     rightOption={<ViewList />}
                 />
-                <FilterPopover state={state} actions={actions} />
+                {isBoard && <FilterPopover state={state} actions={actions} />}
             </Grid>
 
             <Grid className="filterBarContainer">
-                {viewMode === "left" && (
+                {isBoard && (
                     <FilterBar
                         state={state}
                         actions={actions}
                     />
                 )}
 
-                {viewMode === "left" &&
+                {isBoard &&
                     (topicFilterUsed.length > 0 ||
                         priorityFilter !== "all" ||
                         sourceChannelFilter !== "all" ||
