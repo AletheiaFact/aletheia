@@ -10856,6 +10856,7 @@ __metadata:
     react-cookie-consent: ^6.4.1
     react-countdown: ^2.3.2
     react-country-flag: ^3.1.0
+    react-countup: ^6.5.3
     react-dom: ^18.3.1
     react-google-recaptcha: ^2.1.0
     react-hook-form: ^7.31.2
@@ -13362,6 +13363,13 @@ __metadata:
     typescript:
       optional: true
   checksum: dc339ebea427898c9e03bf01b56ba7afbac07fc7d2a2d5a15d6e9c14de98275a9565da949375aee1809591c152c0a3877bb86dbeaf74d5bd5aaa79955ad9e7a0
+  languageName: node
+  linkType: hard
+
+"countup.js@npm:^2.8.0":
+  version: 2.10.0
+  resolution: "countup.js@npm:2.10.0"
+  checksum: b95711eaf871a098ee78e45c211b8757e245484e0cc71545b3b5229057cba159a4ddb6665252a8cb79dd39c8ca4a6f01784809340c802864d802e2118471c6fe
   languageName: node
   linkType: hard
 
@@ -23858,6 +23866,17 @@ __metadata:
   peerDependencies:
     react: ">=16"
   checksum: d032dac7d342b6aab8efc77552acc91939a8f78edc158a54972180834ff591e4c01f1f3ecced7eeaabd98cbb26db9ea7ce64892facade3157380a91f226e9161
+  languageName: node
+  linkType: hard
+
+"react-countup@npm:^6.5.3":
+  version: 6.5.3
+  resolution: "react-countup@npm:6.5.3"
+  dependencies:
+    countup.js: ^2.8.0
+  peerDependencies:
+    react: ">= 16.3.0"
+  checksum: c9a9776737a469e68beb035b81334879bac2e7d8edb1721f97d115d7b88e87d6ad62fc99083e329650b4416fe33d85b33211719afd531b83399e12d7ded25f89
   languageName: node
   linkType: hard
 
