@@ -399,7 +399,7 @@ export class VerificationRequestService {
                                 await this.topicService.findOrCreateTopic(
                                     topicData
                                 );
-                            return (topic as any)._id;
+                            return topic._id;
                         })
                     );
 
@@ -416,7 +416,7 @@ export class VerificationRequestService {
                     const topic = await this.topicService.findOrCreateTopic(
                         result
                     );
-                    valueToUpdate = (topic as any)._id;
+                    valueToUpdate = topic._id;
                     this.logger.log(
                         `Impact area topic created/found with ID: ${valueToUpdate}`
                     );

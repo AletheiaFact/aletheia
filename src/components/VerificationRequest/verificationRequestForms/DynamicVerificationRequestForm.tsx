@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import createVerificationRequestForm from "./fieldLists/CreateVerificationRequestForm";
-import moment from "moment";
 import DynamicForm from "../../Form/DynamicForm";
 import SharedFormFooter from "../../SharedFormFooter";
 import editVerificationRequestForm from "./fieldLists/EditVerificationRequestForm";
@@ -22,8 +21,6 @@ const DynamicVerificationRequestForm = ({
         control,
         formState: { errors },
     } = useForm();
-    const disabledDate = (current) =>
-        current && current > moment().endOf("day");
 
     return (
         <form
@@ -34,7 +31,6 @@ const DynamicVerificationRequestForm = ({
                 currentForm={isEdit ? editVerificationRequestForm : createVerificationRequestForm}
                 control={control}
                 errors={errors}
-                disabledDate={disabledDate}
                 machineValues={data}
             />
 

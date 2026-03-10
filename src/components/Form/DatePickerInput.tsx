@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import colors from "../../styles/colors";
 import styled from "styled-components";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import dayjs from "dayjs";
 
 const StyledTextField = styled(TextField)`
@@ -39,36 +39,55 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const DatePickerInput = (props) => {
-  const { t } = useTranslation();
-  const [value, setValue] = useState(props.defaultValue || null);
-  const [open, setOpen] = useState(false);
+interface IDatePickerInput {
+    defaultValue?: any,
+    placeholder: string,
+    onChange: (value: any) => void,
+    disabledFuture?: boolean,
+    dataCy?: string,
+    disabled?: boolean,
+    style?: CSSProperties,
+}
 
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label={t(props.placeholder)}
-        value={value}
-        inputFormat="DD/MM/YYYY"
-        open={open}
-        onClose={() => setOpen(false)}
-        onChange={(newValue) => {
-          setValue(newValue);
-          props.onChange?.(newValue);
-        }}
-        maxDate={dayjs()}
-        renderInput={(params) =>
-          <StyledTextField
-            {...params}
-            onClick={() => setOpen(true)}
-            data-cy={props.dataCy}
-            {...props}
-          />}
-        PopperProps={{ placement: 'bottom-start', }}
-        desktopModeMediaQuery="@media (min-width: 0)"
-      />
-    </LocalizationProvider>
-  );
+const DatePickerInput = ({
+    defaultValue,
+    placeholder,
+    onChange,
+    disabledFuture = true,
+    dataCy,
+    disabled,
+    style
+}: IDatePickerInput) => {
+    const { t } = useTranslation();
+    const [value, setValue] = useState(defaultValue || null);
+    const [open, setOpen] = useState(false);
+
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+                label={t(placeholder)}
+                value={value}
+                inputFormat="DD/MM/YYYY"
+                open={open}
+                onClose={() => setOpen(false)}
+                onChange={(newValue) => {
+                    setValue(newValue);
+                    onChange?.(newValue);
+                }}
+                disableFuture={disabledFuture}
+                disabled={disabled}
+                renderInput={(params) =>
+                    <StyledTextField
+                        {...params}
+                        onClick={() => setOpen(true)}
+                        data-cy={dataCy}
+                        style={{ ...style }}
+                    />}
+                PopperProps={{ placement: 'bottom-start', }}
+                desktopModeMediaQuery="@media (min-width: 0)"
+            />
+        </LocalizationProvider>
+    );
 };
 
 export default DatePickerInput;

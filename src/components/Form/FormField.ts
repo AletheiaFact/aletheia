@@ -17,6 +17,7 @@ export type FormField = {
     defaultValue: string | [];
     extraProps?: FormFieldExtraProps;
     disabled?: boolean;
+    hasTooltip?: boolean;
 };
 
 // Use to add properties specific to one type of field
@@ -40,6 +41,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     required?: boolean;
     isURLField?: boolean;
     disabled?: boolean;
+    hasTooltip?: boolean;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -53,6 +55,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         required = true,
         isURLField = false,
         disabled = false,
+        hasTooltip = false,
     } = props;
 
     return {
@@ -62,6 +65,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
         defaultValue,
         disabled,
+        hasTooltip,
         ...props,
         rules: {
             required: !disabled && required && "common:requiredFieldError",
@@ -111,7 +115,7 @@ const fieldValidation = (value, validationFunction) => {
     }
 
     if (dayjs.isDayjs(value)) {
-        return dayjs(value).isValid() && dayjs(value).isBefore(dayjs());
+        return dayjs(value).isValid()
     }
 
     if (Array.isArray(value) && value.length > 0 && (value[0].uid || value[0].originFileObj)) {
@@ -126,9 +130,14 @@ const fieldValidation = (value, validationFunction) => {
     if (typeof value === "string") {
         return validationFunction(value);
     }
-    if (typeof value === "object") {
+
+    if (typeof value === "object" && value !== null) {
+        if ("value" in value) {
+            return validationFunction(value.value);
+        }
         return value.every((v) => validationFunction(v));
     }
+
     return false;
 };
 

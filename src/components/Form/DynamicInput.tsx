@@ -32,7 +32,7 @@ interface DynamicInputProps {
     defaultValue: UnifiedDefaultValue;
     "data-cy": string;
     extraProps: any;
-    disabledDate?: any;
+    disabledFuture: boolean;
     disabled?: boolean;
 }
 
@@ -171,8 +171,8 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    data-cy="testSelectDate"
-                    disabledDate={props.disabledDate}
+                    dataCy="testSelectDate"
+                    disabledFuture={props.disabledFuture}
                     disabled={props.disabled}
                     style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
                 />

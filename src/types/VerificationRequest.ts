@@ -38,11 +38,13 @@ interface VerificationRequest {
   group: Group;
   date: Date;
   source?: Source[] | string[];
+  sourceChannel: string;
   _id?: string;
   publicationDate: string;
   heardFrom: string;
   reportType?: string;
   impactArea?: Topic;
+  status: string;
 };
 interface FiltersState {
   loading: Record<verificationRequestStatus, boolean>;
@@ -143,8 +145,8 @@ interface IDynamicVerificationRequestForm {
     setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
     hasCaptcha: boolean;
     isEdit: boolean;
-    isDrawerOpen: boolean;
-    onClose: () => void;
+    isDrawerOpen?: boolean;
+    onClose?: () => void;
 }
 
 export type {

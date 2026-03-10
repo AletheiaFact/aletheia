@@ -3,7 +3,9 @@ import {
     AddCircle,
     AddOutlined,
     PersonAddAlt1Outlined,
+    Source,
     Report,
+    Event
     // Source,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
@@ -92,6 +94,15 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
                         ? `/${nameSpace}/verification-request/create`
                         : `/verification-request/create`,
                 dataCy: "testFloatButtonAddVerificationRequest",
+            },
+            {
+                icon: <Event />,
+                tooltip: t("affix:affixButtonCreateVerificationRequest"),
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/event/create`
+                        : `/event/create`,
+                dataCy: "testFloatButtonAddEvent",
             }
         );
 

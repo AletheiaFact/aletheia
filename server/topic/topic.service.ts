@@ -5,6 +5,7 @@ import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ContentModelEnum } from "../types/enums";
+import { TopicData } from "../topic/types/topic.interfaces";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
@@ -217,12 +218,7 @@ export class TopicService {
      * @param topicData object with { slug?, name, wikidataId?, language?, description? }
      * @returns the existing or newly created topic document
      */
-    async findOrCreateTopic(topicData: {
-        name: string;
-        wikidataId?: string;
-        language?: string;
-        description?: string; // Future use
-    }): Promise<Topic> {
+    async findOrCreateTopic(topicData: TopicData): Promise<TopicDocument> {
         try {
             const slug = slugify(topicData.name, { lower: true, strict: true });
 

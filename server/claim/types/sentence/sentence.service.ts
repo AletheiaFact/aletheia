@@ -1,6 +1,8 @@
 import {
     BadRequestException,
     Injectable,
+    InternalServerErrorException,
+    Logger,
     NotFoundException,
 } from "@nestjs/common";
 import { Model, PipelineStage } from "mongoose";
@@ -8,8 +10,9 @@ import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
-import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
 import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
+import { TopicRelatedSentencesResponse } from "./types/sentence.interfaces";
+import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
 import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
 import { buildStats } from "../../../../src/components/Home/COP30/utils/classification";
 
@@ -24,12 +27,72 @@ interface FindAllOptionsFilters {
 
 @Injectable()
 export class SentenceService {
+    private readonly logger = new Logger(SentenceService.name);
+
     constructor(
         @InjectModel(Sentence.name)
         private SentenceModel: Model<SentenceDocument>,
         private reportService: ReportService,
         private util: UtilService
     ) {}
+
+    /**
+         * Fetches sentences based on topic values and enriches them with review classification.
+         * Uses an aggregation pipeline for cross-collection lookup.
+         * @param query - Topic wikidataId array to filter sentences.
+         * @returns A list of sentences with their respective classification.
+         */
+    async getSentencesByTopics(query: string[]): Promise<TopicRelatedSentencesResponse[]> {
+        try {
+            this.logger.debug(`Fetching sentences for topics: ${query.join(', ')}`);
+
+            const aggregation: any[] = [
+                { $match: { "topics.value": { $in: query } } },
+                {
+                    $lookup: {
+                        from: "reviewtasks",
+                        let: { sentenceDataHash: "$data_hash" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: [
+                                            "$machine.context.reviewData.data_hash",
+                                            "$$sentenceDataHash",
+                                        ],
+                                    },
+                                },
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    classification: "$machine.context.reviewData.classification",
+                                },
+                            },
+                        ],
+                        as: "reviewInfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        classification: {
+                            $arrayElemAt: ["$reviewInfo.classification", 0],
+                        },
+                    },
+                },
+                { $project: { reviewInfo: 0 } },
+            ];
+
+            const result = await this.SentenceModel.aggregate(aggregation).exec();
+
+            this.logger.log(`Found ${result.length} sentences for the requested topics.`);
+
+            return result;
+        } catch (error) {
+            this.logger.error(`Error in getSentencesByTopics: ${error.message}`, error.stack);
+            throw new InternalServerErrorException("Failed to aggregate sentences with review data.");
+        }
+    }
 
     async getSentencesWithCop30Topics(): Promise<Cop30Sentence[]> {
         const aggregation = [

@@ -1,0 +1,365 @@
+import { Test, TestingModule } from "@nestjs/testing";
+import { getModelToken } from "@nestjs/mongoose";
+import {
+    BadRequestException,
+    ConflictException,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
+import * as crypto from "crypto";
+import { EventsService } from "./event.service";
+import { Event } from "./schema/event.schema";
+import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { TopicService } from "../topic/topic.service";
+import {
+    mockCreateEventDto,
+    mockEventModel,
+    mockSentenceService,
+    mockTopicService,
+    mockVerificationRequestService,
+} from "../mocks/EventMock";
+
+describe("EventsService (Unit)", () => {
+    let service: EventsService;
+
+    beforeAll(async () => {
+        const testingModule: TestingModule = await Test.createTestingModule({
+            providers: [
+                EventsService,
+                {
+                    provide: getModelToken(Event.name),
+                    useValue: mockEventModel,
+                },
+                {
+                    provide: VerificationRequestService,
+                    useValue: mockVerificationRequestService,
+                },
+                {
+                    provide: SentenceService,
+                    useValue: mockSentenceService,
+                },
+                {
+                    provide: TopicService,
+                    useValue: mockTopicService,
+                },
+            ],
+        }).compile();
+
+        service = testingModule.get<EventsService>(EventsService);
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    describe("create", () => {
+        it("should create an event with generated hash and resolved topics", async () => {
+            const mainTopic = { _id: "t1", name: "Climate", wikidataId: "Q1" };
+            const expectedHash = crypto
+                .createHash("md5")
+                .update(`${mockCreateEventDto.name}-${mockCreateEventDto.startDate}`)
+                .digest("hex");
+            const createdEvent = { _id: "e1", data_hash: expectedHash };
+
+            mockTopicService.findOrCreateTopic.mockResolvedValueOnce(mainTopic);
+            mockEventModel.create.mockResolvedValue(createdEvent);
+
+            const result = await service.create(mockCreateEventDto as any);
+
+            expect(mockTopicService.findOrCreateTopic).toHaveBeenCalledTimes(1);
+            expect(mockTopicService.findOrCreateTopic).toHaveBeenCalledWith({
+                ...mockCreateEventDto.mainTopic,
+                name: mockCreateEventDto.mainTopic.label,
+            });
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    ...mockCreateEventDto,
+                    data_hash: expectedHash,
+                    mainTopic: mainTopic._id,
+                })
+            );
+            expect(result).toEqual(createdEvent);
+        });
+
+        it("should throw BadRequestException for schema validation errors", async () => {
+            const validationError = {
+                name: "ValidationError",
+                errors: { name: {}, location: {} },
+            };
+
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockEventModel.create.mockRejectedValue(validationError);
+
+            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
+                BadRequestException
+            );
+        });
+
+        it("should throw ConflictException for duplicate key errors", async () => {
+            const duplicateKeyError = {
+                code: 11000,
+                keyPattern: { name: 1 },
+            };
+
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockEventModel.create.mockRejectedValue(duplicateKeyError);
+
+            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
+                ConflictException
+            );
+        });
+
+        it("should throw InternalServerErrorException for unknown errors", async () => {
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockEventModel.create.mockRejectedValue(new Error("unexpected"));
+
+            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
+                InternalServerErrorException
+            );
+        });
+    });
+
+    describe("update", () => {
+        it("should throw BadRequestException when id is invalid", async () => {
+            await expect(service.update("invalid-id", { name: "Updated" } as any)).rejects.toThrow(
+                BadRequestException
+            );
+
+            expect(mockEventModel.findByIdAndUpdate).not.toHaveBeenCalled();
+        });
+
+        it("should update event and deduplicate filter topics by name", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            const updateDto = {
+                name: "Updated Event",
+                mainTopic: { name: "Main", wikidataId: "Q10" },
+                filterTopics: [
+                    { name: "A", wikidataId: "Q11" },
+                    { name: "A", wikidataId: "Q11" },
+                    { name: "B", wikidataId: "Q12" },
+                ],
+            } as any;
+
+            const resolvedMain = { _id: "tm", name: "Main" };
+            const resolvedFilterA = { _id: "ta", name: "A" };
+            const resolvedFilterB = { _id: "tb", name: "B" };
+            const updatedEvent = { _id: id, ...updateDto };
+
+            mockTopicService.findOrCreateTopic
+                .mockResolvedValueOnce(resolvedMain)
+                .mockResolvedValueOnce(resolvedFilterA)
+                .mockResolvedValueOnce(resolvedFilterB);
+            mockEventModel.findByIdAndUpdate.mockResolvedValue(updatedEvent);
+
+            const result = await service.update(id, updateDto);
+
+            expect(mockTopicService.findOrCreateTopic).toHaveBeenCalledTimes(3);
+            expect(mockEventModel.findByIdAndUpdate).toHaveBeenCalledWith(
+                id,
+                {
+                    $set: expect.objectContaining({
+                        name: "Updated Event",
+                        mainTopic: resolvedMain,
+                        filterTopics: [resolvedFilterA, resolvedFilterB],
+                    }),
+                },
+                { new: true, runValidators: true }
+            );
+            expect(result).toEqual(updatedEvent);
+        });
+
+        it("should throw NotFoundException if event is not found", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockResolvedValue(null);
+
+            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
+                NotFoundException
+            );
+        });
+
+        it("should throw BadRequestException on cast errors", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockRejectedValue({
+                name: "CastError",
+                path: "startDate",
+            });
+
+            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
+                BadRequestException
+            );
+        });
+
+        it("should throw InternalServerErrorException on unknown failures", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockRejectedValue(new Error("unexpected"));
+
+            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
+                InternalServerErrorException
+            );
+        });
+    });
+
+    describe("findAll", () => {
+        it("should return events list with pagination and order", async () => {
+            const eventsResult = [{ _id: "e1" }, { _id: "e2" }];
+            const exec = jest.fn().mockResolvedValue(eventsResult);
+            const countExec = jest.fn().mockResolvedValue(eventsResult.length);
+            const lean = jest.fn().mockReturnValue({ exec: exec });
+            const sort = jest.fn().mockReturnValue({ lean });
+            const limit = jest.fn().mockReturnValue({ sort });
+            const skip = jest.fn().mockReturnValue({ limit });
+
+            mockEventModel.find.mockReturnValue({ skip });
+            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+
+            const result = await service.findAll({
+                page: 1,
+                pageSize: 5,
+                order: "desc",
+                status: "happening",
+            });
+
+            expect(mockEventModel.find).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    startDate: expect.any(Object),
+                    endDate: expect.any(Object),
+                })
+            );
+            expect(skip).toHaveBeenCalledWith(5);
+            expect(limit).toHaveBeenCalledWith(5);
+            expect(sort).toHaveBeenCalledWith({ _id: "desc" });
+            expect(result).toEqual({
+                events: eventsResult,
+                total: eventsResult.length,
+            });
+        });
+
+        it("should throw InternalServerErrorException when querying fails", async () => {
+            const exec = jest.fn().mockRejectedValue(new Error("db fail"));
+            const countExec = jest.fn().mockResolvedValue(0);
+            const lean = jest.fn().mockReturnValue({ exec: exec });
+            const sort = jest.fn().mockReturnValue({ lean });
+            const limit = jest.fn().mockReturnValue({ sort });
+            const skip = jest.fn().mockReturnValue({ limit });
+
+            mockEventModel.find.mockReturnValue({ skip });
+            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+
+            await expect(
+                service.findAll({ page: 0, pageSize: 10, order: "asc", status: "upcoming" })
+            ).rejects.toThrow(InternalServerErrorException);
+        });
+    });
+
+    describe("findByHash", () => {
+        it("should return event when hash exists", async () => {
+            const event = { _id: "e1", data_hash: "hash123" };
+            const exec = jest.fn().mockResolvedValue(event);
+            const populateFilterTopics = jest.fn().mockReturnValue({ exec });
+            const populateMainTopic = jest
+                .fn()
+                .mockReturnValue({ populate: populateFilterTopics });
+
+            mockEventModel.findOne.mockReturnValue({ populate: populateMainTopic });
+
+            const result = await service.findByHash("hash123");
+
+            expect(mockEventModel.findOne).toHaveBeenCalledWith({ data_hash: "hash123" });
+            expect(result).toEqual(event);
+        });
+
+        it("should throw NotFoundException when hash does not exist", async () => {
+            const exec = jest.fn().mockResolvedValue(null);
+            const populateFilterTopics = jest.fn().mockReturnValue({ exec });
+            const populateMainTopic = jest
+                .fn()
+                .mockReturnValue({ populate: populateFilterTopics });
+
+            mockEventModel.findOne.mockReturnValue({ populate: populateMainTopic });
+
+            await expect(service.findByHash("missing-hash")).rejects.toThrow(
+                NotFoundException
+            );
+        });
+    });
+
+    describe("getFullEventByHash", () => {
+        it("should return event with empty arrays when mainTopic is missing", async () => {
+            const eventWithoutMainTopic = { _id: "e1", data_hash: "h1", mainTopic: null };
+            jest
+                .spyOn(service, "findByHash")
+                .mockResolvedValue(eventWithoutMainTopic as any);
+
+            const result = await service.getFullEventByHash("h1");
+
+            expect(result.sentences).toEqual([]);
+            expect(result.verificationRequests).toEqual([]);
+            expect(mockSentenceService.getSentencesByTopics).not.toHaveBeenCalled();
+            expect(mockVerificationRequestService.listAll).not.toHaveBeenCalled();
+        });
+
+        it("should return full event data with sentences and verification requests", async () => {
+            const eventDocument = {
+                _id: "e1",
+                data_hash: "h1",
+                mainTopic: { name: "Climate", wikidataId: "Q1" },
+                toObject: jest.fn().mockReturnValue({
+                    _id: "e1",
+                    data_hash: "h1",
+                    mainTopic: { name: "Climate", wikidataId: "Q1" },
+                }),
+            };
+            const mockSentences = [{ _id: "s1" }];
+            const mockVerificationRequests = [{ _id: "vr1" }];
+
+            jest.spyOn(service, "findByHash").mockResolvedValue(eventDocument as any);
+            mockSentenceService.getSentencesByTopics.mockResolvedValue(mockSentences);
+            mockVerificationRequestService.listAll.mockResolvedValue(
+                mockVerificationRequests
+            );
+
+            const result = await service.getFullEventByHash("h1");
+
+            expect(mockSentenceService.getSentencesByTopics).toHaveBeenCalledWith(["Q1"]);
+            expect(mockVerificationRequestService.listAll).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    topics: ["Climate"],
+                })
+            );
+            expect(result).toEqual(
+                expect.objectContaining({
+                    _id: "e1",
+                    sentences: mockSentences,
+                    verificationRequests: mockVerificationRequests,
+                })
+            );
+        });
+
+        it("should fallback to empty arrays when related queries fail", async () => {
+            const eventDocument = {
+                _id: "e1",
+                data_hash: "h1",
+                mainTopic: { name: "Climate", wikidataId: "Q1" },
+                toObject: jest.fn().mockReturnValue({
+                    _id: "e1",
+                    data_hash: "h1",
+                    mainTopic: { name: "Climate", wikidataId: "Q1" },
+                }),
+            };
+
+            jest.spyOn(service, "findByHash").mockResolvedValue(eventDocument as any);
+            mockSentenceService.getSentencesByTopics.mockRejectedValue(
+                new Error("sentence fail")
+            );
+            mockVerificationRequestService.listAll.mockRejectedValue(
+                new Error("vr fail")
+            );
+
+            const result = await service.getFullEventByHash("h1");
+
+            expect(result.sentences).toEqual([]);
+            expect(result.verificationRequests).toEqual([]);
+        });
+    });
+});
