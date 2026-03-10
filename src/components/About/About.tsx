@@ -12,7 +12,7 @@ import FinalCTASection from "./FinalCTASection";
 
 export default function About() {
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ minHeight: "100dvh", bgcolor: "background.default" }}>
       <HeroSection />
       <MissionSection />
       <FrameworkSection />
