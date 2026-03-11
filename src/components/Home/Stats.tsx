@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import CountUp from "react-countup";
+import CountUp from "react-countup"
 
 type StatsProps = {
     info: number,
