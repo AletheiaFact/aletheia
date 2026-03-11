@@ -406,6 +406,108 @@ justify-content: center;
         }
     }
 
+    /* Small Screens */
+    @media (max-width: 480px) {
+        padding-left: 12px;
+        padding-right: 12px;
+
+        .cop30-banner {
+            padding: 24px 16px;
+            margin-bottom: 24px;
+        }
+
+        .cop30-banner::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cop30-banner h1 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .cop30-banner .bannerDescription {
+            font-size: 14px;
+        }
+
+        .cop30-badge {
+            font-size: 16px;
+            padding: 6px 14px;
+        }
+
+        .cop30-badge-wrapper {
+            gap: 8px;
+        }
+
+        .stats-container {
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .stat-item {
+            padding: 12px 8px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+
+        .filters-container {
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+        }
+
+        .section-title::before {
+            height: 18px;
+            width: 4px;
+        }
+
+        .checagens-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .checagem-card {
+            padding: 16px;
+        }
+
+        .card-header {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+        }
+
+        .author-name {
+            font-size: 15px;
+        }
+
+        .card-footer {
+            gap: 8px;
+        }
+
+        .btn-open {
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+    }
+
     /* Loading Animation */
     @keyframes fadeInUp {
         from {
