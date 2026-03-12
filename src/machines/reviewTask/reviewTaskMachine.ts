@@ -4,7 +4,6 @@ import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
 import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
-import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 import { isSameLabel, machineWorkflow } from "./machineWorkflow";
 
 export const createNewMachine = ({ value, context }, reportModel) => {
@@ -92,7 +91,7 @@ export const transitionHandler = (state) => {
         })
         .finally(() => resetIsLoading());
 
-    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
+    // Note: Notifications are now handled server-side in ReviewTaskService
 };
 
 export const createNewMachineService = (

@@ -166,3 +166,4 @@ The frontend uses Next.js with React:
 - `.env` - Environment variables for frontend
 - `server/app.module.ts` - Main backend module registration
 - `src/pages/_app.tsx` - Next.js app initialization
+- don't import things from the dist folder
