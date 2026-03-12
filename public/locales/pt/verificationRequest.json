@@ -69,13 +69,13 @@
     "allPriorities": "Todas as Prioridades",
     "allSourceChannels": "Todos os Canais de Origem",
     "priority": {
-    "critical": "Crítico",
-    "high": "Alta ({{level}})",
-    "medium": "Média ({{level}})",
-    "low": "Baixa ({{level}})",
-    "filter_high": "Alta",
-    "filter_medium": "Média",
-    "filter_low": "Baixa"
+        "critical": "Crítico",
+        "high": "Alta ({{level}})",
+        "medium": "Média ({{level}})",
+        "low": "Baixa ({{level}})",
+        "filter_high": "Alta",
+        "filter_medium": "Média",
+        "filter_low": "Baixa"
     },
     "filterByPriority": "Filtrar por Prioridade",
     "noRequestsInStatus": "Nenhuma solicitação neste status",
@@ -88,7 +88,7 @@
     "filterBySourceChannel": "Filtrar por Canal de Origem",
     "PRE_TRIAGE": "Pré Triagem",
     "IN_TRIAGE": "Em Triagem",
-    "POSTED": "Postado",
+    "POSTED": "Publicado",
     "DECLINED": "Recusado",
     "activity": {
         "Posted": "Denúncia #{{hash}} verificada e encaminhada",
