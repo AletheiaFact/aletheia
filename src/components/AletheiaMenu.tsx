@@ -88,6 +88,18 @@ const AletheiaMenu = () => {
                 {t("menu:verificationRequestItem")}
             </ListItemButton>
 
+            <ListItemButton
+                onClick={() => handleClick({
+                    key:
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/event`
+                            : "/event"
+                })}
+                data-cy={"testEventItem"}
+            >
+                {t("menu:EventItem")}
+            </ListItemButton>
+
             {role !== Roles.Regular && (
                 <ListItemButton
                     onClick={() => handleClick({

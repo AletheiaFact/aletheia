@@ -13,5 +13,6 @@
     "nameSpaceItem": "Namespace",
     "supportiveMaterials": "Supportive Materials",
     "sourcesItem": "Sources",
-    "verificationRequestItem": "Verification Requests"
+    "verificationRequestItem": "Verification Requests",
+    "eventItem": "Events"
 }
