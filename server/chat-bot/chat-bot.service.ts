@@ -1,8 +1,7 @@
 import { Injectable, Scope, Logger } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AxiosResponse } from "axios";
-import { catchError, map } from "rxjs/operators";
-import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { lastValueFrom, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
@@ -51,7 +50,9 @@ export class ChatbotService {
     ) {}
 
     private async getOrCreateChatBotMachine(data_hash: string) {
-        let chatbotState = await this.chatBotStateService.getByDataHash(data_hash);
+        let chatbotState = await this.chatBotStateService.getByDataHash(
+            data_hash
+        );
 
         if (!chatbotState) {
             chatbotState = await this.createNewChatBotState(data_hash);
@@ -100,9 +101,20 @@ export class ChatbotService {
         );
     }
 
-    public async sendMessage(message): Promise<Observable<AxiosResponse<any>>> {
-        const { api_url, api_token } = this.configService.get("zenvia");
+    public async sendMessage(message): Promise<void> {
         const { from, to, channel, contents } = message;
+        this.logger.log(
+            `Received message [channel=${channel}, from=${from}, state=processing]`
+        );
+
+        if (!contents?.length || !contents[0]) {
+            this.logger.warn(
+                `Empty or invalid contents received [channel=${channel}, from=${from}]`
+            );
+            return;
+        }
+
+        const { api_url, api_token } = this.configService.get("zenvia");
 
         const data_hash = crypto
             .createHmac("sha256", process.env.HASH_SECRET_KEY)
@@ -112,6 +124,10 @@ export class ChatbotService {
         const channel_api_url = `${api_url}/${channel}/messages`;
 
         const chatbotState = await this.getOrCreateChatBotMachine(data_hash);
+        this.logger.log(
+            `Machine state [dataHash=${data_hash}, currentState=${chatbotState.machine.value}]`
+        );
+
         const chatBotMachineService = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
@@ -125,23 +141,35 @@ export class ChatbotService {
         chatBotMachineService.start(chatbotState.machine.value);
 
         const userMessage = contents[0].text;
-        const messageType = message.contents[0].type;
+        const messageType = contents[0].type;
         this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
         if (this.shouldPauseMachine(chatbotState, snapshot)) {
+            this.logger.log(
+                `Machine paused [channel=${channel}, from=${from}]`
+            );
             return;
         }
         chatbotState.machine.value = snapshot.value;
         chatbotState.machine.context = snapshot.context;
 
         await this.updateChatBotState(chatbotState);
+        this.logger.log(
+            `State updated [dataHash=${data_hash}, newState=${snapshot.value}]`
+        );
 
         const responseMessage = snapshot.context.responseMessage;
 
         const body = this.createResponseBody(to, from, responseMessage);
 
-        return this.sendHttpPost(channel_api_url, api_token, body);
+        await this.sendZenviaResponse(
+            channel_api_url,
+            api_token,
+            body,
+            channel,
+            from
+        );
     }
 
     private shouldPauseMachine(chatbotState, snapshot) {
@@ -159,19 +187,39 @@ export class ChatbotService {
         };
     }
 
-    private sendHttpPost(
-        channel_api_url,
-        api_token,
-        body
-    ): Observable<AxiosResponse<any>> {
-        return this.httpService
-            .post(channel_api_url, body, {
-                headers: { "X-API-TOKEN": api_token },
-            })
-            .pipe(
-                map((response) => response),
-                catchError((error) => throwError(() => new Error(error)))
+    private async sendZenviaResponse(
+        channel_api_url: string,
+        api_token: string,
+        body: any,
+        channel: string,
+        from: string
+    ): Promise<void> {
+        try {
+            await lastValueFrom(
+                this.httpService
+                    .post(channel_api_url, body, {
+                        headers: { "X-API-TOKEN": api_token },
+                    })
+                    .pipe(
+                        catchError((error) => {
+                            const status = error.response?.status;
+                            const data = JSON.stringify(error.response?.data);
+                            this.logger.error(
+                                `Zenvia API error [channel=${channel}, from=${from}, status=${status}]: ${data}`
+                            );
+                            return throwError(() => error);
+                        })
+                    )
             );
+            this.logger.log(
+                `Response sent to Zenvia [channel=${channel}, from=${from}]`
+            );
+        } catch (error) {
+            this.logger.error(
+                `Failed to send response to Zenvia [channel=${channel}, from=${from}]: ${error.message}`
+            );
+            throw error;
+        }
     }
 
     private handleUserMessage(
