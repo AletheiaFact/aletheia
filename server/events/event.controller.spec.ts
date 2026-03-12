@@ -125,17 +125,17 @@ describe("EventsController (Unit)", () => {
     describe("eventViewPage", () => {
         it("should render /event-view-page when event exists", async () => {
             const req = {
-                url: "/event/hash-1?lang=en",
-                params: { namespace: "main", data_hash: "hash-1" },
+                url: "/event/hash-1/some-slug?lang=en",
+                params: { namespace: "main", data_hash: "hash-1", event_slug: "some-slug" },
             };
             const res = {};
-            const fullEvent = { _id: "e1", data_hash: "hash-1" };
-
-            mockEventsService.getFullEventByHash.mockResolvedValue(fullEvent);
-
+            const event = { _id: "e1", data_hash: "hash-1" };
+    
+            mockEventsService.findByHash.mockResolvedValue(event);
+    
             await controller.eventViewPage(req as any, res as any);
-
-            expect(mockEventsService.getFullEventByHash).toHaveBeenCalledWith("hash-1");
+    
+            expect(mockEventsService.findByHash).toHaveBeenCalledWith("hash-1");
             expect(mockConfigService.get).toHaveBeenCalledWith("recaptcha_sitekey");
             expect(mockViewService.render).toHaveBeenCalledWith(
                 req,
@@ -143,39 +143,39 @@ describe("EventsController (Unit)", () => {
                 "/event-view-page",
                 expect.objectContaining({
                     lang: "en",
-                    fullEvent,
+                    event,
                     namespace: "main",
                     sitekey: "test-site-key",
                 })
             );
         });
-
+    
         it("should throw NotFoundException when service returns empty event", async () => {
             const req = {
-                url: "/event/hash-1",
-                params: { namespace: "main", data_hash: "hash-1" },
+                url: "/event/hash-1/some-slug",
+                params: { namespace: "main", data_hash: "hash-1", event_slug: "some-slug" },
             };
             const res = {};
-
-            mockEventsService.getFullEventByHash.mockResolvedValue(null);
-
+    
+            mockEventsService.findByHash.mockResolvedValue(null);
+    
             await expect(controller.eventViewPage(req as any, res as any)).rejects.toThrow(
                 NotFoundException
             );
             expect(mockViewService.render).not.toHaveBeenCalled();
         });
-
+    
         it("should rethrow service errors and log only non-NotFound errors", async () => {
             const req = {
-                url: "/event/hash-1",
-                params: { namespace: "main", data_hash: "hash-1" },
+                url: "/event/hash-1/some-slug",
+                params: { namespace: "main", data_hash: "hash-1", event_slug: "some-slug" },
             };
             const res = {};
             const error = new Error("unexpected");
             const loggerErrorSpy = jest.spyOn((controller as any).logger, "error");
-
-            mockEventsService.getFullEventByHash.mockRejectedValue(error);
-
+    
+            mockEventsService.findByHash.mockRejectedValue(error);
+    
             await expect(controller.eventViewPage(req as any, res as any)).rejects.toThrow(
                 "unexpected"
             );

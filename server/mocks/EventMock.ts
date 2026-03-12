@@ -32,7 +32,7 @@ export const mockEventsService = {
     create: jest.fn(),
     update: jest.fn(),
     findAll: jest.fn(),
-    getFullEventByHash: jest.fn(),
+    findByHash: jest.fn(),
 };
 
 export const mockConfigService = {
