@@ -90,6 +90,7 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         align-items: center;
         justify-content: center;
         margin: 0;
+        gap: 8px;
 
         &:hover {
             background-color: color-mix(in srgb, ${colors.white} 6%, transparent);
