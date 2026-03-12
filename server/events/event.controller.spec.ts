@@ -10,6 +10,7 @@ import {
     mockEventsService,
     mockViewService,
 } from "../mocks/EventMock";
+import { EventsStatus } from "../types/enums";
 
 describe("EventsController (Unit)", () => {
     let controller: EventsController;
@@ -63,7 +64,7 @@ describe("EventsController (Unit)", () => {
 
     describe("findAll", () => {
         it("should delegate filtering to eventsService", async () => {
-            const query = { page: 0, pageSize: 10, order: "asc", status: "upcoming" };
+            const query = { page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING };
             const events = [{ _id: "e1" }];
             mockEventsService.findAll.mockResolvedValue(events);
 
@@ -130,11 +131,11 @@ describe("EventsController (Unit)", () => {
             };
             const res = {};
             const event = { _id: "e1", data_hash: "hash-1" };
-    
+
             mockEventsService.findByHash.mockResolvedValue(event);
-    
+
             await controller.eventViewPage(req as any, res as any);
-    
+
             expect(mockEventsService.findByHash).toHaveBeenCalledWith("hash-1");
             expect(mockConfigService.get).toHaveBeenCalledWith("recaptcha_sitekey");
             expect(mockViewService.render).toHaveBeenCalledWith(
@@ -149,22 +150,22 @@ describe("EventsController (Unit)", () => {
                 })
             );
         });
-    
+
         it("should throw NotFoundException when service returns empty event", async () => {
             const req = {
                 url: "/event/hash-1/some-slug",
                 params: { namespace: "main", data_hash: "hash-1", event_slug: "some-slug" },
             };
             const res = {};
-    
+
             mockEventsService.findByHash.mockResolvedValue(null);
-    
+
             await expect(controller.eventViewPage(req as any, res as any)).rejects.toThrow(
                 NotFoundException
             );
             expect(mockViewService.render).not.toHaveBeenCalled();
         });
-    
+
         it("should rethrow service errors and log only non-NotFound errors", async () => {
             const req = {
                 url: "/event/hash-1/some-slug",
@@ -173,9 +174,9 @@ describe("EventsController (Unit)", () => {
             const res = {};
             const error = new Error("unexpected");
             const loggerErrorSpy = jest.spyOn((controller as any).logger, "error");
-    
+
             mockEventsService.findByHash.mockRejectedValue(error);
-    
+
             await expect(controller.eventViewPage(req as any, res as any)).rejects.toThrow(
                 "unexpected"
             );

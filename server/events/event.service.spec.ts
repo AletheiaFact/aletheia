@@ -19,6 +19,7 @@ import {
     mockTopicService,
     mockVerificationRequestService,
 } from "../mocks/EventMock";
+import { EventsStatus } from "../types/enums";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -202,7 +203,7 @@ describe("EventsService (Unit)", () => {
 
     describe("findAll", () => {
         it("should return events list with pagination and order", async () => {
-            const eventsResult = [{ _id: "e1" }, { _id: "e2" }];
+            const eventsResult = [{ endDate: "2025-11-20T23:00:00.000+00:00" }, { endDate: "2025-12-15T18:30:00.000+00:00" }];
             const exec = jest.fn().mockResolvedValue(eventsResult);
             const countExec = jest.fn().mockResolvedValue(eventsResult.length);
             const lean = jest.fn().mockReturnValue({ exec: exec });
@@ -217,7 +218,7 @@ describe("EventsService (Unit)", () => {
                 page: 1,
                 pageSize: 5,
                 order: "desc",
-                status: "happening",
+                status: EventsStatus.HAPPENING,
             });
 
             expect(mockEventModel.find).toHaveBeenCalledWith(
@@ -228,7 +229,7 @@ describe("EventsService (Unit)", () => {
             );
             expect(skip).toHaveBeenCalledWith(5);
             expect(limit).toHaveBeenCalledWith(5);
-            expect(sort).toHaveBeenCalledWith({ _id: "desc" });
+            expect(sort).toHaveBeenCalledWith({ endDate: "desc" });
             expect(result).toEqual({
                 events: eventsResult,
                 total: eventsResult.length,
@@ -247,7 +248,7 @@ describe("EventsService (Unit)", () => {
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
 
             await expect(
-                service.findAll({ page: 0, pageSize: 10, order: "asc", status: "upcoming" })
+                service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING })
             ).rejects.toThrow(InternalServerErrorException);
         });
     });

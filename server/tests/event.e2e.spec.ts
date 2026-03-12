@@ -13,6 +13,7 @@ import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
+import { EventsStatus } from "../types/enums";
 
 jest.setTimeout(10000);
 
@@ -190,7 +191,7 @@ describe("EventController (e2e)", () => {
                 page: 0,
                 pageSize: 20,
                 order: "asc",
-                status: "upcoming",
+                status: EventsStatus.UPCOMING,
             })
             .expect(200)
             .expect(({ body }) => {

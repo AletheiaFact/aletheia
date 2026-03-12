@@ -10,12 +10,7 @@ import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
-import type { Cop30Sentence } from "../../../../src/types/Cop30Sentence";
 import { TopicRelatedSentencesResponse } from "./types/sentence.interfaces";
-import { allCop30WikiDataIds } from "../../../../src/constants/cop30Filters";
-import type { Cop30Stats } from "../../../../src/types/Cop30Stats";
-import { buildStats } from "../../../../src/components/Home/COP30/utils/classification";
-
 interface FindAllOptionsFilters {
     searchText: string;
     pageSize: number;
@@ -34,7 +29,7 @@ export class SentenceService {
         private SentenceModel: Model<SentenceDocument>,
         private reportService: ReportService,
         private util: UtilService
-    ) {}
+    ) { }
 
     /**
          * Fetches sentences based on topic values and enriches them with review classification.
@@ -94,54 +89,6 @@ export class SentenceService {
         }
     }
 
-    async getSentencesWithCop30Topics(): Promise<Cop30Sentence[]> {
-        const aggregation = [
-            { $match: { "topics.value": { $in: allCop30WikiDataIds } } },
-            {
-                $lookup: {
-                    from: "reviewtasks",
-                    let: { sentenceDataHash: "$data_hash" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $eq: [
-                                        "$machine.context.reviewData.data_hash",
-                                        "$$sentenceDataHash",
-                                    ],
-                                },
-                            },
-                        },
-                        {
-                            $project: {
-                                _id: 0,
-                                classification:
-                                    "$machine.context.reviewData.classification",
-                            },
-                        },
-                    ],
-                    as: "reviewInfo",
-                },
-            },
-            {
-                $addFields: {
-                    classification: {
-                        $arrayElemAt: ["$reviewInfo.classification", 0],
-                    },
-                },
-            },
-            { $project: { reviewInfo: 0 } },
-        ];
-
-        return this.SentenceModel.aggregate(aggregation).exec();
-    }
-
-    async getCop30Stats(): Promise<Cop30Stats> {
-        const sentences = await this.getSentencesWithCop30Topics();
-
-        return buildStats(sentences);
-    }
-
     /**
      * Searches for sentence data hashes associated with a specific topic.
      * @param topicWikidataId - The topic identifier.
@@ -151,12 +98,12 @@ export class SentenceService {
         this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
         try {
             const sentences = await this.SentenceModel.find(
-              { "topics.value": { $eq: topicWikidataId } },
-              { data_hash: 1 }
+                { "topics.value": { $eq: topicWikidataId } },
+                { data_hash: 1 }
             ).lean();
 
             this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
-  
+
             return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
             this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
