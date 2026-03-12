@@ -186,6 +186,10 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     padding: 22px;
     margin-bottom: 22px;
 
+    .ctaMainColumn {
+        align-items: center;
+    }
+
     .ctaTitle {
       font-size: 28px;
     }
@@ -194,12 +198,17 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
       font-size: 17px;
     }
 
+    .ctaButtonWrapper {
+        display: grid;
+        width: 100%
+    }
+
     .ctaFooter {
       font-size: 15px;
     }
 
     .ctaAchievementsList {
-      padding: 20px;
+      padding: 0px;
     }
 
     .ctaAchievementsItem {

@@ -90,7 +90,7 @@ const ClaimReviewForm = ({
                 justifyContent: "center",
             }}
         >
-            <Grid item xs={componentStyle.span}>
+            <Grid item xs={10} sm={componentStyle.span}>
                 {formCollapsed && (
                     <ReportModelButtons setFormCollapsed={setFormCollapsed} />
                 )}

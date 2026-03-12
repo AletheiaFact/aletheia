@@ -11,7 +11,7 @@ const SentenceReportPreview = ({
     componentStyle,
 }) => {
     return (
-        <Grid item xs={componentStyle.span}>
+        <Grid item xs={10} sm={componentStyle.span}>
             {canShowReportPreview && (
                 <SentenceReportComments context={context} />
             )}

@@ -47,19 +47,19 @@ const ClaimReviewHeader = ({
     return (
         <Grid container
             style={{
-                justifyContent:"center",
+                justifyContent: "center",
                 background:
                     isPublished &&
-                    reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
+                        reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
                         ? "none"
                         : colors.lightNeutral,
             }}
         >
-            <Grid item xs={componentStyle.span}>
+            <Grid item xs={10} sm={componentStyle.span}>
                 <Grid container>
                     <Grid item
-                       xs={12} 
-                       order={{ xs: 2, lg: 1 }}
+                        xs={12}
+                        order={{ xs: 2, lg: 1 }}
                     >
                         <SentenceReportCard
                             personality={personality}

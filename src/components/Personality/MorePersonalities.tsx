@@ -22,7 +22,11 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 justifyContent: "center",
             }}
         >
-            <Grid item xs={isLoggedIn || vw?.lg ? 9 : 6}>
+            <Grid item
+                xs={11}
+                lg={9}
+                xl={5}
+            >
                 <PersonalitiesGrid
                     personalities={personalities}
                     title={title}
@@ -30,11 +34,13 @@ const MorePersonalities = ({ personalities, href, title }) => {
             </Grid>
 
             <Grid item
-                xs={isLoggedIn || vw?.lg ? 11 : 3}
+                xs={11}
+                lg={9}
+                xl={4}
                 style={{ paddingLeft: vw?.lg ? 0 : 20 }}
             >
 
-                {!vw?.md && (
+                {(!isLoggedIn && !vw?.md) && (
                     <SectionTitle>
                         {t("home:sectionTitle2")}
                     </SectionTitle>
