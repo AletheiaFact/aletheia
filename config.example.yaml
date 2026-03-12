@@ -15,8 +15,6 @@ services:
         connection_uri: mongodb://localhost/Aletheia
         type: mongodb
         options:
-          useUnifiedTopology: true
-          useNewUrlParser: true
           retryWrites: true
           w: majority
       throttle:

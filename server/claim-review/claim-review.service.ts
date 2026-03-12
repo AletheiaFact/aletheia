@@ -1,5 +1,10 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
-import { LeanDocument, Model, Types } from "mongoose";
+import mongoose, {
+    LeanDocument,
+    Model,
+    Types,
+    UpdateWriteOpResult,
+} from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -8,6 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { PerformedBy } from "../history/types/history.interfaces";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
@@ -18,7 +24,12 @@ import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
-import { IlistAll, IListAllQuery, ClaimReviewAggregated, ClaimReviewList } from "./types/claim-review.interfaces";
+import {
+    IlistAll,
+    IListAllQuery,
+    ClaimReviewAggregated,
+    ClaimReviewList,
+} from "./types/claim-review.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -40,11 +51,9 @@ export class ClaimReviewService {
         pageSize,
         order,
         query,
-        latest = false
+        latest = false,
     }: IlistAll): Promise<ClaimReviewList> {
-        const sort = latest
-            ? { date: -1 }
-            : { _id: order === "asc" ? 1 : -1 };
+        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
 
         const match = {
             ...query,
@@ -59,9 +68,9 @@ export class ClaimReviewService {
                     let: { claimId: "$target" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                        { $match: { isDeleted: false } }
+                        { $match: { isDeleted: false } },
                     ],
-                    as: "target"
+                    as: "target",
                 },
             },
             { $unwind: "$target" },
@@ -106,7 +115,10 @@ export class ClaimReviewService {
             });
         }
 
-        const countResult = await this.ClaimReviewModel.aggregate([...pipeline, { $count: "totalCount" }]);
+        const countResult = await this.ClaimReviewModel.aggregate([
+            ...pipeline,
+            { $count: "totalCount" },
+        ]);
         const total = countResult[0]?.totalCount || 0;
 
         pipeline.push(
@@ -116,10 +128,13 @@ export class ClaimReviewService {
         );
 
         const reviews = await this.ClaimReviewModel.aggregate(pipeline);
-        const data = await Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+        const data = await Promise.all(
+            reviews.map(async (review: ClaimReviewAggregated) =>
+                this.postProcess(review)
+            )
+        );
 
         return { data, total };
-
     }
 
     async count(query: IListAllQuery = {}): Promise<number> {
@@ -209,7 +224,7 @@ export class ClaimReviewService {
 
     async findAllReviewsForCascadeDelete(claimId: string) {
         const query = {
-            target: Types.ObjectId(claimId),
+            target: new Types.ObjectId(claimId),
             nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
         };
 
@@ -258,17 +273,19 @@ export class ClaimReviewService {
      */
     async create(claimReview, data_hash, reportModel) {
         if (claimReview.personality) {
-            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.personality = new Types.ObjectId(
+                claimReview.personality
+            );
         }
 
         if (claimReview.target) {
-            claimReview.target = Types.ObjectId(claimReview.target);
+            claimReview.target = new Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {
-            return Types.ObjectId(userId);
+            return new Types.ObjectId(userId);
         });
-        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.report = new Types.ObjectId(claimReview.report._id);
         claimReview.data_hash = data_hash;
         claimReview.reportModel = reportModel;
         claimReview.date = new Date();
@@ -333,10 +350,11 @@ export class ClaimReviewService {
     async delete(claimReviewId) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId);
+
         const history = this.historyService.getHistoryParams(
             claimReview._id,
             TargetModel.ClaimReview,
-            claimReview.usersId,
+            claimReview.usersId as mongoose.Types.ObjectId[] as PerformedBy,
             HistoryType.Delete,
             null,
             claimReview
@@ -345,7 +363,11 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 
-    async hideOrUnhideReview(_id, hide, description) {
+    async hideOrUnhideReview(
+        _id,
+        hide,
+        description
+    ): Promise<UpdateWriteOpResult> {
         const review = await this.getById(_id);
         const newReview = {
             ...review.toObject(),
@@ -362,7 +384,7 @@ export class ClaimReviewService {
             : { isHidden: hide };
 
         const history = this.historyService.getHistoryParams(
-            newReview._id,
+            newReview._id as string,
             TargetModel.ClaimReview,
             this.req.user?._id,
             hide ? HistoryType.Hide : HistoryType.Unhide,

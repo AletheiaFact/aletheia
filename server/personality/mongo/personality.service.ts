@@ -458,7 +458,11 @@ export class MongoPersonalityService {
         return personalityUpdate;
     }
 
-    async hideOrUnhidePersonality(personalityId, isHidden, description) {
+    async hideOrUnhidePersonality(
+        personalityId,
+        isHidden,
+        description
+    ): Promise<PersonalityDocument> {
         const personality = await this.getById(personalityId);
 
         const newPersonality = {
@@ -479,7 +483,7 @@ export class MongoPersonalityService {
         );
         this.historyService.createHistory(history);
 
-        return this.PersonalityModel.updateOne(
+        return this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
             newPersonality
         );

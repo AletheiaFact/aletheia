@@ -2,7 +2,7 @@ services:
   - name: service-aletheia
     conf:
       port: 3000
-      cors: '*'
+      cors: "*"
       websocketUrl: wss://ws.aletheiafact.org
       baseUrl: "https://aletheiafact.org"
       automatedFactCheckingAPIUrl: AGENTS_API_URL
@@ -12,8 +12,6 @@ services:
         atlas: true
         connection_uri: MONGODB_URI
         options:
-          useUnifiedTopology: true
-          useNewUrlParser: true
           retryWrites: true
           w: majority
       throttle:
@@ -23,7 +21,7 @@ services:
       ory:
         url: ORY_SDK_URL
         admin_url: ORY_SDK_URL
-        admin_endpoint: admin 
+        admin_endpoint: admin
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:
