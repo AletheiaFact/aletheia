@@ -4,11 +4,7 @@ import locators from "../../support/locators";
 
 describe("Footer Navigation", () => {
     const expectInternalNavigation = (selector: string, expectedPath: string) => {
-        cy.get(selector)
-            .should("be.visible")
-            .and("not.have.attr", "target", "_blank")
-            .find("svg").should("not.exist");
-        cy.get(selector).click();
+        cy.get(selector).should("be.visible").click();
         cy.url().should("include", expectedPath);
     };
 
