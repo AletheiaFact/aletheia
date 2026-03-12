@@ -87,16 +87,29 @@ export class ImageService {
      */
     async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
         this.logger.debug(`Fetching image hashes for topic: ${topicWikidataId}`);
-        try {
-            const images = await this.ImageModel
-                .find({ "topics.value": topicWikidataId }, { data_hash: 1 })
-                .lean();
 
-            this.logger.debug(`Successfully retrieved ${images.length} image hashes for topic: ${topicWikidataId}`);
+        if (typeof topicWikidataId !== "string") {
+            throw new BadRequestException("Invalid topic identifier format");
+        }
+
+        const validatedTopicId = topicWikidataId.trim();
+
+        try {
+            const images = await this.ImageModel.find(
+                { "topics.value": { $eq: validatedTopicId } },
+                { data_hash: 1 }
+            ).lean();
+
+            this.logger.debug(
+                `Successfully retrieved ${images.length} image hashes for topic: ${validatedTopicId}`
+            );
 
             return images.map(image => image.data_hash);
         } catch (error) {
-            this.logger.error(`Failed to fetch image hashes for topic: ${topicWikidataId}`, error.stack);
+            this.logger.error(
+                `Failed to fetch image hashes for topic: ${validatedTopicId}`,
+                error.stack
+            );
             throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
         }
     }

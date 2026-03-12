@@ -150,13 +150,14 @@ export class SentenceService {
     async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
         this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
         try {
-        const sentences = await this.SentenceModel
-            .find({ "topics.value": topicWikidataId }, { data_hash: 1 })
-            .lean();
+            const sentences = await this.SentenceModel.find(
+              { "topics.value": { $eq: topicWikidataId } },
+              { data_hash: 1 }
+            ).lean();
 
             this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
   
-        return sentences.map(sentence => sentence.data_hash);
+            return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
             this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
             throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
