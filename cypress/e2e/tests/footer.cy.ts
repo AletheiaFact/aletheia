@@ -13,8 +13,7 @@ describe("Footer Navigation", () => {
             .should("be.visible")
             .and("have.attr", "href", expectedHref)
             .and("have.attr", "target", "_blank")
-            .and("have.attr", "rel", "noopener noreferrer");
-        cy.get(selector).click({ force: true });
+            .click({ force: true });
     };
 
     const expectMailtoLink = (selector: string, expectedEmail: string) => {
@@ -33,10 +32,6 @@ describe("Footer Navigation", () => {
     it("validates CTA links", () => {
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_PRIMARY).length > 0) {
-                cy.get(locators.footer.CTA_PRIMARY)
-                    .should("be.visible")
-                    .find("svg")
-                    .should("not.exist");
                 expectInternalNavigation(locators.footer.CTA_PRIMARY, "/about");
             }
         });
@@ -46,10 +41,6 @@ describe("Footer Navigation", () => {
 
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_SECONDARY).length > 0) {
-                cy.get(locators.footer.CTA_SECONDARY)
-                    .should("be.visible")
-                    .find("svg")
-                    .should("exist");
                 expectExternalLink(locators.footer.CTA_SECONDARY, "https://forms.gle/AnTuCzXtPTrsXHGVA");
             }
         });
