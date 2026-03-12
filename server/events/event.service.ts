@@ -17,6 +17,7 @@ import { TopicService } from "../topic/topic.service";
 import { FindAllResponse } from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
+import { EventsStatus } from "../types/enums";
 
 @Injectable()
 export class EventsService {
@@ -156,7 +157,7 @@ export class EventsService {
                 this.eventModel.find(query)
                     .skip(page * parseInt(`${pageSize}`, 10))
                     .limit(parseInt(`${pageSize}`, 10))
-                    .sort({ _id: order })
+                    .sort({ endDate: order })
                     .lean<Event[]>()
                     .exec(),
 
@@ -193,7 +194,7 @@ export class EventsService {
      * @param status - The status string (finalized, upcoming, happening).
      * @returns A MongoDB query object.
      */
-    private buildStatusQuery(status?: string): FilterQuery<Event> {
+    private buildStatusQuery(status?: EventsStatus): FilterQuery<Event> {
         const query: FilterQuery<Event> = {};
         const now = new Date();
         now.setHours(0, 0, 0, 0);
@@ -201,13 +202,13 @@ export class EventsService {
         if (!status || status === "all") return query;
 
         switch (status) {
-            case "finalized":
+            case EventsStatus.FINALIZED:
                 query.endDate = { $lt: now };
                 break;
-            case "upcoming":
+            case EventsStatus.UPCOMING:
                 query.startDate = { $gt: now };
                 break;
-            case "happening":
+            case EventsStatus.HAPPENING:
                 query.startDate = { $lte: now };
                 query.endDate = { $gte: now };
                 break;

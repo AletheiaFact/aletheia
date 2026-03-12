@@ -97,7 +97,7 @@ const AletheiaMenu = () => {
                 })}
                 data-cy={"testEventItem"}
             >
-                {t("menu:EventItem")}
+                {t("menu:eventItem")}
             </ListItemButton>
 
             {role !== Roles.Regular && (

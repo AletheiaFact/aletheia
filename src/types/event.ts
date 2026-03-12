@@ -17,6 +17,7 @@ export interface EventPayload {
     filterTopics?: Topic[];
     recaptcha?: string
 }
+
 export interface ListEventsOptions {
     page?: number;
     pageSize?: number;

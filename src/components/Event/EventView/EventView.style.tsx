@@ -23,16 +23,30 @@ const EventBox = styled(Box)`
         flex-direction: column;
         width: 100%;
         align-items: flex-start;
-        gap: 18px;
         padding: 0 24px;
     }
 
-    .eventChip{
-        font-size: 12px;
+    .eventSectionHeader{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .eventChipText{
+        font-size: 14px;
         color: ${colors.white};
-        background-color: ${colors.lightSecondary};
         font-weight: 700;
-        box-shadow: 0px 2px 4px ${colors.lightPrimary};
+        padding: 8px 4px;
+    }
+
+    .eventLocationText {
+        color: ${colors.quartiary};
+        margin-top: 4px;
+    }
+    
+    .eventChip {
+        background-color: ${colors.lightSecondary};
+        box-shadow: 0px 2px 4px ${colors.lightPrimary}; 
     }
 
     .eventChip:hover {

@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
-import GridList from "../../GridList";
 import EventApi from "../../../api/eventApi";
 import Loading from "../../Loading";
 import { EventPayload, ListEventsOptions } from "../../../types/event";
-import EventCard from "./EventCard";
 import ErrorState from "../../ErrorState";
 import EventFilters from "./EventFilters";
 import EventLoadMore from "./EventLoadMore";
+import EventsGrid from "./EventGrid";
 import EventTitle from "./EventTitle";
 
 interface IData {
-    events: EventPayload[],
-    total: number
+    events: EventPayload[];
+    total: number;
 }
 
 const EventsList = () => {
@@ -26,7 +25,7 @@ const EventsList = () => {
         pageSize: 10,
         order: "asc",
         status: "all",
-    })
+  });
 
     const handleFetch = async () => {
         setLoading(true);
@@ -34,20 +33,20 @@ const EventsList = () => {
         try {
             const events = await EventApi.getEvents(query);
 
-            if (query.page === 1) {
-                setData(events)
-            } else {
-                setData(prev => ({
-                    events: [...prev.events, ...events.events],
-                    total: events.total
-                }))
-            }
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+        if (query.page === 1) {
+            setData(events);
+      } else {
+          setData((prev) => ({
+              events: [...prev.events, ...events.events],
+              total: events.total,
+        }));
         }
-    };
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
 
     useEffect(() => {
         handleFetch();
@@ -58,47 +57,45 @@ const EventsList = () => {
     }
 
     if (error) {
-        return <ErrorState message={t("events:fetchError")} />
-    }
+        return <ErrorState message={t("events:fetchError")} />;
+  }
 
     return (
         <main>
             <Grid container justifyContent="center" marginBottom={4}>
                 <EventFilters
                     selectedStatus={query.status}
-                    onStatusChange={(status) => setQuery(prev => ({ ...prev, status, page: 1 }))}
+                    onStatusChange={(status) =>
+                        setQuery((prev) => ({ ...prev, status, page: 1 }))
+                    }
                     t={t}
                 />
-                <Grid item xs={11} sm={8}>
-                    <GridList
-                        title={
-                            <EventTitle
-                                total={data.total}
-                                label={t("events:eventsList")}
-                                t={t}
-                            />
-                        }
-                        dataSource={data.events}
-                        loggedInMaxColumns={6}
-                        disableSeeMoreButton={true}
-                        hasDivider={true}
-                        renderItem={(event) =>
-                            <EventCard
-                                event={event}
-                                openEventLabel={t("events:openEvent")}
-                            />
-                        }
-                    />
-                </Grid>
-                <EventLoadMore
-                    visible={data.total > data.events.length}
-                    onLoadMore={() => setQuery(prev => ({ ...prev, page: prev.page + 1 }))}
-                    label={t("events:loadMoreButton")}
-                />
 
-            </Grid>
-        </main >
-    )
-}
+              <Grid item xs={11} sm={8}>
+                  <EventsGrid
+                      title={
+                          <EventTitle
+                              total={data.total}
+                              label={t("events:eventsList")}
+                              t={t}
+                          />
+                      }
+                      events={data.events}
+                      t={t}
+                      hasDivider={true}
+                  />
+              </Grid>
 
-export default EventsList
+              <EventLoadMore
+                  visible={data.total > data.events.length}
+                  onLoadMore={() =>
+                      setQuery((prev) => ({ ...prev, page: prev.page + 1 }))
+                  }
+                  label={t("events:loadMoreButton")}
+              />
+          </Grid>
+      </main>
+  );
+};
+
+export default EventsList;

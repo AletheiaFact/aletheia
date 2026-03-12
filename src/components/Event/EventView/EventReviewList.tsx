@@ -93,6 +93,7 @@ const EventReviews = ({
               t={t}
             />
           }
+          hasDivider={true}
         />
       </Grid>
       <EventLoadMore

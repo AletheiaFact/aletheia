@@ -17,6 +17,7 @@ const HomePage: NextPage<{
     claims;
     nameSpace;
     reviews;
+    events;
 }> = (props) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
@@ -39,6 +40,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             reviews: JSON.parse(JSON.stringify(query.reviews)),
+            events: JSON.parse(JSON.stringify(query.events)),
             claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

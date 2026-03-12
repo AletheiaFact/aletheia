@@ -24,5 +24,7 @@
     "mainTopicLabel": "Main topic",
     "mainTopicPlaceholder": "Search and select the main topic",
     "mainTopicLabelTooltip": "Reference topic used to link the fact-checks and verification requests that will appear on the event page.",
-    "latestReviews": "Latest claim reviews"
+    "latestReviews": "Latest claim reviews",
+    "latestEvents": "Latest events",
+    "seeMoreEventsButton": "See more Events"
 }

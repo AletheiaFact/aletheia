@@ -19,6 +19,8 @@ import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { EventsService } from "../events/event.service";
+import { EventsStatus } from "../types/enums";
 
 @Controller("/")
 export class HomeController {
@@ -29,7 +31,8 @@ export class HomeController {
         private statsService: StatsService,
         private debateService: DebateService,
         private claimRevisionService: ClaimRevisionService,
-        private claimReviewService: ClaimReviewService
+        private claimReviewService: ClaimReviewService,
+        private readonly eventsService: EventsService,
     ) {}
 
     @ApiTags("pages")
@@ -56,6 +59,13 @@ export class HomeController {
             },
             latest: true,
         });
+
+        const eventsData = await this.eventsService.findAll({
+            page: 0,
+            pageSize: 6,
+            order: "desc",
+            status: EventsStatus.FINALIZED
+        })
 
         const { personalities } = await this.personalityService.combinedListAll(
             {
@@ -105,6 +115,7 @@ export class HomeController {
             stats,
             claims,
             reviews: reviews.data,
+            events: eventsData.events,
             nameSpace: req.params.namespace || NameSpaceEnum.Main,
         });
 

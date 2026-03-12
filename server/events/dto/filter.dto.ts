@@ -5,6 +5,7 @@ import {
     IsString
 } from "class-validator";
 import { Type } from "class-transformer";
+import { EventsStatus } from "../../types/enums";
 
 export class FilterEventsDTO {
     @Type(() => Number)
@@ -22,5 +23,5 @@ export class FilterEventsDTO {
 
     @IsOptional()
     @IsString()
-    status?: string;
+    status?: EventsStatus;
 }

@@ -5,7 +5,7 @@ import HomeContent from "./HomeContent";
 import HomeHeader from "./HomeHeader/HomeHeader";
 import Cop30Section from "./COP30/Cop30Section";
 
-const Home = ({ personalities, stats, href, claims, reviews }) => {
+const Home = ({ personalities, stats, href, claims, reviews, events }) => {
     const { t } = useTranslation();
 
     return (
@@ -18,6 +18,7 @@ const Home = ({ personalities, stats, href, claims, reviews }) => {
                 personalities={personalities}
                 debateClaims={claims}
                 reviews={reviews}
+                events={events}
                 href={href}
                 title={t("home:sectionTitle1")}
             />

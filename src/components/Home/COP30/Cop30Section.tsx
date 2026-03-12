@@ -10,7 +10,7 @@ import cop30Filters, { allCop30WikiDataIds } from "../../../constants/cop30Filte
 import SentenceApi from "../../../api/sentenceApi";
 
 interface Cop30SectionProps {
-    reviews: Cop30Sentence[];
+    reviews: any[];
 }
 
 const Cop30Section: React.FC<Cop30SectionProps> = ({ reviews }) => {

@@ -10,19 +10,21 @@ type EventViewProps = {
 };
 
 const EventView = ({ event, nameSpace }: EventViewProps) => {
-    const { badge, name, description, mainTopic, filterTopics } = event
+    const { badge, location, name, startDate, description, mainTopic, filterTopics } = event
     return (
         <EventBox>
-                <EventHeaderContent
-                    badge={badge}
-                    title={name}
-                    description={description}
+            <EventHeaderContent
+                badge={badge}
+                location={location}
+                startDate={startDate}
+                title={name}
+                description={description}
             />
 
-                <EventReviews
-                    mainTopic={mainTopic}
-                    filterTopics={filterTopics}
-                    nameSpace={nameSpace}
+            <EventReviews
+                mainTopic={mainTopic}
+                filterTopics={filterTopics}
+                nameSpace={nameSpace}
             />
         </EventBox>
     );

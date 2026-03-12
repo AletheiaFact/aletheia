@@ -24,5 +24,7 @@
     "mainTopicLabel": "Tópico principal",
     "mainTopicPlaceholder": "Busque e selecione o tópico principal",
     "mainTopicLabelTooltip": "Tópico de referência usado para vincular as checagens e as denúncias que serão exibidos na página do evento.",
-    "latestReviews": "Últimas checagens"
+    "latestReviews": "Últimas checagens",
+    "latestEvents": "Últimos eventos",
+    "seeMoreEventsButton": "Veja mais eventos"
 }
