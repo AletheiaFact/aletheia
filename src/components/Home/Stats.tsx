@@ -1,38 +1,29 @@
 import React from "react";
-import { useAppSelector } from "../../store/store";
-import colors from "../../styles/colors";
+import { Grid, Typography } from "@mui/material";
 import CountUp from "react-countup"
 
-export const Stats = ({ info, title, style = {} }) => {
-    const { vw } = useAppSelector((state) => state);
+type StatsProps = {
+    info: number,
+    title: string
+}
+
+export const Stats = ({ info, title }: StatsProps) => {
     return (
-        <div
-            style={{
-                display: "flex",
-                alignItems: "center",
-                width: "33%",
-                gap: "4px",
-                justifyContent: "center",
-                ...style,
-            }}
+        <Grid item
+            className="statsContainer"
         >
-            <h3
-                style={{
-                    color: colors.lightSecondary,
-                    marginRight: vw?.sm ? "5px" : "20px",
-                    fontSize: vw?.sm ? "28px" : "40px",
-                }}
+            <Typography
+                variant="h3"
+                className="statsNumber"
             >
                 <CountUp start={0} end={info} duration={2} separator="." />
-            </h3>{" "}
-            <span
-                style={{
-                    marginTop: "0.25em",
-                    fontSize: vw?.sm ? "14px" : "20px",
-                }}
+            </Typography>
+            <Typography
+                variant="body1"
+                className="statsTitle"
             >
                 {title}
-            </span>
-        </div>
+            </Typography>
+        </Grid>
     );
 };

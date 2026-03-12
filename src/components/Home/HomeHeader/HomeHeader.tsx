@@ -18,9 +18,8 @@ const HomeHeader = ({ stats }) => {
             >
                 <HomeHeaderTitle />
                 <CTASection />
+                <HomeStats stats={stats} />
             </Grid>
-            <HomeStats stats={stats} />
-
             <HomeHeaderSearch />
         </HomeHeaderStyle>
     );

@@ -2,9 +2,12 @@ import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "next-i18next";
+import { useAppSelector } from "../../store/store";
 
 const DonateButton = ({ header = false, style = {} }) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
+
     return (
         <AletheiaButton
             type={ButtonType.white}
@@ -20,6 +23,8 @@ const DonateButton = ({ header = false, style = {} }) => {
                 lineHeight: "16px",
                 textAlign: "center",
                 justifyContent: "center",
+                fontSize: vw?.xs ? "10px" : "12px",
+                padding: vw?.xs ? "6px 4px" : "6px 16px",
                 ...style,
             }}
         >

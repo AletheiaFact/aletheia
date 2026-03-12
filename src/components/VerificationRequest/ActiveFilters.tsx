@@ -2,13 +2,13 @@ import React from "react";
 import { Grid, Typography, Chip } from "@mui/material";
 import { ActionTypes } from "../../store/types";
 import {
-  FilterItem,
-  FiltersContext,
-  FilterType,
+    FilterItem,
+    FiltersContext,
+    FilterType,
 } from "../../types/VerificationRequest";
 
 const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
-    const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults } =
+    const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults, viewMode } =
         state;
     const { dispatch, t, setPaginationModel, setApplyFilters } = actions;
 
@@ -48,8 +48,8 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
         const label =
             type === FilterType.TOPIC
                 ? `${t(
-                      "verificationRequest:topicFilterLabel"
-                  )} ${getTopicDisplayLabel(value)}`
+                    "verificationRequest:topicFilterLabel"
+                )} ${getTopicDisplayLabel(value)}`
                 : `${t("verificationRequest:impactAreaFilterLabel")} ${value}`;
 
         const deleteObject: FilterItem = {
@@ -62,7 +62,7 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
         };
 
         return (
-            <Grid item key={value}>
+            <Grid item key={value} maxWidth="100%">
                 <Chip
                     label={label}
                     onDelete={() => handleRemoveFilter(deleteObject)}
@@ -72,8 +72,9 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     };
 
     return (
+        viewMode === "left" &&
         (topicFilterUsed.length > 0 || impactAreaFilterUsed.length > 0) && (
-            <Grid item xs={10}>
+            <Grid item marginTop={1}>
                 <Typography variant="subtitle1" gutterBottom>
                     {t("verificationRequest:activeFiltersLabel")}
                 </Typography>

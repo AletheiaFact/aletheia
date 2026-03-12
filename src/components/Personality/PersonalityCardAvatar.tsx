@@ -16,7 +16,6 @@ const PersonalityCardAvatar = ({
             xs={componentStyle.avatarSpan}
             style={{
                 alignContent: componentStyle.avatarSize < 90 ? undefined : "center",
-                padding: 0,
                 minWidth:
                     componentStyle.avatarSize < 100
                         ? componentStyle.avatarSize + 0.02 * 6

@@ -11,6 +11,7 @@ const PersonalityCardButton = ({
     personalityIsSelected,
     isCreatingClaim,
     onClick,
+    isMobileDevice
 }) => {
     const { t } = useTranslation();
     const buttonProps = {
@@ -26,7 +27,8 @@ const PersonalityCardButton = ({
                 {...buttonProps}
                 style={{
                     height: "auto",
-                    padding: "4px 12px",
+                    fontSize: isMobileDevice ? "12px" : "14px",
+                    padding: isMobileDevice ? "4px 8px" : "4px 12px",
                     textAlign: "center",
                     justifyContent: "center",
                 }}
@@ -51,11 +53,12 @@ const PersonalityCardButton = ({
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: 40,
-                    paddingBottom: 0,
+                    height: "auto",
+                    fontSize: isMobileDevice ? "12px" : "14px",
+                    padding: isMobileDevice ? "2px 8px" : "4px 12px",
                 }}
             >
-                <AddOutlinedIcon />{" "}
+                <AddOutlinedIcon style={{ margin: "0 3px 3px 0", fontSize: isMobileDevice ? "18px" : "24px", }} />
                 {isCreatingClaim
                     ? t("claimForm:personalityNotFound")
                     : t("personality:add_button")}

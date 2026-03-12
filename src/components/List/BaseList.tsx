@@ -121,7 +121,7 @@ const BaseList = ({
                     style={{
                         alignContent: "middle",
                         justifyContent: "space-between",
-                        padding: "12px 0",
+                        padding: "12px",
                         borderBottom: "1px solid #eee"
                     }}
                 >

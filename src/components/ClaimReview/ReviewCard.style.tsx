@@ -48,6 +48,16 @@ const ReviewCardStyled = styled.div`
             width: 100%;
         }
     }
+
+    @media ${queries.xs} {
+    .review-actions {
+      margin-top: 8px;
+      display: grid;
+      justify-content: center;
+      justify-items: center;
+      gap: 0px;
+    }
+  }
 `;
 
 export default ReviewCardStyled;

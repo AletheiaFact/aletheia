@@ -23,7 +23,7 @@ export default function FinalCTASection() {
       }}
     >
       <Container maxWidth="md">
-        <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold" }}>
+        <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
           {t("about:finalCTATitle")}
         </Typography>
         <Typography variant="h6" sx={{ mb: 4, opacity: 0.9, fontWeight: 400 }}>

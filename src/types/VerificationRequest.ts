@@ -3,6 +3,7 @@ import { Source } from "../../server/source/schemas/source.schema";
 import { ActionTypes } from "../store/types";
 import { Topic } from "./Topic";
 import { UnifiedDefaultValue } from "../components/Form/DynamicInput";
+import { ViewMode } from "../components/FilterToggleButtons";
 
 export enum FilterType {
   TOPIC = "topic",
@@ -22,8 +23,6 @@ interface FilterItem {
   value: string;
   type: FilterType;
 }
-
-type ViewMode = "board" | "dashboard";
 
 type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
 
@@ -155,7 +154,6 @@ export type {
   FiltersContext,
   PaginationModel,
   SeverityLevel,
-  ViewMode,
   FilterItem,
   TopicOption,
   StatsCount,

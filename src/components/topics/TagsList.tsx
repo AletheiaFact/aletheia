@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import router from "next/router";
+import { useAppSelector } from "../../store/store";
 interface TagsListProps {
     tags: any[];
     editable?: boolean;
@@ -12,6 +13,8 @@ interface TagsListProps {
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
+    const isMobile = vw?.xs;
 
     const handleTagClick = (tag) => {
         router
@@ -74,12 +77,14 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 backgroundColor: colors.secondary,
                                 color: colors.white,
                                 borderRadius: 32,
-                                padding: "4px 10px 2px",
+                                padding: isMobile ? "0px" : "4px 10px 2px",
                                 marginTop: 4,
                                 marginBottom: 4,
                                 cursor: "pointer",
-                                maxWidth: "300px",
+                                fontSize: isMobile ? "11px" : "13px",
+                                maxWidth: isMobile ? "250px" : "300px"
                             }}
+
                         />
                     );
                 })}
