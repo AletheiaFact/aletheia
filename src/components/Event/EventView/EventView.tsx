@@ -1,23 +1,29 @@
-import Grid from "@mui/material/Grid";
-import { FullEventResponse } from "../../../types/event";
+import { EventPayload } from "../../../types/event";
 import EventBox from "./EventView.style";
 import EventHeaderContent from "./EventHeaderContent";
+import EventReviews from "./EventReviewList";
+import { NameSpaceEnum } from "../../../types/Namespace";
 
 type EventViewProps = {
-    fullEvent: FullEventResponse;
+    event: EventPayload;
+    nameSpace: NameSpaceEnum;
 };
 
-const EventView = ({ fullEvent }: EventViewProps) => {
-    const { badge, name, description } = fullEvent
+const EventView = ({ event, nameSpace }: EventViewProps) => {
+    const { badge, name, description, mainTopic, filterTopics } = event
     return (
         <EventBox>
-            <Grid container className="eventMainContent">
                 <EventHeaderContent
                     badge={badge}
                     title={name}
                     description={description}
-                />
-            </Grid>
+            />
+
+                <EventReviews
+                    mainTopic={mainTopic}
+                    filterTopics={filterTopics}
+                    nameSpace={nameSpace}
+            />
         </EventBox>
     );
 };

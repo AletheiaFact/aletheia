@@ -29,7 +29,7 @@ const GridList = ({
                         xs={12}
                         md={loggedInMaxColumns}
                         lg={6}
-                        key={item}
+                        key={item.content._id}
                     >
                         {renderItem(item)}
                     </Grid>

@@ -14,6 +14,7 @@ interface FetchOptions {
     isHidden?: boolean;
     latest?: boolean;
     nameSpace?: NameSpaceEnum;
+    mainTopicWikidataID?: string;
 }
 
 const get = (options: FetchOptions = {}) => {
@@ -24,6 +25,7 @@ const get = (options: FetchOptions = {}) => {
         isHidden: options?.isHidden || false,
         latest: options?.latest,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
+        mainTopicWikidataID: options?.mainTopicWikidataID
     };
 
     return request

@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { FullEventResponse } from "../types/event";
+import { EventPayload } from "../types/event";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -10,13 +10,13 @@ import actions from "../store/actions";
 import EventView from "../components/Event/EventView/EventView";
 
 interface EventPageProps {
-    fullEvent: FullEventResponse;
+    event: EventPayload;
     nameSpace: NameSpaceEnum;
     sitekey: string;
 }
 
 const EventViewPage: NextPage<EventPageProps> = ({
-    fullEvent,
+    event,
     nameSpace,
     sitekey
 }) => {
@@ -29,7 +29,8 @@ const EventViewPage: NextPage<EventPageProps> = ({
     return (
         <main>
             <EventView
-                fullEvent={fullEvent}
+                event={event}
+                nameSpace={nameSpace}
             />
         </main>
     );
@@ -42,7 +43,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            fullEvent: query.fullEvent || null,
+            event: query.event || null,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,

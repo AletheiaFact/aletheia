@@ -53,7 +53,7 @@ const EventsList = () => {
         handleFetch();
     }, [query]);
 
-    if (loading) {
+    if (loading && query.page === 1) {
         return <Loading />;
     }
 
@@ -69,11 +69,12 @@ const EventsList = () => {
                     onStatusChange={(status) => setQuery(prev => ({ ...prev, status, page: 1 }))}
                     t={t}
                 />
-                <Grid xs={11} sm={8}>
+                <Grid item xs={11} sm={8}>
                     <GridList
                         title={
                             <EventTitle
                                 total={data.total}
+                                label={t("events:eventsList")}
                                 t={t}
                             />
                         }

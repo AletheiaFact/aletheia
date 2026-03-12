@@ -34,4 +34,9 @@ export class GetClaimReviewsDTO {
     @IsString()
     @ApiProperty()
     nameSpace: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty()
+    mainTopicWikidataID: string;
 }

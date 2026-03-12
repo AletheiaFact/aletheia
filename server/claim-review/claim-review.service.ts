@@ -51,15 +51,50 @@ export class ClaimReviewService {
         pageSize,
         order,
         query,
+<<<<<<< HEAD
         latest = false,
+=======
+        mainTopicWikidataID,
+        latest = false
+>>>>>>> 91b1a6aa (feat(events): implement claim reviews fetch by main topic)
     }: IlistAll): Promise<ClaimReviewList> {
         const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
 
-        const match = {
+        let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
         };
 
+        if (mainTopicWikidataID) {
+          const [sentenceHashes, imageHashes] = await Promise.all([
+              this.sentenceService.getHashesByTopic(mainTopicWikidataID),
+              this.imageService.getHashesByTopic(mainTopicWikidataID)
+          ]);
+      
+          const validHashes = [...sentenceHashes, ...imageHashes];
+      
+          initialMatch.data_hash = { $in: validHashes };
+      }
+          
+        const pipeline = this.buildClaimReviewBasePipeline(initialMatch, query);
+
+        const countResult = await this.ClaimReviewModel.aggregate([...pipeline, { $count: "totalCount" }]);
+        const total = countResult[0]?.totalCount || 0;
+
+        pipeline.push(
+            { $sort: sort },
+            { $skip: page * pageSize },
+            { $limit: pageSize }
+        );
+
+        const reviews = await this.ClaimReviewModel.aggregate(pipeline);
+        const data = await Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+
+        return { data, total };
+
+    }
+
+    private buildClaimReviewBasePipeline(match: any, query: IListAllQuery): any[] {
         const pipeline: any[] = [
             { $match: match },
             {
@@ -115,6 +150,7 @@ export class ClaimReviewService {
             });
         }
 
+<<<<<<< HEAD
         const countResult = await this.ClaimReviewModel.aggregate([
             ...pipeline,
             { $count: "totalCount" },
@@ -135,6 +171,9 @@ export class ClaimReviewService {
         );
 
         return { data, total };
+=======
+        return pipeline;
+>>>>>>> 91b1a6aa (feat(events): implement claim reviews fetch by main topic)
     }
 
     async count(query: IListAllQuery = {}): Promise<number> {

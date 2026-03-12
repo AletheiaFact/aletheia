@@ -2,6 +2,8 @@ import {
     BadRequestException,
     Inject,
     Injectable,
+    InternalServerErrorException,
+    Logger,
     NotFoundException,
     Scope,
 } from "@nestjs/common";
@@ -20,13 +22,15 @@ import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
+    private readonly logger = new Logger(ImageService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
         private historyService: HistoryService,
         private reportService: ReportService
-    ) {}
+    ) { }
 
     async create(image, claimRevisionId = null) {
         const imageSchema = {
@@ -76,11 +80,28 @@ export class ImageService {
         }
     }
 
-    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument> {
-        if (!Array.isArray(topics)) {
-            throw new BadRequestException("Invalid topics array.");
-        }
+    /**
+     * Searches for image data hashes associated with a specific topic.
+     * @param topicWikidataId - The topic identifier.
+     * @returns Array of image data hashes.
+     */
+    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
+        this.logger.debug(`Fetching image hashes for topic: ${topicWikidataId}`);
+        try {
+            const images = await this.ImageModel
+                .find({ "topics.value": topicWikidataId }, { data_hash: 1 })
+                .lean();
 
+            this.logger.debug(`Successfully retrieved ${images.length} image hashes for topic: ${topicWikidataId}`);
+
+            return images.map(image => image.data_hash);
+        } catch (error) {
+            this.logger.error(`Failed to fetch image hashes for topic: ${topicWikidataId}`, error.stack);
+            throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
+        }
+    }
+
+    async updateImageWithTopics(topics, data_hash) {
         const image = await this.getByDataHash(data_hash);
 
         const newImage = {

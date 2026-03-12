@@ -142,6 +142,27 @@ export class SentenceService {
         return buildStats(sentences);
     }
 
+    /**
+     * Searches for sentence data hashes associated with a specific topic.
+     * @param topicWikidataId - The topic identifier.
+     * @returns Array of sentence data hashes.
+     */
+    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
+        this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
+        try {
+        const sentences = await this.SentenceModel
+            .find({ "topics.value": topicWikidataId }, { data_hash: 1 })
+            .lean();
+
+            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
+  
+        return sentences.map(sentence => sentence.data_hash);
+        } catch (error) {
+            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
+            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
+        }
+    }
+
     async create(sentenceBody) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
         return newSentence._id;

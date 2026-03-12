@@ -114,15 +114,15 @@ export class EventsController {
         const parsedUrl = parse(req.url, true);
         const { data_hash } = req.params;
         try {
-            const fullEvent = await this.eventsService.getFullEventByHash(data_hash);
+            const event = await this.eventsService.findByHash(data_hash);
 
-            if (!fullEvent) {
+            if (!event) {
                 this.logger.warn(`Event not found for hash: ${data_hash}`);
                 throw new NotFoundException("Event not found");
             }
 
             const queryObject = Object.assign(parsedUrl.query, {
-                fullEvent,
+                event,
                 namespace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             });

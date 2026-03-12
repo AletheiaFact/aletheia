@@ -14,7 +14,7 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { FilterEventsDTO } from "./dto/filter.dto";
 import { TopicService } from "../topic/topic.service";
-import { FindAllResponse, FullEventResponse } from "./types/event.interfaces";
+import { FindAllResponse } from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
 
@@ -168,49 +168,6 @@ export class EventsService {
             this.logger.error(`Failed to fetch events list: ${error.message}`, error.stack);
             throw new InternalServerErrorException("An error occurred while fetching the events list.");
         }
-    }
-
-    /**
-     * Fetches the "Full Content" of an event for the SSR view page.
-     * Aggregates the core Event data, related Sentences, and Verification Requests.
-     * @param data_hash - The unique hash identifier of the event.
-     * @returns A composite object containing the event and its related data.
-     * @throws NotFoundException if the event does not exist.
-    */
-    async getFullEventByHash(data_hash: string): Promise<FullEventResponse> {
-        const currentEvent = await this.findByHash(data_hash);
-
-        if (!currentEvent.mainTopic) {
-            this.logger.error(`Event ${data_hash} exists but is missing mainTopic relation`);
-            return {
-                ...currentEvent,
-                sentences: [],
-                verificationRequests: []
-            };
-        }
-
-        const [eventSentences, eventVerificationRequest] = await Promise.all([
-            this.sentenceService.getSentencesByTopics([currentEvent.mainTopic.wikidataId])
-                .catch(err => {
-                    this.logger.error(`Failed to fetch sentences for topic ${currentEvent.mainTopic.wikidataId}`, err.stack);
-                    return [];
-                }),
-            this.verificationRequestService.listAll({
-                page: 0,
-                pageSize: 10,
-                order: "asc",
-                topics: [currentEvent.mainTopic.name]
-            }).catch(err => {
-                this.logger.error(`Failed to fetch verification requests for topic ${currentEvent.mainTopic.name}`, err.stack);
-                return [];
-            })
-        ]);
-
-        return {
-            ...currentEvent.toObject(),
-            sentences: eventSentences,
-            verificationRequests: eventVerificationRequest
-        };
     }
 
     /**

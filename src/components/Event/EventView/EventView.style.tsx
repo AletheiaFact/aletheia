@@ -6,16 +6,19 @@ import { queries } from "../../../styles/mediaQueries";
 const EventBox = styled(Box)`
     min-height: 100vh;
 
-    .eventMainContent {
+    .eventContainerBase {
         display: flex;
-        background: linear-gradient(180deg, ${colors.blackTertiary} 0%, ${colors.primary} 100%);
         align-items: center;
-        padding: 56px 0 72px;
         flex-wrap: wrap;
         justify-content: center;
+        padding: 56px 0 72px;
     }
 
-    .eventHeaderContent {
+    .mainContent{
+        background: linear-gradient(180deg, ${colors.blackTertiary} 0%, ${colors.primary} 100%);
+    }
+
+    .eventSection {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -39,8 +42,6 @@ const EventBox = styled(Box)`
     .title {
         font-size: clamp(24px, 2.2vw, 52px);
         font-weight: 700;
-        line-height: 1.15;
-        margin: 0;
         color: ${colors.white};
     }
 

@@ -14,7 +14,7 @@ const EventLoadMore = ({ visible, onLoadMore, label }: EventLoadMoreProps) => {
     }
 
     return (
-        <Grid xs={8} display="flex" justifyContent="center" padding={2}>
+        <Grid item xs={8} display="flex" justifyContent="center" padding={2}>
             <AletheiaButton
                 data-cy={"testSeeMoreEvents"}
                 type={ButtonType.gray}

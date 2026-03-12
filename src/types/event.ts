@@ -1,7 +1,5 @@
 import { NameSpaceEnum } from "./Namespace";
-import { SentenceContent } from "./Sentence";
 import { Topic } from "./Topic";
-import { VerificationRequest } from "./VerificationRequest";
 
 export type EventOrder = "asc" | "desc";
 export type EventStatus = "happening" | "upcoming" | "finalized" | "all";
@@ -19,11 +17,6 @@ export interface EventPayload {
     filterTopics?: Topic[];
     recaptcha?: string
 }
-
-export type FullEventResponse = EventPayload & {
-    sentences: SentenceContent[];
-    verificationRequests: VerificationRequest[];
-};
 export interface ListEventsOptions {
     page?: number;
     pageSize?: number;

@@ -24,6 +24,7 @@ export interface IlistAll {
     pageSize: number;
     order: "asc" | "desc";
     query: IListAllQuery;
+    mainTopicWikidataID?: string;
     latest?: boolean;
 }
 
