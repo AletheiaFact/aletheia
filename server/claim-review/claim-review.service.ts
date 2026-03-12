@@ -13,6 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { PerformedBy } from "../history/types/history.interfaces";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
@@ -23,7 +24,12 @@ import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
-import { IlistAll, IListAllQuery, ClaimReviewAggregated, ClaimReviewList } from "./types/claim-review.interfaces";
+import {
+    IlistAll,
+    IListAllQuery,
+    ClaimReviewAggregated,
+    ClaimReviewList,
+} from "./types/claim-review.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
