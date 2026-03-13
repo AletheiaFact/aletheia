@@ -28,7 +28,7 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
   .ctaMainColumn {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
   }
 
@@ -57,7 +57,8 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
   }
 
   .ctaButtonWrapper {
-    display: flex;
+    display: grid;
+    width: 100%;
     gap: 12px;
     margin-top: 28px;
   }
@@ -116,7 +117,7 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     border-radius: 16px;
     border: 1px solid ${colors.secondary};
     background: ${colors.whiteLow};
-    padding: 30px;
+    padding: 15px;
 
     &:hover {
       transform: translateY(-2px);
@@ -162,6 +163,19 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     font-weight: 900;
   }
 
+  @media ${queries.xl} {
+    .ctaAchievementsColumn {
+      padding: 30px;
+    }
+    .ctaMainColumn {
+      align-items: flex-start;
+    }
+
+    .ctaButtonWrapper {
+      display: flex;
+    }
+  }
+
   @media ${queries.md} {
     padding: 30px;
 
@@ -187,7 +201,7 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     margin-bottom: 22px;
 
     .ctaMainColumn {
-        align-items: center;
+      align-items: center;
     }
 
     .ctaTitle {
@@ -199,8 +213,8 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     }
 
     .ctaButtonWrapper {
-        display: grid;
-        width: 100%
+      display: grid;
+      width: 100%;
     }
 
     .ctaFooter {
