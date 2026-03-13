@@ -57,7 +57,7 @@ const VerificationRequestGrid = styled(Grid)`
     gap: 8px;
   }
 
-  @media ${queries.xl} {
+  @media ${queries.xxl} {
     .filterActions {
       justify-content: center;
     }
