@@ -14,7 +14,16 @@ interface TagsListProps {
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-    const isMobile = vw?.xs;
+    const maxWidthMap = {
+        xs: "15.6rem",
+        sm: "23.7rem",
+        md: "30rem",
+        lg: "28.7rem",
+        xl: "9.3rem",
+        xxl: "18.7rem"
+    };
+    const currentBreakpoint = Object.keys(maxWidthMap).find(key => vw?.[key]);
+    const maxWidth = maxWidthMap[currentBreakpoint];
 
     const handleTagClick = (tag) => {
         router
@@ -77,12 +86,15 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 backgroundColor: colors.secondary,
                                 color: colors.white,
                                 borderRadius: 32,
-                                padding: isMobile ? "0px" : "4px 10px 2px",
+                                padding: "4px 10px 2px",
                                 marginTop: 4,
                                 marginBottom: 4,
                                 cursor: "pointer",
-                                fontSize: isMobile ? "11px" : "13px",
-                                maxWidth: isMobile ? "250px" : "300px"
+                                fontSize: "13px",
+                                maxWidth: maxWidth,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
                             }}
 
                         />

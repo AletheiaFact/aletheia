@@ -2,11 +2,11 @@ import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 
 const ReviewCardStyled = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns: 120px 1fr;
     gap: 16px;
     padding: 32px;
     width: 100%;
-    flex-wrap: wrap;
 
     .personality-card {
         width: 120px;
@@ -39,6 +39,14 @@ const ReviewCardStyled = styled.div`
         justify-content: space-between;
         align-items: center;
         gap: 8px;
+    }
+
+    @media ${queries.lg} {
+    display: flex;
+    gap: 16px;
+    padding: 32px;
+    width: 100%;
+    flex-wrap: wrap;
     }
 
     @media ${queries.sm} {
