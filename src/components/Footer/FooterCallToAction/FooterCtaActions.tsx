@@ -20,18 +20,18 @@ const FooterCtaActions = () => {
                 className="footer-primary-cta-link"
                 data-cy="testFooterCtaPrimaryLink"
             >
-                {t("footer:cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
+                {t("footer:cta.primaryButton")}
             </Link>
             <Link
                 onClick={() => trackUmamiEvent("cta-footer-forum-form-button", "forumForm")}
                 href={callToActionRedirect}
                 underline="none"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="footer-secondary-cta-link"
                 data-cy="testFooterCtaSecondaryLink"
             >
-                {t("footer:cta.secondaryButton")}
+                {t("footer:cta.secondaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
         </Stack>
     );
