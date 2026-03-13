@@ -1,4 +1,20 @@
-<!DOCTYPE html>
+import { Controller, Get, Header, Res } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Public } from "../auth/decorators/auth.decorator";
+import type { Response } from "express";
+
+@Controller()
+export class CaptchaController {
+    constructor(private configService: ConfigService) {}
+
+    @Public()
+    @Get("api/captcha-bridge")
+    @Header("Content-Type", "text/html")
+    @Header("Cache-Control", "max-age=86400")
+    getCaptchaBridge(@Res() res: Response) {
+        const sitekey = this.configService.get<string>("recaptcha_sitekey");
+
+        res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +37,7 @@
 <body>
   <div class="captcha-wrapper">
     <div class="g-recaptcha"
-         data-sitekey="6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
+         data-sitekey="${sitekey}"
          data-callback="onCaptchaSuccess"
          data-expired-callback="onCaptchaExpired"
          data-error-callback="onCaptchaError">
@@ -30,7 +46,6 @@
 
   <script>
     function postToParent(payload) {
-      // Post to any origin — the extension validates on its end
       window.parent.postMessage(payload, '*');
     }
 
@@ -47,4 +62,6 @@
     }
   </script>
 </body>
-</html>
+</html>`);
+    }
+}
