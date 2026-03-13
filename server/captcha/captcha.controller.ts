@@ -1,13 +1,11 @@
 import { Controller, Get, Header, Res } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Public } from "../auth/decorators/auth.decorator";
 import type { Response } from "express";
 
 @Controller()
 export class CaptchaController {
     constructor(private configService: ConfigService) {}
 
-    @Public()
     @Get("api/captcha-bridge")
     @Header("Content-Type", "text/html")
     @Header("Cache-Control", "max-age=86400")
