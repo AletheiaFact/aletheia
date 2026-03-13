@@ -1,57 +1,57 @@
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 interface AffixAletheiaButtonProps {
-  Children: React.ReactNode;
-  style?: React.CSSProperties;
+    Children: React.ReactNode;
+    style?: React.CSSProperties;
 }
 
 const AffixButtonV2: React.FC<AffixAletheiaButtonProps> = ({ Children, ...style }) => {
-  const [isAffixed, setIsAffixed] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+    const [isAffixed, setIsAffixed] = useState(false);
+    const ref = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const drawer = document.querySelector(".MuiDrawer-paper");
-    const scrollTarget = drawer || window;
+    useEffect(() => {
+        const drawer = document.querySelector(".MuiDrawer-paper");
+        const scrollTarget = drawer || window;
 
-    const handleScroll = () => {
-      if (!ref.current) return;
+        const handleScroll = () => {
+            if (!ref.current) return;
 
-      const { bottom } = ref.current.getBoundingClientRect();
-      const isFixed = bottom > window.innerHeight;
+            const { bottom } = ref.current.getBoundingClientRect();
+            const isFixed = bottom > window.innerHeight;
 
-      if (isFixed) {
-        setIsAffixed(true);
-      } else {
-        setIsAffixed(false);
-      }
-    };
+            if (isFixed) {
+                setIsAffixed(true);
+            } else {
+                setIsAffixed(false);
+            }
+        };
 
-    if (ref.current) {
-      const scrollableSpeech = ref.current.scrollHeight > window.innerHeight;
-      if (scrollableSpeech) {
-        setIsAffixed(true);
-      }
-    }
+        if (ref.current) {
+            const scrollableSpeech = ref.current.scrollHeight > window.innerHeight;
+            if (scrollableSpeech) {
+                setIsAffixed(true);
+            }
+        }
 
-    scrollTarget.addEventListener("scroll", handleScroll);
-    return () => scrollTarget.removeEventListener("scroll", handleScroll);
-  }, []);
+        scrollTarget.addEventListener("scroll", handleScroll);
+        return () => scrollTarget.removeEventListener("scroll", handleScroll);
+    }, []);
 
-  return (
-    <>
-      <span ref={ref} />
-      <Box
-        style={{
-          position: isAffixed ? "fixed" : "relative",
-          bottom: isAffixed ? 15 : "auto",
-          ...style,
-        }}
-      >
-        {Children}
-      </Box>
-    </>
-  );
+    return (
+        <Grid item xs={12} justifyItems="center">
+            <span ref={ref} />
+            <Box
+                style={{
+                    position: isAffixed ? "fixed" : "relative",
+                    bottom: isAffixed ? 15 : "auto",
+                    ...style,
+                }}
+            >
+                {Children}
+            </Box>
+        </Grid>
+    );
 };
 
 export default AffixButtonV2;

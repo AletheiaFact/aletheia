@@ -69,13 +69,13 @@
     "allPriorities": "All Priorities",
     "allSourceChannels": "All Source Channels",
     "priority": {
-    "critical": "Critical",
-    "high": "High ({{level}})",
-    "medium": "Medium ({{level}})",
-    "low": "Low ({{level}})",
-    "filter_high": "High",
-    "filter_medium": "Medium",
-    "filter_low": "Low"
+        "critical": "Critical",
+        "high": "High ({{level}})",
+        "medium": "Medium ({{level}})",
+        "low": "Low ({{level}})",
+        "filter_high": "High",
+        "filter_medium": "Medium",
+        "filter_low": "Low"
     },
     "filterByPriority": "Filter by Priority",
     "noRequestsInStatus": "No requests in this status",
@@ -89,7 +89,7 @@
     "errorUpdatingStatus": "Error updating status:",
     "PRE_TRIAGE": "Pre Triage",
     "IN_TRIAGE": "In Triage",
-    "POSTED": "Posted",
+    "POSTED": "Published",
     "DECLINED": "Declined",
     "activity": {
         "Posted": "Verification request #{{hash}} verified and forwarded",

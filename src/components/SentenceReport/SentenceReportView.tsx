@@ -68,7 +68,7 @@ const SentenceReportView = ({
                         : undefined
                 }
             >
-                <Grid item xs={componentStyle.span}>
+                <Grid item xs={10} sm={componentStyle.span}>
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}

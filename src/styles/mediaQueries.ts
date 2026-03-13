@@ -3,6 +3,7 @@ const breakpoints = {
     sm: 768,
     md: 992,
     lg: 1200,
+    xl: 1500,
 };
 
 /** Exports media queries for each breakpoint
@@ -14,7 +15,8 @@ const queries = {
     sm: `(max-width: ${breakpoints.sm - 1}px)`,
     md: `(max-width: ${breakpoints.md - 1}px)`,
     lg: `(max-width: ${breakpoints.lg - 1}px)`,
-    xl: `(min-width: ${breakpoints.lg}px)`,
+    xl: `(max-width: ${breakpoints.xl - 1}px)`,
+    xxl: `(min-width: ${breakpoints.xl}px)`,
 };
 
 export { breakpoints, queries };
