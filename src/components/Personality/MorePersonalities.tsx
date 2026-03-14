@@ -47,7 +47,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 )}
 
                 <Grid container id="create_account">
-                    <CTAFolder />
+                    <CTAFolder isSplit={true}/>
                 </Grid>
 
                 <SocialMediaShare href={href} />
