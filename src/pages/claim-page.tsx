@@ -82,7 +82,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
             />
             <JsonLd {...jsonld} />
             <ClaimView {...props} />
-            <AffixButton personalitySlug={personality?.slug} />
+            <AffixButton personalitySlug={personality?.slug} bottom="6%" />
         </>
     );
 };
