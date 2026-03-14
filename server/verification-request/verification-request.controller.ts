@@ -11,7 +11,7 @@ import {
     Put,
     Logger,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiQuery } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
 import type { BaseRequest } from "../types";
 import { parse } from "url";
@@ -114,7 +114,16 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @ApiQuery({ name: "sourceUrl", required: false, description: "Filter by source URL (exact match on Source.href)" })
+    @ApiQuery({ name: "searchContent", required: false, description: "Regex search on verification request content" })
+    @ApiQuery({ name: "pageSize", required: false, type: Number, description: "Number of results to return" })
     public async getAll(@Query() getVerificationRequest) {
+        if (getVerificationRequest.sourceUrl) {
+            return this.verificationRequestService.findBySourceUrl(
+                getVerificationRequest.sourceUrl,
+                { pageSize: getVerificationRequest.pageSize }
+            );
+        }
         return this.verificationRequestService.findAll(getVerificationRequest);
     }
 

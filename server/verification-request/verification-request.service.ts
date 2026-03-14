@@ -92,6 +92,32 @@ export class VerificationRequestService {
     }
 
     /**
+     * Find verification requests by source URL.
+     * Looks up Source documents matching the given href, then returns
+     * VerificationRequests that reference those sources.
+     * @param sourceUrl the source URL to match
+     * @param options pagination options
+     * @returns an array of verification request documents
+     */
+    async findBySourceUrl(
+        sourceUrl: string,
+        options?: { page?: number; pageSize?: number }
+    ): Promise<VerificationRequest[]> {
+        const pageSize = options?.pageSize || 10;
+
+        const source = await this.sourceService.getSourceByHref(sourceUrl);
+        if (!source) return [];
+
+        return this.VerificationRequestModel.find(
+            { source: source._id },
+            { embedding: 0 }
+        )
+            .sort({ date: -1 })
+            .limit(pageSize)
+            .exec();
+    }
+
+    /**
      * Finds a document by an id parameter
      * @param verificationRequestId verification request ID string
      * @returns the verification request document
