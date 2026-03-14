@@ -8,7 +8,11 @@ import localConfig from "../../../../config/localConfig";
 import CTAFolderMainColumn from "./CTAFolderMainColumn";
 import CTAFolderAchievementsColumn from "./CTAFolderAchievementsColumn";
 
-const CTAFolder = () => {
+type CTAFolderProps = {
+    isSplit?: Boolean;
+}
+
+const CTAFolder = ({isSplit}: CTAFolderProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
@@ -17,6 +21,7 @@ const CTAFolder = () => {
             <CTAFolderStyle
                 $nameSpace={nameSpace}
                 $isLoggedIn={isLoggedIn}
+                $isSplit={isSplit}
             >
                 <Grid container className="ctaFolderContent">
                     <CTAFolderMainColumn

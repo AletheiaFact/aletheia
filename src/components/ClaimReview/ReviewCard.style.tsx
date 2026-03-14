@@ -1,12 +1,25 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 
-const ReviewCardStyled = styled.div`
-    display: grid;
-    grid-template-columns: 120px 1fr;
+type ReviewCardStyledProps = {
+    $hasPersonality: boolean;
+};
+
+const ReviewCardStyled = styled.div<ReviewCardStyledProps>`
     gap: 16px;
     padding: 32px;
     width: 100%;
+
+    ${({ $hasPersonality }) =>
+        $hasPersonality
+            ? css`
+          display: grid;
+          grid-template-columns: 120px 1fr;
+        `
+            : css`
+          display: flex;
+          flex-wrap: wrap;
+        `}
 
     .personality-card {
         width: 120px;
@@ -43,9 +56,6 @@ const ReviewCardStyled = styled.div`
 
     @media ${queries.lg} {
     display: flex;
-    gap: 16px;
-    padding: 32px;
-    width: 100%;
     flex-wrap: wrap;
     }
 

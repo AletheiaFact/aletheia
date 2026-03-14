@@ -7,6 +7,7 @@ import { NameSpaceEnum } from "../../../types/Namespace";
 type CTAFolderProps = {
     $nameSpace: string;
     $isLoggedIn: boolean;
+    $isSplit: boolean;
 };
 
 const CTAFolderStyle = styled(Box) <CTAFolderProps>`
@@ -28,7 +29,6 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
   .ctaMainColumn {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
   }
 
@@ -57,7 +57,7 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
   }
 
   .ctaButtonWrapper {
-    display: grid;
+    display: ${({ $isSplit }) => $isSplit ? "grid" : "flex"};
     width: 100%;
     gap: 12px;
     margin-top: 28px;

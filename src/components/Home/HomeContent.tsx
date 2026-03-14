@@ -61,7 +61,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                 </Grid>
 
 
-                <Grid item xs={12} lg={9} order={3}>
+                <Grid item xs={11} sm={11} md={9} order={3}>
                     <CTAFolder />
                 </Grid>
 
