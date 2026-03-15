@@ -29,6 +29,7 @@ import {
     IListAllQuery,
     ClaimReviewAggregated,
     ClaimReviewList,
+    listAllData,
 } from "./types/claim-review.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -46,16 +47,24 @@ export class ClaimReviewService {
         private wikidata: WikidataService
     ) { }
 
-    async listAll({
-        page,
-        pageSize,
-        order,
-        query,
-        latest = false,
-        mainTopicWikidataID,
-    }: IlistAll): Promise<ClaimReviewList> {
-        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
+    async listAll(params: IlistAll): Promise<ClaimReviewList> {
+        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicWikidataID);
 
+        const [total, data] = await Promise.all([
+            this.countReviews(basePipeline),
+            this.findReviews(basePipeline, params)
+        ]);
+
+        return { data, total };
+    }
+
+    async count(params: { query: IListAllQuery, mainTopicWikidataID?: string }): Promise<number> {
+        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicWikidataID);
+
+        return this.countReviews(basePipeline);
+    }
+
+    private async createSharedPipeline(query: IListAllQuery, mainTopicWikidataID?: string): Promise<any[]> {
         let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
@@ -72,22 +81,33 @@ export class ClaimReviewService {
             initialMatch.data_hash = { $in: validHashes };
         }
 
-        const pipeline = this.buildClaimReviewBasePipeline(initialMatch, query);
+        return this.buildClaimReviewBasePipeline(initialMatch, query);
+    }
 
-        const countResult = await this.ClaimReviewModel.aggregate([...pipeline, { $count: "totalCount" }]);
-        const total = countResult[0]?.totalCount || 0;
+    private async findReviews(basePipeline: any[], params: IlistAll): Promise<listAllData[]> {
+        const { page, pageSize, order, latest = false } = params;
+        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
 
-        pipeline.push(
+        const pipeline = [
+            ...basePipeline,
             { $sort: sort },
             { $skip: page * pageSize },
             { $limit: pageSize }
-        );
+        ];
 
         const reviews = await this.ClaimReviewModel.aggregate(pipeline);
-        const data = await Promise.all(reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review)));
+        const data = await Promise.all(
+            reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review))
+        );
 
-        return { data, total };
+        return data;
+    }
 
+    private async countReviews(basePipeline: any[]): Promise<number> {
+        const pipeline = [...basePipeline, { $count: "totalCount" }];
+
+        const countResult = await this.ClaimReviewModel.aggregate(pipeline);
+        return countResult[0]?.totalCount || 0;
     }
 
     private buildClaimReviewBasePipeline(match: any, query: IListAllQuery): any[] {
@@ -147,15 +167,6 @@ export class ClaimReviewService {
         }
 
         return pipeline;
-    }
-
-    async count(query: IListAllQuery = {}): Promise<number> {
-        const match = {
-            ...query,
-            targetModel: ReviewTaskTypeEnum.Claim,
-        };
-
-        return await this.ClaimReviewModel.countDocuments(match);
     }
 
     async listDailyClaimReviews(query) {

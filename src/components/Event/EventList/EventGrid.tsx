@@ -1,7 +1,7 @@
 import React from "react";
 import EventCard from "./EventCard";
 import GridList from "../../GridList";
-import { EventPayload } from "../../../types/event";
+import { EventMetrics, EventPayload } from "../../../types/event";
 import { TFunction } from "react-i18next";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { useAtom } from "jotai";
@@ -9,6 +9,7 @@ import { NameSpaceEnum } from "../../../types/Namespace";
 
 type EventsGridProps = {
   events: EventPayload[];
+  eventMetrics: EventMetrics;
   t: TFunction;
   hasDivider?: boolean;
   disableSeeMoreButton?: boolean;
@@ -17,6 +18,7 @@ type EventsGridProps = {
 
 const EventsGrid = ({
   events,
+  eventMetrics,
   t,
   hasDivider,
   disableSeeMoreButton,
@@ -37,7 +39,11 @@ const EventsGrid = ({
       seeMoreButtonLabel={t("events:seeMoreEventsButton")}
       hasDivider={hasDivider}
       renderItem={(event) => (
-        <EventCard event={event} openEventLabel={t("events:openEvent")} />
+        <EventCard
+          event={event}
+          eventMetrics={eventMetrics}
+          openEventLabel={t("events:openEvent")}
+        />
       )}
     />
   );

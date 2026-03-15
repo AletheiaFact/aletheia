@@ -10,16 +10,18 @@ import * as crypto from "crypto";
 import { EventsService } from "./event.service";
 import { Event } from "./schema/event.schema";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { TopicService } from "../topic/topic.service";
 import {
     mockCreateEventDto,
     mockEventModel,
-    mockSentenceService,
+    mockClaimService,
+    mockClaimReviewService,
     mockTopicService,
     mockVerificationRequestService,
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
+import { ClaimService } from "../claim/claim.service";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -37,8 +39,12 @@ describe("EventsService (Unit)", () => {
                     useValue: mockVerificationRequestService,
                 },
                 {
-                    provide: SentenceService,
-                    useValue: mockSentenceService,
+                    provide: ClaimService,
+                    useValue: mockClaimService,
+                },
+                {
+                    provide: ClaimReviewService,
+                    useValue: mockClaimReviewService,
                 },
                 {
                     provide: TopicService,
@@ -203,16 +209,33 @@ describe("EventsService (Unit)", () => {
 
     describe("findAll", () => {
         it("should return events list with pagination and order", async () => {
-            const eventsResult = [{ endDate: "2025-11-20T23:00:00.000+00:00" }, { endDate: "2025-12-15T18:30:00.000+00:00" }];
+            const eventsResult = [
+                {
+                    data_hash: "mock-hash-1",
+                    endDate: "2025-11-20T23:00:00.000+00:00",
+                    mainTopic: { wikidataId: "Q123", name: "Topic A" }
+                },
+                {
+                    data_hash: "mock-hash-2",
+                    endDate: "2025-12-15T18:30:00.000+00:00",
+                    mainTopic: { wikidataId: "Q456", name: "Topic B" }
+                }
+            ];
+
             const exec = jest.fn().mockResolvedValue(eventsResult);
-            const countExec = jest.fn().mockResolvedValue(eventsResult.length);
-            const lean = jest.fn().mockReturnValue({ exec: exec });
+            const populate = jest.fn().mockReturnValue({ exec });
+            const lean = jest.fn().mockReturnValue({ populate });
             const sort = jest.fn().mockReturnValue({ lean });
             const limit = jest.fn().mockReturnValue({ sort });
             const skip = jest.fn().mockReturnValue({ limit });
 
             mockEventModel.find.mockReturnValue({ skip });
+
+            const countExec = jest.fn().mockResolvedValue(eventsResult.length);
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+
+            const mockMetrics = { verificationRequests: 5, claims: 10, reviews: 15 };
+            jest.spyOn(service, 'getEventMetrics').mockResolvedValue(mockMetrics);
 
             const result = await service.findAll({
                 page: 1,
@@ -229,23 +252,36 @@ describe("EventsService (Unit)", () => {
             );
             expect(skip).toHaveBeenCalledWith(5);
             expect(limit).toHaveBeenCalledWith(5);
-            expect(sort).toHaveBeenCalledWith({ endDate: "desc" });
+            expect(sort).toHaveBeenCalledWith({ endDate: -1 });
+            expect(populate).toHaveBeenCalledWith("mainTopic");
+
+            expect(service.getEventMetrics).toHaveBeenCalledTimes(2);
+            expect(service.getEventMetrics).toHaveBeenCalledWith("Q123", "Topic A");
+
             expect(result).toEqual({
                 events: eventsResult,
                 total: eventsResult.length,
+                eventMetrics: {
+                    "mock-hash-1": mockMetrics,
+                    "mock-hash-2": mockMetrics,
+                }
             });
         });
 
         it("should throw InternalServerErrorException when querying fails", async () => {
             const exec = jest.fn().mockRejectedValue(new Error("db fail"));
-            const countExec = jest.fn().mockResolvedValue(0);
-            const lean = jest.fn().mockReturnValue({ exec: exec });
+            const populate = jest.fn().mockReturnValue({ exec });
+            const lean = jest.fn().mockReturnValue({ populate });
             const sort = jest.fn().mockReturnValue({ lean });
             const limit = jest.fn().mockReturnValue({ sort });
             const skip = jest.fn().mockReturnValue({ limit });
 
             mockEventModel.find.mockReturnValue({ skip });
+
+            const countExec = jest.fn().mockResolvedValue(0);
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+
+            jest.restoreAllMocks();
 
             await expect(
                 service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING })

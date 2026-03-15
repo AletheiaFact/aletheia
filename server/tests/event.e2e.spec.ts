@@ -90,8 +90,10 @@ describe("EventController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body).toHaveProperty("events");
+                expect(body).toHaveProperty("eventMetrics");
                 expect(body).toHaveProperty("total");
                 expect(Array.isArray(body.events)).toBe(true);
+                expect(body.eventMetrics).toEqual({});
                 expect(body.events).toHaveLength(0);
                 expect(body.total).toBe(0);
             });
@@ -144,14 +146,22 @@ describe("EventController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body).toHaveProperty("events");
+                expect(body).toHaveProperty("eventMetrics");
                 expect(body).toHaveProperty("total");
                 expect(Array.isArray(body.events)).toBe(true);
+                expect(typeof body.eventMetrics).toBe("object");
                 expect(body.events.length).toBeGreaterThanOrEqual(2);
                 expect(body.total).toBeGreaterThanOrEqual(2);
 
                 const created = body.events.find((event) => event._id === createdEventId);
                 expect(created).toBeDefined();
                 expect(created.name).toEqual("Future Event Alpha");
+
+                expect(body.eventMetrics[created.data_hash]).toMatchObject({
+                    verificationRequests: expect.any(Number),
+                    claims: expect.any(Number),
+                    reviews: expect.any(Number)
+                });
             });
     });
 
@@ -196,13 +206,16 @@ describe("EventController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body).toHaveProperty("events");
+                expect(body).toHaveProperty("eventMetrics");
                 expect(body).toHaveProperty("total");
                 expect(Array.isArray(body.events)).toBe(true);
+                expect(typeof body.eventMetrics).toBe("object");
                 expect(body.events.length).toBeGreaterThanOrEqual(1);
                 expect(body.total).toBeGreaterThanOrEqual(1);
 
                 for (const event of body.events) {
                     expect(new Date(event.startDate).getTime()).toBeGreaterThan(Date.now() - 24 * 60 * 60 * 1000);
+                    expect(body.eventMetrics[event.data_hash]).toBeDefined();
                 }
             });
     });
@@ -219,10 +232,16 @@ describe("EventController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body).toHaveProperty("events");
+                expect(body).toHaveProperty("eventMetrics");
                 expect(body).toHaveProperty("total");
                 expect(Array.isArray(body.events)).toBe(true);
+                expect(typeof body.eventMetrics).toBe("object");
                 expect(body.events.length).toBeGreaterThanOrEqual(1);
                 expect(body.total).toBeGreaterThanOrEqual(1);
+                const firstEvent = body.events[0];
+                if (firstEvent) {
+                    expect(body.eventMetrics[firstEvent.data_hash]).toBeDefined();
+                }
             });
     });
 

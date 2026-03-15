@@ -10,14 +10,16 @@ import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model } from "mongoose";
 import { EventDocument, Event } from "./schema/event.schema";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { FilterEventsDTO } from "./dto/filter.dto";
 import { TopicService } from "../topic/topic.service";
-import { FindAllResponse } from "./types/event.interfaces";
+import { EventMetricsResponse, FindAllResponse } from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { ClaimService } from "../claim/claim.service";
 
 @Injectable()
 export class EventsService {
@@ -25,8 +27,9 @@ export class EventsService {
 
     constructor(
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
+        private readonly claimService: ClaimService,
+        private readonly claimReviewService: ClaimReviewService,
         private readonly verificationRequestService: VerificationRequestService,
-        private readonly sentenceService: SentenceService,
         private readonly topicService: TopicService,
     ) { }
 
@@ -143,31 +146,101 @@ export class EventsService {
      * Lists events with pagination and dynamic filters for status.
      * Useful for public listings and SSR components.
      * @param queryDto - DTO containing pagination and filter parameters.
-     * @returns A list of event documents.
+     * @returns A list of event documents, a dictionary of event metrics, and the total count.
      */
     async findAll(queryDto: FilterEventsDTO): Promise<FindAllResponse> {
         const { page, pageSize, order, status } = queryDto;
         try {
             const query = this.buildStatusQuery(status);
+            const limit = parseInt(`${pageSize}`, 10);
+            const skip = page * limit;
 
             this.logger.debug(`Fetching events list. Page: ${page}, PageSize: ${pageSize}, Status: ${status}`);
             this.logger.verbose(`Built MongoDB Query: ${JSON.stringify(query)}`);
 
             const [events, total] = await Promise.all([
                 this.eventModel.find(query)
-                    .skip(page * parseInt(`${pageSize}`, 10))
-                    .limit(parseInt(`${pageSize}`, 10))
-                    .sort({ endDate: order })
-                    .lean<Event[]>()
+                    .skip(skip)
+                    .limit(limit)
+                    .sort({ endDate: order === "asc" ? 1 : -1 })
+                    .lean<EventDocument[]>()
+                    .populate("mainTopic")
                     .exec(),
 
                 this.eventModel.countDocuments(query).exec()
             ]);
 
-            return { events, total };
+            const eventMetrics = await this.getBatchEventMetrics(events);
+
+            return { events, eventMetrics, total };
         } catch (error) {
-            this.logger.error(`Failed to fetch events list: ${error.message}`, error.stack);
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to fetch events list: ${error instanceof Error ? error.message : 'Unknown error'}`, stackTrace);
             throw new InternalServerErrorException("An error occurred while fetching the events list.");
+        }
+    }
+
+    /**
+     * Fetches and aggregates metrics for an array of events concurrently.
+     * @param events - Array of event documents.
+     * @returns A dictionary of metrics keyed by the event ID.
+     */
+    private async getBatchEventMetrics(events: EventDocument[]): Promise<Record<string, EventMetricsResponse>> {
+        const metricsPromises = events.map(async (event) => {
+            const wikidataId = event.mainTopic?.wikidataId || "";
+            const topicName = event.mainTopic?.name || "";
+
+            const metrics = await this.getEventMetrics(wikidataId, topicName);
+
+            return { eventDataHash: event.data_hash.toString(), metrics };
+        });
+
+        const metricsResults = await Promise.all(metricsPromises);
+
+        return metricsResults.reduce((accumulator, current) => {
+            accumulator[current.eventDataHash] = current.metrics;
+            return accumulator;
+        }, {} as Record<string, EventMetricsResponse>);
+    }
+
+    /**
+     * Get metrics for an event by its main topic id.
+     * @param eventMainTopicId - The Wikidata identifier (or main topic ID) for the event.
+     * @returns Event Metrics
+    */
+    async getEventMetrics(eventMainTopicWikidataId: string, topicName: string): Promise<EventMetricsResponse> {
+        this.logger.debug(`Getting event metrics for topic ID: ${eventMainTopicWikidataId}`);
+
+        try {
+            const [verificationRequestStats, claimReviewsStats, claimStats] = await Promise.all([
+                this.verificationRequestService.count({ topics: [topicName] }),
+
+                this.claimReviewService.count({
+                    query: {
+                        isHidden: false,
+                        isDeleted: false,
+                        nameSpace: NameSpaceEnum.Main
+                    },
+                    mainTopicWikidataID: eventMainTopicWikidataId
+                }),
+
+                this.claimService.countBySentenceTopics(eventMainTopicWikidataId)
+            ]);
+
+            return {
+                verificationRequests: verificationRequestStats,
+                claims: claimStats,
+                reviews: claimReviewsStats
+            };
+
+        } catch (error) {
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to get event metrics for topic ${eventMainTopicWikidataId}`, stackTrace);
+            return {
+                verificationRequests: 0,
+                claims: 0,
+                reviews: 0
+            };
         }
     }
 

@@ -26,5 +26,8 @@
     "mainTopicLabelTooltip": "Tópico de referência usado para vincular as checagens e as denúncias que serão exibidos na página do evento.",
     "latestReviews": "Últimas checagens",
     "latestEvents": "Últimos eventos",
-    "seeMoreEventsButton": "Veja mais eventos"
+    "seeMoreEventsButton": "Veja mais eventos",
+    "reviewStats": "Checagens",
+    "verificationRequestsStats": "Denúncias",
+    "claimsStats": "Discursos"
 }

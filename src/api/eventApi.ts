@@ -77,6 +77,7 @@ const getEvents = (options: ListEventsOptions = {}, t?: TFunction) => {
         .then((response) => {
             return {
                 events: response.data.events,
+                eventMetrics: response.data.eventMetrics,
                 total: response.data.total
             };
         })

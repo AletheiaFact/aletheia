@@ -18,6 +18,11 @@ export interface EventPayload {
     recaptcha?: string
 }
 
+export interface EventMetrics {
+    verificationRequests: number,
+    claims: number,
+    reviews: number,
+}
 export interface ListEventsOptions {
     page?: number;
     pageSize?: number;

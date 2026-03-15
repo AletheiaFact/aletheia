@@ -50,7 +50,7 @@ export interface ClaimReviewAggregated {
     __v?: number;
 }
 
-interface listAllData {
+export interface listAllData {
     content: Image | Sentence;
     personality?: Personality;
     reviewHref: string;

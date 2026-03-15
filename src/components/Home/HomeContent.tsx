@@ -10,7 +10,7 @@ import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
 import EventsGrid from "../Event/EventList/EventGrid";
 
-const HomeContent = ({ personalities, href, title, debateClaims, reviews, events }) => {
+const HomeContent = ({ personalities, href, title, debateClaims, reviews, eventsData }) => {
     const { results } = useAppSelector((state) => ({
         results: [
             state?.search?.searchResults?.personalities || [],
@@ -63,7 +63,8 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
 
                 <Grid item xs={11} sm={11} md={9}>
                     <EventsGrid
-                        events={events}
+                        events={eventsData.events}
+                        eventMetrics={eventsData.eventMetrics}
                         t={t}
                         disableSeeMoreButton={false}
                         title={t("events:latestEvents")}

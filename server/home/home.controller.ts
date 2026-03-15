@@ -115,7 +115,7 @@ export class HomeController {
             stats,
             claims,
             reviews: reviews.data,
-            events: eventsData.events,
+            eventsData: eventsData,
             nameSpace: req.params.namespace || NameSpaceEnum.Main,
         });
 
