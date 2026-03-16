@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Controller,
     Post,
     Body,
@@ -246,7 +247,7 @@ export class VerificationRequestController {
                 verificationRequestBody.recaptcha
             );
             if (!validateCaptcha) {
-                throw new Error("Error validating captcha");
+                throw new BadRequestException("Error validating captcha");
             }
         } else {
             this.logger.log("M2M user request - skipping CAPTCHA validation");

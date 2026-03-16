@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    InternalServerErrorException,
     Param,
     Post,
     Query,
@@ -71,7 +72,7 @@ export class CopilotChatController {
                 req.user._id
             );
         } catch (e) {
-            throw new Error(e);
+            throw new InternalServerErrorException(e);
         }
     }
 

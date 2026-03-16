@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ChatOpenAI } from "@langchain/openai";
 import customMessage from "./customMessage.response";
 import { MESSAGES } from "./messages.constants";
@@ -182,7 +182,7 @@ export class CopilotChatService {
             const session =
                 await this.copilotSessionService.getSessionById(sessionId);
             if (!session) {
-                throw new Error("Session not found");
+                throw new NotFoundException("Session not found");
             }
 
             const context = session.context as Context;

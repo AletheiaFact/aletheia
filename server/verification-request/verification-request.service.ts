@@ -22,6 +22,7 @@ import {
     Inject,
     forwardRef,
     Logger,
+    NotFoundException,
     Scope,
 } from "@nestjs/common";
 import {
@@ -683,7 +684,7 @@ export class VerificationRequestService {
                 ).populate("group");
 
             if (!verificationRequest) {
-                throw new Error("Verification request not found");
+                throw new NotFoundException("Verification request not found");
             }
 
             const latestVerificationRequest = verificationRequest.toObject();

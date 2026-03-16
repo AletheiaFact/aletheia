@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
 import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
@@ -51,7 +51,7 @@ export class HistoryService {
         previousChange?: AfterAndBeforeType
     ) {
         if (!isValidObjectId(dataId)) {
-            throw new Error(`Invalid dataId received: ${dataId}`);
+            throw new BadRequestException(`Invalid dataId received: ${dataId}`);
         }
 
         const date = new Date();

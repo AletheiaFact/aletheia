@@ -380,7 +380,6 @@ export class MongoPersonalityService {
 
     async postProcess(personality, language: string = "en") {
         if (personality) {
-            // TODO: allow wikdiata resolver to fetch in batches
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
                 language,

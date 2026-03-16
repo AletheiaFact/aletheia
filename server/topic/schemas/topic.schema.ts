@@ -9,8 +9,6 @@ export type TopicDocument = Topic & mongoose.Document;
     timestamps: true,
 })
 export class Topic {
-    // TODO: Implement topic taxonomy
-    // TODO: Better I18N
     @Prop({
         required: true,
         unique: true,

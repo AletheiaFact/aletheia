@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Post,
@@ -90,7 +91,7 @@ export class ReviewTaskController {
             createReviewTask.recaptcha
         );
         if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
         return this.reviewTaskService.create(createReviewTask);
     }

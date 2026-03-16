@@ -17,7 +17,7 @@ export class ReportService {
         if (
             !Object.values(ClassificationEnum).includes(report.classification)
         ) {
-            throw new Error("Classification doesn't match options");
+            throw new BadRequestException("Classification doesn't match options");
         }
         const newReport = new this.ReportModel(report);
 
