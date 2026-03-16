@@ -25,7 +25,6 @@ const ClaimRevisionModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    // TODO: clean-up Claim module after logic is fully migrated to ClaimRevision
     imports: [
         ClaimRevisionModel,
         ParserModule,

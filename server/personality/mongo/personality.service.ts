@@ -258,8 +258,7 @@ export class MongoPersonalityService {
             this.req
         );
 
-        const personality = await this.PersonalityModel
-            .findOne(queryOptions)
+        const personality = await this.PersonalityModel.findOne(queryOptions)
             .populate({
                 path: "claims",
                 match: {
@@ -380,7 +379,6 @@ export class MongoPersonalityService {
 
     async postProcess(personality, language: string = "en") {
         if (personality) {
-            // TODO: allow wikdiata resolver to fetch in batches
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
                 language,
@@ -497,13 +495,17 @@ export class MongoPersonalityService {
      */
     async delete(personalityId: string) {
         const user = this.req.user?._id;
-        this.logger.log(`Initiating soft delete for personalityId: ${personalityId} by user: ${user}`);
+        this.logger.log(
+            `Initiating soft delete for personalityId: ${personalityId} by user: ${user}`
+        );
 
         try {
             const previousPersonality = await this.getById(personalityId);
 
             if (!previousPersonality) {
-                this.logger.warn(`Attempted to soft delete non-existent personalityId: ${personalityId}`);
+                this.logger.warn(
+                    `Attempted to soft delete non-existent personalityId: ${personalityId}`
+                );
                 return null;
             }
 
@@ -517,12 +519,18 @@ export class MongoPersonalityService {
             );
             await this.history.createHistory(history);
 
-            const result = await this.PersonalityModel.softDelete({ _id: personalityId });
-            this.logger.log(`Personality ${personalityId} successfully marked as isDeleted`);
+            const result = await this.PersonalityModel.softDelete({
+                _id: personalityId,
+            });
+            this.logger.log(
+                `Personality ${personalityId} successfully marked as isDeleted`
+            );
 
             return result;
         } catch (error) {
-            this.logger.error(`Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`);
+            this.logger.error(
+                `Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`
+            );
             throw error;
         }
     }

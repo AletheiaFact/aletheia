@@ -17,7 +17,9 @@ export class ReportService {
         if (
             !Object.values(ClassificationEnum).includes(report.classification)
         ) {
-            throw new Error("Classification doesn't match options");
+            throw new BadRequestException(
+                "Classification doesn't match options"
+            );
         }
         const newReport = new this.ReportModel(report);
 
@@ -54,11 +56,11 @@ export class ReportService {
         return this.sourceService.update(data_hash, newSourceBody);
     }
 
-  findByDataHash(data_hash: string) {
-    if (!data_hash) {
-    throw new BadRequestException("Invalid data hash provided.");
-  }
+    findByDataHash(data_hash: string) {
+        if (!data_hash) {
+            throw new BadRequestException("Invalid data hash provided.");
+        }
 
-  return this.ReportModel.findOne({ data_hash: { $eq: data_hash } });
-}
+        return this.ReportModel.findOne({ data_hash: { $eq: data_hash } });
+    }
 }

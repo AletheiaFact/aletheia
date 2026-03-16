@@ -1,4 +1,9 @@
-import { Injectable, Scope, Logger } from "@nestjs/common";
+import {
+    Injectable,
+    InternalServerErrorException,
+    Scope,
+    Logger,
+} from "@nestjs/common";
 import { Model } from "mongoose";
 import {
     DailyReport,
@@ -42,7 +47,9 @@ export class DailyReportService {
             );
         } catch (error) {
             this.logger.error("Error generating daily report:", error);
-            throw new Error("Failed to generate daily report");
+            throw new InternalServerErrorException(
+                "Failed to generate daily report"
+            );
         }
     }
 }

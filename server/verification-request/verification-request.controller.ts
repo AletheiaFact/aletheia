@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Controller,
     Post,
     Body,
@@ -25,7 +26,11 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { Public, AdminOnly, RegularUserOnly } from "../auth/decorators/auth.decorator";
+import {
+    Public,
+    AdminOnly,
+    RegularUserOnly,
+} from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -114,9 +119,22 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    @ApiQuery({ name: "sourceUrl", required: false, description: "Filter by source URL (exact match on Source.href)" })
-    @ApiQuery({ name: "searchContent", required: false, description: "Regex search on verification request content" })
-    @ApiQuery({ name: "pageSize", required: false, type: Number, description: "Number of results to return" })
+    @ApiQuery({
+        name: "sourceUrl",
+        required: false,
+        description: "Filter by source URL (exact match on Source.href)",
+    })
+    @ApiQuery({
+        name: "searchContent",
+        required: false,
+        description: "Regex search on verification request content",
+    })
+    @ApiQuery({
+        name: "pageSize",
+        required: false,
+        type: Number,
+        description: "Number of results to return",
+    })
     public async getAll(@Query() getVerificationRequest) {
         if (getVerificationRequest.sourceUrl) {
             return this.verificationRequestService.findBySourceUrl(
@@ -255,7 +273,7 @@ export class VerificationRequestController {
                 verificationRequestBody.recaptcha
             );
             if (!validateCaptcha) {
-                throw new Error("Error validating captcha");
+                throw new BadRequestException("Error validating captcha");
             }
         } else {
             this.logger.log("M2M user request - skipping CAPTCHA validation");
@@ -410,18 +428,19 @@ export class VerificationRequestController {
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
 
-        const view = viewType === "history" ? "/history-page" : "/tracking-page";
+        const view =
+            viewType === "history" ? "/history-page" : "/tracking-page";
 
         const queryObject = Object.assign(
             parsedUrl.query,
             viewType === "history"
                 ? {
-                    targetId: verificationRequest._id,
-                    targetModel: TargetModel.VerificationRequest,
-                }
+                      targetId: verificationRequest._id,
+                      targetModel: TargetModel.VerificationRequest,
+                  }
                 : {
-                    verificationRequestId: verificationRequest._id,
-                }
+                      verificationRequestId: verificationRequest._id,
+                  }
         );
 
         await this.viewService.render(req, res, view, queryObject);

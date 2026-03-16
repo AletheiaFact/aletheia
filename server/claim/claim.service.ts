@@ -236,7 +236,7 @@ export class ClaimService {
             const claim = await this.ClaimModel.findById(claimId);
 
             if (!claim) {
-                throw new Error("Claim not found");
+                throw new NotFoundException("Claim not found");
             }
 
             const before = { isHidden: !isHidden };

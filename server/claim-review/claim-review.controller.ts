@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Param,
@@ -71,7 +72,7 @@ export class ClaimReviewController {
             body.recaptcha
         );
         if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
         return this.claimReviewService.hideOrUnhideReview(
             reviewId,

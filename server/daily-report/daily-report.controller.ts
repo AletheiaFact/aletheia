@@ -1,4 +1,4 @@
-import { Controller, Param, Post } from "@nestjs/common";
+import { Controller, NotFoundException, Param, Post } from "@nestjs/common";
 import { AdminOnly } from "../auth/decorators/auth.decorator";
 import { DailyReportService } from "../daily-report/daily-report.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -77,7 +77,7 @@ export class DailyReportController {
         this.notificationService.sendDailyReviewsEmail(topic, dailyReport);
 
         if (dailyReviews.length < 1) {
-            throw new Error("No daily reports today");
+            throw new NotFoundException("No daily reports today");
         }
 
         return dailyReviews;
