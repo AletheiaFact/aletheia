@@ -39,10 +39,9 @@ export class MongoPersonalityService {
         private readonly PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
             Model<PersonalityDocument>,
         private readonly claimReview: ClaimReviewService,
-        private readonly history: HistoryService,
+        private readonly historyService: HistoryService,
         private readonly wikidata: WikidataService,
         private readonly util: UtilService,
-        private readonly historyService: HistoryService
     ) {}
 
     async getWikidataEntities(regex: string, language: string) {
@@ -156,7 +155,7 @@ export class MongoPersonalityService {
 
                 const user = this.req.user?._id;
 
-                const history = this.history.getHistoryParams(
+                const history = this.historyService.getHistoryParams(
                     newPersonality._id,
                     TargetModel.Personality,
                     user,
@@ -164,11 +163,14 @@ export class MongoPersonalityService {
                     personality
                 );
 
-                this.history.createHistory(history);
+                await this.historyService.createHistory(history);
 
                 return newPersonality.save();
             }
-        } catch (err) {}
+        } catch (err) {
+            this.logger.error(`Error creating personality: ${err.message}`);
+            throw err;
+        }
     }
 
     getDeletedPersonalityByWikidata(wikidata) {
@@ -354,7 +356,7 @@ export class MongoPersonalityService {
             personality.claims = await Promise.all(
                 personality.claims.map((claim) => {
                     return {
-                        ...claim.lastestRevision,
+                        ...claim.latestRevision,
                         ...claim,
                     };
                 })
@@ -443,7 +445,7 @@ export class MongoPersonalityService {
 
         const user = this.req.user?._id;
 
-        const history = this.history.getHistoryParams(
+        const history = this.historyService.getHistoryParams(
             personalityId,
             TargetModel.Personality,
             user,
@@ -451,7 +453,7 @@ export class MongoPersonalityService {
             personalityUpdate,
             previousPersonality
         );
-        await this.history.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return personalityUpdate;
     }
@@ -479,7 +481,7 @@ export class MongoPersonalityService {
             after,
             before
         );
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
@@ -509,7 +511,7 @@ export class MongoPersonalityService {
                 return null;
             }
 
-            const history = this.history.getHistoryParams(
+            const history = this.historyService.getHistoryParams(
                 personalityId,
                 TargetModel.Personality,
                 user,
@@ -517,7 +519,7 @@ export class MongoPersonalityService {
                 null,
                 previousPersonality
             );
-            await this.history.createHistory(history);
+            await this.historyService.createHistory(history);
 
             const result = await this.PersonalityModel.softDelete({
                 _id: personalityId,
