@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Grid } from "@mui/material";
 import colors from "../../../styles/colors";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../../atoms/namespace";
 import EventApi from "../../../api/eventApi";
 import DynamicEventForm from "./DynamicEventForm";
+import useEventsHook from "../hooks/useEventsHook";
 
 const CreateEventView = () => {
-    const router = useRouter();
-    const { t } = useTranslation();
-    const [nameSpace] = useAtom(currentNameSpace);
-    const [isLoading, setIsLoading] = useState(false);
-    const [recaptchaString, setRecaptchaString] = useState("");
-    const hasCaptcha = !!recaptchaString;
+    const { state, actions } = useEventsHook()
+    const { nameSpace, isLoading, hasCaptcha, recaptchaString } = state
+    const { setRecaptchaString, t, router, setIsLoading } = actions
 
     const onSubmit = (data) => {
         const newEvent = {

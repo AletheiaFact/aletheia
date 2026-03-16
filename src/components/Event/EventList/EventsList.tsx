@@ -1,117 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect } from "react";
 import { Grid } from "@mui/material";
 import EventApi from "../../../api/eventApi";
 import Loading from "../../Loading";
-import {
-  EventMetrics,
-  EventPayload,
-  ListEventsOptions,
-} from "../../../types/event";
 import ErrorState from "../../ErrorState";
 import EventFilters from "./EventFilters";
 import EventLoadMore from "./EventLoadMore";
 import EventsGrid from "./EventGrid";
 import EventTitle from "./EventTitle";
-
-interface IData {
-  events: EventPayload[];
-  eventMetrics: EventMetrics;
-  total: number;
-}
+import useEventsHook from "../hooks/useEventsHook";
 
 const EventsList = () => {
-    const { t } = useTranslation();
-    const [data, setData] = useState<IData>({
-      events: [],
-      eventMetrics: { verificationRequests: 0, claims: 0, reviews: 0 },
-      total: 0,
-    });
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [query, setQuery] = useState<ListEventsOptions>({
-        page: 1,
-        pageSize: 10,
-        order: "asc",
-        status: "all",
-  });
+    const { state, actions } = useEventsHook()
+    const { eventsQuery, error, isLoading, eventsData } = state
+    const { setIsLoading, setError, setEventsData, t, setEventsQuery } = actions
 
     const handleFetch = async () => {
-        setLoading(true);
+        setIsLoading(true);
         setError(null);
         try {
-            const events = await EventApi.getEvents(query);
+            const events = await EventApi.getEvents(eventsQuery);
 
-        if (query.page === 1) {
-            setData(events);
-      } else {
-          setData((prev) => ({
-            events: [...prev.events, ...events.events],
-            eventMetrics: {
-              verificationRequests:
-                prev.eventMetrics.verificationRequests +
-                events.eventMetrics.verificationRequests,
-              claims: prev.eventMetrics.claims + events.eventMetrics.claims,
-              reviews: prev.eventMetrics.reviews + events.eventMetrics.reviews,
-            },
-            total: events.total,
-          }));
+            if (eventsQuery.page === 1) {
+                setEventsData(events);
+            } else {
+                setEventsData((prev) => ({
+                    events: [...prev.events, ...events.events],
+                    eventMetrics: {
+                        verificationRequests:
+                            prev.eventMetrics.verificationRequests +
+                            events.eventMetrics.verificationRequests,
+                        claims: prev.eventMetrics.claims + events.eventMetrics.claims,
+                        reviews: prev.eventMetrics.reviews + events.eventMetrics.reviews,
+                    },
+                    total: events.total,
+                }));
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
         }
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
-    }
-  };
+    };
 
     useEffect(() => {
         handleFetch();
-    }, [query]);
+    }, [eventsQuery]);
 
-    if (loading && query.page === 1) {
+    if (isLoading && eventsQuery.page === 1) {
         return <Loading />;
     }
 
     if (error) {
         return <ErrorState message={t("events:fetchError")} />;
-  }
+    }
 
     return (
-      <main>
-        <Grid container justifyContent="center" marginBottom={4}>
-          <EventFilters
-            selectedStatus={query.status}
-            onStatusChange={(status) =>
-              setQuery((prev) => ({ ...prev, status, page: 1 }))
-            }
-            t={t}
-          />
-
-          <Grid item xs={11} sm={8}>
-            <EventsGrid
-              title={
-                <EventTitle
-                  total={data.total}
-                  label={t("events:eventsList")}
-                  t={t}
+        <main>
+            <Grid container justifyContent="center" marginBottom={4}>
+                <EventFilters
+                    selectedStatus={eventsQuery.status}
+                    onStatusChange={(status) =>
+                        setEventsQuery((prev) => ({ ...prev, status, page: 1 }))
+                    }
+                    t={t}
                 />
-              }
-              events={data.events}
-              eventMetrics={data.eventMetrics}
-              t={t}
-              hasDivider={true}
-            />
-          </Grid>
 
-          <EventLoadMore
-            visible={data.total > data.events.length}
-            onLoadMore={() =>
-              setQuery((prev) => ({ ...prev, page: prev.page + 1 }))
-            }
-            label={t("events:loadMoreButton")}
-          />
-        </Grid>
-      </main>
+                <Grid item xs={11} sm={8}>
+                    <EventsGrid
+                        title={
+                            <EventTitle
+                                total={eventsData.total}
+                                t={t}
+                            />
+                        }
+                        events={eventsData.events}
+                        eventMetrics={eventsData.eventMetrics}
+                        t={t}
+                        hasDivider={true}
+                    />
+                </Grid>
+
+                <EventLoadMore
+                    visible={eventsData.total > eventsData.events.length}
+                    onLoadMore={() =>
+                        setEventsQuery((prev) => ({ ...prev, page: prev.page + 1 }))
+                    }
+                    label={t("events:loadMoreButton")}
+                />
+            </Grid>
+        </main>
     );
 };
 

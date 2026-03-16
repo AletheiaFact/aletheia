@@ -15,7 +15,8 @@ const EventBox = styled(Box)`
     }
 
     .mainContent{
-        background: linear-gradient(180deg, ${colors.blackTertiary} 0%, ${colors.primary} 100%);
+        background-image: linear-gradient(135deg, ${colors.primary} 0%, #002C4D 100%);
+        position: relative;
     }
 
     .eventSection {
@@ -23,13 +24,51 @@ const EventBox = styled(Box)`
         flex-direction: column;
         width: 100%;
         align-items: flex-start;
-        padding: 0 24px;
+    }
+
+    .eventSectionInfo{
+        padding: 32px 24px;
+        gap: 10px;
+        position: relative;
+        background-color: ${colors.whiteLow};
+        border: 1px solid ${colors.whiteLow};
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px -10px ${colors.shadow};
+        overflow: hidden;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .eventSectionInfo:hover {
+        background-color: color-mix(in srgb, ${colors.whiteLow}, transparent 30%);
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .eventSectionHeader{
         display: flex;
         align-items: center;
         gap: 12px;
+    }
+
+    .bottomGradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(255, 255, 255, 0) 60%,
+          rgba(255, 255, 255, 0.5) 85%,
+            ${colors.white} 100%
+        );
+        pointer-events: none;
+        z-index: 1;
     }
 
     .eventChipText{
@@ -43,10 +82,10 @@ const EventBox = styled(Box)`
         color: ${colors.quartiary};
         margin-top: 4px;
     }
-    
+
     .eventChip {
         background-color: ${colors.lightSecondary};
-        box-shadow: 0px 2px 4px ${colors.lightPrimary}; 
+        box-shadow: 0px 2px 4px ${colors.lightPrimary};
     }
 
     .eventChip:hover {
@@ -70,6 +109,10 @@ const EventBox = styled(Box)`
     @media ${queries.sm} {
         .eventMainContent {
             padding: 44px 0 50px;
+        }
+
+        .eventSection {
+            gap: 12px;
         }
 
         .eventHeaderContent {

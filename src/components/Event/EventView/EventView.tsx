@@ -3,6 +3,7 @@ import EventBox from "./EventView.style";
 import EventHeaderContent from "./EventHeaderContent";
 import EventReviews from "./EventReviewList";
 import { NameSpaceEnum } from "../../../types/Namespace";
+import useEventsHook from "../hooks/useEventsHook";
 
 type EventViewProps = {
     event: EventPayload;
@@ -10,7 +11,9 @@ type EventViewProps = {
 };
 
 const EventView = ({ event, nameSpace }: EventViewProps) => {
+    const { state, actions } = useEventsHook()
     const { badge, location, name, startDate, description, mainTopic, filterTopics } = event
+
     return (
         <EventBox>
             <EventHeaderContent
@@ -21,11 +24,20 @@ const EventView = ({ event, nameSpace }: EventViewProps) => {
                 description={description}
             />
 
-            <EventReviews
-                mainTopic={mainTopic}
-                filterTopics={filterTopics}
-                nameSpace={nameSpace}
-            />
+
+            {state.viewMode === "left" && (
+                <EventReviews
+                    mainTopic={mainTopic}
+                    filterTopics={filterTopics}
+                    nameSpace={nameSpace}
+                    state={state}
+                    actions={actions}
+                />
+            )}
+
+            {state.viewMode === "right" && (
+                "in-progress"
+            )}
         </EventBox>
     );
 };

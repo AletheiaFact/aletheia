@@ -29,5 +29,6 @@
     "seeMoreEventsButton": "See more Events",
     "reviewStats": "Reviews",
     "verificationRequestsStats": "Verification requests",
-    "claimsStats": "Claims"
+    "claimsStats": "Claims",
+    "claimToggleOption": "Repository"
 }

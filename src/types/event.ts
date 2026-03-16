@@ -1,4 +1,5 @@
 import { NameSpaceEnum } from "./Namespace";
+import { Review } from "./Review";
 import { Topic } from "./Topic";
 
 export type EventOrder = "asc" | "desc";
@@ -30,12 +31,13 @@ export interface ListEventsOptions {
     status?: EventStatus;
 }
 
-export interface IDynamicEventForm {
-    data?: EventPayload;
-    onSubmit: (value: EventPayload) => void;
-    isLoading: boolean;
-    setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
-    hasCaptcha: boolean;
-    isDrawerOpen?: boolean;
-    onClose?: () => void;
+export interface IData {
+    events: EventPayload[];
+    eventMetrics: EventMetrics;
+    total: number;
+}
+
+export interface IReviewData {
+    items: Review[];
+    total: number;
 }

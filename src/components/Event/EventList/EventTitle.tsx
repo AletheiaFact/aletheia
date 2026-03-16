@@ -1,7 +1,8 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import colors from "../../../styles/colors";
-import { ReactNode } from "react";
 import styled from "styled-components";
+import FilterToggleButtons, { ViewMode } from "../../FilterToggleButtons";
+import { FormatQuoteOutlined, ReportProblemOutlined } from "@mui/icons-material";
 
 const TypographyBox = styled(Grid)`
   display: flex;
@@ -9,22 +10,55 @@ const TypographyBox = styled(Grid)`
   align-items: center;
 `;
 
+const LeftText = ({ total, t }: { total: number; t: any }) => (
+    <Typography variant="body2" color={colors.blackSecondary}>
+        {t("events:totalItems", { total: total })}
+    </Typography>
+);
+
 interface EventTitleProps {
-    total?: number;
-    label: ReactNode;
+    total: number;
+    isReviewGrid?: boolean;
+    viewMode?: ViewMode;
+    setViewMode?: (mode: ViewMode) => void;
     t: (key: string, options?: { total: number }) => string;
 }
 
-const EventTitle = ({ total = 0, label, t }: EventTitleProps) => (
-    <TypographyBox container>
-        {label}
+const EventTitle = ({ total = 0, isReviewGrid = false, viewMode, setViewMode, t }: EventTitleProps) => {
 
-        <Typography variant="body2" color={colors.blackSecondary}>
-            {t("events:totalItems", {
-                total: total,
-            })}
-        </Typography>
-    </TypographyBox>
-);
+    if (isReviewGrid) {
+        return (
+            <TypographyBox container>
+                <LeftText total={total} t={t} />
+                <FilterToggleButtons
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
+                    leftOption={
+                        <Stack direction="row" alignItems="center" gap={1}>
+                            <FormatQuoteOutlined fontSize="small" />
+                            {t("events:claimToggleOption")}
+                        </Stack>
+
+                    }
+                    rightOption={
+                        <Stack direction="row" alignItems="center" gap={1}>
+                            <ReportProblemOutlined fontSize="small" />
+                            {t("events:verificationRequestsStats")}
+                        </Stack>
+                    }
+                />
+            </TypographyBox>
+        );
+    }
+
+    return (
+        <TypographyBox container>
+            <Typography variant="h2" fontSize={24}>
+                {t("events:eventsList")}
+            </Typography>
+            <LeftText total={total} t={t} />
+        </TypographyBox>
+    );
+};
 
 export default EventTitle;
