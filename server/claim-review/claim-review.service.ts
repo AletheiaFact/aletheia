@@ -284,7 +284,7 @@ export class ClaimReviewService {
             newClaimReview
         );
 
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return newClaimReview.save();
     }
@@ -341,7 +341,7 @@ export class ClaimReviewService {
             null,
             claimReview
         );
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 
@@ -369,7 +369,7 @@ export class ClaimReviewService {
             after,
             before
         );
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }

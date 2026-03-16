@@ -409,7 +409,7 @@ export class ReviewTaskService {
             }
         );
 
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
     }
 
     _createStateEvent(newReviewTask) {

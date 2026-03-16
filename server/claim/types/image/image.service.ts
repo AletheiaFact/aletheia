@@ -48,7 +48,7 @@ export class ImageService {
             HistoryType.Create,
             newImage
         );
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
         return newImage;
     }
 

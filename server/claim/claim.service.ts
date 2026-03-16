@@ -126,7 +126,7 @@ export class ClaimService {
             TypeModel.Claim
         );
 
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
         if (claim.group) {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
@@ -242,7 +242,7 @@ export class ClaimService {
                 after,
                 before
             );
-            this.historyService.createHistory(history);
+            await this.historyService.createHistory(history);
 
             return await this.ClaimModel.updateOne(
                 { _id: claim._id },
