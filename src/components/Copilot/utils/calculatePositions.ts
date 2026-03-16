@@ -17,7 +17,7 @@ export const calculatePosition = (
         return {
             topPosition: "50%",
             rotate: open ? "rotateY(45deg)" : "rotateY(135deg)",
-            rightPosition: open ? "350px" : "16px",
+            rightPosition: open ? "50vw" : "16px",
         };
     }
 

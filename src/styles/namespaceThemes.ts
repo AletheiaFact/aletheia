@@ -20,6 +20,12 @@ const defaultPalette = namespacePalette.otherNamespace;
 export const AletheiaThemeConfig = (namespace: string) => {
     const theme = namespacePalette[namespace] ?? defaultPalette;
 
+    const defaultTitleStyle = {
+        fontFamily: '"Noticia Text", serif',
+        fontWeight: 500,
+        lineHeight: 1.2,
+    };
+
     return createTheme({
         palette: {
             primary: {
@@ -33,6 +39,14 @@ export const AletheiaThemeConfig = (namespace: string) => {
         },
         typography: {
             fontFamily: "Open Sans",
+            fontWeightRegular: 400,
+
+            h1: { ...defaultTitleStyle },
+            h2: { ...defaultTitleStyle },
+            h3: { ...defaultTitleStyle },
+            h4: { ...defaultTitleStyle },
+            h5: { ...defaultTitleStyle },
+            h6: { ...defaultTitleStyle },
         },
         components: {
             MuiCssBaseline: {

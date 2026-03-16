@@ -1,19 +1,20 @@
 import { Box } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
+import { queries } from "../../../styles/mediaQueries";
 
 const PieChartSVG = styled.svg`
   transform: rotate(-90deg);
 `;
 
 const LegendColor = styled(Box)(({ color }) => ({
-  width: 12,
-  height: 12,
-  borderRadius: 2,
-  backgroundColor: color,
+    width: 12,
+    height: 12,
+    borderRadius: 2,
+    backgroundColor: color,
 }));
 
-const Bar = styled(Box)<{ height: number; color: string }>`
+const Bar = styled(Box) <{ height: number; color: string }>`
   width: 80px;
   height: ${(props) => props.height}%;
   background-color: ${(props) => props.color};
@@ -27,10 +28,9 @@ const Bar = styled(Box)<{ height: number; color: string }>`
 `;
 
 const Dashboard = styled(Box)`
-  width: 90%;
-  margin-top: 16px;
+  width: 100%;
   padding: 24px;
-  background-color: ${colors.lightNeutral};
+  background-color: ${colors.lightNeutralSecondary};
 
   .title {
     font-size: 18px;
@@ -153,11 +153,25 @@ const Dashboard = styled(Box)`
   }
 
   .badge {
+    width: fit-content;
     padding: 2px 6px;
     border-radius: 4px;
     color: ${colors.white};
     text-transform: uppercase;
     background-color: ${(props) => props.color};
+  }
+
+  @media ${queries.xs} {
+    .BarChart-container {
+        padding: 20px 0px;
+    }
+
+    .item {
+        display: grid;
+
+
+    }
+
   }
 `;
 

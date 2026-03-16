@@ -1,11 +1,56 @@
 {
-    "copyright": "AletheiaFact.org ©{{date}}",
-    "creativeCommons": "All content in this platform is licensed under a ",
-    "socialMedia": "Follow our social media",
-    "contactEmail": "contact@aletheiafact.org",
-    "platformInfoTittle": "Aletheia Fact Movement",
-    "adressStreet": "Av Maria Ranieri, Nº 7-50",
-    "adressZipcode":"17.055-175 - Parque Viaduto - Bauru/SP",
-    "legalRegistration":"46.428.905/0001-68",
-    "statuteUrlButton": "https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
+  "copyright": "AletheiaFact.org ©{{date}}",
+  "creativeCommonsLabel": "CC BY-SA 4.0 International",
+  "contactEmail": "contact@aletheiafact.org",
+  "adressStreet": "Av Maria Ranieri, N 7-50, 17.055-175 - Parque Viaduto - Bauru/SP",
+  "legalRegistration": "CNPJ: 46.428.905/0001-68",
+  "brand": "AletheiaFact.org",
+  "description": "Brazilian non-profit organization dedicated to fighting disinformation and promoting media literacy through open-source collaborative tools.",
+  "instagram": "https://www.instagram.com/aletheiafact",
+  "facebook": "https://www.facebook.com/AletheiaFactorg-107521791638412",
+  "linkedin": "https://www.linkedin.com/company/aletheiafact-org",
+  "openSource": "100% Open Source",
+  "award": "WSIS 2025 Finalist (UN)",
+  "cta": {
+    "title": "Aletheia now has a forum!",
+    "description": "Join our community and share your questions, findings, and experiences with other users.",
+    "primaryButton": "Learn About Our Mission",
+    "secondaryButton": "Join Our Forum",
+    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
+  },
+  "sections": {
+    "platform": {
+      "title": "PLATFORM",
+      "links": {
+        "access": "Access Platform",
+        "manual": "Fact-checking Manual",
+        "manualUrl": "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf",
+        "docs": "Technical Documentation"
+      }
+    },
+    "institutional": {
+      "title": "INSTITUTIONAL",
+      "links": {
+        "about": "About Us",
+        "statute": "Our Statute",
+        "partners": "Partners",
+        "awards": "Awards and Recognition",
+        "statuteUrl": "https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
+      }
+    },
+    "community": {
+      "title": "COMMUNITY",
+      "links": {
+        "collaboration": "Collaboration Proposals",
+        "universities": "Partner Universities",
+        "volunteering": "I want to be a volunteer",
+        "sendEmailButton": "mailto:contact@aletheiafact.org",
+        "sendEmailCollaborationButton": "mailto:tvolcean@aletheiafact.org"
+      }
+    },
+    "contact": {
+      "title": "CONTACT",
+      "statuteCta": "Read Our Statute"
+    }
+  }
 }

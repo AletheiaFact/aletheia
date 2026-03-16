@@ -8,6 +8,7 @@ export interface ChatBotContext {
     additionalInfo?: string;
     email?: string;
     sourceChannel?: string;
+    dataHash?: string;
 }
 
 export const createChatBotMachine = (
@@ -26,6 +27,7 @@ export const createChatBotMachine = (
                 additionalInfo: "",
                 email: "",
                 sourceChannel: "",
+                dataHash: "",
             },
             states: {
                 greeting: {
@@ -138,6 +140,7 @@ export const createChatBotMachine = (
                             target: "finishedReport",
                             actions: [
                                 "saveEmail",
+                                "setDataHash",
                                 "sendThanks",
                                 "setResponseMessage",
                                 "saveVerificationRequestToDB",
@@ -147,6 +150,7 @@ export const createChatBotMachine = (
                             target: "finishedReport",
                             actions: [
                                 "saveEmptyEmail",
+                                "setDataHash",
                                 "sendThanks",
                                 "setResponseMessage",
                                 "saveVerificationRequestToDB",
@@ -190,6 +194,7 @@ export const createChatBotMachine = (
                 ...actions,
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
+                        data_hash: context.dataHash,
                         content: context.verificationRequest,
                         additionalInfo: context.additionalInfo || "",
                         email: context.email || "",

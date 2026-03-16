@@ -9,7 +9,7 @@ import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class SummarizationCrawlerChainService {
     private readonly logger = new Logger("SummarizationChainLogger");
-    constructor(private configService: ConfigService) {}
+    constructor(private configService: ConfigService) { }
 
     createBulletPointsChain(): StuffDocumentsChain {
         const systemMessage = `Write a summary of the following text delimited by triple dashes.`;
@@ -27,7 +27,7 @@ export class SummarizationCrawlerChainService {
         });
         const llm = new ChatOpenAI({
             temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-            modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+            modelName: openAI.GPT_5_MINI.toString(),
             apiKey: this.configService.get<string>("openai.api_key"),
         });
 

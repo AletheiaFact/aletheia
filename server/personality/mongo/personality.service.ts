@@ -4,6 +4,7 @@ import {
     Logger,
     Scope,
     NotFoundException,
+    InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -244,40 +245,61 @@ export class MongoPersonalityService {
     }
 
     async getById(
-        personalityId,
+        personalityId: string,
         query: { language?: string; nameSpace?: string } = {
             language: "en",
             nameSpace: NameSpaceEnum.Main,
         }
     ) {
+        this.logger.debug(`Fetching personality with id: ${personalityId}`);
+
         const queryOptions = this.util.getParamsBasedOnUserRole(
-            {
-                _id: personalityId,
-            },
+            { _id: personalityId },
             this.req
         );
 
-        const personality = await this.PersonalityModel.findOne(
-            queryOptions
-        ).populate({
-            path: "claims",
-            match: {
-                isHidden: false,
-                isDeleted: false,
-                nameSpace: query.nameSpace,
-            },
-            select: "_id title content",
-        });
-        this.logger.log(`Found personality ${personality?._id}`);
-        const processed = await this.postProcess(
-            personality.toObject(),
-            query.language
-        );
+        const personality = await this.PersonalityModel
+            .findOne(queryOptions)
+            .populate({
+                path: "claims",
+                match: {
+                    isHidden: false,
+                    isDeleted: false,
+                    nameSpace: query.nameSpace,
+                },
+                select: "_id title content",
+            })
+            .exec();
+
+        if (!personality) {
+            this.logger.warn(
+                `Personality not found or filtered by access rules. ID: ${personalityId}`
+            );
+            return null;
+        }
+
+        let processed;
+
+        try {
+            processed = await this.postProcess(
+                personality.toObject(),
+                query.language
+            );
+        } catch (error) {
+            this.logger.error(
+                `Post-processing failed for personality ${personalityId}`,
+                error.stack
+            );
+            throw new InternalServerErrorException(
+                "Failed to process personality data."
+            );
+        }
 
         if (!processed) {
-            throw new NotFoundException(
-                `Personality with id ${personalityId} not found or has invalid instance type`
+            this.logger.warn(
+                `Post-processing returned invalid result for personality ${personalityId}`
             );
+            return null;
         }
 
         return processed;
@@ -464,25 +486,41 @@ export class MongoPersonalityService {
     }
 
     /**
-     * This function does a soft deletion, doesn't delete claim in DataBase,
-     * but omit its in the front page
-     * Also creates a History Module that tracks deletion of personalities.
-     * @param personalityId Personality Id which wants to delete
-     * @returns Returns the personality with the param isDeleted equal to true
+     * Executes a soft delete on a specific personality record.
+     * Records the action in the history module for auditing.
+     * * @param {string} personalityId - The ID of the personality to mark as deleted.
+     * @returns {Promise<Personality>} The personality document with isDeleted set to true, or null if not found.
      */
-    async delete(personalityId) {
+    async delete(personalityId: string) {
         const user = this.req.user?._id;
-        const previousPersonality = await this.getById(personalityId);
-        const history = this.history.getHistoryParams(
-            personalityId,
-            TargetModel.Personality,
-            user,
-            HistoryType.Delete,
-            null,
-            previousPersonality
-        );
-        await this.history.createHistory(history);
-        return this.PersonalityModel.softDelete({ _id: personalityId });
+        this.logger.log(`Initiating soft delete for personalityId: ${personalityId} by user: ${user}`);
+
+        try {
+            const previousPersonality = await this.getById(personalityId);
+
+            if (!previousPersonality) {
+                this.logger.warn(`Attempted to soft delete non-existent personalityId: ${personalityId}`);
+                return null;
+            }
+
+            const history = this.history.getHistoryParams(
+                personalityId,
+                TargetModel.Personality,
+                user,
+                HistoryType.Delete,
+                null,
+                previousPersonality
+            );
+            await this.history.createHistory(history);
+
+            const result = await this.PersonalityModel.softDelete({ _id: personalityId });
+            this.logger.log(`Personality ${personalityId} successfully marked as isDeleted`);
+
+            return result;
+        } catch (error) {
+            this.logger.error(`Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`);
+            throw error;
+        }
     }
 
     /**

@@ -56,6 +56,7 @@ const PersonalityCard = ({
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
     const smallDevice = vw?.sm;
+    const mobileDevice = vw?.xs;
 
     const baseHref = hrefBase || "";
     const nameSpaceHref =
@@ -89,13 +90,14 @@ const PersonalityCard = ({
         hiddenIconSize: 12,
     };
     if (summarized) {
-        componentStyle.titleSpan = 5;
-        componentStyle.avatarSpan = 2.5;
-        componentStyle.buttonSpan = 4.5;
+        componentStyle.titleSpan = mobileDevice ? 12 : 5;
+        componentStyle.avatarSpan = mobileDevice ? 3.5 : 2.5;
+        componentStyle.buttonSpan = mobileDevice ? 12 : 4.5;
         componentStyle.avatarSize = 43;
     }
     if (header) {
-        componentStyle.avatarSize = 144;
+        componentStyle.avatarSpan = mobileDevice ? 6 : 4;
+        componentStyle.avatarSize = mobileDevice ? 114 : 144;
         componentStyle.hiddenIconSize = 22;
     }
 
@@ -140,9 +142,9 @@ const PersonalityCard = ({
                     <Grid container
                         columnSpacing={summarized ? 0 : 1.5}
                         style={{
-                            alignContent: summarized ? "center": undefined,
+                            alignContent: summarized ? "center" : undefined,
                             width: "100%",
-                            padding: "12px",
+                            padding: !summarized && mobileDevice ? "12px 6px" : "12px",
                         }}
                     >
                         <PersonalityCardAvatar
@@ -151,7 +153,7 @@ const PersonalityCard = ({
                             componentStyle={componentStyle}
                         />
 
-                        {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
+                        {((hoistAvatar && (!smallDevice || !mobileDevice)) ||
                             !hoistAvatar) && (
 
                                 <PersonalityInfo
@@ -169,7 +171,7 @@ const PersonalityCard = ({
                                 xs={componentStyle.buttonSpan}
                                 style={{
                                     display: "flex",
-                                    justifyContent: "flex-end",
+                                    justifyContent: mobileDevice ? "center" : "flex-end",
                                     maxHeight: 40,
                                 }}
                             >
@@ -184,6 +186,7 @@ const PersonalityCard = ({
                                     }
                                     isCreatingClaim={isCreatingClaim}
                                     onClick={onClick}
+                                    isMobileDevice={mobileDevice}
                                 />
                             </Grid>
                         )}

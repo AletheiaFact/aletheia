@@ -15,8 +15,7 @@ describe("Create image claim", () => {
             .should("be.visible")
             .type(claim.imageTitle);
 
-        cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
-        cy.contains('[role="gridcell"]', today.format("D")).click();
+        cy.selectDatePickerDate(today)
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")

@@ -2,27 +2,30 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
-import AletheiaButton from "../Button";
 import { MenuOutlined } from "@mui/icons-material";
 import colors from "../../styles/colors";
+import { IconButton } from "@mui/material";
+import { useAppSelector } from "../../store/store";
 
 const Menu = () => {
     const dispatch = useDispatch();
+    const { vw } = useAppSelector((state) => state);
 
     return (
-        <AletheiaButton
+        <IconButton
             data-cy="testOpenSideMenu"
             onClick={() => {
                 dispatch(actions.openSideMenu());
             }}
+            size="large"
+            sx={{ padding: vw?.xs ? "0px" : "5px 15px" }}
         >
             <MenuOutlined
-                fontSize="small"
                 style={{
                     color: colors.white,
                 }}
             />
-        </AletheiaButton>
+        </IconButton>
     );
 };
 

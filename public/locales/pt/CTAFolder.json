@@ -1,8 +1,15 @@
 {
-    "title": "Quer ser um revisor?",
-    "body":
-    "Aletheia está atualmente em teste beta e estamos aceitando todos os jornalistas e profissionais de checagem de fatos para testar a plataforma!",
-    "footer":
-    "Nosso objetivo é estar aberto para que todos os usuários adicionem e revisem alegações assim que os testes forem concluídos. Acompanhe-nos nas redes sociais!",
-    "button": "Inscreva-se para ser parte do movimento"
+    "signUpTitle": "Quer ser um revisor?",
+    "signUpBody": "Aletheia está atualmente em teste beta e estamos aceitando todos os jornalistas e profissionais de checagem de fatos para testar a plataforma!",
+    "signUpFooter": "Nosso objetivo é estar aberto para que todos os usuários adicionem e revisem alegações assim que os testes forem concluídos. Acompanhe-nos nas redes sociais!",
+    "aboutUsTitle": "Saiba mais sobre o projeto Aletheia",
+    "aboutUsBody": "A Aletheia é um movimento e uma plataforma open source que oferece ferramentas gratuitas para que qualquer cidadão possa combater a desinformação e fortalecer a democracia.",
+    "button": "Inscreva-se para ser parte do movimento",
+    "signUpButton": "Inscreva-se agora",
+    "aboutUsButton": "Quero conhecer a Aletheia!",
+    "aletheiaMoviment": "Movimento Aletheia Fact",
+    "achievements1": "Finalista do WSIS 2025 (ONU)",
+    "achievements2": "20+ Universidades Parceiras",
+    "achievements3": "100% Código Aberto",
+    "achievements4": "Metodologia replicável"
 }

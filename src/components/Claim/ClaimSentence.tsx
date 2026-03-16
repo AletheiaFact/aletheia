@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import InfoTooltip from "./InfoTooltip";
 import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
+import { ViewMode } from "../FilterToggleButtons";
 
 const Sentence = styled.a`
     color: ${colors.primary};
@@ -19,6 +20,14 @@ const Sentence = styled.a`
     }
 `;
 
+type ClaimSentence = {
+    showHighlights: ViewMode;
+    properties: any;
+    data_hash: any;
+    content: any;
+    handleSentenceClick: any;
+}
+
 const ClaimSentence = ({
     showHighlights,
     properties,
@@ -28,7 +37,7 @@ const ClaimSentence = ({
 }) => {
     let style = {};
     const { t } = useTranslation();
-    if (properties.classification && showHighlights) {
+    if (properties.classification && showHighlights === "left") {
         style = {
             ...style,
             backgroundColor: highlightColors[properties.classification],
@@ -70,7 +79,7 @@ const ClaimSentence = ({
             >
                 {content}{" "}
             </Sentence>
-            {properties.classification === "in-progress" && showHighlights && (
+            {properties.classification === "in-progress" && showHighlights === "left" && (
                 <sup
                     style={{
                         color: highlightColors[properties.classification],

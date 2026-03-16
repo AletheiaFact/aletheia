@@ -25,11 +25,11 @@ export default function PartnersSection() {
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
+    <Box id="partners-section" sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
           <Chip label={t("about:partnersChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold" }}>
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
             {t("about:partnersTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
@@ -81,7 +81,7 @@ export default function PartnersSection() {
 
         {/* Partnership Opportunities */}
         <Box sx={{ p: 4, textAlign: "center", bgcolor: "white", border: 1, borderColor: "grey.200", borderRadius: 1 }}>
-          <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
+          <Typography variant="h4" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold", overflowWrap: "break-word" }}>
             {t("about:partnershipOpportunitiesTitle")}
           </Typography>
           <Typography variant="h6" sx={{ mb: 3, color: "text.secondary", fontWeight: 400 }}>

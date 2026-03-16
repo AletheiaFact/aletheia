@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import user from "../fixtures/user";
 import locators from "./locators";
 
@@ -57,6 +58,20 @@ Cypress.Commands.add(
     }
 );
 
+Cypress.Commands.add("selectDatePickerDate", (dateToSelect: dayjs.Dayjs) => {
+    const today = dayjs();
+
+    cy.get(locators.claim.INPUT_DATA).click();
+
+    if (dateToSelect.month() < today.month() || dateToSelect.year() < today.year()) {
+        cy.get('[aria-label="Previous month"]').click();
+    } else if (dateToSelect.month() > today.month() || dateToSelect.year() > today.year()) {
+        cy.get('[aria-label="Next month"]').click();
+    }
+
+    cy.contains('[role="gridcell"]', dateToSelect.format("D")).click();
+});
+
 declare global {
     namespace Cypress {
         interface Chainable {
@@ -69,6 +84,7 @@ declare global {
                 email: string,
                 password: string
             ): Chainable<Element>;
+            selectDatePickerDate(date: dayjs.Dayjs): Chainable<Element>;
         }
     }
 }

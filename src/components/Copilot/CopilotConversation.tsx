@@ -54,7 +54,7 @@ const CopilotConversation = ({
     return (
         <div
             ref={CopilotConversationRef}
-            style={{ height: "100%", overflow: "overlay" }}
+            style={{ flex: 1, overflowY: "auto", minHeight: 0 }}
         >
             {messages.map((message) => (
                 <CopilotConversationCard

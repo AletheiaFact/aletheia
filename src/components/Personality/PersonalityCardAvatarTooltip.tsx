@@ -4,6 +4,7 @@ import { Badge, IconButton } from "@mui/material";
 import InfoTooltip from "../Claim/InfoTooltip";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
 const PersonalityCardAvatarTooltip = ({
     children,
@@ -11,6 +12,7 @@ const PersonalityCardAvatarTooltip = ({
     style,
 }) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
 
     const InfoBadge = (
         <Badge
@@ -41,7 +43,7 @@ const PersonalityCardAvatarTooltip = ({
 
     return (
         <InfoTooltip
-            placement="right-start"
+            placement={vw?.xs ? "bottom":"right-start"}
             children={InfoBadge}
             content={
                 <p

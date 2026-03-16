@@ -3,8 +3,8 @@ import {
     AddCircle,
     AddOutlined,
     PersonAddAlt1Outlined,
-    Source,
-    Report
+    Report,
+    // Source,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
@@ -23,12 +23,13 @@ import { useAppSelector } from "../../store/store";
 
 interface AffixButtonProps {
     personalitySlug?: string;
+    bottom?: string
 }
 
 /*** Floating action button that displays the Create Personality option
  * @param personalitySlug if present will display the Create Claim option too
  */
-const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
+const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
         copilotDrawerCollapsed:
@@ -42,6 +43,8 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
+    const bottomValue = bottom ?? "3%";
+
     const actions = [
         {
             icon: <PersonAddAlt1Outlined />,
@@ -69,15 +72,18 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         : `/claim/create${hrefPersonalitySlug}`,
                 dataCy: "testFloatButtonAddClaim",
             },
-            {
-                icon: <Source />,
-                tooltip: t("affix:affixButtonCreateVerifiedSources"),
-                href:
-                    nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/source/create`
-                        : `/source/create`,
-                dataCy: "testFloatButtonAddSources",
-            },
+
+            // Temporarily removing the "add checked information" button from the affixbutton.
+            // {
+            //     icon: <Source />,
+            //     tooltip: t("affix:affixButtonCreateVerifiedSources"),
+            //     href:
+            //         nameSpace !== NameSpaceEnum.Main
+            //             ? `/${nameSpace}/source/create`
+            //             : `/source/create`,
+            //     dataCy: "testFloatButtonAddSources",
+            // },
+
             {
                 icon: <Report />,
                 tooltip: t("affix:affixButtonCreateVerificationRequest"),
@@ -119,7 +125,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             <div
                 style={{
                     position: "fixed",
-                    bottom: "3%",
+                    bottom: bottomValue,
                     right:
                         copilotDrawerCollapsed || vw?.md
                             ? "2%"
@@ -203,10 +209,10 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
+                        components={[<AddCircle style={{ marginBottom: "-5px", fontSize: "18px" }} key={"icon"} />]}
                     />
                 </p>
-                
+
                 <div
                     style={{
                         marginTop: 24,

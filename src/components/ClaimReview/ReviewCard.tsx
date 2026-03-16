@@ -14,12 +14,14 @@ import ReviewCardStyled from "./ReviewCard.style";
 import ClaimInfo from "../Claim/ClaimInfo";
 import ReviewClassification from "./ReviewClassification";
 import ReviewContent from "./ReviewContent";
+import { useAppSelector } from "../../store/store";
 
 const ReviewCard = ({ review, summarized = false }) => {
     const { personality, claim, content, reviewHref } = review;
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
-
+    const { vw } = useAppSelector((state) => state);
+    const hasPersonality = !!personality;
     const claimItem =
         Array.isArray(claim) && claim.length > 0 ? claim[0] : claim;
     const personalityItem =
@@ -57,21 +59,21 @@ const ReviewCard = ({ review, summarized = false }) => {
     const href = reviewHref
         ? reviewHref
         : generateSentenceContentPath(
-              nameSpace,
-              personalityItem,
-              claimItem,
-              claimItem?.contentModel,
-              content?.data_hash
-          );
+            nameSpace,
+            personalityItem,
+            claimItem,
+            claimItem?.contentModel,
+            content?.data_hash
+        );
 
     return (
         <CardBase>
-            <ReviewCardStyled>
+            <ReviewCardStyled $hasPersonality={hasPersonality}>
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
                         <PersonalityMinimalCard
                             personality={personalityItem}
-                            avatarSize={88}
+                            avatarSize={vw?.xs ? 78 : 88}
                         />
                     </Grid>
                 )}
@@ -84,7 +86,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                 `claim:type${claimItem.contentModel}`
                             )}
                             style={{
-                                fontSize: 12,
+                                fontSize: vw?.xs ? 10 : 12,
                                 lineHeight: "16px",
                                 margin: 0,
                             }}
@@ -93,7 +95,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                             <ReviewClassification
                                 label={t("claimReview:titleClaimReview")}
                                 classification={content.props.classification}
-                                classificationTextStyle={{ fontSize: 16 }}
+                                classificationTextStyle={{ fontSize: vw?.xs ? 12 : 16 }}
                             />
                         )}
                     </Grid>
@@ -104,7 +106,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                     borderRadius: 50,
                                     background:
                                         reviewColors[
-                                            content.props.classification
+                                        content.props.classification
                                         ],
                                     width: 10,
                                 }}
@@ -116,7 +118,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                             contentPath={contentPath}
                             isImage={isImage}
                             linkText={t(linkText)}
-                            style={{ fontSize: 18 }}
+                            style={{ fontSize: vw?.xs ? 16 : 18 }}
                         />
                     </Grid>
 

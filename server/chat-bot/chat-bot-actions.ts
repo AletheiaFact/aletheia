@@ -1,12 +1,13 @@
 import { EventObject, assign } from "xstate";
 import { ChatBotContext } from "./chat-bot.machine";
+import * as crypto from "crypto";
 
 interface VerificationRequestEvent extends EventObject {
     verificationRequest: string;
 }
 
 interface AdditionalInfoEvent extends EventObject {
-    AdditionalInfo: string;
+    additionalInfo: string;
 }
 
 interface EmailEvent extends EventObject {
@@ -36,7 +37,8 @@ const MESSAGES = {
         "Para que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
     noTextMessageAskForEmail:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPara que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
-    thanks: "Obrigado por colaborar com o combate à desinformação!\n\nVamos verificar sua denúncia e, caso ela seja selecionada pela nossa equipe de triagem, o resultado será enviado por e-mail.\n\nAcompanhe também as publicações da Aletheia nas redes sociais e na nossa plataforma, lá divulgamos relatórios e investigações verificadas 😉.\n\nSe deseja relatar outra denúncia, responda SIM para continuar. Se preferir falar com uma pessoa real, responda CONVERSA.",
+    thanks: (trackingLink: string) =>
+        `Obrigado por colaborar com o combate à desinformação!\n\nVamos verificar sua denúncia e, caso ela seja selecionada pela nossa equipe de triagem, o resultado será enviado para o e-mail fornecido ou você pode acompanhar status da sua denúncia a qualquer momento por meio do link de acompanhamento abaixo:\n${trackingLink}\n\nAcompanhe também as publicações da Aletheia nas redes sociais e na nossa plataforma, lá divulgamos relatórios e investigações verificadas 😉.\n\nSe deseja relatar outra denúncia, responda SIM para continuar. Se preferir falar com uma pessoa real, responda CONVERSA.`,
 };
 
 export const sendGreeting = assign<ChatBotContext>({
@@ -94,7 +96,7 @@ export const saveVerificationRequest = assign<
 });
 
 export const saveAdditionalInfo = assign<ChatBotContext, AdditionalInfoEvent>({
-    additionalInfo: (context, event) => event.AdditionalInfo,
+    additionalInfo: (context, event) => event.additionalInfo,
 });
 
 export const saveEmptyAdditionalInfo = assign<ChatBotContext>({
@@ -109,10 +111,24 @@ export const saveEmptyEmail = assign<ChatBotContext>({
     email: () => "",
 });
 
+export const setDataHash = assign<ChatBotContext>({
+    dataHash: (context) =>
+        crypto
+            .createHash("md5")
+            .update(
+                `${context.verificationRequest}-${context.additionalInfo || ""}`
+            )
+            .digest("hex"),
+});
+
 export const setResponseMessage = assign<ChatBotContext>({
     responseMessage: (context) => context.responseMessage,
 });
 
 export const sendThanks = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.thanks,
+    responseMessage: (context) => {
+        const trackingLink = `https://aletheiafact.org/verification-request/${context.dataHash}/tracking`;
+
+        return MESSAGES.thanks(trackingLink);
+    },
 });

@@ -39,17 +39,20 @@ const MainApp = ({ children }) => {
     return (
         <Box
             sx={{
-                width:
-                    copilotDrawerCollapsed || vw?.md
-                        ? "100%"
-                        : `calc(100% - ${copilotDrawerWidth}px)`,
+                width: "100%",
+                maxWidth: copilotDrawerCollapsed || vw?.md
+                    ? "100%"
+                    : `calc(100% - ${copilotDrawerWidth}px)`,
+                position: "relative",
+                overflowX: "hidden",
             }}
         >
             <Sidebar />
             <Box sx={{
                 display: "grid",
-                minHeight: "100vh",
-                background: colors.white
+                minHeight: "100dvh",
+                background: colors.white,
+                gridTemplateColumns: "minmax(0, 1fr)",
             }}>
                 <Box>
                     <Header />

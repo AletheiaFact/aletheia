@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import router from "next/router";
+import { useAppSelector } from "../../store/store";
 interface TagsListProps {
     tags: any[];
     editable?: boolean;
@@ -12,6 +13,17 @@ interface TagsListProps {
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
+    const maxWidthMap = {
+        xs: "15.6rem",
+        sm: "23.7rem",
+        md: "30rem",
+        lg: "28.7rem",
+        xl: "9.3rem",
+        xxl: "18.7rem"
+    };
+    const currentBreakpoint = Object.keys(maxWidthMap).find(key => vw?.[key]);
+    const maxWidth = maxWidthMap[currentBreakpoint];
 
     const handleTagClick = (tag) => {
         router
@@ -78,8 +90,13 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 marginTop: 4,
                                 marginBottom: 4,
                                 cursor: "pointer",
-                                maxWidth: "300px",
+                                fontSize: "13px",
+                                maxWidth: maxWidth,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
                             }}
+
                         />
                     );
                 })}

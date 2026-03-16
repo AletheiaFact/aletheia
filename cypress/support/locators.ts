@@ -88,7 +88,6 @@ const locators = {
         FORM_REPORT_TYPE: "[data-cy=testClaimReviewreportType]",
         FORM_IMPACT_AREA: "[data-cy=testClaimReviewimpactArea]",
         FORM_HEARD_FROM: "[data-cy=testClaimReviewheardFrom]",
-        FORM_PUBLICATION_DATE: "[data-cy=testSelectDate]",
         FORM_SOURCE: "[data-cy=testClaimReviewsource]",
         FORM_EMAIL: "[data-cy=testClaimReviewemail]",
 
@@ -133,5 +132,30 @@ const locators = {
         MY_ACCOUNT_MENU: "[data-cy=testMyAccountItem]",
         LOGOUT_MENU: "[data-cy=testLogout]",
     },
+
+    footer: {
+        CTA_PRIMARY: "[data-cy=testFooterCtaPrimaryLink]",
+        CTA_SECONDARY: "[data-cy=testFooterCtaSecondaryLink]",
+
+        SOCIAL_INSTAGRAM: "[data-cy=testFooterSocialInstagram]",
+        SOCIAL_FACEBOOK: "[data-cy=testFooterSocialFacebook]",
+        SOCIAL_LINKEDIN: "[data-cy=testFooterSocialLinkedIn]",
+        SOCIAL_GITHUB: "[data-cy=testFooterSocialGithub]",
+
+        PLATFORM_ACCESS: "[data-cy=testFooterLinkPlatformAccess]",
+        PLATFORM_MANUAL: "[data-cy=testFooterLinkPlatformManual]",
+        PLATFORM_DOCS: "[data-cy=testFooterLinkPlatformDocs]",
+
+        INSTITUTIONAL_ABOUT: "[data-cy=testFooterLinkInstitutionalAbout]",
+        INSTITUTIONAL_PARTNERS: "[data-cy=testFooterLinkInstitutionalPartners]",
+        INSTITUTIONAL_AWARDS: "[data-cy=testFooterLinkInstitutionalAwards]",
+
+        COMMUNITY_COLLABORATION: "[data-cy=testFooterLinkCommunityCollaboration]",
+        COMMUNITY_UNIVERSITIES: "[data-cy=testFooterLinkCommunityUniversities]",
+        COMMUNITY_VOLUNTEERING: "[data-cy=testFooterLinkCommunityVolunteering]",
+
+        STATUTE: "[data-cy=testFooterStatuteLink]",
+        CREATIVE_COMMONS: "[data-cy=testFooterCreativeCommonsLink]",
+    }
 };
 export default locators;

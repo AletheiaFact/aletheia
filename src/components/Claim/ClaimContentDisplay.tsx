@@ -2,12 +2,13 @@ import React from "react";
 
 import ClaimImageBody from "./ClaimImageBody";
 import ClaimSpeechBody from "./ClaimSpeechBody";
+import { ViewMode } from "../FilterToggleButtons";
 
 interface ClaimContentDisplayProps {
     isImage: boolean;
     title: string;
     claimContent: any;
-    showHighlights: boolean;
+    showHighlights: ViewMode;
     dispatchPersonalityAndClaim: () => void;
 }
 

@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import { TrackingCardProps } from "../../types/Tracking";
 import TrackingCard from "./TrackingCard";
-import CTAFolder from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder/CTAFolder";
 
 const TrackingView = ({ verificationRequestId }: TrackingCardProps) => {
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import CTAFolder from "../Home/CTAFolder";
+import CTAFolder from "../Home/CTAFolder/CTAFolder";
 import { Grid } from "@mui/material";
 import SentenceReportComments from "./SentenceReportComments";
 import SentenceReportContent from "./SentenceReportContent";
@@ -11,7 +11,7 @@ const SentenceReportPreview = ({
     componentStyle,
 }) => {
     return (
-        <Grid item xs={componentStyle.span}>
+        <Grid item xs={10} sm={componentStyle.span}>
             {canShowReportPreview && (
                 <SentenceReportComments context={context} />
             )}

@@ -1,9 +1,10 @@
+import { ViewMode } from "../FilterToggleButtons";
 import ClaimParagraph from "./ClaimParagraph";
 import React from "react";
 
 const ClaimSpeechBody = (props: {
     paragraphs: any;
-    showHighlights: boolean;
+    showHighlights: ViewMode;
     handleSentenceClick?: any;
 }) => {
     return (
