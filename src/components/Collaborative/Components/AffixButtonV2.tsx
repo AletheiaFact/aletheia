@@ -45,6 +45,9 @@ const AffixButtonV2: React.FC<AffixAletheiaButtonProps> = ({ Children, ...style 
                 style={{
                     position: isAffixed ? "fixed" : "relative",
                     bottom: isAffixed ? 15 : "auto",
+                    left: isAffixed ? "50%" : "auto",
+                    transform: isAffixed ? "translateX(-50%)" : "none",
+                    zIndex: 1000,
                     ...style,
                 }}
             >

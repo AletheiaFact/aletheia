@@ -23,12 +23,13 @@ import { useAppSelector } from "../../store/store";
 
 interface AffixButtonProps {
     personalitySlug?: string;
+    bottom?: string
 }
 
 /*** Floating action button that displays the Create Personality option
  * @param personalitySlug if present will display the Create Claim option too
  */
-const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
+const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
         copilotDrawerCollapsed:
@@ -42,6 +43,8 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
+    const bottomValue = bottom ?? "3%";
+
     const actions = [
         {
             icon: <PersonAddAlt1Outlined />,
@@ -122,7 +125,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             <div
                 style={{
                     position: "fixed",
-                    bottom: "3%",
+                    bottom: bottomValue,
                     right:
                         copilotDrawerCollapsed || vw?.md
                             ? "2%"
