@@ -8,16 +8,17 @@ import ErrorState from "../../ErrorState";
 import EventLoadMore from "../EventList/EventLoadMore";
 import ReviewsGrid from "../../ClaimReview/ReviewsGrid";
 import EventTitle from "../EventList/EventTitle";
+import { EventsActions, EventsState } from "../../../types/event";
 
 type EventReviewsProps = {
     mainTopic: Topic;
     filterTopics?: Topic[];
     nameSpace: NameSpaceEnum;
-    state: any;
-    actions: any;//improve types
+    state: EventsState;
+    actions: EventsActions;
 };
 
-const EventReviews = ({
+const EventReviewsList = ({
     mainTopic,
     filterTopics, // TODO: create a sub-filter based on these values
     nameSpace,
@@ -50,7 +51,7 @@ const EventReviews = ({
                 }));
             }
         } catch (err: any) {
-            setError(err.message || "Erro ao buscar reviews");
+            setError(err.message);
         } finally {
             setIsLoading(false);
         }
@@ -81,13 +82,12 @@ const EventReviews = ({
                     title={
                         <EventTitle
                             total={reviewData.total}
-                            isReviewGrid={true}
+                            hasToggle={true}
                             viewMode={viewMode}
                             setViewMode={setViewMode}
                             t={t}
                         />
                     }
-                    hasDivider={true}
                 />
             </Grid>
             <EventLoadMore
@@ -101,4 +101,4 @@ const EventReviews = ({
     );
 };
 
-export default EventReviews;
+export default EventReviewsList;

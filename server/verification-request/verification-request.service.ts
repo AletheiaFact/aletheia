@@ -66,6 +66,7 @@ export class VerificationRequestService {
         return this.VerificationRequestModel.find(query, { embedding: 0 })
             .populate("impactArea")
             .populate("topics")
+            .populate("identifiedData")
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })

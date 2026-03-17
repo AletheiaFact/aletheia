@@ -1,9 +1,10 @@
 import { EventPayload } from "../../../types/event";
 import EventBox from "./EventView.style";
 import EventHeaderContent from "./EventHeaderContent";
-import EventReviews from "./EventReviewList";
+import EventReviewsList from "./EventReviewList";
 import { NameSpaceEnum } from "../../../types/Namespace";
 import useEventsHook from "../hooks/useEventsHook";
+import EventVerificationRequestList from "./EventVerificationRequestList";
 
 type EventViewProps = {
     event: EventPayload;
@@ -26,7 +27,7 @@ const EventView = ({ event, nameSpace }: EventViewProps) => {
 
 
             {state.viewMode === "left" && (
-                <EventReviews
+                <EventReviewsList
                     mainTopic={mainTopic}
                     filterTopics={filterTopics}
                     nameSpace={nameSpace}
@@ -36,7 +37,13 @@ const EventView = ({ event, nameSpace }: EventViewProps) => {
             )}
 
             {state.viewMode === "right" && (
-                "in-progress"
+                <EventVerificationRequestList
+                    mainTopic={mainTopic}
+                    filterTopics={filterTopics}
+                    nameSpace={nameSpace}
+                    state={state}
+                    actions={actions}
+                />
             )}
         </EventBox>
     );

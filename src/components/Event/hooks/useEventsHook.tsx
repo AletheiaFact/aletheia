@@ -4,10 +4,14 @@ import { useRouter } from "next/router";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../../types/Namespace";
-import { IData, IReviewData, ListEventsOptions } from "../../../types/event";
+import { EventsActions, EventsState, IData, IReviewData, IVerificationRequestData, ListEventsOptions } from "../../../types/event";
 import { ViewMode } from "../../FilterToggleButtons";
+interface UseEventsHookReturn {
+    state: EventsState;
+    actions: EventsActions;
+}
 
-const useEventsHook = () => {
+const useEventsHook = (): UseEventsHookReturn => {
     const router = useRouter();
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -37,6 +41,13 @@ const useEventsHook = () => {
         order: "asc",
     });
 
+    const [verificationRequestData, setVerificationRequestData] = useState<IVerificationRequestData>({ items: [], total: 0, totalPages: 0 });
+    const [verificationRequestQuery, setVerificationRequestQuery] = useState<ListEventsOptions>({
+        page: 1,
+        pageSize: 6,
+        order: "asc",
+    });
+
     const eventHref =
         nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}/event` : "/event";
 
@@ -52,7 +63,9 @@ const useEventsHook = () => {
             eventsQuery,
             reviewData,
             reviewQuery,
-            viewMode
+            viewMode,
+            verificationRequestData,
+            verificationRequestQuery
         },
         actions: {
             setIsLoading,
@@ -64,7 +77,9 @@ const useEventsHook = () => {
             setEventsQuery,
             setReviewData,
             setReviewQuery,
-            setViewMode
+            setViewMode,
+            setVerificationRequestData,
+            setVerificationRequestQuery
         },
     };
 }

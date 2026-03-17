@@ -2,8 +2,18 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import DynamicForm from "../../Form/DynamicForm";
 import SharedFormFooter from "../../SharedFormFooter";
-import { IDynamicEventForm } from "../../../types/event";
+import { EventPayload } from "../../../types/event";
 import lifecycleEventForm from "./CreateEventForm";
+
+interface IDynamicEventForm {
+    data?: EventPayload;
+    onSubmit: (value: EventPayload) => void;
+    isLoading: boolean;
+    setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
+    hasCaptcha: boolean;
+    isDrawerOpen?: boolean;
+    onClose?: () => void;
+}
 
 const DynamicEventForm = ({
     data,

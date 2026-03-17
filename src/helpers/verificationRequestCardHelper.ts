@@ -1,3 +1,4 @@
+import { VERIFICATION_STATUS_CONFIG, VerificationStatus } from "../constants/verificationRequestStatusConfig";
 import colors from "../styles/colors";
 import { SeverityLevel } from "../types/VerificationRequest";
 import { TFunction } from "i18next";
@@ -43,4 +44,15 @@ export const truncateUrl = (url: string) => {
     console.warn("Invalid URL for truncation:", url, error);
     return url;
   }
+};
+
+export const getStatusStyles = (status: string, t: TFunction) => {
+    const config = VERIFICATION_STATUS_CONFIG[status as VerificationStatus];
+
+    if (!config) return { color: colors.neutral, label: status };
+
+    return {
+        color: config.color,
+        label: t(`verificationRequest:${config.labelKey}`)
+    };
 };

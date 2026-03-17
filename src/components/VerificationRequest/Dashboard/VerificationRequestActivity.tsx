@@ -1,32 +1,13 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
-import colors from "../../../styles/colors";
 import { StatsRecentActivityProps } from "../../../types/VerificationRequest";
 import { useTranslation } from "next-i18next";
 import { formatTimeAgo } from "../../../helpers/formatTimeAgo";
+import { getStatusStyles } from "../../../helpers/verificationRequestCardHelper";
 
 const VerificationRequestActivity = ({
   statsRecentActivity,
 }: StatsRecentActivityProps) => {
   const { t } = useTranslation();
-  
-  const STATUS_CONFIG = {
-    Posted: {
-      color: colors.low,
-      labelKey: "POSTED",
-    },
-    "In Triage": {
-      color: colors.medium,
-      labelKey: "IN_TRIAGE",
-    },
-    "Pre Triage": {
-      color: colors.neutralSecondary,
-      labelKey: "PRE_TRIAGE",
-    },
-    Declined: {
-      color: colors.error,
-      labelKey: "DECLINED",
-    },
-  } as const;
 
   return (
     <Card className="card">
@@ -40,7 +21,7 @@ const VerificationRequestActivity = ({
 
         <Box mt={2}>
           {statsRecentActivity.map((activity) => {
-            const { color, labelKey } = STATUS_CONFIG[activity.status];
+            const { color, label } = getStatusStyles(activity.status, t);
 
             const message = t(`verificationRequest:activity.${activity.status}`, {
               hash: activity.data_hash,
@@ -53,7 +34,7 @@ const VerificationRequestActivity = ({
             return (
               <Box className="item" key={activity.id}>
                 <Typography className="badge" variant="body2" bgcolor={color}>
-                  {t(`verificationRequest:${labelKey}`)}
+                  {t(`verificationRequest:${label}`)}
                 </Typography>
                 <Typography className="legend-label">{message}</Typography>
                 <Typography className="legend-percentage">

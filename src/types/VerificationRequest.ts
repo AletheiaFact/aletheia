@@ -1,9 +1,10 @@
 import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
 import { ActionTypes } from "../store/types";
-import { Topic } from "./Topic";
+import { Topic, ManualTopic } from "./Topic";
 import { UnifiedDefaultValue } from "../components/Form/DynamicInput";
 import { ViewMode } from "../components/FilterToggleButtons";
+import { Personality } from "./Personality";
 
 export enum FilterType {
   TOPIC = "topic",
@@ -45,6 +46,8 @@ interface VerificationRequest {
   reportType?: string;
   impactArea?: Topic;
   status: string;
+  topics: ManualTopic[];
+  identifiedData: Personality[];
 };
 interface FiltersState {
   loading: Record<verificationRequestStatus, boolean>;

@@ -18,15 +18,15 @@ const LeftText = ({ total, t }: { total: number; t: any }) => (
 
 interface EventTitleProps {
     total: number;
-    isReviewGrid?: boolean;
+    hasToggle?: boolean;
     viewMode?: ViewMode;
     setViewMode?: (mode: ViewMode) => void;
     t: (key: string, options?: { total: number }) => string;
 }
 
-const EventTitle = ({ total = 0, isReviewGrid = false, viewMode, setViewMode, t }: EventTitleProps) => {
+const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: EventTitleProps) => {
 
-    if (isReviewGrid) {
+    if (hasToggle) {
         return (
             <TypographyBox container>
                 <LeftText total={total} t={t} />

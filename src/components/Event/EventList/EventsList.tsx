@@ -75,6 +75,7 @@ const EventsList = () => {
                         }
                         events={eventsData.events}
                         eventMetrics={eventsData.eventMetrics}
+                        disableSeeMoreButton={true}
                         t={t}
                         hasDivider={true}
                     />

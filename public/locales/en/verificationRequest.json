@@ -120,5 +120,8 @@
     "noPersonalitiesFound": "No personalities identified in this request",
     "errorLoadingPersonalities": "Error loading personalities. Please try again.",
     "retryLoadingPersonalities": "Retry",
-    "viewPersonalityPage": "View personality page for {{name}}"
+    "viewPersonalityPage": "View personality page for {{name}}",
+    "submittedAt": "Submitted on <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
+    "requestStatus": "Request status: ",
+    "cardLinkToFullRequest": "see full verification request"
 }

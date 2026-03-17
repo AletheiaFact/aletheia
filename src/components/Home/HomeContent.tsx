@@ -66,7 +66,6 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
                         events={eventsData.events}
                         eventMetrics={eventsData.eventMetrics}
                         t={t}
-                        disableSeeMoreButton={false}
                         title={t("events:latestEvents")}
                     />
                 </Grid>

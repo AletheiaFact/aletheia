@@ -6,15 +6,13 @@ import { Review } from "../../types/Review";
 type ReviewsGridProps = {
     reviews: Review[];
     title: React.ReactNode;
-    hasDivider?: boolean
 }
 
-const ReviewsGrid = ({ reviews, title, hasDivider }: ReviewsGridProps) => {
+const ReviewsGrid = ({ reviews, title, }: ReviewsGridProps) => {
     return (
         <GridList
             title={title}
             dataSource={reviews}
-            hasDivider={hasDivider}
             loggedInMaxColumns={12}
             disableSeeMoreButton={true}
             renderItem={(review) => <ReviewCard review={review} />}
