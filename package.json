@@ -127,7 +127,7 @@
         "copyfiles": "^2.4.1",
         "dayjs": "^1.11.13",
         "domino": "^2.1.6",
-        "dompurify": "^3.0.5",
+        "dompurify": "3.3.3",
         "express": "4.19.2",
         "express-session": "^1.17.2",
         "handlebars": "^4.7.7",
