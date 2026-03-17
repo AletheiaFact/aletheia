@@ -34,7 +34,6 @@ import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
 import { Source } from "../source/schemas/source.schema";
-import { Update } from "aws-sdk/clients/dynamodb";
 
 interface IListAllQuery {
     value: any;

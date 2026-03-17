@@ -1,25 +1,28 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { S3 } from "aws-sdk";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 const md5 = require("md5");
 
 @Injectable()
 export class FileManagementService {
     private readonly bucket;
-    private s3;
+    private s3: S3Client;
 
     constructor(private configService: ConfigService) {
         this.bucket = this.configService.get<string>("aws.bucket");
         const s3Config = {
-            accessKeyId: this.configService.get<string>("aws.accessKeyId"),
-            secretAccessKey: this.configService.get<string>(
-                "aws.secretAccessKey"
-            ),
             endpoint: this.configService.get<string>("aws.endpoint"),
-            s3ForcePathStyle: true,
+            forcePathStyle: true,
+            region: this.configService.get<string>("aws.region"),
+            credentials: {
+                accessKeyId: this.configService.get<string>("aws.accessKeyId"),
+                secretAccessKey: this.configService.get<string>(
+                    "aws.secretAccessKey"
+                ),
+            },
         };
 
-        this.s3 = new S3(s3Config);
+        this.s3 = new S3Client(s3Config);
     }
 
     /**
@@ -43,8 +46,8 @@ export class FileManagementService {
 
         const imageDataHash = md5(file.buffer);
 
-        const { Location, Key } = await this.s3
-            .upload({
+        await this.s3.send(
+            new PutObjectCommand({
                 Bucket: bucket || this.bucket,
                 Key: fileName,
                 ContentType: file?.mimetype,
@@ -53,7 +56,13 @@ export class FileManagementService {
                 Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })
-            .promise();
+        );
+
+        const Location = `${this.configService.get<string>("aws.endpoint")}/${
+            bucket || this.bucket
+        }/${fileName}`;
+
+        const Key = fileName;
 
         const result = {
             FileURL: Location,
