@@ -4,6 +4,8 @@
     "openEvent": "See event",
     "fetchError": "Error fetching events. Please try again later.",
     "loadMoreButton": "Load more",
+    "heroTitle": "Fact-checking claims at global events",
+    "heroSubtitle": "Follow fact-checking at conferences and events around the world. Contribute to an internet free of disinformation.",
     "eventsList": "Events",
     "filterAll": "All",
     "filterOngoing": "Ongoing",

@@ -8,6 +8,8 @@ import EventLoadMore from "./EventLoadMore";
 import EventsGrid from "./EventGrid";
 import EventTitle from "./EventTitle";
 import useEventsHook from "../hooks/useEventsHook";
+import EventListHeader from "./EventListHeader";
+import EventListGrid from "./EventList.style";
 
 const EventsList = () => {
     const { state, actions } = useEventsHook()
@@ -56,7 +58,9 @@ const EventsList = () => {
 
     return (
         <main>
-            <Grid container justifyContent="center" marginBottom={4}>
+            <EventListGrid container>
+                <EventListHeader t={t} />
+
                 <EventFilters
                     selectedStatus={eventsQuery.status}
                     onStatusChange={(status) =>
@@ -65,7 +69,7 @@ const EventsList = () => {
                     t={t}
                 />
 
-                <Grid item xs={11} sm={8}>
+                <Grid item xs={11} md={9} lg={8}>
                     <EventsGrid
                         title={
                             <EventTitle
@@ -88,7 +92,7 @@ const EventsList = () => {
                     }
                     label={t("events:loadMoreButton")}
                 />
-            </Grid>
+            </EventListGrid>
         </main>
     );
 };

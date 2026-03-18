@@ -4,6 +4,8 @@
     "openEvent": "Veja evento",
     "fetchError": "Erro ao carregar eventos. Por favor, tente novamente mais tarde.",
     "loadMoreButton": "Carregar mais",
+    "heroTitle": "Checagem de afirmações em eventos globais",
+    "heroSubtitle": "Acompanhe a verificação de fatos em conferências e eventos ao redor do mundo. Contribua para uma internet livre de desinformação.",
     "eventsList": "Eventos",
     "filterAll": "Todos",
     "filterHappening": "Agora",
