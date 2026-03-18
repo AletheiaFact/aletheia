@@ -46,3 +46,9 @@ export const mockConfigService = {
 export const mockViewService = {
     render: jest.fn(),
 };
+
+export const mockRequest = {
+    params: {
+        namespace: "main"
+    }
+};

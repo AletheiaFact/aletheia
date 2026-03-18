@@ -26,11 +26,12 @@
     "mainTopicLabel": "Tópico principal",
     "mainTopicPlaceholder": "Busque e selecione o tópico principal",
     "mainTopicLabelTooltip": "Tópico de referência usado para vincular as checagens e as denúncias que serão exibidos na página do evento.",
-    "latestReviews": "Últimas checagens",
+    "latestRelatedClaims": "Últimas checagens relacionadas",
     "latestEvents": "Últimos eventos",
     "seeMoreEventsButton": "Veja mais eventos",
     "reviewStats": "Checagens",
     "verificationRequestsStats": "Denúncias",
     "claimsStats": "Discursos",
-    "claimToggleOption": "Afirmações"
+    "claimToggleOption": "Afirmações",
+    "latestRelatedDenuncias": "Últimas denúncias relacionadas"
 }

@@ -75,7 +75,7 @@ const EventReviewsList = ({
         <Grid container className="eventContainerBase">
             <Grid item xs={11} sm={11} md={8} className="eventSection">
                 <Typography variant="h2" fontSize={24}>
-                    {t("events:latestReviews")}
+                    {t("events:latestRelatedClaims")}
                 </Typography>
                 <ReviewsGrid
                     reviews={reviewData.items}

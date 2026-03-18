@@ -83,7 +83,7 @@ const EventVerificationRequestList = ({
         <Grid container className="eventContainerBase">
             <Grid item xs={11} sm={11} md={8} className="eventSection">
                 <Typography variant="h2" fontSize={24}>
-                    {t("events:latestReviews")}
+                    {t("events:latestRelatedDenuncias")}
                 </Typography>
                 <VerificationRequestGridList
                     verificationRequest={verificationRequestData.items}

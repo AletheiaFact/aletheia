@@ -18,10 +18,12 @@ import {
     mockClaimReviewService,
     mockTopicService,
     mockVerificationRequestService,
+    mockRequest,
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { REQUEST } from "@nestjs/core";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -30,6 +32,10 @@ describe("EventsService (Unit)", () => {
         const testingModule: TestingModule = await Test.createTestingModule({
             providers: [
                 EventsService,
+                {
+                    provide: REQUEST,
+                    useValue: mockRequest,
+                },
                 {
                     provide: getModelToken(Event.name),
                     useValue: mockEventModel,
@@ -53,7 +59,7 @@ describe("EventsService (Unit)", () => {
             ],
         }).compile();
 
-        service = testingModule.get<EventsService>(EventsService);
+        service = await testingModule.resolve<EventsService>(EventsService);
     });
 
     beforeEach(() => {
