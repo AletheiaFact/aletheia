@@ -41,6 +41,7 @@ services:
         bucket: aletheia
         accessKeyId: test
         secretAccessKey: test
+        region: us-east-1
         # endpoint is only needed when using localstack
         endpoint: http://localhost:4566
       novu: # Notifications provider
