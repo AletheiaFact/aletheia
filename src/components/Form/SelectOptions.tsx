@@ -76,7 +76,7 @@ function SelectOptions({
             options={filteredOptions}
             getOptionLabel={(option) => option.label || ""}
             isOptionEqualToValue={(option, value) => option?.value === value?.value}
-            loading={fetching ? <Loading /> : selectedValue}
+            loading={fetching}
             value={isMultiple ? value || [] : selectedValue}
             onChange={(_event, newValue) => {
                 setSelectedValue(newValue);
@@ -87,7 +87,9 @@ function SelectOptions({
                     onChange(newValue?.value);
                 }
             }}
-            onInputChange={getOptions}
+            onInputChange={(event, newInputValue, reason) => {
+                getOptions(newInputValue);
+            }}
             style={{ ...style }}
             renderInput={(params) => (
                 <TextField

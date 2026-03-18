@@ -7,7 +7,9 @@ import ClassificationModal from "./ClassificationModal";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import { MenuItem, Select, FormControl } from "@mui/material";
 
-export const SelectInput = styled(Select)`
+export const SelectInput = styled(Select).withConfig({
+    shouldForwardProp: (prop) => prop !== 'dropdownStyle',
+})`
     background: ${colors.white};
     box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
