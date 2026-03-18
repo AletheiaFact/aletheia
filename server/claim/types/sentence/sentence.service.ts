@@ -29,87 +29,7 @@ export class SentenceService {
         private SentenceModel: Model<SentenceDocument>,
         private reportService: ReportService,
         private util: UtilService
-    ) { }
-
-    /**
-         * Fetches sentences based on topic values and enriches them with review classification.
-         * Uses an aggregation pipeline for cross-collection lookup.
-         * @param query - Topic wikidataId array to filter sentences.
-         * @returns A list of sentences with their respective classification.
-         */
-    async getSentencesByTopics(query: string[]): Promise<TopicRelatedSentencesResponse[]> {
-        try {
-            this.logger.debug(`Fetching sentences for topics: ${query.join(', ')}`);
-
-            const aggregation: any[] = [
-                { $match: { "topics.value": { $in: query } } },
-                {
-                    $lookup: {
-                        from: "reviewtasks",
-                        let: { sentenceDataHash: "$data_hash" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $eq: [
-                                            "$machine.context.reviewData.data_hash",
-                                            "$$sentenceDataHash",
-                                        ],
-                                    },
-                                },
-                            },
-                            {
-                                $project: {
-                                    _id: 0,
-                                    classification: "$machine.context.reviewData.classification",
-                                },
-                            },
-                        ],
-                        as: "reviewInfo",
-                    },
-                },
-                {
-                    $addFields: {
-                        classification: {
-                            $arrayElemAt: ["$reviewInfo.classification", 0],
-                        },
-                    },
-                },
-                { $project: { reviewInfo: 0 } },
-            ];
-
-            const result = await this.SentenceModel.aggregate(aggregation).exec();
-
-            this.logger.log(`Found ${result.length} sentences for the requested topics.`);
-
-            return result;
-        } catch (error) {
-            this.logger.error(`Error in getSentencesByTopics: ${error.message}`, error.stack);
-            throw new InternalServerErrorException("Failed to aggregate sentences with review data.");
-        }
-    }
-
-    /**
-     * Searches for sentence data hashes associated with a specific topic.
-     * @param topicWikidataId - The topic identifier.
-     * @returns Array of sentence data hashes.
-     */
-    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
-        this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
-        try {
-            const sentences = await this.SentenceModel.find(
-                { "topics.value": { $eq: topicWikidataId } },
-                { data_hash: 1 }
-            ).lean();
-
-            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
-
-            return sentences.map((sentence) => sentence.data_hash);
-        } catch (error) {
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
-            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
-        }
-    }
+    ) {}
 
     async create(sentenceBody) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
@@ -278,5 +198,85 @@ export class SentenceService {
                 })
             ),
         };
+    }
+
+    /**
+     * Fetches sentences based on topic values and enriches them with review classification.
+     * Uses an aggregation pipeline for cross-collection lookup.
+     * @param query - Topic wikidataId array to filter sentences.
+     * @returns A list of sentences with their respective classification.
+    */
+    async getSentencesByTopics(query: string[]): Promise<TopicRelatedSentencesResponse[]> {
+        try {
+            this.logger.debug(`Fetching sentences for topics: ${query.join(', ')}`);
+
+            const aggregation: any[] = [
+                { $match: { "topics.value": { $in: query } } },
+                {
+                    $lookup: {
+                        from: "reviewtasks",
+                        let: { sentenceDataHash: "$data_hash" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: [
+                                            "$machine.context.reviewData.data_hash",
+                                            "$$sentenceDataHash",
+                                        ],
+                                    },
+                                },
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    classification: "$machine.context.reviewData.classification",
+                                },
+                            },
+                        ],
+                        as: "reviewInfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        classification: {
+                            $arrayElemAt: ["$reviewInfo.classification", 0],
+                        },
+                    },
+                },
+                { $project: { reviewInfo: 0 } },
+            ];
+
+            const result = await this.SentenceModel.aggregate(aggregation).exec();
+
+            this.logger.log(`Found ${result.length} sentences for the requested topics.`);
+
+            return result;
+        } catch (error) {
+            this.logger.error(`Error in getSentencesByTopics: ${error.message}`, error.stack);
+            throw new InternalServerErrorException("Failed to aggregate sentences with review data.");
+        }
+    }
+
+    /**
+     * Searches for sentence data hashes associated with a specific topic.
+     * @param topicWikidataId - The topic identifier.
+     * @returns Array of sentence data hashes.
+     */
+    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
+        this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
+        try {
+            const sentences = await this.SentenceModel.find(
+                { "topics.value": { $eq: topicWikidataId } },
+                { data_hash: 1 }
+            ).lean();
+
+            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
+
+            return sentences.map((sentence) => sentence.data_hash);
+        } catch (error) {
+            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
+            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
+        }
     }
 }

@@ -32,6 +32,7 @@ const EventsGrid = ({
             href={state.eventHref}
             disableSeeMoreButton={disableSeeMoreButton}
             seeMoreButtonLabel={t("events:seeMoreEventsButton")}
+            dataCy="testSeeMoreEvents"
             hasDivider={hasDivider}
             renderItem={(event) => (
                 <EventCard

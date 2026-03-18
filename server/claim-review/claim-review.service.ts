@@ -45,7 +45,7 @@ export class ClaimReviewService {
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private wikidata: WikidataService
-    ) { }
+    ) {}
 
     async listAll(params: IlistAll): Promise<ClaimReviewList> {
         const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicWikidataID);

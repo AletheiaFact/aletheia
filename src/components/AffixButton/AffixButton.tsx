@@ -97,7 +97,7 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
             },
             {
                 icon: <Event />,
-                tooltip: t("affix:affixButtonCreateVerificationRequest"),
+                tooltip: t("affix:affixButtonCreateEvent"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
                         ? `/${nameSpace}/event/create`

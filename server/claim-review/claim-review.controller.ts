@@ -24,7 +24,7 @@ export class ClaimReviewController {
         private claimReviewService: ClaimReviewService,
         private captchaService: CaptchaService,
         private historyService: HistoryService
-    ) { }
+    ) {}
 
     @Public()
     @ApiTags("claim-review")

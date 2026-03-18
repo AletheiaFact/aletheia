@@ -29,16 +29,19 @@ const EventMetricsChip = ({ eventMetrics }: EventMetricsChipProps) => {
         value={metrics.reviews}
         label={t("events:reviewStats")}
         color={colors.lightPrimary}
+        dataCy="testEventMetricsReviews"
       />
       <MetricBox
         value={metrics.verificationRequests}
         label={t("events:verificationRequestsStats")}
         color={colors.low}
+        dataCy="testEventMetricsVerificationRequests"
       />
       <MetricBox
         value={metrics.claims}
         label={t("events:claimsStats")}
         color={colors.error}
+        dataCy="testEventMetricsClaims"
       />
     </Box>
   );

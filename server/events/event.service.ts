@@ -1,6 +1,7 @@
 import {
     BadRequestException,
     ConflictException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     Logger,
@@ -20,12 +21,15 @@ import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimService } from "../claim/claim.service";
+import type  { BaseRequest } from "../types";
+import { REQUEST } from "@nestjs/core";
 
 @Injectable()
 export class EventsService {
     private readonly logger = new Logger(EventsService.name);
 
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
         private readonly claimService: ClaimService,
         private readonly claimReviewService: ClaimReviewService,
@@ -219,7 +223,7 @@ export class EventsService {
                     query: {
                         isHidden: false,
                         isDeleted: false,
-                        nameSpace: NameSpaceEnum.Main
+                        nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
                     },
                     mainTopicWikidataID: eventMainTopicWikidataId
                 }),

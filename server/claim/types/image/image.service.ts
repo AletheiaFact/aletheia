@@ -80,6 +80,21 @@ export class ImageService {
         }
     }
 
+    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument> {
+        if (!Array.isArray(topics)) {
+            throw new BadRequestException("Invalid topics array.");
+        }
+
+        const image = await this.getByDataHash(data_hash);
+
+        const newImage = {
+            ...image.toObject,
+            topics,
+        };
+
+        return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
+    }
+
     /**
      * Searches for image data hashes associated with a specific topic.
      * @param topicWikidataId - The topic identifier.
@@ -112,16 +127,5 @@ export class ImageService {
             );
             throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
         }
-    }
-
-    async updateImageWithTopics(topics, data_hash) {
-        const image = await this.getByDataHash(data_hash);
-
-        const newImage = {
-            ...image.toObject,
-            topics,
-        };
-
-        return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
     }
 }

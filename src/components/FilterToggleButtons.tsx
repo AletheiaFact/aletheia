@@ -46,6 +46,7 @@ const FilterToggleButtons = ({ viewMode, setViewMode, leftOption, rightOption, i
                 value="left"
                 aria-label="board view"
                 style={{ borderRadius: isRounded ? "50px 0px 0px 50px " : "4px" }}
+                data-cy="testToggleButtonLeft"
             >
                 {leftOption}
             </ToggleButton>
@@ -53,6 +54,7 @@ const FilterToggleButtons = ({ viewMode, setViewMode, leftOption, rightOption, i
                 value="right"
                 aria-label="dashboard view"
                 style={{ borderRadius: isRounded ? "0px 50px 50px 0px " : "4px" }}
+                data-cy="testToggleButtonRight"
             >
                 {rightOption}
             </ToggleButton>

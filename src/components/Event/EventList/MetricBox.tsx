@@ -56,11 +56,12 @@ interface MetricBoxProps {
   value: number;
   label: string;
   color: string;
+  dataCy: string;
 }
 
-const MetricBox = ({ value, label, color }: MetricBoxProps) => (
+const MetricBox = ({ value, label, color, dataCy }: MetricBoxProps) => (
   <StyledBox $metricsColor={color}>
-    <Typography variant="h5" className="valueText">
+    <Typography variant="h5" className="valueText" data-cy={dataCy}>
       {value}
     </Typography>
     <Typography variant="caption" className="labelText">

@@ -10,7 +10,7 @@ const TypographyBox = styled(Grid)`
   align-items: center;
 `;
 
-const LeftText = ({ total, t }: { total: number; t: any }) => (
+const TotalCountText = ({ total, t }: { total: number; t: any }) => (
     <Typography variant="body2" color={colors.blackSecondary}>
         {t("events:totalItems", { total: total })}
     </Typography>
@@ -29,7 +29,7 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
     if (hasToggle) {
         return (
             <TypographyBox container>
-                <LeftText total={total} t={t} />
+                <TotalCountText total={total} t={t} data-cy="testEventGridCount"/>
                 <FilterToggleButtons
                     viewMode={viewMode}
                     setViewMode={setViewMode}
@@ -56,7 +56,7 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
             <Typography variant="h2" fontSize={24}>
                 {t("events:eventsList")}
             </Typography>
-            <LeftText total={total} t={t} />
+            <TotalCountText total={total} t={t} data-cy="testEventGridCount"/>
         </TypographyBox>
     );
 };

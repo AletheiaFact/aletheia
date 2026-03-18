@@ -29,18 +29,20 @@ const EventHeaderContent = ({
                         className="eventChipText eventChip"
                         size="small"
                         label={badge}
+                        data-cy="testEventBadgeChip"
                     />
                     <Typography
                         className="eventChipText eventLocationText"
                         variant="body1"
+                        data-cy="testEventLocationText"
                     >
                         {`${location} • ${formattedDate}`}
                     </Typography>
                 </Grid>
-                <Typography variant="h1" className="title">
+                <Typography variant="h1" className="title" data-cy="testEventTitle">
                     {title}
                 </Typography>
-                <Typography className="description" variant="body1">
+                <Typography className="description" variant="body1" data-cy="testEventDescription">
                     {description}
                 </Typography>
             </Grid>

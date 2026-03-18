@@ -5,7 +5,7 @@ import { Auth } from "../../../auth/decorators/auth.decorator";
 
 @Controller()
 export class SentenceController {
-    constructor(private sentenceService: SentenceService) { }
+    constructor(private sentenceService: SentenceService) {}
 
     @ApiTags("claim")
     @Auth({ public: true })

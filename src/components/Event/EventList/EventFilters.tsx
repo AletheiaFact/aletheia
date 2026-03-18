@@ -23,7 +23,7 @@ const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) 
             {filterOptions.map(({ status, label }) => (
                 <AletheiaButton
                     key={status}
-                    data-cy={`testFiltersEvents${label}`}
+                    data-cy={`testFiltersEvents${status}`}
                     type={selectedStatus === status ? ButtonType.whiteBlue : ButtonType.gray}
                     onClick={() => onStatusChange(status)}
                     rounded={"true"}
