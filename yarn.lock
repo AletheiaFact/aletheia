@@ -4340,11 +4340,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/classic@npm:1.0.18":
-  version: 1.0.18
-  resolution: "@langchain/classic@npm:1.0.18"
+"@langchain/classic@npm:1.0.21":
+  version: 1.0.21
+  resolution: "@langchain/classic@npm:1.0.21"
   dependencies:
-    "@langchain/openai": 1.2.8
+    "@langchain/openai": 1.2.11
     "@langchain/textsplitters": 1.0.1
     handlebars: ^4.7.8
     js-yaml: ^4.1.1
@@ -4369,30 +4369,31 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: 0141934d90f8c89fc9fce0ba83c2453979bf741961800cb85d21412e39337426751f85a2be4ee10bb4e492400d06e459dbadbdab67b9aa9606925208a2e2ad94
+  checksum: 6dc38d1bbd36f2e85179b87ae200c774e05e96e57cf839ab65784ea2eaf4fb3e0146ef9c73af89b62a38ce10865639ed4d0943c02737ce306e64f01b5afc0d91
   languageName: node
   linkType: hard
 
-"@langchain/community@npm:1.1.16":
-  version: 1.1.16
-  resolution: "@langchain/community@npm:1.1.16"
+"@langchain/community@npm:1.1.21":
+  version: 1.1.21
+  resolution: "@langchain/community@npm:1.1.21"
   dependencies:
-    "@langchain/classic": 1.0.18
-    "@langchain/openai": 1.2.8
+    "@langchain/classic": 1.0.21
+    "@langchain/openai": 1.2.11
     binary-extensions: ^2.2.0
     flat: ^5.0.2
     js-yaml: ^4.1.1
+    langsmith: ">=0.4.0 <1.0.0"
     math-expression-evaluator: ^2.0.0
     uuid: ^10.0.0
     zod: ^3.25.76 || ^4
   peerDependencies:
     "@arcjet/redact": ^v1.1.0
     "@aws-crypto/sha256-js": ^5.0.0
-    "@aws-sdk/client-dynamodb": ^3.991.0
-    "@aws-sdk/client-lambda": ^3.991.0
-    "@aws-sdk/client-s3": ^3.991.0
-    "@aws-sdk/client-sagemaker-runtime": ^3.991.0
-    "@aws-sdk/client-sfn": ^3.991.0
+    "@aws-sdk/client-dynamodb": ^3.995.0
+    "@aws-sdk/client-lambda": ^3.995.0
+    "@aws-sdk/client-s3": ^3.995.0
+    "@aws-sdk/client-sagemaker-runtime": ^3.995.0
+    "@aws-sdk/client-sfn": ^3.995.0
     "@aws-sdk/credential-provider-node": ^3.388.0
     "@azure/search-documents": ^12.2.0
     "@azure/storage-blob": ^12.31.0
@@ -4411,7 +4412,7 @@ __metadata:
     "@huggingface/transformers": ^3.8.1
     "@ibm-cloud/watsonx-ai": "*"
     "@lancedb/lancedb": ^0.19.1
-    "@langchain/core": ^1.1.25
+    "@langchain/core": ^1.1.29
     "@layerup/layerup-security": ^1.5.12
     "@libsql/client": ^0.17.0
     "@mendable/firecrawl-js": ^4.13.0
@@ -4424,10 +4425,10 @@ __metadata:
     "@premai/prem-sdk": ^0.3.25
     "@raycast/api": ^1.55.2
     "@rockset/client": ^0.9.1
-    "@smithy/eventstream-codec": ^4.2.8
-    "@smithy/protocol-http": ^5.3.8
-    "@smithy/signature-v4": ^5.3.8
-    "@smithy/util-utf8": ^4.2.0
+    "@smithy/eventstream-codec": ^4.2.9
+    "@smithy/protocol-http": ^5.3.9
+    "@smithy/signature-v4": ^5.3.9
+    "@smithy/util-utf8": ^4.2.1
     "@spider-cloud/spider-client": ^0.1.85
     "@supabase/supabase-js": ^2.45.0
     "@tensorflow-models/universal-sentence-encoder": "*"
@@ -4440,8 +4441,8 @@ __metadata:
     "@writerai/writer-sdk": ^3.6.0
     "@xata.io/client": ^0.28.0
     "@zilliz/milvus2-sdk-node": ">=2.3.5"
-    apify-client: ^2.22.1
-    assemblyai: ^4.23.0
+    apify-client: ^2.22.2
+    assemblyai: ^4.23.1
     azion: ^3.1.1
     better-sqlite3: ">=9.4.0 <12.0.0"
     cassandra-driver: ^4.7.2
@@ -4452,7 +4453,7 @@ __metadata:
     closevector-node: 0.1.6
     closevector-web: 0.1.6
     convex: ^1.3.1
-    couchbase: ^4.6.0
+    couchbase: ^4.6.1
     crypto-js: ^4.2.0
     d3-dsv: ^3.0.1
     discord.js: ^14.25.1
@@ -4477,7 +4478,7 @@ __metadata:
     mammoth: ^1.11.0
     mariadb: ^3.4.0
     mem0ai: ^2.1.8
-    mysql2: ^3.17.2
+    mysql2: ^3.18.0
     neo4j-driver: "*"
     node-llama-cpp: ">=3.0.0"
     notion-to-md: ^3.1.0
@@ -4738,7 +4739,7 @@ __metadata:
       optional: true
     youtubei.js:
       optional: true
-  checksum: de64f5f81cd8ee7533cb81ef25601e1dac1b36b4d2a7403dee7022733f18187c555f68a0f6ebce8cc947afd2d41e47b16318c71f0ddc776fbcb4c4cd5a33abdf
+  checksum: 7d5f01cfa2d8cbaf87a326aba75635c77a598a6d5377ff92c717ae371e97c4f9ca4627d10a5fe64e765d7389cabbe082f4d806ac62b02672b8f6f3ec5f2f17e6
   languageName: node
   linkType: hard
 
@@ -4810,6 +4811,19 @@ __metadata:
     zod-to-json-schema:
       optional: true
   checksum: b1b9c848d78b7c1314ea5894f15a462f566cc8d9530477cd23ecc256fef4540a8008948635f994b3dfac96d34efdf63db44d48d8e73c4f29a87e9ce92822a37f
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:1.2.11":
+  version: 1.2.11
+  resolution: "@langchain/openai@npm:1.2.11"
+  dependencies:
+    js-tiktoken: ^1.0.12
+    openai: ^6.24.0
+    zod: ^3.25.76 || ^4
+  peerDependencies:
+    "@langchain/core": ^1.1.29
+  checksum: 7701935ba7fdbe721c5e6a3c3e8496a65f10b73a4d43a57aa69de966ba49167e454afab12a7e5d47f434006520a7ff0fa26a04f359d7862c8a04759e39e5516c
   languageName: node
   linkType: hard
 
@@ -12887,7 +12901,7 @@ __metadata:
     "@eslint/compat": ^2.0.2
     "@eslint/eslintrc": ^3.3.3
     "@eslint/js": ^9.39.2
-    "@langchain/community": 1.1.16
+    "@langchain/community": 1.1.21
     "@langchain/core": 1.1.26
     "@langchain/langgraph": ^1.1.5
     "@langchain/openai": 1.2.8
@@ -12946,7 +12960,7 @@ __metadata:
     "@xstate/react": ^3.0.0
     accept-language-parser: ^1.5.0
     ai: 5.0.52
-    axios: ^1.12.0
+    axios: 1.13.6
     babel-eslint: ^10.1.0
     babel-jest: ^29.7.0
     babel-loader: ^8.2.5
@@ -12963,7 +12977,7 @@ __metadata:
     cypress: 13.17.0
     dayjs: ^1.11.13
     domino: ^2.1.6
-    dompurify: ^3.0.5
+    dompurify: 3.3.3
     dotenv: ^16.4.5
     env-cmd: ^10.1.0
     eslint: ^9.39.2
@@ -13487,14 +13501,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.0":
-  version: 1.12.2
-  resolution: "axios@npm:1.12.2"
+"axios@npm:1.13.6":
+  version: 1.13.6
+  resolution: "axios@npm:1.13.6"
   dependencies:
-    follow-redirects: ^1.15.6
-    form-data: ^4.0.4
+    follow-redirects: ^1.15.11
+    form-data: ^4.0.5
     proxy-from-env: ^1.1.0
-  checksum: f0331594fe053a4bbff04104edb073973a3aabfad2e56b0aa18de82428aa63f6f0839ca3d837258ec739cb4528014121793b1649a21e5115ffb2bf8237eadca3
+  checksum: 72e94640e34aa9b591a47a9cc1798a1e18f179e15e39276514dd73f6d910981bdb2117c649da858bd72fc34d91db4f84318f88c8d306e395cd4ef5d6f142ab70
   languageName: node
   linkType: hard
 
@@ -16489,15 +16503,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.0.5":
-  version: 3.2.6
-  resolution: "dompurify@npm:3.2.6"
+"dompurify@npm:3.3.3":
+  version: 3.3.3
+  resolution: "dompurify@npm:3.3.3"
   dependencies:
     "@types/trusted-types": ^2.0.7
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 4d002997dbae13f6bdf0e6be014384129c83b1ee8cd3fca9d96f95b9142d1e96256924466a2fc25e7ffb6ede54290e5c4a7d1bd10f9b14cfa07928dd799c3b42
+  checksum: 2ba5b40129259836f1e6c98e99d16608d34c7f4ad6ba457ac8c932f0e2c8e0e7c27561d25fcabf97e695eec57fd5eef1c065b324a542e5125631d4f768af2736
   languageName: node
   linkType: hard
 
@@ -18534,6 +18548,19 @@ __metadata:
     hasown: ^2.0.2
     mime-types: ^2.1.12
   checksum: 9b7788836df9fa5a6999e0c02515b001946b2a868cfe53f026c69e2c537a2ff9fbfb8e9d2b678744628f3dc7a2d6e14e4e45dfaf68aa6239727f0bdb8ce0abf2
+  languageName: node
+  linkType: hard
+
+"form-data@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "form-data@npm:4.0.5"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.8
+    es-set-tostringtag: ^2.1.0
+    hasown: ^2.0.2
+    mime-types: ^2.1.12
+  checksum: af8328413c16d0cded5fccc975a44d227c5120fd46a9e81de8acf619d43ed838414cc6d7792195b30b248f76a65246949a129a4dadd148721948f90cd6d4fb69
   languageName: node
   linkType: hard
 
@@ -24359,6 +24386,23 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: f4781328eb719c118b8b4190f589356b6cb13b7f180b3069a8a0c6171daa78f9992b3d336acffeeeed8d433ba53cfd2348eeace316abc2931352ade83c3a075b
+  languageName: node
+  linkType: hard
+
+"openai@npm:^6.24.0":
+  version: 6.32.0
+  resolution: "openai@npm:6.32.0"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.25 || ^4.0
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 9a5de87df2a9a27d68dfcb84f075b4fded1c349963772aa95c2da66a24e9f658473dc2035e4caae0f757f3a90c0624917f083e4a251435a84eacfc8be2777b71
   languageName: node
   linkType: hard
 
