@@ -10,9 +10,8 @@ export class FileManagementService {
 
     constructor(private configService: ConfigService) {
         this.bucket = this.configService.get<string>("aws.bucket");
-        const s3Config = {
-            endpoint: this.configService.get<string>("aws.endpoint"),
-            forcePathStyle: true,
+        const endpoint = this.configService.get<string>("aws.endpoint");
+        const s3Config: Record<string, any> = {
             region: this.configService.get<string>("aws.region"),
             credentials: {
                 accessKeyId: this.configService.get<string>("aws.accessKeyId"),
@@ -21,6 +20,11 @@ export class FileManagementService {
                 ),
             },
         };
+
+        if (endpoint) {
+            s3Config.endpoint = endpoint;
+            s3Config.forcePathStyle = true;
+        }
 
         this.s3 = new S3Client(s3Config);
     }
