@@ -1,5 +1,6 @@
 {
     "eventCreateSuccess": "Evento criado com sucesso",
+    "eventUpdatedSuccess": "Evento atualizado com sucesso",
     "totalItems": "{{total}} no total",
     "openEvent": "Veja evento",
     "fetchError": "Erro ao carregar eventos. Por favor, tente novamente mais tarde.",
@@ -33,5 +34,6 @@
     "verificationRequestsStats": "Denúncias",
     "claimsStats": "Discursos",
     "claimToggleOption": "Afirmações",
-    "latestRelatedDenuncias": "Últimas denúncias relacionadas"
+    "latestRelatedDenuncias": "Últimas denúncias relacionadas",
+    "titleEditEvent": "Edição de evento"
 }

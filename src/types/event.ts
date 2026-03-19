@@ -9,6 +9,7 @@ import { NextRouter } from "next/router";
 export type EventOrder = "asc" | "desc";
 export type EventStatus = "happening" | "upcoming" | "finalized" | "all";
 export interface EventPayload {
+    id?: string;
     nameSpace: NameSpaceEnum,
     badge: string;
     data_hash?: string;

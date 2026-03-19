@@ -9,7 +9,7 @@ const ImpactAreaSelect = ({
   isDisabled,
   dataCy,
 }: IImpactAreaSelect) => {
-  const [value, setValue] = useState<ManualTopic | null>(null);
+  const [value, setValue] = useState<ManualTopic | null>((defaultValue as unknown as ManualTopic)|| null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

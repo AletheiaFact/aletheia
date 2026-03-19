@@ -26,8 +26,29 @@ const EventBox = styled(Box)`
         align-items: flex-start;
     }
 
+    .eventTopBar{
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+        width: 100%;
+    }
+
+    .edit-icon {
+       color: ${colors.white};
+       border-radius: 100%;
+       padding: clamp(6px, 1vw, 10px);
+       font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+       background-color: transparent;
+       transition: background-color 0.2s ease-in-out;
+       cursor: pointer;
+    }
+
+    .edit-icon:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
     .eventSectionInfo{
-        padding: 32px 24px;
+        padding: clamp(20px, 2.5vw, 32px) clamp(16px, 2vw, 24px);
         gap: 10px;
         position: relative;
         background-color: ${colors.whiteLow};
@@ -50,7 +71,7 @@ const EventBox = styled(Box)`
     .eventSectionHeader{
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: clamp(8px, 1.5vw, 12px);
     }
 
     .bottomGradient {
@@ -72,7 +93,7 @@ const EventBox = styled(Box)`
     }
 
     .eventChipText{
-        font-size: 14px;
+        font-size: clamp(12px, 1vw, 14px);
         color: ${colors.white};
         font-weight: 700;
         padding: 8px 4px;
@@ -81,15 +102,12 @@ const EventBox = styled(Box)`
     .eventLocationText {
         color: ${colors.quartiary};
         margin-top: 4px;
+        font-size: clamp(12px, 0.9vw, 16px);
     }
 
     .eventChip {
         background-color: ${colors.lightSecondary};
         box-shadow: 0px 2px 4px ${colors.lightPrimary};
-    }
-
-    .eventChip:hover {
-      box-shadow: 0px 3px 8px ${colors.lightPrimary};
     }
 
     .title {
@@ -107,16 +125,8 @@ const EventBox = styled(Box)`
     }
 
     @media ${queries.sm} {
-        .eventMainContent {
-            padding: 44px 0 50px;
-        }
-
         .eventSection {
-            gap: 12px;
-        }
-
-        .eventHeaderContent {
-            padding: 0 20px;
+            gap: clamp(8px, 2vw, 12px);
         }
     }
 `;

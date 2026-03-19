@@ -1,5 +1,6 @@
 {
     "eventCreateSuccess": "Event created successfully",
+    "eventUpdatedSuccess": "Event updated successfully",
     "totalItems": "{{total}} in total",
     "openEvent": "See event",
     "fetchError": "Error fetching events. Please try again later.",
@@ -33,5 +34,6 @@
     "verificationRequestsStats": "Verification requests",
     "claimsStats": "Claims",
     "claimToggleOption": "Repository",
-    "latestRelatedDenuncias": "Latest related reports"
+    "latestRelatedDenuncias": "Latest related reports",
+    "titleEditEvent": "Event edition"
 }

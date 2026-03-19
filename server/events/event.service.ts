@@ -21,7 +21,7 @@ import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimService } from "../claim/claim.service";
-import type  { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 
 @Injectable()
@@ -104,10 +104,16 @@ export class EventsService {
 
             const { mainTopic, filterTopics, ...otherFields } = updateEventDto;
 
-            const updateData: Partial<Event> = { ...otherFields };
+            const slug = slugify(updateEventDto.name, {
+                lower: true,
+                strict: true,
+                trim: true
+            });
+
+            const updateData: Partial<Event> = { ...otherFields, slug: slug };
 
             if (mainTopic) {
-                updateData.mainTopic = await this.topicService.findOrCreateTopic(mainTopic);
+                updateData.mainTopic = await this.topicService.findOrCreateTopic({...mainTopic, name: mainTopic.label});
             }
 
             if (filterTopics !== undefined) {

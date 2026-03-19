@@ -13,18 +13,11 @@ type EventViewProps = {
 
 const EventView = ({ event, nameSpace }: EventViewProps) => {
     const { state, actions } = useEventsHook()
-    const { badge, location, name, startDate, description, mainTopic, filterTopics } = event
+    const { mainTopic, filterTopics } = event
 
     return (
         <EventBox>
-            <EventHeaderContent
-                badge={badge}
-                location={location}
-                startDate={startDate}
-                title={name}
-                description={description}
-            />
-
+            <EventHeaderContent currentEvent={event} state={state} actions={actions} />
 
             {state.viewMode === "left" && (
                 <EventReviewsList

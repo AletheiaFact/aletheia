@@ -54,7 +54,14 @@ const updateEvent = (eventId: string, updatedEvent: Partial<EventPayload>, t?: T
 
     return request
         .patch(`/${eventId}`, updatedEvent)
-        .then((response) => response.data)
+        .then((response) => {
+            MessageManager.showMessage(
+                "success",
+                t("events:eventUpdatedSuccess")
+            );
+
+            return response.data
+        })
         .catch((err) => {
             MessageManager.showMessage(
                 "error",

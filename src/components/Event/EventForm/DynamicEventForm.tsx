@@ -30,6 +30,17 @@ const DynamicEventForm = ({
         formState: { errors },
     } = useForm();
 
+    const formattedEvent = {
+        ...data,
+        mainTopic: {
+            label: data.mainTopic.name,
+            value: data.mainTopic.wikidataId,
+            aliases: data.mainTopic.aliases || [],
+            matchedAlias: null,
+            displayLabel: data.mainTopic.name,
+        }
+    };
+
     return (
         <form
             style={{ width: "100%" }}
@@ -40,7 +51,7 @@ const DynamicEventForm = ({
                 control={control}
                 errors={errors}
                 disabledFuture={false}
-                machineValues={data}
+                machineValues={formattedEvent}
             />
 
             <SharedFormFooter
