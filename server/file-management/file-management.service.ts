@@ -3,30 +3,42 @@ import { ConfigService } from "@nestjs/config";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 const md5 = require("md5");
 
+interface S3Config {
+    endpoint: string;
+    forcePathStyle: boolean;
+    region: string;
+    /**
+     * Optional credentials to use when connecting to S3.
+     * Useful for connecting to a local S3 emulator.
+     * If not provided, the default credentials provider will be used.
+     */
+    credentials?: {
+        accessKeyId: string;
+        secretAccessKey: string;
+    };
+}
+
 @Injectable()
 export class FileManagementService {
     private readonly bucket;
-    private s3: S3Client;
+    private s3Client: S3Client;
 
     constructor(private configService: ConfigService) {
-        this.bucket = this.configService.get<string>("aws.bucket");
-        const endpoint = this.configService.get<string>("aws.endpoint");
-        const s3Config: Record<string, any> = {
-            region: this.configService.get<string>("aws.region"),
+        this.bucket = this.configService.getOrThrow<string>("aws.bucket");
+        const s3Config: S3Config = {
+            endpoint: this.configService.getOrThrow<string>("aws.endpoint"),
+            forcePathStyle: true,
+            region: this.configService.getOrThrow<string>("aws.region"),
             credentials: {
-                accessKeyId: this.configService.get<string>("aws.accessKeyId"),
-                secretAccessKey: this.configService.get<string>(
+                accessKeyId:
+                    this.configService.getOrThrow<string>("aws.accessKeyId"),
+                secretAccessKey: this.configService.getOrThrow<string>(
                     "aws.secretAccessKey"
                 ),
             },
         };
 
-        if (endpoint) {
-            s3Config.endpoint = endpoint;
-            s3Config.forcePathStyle = true;
-        }
-
-        this.s3 = new S3Client(s3Config);
+        this.s3Client = new S3Client(s3Config);
     }
 
     /**
@@ -50,7 +62,7 @@ export class FileManagementService {
 
         const imageDataHash = md5(file.buffer);
 
-        await this.s3.send(
+        await this.s3Client.send(
             new PutObjectCommand({
                 Bucket: bucket || this.bucket,
                 Key: fileName,
@@ -62,16 +74,17 @@ export class FileManagementService {
             })
         );
 
-        const Location = `${this.configService.get<string>("aws.endpoint")}/${
-            bucket || this.bucket
-        }/${fileName}`;
-
-        const Key = fileName;
+        const Location = `${this.configService.getOrThrow<string>(
+            "aws.endpoint"
+        )}/${bucket || this.bucket}/${fileName}`;
 
         const result = {
             FileURL: Location,
-            Key,
-            Extension: Key.substring(Key.lastIndexOf(".") + 1, Key.length),
+            fileName,
+            Extension: fileName.substring(
+                fileName.lastIndexOf(".") + 1,
+                fileName.length
+            ),
             DataHash: imageDataHash,
         };
         return result;
