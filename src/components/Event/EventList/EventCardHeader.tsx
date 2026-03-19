@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import colors from "../../../styles/colors";
 
 interface EventCardHeaderProps {
     badge: string;
@@ -9,27 +8,11 @@ interface EventCardHeaderProps {
 
 const EventCardHeader = ({ badge, location }: EventCardHeaderProps) => {
     return (
-        <Grid item xs={12} display="flex" alignItems="center" gap={1} flexWrap="wrap">
-            <Typography
-                variant="h2"
-                style={{
-                    background: colors.lightTertiary,
-                    color: colors.lightPrimary,
-                    fontSize: 16,
-                    fontWeight: 800,
-                    padding: "4px 12px",
-                    borderRadius: 4,
-                }}
-            >
+        <Grid item xs={12} className="EventCardHeader">
+            <Typography variant="h2" className="EventCardBadge">
                 {badge}
             </Typography>
-            <Typography
-                variant="h2"
-                style={{
-                    color: colors.secondary,
-                    fontSize: 16,
-                }}
-            >
+            <Typography variant="body1" className="EventCardBody1">
                 {location}
             </Typography>
         </Grid>
