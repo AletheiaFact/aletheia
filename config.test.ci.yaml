@@ -33,6 +33,7 @@ services:
         accessKeyId: { env(AWS_ACCESS_KEY_ID) }
         secretAccessKey: { env(AWS_SECRET_ACCESS_KEY) }
         region: { env(AWS_REGION) }
+        endpoint: { env(AWS_ENDPOINT) }
       openai:
         api_key: { env(OPENAI_API_KEY) }
       zenvia:
