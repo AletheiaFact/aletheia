@@ -8,7 +8,7 @@ import {
     NotFoundException
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, isValidObjectId, Model } from "mongoose";
+import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
 import { EventDocument, Event } from "./schema/event.schema";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
@@ -20,9 +20,10 @@ import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { ClaimService } from "../claim/claim.service";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { ImageService } from "../claim/types/image/image.service";
 
 @Injectable()
 export class EventsService {
@@ -31,7 +32,8 @@ export class EventsService {
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
-        private readonly claimService: ClaimService,
+        private readonly sentenceService: SentenceService,
+        private readonly imageService: ImageService,
         private readonly claimReviewService: ClaimReviewService,
         private readonly verificationRequestService: VerificationRequestService,
         private readonly topicService: TopicService,
@@ -113,7 +115,7 @@ export class EventsService {
             const updateData: Partial<Event> = { ...otherFields, slug: slug };
 
             if (mainTopic) {
-                updateData.mainTopic = await this.topicService.findOrCreateTopic({...mainTopic, name: mainTopic.label});
+                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: mainTopic.label });
             }
 
             if (filterTopics !== undefined) {
@@ -197,10 +199,10 @@ export class EventsService {
      */
     private async getBatchEventMetrics(events: EventDocument[]): Promise<Record<string, EventMetricsResponse>> {
         const metricsPromises = events.map(async (event) => {
-            const wikidataId = event.mainTopic?.wikidataId || "";
+            const topicId = event.mainTopic?._id || "";
             const topicName = event.mainTopic?.name || "";
 
-            const metrics = await this.getEventMetrics(wikidataId, topicName);
+            const metrics = await this.getEventMetrics(topicId, topicName);
 
             return { eventDataHash: event.data_hash.toString(), metrics };
         });
@@ -214,12 +216,13 @@ export class EventsService {
     }
 
     /**
-     * Get metrics for an event by its main topic id.
-     * @param eventMainTopicId - The Wikidata identifier (or main topic ID) for the event.
-     * @returns Event Metrics
+     * Get metrics for an event by its main topic identifier and name.
+     * @param topicId - The unique identifier (main topic ID) for the event.
+     * @param topicName - The name of the topic associated with the event.
+     * @returns A promise that resolves to the event metrics data.
     */
-    async getEventMetrics(eventMainTopicWikidataId: string, topicName: string): Promise<EventMetricsResponse> {
-        this.logger.debug(`Getting event metrics for topic ID: ${eventMainTopicWikidataId}`);
+    async getEventMetrics(topicId: string, topicName: string): Promise<EventMetricsResponse> {
+        this.logger.debug(`Getting event metrics for topic ID: ${topicId}`);
 
         try {
             const [verificationRequestStats, claimReviewsStats, claimStats] = await Promise.all([
@@ -231,10 +234,13 @@ export class EventsService {
                         isDeleted: false,
                         nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
                     },
-                    mainTopicWikidataID: eventMainTopicWikidataId
+                    topicId: topicId
                 }),
 
-                this.claimService.countBySentenceTopics(eventMainTopicWikidataId)
+                Promise.all([
+                    this.sentenceService.countUniqueSentenceClaimsByTopic(topicId),
+                    this.imageService.countUniqueImageClaimsByTopic(topicId)
+                ]).then(([countSentences, countImages]) => countSentences + countImages)
             ]);
 
             return {
@@ -245,7 +251,7 @@ export class EventsService {
 
         } catch (error) {
             const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to get event metrics for topic ${eventMainTopicWikidataId}`, stackTrace);
+            this.logger.error(`Failed to get event metrics for topic ${topicId}`, stackTrace);
             return {
                 verificationRequests: 0,
                 claims: 0,

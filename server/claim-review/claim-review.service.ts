@@ -48,7 +48,7 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(params: IlistAll): Promise<ClaimReviewList> {
-        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicWikidataID);
+        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicId);
 
         const [total, data] = await Promise.all([
             this.countReviews(basePipeline),
@@ -58,22 +58,22 @@ export class ClaimReviewService {
         return { data, total };
     }
 
-    async count(params: { query: IListAllQuery, mainTopicWikidataID?: string }): Promise<number> {
-        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicWikidataID);
+    async count(params: { query: IListAllQuery, topicId?: string }): Promise<number> {
+        const basePipeline = await this.createSharedPipeline(params.query, params.topicId);
 
         return this.countReviews(basePipeline);
     }
 
-    private async createSharedPipeline(query: IListAllQuery, mainTopicWikidataID?: string): Promise<any[]> {
+    private async createSharedPipeline(query: IListAllQuery, topicId?: string): Promise<any[]> {
         let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
         };
 
-        if (mainTopicWikidataID) {
+        if (topicId) {
             const [sentenceHashes, imageHashes] = await Promise.all([
-                this.sentenceService.getHashesByTopic(mainTopicWikidataID),
-                this.imageService.getHashesByTopic(mainTopicWikidataID)
+                this.sentenceService.getHashesByTopic(topicId),
+                this.imageService.getHashesByTopic(topicId)
             ]);
 
             const validHashes = [...sentenceHashes, ...imageHashes];

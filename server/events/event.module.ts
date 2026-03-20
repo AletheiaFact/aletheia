@@ -9,7 +9,8 @@ import { VerificationRequestModule } from "../verification-request/verification-
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { TopicModule } from "../topic/topic.module";
 import { AbilityModule } from "../auth/ability/ability.module";
-import { ClaimModule } from "../claim/claim.module";
+import { SentenceModule } from "../claim/types/sentence/sentence.module";
+import { ImageModule } from "../claim/types/image/image.module";
 
 const EventModel = MongooseModule.forFeature([
     {
@@ -27,7 +28,8 @@ const EventModel = MongooseModule.forFeature([
         AbilityModule,
         VerificationRequestModule,
         ClaimReviewModule,
-        ClaimModule,
+        SentenceModule,
+        ImageModule,
         TopicModule
     ],
     controllers: [EventsController],

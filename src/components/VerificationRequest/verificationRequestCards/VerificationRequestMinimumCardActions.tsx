@@ -3,13 +3,13 @@ import { Box, Grid, Link, Typography } from "@mui/material";
 import TagsList from "../../topics/TagsList";
 import AletheiaButton, { ButtonType } from "../../Button";
 import AletheiaAvatar from "../../AletheiaAvatar";
-import { ManualTopic } from "../../../types/Topic";
+import { Topic } from "../../../types/Topic";
 import { PersonalityWithWikidata } from "../../../types/PersonalityWithWikidata";
 
 interface VerificationRequestMinimumCardActionsProps {
     verificationRequestId: string;
     dataHash: string;
-    topics: ManualTopic[];
+    topics: Topic[];
     personalities: PersonalityWithWikidata[];
     t: (key: string) => string;
 }
@@ -22,7 +22,7 @@ const VerificationRequestMinimumCardActions = ({
     t
 }: VerificationRequestMinimumCardActionsProps) => {
     const tags = topics?.map((topic) => ({
-        name: topic.aliases?.[0] || topic.label
+        name: topic.aliases?.[0] || topic.name
     })) || [];
 
     return (

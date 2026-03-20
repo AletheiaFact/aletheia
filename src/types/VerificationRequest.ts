@@ -46,7 +46,7 @@ interface VerificationRequest {
   reportType?: string;
   impactArea?: Topic;
   status: string;
-  topics: ManualTopic[];
+  topics: Topic[];
   identifiedData: Personality[];
 };
 interface FiltersState {

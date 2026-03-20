@@ -49,6 +49,17 @@ const EventDrawer = ({
         }
     };
 
+    const formattedEvent = {
+        ...currentEvent,
+        mainTopic: {
+            label: currentEvent.mainTopic.name,
+            value: currentEvent.mainTopic.wikidataId,
+            aliases: currentEvent.mainTopic.aliases || [],
+            matchedAlias: null,
+            displayLabel: currentEvent.mainTopic.name,
+        }
+    };
+
     return (
         <LargeDrawer open={open} onClose={onClose}>
             <Grid container style={{ padding: "30px" }}>
@@ -57,7 +68,7 @@ const EventDrawer = ({
                 </Typography>
                 <Divider />
                 <DynamicEventForm
-                    data={currentEvent}
+                    data={formattedEvent}
                     onSubmit={onSubmit}
                     isLoading={isLoading}
                     setRecaptchaString={setRecaptchaString}

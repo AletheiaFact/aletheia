@@ -38,5 +38,5 @@ export class GetClaimReviewsDTO {
     @IsOptional()
     @IsString()
     @ApiProperty()
-    mainTopicWikidataID: string;
+    mainTopicId: string;
 }

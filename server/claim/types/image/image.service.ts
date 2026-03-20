@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
     TargetModel,
@@ -97,35 +97,52 @@ export class ImageService {
 
     /**
      * Searches for image data hashes associated with a specific topic.
-     * @param topicWikidataId - The topic identifier.
+     * @param topicId - The topic identifier.
      * @returns Array of image data hashes.
      */
-    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
-        this.logger.debug(`Fetching image hashes for topic: ${topicWikidataId}`);
-
-        if (typeof topicWikidataId !== "string") {
-            throw new BadRequestException("Invalid topic identifier format");
-        }
-
-        const validatedTopicId = topicWikidataId.trim();
-
+    async getHashesByTopic(topicId: string): Promise<string[]> {
+        this.logger.debug(`Fetching image hashes for topic: ${topicId}`);
         try {
             const images = await this.ImageModel.find(
-                { "topics.value": { $eq: validatedTopicId } },
+                { "topics.id": { $eq: new Types.ObjectId(topicId) } },
                 { data_hash: 1 }
             ).lean();
 
             this.logger.debug(
-                `Successfully retrieved ${images.length} image hashes for topic: ${validatedTopicId}`
+                `Successfully retrieved ${images.length} image hashes for topic: ${topicId}`
             );
 
             return images.map(image => image.data_hash);
         } catch (error) {
             this.logger.error(
-                `Failed to fetch image hashes for topic: ${validatedTopicId}`,
+                `Failed to fetch image hashes for topic: ${topicId}`,
                 error.stack
             );
             throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
+        }
+    }
+
+    /**
+     * Counts the number of unique claims associated with a specific topic
+     * by extracting distinct claimRevisionIds from Image records.
+     * * @param topicId - The unique identifier of the topic.
+     * @returns The total count of unique claims derived from images.
+     */
+    async countUniqueImageClaimsByTopic(topicId: string): Promise<number> {
+        this.logger.debug(`Counting unique image claims for topic: ${topicId}`);
+
+        try {
+            const uniqueClaimIds = await this.ImageModel.distinct(
+                "claimRevisionId",
+                { "topics.id": new Types.ObjectId(topicId) }
+            );
+
+            this.logger.debug(`Successfully found ${uniqueClaimIds.length} unique image claims for topic: ${topicId}`);
+
+            return uniqueClaimIds.length;
+        } catch (error) {
+            this.logger.error(`Failed to count unique image claims for topic: ${topicId}`, error.stack);
+            throw new InternalServerErrorException(`An error occurred while counting image claims for the requested topic.`);
         }
     }
 }

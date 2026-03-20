@@ -5,12 +5,11 @@ import {
     Logger,
     NotFoundException,
 } from "@nestjs/common";
-import { Model, PipelineStage } from "mongoose";
+import { Model, PipelineStage, Types } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
-import { TopicRelatedSentencesResponse } from "./types/sentence.interfaces";
 interface FindAllOptionsFilters {
     searchText: string;
     pageSize: number;
@@ -201,81 +200,47 @@ export class SentenceService {
     }
 
     /**
-     * Fetches sentences based on topic values and enriches them with review classification.
-     * Uses an aggregation pipeline for cross-collection lookup.
-     * @param query - Topic wikidataId array to filter sentences.
-     * @returns A list of sentences with their respective classification.
-    */
-    async getSentencesByTopics(query: string[]): Promise<TopicRelatedSentencesResponse[]> {
+     * Counts the number of unique claims associated with a specific topic
+     * by extracting distinct claimRevisionIds from Sentence records.
+     * * @param topicId - The unique identifier of the topic.
+     * @returns The total count of unique claims derived from sentences.
+     */
+    async countUniqueSentenceClaimsByTopic(topicId: string): Promise<number> {
+        this.logger.debug(`Counting unique sentence claims for topic: ${topicId}`);
+
         try {
-            this.logger.debug(`Fetching sentences for topics: ${query.join(', ')}`);
+            const uniqueClaimIds = await this.SentenceModel.distinct(
+                "claimRevisionId",
+                { "topics.id": new Types.ObjectId(topicId) }
+            );
 
-            const aggregation: any[] = [
-                { $match: { "topics.value": { $in: query } } },
-                {
-                    $lookup: {
-                        from: "reviewtasks",
-                        let: { sentenceDataHash: "$data_hash" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $eq: [
-                                            "$machine.context.reviewData.data_hash",
-                                            "$$sentenceDataHash",
-                                        ],
-                                    },
-                                },
-                            },
-                            {
-                                $project: {
-                                    _id: 0,
-                                    classification: "$machine.context.reviewData.classification",
-                                },
-                            },
-                        ],
-                        as: "reviewInfo",
-                    },
-                },
-                {
-                    $addFields: {
-                        classification: {
-                            $arrayElemAt: ["$reviewInfo.classification", 0],
-                        },
-                    },
-                },
-                { $project: { reviewInfo: 0 } },
-            ];
+            this.logger.debug(`Successfully found ${uniqueClaimIds.length} unique sentence claims for topic: ${topicId}`);
 
-            const result = await this.SentenceModel.aggregate(aggregation).exec();
-
-            this.logger.log(`Found ${result.length} sentences for the requested topics.`);
-
-            return result;
+            return uniqueClaimIds.length;
         } catch (error) {
-            this.logger.error(`Error in getSentencesByTopics: ${error.message}`, error.stack);
-            throw new InternalServerErrorException("Failed to aggregate sentences with review data.");
+            this.logger.error(`Failed to count unique sentence claims for topic: ${topicId}`, error.stack);
+            throw new InternalServerErrorException(`An error occurred while counting sentence claims for the requested topic.`);
         }
     }
 
     /**
      * Searches for sentence data hashes associated with a specific topic.
-     * @param topicWikidataId - The topic identifier.
+     * @param topicId - The topic identifier.
      * @returns Array of sentence data hashes.
      */
-    async getHashesByTopic(topicWikidataId: string): Promise<string[]> {
-        this.logger.debug(`Fetching sentence hashes for topic: ${topicWikidataId}`);
+    async getHashesByTopic(topicId: string): Promise<string[]> {
+        this.logger.debug(`Fetching sentence hashes for topic: ${topicId}`);
         try {
             const sentences = await this.SentenceModel.find(
-                { "topics.value": { $eq: topicWikidataId } },
+                { "topics.id": { $eq: new Types.ObjectId(topicId) } },
                 { data_hash: 1 }
             ).lean();
 
-            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicWikidataId}`);
+            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicId}`);
 
             return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicWikidataId}`, error.stack);
+            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, error.stack);
             throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
         }
     }

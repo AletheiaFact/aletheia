@@ -95,12 +95,12 @@ export class TopicService {
         }: {
             contentModel?: ContentModelEnum;
             topics:
-                | { label: string; value: string; aliases?: string[] }[]
-                | string[]
-                | (
-                      | string
-                      | { label: string; value: string; aliases?: string[] }
-                  )[];
+            | { label: string; value: string; aliases?: string[] }[]
+            | string[]
+            | (
+                | string
+                | { label: string; value: string; aliases?: string[] }
+            )[];
             data_hash?: string;
         },
         language: string = "pt"
@@ -117,10 +117,10 @@ export class TopicService {
                     if (findedTopic) {
                         return findedTopic?.wikidataId
                             ? {
-                                  id: findedTopic._id,
-                                  label: findedTopic?.name,
-                                  value: findedTopic?.wikidataId,
-                              }
+                                id: findedTopic._id,
+                                label: findedTopic?.name,
+                                value: findedTopic?.wikidataId,
+                            }
                             : findedTopic.slug;
                     } else {
                         const newTopic = {
@@ -232,7 +232,7 @@ export class TopicService {
                 name: topicData.name,
                 slug,
                 language: topicData.language || "pt",
-                wikidataId: topicData.wikidataId || undefined,
+                wikidataId: topicData.wikidataId || topicData.value || undefined,
             };
 
             const createdTopic = await new this.TopicModel(newTopic).save();

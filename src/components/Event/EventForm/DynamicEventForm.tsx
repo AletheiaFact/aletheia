@@ -4,9 +4,14 @@ import DynamicForm from "../../Form/DynamicForm";
 import SharedFormFooter from "../../SharedFormFooter";
 import { EventPayload } from "../../../types/event";
 import lifecycleEventForm from "./CreateEventForm";
+import { ManualTopic } from "../../../types/Topic";
+
+type EventBeingEdited = Omit<EventPayload, "mainTopic"> & {
+    mainTopic: ManualTopic;
+};
 
 interface IDynamicEventForm {
-    data?: EventPayload;
+    data?: EventBeingEdited;
     onSubmit: (value: EventPayload) => void;
     isLoading: boolean;
     setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
@@ -30,17 +35,6 @@ const DynamicEventForm = ({
         formState: { errors },
     } = useForm();
 
-    const formattedEvent = {
-        ...data,
-        mainTopic: {
-            label: data.mainTopic.name,
-            value: data.mainTopic.wikidataId,
-            aliases: data.mainTopic.aliases || [],
-            matchedAlias: null,
-            displayLabel: data.mainTopic.name,
-        }
-    };
-
     return (
         <form
             style={{ width: "100%" }}
@@ -51,7 +45,7 @@ const DynamicEventForm = ({
                 control={control}
                 errors={errors}
                 disabledFuture={false}
-                machineValues={formattedEvent}
+                machineValues={data}
             />
 
             <SharedFormFooter

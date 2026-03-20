@@ -36,7 +36,7 @@ const EventReviewsList = ({
                 ...reviewQuery,
                 isHidden: false,
                 nameSpace: nameSpace,
-                mainTopicWikidataID: mainTopic.wikidataId,
+                mainTopicId: mainTopic._id,
             });
 
             if (reviewQuery.page === 1) {

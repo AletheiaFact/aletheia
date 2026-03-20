@@ -40,7 +40,7 @@ export class ClaimReviewController {
             isHidden = false,
             latest = false,
             nameSpace = NameSpaceEnum.Main,
-            mainTopicWikidataID
+            mainTopicId
         } = getClaimReviewsDto;
 
         const reviews = await this.claimReviewService.listAll({
@@ -53,7 +53,7 @@ export class ClaimReviewController {
                 isDeleted: false,
             },
             latest,
-            mainTopicWikidataID
+            mainTopicId
         });
 
         return {

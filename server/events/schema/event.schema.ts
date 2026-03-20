@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Schema as MongooseSchema } from "mongoose";
-import { Topic } from "../../topic/schemas/topic.schema";
+import type { TopicDocument } from "../../topic/schemas/topic.schema";
 
 export type EventDocument = Event & Document;
 
@@ -35,13 +35,13 @@ export class Event {
         required: true,
         ref: "Topic",
     })
-    mainTopic: Topic;
+    mainTopic: TopicDocument;
 
     @Prop({
         type: [{ type: MongooseSchema.Types.ObjectId, ref: "Topic" }],
         required: false,
     })
-    filterTopics: Topic[];
+    filterTopics: TopicDocument[];
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

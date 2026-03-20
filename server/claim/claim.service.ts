@@ -23,16 +23,15 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
-import { SentenceService } from "./types/sentence/sentence.service";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -52,7 +51,6 @@ export class ClaimService {
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
         private groupService: GroupService,
-        private sentenceService: SentenceService
     ) {}
 
     async listAll(page, pageSize, order, query) {
@@ -192,8 +190,7 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${
-                user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
             }`
         );
         try {
@@ -342,43 +339,6 @@ s    */
             this.req
         );
         return this._getClaim(queryOptions, revisionId, true, population);
-    }
-
-    /**
-     * Retrieves the total count of active (non-deleted, non-hidden, current-namespace) claims associated
-     * with a specific wikidataId of the sentence topic. It achieves this by first resolving
-     * the topic into data hashes and then counting the matching claims in the database.
-     * * @param sentenceTopicWikidataId - The indicator of the main topic of the sentence.
-     * @returns A promise that resolves to the total count of matching claims.
-     * @throws {Error} Propagates any database or service-level errors encountered.
-     */
-    async countBySentenceTopics(sentenceTopicWikidataId: string): Promise<number> {
-        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
-
-        try {
-            const sentenceHashes = await this.sentenceService.getHashesByTopic(sentenceTopicWikidataId);
-
-            if (!sentenceHashes || sentenceHashes.length === 0) {
-                this.logger.debug(`No sentence hashes found for topic: ${sentenceTopicWikidataId}. Returning 0.`);
-                return 0;
-            }
-
-            const count = await this.ClaimModel.countDocuments({
-                data_hash: { $in: sentenceHashes },
-                isDeleted: false,
-                isHidden: false,
-                nameSpace
-            });
-
-            return count;
-        } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(
-                `Failed to count claims for sentence topic ${sentenceTopicWikidataId}`,
-                stackTrace
-            );
-            throw error;
-        }
     }
 
     private async _getClaim(
