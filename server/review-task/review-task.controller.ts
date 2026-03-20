@@ -88,7 +88,7 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Post("api/reviewtask")
     @Header("Cache-Control", "no-cache")
-    async create(@Body() createReviewTask: CreateReviewTaskDTO) {
+    async create(@Body() createReviewTask: CreateReviewTaskDTO): Promise<any> {
         if (createReviewTask.recaptcha) {
             const validateCaptcha = await this.captchaService.validate(
                 createReviewTask.recaptcha
