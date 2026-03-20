@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import Button from "../../Button";
 import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@mui/icons-material";
@@ -31,16 +31,36 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
             inputSize={40}
             extra={
                 <Grid item xs={1} style={{ alignContent: "center" }}>
-                    <Button
-                        style={{ height: "40px", margin: "0 auto" }}
-                        onClick={handleDelete}
-                        disabled={editorConfiguration?.readonly}
-                        data-cy="testClaimReviewquestionsRemove1"
-                        contentEditable={false}
-                        suppressContentEditableWarning
+                    <Tooltip
+                        title={
+                            editorConfiguration?.readonly
+                                ? t("claimReviewForm:viewOnlyTooltip")
+                                : ""
+                        }
+                        arrow
                     >
-                        <DeleteOutlined fontSize="small" />
-                    </Button>
+                        <span>
+                            <Button
+                                style={{
+                                    height: "40px",
+                                    margin: "0 auto",
+                                    opacity: editorConfiguration?.readonly
+                                        ? 0.4
+                                        : 1,
+                                    cursor: editorConfiguration?.readonly
+                                        ? "not-allowed"
+                                        : "pointer",
+                                }}
+                                onClick={handleDelete}
+                                disabled={editorConfiguration?.readonly}
+                                data-cy="testClaimReviewquestionsRemove1"
+                                contentEditable={false}
+                                suppressContentEditableWarning
+                            >
+                                <DeleteOutlined fontSize="small" />
+                            </Button>
+                        </span>
+                    </Tooltip>
                 </Grid>
             }
         />

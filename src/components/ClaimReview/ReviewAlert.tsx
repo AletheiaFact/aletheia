@@ -7,16 +7,11 @@ import {
     reviewingSelector,
     reviewNotStartedSelector,
     crossCheckingSelector,
-    reviewDataSelector,
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useAtom } from "jotai";
-import {
-    currentUserId,
-    currentUserRole,
-    isUserLoggedIn,
-} from "../../atoms/currentUser";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 import { TargetModel } from "../../types/enums";
 import { isAdmin } from "../../utils/GetUserPermission";
 
@@ -24,14 +19,12 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
-    const [userId] = useAtom(currentUserId);
 
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewNotStarted = useSelector(
         machineService,
         reviewNotStartedSelector
     );
-    const reviewData = useSelector(machineService, reviewDataSelector);
     const userIsAdmin = isAdmin(role);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(
@@ -39,9 +32,6 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         addCommentCrossCheckingSelector
     );
     const isReviewing = useSelector(machineService, reviewingSelector);
-    const userIsReviewer = reviewData.reviewerId === userId;
-    const userIsAssignee = reviewData.usersId.includes(userId);
-    const userHasPermission = userIsReviewer || userIsAssignee;
     const [hide, setHide] = useState(isHidden);
 
     useEffect(() => {
@@ -78,25 +68,24 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
 
     const [alert, setAlert] = useState(alertTypes.noAlert);
     const getAlert = () => {
-        if (!isLoggedIn) {
+        // Show status messages only to non-logged-in users
+        if (isLoggedIn) {
+            // Only show hidden report warning to logged-in non-admins
+            if (hide && !userIsAdmin) {
+                return alertTypes.hiddenReport;
+            }
             return alertTypes.noAlert;
         }
-        if (hide && !userIsAdmin) {
-            return alertTypes.hiddenReport;
-        }
-        if (!isPublished) {
-            if (
-                (isCrossChecking || isAddCommentCrossChecking) &&
-                (!userIsAdmin || !userHasPermission)
-            ) {
+
+        // Non-logged-in users see workflow status alerts
+        if (!isPublished && !reviewNotStarted) {
+            if (isCrossChecking || isAddCommentCrossChecking) {
                 return alertTypes.crossChecking;
             }
-            if (isReviewing && (!userIsAdmin || !userHasPermission)) {
+            if (isReviewing) {
                 return alertTypes.reviewing;
             }
-            if (!userHasPermission && !userIsAdmin && !reviewNotStarted) {
-                return alertTypes.hasStarted;
-            }
+            return alertTypes.hasStarted;
         }
         return alertTypes.noAlert;
     };
@@ -109,7 +98,8 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         isReviewing,
         hide,
         isLoggedIn,
-        userHasPermission,
+        isPublished,
+        reviewNotStarted,
         userIsAdmin,
     ]);
 

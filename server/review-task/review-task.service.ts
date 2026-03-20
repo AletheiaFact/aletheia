@@ -605,6 +605,21 @@ export class ReviewTaskService {
             return null;
         }
 
+        // Ownership check: only assignees or admins can save drafts
+        const loggedInUser = this.req.user;
+        const assignees =
+            reviewTask.machine?.context?.reviewData?.usersId || [];
+        const isAssignee = assignees
+            .map((id) => id.toString())
+            .includes(loggedInUser._id.toString());
+        const userRole = loggedInUser.role?.[reviewTask.nameSpace];
+        const isAdminUser =
+            userRole === Roles.Admin || userRole === Roles.SuperAdmin;
+
+        if (!isAssignee && !isAdminUser) {
+            throw new ForbiddenException("Not authorized to save this draft");
+        }
+
         const setFields: Record<string, any> = {};
 
         // Merge reviewData fields individually to preserve existing data

@@ -94,6 +94,8 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     // Re-fetch editor content when the form changes (e.g., after state transitions).
     // This ensures the editor shows up-to-date content when it remounts after
     // unmounting during non-editor form states (like selectReviewer).
+    // Also reset comments so they are re-initialized from machine context
+    // (prevents resolved comments from reappearing).
     useEffect(() => {
         if (isInitialFormLoad.current) {
             isInitialFormLoad.current = false;
@@ -101,6 +103,9 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         }
 
         if (!form || !reportModel) return;
+
+        // Reset comments so CommentContainer re-filters from machine context
+        setComments(null);
 
         const hasVisualEditor = form.some(
             (field) => field.fieldName === "visualEditor"

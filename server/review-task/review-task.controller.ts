@@ -107,12 +107,6 @@ export class ReviewTaskController {
         @Param("data_hash") data_hash: string,
         @Body() saveDraftBody: SaveDraftDTO
     ) {
-        const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
-            data_hash
-        );
-        if (!reviewTask) {
-            throw new Error("Review task not found");
-        }
         return this.reviewTaskService.saveDraft(data_hash, saveDraftBody);
     }
 

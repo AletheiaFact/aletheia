@@ -14,7 +14,7 @@ const StyledSelect = styled(Autocomplete)`
     .MuiOutlinedInput-root {
         border-radius: 0px;
     }
-    
+
     .MuiInputLabel-root {
         color: ${colors.neutralSecondary};
     }
@@ -75,16 +75,18 @@ function SelectOptions({
             multiple={isMultiple}
             options={filteredOptions}
             getOptionLabel={(option) => option.label || ""}
-            isOptionEqualToValue={(option, value) => option?.value === value?.value}
+            isOptionEqualToValue={(option, value) =>
+                option?.value === value?.value
+            }
             loading={fetching ? <Loading /> : selectedValue}
             value={isMultiple ? value || [] : selectedValue}
             onChange={(_event, newValue) => {
                 setSelectedValue(newValue);
                 if (Array.isArray(newValue)) {
-                    const selectedIds = newValue.map(item => item?.value);
-                    onChange(selectedIds);
+                    const selectedIds = newValue.map((item) => item?.value);
+                    onChange(selectedIds, newValue);
                 } else {
-                    onChange(newValue?.value);
+                    onChange(newValue?.value, newValue);
                 }
             }}
             onInputChange={getOptions}
@@ -96,11 +98,7 @@ function SelectOptions({
                     variant="outlined"
                     InputProps={{
                         ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
+                        endAdornment: <>{params.InputProps.endAdornment}</>,
                     }}
                 />
             )}

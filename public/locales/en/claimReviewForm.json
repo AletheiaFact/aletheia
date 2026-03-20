@@ -62,5 +62,6 @@
     "reviewerChipLabel": "Reviewer",
     "crossCheckerChipLabel": "Cross-Checker",
     "validationErrorTitle": "Please fix the following errors",
-    "validationErrorDescription": "Some required fields are missing or invalid. Please review the highlighted fields below."
+    "validationErrorDescription": "Some required fields are missing or invalid. Please review the highlighted fields below.",
+    "viewOnlyTooltip": "View-only mode: this action is not available"
 }

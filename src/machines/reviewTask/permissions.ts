@@ -31,6 +31,7 @@ export interface PermissionContext {
 export interface PermissionInput {
     state: ReviewTaskStates;
     userRole: Roles;
+    isLoggedIn: boolean;
     userAssignments: UserAssignments;
     reportModel: ReportModelEnum;
     availableEvents: ReviewTaskEvents[];
@@ -56,9 +57,31 @@ const READONLY_VIEW_PERMISSIONS: PermissionContext = {
  * Single source of truth for all permission logic
  */
 export function resolvePermissions(input: PermissionInput): PermissionContext {
-    const { state, userRole, userAssignments, reportModel, availableEvents } =
-        input;
+    const {
+        state,
+        userRole,
+        isLoggedIn,
+        userAssignments,
+        reportModel,
+        availableEvents,
+    } = input;
     const { isAssignee, isReviewer, isCrossChecker, isAdmin } = userAssignments;
+
+    // Non-logged-in users can only see published reports
+    if (!isLoggedIn && state !== ReviewTaskStates.published) {
+        return {
+            canAccessState: false,
+            canViewEditor: false,
+            canEditEditor: false,
+            canSaveDraft: false,
+            canSubmitActions: [],
+            canSelectUsers: false,
+            editorReadonly: true,
+            showForm: false,
+            showSaveDraftButton: false,
+            formType: "none",
+        };
+    }
 
     // Base permissions - start with most restrictive
     let permissions: PermissionContext = {
