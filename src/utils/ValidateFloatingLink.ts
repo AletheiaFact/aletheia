@@ -1,7 +1,12 @@
 export const URL_PATTERN =
     /^(?!.*\.$)(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/i;
 
+/**
+ * Validates if a string follows a proper URL format for external links.
+ */
 export const validateFloatingLink = (href?: string, t?: (key: string) => string) => {
+    if (!href) return;
+
     if (href?.endsWith('.')) {
         throw new Error(t("sourceForm:errorMessageTrailingDot"));
     }
@@ -11,20 +16,26 @@ export const validateFloatingLink = (href?: string, t?: (key: string) => string)
     }
 };
 
-
-export const sanitizeUrl = (url: string | undefined) => {
+/**
+ * Sanitizes URLs to prevent XSS attacks and ensure browser stability.
+ * Allows only HTTP/HTTPS/Blob URLs and rejects all other protocols.
+ */
+export const sanitizeUrl = (url: string | undefined): string => {
     if (!url) return "";
 
     const trimmedUrl = url.trim();
 
-    if (
-        trimmedUrl.startsWith("http://") ||
-        trimmedUrl.startsWith("https://") ||
-        trimmedUrl.startsWith("data:image/")
-    ) {
-        return trimmedUrl;
-    }
+    try {
+        const parsed = new URL(trimmedUrl);
+        const protocol = parsed.protocol.toLowerCase();
+        if (protocol === "http:" || protocol === "https:" || protocol === "blob:") {
+            return parsed.toString();
+        }
 
-    console.warn(`Blocked potentially unsafe URL: ${trimmedUrl}`);
-    return "";
+        console.warn(`Blocked URL with unsupported protocol: ${protocol}`);
+        return "";
+    } catch {
+        console.warn("Blocked URL: invalid format.");
+        return "";
+    }
 };
