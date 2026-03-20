@@ -32,7 +32,7 @@ services:
         bucket: { env(AWS_SDK_BUCKET) }
         accessKeyId: { env(AWS_ACCESS_KEY_ID) }
         secretAccessKey: { env(AWS_SECRET_ACCESS_KEY) }
-        region: { env(AWS_REGION) }
+        region: us-east-1
         endpoint: { env(AWS_ENDPOINT) }
       openai:
         api_key: { env(OPENAI_API_KEY) }
