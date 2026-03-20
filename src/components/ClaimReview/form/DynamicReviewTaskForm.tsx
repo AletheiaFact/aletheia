@@ -31,6 +31,11 @@ import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
 
+const EVENTS_REQUIRING_CLASSIFICATION = [
+    ReviewTaskEvents.finishReport,
+    ReviewTaskEvents.publish,
+];
+
 const DynamicReviewTaskForm = ({
     data_hash,
     personality,
@@ -43,6 +48,7 @@ const DynamicReviewTaskForm = ({
         getValues,
         reset,
         clearErrors,
+        setError,
         formState: { errors },
         watch,
     } = useForm();
@@ -234,11 +240,6 @@ const DynamicReviewTaskForm = ({
      * @param data data from form submit
      * @param e event
      */
-    const EVENTS_REQUIRING_CLASSIFICATION = [
-        ReviewTaskEvents.finishReport,
-        ReviewTaskEvents.publish,
-    ];
-
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (!validateSelectedReviewer(data, event)) return;
@@ -248,10 +249,19 @@ const DynamicReviewTaskForm = ({
             EVENTS_REQUIRING_CLASSIFICATION.includes(event) &&
             (!data.classification || data.classification === "")
         ) {
-            errorAlertRef.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
+            setError("classification", {
+                type: "manual",
+                message: t("common:requiredFieldError"),
             });
+            const el = document.getElementById("field-classification");
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+                errorAlertRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }
             return;
         }
 
