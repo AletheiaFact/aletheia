@@ -16,9 +16,12 @@ const visualEditor: FormField[] = [
         fieldName: "classification",
         type: "select",
         defaultValue: "",
+        required: false,
         rules: {
             validate: {
                 validClassification: (value) =>
+                    !value ||
+                    value === "" ||
                     fieldValidation(value, isValidClassification) ||
                     "common:requiredFieldError",
             },

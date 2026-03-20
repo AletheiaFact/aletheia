@@ -42,6 +42,7 @@ const DynamicReviewTaskForm = ({
         control,
         getValues,
         reset,
+        clearErrors,
         formState: { errors },
         watch,
     } = useForm();
@@ -101,11 +102,15 @@ const DynamicReviewTaskForm = ({
 
     useEffect(() => {
         if (isLoggedIn) {
-            setFormAndEvents(machineService.machine.config.initial);
+            const state = machineService.state.value;
+            const currentMachineState =
+                typeof state === "string" ? state : Object.keys(state)[0];
+            setFormAndEvents(currentMachineState);
         }
     }, [isLoggedIn]);
 
     useEffect(() => {
+        clearErrors();
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
@@ -229,9 +234,26 @@ const DynamicReviewTaskForm = ({
      * @param data data from form submit
      * @param e event
      */
+    const EVENTS_REQUIRING_CLASSIFICATION = [
+        ReviewTaskEvents.finishReport,
+        ReviewTaskEvents.publish,
+    ];
+
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (!validateSelectedReviewer(data, event)) return;
+
+        // Classification is required for report completion and publish events
+        if (
+            EVENTS_REQUIRING_CLASSIFICATION.includes(event) &&
+            (!data.classification || data.classification === "")
+        ) {
+            errorAlertRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+            return;
+        }
 
         if (CAPTCHA_EXEMPT_EVENTS.includes(event)) {
             handleSendEvent(event, data);

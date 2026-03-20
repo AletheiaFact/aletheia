@@ -4,6 +4,7 @@ import { useAtom } from "jotai";
 import {
     currentUserId,
     currentUserRole,
+    isUserLoggedIn,
     debugInfo,
     DebugAssignmentType,
 } from "../../atoms/currentUser";
@@ -31,6 +32,7 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
     );
     const [userId] = useAtom(currentUserId);
     const [role] = useAtom(currentUserRole);
+    const [loggedIn] = useAtom(isUserLoggedIn);
     const [debug] = useAtom(debugInfo);
 
     // Get current state and review data (flatten compound sub-states)
@@ -89,13 +91,21 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
         const input: PermissionInput = {
             state: validState,
             userRole: effectiveRole,
+            isLoggedIn: loggedIn,
             userAssignments,
             reportModel,
             availableEvents: events || [],
         };
 
         return resolvePermissions(input);
-    }, [validState, effectiveRole, userAssignments, reportModel, events]);
+    }, [
+        validState,
+        effectiveRole,
+        loggedIn,
+        userAssignments,
+        reportModel,
+        events,
+    ]);
 
     return {
         ...permissions,

@@ -23,21 +23,18 @@ const WORKFLOW_STAGES: Record<string, StageConfig[]> = {
             states: [
                 ReviewTaskStates.assigned,
                 ReviewTaskStates.reported,
-                ReviewTaskStates.selectReviewer,
-                ReviewTaskStates.selectCrossChecker,
                 ReviewTaskStates.rejected,
             ],
         },
         {
             labelKey: "stageReview",
             states: [
+                ReviewTaskStates.selectCrossChecker,
                 ReviewTaskStates.crossChecking,
                 ReviewTaskStates.addCommentCrossChecking,
+                ReviewTaskStates.selectReviewer,
+                ReviewTaskStates.submitted,
             ],
-        },
-        {
-            labelKey: "stageApproval",
-            states: [ReviewTaskStates.submitted],
         },
         {
             labelKey: "stagePublished",

@@ -62,5 +62,6 @@
     "reviewerChipLabel": "Revisor",
     "crossCheckerChipLabel": "Cross-Checker",
     "validationErrorTitle": "Por favor, corrija os seguintes erros",
-    "validationErrorDescription": "Alguns campos obrigatórios estão ausentes ou inválidos. Revise os campos destacados abaixo."
+    "validationErrorDescription": "Alguns campos obrigatórios estão ausentes ou inválidos. Revise os campos destacados abaixo.",
+    "viewOnlyTooltip": "Modo somente leitura: esta ação não está disponível"
 }

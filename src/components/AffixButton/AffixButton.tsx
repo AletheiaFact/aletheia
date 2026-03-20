@@ -30,13 +30,12 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
-    const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
-        vw: state?.vw,
-        copilotDrawerCollapsed:
-            state?.copilotDrawerCollapsed !== undefined
-                ? state?.copilotDrawerCollapsed
-                : true,
-    }));
+    const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed } =
+        useAppSelector((state) => ({
+            vw: state?.vw,
+            copilotDrawerCollapsed: state?.copilotDrawerCollapsed ?? true,
+            reviewDrawerCollapsed: state?.reviewDrawerCollapsed ?? true,
+        }));
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userRole] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
@@ -116,7 +115,7 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
         toggleFloatingdrawer();
     };
 
-    if (!isLoggedIn) {
+    if (!isLoggedIn || !reviewDrawerCollapsed) {
         return null;
     }
 
@@ -162,11 +161,7 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
-                        icon={
-                            <AddOutlined
-                                fontSize="large"
-                            />
-                        }
+                        icon={<AddOutlined fontSize="large" />}
                     />
                 </PulseAnimation>
 
@@ -193,8 +188,9 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
                             fontSize: 14,
                             textAlign: "center",
                             textTransform: "uppercase",
-                            padding: "0 34px"
-                        }}>
+                            padding: "0 34px",
+                        }}
+                    >
                         {t("tutorial:modalTitle")}
                     </h2>
                 }
@@ -209,7 +205,15 @@ const AffixButton = ({ personalitySlug, bottom }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<AddCircle style={{ marginBottom: "-5px", fontSize: "18px" }} key={"icon"} />]}
+                        components={[
+                            <AddCircle
+                                style={{
+                                    marginBottom: "-5px",
+                                    fontSize: "18px",
+                                }}
+                                key={"icon"}
+                            />,
+                        ]}
                     />
                 </p>
 

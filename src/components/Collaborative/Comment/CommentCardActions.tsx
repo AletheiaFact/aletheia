@@ -8,13 +8,11 @@ import ReviewTaskApi from "../../../api/reviewTaskApi";
 import CommentApi from "../../../api/comment";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
-import { currentUserRole } from "../../../atoms/currentUser";
-import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { reviewingSelector } from "../../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
-import { Roles } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
 const CommentCardActions = ({ content, setIsResolved }) => {
     const enableEditorAnnotations = useAppSelector(
@@ -22,9 +20,15 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     );
     const { data_hash, setComments } = useContext(VisualEditorContext);
     const { removeAnnotations } = useCommands();
-    const [role] = useAtom(currentUserRole);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
+
+    const permissions = useReviewTaskPermissions();
+    const canResolveComment =
+        permissions.isAdmin ||
+        permissions.isReviewer ||
+        permissions.isCrossChecker ||
+        permissions.isAssignee;
 
     const handleResolvedClick = async () => {
         await CommentApi.updateComment(content?._id, { resolved: true });
@@ -32,6 +36,11 @@ const CommentCardActions = ({ content, setIsResolved }) => {
             removeAnnotations([content?._id]);
         }
         setIsResolved(true);
+        // Remove from context array so the panel hides when empty
+        // and the comment doesn't reappear on state transitions
+        setComments(
+            (prev) => prev?.filter((c) => c._id !== content?._id) || []
+        );
     };
 
     const handleDeleteClick = async () => {
@@ -45,11 +54,11 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                     comments.map((comment) =>
                         comment._id === content.targetId
                             ? {
-                                ...comment,
-                                replies: comment.replies.filter(
-                                    (reply) => reply._id !== content._id
-                                ),
-                            }
+                                  ...comment,
+                                  replies: comment.replies.filter(
+                                      (reply) => reply._id !== content._id
+                                  ),
+                              }
                             : comment
                     )
                 );
@@ -70,7 +79,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     return (
         <div className="comment-card-actions">
             <div className="comment-card-actions-resolve-button">
-                {!content.isReply && (
+                {!content.isReply && canResolveComment && (
                     <Button
                         type={ButtonType.white}
                         onClick={handleResolvedClick}
@@ -79,8 +88,9 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                     </Button>
                 )}
             </div>
-            {role !== Roles.Regular &&
-                role !== Roles.FactChecker &&
+            {(permissions.isAdmin ||
+                permissions.isReviewer ||
+                permissions.isCrossChecker) &&
                 isReviewing && (
                     <PopoverClick
                         children={
