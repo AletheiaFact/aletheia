@@ -74,6 +74,7 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
                 sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
             >
                 <AletheiaButton
+                    data-cy="testReviewClaimImage"
                     onClick={handleClickOnButton}
                     style={{
                         textTransform: "none",

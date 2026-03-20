@@ -10,8 +10,12 @@ export const mockVerificationRequestService = {
     listAll: jest.fn(),
 };
 
-export const mockClaimService = {
-    countBySentenceTopics: jest.fn(),
+export const mockSentenceService = {
+    countUniqueSentenceClaimsByTopic: jest.fn(),
+};
+
+export const mockImageService = {
+    countUniqueImageClaimsByTopic: jest.fn(),
 };
 
 export const mockClaimReviewService = {

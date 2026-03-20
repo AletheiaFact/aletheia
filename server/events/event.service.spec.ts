@@ -14,16 +14,18 @@ import { TopicService } from "../topic/topic.service";
 import {
     mockCreateEventDto,
     mockEventModel,
-    mockClaimService,
+    mockSentenceService,
+    mockImageService,
     mockClaimReviewService,
     mockTopicService,
     mockVerificationRequestService,
     mockRequest,
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
-import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { REQUEST } from "@nestjs/core";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { ImageService } from "../claim/types/image/image.service";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -45,8 +47,12 @@ describe("EventsService (Unit)", () => {
                     useValue: mockVerificationRequestService,
                 },
                 {
-                    provide: ClaimService,
-                    useValue: mockClaimService,
+                    provide: SentenceService,
+                    useValue: mockSentenceService,
+                },
+                {
+                    provide: ImageService,
+                    useValue: mockImageService,
                 },
                 {
                     provide: ClaimReviewService,
@@ -219,12 +225,12 @@ describe("EventsService (Unit)", () => {
                 {
                     data_hash: "mock-hash-1",
                     endDate: "2025-11-20T23:00:00.000+00:00",
-                    mainTopic: { wikidataId: "Q123", name: "Topic A" }
+                    mainTopic: { _id: "Q123", name: "Topic A" }
                 },
                 {
                     data_hash: "mock-hash-2",
                     endDate: "2025-12-15T18:30:00.000+00:00",
-                    mainTopic: { wikidataId: "Q456", name: "Topic B" }
+                    mainTopic: { _id: "Q456", name: "Topic B" }
                 }
             ];
 

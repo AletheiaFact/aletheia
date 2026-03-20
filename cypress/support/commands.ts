@@ -58,10 +58,10 @@ Cypress.Commands.add(
     }
 );
 
-Cypress.Commands.add("selectDatePickerDate", (dateToSelect: dayjs.Dayjs) => {
+Cypress.Commands.add("selectDatePickerDate", (index: number, dateToSelect: dayjs.Dayjs) => {
     const today = dayjs();
 
-    cy.get(locators.claim.INPUT_DATA).click();
+    cy.get(locators.claim.INPUT_DATA).eq(index).click();
 
     if (dateToSelect.month() < today.month() || dateToSelect.year() < today.year()) {
         cy.get('[aria-label="Previous month"]').click();
@@ -84,7 +84,7 @@ declare global {
                 email: string,
                 password: string
             ): Chainable<Element>;
-            selectDatePickerDate(date: dayjs.Dayjs): Chainable<Element>;
+            selectDatePickerDate(index: number, date: dayjs.Dayjs): Chainable<Element>;
         }
     }
 }

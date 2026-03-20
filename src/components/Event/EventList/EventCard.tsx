@@ -17,7 +17,7 @@ interface EventCardProps {
 const EventCard = ({ event, eventMetrics, openEventLabel }: EventCardProps) => {
     return (
         <CardBase>
-            <EventCardStyled container>
+            <EventCardStyled container data-cy="event-card">
                 <EventCardHeader badge={event.badge} location={event.location} />
                 <EventCardTitle title={event.name} />
                 <EventCardDateRange

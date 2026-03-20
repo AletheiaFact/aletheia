@@ -15,7 +15,7 @@ describe("Create image claim", () => {
             .should("be.visible")
             .type(claim.imageTitle);
 
-        cy.selectDatePickerDate(today)
+        cy.selectDatePickerDate(0, today)
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
