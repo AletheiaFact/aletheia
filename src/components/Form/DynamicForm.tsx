@@ -92,6 +92,7 @@ const DynamicForm = ({
                             {errors[fieldName] && (
                                 <Typography
                                     variant="body1"
+                                    data-cy={`testClaimReviewError${fieldName}`}
                                     style={{
                                         marginLeft: 20,
                                         color: colors.error,

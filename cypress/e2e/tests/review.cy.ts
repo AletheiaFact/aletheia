@@ -59,9 +59,9 @@ const blockAssignedUserReview = () => {
         .type(`${review.username}{downarrow}{downarrow}{enter}`, {
             delay: 200,
         });
-    // SEND_TO_REVIEW requires captcha, so clicking it opens the modal
+    // SEND_TO_REVIEW triggers form submit; reviewer validation catches the
+    // invalid reviewer (assigned user) before the captcha modal opens
     cy.get(locators.claimReview.BTN_SUBMIT).should("be.visible").click();
-    completeRecaptchaModal();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
 };
 
