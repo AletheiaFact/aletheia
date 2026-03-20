@@ -12,10 +12,7 @@ import {
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
-<<<<<<< HEAD
 import CTAFolder from "../Home/CTAFolder/CTAFolder";
-=======
->>>>>>> 0234bfee (feat: implement centralized RBAC permission system with enhanced UX)
 import SentenceReportContent from "./SentenceReportContent";
 import SentenceReportHeader from "./SentenceReportHeader";
 import { useAtom } from "jotai";
@@ -186,6 +183,7 @@ const SentenceReportView = ({
                             href={href}
                         />
                     )}
+                    <CTAFolder />
                 </Grid>
             </Grid>
         )
