@@ -20,7 +20,7 @@ import ImageUpload, { UploadFile } from "../ImageUpload";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
-export type UnifiedDefaultValue = Topic | SourceType[] | UploadFile[] | string
+export type UnifiedDefaultValue = Topic | SourceType[] | UploadFile[] | string;
 
 interface DynamicInputProps {
     fieldName: string;
@@ -74,7 +74,11 @@ const DynamicInput = (props: DynamicInputProps) => {
                     data-cy={props["data-cy"]}
                     white="true"
                     disabled={props.disabled}
-                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
+                    style={{
+                        backgroundColor: props.disabled
+                            ? colors.lightNeutral
+                            : colors.white,
+                    }}
                 />
             );
         case "textList":
@@ -106,6 +110,10 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
+                    disabled={props.disabled}
+                    ignoreEditorReadonly={
+                        props.extraProps?.ignoreEditorReadonly
+                    }
                 />
             );
         case "selectReportType":
@@ -146,8 +154,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                             checked={!!props.value}
                         />
                     }
-                    label=
-                    {t(`claimReviewForm:${props.fieldName}`)}
+                    label={t(`claimReviewForm:${props.fieldName}`)}
                 />
             );
         case "visualEditor":
@@ -174,7 +181,11 @@ const DynamicInput = (props: DynamicInputProps) => {
                     data-cy="testSelectDate"
                     disabledDate={props.disabledDate}
                     disabled={props.disabled}
-                    style={{ backgroundColor: props.disabled ? colors.lightNeutral : colors.white }}
+                    style={{
+                        backgroundColor: props.disabled
+                            ? colors.lightNeutral
+                            : colors.white,
+                    }}
                 />
             );
         case "email":

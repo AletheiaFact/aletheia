@@ -109,7 +109,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.assigned:
             permissions = resolveAssignedPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -117,7 +116,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.reported:
             permissions = resolveReportedPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -125,7 +123,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.selectReviewer:
             permissions = resolveSelectReviewerPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -133,7 +130,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.selectCrossChecker:
             permissions = resolveSelectCrossCheckerPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -141,7 +137,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.crossChecking:
             permissions = resolveCrossCheckingPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -149,7 +144,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.addCommentCrossChecking:
             permissions = resolveAddCommentCrossCheckingPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -157,7 +151,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.submitted:
             permissions = resolveSubmittedPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -165,7 +158,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.rejected:
             permissions = resolveRejectedPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -173,7 +165,6 @@ export function resolvePermissions(input: PermissionInput): PermissionContext {
 
         case ReviewTaskStates.published:
             permissions = resolvePublishedPermissions(
-                userRole,
                 userAssignments,
                 availableEvents
             );
@@ -226,7 +217,6 @@ function resolveUnassignedPermissions(
 }
 
 function resolveAssignedPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -251,7 +241,6 @@ function resolveAssignedPermissions(
 }
 
 function resolveReportedPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -276,7 +265,6 @@ function resolveReportedPermissions(
 }
 
 function resolveSelectReviewerPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -301,7 +289,6 @@ function resolveSelectReviewerPermissions(
 }
 
 function resolveSelectCrossCheckerPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -326,7 +313,6 @@ function resolveSelectCrossCheckerPermissions(
 }
 
 function resolveCrossCheckingPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -351,7 +337,6 @@ function resolveCrossCheckingPermissions(
 }
 
 function resolveAddCommentCrossCheckingPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -376,7 +361,6 @@ function resolveAddCommentCrossCheckingPermissions(
 }
 
 function resolveSubmittedPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -401,7 +385,6 @@ function resolveSubmittedPermissions(
 }
 
 function resolveRejectedPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {
@@ -426,7 +409,6 @@ function resolveRejectedPermissions(
 }
 
 function resolvePublishedPermissions(
-    userRole: Roles,
     userAssignments: UserAssignments,
     availableEvents: ReviewTaskEvents[]
 ): PermissionContext {

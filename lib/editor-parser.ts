@@ -641,8 +641,13 @@ export class EditorParser {
     }
 
     buildContentWithoutSouces(key, content): RemirrorJSON[] {
-        const isEmpty = content === "";
-        const contentArray = Array.isArray(content) ? content : [content];
+        const isEmpty =
+            content === "" || (Array.isArray(content) && content.length === 0);
+        const contentArray = isEmpty
+            ? [""]
+            : Array.isArray(content)
+            ? content
+            : [content];
 
         return contentArray.map((c) => ({
             type: key,

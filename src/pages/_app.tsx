@@ -17,6 +17,7 @@ import {
     currentUserId,
     currentUserRole,
     isUserLoggedIn,
+    isAuthResolved,
 } from "../atoms/currentUser";
 import { GetUserRole } from "../utils/GetUserRole";
 import { AletheiaThemeConfig } from "../styles/namespaceThemes";
@@ -30,16 +31,21 @@ function MyApp({ Component, pageProps }) {
     const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
     const setCurrentUserId = useSetAtom(currentUserId);
     const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
+    const setAuthResolved = useSetAtom(isAuthResolved);
 
     const [nameSpace] = useAtom(currentNameSpace);
     const safeNamespace = nameSpace || NameSpaceEnum.Main;
-    const namespaceTheme = useMemo(() => AletheiaThemeConfig(safeNamespace), [safeNamespace]);
+    const namespaceTheme = useMemo(
+        () => AletheiaThemeConfig(safeNamespace),
+        [safeNamespace]
+    );
 
     GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);
         setCurrentLoginStatus(isLoggedIn);
         setCurrentUserId(id);
         setCurrentLevelAuthentication(aal);
+        setAuthResolved(true);
     });
 
     return (
