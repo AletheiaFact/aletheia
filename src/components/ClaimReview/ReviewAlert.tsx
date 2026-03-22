@@ -78,25 +78,11 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
             return alertTypes.noAlert;
         }
 
-        // Show status messages only to non-logged-in users
-        if (isLoggedIn) {
-            // Only show hidden report warning to logged-in non-admins
-            if (hide && !userIsAdmin) {
-                return alertTypes.hiddenReport;
-            }
-            return alertTypes.noAlert;
+        // Only show hidden report warning to logged-in non-admins
+        if (isLoggedIn && hide && !userIsAdmin) {
+            return alertTypes.hiddenReport;
         }
 
-        // Non-logged-in users see workflow status alerts
-        if (!isPublished && !reviewNotStarted) {
-            if (isCrossChecking || isAddCommentCrossChecking) {
-                return alertTypes.crossChecking;
-            }
-            if (isReviewing) {
-                return alertTypes.reviewing;
-            }
-            return alertTypes.hasStarted;
-        }
         return alertTypes.noAlert;
     };
 

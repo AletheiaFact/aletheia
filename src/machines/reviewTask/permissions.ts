@@ -39,6 +39,8 @@ export interface PermissionInput {
 
 // Read-only view permissions for non-assigned users
 // They can see the editor content but cannot interact with the form
+// showForm is true so the form component renders (displaying the read-only editor),
+// but canSubmitActions is empty so no action buttons appear
 const READONLY_VIEW_PERMISSIONS: PermissionContext = {
     canAccessState: true,
     canViewEditor: true,
@@ -47,7 +49,7 @@ const READONLY_VIEW_PERMISSIONS: PermissionContext = {
     canSubmitActions: [],
     canSelectUsers: false,
     editorReadonly: true,
-    showForm: false,
+    showForm: true,
     showSaveDraftButton: false,
     formType: "readonly",
 };
