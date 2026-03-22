@@ -594,10 +594,9 @@ export class ReviewTaskService {
             this._createStateEvent(newReviewTask);
         }
 
-        return this.ReviewTaskModel.findByIdAndUpdate(
-            { _id: newReviewTask._id },
-            newReviewTask
-        );
+        return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
+            $set: { machine: newReviewTaskMachine },
+        });
     }
 
     private static readonly ALLOWED_DRAFT_REVIEW_DATA_FIELDS = [
