@@ -31,7 +31,7 @@ const VerificationRequestMinimumCard = ({
 
     return (
         <CardBase>
-            <VerificationCardStyled>
+            <VerificationCardStyled data-cy="testVerificationRequestCardContainer">
                 <VerificationRequestMinimumCardHeader
                     sourceChannel={sourceChannel}
                     createdAt={date}

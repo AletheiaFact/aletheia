@@ -55,6 +55,11 @@ const locators = {
         ADD_EVENT: "[data-cy=testFloatButtonAddEvent]"
     },
 
+    toggleButton: {
+        TOGGLE_BUTTON_LEFT: "[data-cy=testToggleButtonLeft]",
+        TOGGLE_BUTTON_RIGHT: "[data-cy=testToggleButtonRight]",
+    },
+
     topic: {
         ADD_TOPIC_ICON: "[data-cy=testAddTopicsToggle]",
         TYPE_TOPIC_INPUT: "[data-cy=testAddTopicsInput]",
@@ -90,7 +95,9 @@ const locators = {
             "[data-cy=testClaimReviewSourcesInput]",
         ADD_EDITOR_SOURCES_DIALOG_BUTTON:
             "[data-cy=testClaimReviewSourcesButton]",
-        BTN_REVIEW_CLAIM_IMAGE: "[data-cy=testReviewClaimImage]"
+        BTN_REVIEW_CLAIM_IMAGE: "[data-cy=testReviewClaimImage]",
+
+        REVIEW_CARD_CONTAINER: "[data-cy=testReviewCardContainer]"
     },
 
     verificationRequest: {
@@ -127,6 +134,8 @@ const locators = {
         EDIT_BUTTON: "[data-cy=testVerificationRequestEditButton]",
         SAVE_BUTTON: "[data-cy=testSaveButton]",
         CANCEL_BUTTON: "[data-cy=testCancelButton]",
+
+        VERIFICATION_REQUEST_CARD_CONTAINER: "[data-cy=testVerificationRequestCardContainer]"
     },
 
     event: {
@@ -139,6 +148,19 @@ const locators = {
         FORM_MAIN_TOPIC: "[data-cy=testClaimReviewmainTopic]",
 
         DETAIL_TITLE: "[data-cy=testEventTitle]",
+        DETAIL_DESCRIPTION: "[data-cy=testEventDescription]",
+        DETAIL_LOCATION: "[data-cy=testEventLocationText]",
+        DETAIL_BADGE: "[data-cy=testEventBadgeChip]",
+        EVENT_ITEMS_TOTAL_COUNT: "[data-cy=testTotalCountText]",
+        OPEN_EDIT_DRAWER_BTN: "[data-cy=testEventEditButton]",
+
+        SEE_MORE_EVENTS: "[data-cy=testSeeMoreEvents]",
+
+        EVENT_CARD: "[data-cy=event-card]",
+        METRICS_REVIEWS: "[data-cy=testEventMetricsReviews]",
+        METRICS_VERIFICATION_REQUESTS: "[data-cy=testEventMetricsVerificationRequests]",
+        METRICS_CLAIMS: "[data-cy=testEventMetricsClaims]",
+        SEE_FULL_EVENT: "[data-cy=testOpenEventButton]",
 
         ERROR_VALIDATION_NAME: "[data-cy=testClaimReviewErrorname]",
         ERROR_VALIDATION_MAIN_TOPIC: "[data-cy=testClaimReviewErrormainTopic]",

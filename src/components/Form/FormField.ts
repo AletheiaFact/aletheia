@@ -42,6 +42,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     isURLField?: boolean;
     disabled?: boolean;
     hasTooltip?: boolean;
+    mustBeAfterField?: string;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -56,6 +57,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         isURLField = false,
         disabled = false,
         hasTooltip = false,
+        mustBeAfterField,
     } = props;
 
     return {
@@ -80,6 +82,16 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
                         !v ||
                         URL_PATTERN.test(v) ||
                         "sourceForm:errorMessageValidURL",
+                }),
+
+                ...(!disabled && mustBeAfterField && {
+                    afterDate: (value, formValues) => {
+                        const otherValue = formValues[mustBeAfterField];
+                        if (!value || !otherValue) return true;
+                        const isAfterOrSame = dayjs(value).isAfter(dayjs(otherValue)) || dayjs(value).isSame(dayjs(otherValue));
+
+                        return isAfterOrSame || "common:endDateMustBeAfterStartDate";
+                    }
                 }),
                 ...rules?.validate,
             },

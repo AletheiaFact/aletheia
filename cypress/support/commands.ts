@@ -69,7 +69,7 @@ Cypress.Commands.add("selectDatePickerDate", (index: number, dateToSelect: dayjs
         cy.get('[aria-label="Next month"]').click();
     }
 
-    cy.contains('[role="gridcell"]', dateToSelect.format("D")).click();
+    cy.contains('[role="gridcell"]', dateToSelect.format("D")).click({ force: true });
 });
 
 declare global {

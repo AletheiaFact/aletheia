@@ -11,7 +11,7 @@ const TypographyBox = styled(Grid)`
 `;
 
 const TotalCountText = ({ total, t }: { total: number; t: any }) => (
-    <Typography variant="body2" color={colors.blackSecondary}>
+    <Typography variant="body2" color={colors.blackSecondary} data-cy="testTotalCountText">
         {t("events:totalItems", { total: total })}
     </Typography>
 );

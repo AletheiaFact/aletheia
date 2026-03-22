@@ -15,5 +15,6 @@
     "captchaLabel": "Verificação",
     "change": "Mudar",
     "approve": "Aprovar",
-    "reject": "Rejeitar"
+    "reject": "Rejeitar",
+    "endDateMustBeAfterStartDate": "A data de término não pode ser anterior à data de início"
 }

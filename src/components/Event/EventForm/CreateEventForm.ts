@@ -35,7 +35,8 @@ const lifecycleEventForm: FormField[] = [
         fieldName: "endDate",
         type: "date",
         defaultValue: "",
-        i18nNamespace: "events"
+        i18nNamespace: "events",
+        mustBeAfterField: "startDate"
     }),
     createFormField({
         fieldName: "mainTopic",

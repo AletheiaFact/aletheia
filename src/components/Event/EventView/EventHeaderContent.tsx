@@ -6,6 +6,7 @@ import { isStaff } from "../../../utils/GetUserPermission";
 import EditIcon from "@mui/icons-material/Edit";
 import EventDrawer from "../EventForm/EventDrawer";
 import { isEditDrawerOpen } from "../../../atoms/editDrawer";
+import { formatMonthYear } from "../../../helpers/formatTimeAgo";
 
 type EventHeaderContentProps = {
     currentEvent: EventPayload,
@@ -34,12 +35,6 @@ const EventHeaderContent = ({
         }
     };
 
-    //this could be a util
-    const date = new Date(startDate);
-    const month = date.toLocaleString("pt-BR", { month: "long" });
-    const year = date.getFullYear();
-    const formattedDate = `${month[0].toUpperCase()}${month.slice(1)} de ${year}`;
-
     return (
         <Grid container className="eventContainerBase mainContent">
             <Grid item xs={11} md={8} className="eventSection eventSectionInfo">
@@ -56,7 +51,7 @@ const EventHeaderContent = ({
                             variant="body1"
                             data-cy="testEventLocationText"
                         >
-                            {`${location} • ${formattedDate}`}
+                            {`${location} • ${formatMonthYear(startDate)}`}
                         </Typography>
                     </Box>
                     {isStaff(role) && (
