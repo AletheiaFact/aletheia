@@ -56,7 +56,7 @@ const ClaimReviewForm = ({
 
     // Use centralized permission system
     const permissions = useReviewTaskPermissions();
-    const showForm = permissions.showForm || permissions.canViewEditor;
+    const showForm = permissions.showForm;
     const canInteractWithForm = permissions.canSubmitActions.length > 0;
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const ClaimReviewForm = ({
         return null;
     }
 
-    // If user can't see editor and is not logged in, show info banner
+    // If user can't see editor and is not logged in, show info banner with login
     if (canShowEditor === false && !isLoggedIn) {
         return (
             <Grid
@@ -81,6 +81,7 @@ const ClaimReviewForm = ({
             >
                 <Grid item xs={componentStyle.span}>
                     <FactCheckingInfo />
+                    <LoginButton />
                 </Grid>
             </Grid>
         );
