@@ -141,25 +141,6 @@ The application features a centralized Role-Based Access Control (RBAC) system f
 - **Form Permissions**: `canSubmitActions`, `canSelectUsers`, `formType` - dynamic form behavior
 - **UI Control**: `showForm`, `showSaveDraftButton`, `canSaveDraft` - fine-grained UI visibility
 
-### Debug Mode (Development Only)
-For testing different user scenarios without multiple accounts:
-
-```typescript
-// Enable in browser console or through debug tools
-debugInfo.set({
-  DEBUG_ROLE: Roles.FactChecker, // Override user role
-  DEBUG_ASSIGNMENT_TYPE: DebugAssignmentType.Assignee // Override assignment
-});
-```
-
-**Debug Assignment Types**:
-- `DebugAssignmentType.None` - Use natural assignments
-- `DebugAssignmentType.Assignee` - Test as assigned fact-checker
-- `DebugAssignmentType.Reviewer` - Test as assigned reviewer  
-- `DebugAssignmentType.CrossChecker` - Test as assigned cross-checker
-
-**Debug Roles**: Admin, SuperAdmin, FactChecker, Reviewer, Regular
-
 ### State Machine Workflow
 Review tasks follow these states with proper RBAC enforcement:
 - `unassigned` → `assigned` → `reported` → `reviewing/crossChecking` → `published`

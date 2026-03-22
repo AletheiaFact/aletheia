@@ -5,8 +5,6 @@ import {
     currentUserId,
     currentUserRole,
     isUserLoggedIn,
-    debugInfo,
-    DebugAssignmentType,
 } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import { ReviewTaskMachineContext } from "./ReviewTaskMachineProvider";
@@ -33,7 +31,6 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
     const [userId] = useAtom(currentUserId);
     const [role] = useAtom(currentUserRole);
     const [loggedIn] = useAtom(isUserLoggedIn);
-    const [debug] = useAtom(debugInfo);
 
     // Get current state and review data (flatten compound sub-states)
     const currentState = useSelector(
@@ -47,37 +44,13 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
 
     // Determine user assignments
     const userAssignments: UserAssignments = useMemo(() => {
-        const baseAssignments = {
+        return {
             isAssignee: reviewData?.usersId?.includes(userId) || false,
             isReviewer: reviewData?.reviewerId === userId,
             isCrossChecker: reviewData?.crossCheckerId === userId,
             isAdmin: role === Roles.Admin || role === Roles.SuperAdmin,
         };
-
-        // Apply debug overrides if enabled
-        if (
-            debug?.DEBUG_ASSIGNMENT_TYPE &&
-            debug.DEBUG_ASSIGNMENT_TYPE !== DebugAssignmentType.None
-        ) {
-            return {
-                ...baseAssignments,
-                isAssignee:
-                    debug.DEBUG_ASSIGNMENT_TYPE ===
-                    DebugAssignmentType.Assignee,
-                isReviewer:
-                    debug.DEBUG_ASSIGNMENT_TYPE ===
-                    DebugAssignmentType.Reviewer,
-                isCrossChecker:
-                    debug.DEBUG_ASSIGNMENT_TYPE ===
-                    DebugAssignmentType.CrossChecker,
-            };
-        }
-
-        return baseAssignments;
-    }, [userId, role, reviewData, debug]);
-
-    // Apply debug role override if enabled
-    const effectiveRole = debug?.DEBUG_ROLE || role;
+    }, [userId, role, reviewData]);
 
     // Validate state against ReviewTaskStates enum for type safety
     const validState = Object.values(ReviewTaskStates).includes(
@@ -90,7 +63,7 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
     const permissions = useMemo(() => {
         const input: PermissionInput = {
             state: validState,
-            userRole: effectiveRole,
+            userRole: role,
             isLoggedIn: loggedIn,
             userAssignments,
             reportModel,
@@ -98,14 +71,7 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
         };
 
         return resolvePermissions(input);
-    }, [
-        validState,
-        effectiveRole,
-        loggedIn,
-        userAssignments,
-        reportModel,
-        events,
-    ]);
+    }, [validState, role, loggedIn, userAssignments, reportModel, events]);
 
     return {
         ...permissions,

@@ -10,6 +10,7 @@ const visualEditor: FormField[] = [
         fieldName: "visualEditor",
         type: "visualEditor",
         defaultValue: "",
+        required: false,
     }),
 
     createFormField({

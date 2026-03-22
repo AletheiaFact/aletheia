@@ -12,6 +12,7 @@ import {
     currentUserId,
     currentUserRole,
     isUserLoggedIn,
+    isAuthResolved,
 } from "../../atoms/currentUser";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import FactCheckingInfo from "../SentenceReport/FactCheckingInfo";
@@ -34,6 +35,7 @@ const ClaimReviewForm = ({
     personalityId = null,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [authResolved] = useAtom(isAuthResolved);
     const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
     const { machineService, reportModel } = useContext(
@@ -61,8 +63,13 @@ const ClaimReviewForm = ({
         setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
 
-    // If user can't see editor, show info banner instead
-    if (canShowEditor === false) {
+    // Don't render until auth state is resolved to prevent flash
+    if (!authResolved) {
+        return null;
+    }
+
+    // If user can't see editor and is not logged in, show info banner
+    if (canShowEditor === false && !isLoggedIn) {
         return (
             <Grid
                 container

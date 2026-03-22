@@ -17,9 +17,13 @@ const crossCheckingForm: FormField[] = [
         fieldName: "crossCheckingClassification",
         type: "select",
         defaultValue: "",
+        required: false,
+        extraProps: { ignoreEditorReadonly: true },
         rules: {
             validate: {
                 validClassification: (value) =>
+                    !value ||
+                    value === "" ||
                     fieldValidation(value, isValidClassification) ||
                     "common:requiredFieldError",
             },

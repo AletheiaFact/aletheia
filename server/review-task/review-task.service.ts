@@ -2,6 +2,7 @@ import {
     ForbiddenException,
     Inject,
     Injectable,
+    NotFoundException,
     Scope,
     Logger,
 } from "@nestjs/common";
@@ -598,11 +599,31 @@ export class ReviewTaskService {
         );
     }
 
+    private static readonly ALLOWED_DRAFT_REVIEW_DATA_FIELDS = [
+        "summary",
+        "questions",
+        "report",
+        "verification",
+        "sources",
+        "classification",
+        "visualEditor",
+        "crossCheckingClassification",
+        "crossCheckingComment",
+        "rejectionComment",
+    ];
+
+    private static readonly ALLOWED_DRAFT_REVIEW_FIELDS = [
+        "usersId",
+        "personality",
+        "isPartialReview",
+        "targetId",
+    ];
+
     async saveDraft(data_hash: string, saveDraftBody: SaveDraftDTO) {
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
         if (!reviewTask) {
-            return null;
+            throw new NotFoundException("Review task not found");
         }
 
         // Ownership check: only assignees or admins can save drafts
@@ -622,21 +643,29 @@ export class ReviewTaskService {
 
         const setFields: Record<string, any> = {};
 
-        // Merge reviewData fields individually to preserve existing data
+        // Merge reviewData fields individually (whitelisted only)
         if (saveDraftBody.machine.context.reviewData) {
             const draftReviewData = saveDraftBody.machine.context.reviewData;
             for (const [key, value] of Object.entries(draftReviewData)) {
-                if (value !== undefined) {
+                if (
+                    value !== undefined &&
+                    ReviewTaskService.ALLOWED_DRAFT_REVIEW_DATA_FIELDS.includes(
+                        key
+                    )
+                ) {
                     setFields[`machine.context.reviewData.${key}`] = value;
                 }
             }
         }
 
-        // Merge review fields individually to preserve existing data
+        // Merge review fields individually (whitelisted only)
         if (saveDraftBody.machine.context.review) {
             const draftReview = saveDraftBody.machine.context.review;
             for (const [key, value] of Object.entries(draftReview)) {
-                if (value !== undefined) {
+                if (
+                    value !== undefined &&
+                    ReviewTaskService.ALLOWED_DRAFT_REVIEW_FIELDS.includes(key)
+                ) {
                     setFields[`machine.context.review.${key}`] = value;
                 }
             }

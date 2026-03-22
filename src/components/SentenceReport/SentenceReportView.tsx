@@ -35,7 +35,6 @@ const SentenceReportView = ({
     const { machineService, publishedReview, reviewTaskType, reportModel } =
         useContext(ReviewTaskMachineContext);
 
-    // Centralized permissions (includes debug overrides for assignments and roles)
     const permissions = useReviewTaskPermissions();
 
     // Machine state selectors (about workflow state, not permissions)
@@ -65,19 +64,27 @@ const SentenceReportView = ({
         return isPublished || publishedReview?.review;
     }, [isPublished, publishedReview]);
 
-    // Get current state for status display
-    const currentState = useMemo(() => {
-        const state = machineService.state.value;
-        if (typeof state === "string") return state;
-        return Object.keys(state)[0] || "unknown";
-    }, [machineService.state.value]);
+    // Get current state for status display (useSelector ensures re-render on state changes)
+    const currentState = useSelector(
+        machineService,
+        (state: { value: string | Record<string, unknown> }) => {
+            const value = state.value;
+            return typeof value === "string"
+                ? value
+                : Object.keys(value)[0] || "unknown";
+        }
+    );
 
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
             <Grid
                 container
                 justifyContent="center"
-                style={{ backgroundColor: colors.lightNeutral }}
+                style={
+                    !isPublished
+                        ? { backgroundColor: colors.lightNeutral }
+                        : undefined
+                }
             >
                 <Grid item xs={componentStyle.span}>
                     {/* Header with status chips - only show for logged-in users when not published */}
@@ -183,7 +190,7 @@ const SentenceReportView = ({
                             href={href}
                         />
                     )}
-                    <CTAFolder />
+                    {isPublished && <CTAFolder />}
                 </Grid>
             </Grid>
         )

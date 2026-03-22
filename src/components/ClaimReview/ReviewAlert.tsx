@@ -11,7 +11,11 @@ import {
 } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useAtom } from "jotai";
-import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
+import {
+    currentUserRole,
+    isUserLoggedIn,
+    isAuthResolved,
+} from "../../atoms/currentUser";
 import { TargetModel } from "../../types/enums";
 import { isAdmin } from "../../utils/GetUserPermission";
 
@@ -19,6 +23,7 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [authResolved] = useAtom(isAuthResolved);
 
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewNotStarted = useSelector(
@@ -68,6 +73,11 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
 
     const [alert, setAlert] = useState(alertTypes.noAlert);
     const getAlert = () => {
+        // Don't show alerts until auth state is resolved to prevent flash
+        if (!authResolved) {
+            return alertTypes.noAlert;
+        }
+
         // Show status messages only to non-logged-in users
         if (isLoggedIn) {
             // Only show hidden report warning to logged-in non-admins
@@ -94,6 +104,7 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         const newAlert = getAlert();
         setAlert(newAlert);
     }, [
+        authResolved,
         isCrossChecking,
         isReviewing,
         hide,

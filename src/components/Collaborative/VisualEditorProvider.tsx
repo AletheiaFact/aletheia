@@ -70,16 +70,16 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
 
     const isInitialFormLoad = useRef(true);
 
-    useEffect(() => {
-        const params = { reportModel, reviewTaskType };
+    const fetchEditorContent = useCallback(
+        (cancelled: { current: boolean }) => {
+            if (!reportModel) return;
 
-        if (reportModel) {
+            const params = { reportModel, reviewTaskType };
             setIsFetchingEditor(true);
             ReviewTaskApi.getEditorContentObject(props.data_hash, params).then(
                 (content) => {
+                    if (cancelled.current) return;
                     setEditorContentObject(content);
-                    // Sync editor sources from machine context to ensure
-                    // sources display correctly after state transitions
                     const currentSources =
                         machineService.state.context.reviewData.sources;
                     if (currentSources) {
@@ -88,12 +88,20 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
                     setIsFetchingEditor(false);
                 }
             );
-        }
+        },
+        [props.data_hash, reportModel, reviewTaskType]
+    );
+
+    // Fetch editor content on mount
+    useEffect(() => {
+        const cancelled = { current: false };
+        fetchEditorContent(cancelled);
+        return () => {
+            cancelled.current = true;
+        };
     }, [props.data_hash, reportModel]);
 
     // Re-fetch editor content when the form changes (e.g., after state transitions).
-    // This ensures the editor shows up-to-date content when it remounts after
-    // unmounting during non-editor form states (like selectReviewer).
     // Also reset comments so they are re-initialized from machine context
     // (prevents resolved comments from reappearing).
     useEffect(() => {
@@ -112,19 +120,11 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         );
         if (!hasVisualEditor) return;
 
-        const params = { reportModel, reviewTaskType };
-        setIsFetchingEditor(true);
-        ReviewTaskApi.getEditorContentObject(props.data_hash, params).then(
-            (content) => {
-                setEditorContentObject(content);
-                const currentSources =
-                    machineService.state.context.reviewData.sources;
-                if (currentSources) {
-                    setEditorSources(currentSources);
-                }
-                setIsFetchingEditor(false);
-            }
-        );
+        const cancelled = { current: false };
+        fetchEditorContent(cancelled);
+        return () => {
+            cancelled.current = true;
+        };
     }, [form]);
 
     const { websocketProvider, isCollaborative } = useMemo(() => {

@@ -42,7 +42,6 @@ export const transitionHandler = (state) => {
     const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
     const shouldNotUpdateReviewTask =
-        event === Events.reject ||
         event === Events.selectedCrossChecking ||
         event === Events.selectedReview ||
         event === Events.reAssignUser;

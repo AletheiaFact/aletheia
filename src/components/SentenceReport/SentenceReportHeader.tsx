@@ -48,10 +48,11 @@ const SentenceReportHeader = ({
         let cancelled = false;
 
         const fetchUserNames = async () => {
-            const userIds = [];
-            if (context.reviewerId) userIds.push(context.reviewerId);
-            if (context.crossCheckerId) userIds.push(context.crossCheckerId);
-            if (context.usersId) userIds.push(...context.usersId);
+            const rawIds = [];
+            if (context.reviewerId) rawIds.push(context.reviewerId);
+            if (context.crossCheckerId) rawIds.push(context.crossCheckerId);
+            if (context.usersId) rawIds.push(...context.usersId);
+            const userIds = [...new Set(rawIds)];
 
             const names = {};
             await Promise.all(
@@ -147,12 +148,11 @@ const SentenceReportHeader = ({
                     />
                 )}
 
-            {/* Assigned fact-checker chip */}
-            {assignedFactChecker && (
+            {/* Assigned fact-checker chip — only render after name is resolved */}
+            {assignedFactChecker && userNames[assignedFactChecker.id] && (
                 <Chip
                     label={`${assignedFactChecker.type}: ${
-                        userNames[assignedFactChecker.id] ||
-                        assignedFactChecker.id
+                        userNames[assignedFactChecker.id]
                     }`}
                     color="primary"
                     variant="outlined"
