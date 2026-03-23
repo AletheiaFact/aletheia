@@ -5,8 +5,8 @@ import {
     ReportModelEnum,
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
-import { Roles } from "../../types/enums";
-import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
+import { currentUserRole } from "../../atoms/currentUser";
+import { isStaff } from "../../utils/GetUserPermission";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import AddIcon from "@mui/icons-material/Add";
@@ -14,7 +14,6 @@ import { useTranslation } from "next-i18next";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
     const { t } = useTranslation();
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
     const { recreateMachine, reviewTaskType } = useContext(
         ReviewTaskMachineContext
@@ -48,7 +47,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                     gap: 16,
                 }}
             >
-                {isLoggedIn && role !== Roles.Regular && (
+                {isStaff(role) && (
                     <>
                         {isClaim && (
                             <>

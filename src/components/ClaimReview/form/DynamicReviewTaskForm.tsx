@@ -248,9 +248,14 @@ const DynamicReviewTaskForm = ({
                 type: "manual",
                 message: t("common:requiredFieldError"),
             });
-            const el = document.getElementById("field-classification");
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth", block: "center" });
+            const classificationField = document.getElementById(
+                "field-classification"
+            );
+            if (classificationField) {
+                classificationField.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
             } else {
                 errorAlertRef.current?.scrollIntoView({
                     behavior: "smooth",

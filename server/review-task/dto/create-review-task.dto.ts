@@ -1,10 +1,4 @@
-import {
-    IsEnum,
-    IsNotEmpty,
-    IsObject,
-    IsOptional,
-    IsString,
-} from "class-validator";
+import { IsEnum, IsNotEmpty, IsObject, IsString } from "class-validator";
 
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
