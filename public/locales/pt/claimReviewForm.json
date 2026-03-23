@@ -43,6 +43,7 @@
     "reviewerPlaceholder": "Selecione um usuário",
     "crossCheckerLabel": "Selecione um revisor para o cross-ckecking",
     "crossCheckerPlaceholder": "Selecione um usuário",
+    "viewOnlyMode": "Você está visualizando este relatório em modo somente leitura. O conteúdo está visível mas não pode ser editado.",
     "crossCheckingCommentLabel": "Comentário do cross-checking",
     "crossCheckingCommentPlaceholder": "Insira o comentário do cross-checking",
     "crossCheckingClassificationLabel": "Revise esse relatório",
@@ -56,5 +57,11 @@
     "isSensitiveLabel": "Conteúdo confidencial",
     "isSensitive": "Esta denúncia contém conteúdo confidencial",
     "viewPreview": "Visualizar pré-visualização",
-    "hidePreview": "Ocultar pré-visualização"
+    "hidePreview": "Ocultar pré-visualização",
+    "assigneeChipLabel": "Responsável",
+    "reviewerChipLabel": "Revisor",
+    "crossCheckerChipLabel": "Cross-Checker",
+    "validationErrorTitle": "Por favor, corrija os seguintes erros",
+    "validationErrorDescription": "Alguns campos obrigatórios estão ausentes ou inválidos. Revise os campos destacados abaixo.",
+    "viewOnlyTooltip": "Modo somente leitura: esta ação não está disponível"
 }

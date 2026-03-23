@@ -1,4 +1,3 @@
-import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     reviewingSelector,
@@ -6,15 +5,15 @@ import {
     crossCheckingSelector,
     reportSelector,
     addCommentCrossCheckingSelector,
+    currentStateSelector,
 } from "../../../machines/reviewTask/selectors";
 
-import AletheiaCaptcha from "../../AletheiaCaptcha";
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Grid, Typography } from "@mui/material";
 import colors from "../../../styles/colors";
+import AletheiaAlert from "../../AletheiaAlert";
 import {
     isUserLoggedIn,
     currentUserId,
@@ -26,23 +25,42 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
+import RecaptchaModal from "../../Modal/RecaptchaModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
-import { isAdmin } from "../../../utils/GetUserPermission";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
+import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
+const EVENTS_REQUIRING_CLASSIFICATION = [
+    ReviewTaskEvents.finishReport,
+    ReviewTaskEvents.publish,
+];
+
+const DynamicReviewTaskForm = ({
+    data_hash,
+    personality,
+    target,
+    canInteract = true,
+}) => {
     const {
         handleSubmit,
         control,
         getValues,
         reset,
+        clearErrors,
+        setError,
         formState: { errors },
         watch,
     } = useForm();
-    const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { machineService, events, form, setFormAndEvents, reviewTaskType } =
-        useContext(ReviewTaskMachineContext);
+    const {
+        reportModel,
+        machineService,
+        events,
+        form,
+        setFormAndEvents,
+        reviewTaskType,
+    } = useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(
@@ -57,15 +75,23 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState({});
     const [reviewerError, setReviewerError] = useState(false);
-    const [recaptchaString, setRecaptchaString] = useState("");
     const [gobackWarningModal, setGobackWarningModal] = useState(false);
     const [finishReportWarningModal, setFinishReportWarningModal] =
         useState(false);
-    const hasCaptcha = !!recaptchaString;
-    const recaptchaRef = useRef(null);
+    const [pendingAction, setPendingAction] = useState<{
+        event: string;
+        data: any;
+    } | null>(null);
+    const pendingCaptchaToken = useRef<string>("");
+    const errorAlertRef = useRef<HTMLDivElement>(null);
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
+
+    // Use centralized permission system as middleware only
+    const permissions = useReviewTaskPermissions();
+
+    const currentState = useSelector(machineService, currentStateSelector);
 
     const resetIsLoading = () => {
         const isLoading = {};
@@ -77,30 +103,62 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setFormAndEvents(machineService.machine.config.initial);
+            const state = machineService.state.value;
+            const currentMachineState =
+                typeof state === "string" ? state : Object.keys(state)[0];
+            setFormAndEvents(currentMachineState);
         }
     }, [isLoggedIn]);
 
     useEffect(() => {
+        clearErrors();
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
-    }, [events]);
+    }, [events, form]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
+
+        // Filter out visualEditor for events that don't need it (navigation, selection, and comment-only events)
+        const eventsWithoutVisualEditor = [
+            ReviewTaskEvents.addRejectionComment,
+            ReviewTaskEvents.confirmRejection,
+            ReviewTaskEvents.selectedCrossChecking,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.selectedReview,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.reAssignUser,
+            ReviewTaskEvents.viewPreview,
+            ReviewTaskEvents.addComment,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.submitComment, // Cross-checking comment submission uses separate form fields
+        ];
+
+        const filteredFormData = eventsWithoutVisualEditor.includes(eventName)
+            ? Object.fromEntries(
+                  Object.entries(formData).filter(
+                      ([key]) => key !== "visualEditor"
+                  )
+              )
+            : formData;
+
         const payload = {
             data_hash,
             reportModel,
             reviewData: {
-                ...formData,
+                ...filteredFormData,
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review
                     ) || reviewData.reviewComments,
                 crossCheckingComments: reviewData.crossCheckingComments,
+                ...(eventName === ReviewTaskEvents.sendToReview && {
+                    rejectionComment: "",
+                }),
             },
             review: {
                 personality,
@@ -109,24 +167,23 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
             target,
             type: eventName,
             t,
-            recaptchaString,
+            recaptchaString: pendingCaptchaToken.current,
             setFormAndEvents,
             resetIsLoading,
             currentUserId: userId,
             nameSpace,
         };
         machineService.send(eventName, payload);
-        setRecaptchaString("");
-        recaptchaRef.current?.resetRecaptcha();
+        pendingCaptchaToken.current = "";
     };
 
     const validateSelectedReviewer = (data, event) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                !reviewData.usersId.includes(data.crossCheckerId)
+                  !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                !reviewData.usersId.includes(data.reviewerId);
+                  !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -180,8 +237,38 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (validateSelectedReviewer(data, event)) {
+        if (!validateSelectedReviewer(data, event)) return;
+
+        // Classification is required for report completion and publish events
+        if (
+            EVENTS_REQUIRING_CLASSIFICATION.includes(event) &&
+            (!data.classification || data.classification === "")
+        ) {
+            setError("classification", {
+                type: "manual",
+                message: t("common:requiredFieldError"),
+            });
+            const classificationField = document.getElementById(
+                "field-classification"
+            );
+            if (classificationField) {
+                classificationField.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            } else {
+                errorAlertRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }
+            return;
+        }
+
+        if (CAPTCHA_EXEMPT_EVENTS.includes(event)) {
             handleSendEvent(event, data);
+        } else {
+            setPendingAction({ event, data });
         }
     };
 
@@ -197,37 +284,72 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         if (event === ReviewTaskEvents.goback)
             setGobackWarningModal(!gobackWarningModal);
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
+        // Non-exempt submit buttons are handled by onSubmit (after form validation),
+        // so we don't open the captcha modal here to avoid showing errors + modal together
     };
 
-    const checkIfUserCanSeeButtons = (): boolean => {
-        const userIsReviewer = reviewData.reviewerId === userId;
-        const userIsCrossChecker = reviewData.crossCheckerId === userId;
-        const userIsAssignee = reviewData.usersId.includes(userId);
-        const userIsAdmin = isAdmin(role);
-
-        if (
-            isReported &&
-            !userIsAssignee &&
-            !userIsCrossChecker &&
-            !userIsAdmin
-        ) {
-            return false;
-        }
-        if (isCrossChecking || isAddCommentCrossChecking) {
-            return userIsCrossChecker || userIsAdmin;
-        }
-        if (isReviewing) {
-            return userIsReviewer || userIsAdmin;
-        }
-        return true;
+    const handleRecaptchaConfirm = (token: string) => {
+        if (!pendingAction) return;
+        pendingCaptchaToken.current = token;
+        const { event, data } = pendingAction;
+        setPendingAction(null);
+        handleSendEvent(event, data);
     };
 
-    const showButtons = checkIfUserCanSeeButtons();
+    const handleRecaptchaCancel = () => {
+        setPendingAction(null);
+    };
+
+    // Check if user can perform any actions as middleware
+    const canUserInteractWithForm = () => {
+        // If no events from state machine, no buttons
+        if (!events || events.length === 0) return false;
+
+        // Use permissions as middleware to check if user can perform any action
+        return permissions.showForm && canInteract;
+    };
+
+    const onValidationError = (formErrors) => {
+        const firstErrorField = Object.keys(formErrors)[0];
+        if (firstErrorField) {
+            const el = document.getElementById(`field-${firstErrorField}`);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+        }
+        errorAlertRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        });
+    };
+
+    const showButtons = canUserInteractWithForm();
 
     return (
-        <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+        <form
+            style={{ width: "100%" }}
+            onSubmit={handleSubmit(onSubmit, onValidationError)}
+        >
             {form && (
                 <>
+                    {Object.keys(errors).length > 0 && (
+                        <div
+                            ref={errorAlertRef}
+                            style={{ margin: "0 20px 16px" }}
+                        >
+                            <AletheiaAlert
+                                type="error"
+                                message={t(
+                                    "claimReviewForm:validationErrorTitle"
+                                )}
+                                description={t(
+                                    "claimReviewForm:validationErrorDescription"
+                                )}
+                                showIcon
+                            />
+                        </div>
+                    )}
                     <DynamicForm
                         currentForm={form}
                         machineValues={reviewData}
@@ -236,50 +358,32 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                     />
                     <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
-                            <Typography
-                                variant="body1"
-                                style={{ color: colors.error, fontSize: 16 }}
+                            <AletheiaAlert
+                                type="error"
+                                message={t("reviewTask:invalidReviewerMessage")}
+                                showIcon
                                 data-cy="testReviewerError"
-                            >
-                                {t("reviewTask:invalidReviewerMessage")}
-                            </Typography>
+                            />
                         )}
                     </div>
-                    {events?.length > 0 && showButtons && (
-                        <AletheiaCaptcha
-                            onChange={setRecaptchaString}
-                            ref={recaptchaRef}
-                        />
-                    )}
                 </>
             )}
             {showButtons && (
-                <Grid
-                    container
-                    style={{
-                        padding: "32px 0 0",
-                        justifyContent: "space-evenly",
-                        gap: "10px",
-                    }}
-                >
-                    {events?.map((event) => {
-                        return (
-                            <AletheiaButton
-                                loading={isLoading[event]}
-                                key={event}
-                                type={ButtonType.blue}
-                                htmlType={defineButtonHtmlType(event)}
-                                onClick={() => handleOnClick(event)}
-                                event={event}
-                                disabled={!hasCaptcha}
-                                data-cy={`testClaimReview${event}`}
-                            >
-                                {t(`reviewTask:${event}`)}
-                            </AletheiaButton>
-                        );
-                    })}
-                </Grid>
+                <ActionToolbar
+                    events={events}
+                    permissions={permissions}
+                    isLoading={isLoading}
+                    currentState={currentState}
+                    onButtonClick={handleOnClick}
+                    defineButtonHtmlType={defineButtonHtmlType}
+                />
             )}
+
+            <RecaptchaModal
+                open={pendingAction !== null}
+                onConfirm={handleRecaptchaConfirm}
+                onCancel={handleRecaptchaCancel}
+            />
 
             <WarningModal
                 open={gobackWarningModal}

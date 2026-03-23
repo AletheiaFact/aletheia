@@ -5,10 +5,12 @@ const isUserLoggedIn = atom(false);
 const currentUserRole = atom(Roles.Regular);
 const currentUserId = atom("");
 const currentAuthentication = atom("");
+const isAuthResolved = atom(false);
 
 export {
     isUserLoggedIn,
     currentUserRole,
     currentUserId,
     currentAuthentication,
+    isAuthResolved,
 };

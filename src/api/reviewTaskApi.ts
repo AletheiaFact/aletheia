@@ -48,7 +48,10 @@ const createReviewTask = (params, t, type) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            MessageManager.showMessage("success", t(`reviewTask:${type}_SUCCESS`));
+            MessageManager.showMessage(
+                "success",
+                t(`reviewTask:${type}_SUCCESS`)
+            );
             return response.data;
         })
         .catch((err) => {
@@ -61,10 +64,32 @@ const autoSaveDraft = (params, t) => {
     return request
         .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
-            MessageManager.showMessage("success", t(`reviewTask:SAVE_DRAFT_SUCCESS`));
+            MessageManager.showMessage(
+                "success",
+                t(`reviewTask:SAVE_DRAFT_SUCCESS`)
+            );
             return response.data;
         })
         .catch((err) => {
+            throw err;
+        });
+};
+
+const saveDraft = (data_hash: string, machine: { context: any }, t) => {
+    return request
+        .put(`/save-draft/${data_hash}`, { machine })
+        .then((response) => {
+            MessageManager.showMessage(
+                "success",
+                t(`reviewTask:SAVE_DRAFT_SUCCESS`)
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            MessageManager.showMessage(
+                "error",
+                t(`reviewTask:SAVE_DRAFT_ERROR`)
+            );
             throw err;
         });
 };
@@ -107,6 +132,7 @@ const ReviewTaskApi = {
     createReviewTask,
     getReviewTasks,
     autoSaveDraft,
+    saveDraft,
     getEditorContentObject,
     addComment,
     deleteComment,

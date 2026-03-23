@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
 import React from "react";
@@ -29,7 +29,11 @@ const DynamicForm = ({
                 const defaultValue = machineValues[fieldName];
 
                 return (
-                    <Grid container key={fieldName + index}>
+                    <Grid
+                        container
+                        key={fieldName + index}
+                        id={`field-${fieldName}`}
+                    >
                         <Grid item xs={12}>
                             <h4
                                 style={{
@@ -39,9 +43,16 @@ const DynamicForm = ({
                                     marginBottom: 0,
                                 }}
                             >
-                                {fieldItem.rules.required &&
-                                    <span style={{ fontSize: 16, color: colors.error }}>* </span>
-                                }
+                                {fieldItem.rules.required && (
+                                    <span
+                                        style={{
+                                            fontSize: 16,
+                                            color: colors.error,
+                                        }}
+                                    >
+                                        *{" "}
+                                    </span>
+                                )}
                                 {t(label)}
                             </h4>
                         </Grid>
@@ -51,6 +62,10 @@ const DynamicForm = ({
                             style={{
                                 margin: "10px 0",
                                 wordBreak: "break-word",
+                                ...(errors[fieldName] && {
+                                    borderLeft: `3px solid ${colors.error}`,
+                                    paddingLeft: "8px",
+                                }),
                             }}
                         >
                             <Controller
@@ -76,9 +91,13 @@ const DynamicForm = ({
                             />
                             {errors[fieldName] && (
                                 <Typography
-                                    data-cy={`testClaimReviewError${fieldName}`}
                                     variant="body1"
-                                    style={{ marginLeft: 20, color: colors.error, fontSize: 16 }}
+                                    data-cy={`testClaimReviewError${fieldName}`}
+                                    style={{
+                                        marginLeft: 20,
+                                        color: colors.error,
+                                        fontSize: 16,
+                                    }}
                                 >
                                     {t(errors[fieldName].message)}
                                 </Typography>
