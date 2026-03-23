@@ -8,7 +8,7 @@ import {
 } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
 import { ReviewTaskMachineContext } from "./ReviewTaskMachineProvider";
-import { reviewDataSelector } from "./selectors";
+import { currentStateSelector, reviewDataSelector } from "./selectors";
 import {
     resolvePermissions,
     PermissionContext,
@@ -33,13 +33,7 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
     const [loggedIn] = useAtom(isUserLoggedIn);
 
     // Get current state and review data (flatten compound sub-states)
-    const currentState = useSelector(
-        machineService,
-        (state: { value: string | Record<string, unknown> }) => {
-            const value = state.value;
-            return typeof value === "string" ? value : Object.keys(value)[0];
-        }
-    );
+    const currentState = useSelector(machineService, currentStateSelector);
     const reviewData = useSelector(machineService, reviewDataSelector);
 
     // Determine user assignments

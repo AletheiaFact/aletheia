@@ -5,6 +5,7 @@ import {
     crossCheckingSelector,
     reportSelector,
     addCommentCrossCheckingSelector,
+    currentStateSelector,
 } from "../../../machines/reviewTask/selectors";
 
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
@@ -90,13 +91,7 @@ const DynamicReviewTaskForm = ({
     // Use centralized permission system as middleware only
     const permissions = useReviewTaskPermissions();
 
-    const currentState = useSelector(
-        machineService,
-        (state: { value: string | Record<string, unknown> }) => {
-            const value = state.value;
-            return typeof value === "string" ? value : Object.keys(value)[0];
-        }
-    );
+    const currentState = useSelector(machineService, currentStateSelector);
 
     const resetIsLoading = () => {
         const isLoading = {};
@@ -289,6 +284,7 @@ const DynamicReviewTaskForm = ({
     };
 
     const handleRecaptchaConfirm = (token: string) => {
+        if (!pendingAction) return;
         pendingCaptchaToken.current = token;
         const { event, data } = pendingAction;
         setPendingAction(null);

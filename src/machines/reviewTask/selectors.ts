@@ -40,6 +40,11 @@ const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
+const currentStateSelector = (state) => {
+    const value = state.value;
+    return typeof value === "string" ? value : Object.keys(value)[0];
+};
+
 export {
     publishedSelector,
     crossCheckingSelector,
@@ -50,4 +55,5 @@ export {
     reviewDataSelector,
     reportSelector,
     assignedSelector,
+    currentStateSelector,
 };

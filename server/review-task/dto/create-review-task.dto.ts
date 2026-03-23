@@ -69,10 +69,10 @@ export class CreateReviewTaskDTO {
     @ApiProperty()
     reportModel: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
     @ApiProperty()
-    recaptcha?: string;
+    recaptcha: string;
 
     @IsString()
     @ApiProperty()
