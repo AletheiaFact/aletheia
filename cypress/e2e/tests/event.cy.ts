@@ -145,13 +145,7 @@ describe("Test events infrastructure", () => {
     });
 
     describe("Event populated state", () => {
-        it("should not be able to open the edit drawer as an unauthenticated user", () => {
-            cy.visit(createdEventUrl);
-            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).should("not.exist");
-        });
-
         it("should display updated metrics and claim cards after linking topics", () => {
-            cy.intercept("GET", "**/api/review*").as("getReviews");
             cy.intercept("GET", "**/api/verification-request/**").as("getVerificationRequests");
 
             cy.login();
@@ -164,12 +158,6 @@ describe("Test events infrastructure", () => {
             });
 
             cy.url().should("contain", createdEventUrl);
-            cy.wait("@getReviews", { timeout: 15000 });
-
-            // Note: Testing populated reviews requires 2 seeded users to publish a
-            // report, which we don't have yet. Asserting as 0 for now.
-            cy.get(locators.claimReview.REVIEW_CARD_CONTAINER).should("not.exist");
-            cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 0);
 
             cy.get(locators.toggleButton.TOGGLE_BUTTON_RIGHT).click();
             cy.wait("@getVerificationRequests");
@@ -177,13 +165,19 @@ describe("Test events infrastructure", () => {
             cy.get(locators.verificationRequest.VERIFICATION_REQUEST_CARD_CONTAINER)
                 .should("be.visible");
             cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 1);
+
+            cy.get(locators.toggleButton.TOGGLE_BUTTON_LEFT).click();
+            // Note: Testing populated reviews requires 2 seeded users to publish a
+            // report, which we don't have yet. Asserting as 0 for now.
+            cy.get(locators.claimReview.REVIEW_CARD_CONTAINER).should("not.exist");
+            cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 0);
         });
     });
 
     describe("Event editing via drawer", () => {
-        beforeEach(() => {
-            cy.login();
+        it("should not be able to open the edit drawer as an unauthenticated user", () => {
             cy.visit(createdEventUrl);
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).should("not.exist");
         });
 
         it("should open the edit drawer, change the main topic, and reset to empty state", () => {
@@ -197,6 +191,9 @@ describe("Test events infrastructure", () => {
                 location: "Belém, Brasil v2",
                 mainTopic: cop28Topic,
             };
+
+            cy.login();
+            cy.visit(createdEventUrl);
 
             cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
 
