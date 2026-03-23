@@ -10,6 +10,7 @@ import {
     crossCheckingSelector,
     reportSelector,
     addCommentCrossCheckingSelector,
+    currentStateSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import CTAFolder from "../Home/CTAFolder/CTAFolder";
@@ -65,15 +66,7 @@ const SentenceReportView = ({
     }, [isPublished, publishedReview]);
 
     // Get current state for status display (useSelector ensures re-render on state changes)
-    const currentState = useSelector(
-        machineService,
-        (state: { value: string | Record<string, unknown> }) => {
-            const value = state.value;
-            return typeof value === "string"
-                ? value
-                : Object.keys(value)[0] || "unknown";
-        }
-    );
+    const currentState = useSelector(machineService, currentStateSelector);
 
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (

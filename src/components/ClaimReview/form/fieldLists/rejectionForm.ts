@@ -1,7 +1,4 @@
-import {
-    createFormField,
-    FormField,
-} from "../../../Form/FormField";
+import { createFormField, FormField } from "../../../Form/FormField";
 
 const rejectionForm: FormField[] = [
     createFormField({
