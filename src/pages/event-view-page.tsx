@@ -8,6 +8,7 @@ import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import EventView from "../components/Event/EventView/EventView";
+import AffixButton from "../components/AffixButton/AffixButton";
 
 interface EventPageProps {
     event: EventPayload;
@@ -32,6 +33,7 @@ const EventViewPage: NextPage<EventPageProps> = ({
                 event={event}
                 nameSpace={nameSpace}
             />
+            <AffixButton />
         </main>
     );
 };

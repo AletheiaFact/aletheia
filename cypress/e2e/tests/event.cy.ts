@@ -49,8 +49,13 @@ const fillAndSaveEvent = (startDate, endDate, overrides = {}) => {
 
 const addTopicFlow = (aliasType: string, labelToClick: string) => {
     cy.get(locators.topic.ADD_TOPIC_ICON).click();
-    cy.get(locators.topic.TYPE_TOPIC_INPUT).type(aliasType, { delay: 200 });
+    cy.get(locators.topic.TYPE_TOPIC_INPUT).should("be.visible").click();
+
+    cy.wait(300);
+
+    cy.get(locators.topic.TYPE_TOPIC_INPUT).clear().type(aliasType, { delay: 200 });
     cy.contains(labelToClick).should("be.visible").click();
+
     cy.get(locators.topic.ADD_TOPIC_SUBMIT).click();
 
     cy.wait("@postTopic").then((interception) => {
