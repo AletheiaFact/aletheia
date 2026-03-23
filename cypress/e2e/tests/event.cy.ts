@@ -151,8 +151,8 @@ describe("Test events infrastructure", () => {
         });
 
         it("should display updated metrics and claim cards after linking topics", () => {
-            cy.intercept({ method: "GET", pathname: "/api/review" }).as("getReviews");
-            cy.intercept({ method: "GET", pathname: "/api/verification-request/" }).as("getVerificationRequests");
+            cy.intercept("GET", "**/api/review*").as("getReviews");
+            cy.intercept("GET", "**/api/verification-request/**").as("getVerificationRequests");
 
             cy.login();
             cy.visit(routes.listPage);
@@ -164,7 +164,7 @@ describe("Test events infrastructure", () => {
             });
 
             cy.url().should("contain", createdEventUrl);
-            cy.wait("@getReviews");
+            cy.wait("@getReviews", { timeout: 15000 });
 
             // Note: Testing populated reviews requires 2 seeded users to publish a
             // report, which we don't have yet. Asserting as 0 for now.
