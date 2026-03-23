@@ -142,12 +142,11 @@ const fieldValidation = (value, validationFunction) => {
     if (typeof value === "string") {
         return validationFunction(value);
     }
-
-    if (typeof value === "object" && value !== null) {
-        if ("value" in value) {
-            return validationFunction(value.value);
-        }
+    if (Array.isArray(value)) {
         return value.every((v) => validationFunction(v));
+    }
+    if (typeof value === "object" && value !== null && "value" in value) {
+        return validationFunction(value.value);
     }
 
     return false;

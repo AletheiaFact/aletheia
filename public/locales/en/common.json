@@ -16,5 +16,6 @@
     "change": "Change",
     "approve": "Approve",
     "reject": "Reject",
-    "endDateMustBeAfterStartDate": "End date cannot be earlier than start date"
+    "endDateMustBeAfterStartDate": "End date cannot be earlier than start date",
+    "viewOnly": "View Only"
 }

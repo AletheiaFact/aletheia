@@ -10,15 +10,19 @@ const visualEditor: FormField[] = [
         fieldName: "visualEditor",
         type: "visualEditor",
         defaultValue: "",
+        required: false,
     }),
 
     createFormField({
         fieldName: "classification",
         type: "select",
         defaultValue: "",
+        required: false,
         rules: {
             validate: {
                 validClassification: (value) =>
+                    !value ||
+                    value === "" ||
                     fieldValidation(value, isValidClassification) ||
                     "common:requiredFieldError",
             },

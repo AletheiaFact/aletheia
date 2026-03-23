@@ -16,5 +16,6 @@
     "change": "Mudar",
     "approve": "Aprovar",
     "reject": "Rejeitar",
-    "endDateMustBeAfterStartDate": "A data de término não pode ser anterior à data de início"
+    "endDateMustBeAfterStartDate": "A data de término não pode ser anterior à data de início",
+    "viewOnly": "Somente leitura"
 }

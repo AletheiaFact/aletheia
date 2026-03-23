@@ -1,19 +1,20 @@
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import React, { useContext } from "react";
 import Button, { ButtonType } from "../Button";
 import {
     ReportModelEnum,
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
-import { isUserLoggedIn } from "../../atoms/currentUser";
+import { currentUserRole } from "../../atoms/currentUser";
+import { isStaff } from "../../utils/GetUserPermission";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "next-i18next";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
     const { t } = useTranslation();
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [role] = useAtom(currentUserRole);
     const { recreateMachine, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -28,14 +29,16 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
     };
 
     return (
-        <Grid container
+        <Grid
+            container
             style={{
                 width: "100%",
                 padding: "0px 0px 15px 0px",
                 justifyContent: "center",
             }}
         >
-            <Grid item
+            <Grid
+                item
                 xs={12}
                 style={{
                     display: "flex",
@@ -44,7 +47,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                     gap: 16,
                 }}
             >
-                {isLoggedIn && (
+                {isStaff(role) && (
                     <>
                         {isClaim && (
                             <>

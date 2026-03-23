@@ -21,6 +21,8 @@
     "SEND_TO_REVIEW_ERROR": "Error when sending for revision",
     "ADD_REJECTION_COMMENT_SUCCESS": "Rejection saved succesfully",
     "ADD_REJECTION_COMMENT_ERROR": "Error when saving the rejection",
+    "CONFIRM_REJECTION_SUCCESS": "Rejection confirmed successfully",
+    "CONFIRM_REJECTION_ERROR": "Error when confirming the rejection",
     "PARTIAL_REVIEW_SUCCESS": "Summary saved succesfully",
     "PARTIAL_REVIEW_ERROR": "Error when saving the summary",
     "FULL_REVIEW_SUCCESS": "Summary saved succesfully",
@@ -33,6 +35,7 @@
     "RESET_ERROR": "It was not possible to reset",
 
     "ADD_REJECTION_COMMENT": "Send comment",
+    "CONFIRM_REJECTION": "Confirm rejection",
     "ASSIGN_USER": "Assign",
     "ASSIGN_REQUEST": "Assign",
     "FINISH_REPORT": "Finish Report",
@@ -68,5 +71,26 @@
     "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
     "seeFullPage": "See full page",
 
-    "sentenceInfo": "This sentence is being checked by AletheiaFact."
+    "sentenceInfo": "This sentence is being checked by AletheiaFact.",
+
+    "recaptchaModalTitle": "Please complete the captcha to continue",
+    "recaptchaModalConfirm": "Confirm",
+    "recaptchaModalCancel": "Cancel",
+
+    "unassigned": "Unassigned",
+    "cross-checking": "Cross-checking",
+    "selectReviewer": "Selecting reviewer",
+    "selectCrossChecker": "Selecting cross-checker",
+    "addCommentCrossChecking": "Adding comment",
+    "rejected": "Rejected",
+
+    "stageAssign": "Assign",
+    "stageAssigned": "Assigned",
+    "stageDraft": "Draft",
+    "stageReview": "Review",
+    "stageApproval": "Approval",
+    "stagePublished": "Published",
+
+    "rejectionCommentTitle": "Review rejected",
+    "reviewerInstructions": "Review the report and approve or reject with a comment."
 }

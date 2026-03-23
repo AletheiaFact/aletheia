@@ -13,6 +13,7 @@ import {
 import { ReviewTaskService } from "./review-task.service";
 import { CreateReviewTaskDTO } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
+import { SaveDraftDTO } from "./dto/save-draft.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
 import type { Request, Response } from "express";
@@ -87,16 +88,26 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Post("api/reviewtask")
     @Header("Cache-Control", "no-cache")
-    async create(
-        @Body() createReviewTask: CreateReviewTaskDTO
-    ): Promise<ReviewTaskDocument | UpdateWriteOpResult> {
-        const validateCaptcha = await this.captchaService.validate(
-            createReviewTask.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+    async create(@Body() createReviewTask: CreateReviewTaskDTO): Promise<any> {
+        if (createReviewTask.recaptcha) {
+            const validateCaptcha = await this.captchaService.validate(
+                createReviewTask.recaptcha
+            );
+            if (!validateCaptcha) {
+                throw new Error("Error validating captcha");
+            }
         }
         return this.reviewTaskService.create(createReviewTask);
+    }
+
+    @ApiTags("review-task")
+    @Put("api/reviewtask/save-draft/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async saveDraft(
+        @Param("data_hash") data_hash: string,
+        @Body() saveDraftBody: SaveDraftDTO
+    ) {
+        return this.reviewTaskService.saveDraft(data_hash, saveDraftBody);
     }
 
     @ApiTags("review-task")

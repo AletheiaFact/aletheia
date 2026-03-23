@@ -18,7 +18,6 @@ import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
-import SentenceReportPreviewView from "../SentenceReport/SentenceReportPreviewView";
 import { isAdmin } from "../../utils/GetUserPermission";
 
 export interface ClaimReviewViewProps {
@@ -33,15 +32,13 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
-    const { vw, enableViewReportPreview, reviewDrawerCollapsed } =
-        useAppSelector((state) => ({
-            vw: state?.vw,
-            enableViewReportPreview: state?.enableViewReportPreview,
-            reviewDrawerCollapsed:
-                state?.reviewDrawerCollapsed !== undefined
-                    ? state?.reviewDrawerCollapsed
-                    : true,
-        }));
+    const { vw, reviewDrawerCollapsed } = useAppSelector((state) => ({
+        vw: state?.vw,
+        reviewDrawerCollapsed:
+            state?.reviewDrawerCollapsed !== undefined
+                ? state?.reviewDrawerCollapsed
+                : true,
+    }));
     const { review } = publishedReview || {};
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
@@ -100,38 +97,25 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             )}
             {(isClaimTypeAndNotSmallScreen ||
                 isSourceOrVerificationRequest) && (
-                    <ClaimReviewHeader
-                        classification={
-                            review?.report?.classification ||
-                            reviewData?.classification
-                        }
-                        hideDescription={hideDescriptions}
-                        userIsNotRegular={userIsNotRegular}
-                        componentStyle={componentStyle}
-                        {...props}
-                    />
-                )}
-
-            {enableViewReportPreview ? (
-                <SentenceReportPreviewView
-                    context={review?.report || reviewData}
+                <ClaimReviewHeader
+                    classification={
+                        review?.report?.classification ||
+                        reviewData?.classification
+                    }
+                    hideDescription={hideDescriptions}
                     userIsNotRegular={userIsNotRegular}
-                    userIsReviewer={userIsReviewer}
-                    isHidden={review?.isHidden}
-                    href={href}
                     componentStyle={componentStyle}
                     {...props}
                 />
-            ) : (
-                <SentenceReportView
-                    context={review?.report || reviewData}
-                    userIsNotRegular={userIsNotRegular}
-                    userIsReviewer={userIsReviewer}
-                    isHidden={review?.isHidden}
-                    href={href}
-                    componentStyle={componentStyle}
-                />
             )}
+
+            <SentenceReportView
+                context={review?.report || reviewData}
+                userIsNotRegular={userIsNotRegular}
+                isHidden={review?.isHidden}
+                href={href}
+                componentStyle={componentStyle}
+            />
 
             {!review?.isPublished && (
                 <ClaimReviewForm

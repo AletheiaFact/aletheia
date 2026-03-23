@@ -97,7 +97,8 @@ const locators = {
             "[data-cy=testClaimReviewSourcesButton]",
         BTN_REVIEW_CLAIM_IMAGE: "[data-cy=testReviewClaimImage]",
 
-        REVIEW_CARD_CONTAINER: "[data-cy=testReviewCardContainer]"
+        REVIEW_CARD_CONTAINER: "[data-cy=testReviewCardContainer]",
+        BTN_RECAPTCHA_CONFIRM: "[data-cy=testRecaptchaConfirm]",
     },
 
     verificationRequest: {
@@ -119,13 +120,15 @@ const locators = {
         DETAIL_SOURCE_CHANNEL: "[data-cy=testVerificationRequestSourceChannel]",
         DETAIL_SEVERITY: "[data-cy=testVerificationRequestSeverity]",
         DETAIL_HEARD_FROM: "[data-cy=testVerificationRequestHeardFrom]",
-        DETAIL_PUBLICATION_DATE: "[data-cy=testVerificationRequestPublicationDate]",
+        DETAIL_PUBLICATION_DATE:
+            "[data-cy=testVerificationRequestPublicationDate]",
         DETAIL_DATE: "[data-cy=testVerificationRequestDate]",
         DETAIL_SOURCE_0: "[data-cy=testVerificationRequestSource0]",
         DETAIL_SOURCE_1: "[data-cy=testVerificationRequestSource1]",
 
         ERROR_VALIDATION_CONTENT: "[data-cy=testClaimReviewErrorcontent]",
-        ERROR_VALIDATION_PUBLICATION_DATE: "[data-cy=testClaimReviewErrorpublicationDate]",
+        ERROR_VALIDATION_PUBLICATION_DATE:
+            "[data-cy=testClaimReviewErrorpublicationDate]",
 
         DETAIL_CARD_CONTENT: "[data-cy=testVerificationRequestCardContent0]",
         DETAIL_CARD_CONTENT_1: "[data-cy=testVerificationRequestCardContent1]",

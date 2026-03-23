@@ -1,6 +1,7 @@
 import { useSelector } from "@xstate/react";
-import { Grid } from "@mui/material";
-import React, { useContext } from "react";
+import { Grid, Paper, Box, Typography } from "@mui/material";
+import React, { useContext, useMemo } from "react";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
@@ -9,31 +10,35 @@ import {
     crossCheckingSelector,
     reportSelector,
     addCommentCrossCheckingSelector,
+    currentStateSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import CTAFolder from "../Home/CTAFolder/CTAFolder";
 import SentenceReportContent from "./SentenceReportContent";
+import SentenceReportHeader from "./SentenceReportHeader";
 import { useAtom } from "jotai";
-import { currentUserId, currentUserRole } from "../../atoms/currentUser";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
-import { isAdmin } from "../../utils/GetUserPermission";
+import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
+import { useTranslation } from "next-i18next";
 
 const SentenceReportView = ({
     context,
     userIsNotRegular,
-    userIsReviewer,
     isHidden,
     href,
     componentStyle,
 }) => {
-    const [role] = useAtom(currentUserRole);
-    const [userId] = useAtom(currentUserId);
-    const { machineService, publishedReview, reviewTaskType } = useContext(
-        ReviewTaskMachineContext
-    );
-    const userIsCrossChecker = context.crossCheckerId === userId;
-    const userIsAssignee = context.usersId.includes(userId);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const { t } = useTranslation();
+
+    const { machineService, publishedReview, reviewTaskType, reportModel } =
+        useContext(ReviewTaskMachineContext);
+
+    const permissions = useReviewTaskPermissions();
+
+    // Machine state selectors (about workflow state, not permissions)
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(
@@ -44,43 +49,141 @@ const SentenceReportView = ({
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
-    const userIsAdmin = isAdmin(role);
 
+    // Show comments/classification based on centralized permissions + machine state
     const canShowClassificationAndCrossChecking =
         ((isCrossChecking || isAddCommentCrossChecking) &&
-            (userIsAdmin || userIsCrossChecker)) ||
-        (isReviewing && (userIsAdmin || userIsReviewer)) ||
-        (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
+            (permissions.isAdmin || permissions.isCrossChecker)) ||
+        (isReviewing && (permissions.isAdmin || permissions.isReviewer)) ||
+        (isReport &&
+            (permissions.isAdmin ||
+                permissions.isAssignee ||
+                permissions.isCrossChecker));
 
-    const canShowReport =
-        (isPublished && (!isHidden || userIsNotRegular)) ||
-        canShowClassificationAndCrossChecking;
+    // Only show SentenceReportContent if the report is published
+    const shouldShowReportContent = useMemo(() => {
+        return isPublished || publishedReview?.review;
+    }, [isPublished, publishedReview]);
+
+    // Get current state for status display (useSelector ensures re-render on state changes)
+    const currentState = useSelector(machineService, currentStateSelector);
 
     return (
-        canShowReport &&
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
             <Grid
                 container
                 justifyContent="center"
                 style={
-                    isCrossChecking || isReport || isReviewing
+                    !isPublished
                         ? { backgroundColor: colors.lightNeutral }
                         : undefined
                 }
             >
-                <Grid item xs={10} sm={componentStyle.span}>
+                <Grid item xs={componentStyle.span}>
+                    {/* Header with status chips - only show for logged-in users when not published */}
+                    {isLoggedIn &&
+                        !(isPublished || publishedReview?.review) && (
+                            <SentenceReportHeader
+                                context={context}
+                                currentState={currentState}
+                                editorReadonly={permissions.editorReadonly}
+                                reportModel={reportModel}
+                            />
+                        )}
+
+                    {/* Reviewer instructions banner */}
+                    {isLoggedIn &&
+                        isReviewing &&
+                        (permissions.isReviewer || permissions.isAdmin) && (
+                            <Paper
+                                elevation={0}
+                                style={{
+                                    padding: "12px 20px",
+                                    margin: "0 0 16px",
+                                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                                    border: "1px solid rgba(25, 118, 210, 0.3)",
+                                    borderRadius: "8px",
+                                }}
+                            >
+                                <Typography
+                                    variant="body2"
+                                    style={{
+                                        color: "rgb(25, 118, 210)",
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    {t("reviewTask:reviewerInstructions")}
+                                </Typography>
+                            </Paper>
+                        )}
+
+                    {/* Rejection comment banner */}
+                    {isLoggedIn && context?.rejectionComment && (
+                        <Paper
+                            elevation={0}
+                            style={{
+                                padding: "16px 20px",
+                                margin: "0 0 16px",
+                                backgroundColor: colors.errorTranslucent,
+                                border: `1px solid ${colors.error}`,
+                                borderRadius: "8px",
+                            }}
+                        >
+                            <Box
+                                style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: "12px",
+                                }}
+                            >
+                                <ErrorOutlineIcon
+                                    style={{
+                                        color: colors.error,
+                                        fontSize: "22px",
+                                        marginTop: "2px",
+                                    }}
+                                />
+                                <div>
+                                    <Typography
+                                        variant="subtitle2"
+                                        style={{
+                                            color: colors.error,
+                                            fontWeight: 600,
+                                            marginBottom: "4px",
+                                        }}
+                                    >
+                                        {t("reviewTask:rejectionCommentTitle")}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        style={{
+                                            color: colors.blackSecondary,
+                                            lineHeight: 1.5,
+                                        }}
+                                    >
+                                        {context.rejectionComment}
+                                    </Typography>
+                                </div>
+                            </Box>
+                        </Paper>
+                    )}
+
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}
-                    <SentenceReportContent
-                        context={context?.reviewDataHtml || context}
-                        classification={context.classification}
-                        showClassification={
-                            canShowClassificationAndCrossChecking
-                        }
-                        href={href}
-                    />
-                    <CTAFolder />
+
+                    {/* SentenceReportContent section - only show if published */}
+                    {shouldShowReportContent && (
+                        <SentenceReportContent
+                            context={context?.reviewDataHtml || context}
+                            classification={context.classification}
+                            showClassification={
+                                canShowClassificationAndCrossChecking
+                            }
+                            href={href}
+                        />
+                    )}
+                    {isPublished && <CTAFolder />}
                 </Grid>
             </Grid>
         )
