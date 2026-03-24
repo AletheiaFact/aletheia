@@ -16,17 +16,16 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { CaptchaService } from "../captcha/captcha.service";
+import { MongoPersonalityService } from "../personality/mongo/personality.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
-import { FileManagementService } from "../file-management/file-management.service";
-import { FileManagementServiceMock } from "./mocks/FileManagementServiceMock.ts";
 
 jest.setTimeout(10000);
 
 /**
  * ClaimController E2E Test Suite
- *
+ * 
  * Tests the complete claim lifecycle management including:
  * - Multiple content model types (Speech, Image, Debate) with different validation rules
  * - Claim creation, retrieval, and management across content types
@@ -35,14 +34,14 @@ jest.setTimeout(10000);
  * - Soft delete functionality with proper access control
  * - Comprehensive validation for required fields and business rules
  * - Pagination and filtering capabilities
- *
+ * 
  * Business Context:
  * Claims are the core content units in the fact-checking platform. They represent
  * statements made by public figures that need verification. The system supports:
  * - Speech Claims: Text-based statements with source citations
  * - Image Claims: Visual content with metadata and file storage
  * - Debate Claims: Multi-personality discussions requiring 2+ participants
- *
+ * 
  * Technical Features:
  * - Content model polymorphism with type-specific validation
  * - Personality service integration with mock data
@@ -50,7 +49,7 @@ jest.setTimeout(10000);
  * - Soft delete pattern with mongoose-softdelete
  * - Path generation with SEO-friendly slugs
  * - Namespace-based content organization
- *
+ * 
  * Data Flow:
  * 1. Empty state validation → claim creation by type → retrieval with population
  * 2. Moderation workflows (hide/unhide) → soft deletion → access validation
@@ -97,10 +96,7 @@ describe("ClaimController (e2e)", () => {
 
         await SeedTestUser(mongoUri);
         const { insertedIds } = await SeedTestPersonality(mongoUri);
-        personalitiesId = [
-            insertedIds["0"].toString(),
-            insertedIds["1"].toString(),
-        ];
+        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
 
         // Update test config with shared MongoDB URI
         const testConfig = {
@@ -128,8 +124,6 @@ describe("ClaimController (e2e)", () => {
             .useValue(personalityService)
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
-            .overrideProvider(FileManagementService)
-            .useValue(FileManagementServiceMock)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -191,18 +185,16 @@ describe("ClaimController (e2e)", () => {
                 sources: speechSources,
                 recaptcha: "valid_recaptcha_token",
             });
-
+        
         expect(response.status).toBe(201);
         speechClaimId = response.body?._id;
         claimId = speechClaimId; // Set default claimId for dependent tests
-
+        
         // Validate response structure and content
         expect(response.body?.title).toEqual("Speech Claim Title");
         expect(response.body?._id).toBeDefined();
         expect(response.body?.path).toBeDefined();
-        expect(response.body?.path).toContain(
-            "/personality/barack-obama/claim/"
-        );
+        expect(response.body?.path).toContain("/personality/barack-obama/claim/");
         expect(response.body?.path).toContain("speech-claim-title");
     });
 
@@ -218,13 +210,13 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/:id (GET) - Get by id", async () => {
         expect(claimId).toBeDefined();
-
+        
         const response = await request(app.getHttpServer())
             .get(`/api/claim/${claimId}`)
             .query({ nameSpace: NameSpaceEnum.Main });
-
+        
         expect(response.status).toBe(200);
-
+        
         // Validate personality population works correctly
         const hasBarackObamaPersonality = response.body?.personalities.some(
             (p) => p.name === "Barack Obama"
@@ -232,7 +224,7 @@ describe("ClaimController (e2e)", () => {
         expect(hasBarackObamaPersonality).toBeTruthy();
         expect(response.body?.personalities).toHaveLength(1);
         expect(response.body?.personalities[0]?.slug).toEqual("barack-obama");
-
+        
         // Validate all claim fields are properly returned
         expect(response.body?._id).toEqual(claimId);
         expect(response.body?.title).toEqual("Speech Claim Title");
@@ -274,17 +266,13 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(201);
-
+        
         // Validate response structure and content
         expect(response.status).toBe(201);
-        expect(response.body?.title).toEqual(
-            "Image Claim Title With Personality"
-        );
+        expect(response.body?.title).toEqual("Image Claim Title With Personality");
         expect(response.body?.path).toBeDefined();
-        expect(response.body?.path).toContain(
-            "/personality/barack-obama/claim/"
-        );
-
+        expect(response.body?.path).toContain("/personality/barack-obama/claim/");
+        
         imageClaimId = response.body?._id || response.body?.path;
     });
 
@@ -315,13 +303,12 @@ describe("ClaimController (e2e)", () => {
                 },
                 recaptcha: "valid_recaptcha_token",
             });
-
+        
+        
         expect(response.status).toBe(201);
-        expect(response.body?.title).toEqual(
-            "Image Claim Title Without Personality"
-        );
+        expect(response.body?.title).toEqual("Image Claim Title Without Personality");
         expect(response.body?.path).toBeDefined();
-
+        
         // Validate that path doesn't contain personality slug (since no personality)
         expect(response.body?.path).toContain("/claim/");
         expect(response.body?.path).not.toContain("/personality/");
@@ -355,8 +342,7 @@ describe("ClaimController (e2e)", () => {
 
         // Debate endpoint may return different response formats
         // Accept either _id, path, or just success status
-        debateClaimId =
-            response.body?._id || response.body?.path || "debate-created";
+        debateClaimId = response.body?._id || response.body?.path || "debate-created";
 
         // If the response contains a path, validate it
         if (response.body?.path) {
@@ -401,7 +387,7 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/hidden/:id (PUT) - Hide claim", async () => {
         expect(claimId).toBeDefined();
-
+        
         // Hide the claim
         await request(app.getHttpServer())
             .put(`/api/claim/hidden/${claimId}`)
@@ -411,7 +397,7 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(200);
-
+            
         // Verify claim no longer appears in public listings
         const response = await request(app.getHttpServer())
             .get("/api/claim")
@@ -424,7 +410,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
             })
             .expect(200);
-
+            
         expect(response.body?.claims.length).toEqual(3); // Should be 3 instead of 4
     });
 
@@ -439,7 +425,7 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/hidden/:id (PUT) - Unhide claim", async () => {
         expect(claimId).toBeDefined();
-
+        
         // Unhide the claim
         await request(app.getHttpServer())
             .put(`/api/claim/hidden/${claimId}`)
@@ -449,7 +435,7 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(200);
-
+            
         // Verify claim reappears in public listings
         const response = await request(app.getHttpServer())
             .get("/api/claim")
@@ -462,7 +448,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
             })
             .expect(200);
-
+            
         expect(response.body?.claims.length).toEqual(4); // Should be back to 4
     });
 

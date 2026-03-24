@@ -15,25 +15,23 @@ import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { AdminUserMock } from "./utils/AdminUserMock";
 import { NotificationService } from "../notifications/notifications.service";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
-import { FileManagementService } from "../file-management/file-management.service";
-import { FileManagementServiceMock } from "./mocks/FileManagementServiceMock.ts";
 
 jest.setTimeout(10000);
 
 /**
  * NotificationController E2E Test Suite
- *
+ * 
  * Tests the complete notification system lifecycle including:
  * - Notification sending via Novu integration
  * - HMAC hash generation for secure client authentication
  * - Token retrieval for notification widget authentication
  * - Mock service validation for test environment isolation
- *
+ * 
  * Business Context:
  * The notification system uses Novu as the primary notification infrastructure.
  * It supports email notifications, topic-based subscriptions, and secure
  * client-side notification widgets through HMAC authentication tokens.
- *
+ * 
  * Data Flow:
  * 1. Notification sending → Novu trigger → email delivery
  * 2. Token retrieval → HMAC generation → secure widget authentication
@@ -52,7 +50,7 @@ describe("NotificationController (e2e)", () => {
     beforeAll(async () => {
         // Use shared MongoDB instance from global setup
         const mongoUri = process.env.MONGO_URI!;
-
+        
         await SeedTestUser(mongoUri);
 
         // Update test config with actual MongoDB URI
@@ -77,8 +75,6 @@ describe("NotificationController (e2e)", () => {
             .useValue(AbilitiesGuardMock)
             .overrideProvider(NotificationService)
             .useValue(notificationService)
-            .overrideProvider(FileManagementService)
-            .useValue(FileManagementServiceMock)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -95,14 +91,14 @@ describe("NotificationController (e2e)", () => {
 
     /**
      * Test: POST /api/notification - Send Notification via Novu
-     *
+     * 
      * Purpose: Validates notification sending through Novu integration
      * Business Logic:
      * - Accepts subscriberId and payload for notification content
      * - Triggers Novu "email-notifications" workflow
      * - Returns notification data with payload confirmation
      * - Uses mock service to avoid real notification sending in tests
-     *
+     * 
      * Validates:
      * - HTTP 201 response for successful notification sending
      * - Notification service is called with correct parameters
@@ -130,14 +126,14 @@ describe("NotificationController (e2e)", () => {
 
     /**
      * Test: GET /api/notification/token/:subscriberId - Generate Authentication Tokens
-     *
+     * 
      * Purpose: Validates secure token generation for notification widget authentication
      * Business Logic:
      * - Generates HMAC hash using Novu API key and subscriber ID
      * - Provides authentication tokens for client-side notification widgets
      * - Uses SHA256 HMAC for secure subscriber verification
      * - Returns both HMAC hash and application identifier
-     *
+     * 
      * Validates:
      * - HTTP 200 response for successful token generation
      * - HMAC hash generation service is called with subscriber ID
@@ -158,13 +154,13 @@ describe("NotificationController (e2e)", () => {
 
     /**
      * Test: POST /api/notification - Handle Missing Fields (Current Behavior)
-     *
+     * 
      * Purpose: Documents current API behavior with missing fields
      * Business Logic:
      * - Currently accepts requests even with missing fields
      * - Notification service handles undefined values gracefully
      * - Mock service returns successful response regardless of input
-     *
+     * 
      * Validates:
      * - HTTP 201 response (current behavior with missing fields)
      * - Service accepts undefined subscriberId and payload
@@ -189,13 +185,13 @@ describe("NotificationController (e2e)", () => {
 
     /**
      * Test: GET /api/notification/token/:subscriberId - Handle Invalid Subscriber ID
-     *
+     * 
      * Purpose: Validates API behavior when requesting tokens with invalid subscriber ID
      * Business Logic:
      * - Should handle requests for invalid subscriber IDs gracefully
      * - HMAC generation should work with any string input
      * - Returns consistent response format even with invalid IDs
-     *
+     * 
      * Validates:
      * - HTTP 200 response (HMAC can be generated for any string)
      * - Response contains HMAC hash even for invalid subscriber ID
@@ -204,7 +200,7 @@ describe("NotificationController (e2e)", () => {
     it("/api/notification/token/:subscriberId (GET) - Should handle invalid subscriber ID", () => {
         const invalidSubscriberId = "invalid_subscriber_id";
         const mockHash = "generated_hash_for_invalid_id";
-
+        
         jest.spyOn(notificationService, "generateHmacHash").mockReturnValueOnce(
             mockHash
         );
@@ -214,20 +210,20 @@ describe("NotificationController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body.hmacHash).toEqual(mockHash);
-                expect(body).toHaveProperty("hmacHash");
+                expect(body).toHaveProperty('hmacHash');
                 // Note: applicationIdentifier may be undefined in test environment
             });
     });
 
     /**
      * Test: POST /api/notification - Handle Service Failure
-     *
+     * 
      * Purpose: Validates API behavior when notification service fails
      * Business Logic:
      * - Should handle Novu service failures gracefully
      * - May return error response or fallback behavior
      * - Maintains API consistency during service outages
-     *
+     * 
      * Validates:
      * - Appropriate error handling when service throws exception
      * - API maintains consistent response format during failures
