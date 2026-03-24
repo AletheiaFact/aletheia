@@ -11,8 +11,6 @@ import { SessionOrM2MGuardMock } from "../../tests/mocks/SessionOrM2MGuardMock";
 import { M2MGuard } from "../../auth/m2m.guard";
 import { M2MGuardMock } from "../../tests/mocks/M2MGuardMock";
 import { CleanupDatabase } from "../../tests/utils/CleanupDatabase";
-import { FileManagementService } from "../../file-management/file-management.service";
-import { FileManagementServiceMock } from "../../../server/tests/mocks/FileManagementServiceMock.ts";
 
 /**
  * ParserService Unit Test Suite
@@ -63,8 +61,6 @@ describe("ParserService", () => {
             .useValue(SessionOrM2MGuardMock)
             .overrideGuard(M2MGuard)
             .useValue(M2MGuardMock)
-            .overrideProvider(FileManagementService)
-            .useValue(FileManagementServiceMock)
             .compile();
 
         parserService = moduleFixture.get<ParserService>(ParserService);
