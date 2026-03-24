@@ -1,44 +1,25 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3 } from "aws-sdk";
 const md5 = require("md5");
-
-interface S3Config {
-    endpoint: string;
-    forcePathStyle: boolean;
-    region: string;
-    /**
-     * Optional credentials to use when connecting to S3.
-     * Useful for connecting to a local S3 emulator.
-     * If not provided, the default credentials provider will be used.
-     */
-    credentials?: {
-        accessKeyId: string;
-        secretAccessKey: string;
-    };
-}
 
 @Injectable()
 export class FileManagementService {
     private readonly bucket;
-    private s3Client: S3Client;
+    private s3;
 
     constructor(private configService: ConfigService) {
-        this.bucket = this.configService.getOrThrow<string>("aws.bucket");
-        const s3Config: S3Config = {
-            endpoint: this.configService.getOrThrow<string>("aws.endpoint"),
-            forcePathStyle: true,
-            region: this.configService.getOrThrow<string>("aws.region"),
-            credentials: {
-                accessKeyId:
-                    this.configService.getOrThrow<string>("aws.accessKeyId"),
-                secretAccessKey: this.configService.getOrThrow<string>(
-                    "aws.secretAccessKey"
-                ),
-            },
+        this.bucket = this.configService.get<string>("aws.bucket");
+        const s3Config = {
+            accessKeyId: this.configService.get<string>("aws.accessKeyId"),
+            secretAccessKey: this.configService.get<string>(
+                "aws.secretAccessKey"
+            ),
+            endpoint: this.configService.get<string>("aws.endpoint"),
+            s3ForcePathStyle: true,
         };
 
-        this.s3Client = new S3Client(s3Config);
+        this.s3 = new S3(s3Config);
     }
 
     /**
@@ -62,8 +43,8 @@ export class FileManagementService {
 
         const imageDataHash = md5(file.buffer);
 
-        await this.s3Client.send(
-            new PutObjectCommand({
+        const { Location, Key } = await this.s3
+            .upload({
                 Bucket: bucket || this.bucket,
                 Key: fileName,
                 ContentType: file?.mimetype,
@@ -72,19 +53,12 @@ export class FileManagementService {
                 Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })
-        );
-
-        const Location = `${this.configService.getOrThrow<string>(
-            "aws.endpoint"
-        )}/${bucket || this.bucket}/${fileName}`;
+            .promise();
 
         const result = {
             FileURL: Location,
-            fileName,
-            Extension: fileName.substring(
-                fileName.lastIndexOf(".") + 1,
-                fileName.length
-            ),
+            Key,
+            Extension: Key.substring(Key.lastIndexOf(".") + 1, Key.length),
             DataHash: imageDataHash,
         };
         return result;

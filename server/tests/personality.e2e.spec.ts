@@ -15,8 +15,6 @@ import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
-import { FileManagementService } from "../file-management/file-management.service";
-import { FileManagementServiceMock } from "./mocks/FileManagementServiceMock.ts";
 
 jest.setTimeout(10000);
 
@@ -72,8 +70,6 @@ describe("PersonalityController (e2e)", () => {
             .useValue(AbilitiesGuardMock)
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
-            .overrideProvider(FileManagementService)
-            .useValue(FileManagementServiceMock)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -116,7 +112,7 @@ describe("PersonalityController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body?.personalities.length).toEqual(0);
-                expect(body).toHaveProperty("personalities");
+                expect(body).toHaveProperty('personalities');
                 expect(Array.isArray(body.personalities)).toBe(true);
             });
     });
@@ -149,13 +145,11 @@ describe("PersonalityController (e2e)", () => {
             .expect(201)
             .expect(({ body }) => {
                 personalityId = body?._id;
-                expect(body).toHaveProperty("_id");
+                expect(body).toHaveProperty('_id');
                 expect(body?.wikidata).toEqual("Q76");
-                expect(body?.description).toEqual(
-                    "President of the United States from 2009 to 2017"
-                );
+                expect(body?.description).toEqual("President of the United States from 2009 to 2017");
                 expect(personalityId).toBeDefined();
-                expect(body).toHaveProperty("slug");
+                expect(body).toHaveProperty('slug');
             });
     });
 
@@ -189,11 +183,11 @@ describe("PersonalityController (e2e)", () => {
             .expect(({ body }) => {
                 expect(body?.personalities.length).toEqual(1);
                 expect(body?.personalities[0]?.wikidata).toEqual("Q76");
-                expect(body).toHaveProperty("personalities");
-                expect(body.personalities[0]).toHaveProperty("description");
-                expect(body.personalities[0]).toHaveProperty("_id");
-                expect(body.personalities[0]).toHaveProperty("avatar");
-                expect(body.personalities[0]).toHaveProperty("slug");
+                expect(body).toHaveProperty('personalities');
+                expect(body.personalities[0]).toHaveProperty('description');
+                expect(body.personalities[0]).toHaveProperty('_id');
+                expect(body.personalities[0]).toHaveProperty('avatar');
+                expect(body.personalities[0]).toHaveProperty('slug');
                 expect(body.personalities[0].slug).toEqual("barack-obama");
             });
     });
@@ -222,12 +216,12 @@ describe("PersonalityController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body?._id).toEqual(personalityId);
-                expect(body).toHaveProperty("description");
-                expect(body).toHaveProperty("wikidata");
+                expect(body).toHaveProperty('description');
+                expect(body).toHaveProperty('wikidata');
                 expect(body?.wikidata).toEqual("Q76");
-                expect(body).toHaveProperty("slug");
+                expect(body).toHaveProperty('slug');
                 expect(body?.slug).toEqual("barack-obama");
-                expect(body).toHaveProperty("avatar");
+                expect(body).toHaveProperty('avatar');
             });
     });
 
