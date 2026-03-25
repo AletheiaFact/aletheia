@@ -48,6 +48,7 @@ const ClaimReviewSelect = ({
     style = {},
     disabled = false,
     ignoreEditorReadonly = false,
+    error = false,
 }) => {
     const { vw } = useAppSelector((state) => state);
     const [open, setOpen] = useState(false);
@@ -89,9 +90,15 @@ const ClaimReviewSelect = ({
                         disabled ||
                         (!ignoreEditorReadonly && editorConfiguration?.readonly)
                     }
+                    style={{
+                        ...style,
+                        ...(error && {
+                            border: `1px solid ${colors.error}`,
+                            boxShadow: `0px 0px 0px 1px ${colors.error}`,
+                        }),
+                    }}
                     data-cy={"testClassificationText"}
                     dropdownStyle={vw?.sm && { display: "none" }}
-                    style={style}
                 >
                     <MenuItem value="" disabled>
                         {placeholder}
