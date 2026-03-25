@@ -10,8 +10,8 @@ import {
 
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
-import { fieldValidation } from "../../Form/FormField";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import { validateFormSubmission } from "../../../machines/reviewTask/validation";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import colors from "../../../styles/colors";
 import AletheiaAlert from "../../AletheiaAlert";
@@ -32,11 +32,6 @@ import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
-
-const EVENTS_REQUIRING_FULL_VALIDATION = [
-    ReviewTaskEvents.finishReport,
-    ReviewTaskEvents.publish,
-];
 
 const DynamicReviewTaskForm = ({
     data_hash,
@@ -154,6 +149,7 @@ const DynamicReviewTaskForm = ({
             reportModel,
             reviewData: {
                 ...filteredFormData,
+                sources: editorSources || reviewData.sources || [],
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review
@@ -242,49 +238,31 @@ const DynamicReviewTaskForm = ({
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (!validateSelectedReviewer(data, event)) return;
 
-        // All fields are required for report completion and publish events
-        if (EVENTS_REQUIRING_FULL_VALIDATION.includes(event)) {
-            const errors = [];
+        // Centralized validation based on event type
+        const validationErrors = validateFormSubmission({
+            event,
+            formData: data,
+            editorSources: editorSources || [],
+            machineSources:
+                reviewData?.sources ||
+                machineService.state.context.reviewData?.sources ||
+                [],
+        });
 
-            if (!data.classification || data.classification === "") {
-                errors.push(
-                    `${t("claimReviewForm:classificationLabel")}: ${t(
-                        "common:requiredFieldError"
-                    )}`
-                );
-            }
-
-            // Validate editor content — each block (summary, questions, report, verification) must have text
-            if (data.visualEditor) {
-                const validationResult = fieldValidation(
-                    data.visualEditor,
-                    (v) => !!v?.trim()
-                );
-                if (validationResult !== true) {
-                    errors.push(
-                        t(
-                            typeof validationResult === "string"
-                                ? validationResult
-                                : "common:requiredFieldError"
-                        )
-                    );
-                }
-            }
-
-            if (!editorSources || editorSources.length === 0) {
-                errors.push(t("common:sourceRequiredFieldError"));
-            }
-
-            if (errors.length > 0) {
-                setSubmitValidationError(errors.join(". "));
-                setTimeout(() => {
-                    errorAlertRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                    });
-                }, 0);
-                return;
-            }
+        if (validationErrors.length > 0) {
+            const errorMessages = validationErrors.map((err) =>
+                err.label
+                    ? `${t(err.label)}: ${t(err.message)}`
+                    : t(err.message)
+            );
+            setSubmitValidationError(errorMessages.join(". "));
+            setTimeout(() => {
+                errorAlertRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }, 0);
+            return;
         }
 
         setSubmitValidationError("");
