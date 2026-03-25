@@ -3,14 +3,11 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 import { CreateLogoutHandler } from "../Login/LogoutAction";
-import SelectLanguage from "./SelectLanguage";
-import { useAppSelector } from "../../store/store";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import UserMenuStyle from "./UserMenu.style";
 import { currentNameSpace } from "../../atoms/namespace";
@@ -18,7 +15,11 @@ import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
 import UserMenuHeader from "./UserMenuHeader";
 import colors from "../../styles/colors";
-import { IconButton } from "@mui/material";
+import { Button } from "@mui/material";
+import { isAdmin } from "../../utils/GetUserPermission";
+import { currentUserRole } from "../../atoms/currentUser";
+import { Roles } from "../../types/enums";
+import { KeyboardArrowDown } from "@mui/icons-material";
 
 const menuSlotProps = {
     paper: {
@@ -49,11 +50,11 @@ const menuSlotProps = {
     },
 };
 
-const UserMenu = ({ hasSession, user }) => {
+const UserMenu = ({ hasSession, user, menuPrefix }) => {
     const [nameSpace] = useAtom(currentNameSpace);
-    const { vw } = useAppSelector((state) => state);
     const { t } = useTranslation();
     const router = useRouter();
+    const [role] = useAtom(currentUserRole);
 
     const [isLoading, setIsLoading] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -105,13 +106,14 @@ const UserMenu = ({ hasSession, user }) => {
     return (
         <>
             {!router.pathname.includes("/login") &&
-                <IconButton
+                <Button
                     data-cy="testUserIcon"
+                    className="navLink"
                     onClick={handleClick}
-                    sx={{ color: "white", padding: vw?.xs ? "0px" : "0px 12px" }}
+                    endIcon={<KeyboardArrowDown fontSize="inherit" />}
                 >
-                    <AccountCircleIcon sx={{ width: 28, height: 28 }} />
-                </IconButton>
+                    {t("menu:myAccountItem")}
+                </Button>
             }
 
             <UserMenuStyle
@@ -161,16 +163,26 @@ const UserMenu = ({ hasSession, user }) => {
                     {t(`${hasSession ? "menu:logout" : "login:signup"}`)}
                 </MenuItem>
 
-                {vw?.xs && (
+                {hasSession && role !== Roles.Regular && (
+                    <MenuItem onClick={() => router.push(`${menuPrefix}/kanban`)}>
+                        {t("menu:kanbanItem")}
+                    </MenuItem>
+                )}
+                {hasSession && isAdmin(role) && (
+                    <MenuItem onClick={() => router.push(`${menuPrefix}/admin`)}>
+                        {t("menu:adminItem")}
+                    </MenuItem>
+                )}
+                {hasSession && isAdmin(role) && (
                     <MenuItem
-                        data-cy={"testLanguages"}
-                        key="/language"
-                        className="select-menu-item"
+                        onClick={() => router.push(`${menuPrefix}/admin/badges`)}
                     >
-                        <SelectLanguage
-                            dataCy={"LanguageButton"}
-                            defaultLanguage="pt"
-                        />
+                        Badges
+                    </MenuItem>
+                )}
+                {hasSession && isAdmin(role) && (
+                    <MenuItem onClick={() => router.push("/admin/name-spaces")}>
+                        {t("menu:nameSpaceItem")}
                     </MenuItem>
                 )}
             </UserMenuStyle>

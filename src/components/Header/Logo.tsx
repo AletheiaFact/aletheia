@@ -10,8 +10,8 @@ import LogoAletheia from "./LogoAletheia";
 
 const Logo = ({
     color = colors.logo,
-    height = "42px",
-    width = "80px",
+    height = "clamp(36px, 5vw, 42px)",
+    width = "clamp(62px, 10vw, 80px)",
     lineHeight = "24px",
 }) => {
     const [nameSpace] = useAtom<string>(currentNameSpace);
