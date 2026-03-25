@@ -3,7 +3,6 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 
 type FooterBoxProps = {
-    $mediumDevice?: boolean;
     $isMobile?: boolean;
     $namespacePrefix: string;
 };
@@ -22,7 +21,7 @@ const FooterBox = styled(Box) <FooterBoxProps>`
     border-top: 1px solid color-mix(in srgb, ${colors.white} 8%, transparent);
 
     .footer-inner-container {
-        max-width: ${({ $mediumDevice }) => ($mediumDevice ? "100%" : "75%")};
+        max-width: min(95vw, 1580px);
         margin: 0 auto;
     }
 
