@@ -15,7 +15,7 @@ import {
     UserAssignments,
     PermissionInput,
 } from "./permissions";
-import { ReviewTaskStates } from "./enums";
+import { ReviewTaskStates, ReportModelEnum } from "./enums";
 
 export type ReviewTaskPermissionsResult = PermissionContext & UserAssignments;
 
@@ -38,10 +38,13 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
 
     // Determine user assignments
     const userAssignments: UserAssignments = useMemo(() => {
+        const uid = userId?.toString();
         return {
-            isAssignee: reviewData?.usersId?.includes(userId) || false,
-            isReviewer: reviewData?.reviewerId === userId,
-            isCrossChecker: reviewData?.crossCheckerId === userId,
+            isAssignee:
+                reviewData?.usersId?.some((id) => id?.toString() === uid) ||
+                false,
+            isReviewer: reviewData?.reviewerId?.toString() === uid,
+            isCrossChecker: reviewData?.crossCheckerId?.toString() === uid,
             isAdmin: role === Roles.Admin || role === Roles.SuperAdmin,
         };
     }, [userId, role, reviewData]);
@@ -60,7 +63,7 @@ export function useReviewTaskPermissions(): ReviewTaskPermissionsResult {
             userRole: role,
             isLoggedIn: loggedIn,
             userAssignments,
-            reportModel,
+            reportModel: reportModel as ReportModelEnum,
             availableEvents: events || [],
         };
 
