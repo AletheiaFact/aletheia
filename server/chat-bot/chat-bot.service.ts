@@ -115,9 +115,10 @@ export class ChatbotService {
         }
 
         const { api_url, api_token } = this.configService.get("zenvia");
+        const hashSecretKey = this.configService.get<string>("hashSecretKey");
 
         const data_hash = crypto
-            .createHmac("sha256", process.env.HASH_SECRET_KEY)
+            .createHmac("sha256", hashSecretKey)
             .update(`${channel}-${from}`)
             .digest("hex");
 
