@@ -321,12 +321,17 @@ function resolveCrossCheckingPermissions(
     const { isCrossChecker, isAdmin } = userAssignments;
 
     if (isAdmin || isCrossChecker) {
+        // Only admins can go back from cross-checking state
+        const filteredEvents = isAdmin
+            ? availableEvents
+            : availableEvents.filter((e) => e !== ReviewTaskEvents.goback);
+
         return {
             canAccessState: true,
             canViewEditor: true,
             canEditEditor: false, // Cross-checkers should never edit the report content
             canSaveDraft: false,
-            canSubmitActions: availableEvents,
+            canSubmitActions: filteredEvents,
             canSelectUsers: false,
             editorReadonly: true,
             showForm: true,
@@ -369,12 +374,17 @@ function resolveSubmittedPermissions(
     const { isReviewer, isAdmin } = userAssignments;
 
     if (isAdmin || isReviewer) {
+        // Only admins can go back from submitted state
+        const filteredEvents = isAdmin
+            ? availableEvents
+            : availableEvents.filter((e) => e !== ReviewTaskEvents.goback);
+
         return {
             canAccessState: true,
             canViewEditor: true,
             canEditEditor: false, // Reviewers should not edit content, just review
             canSaveDraft: false,
-            canSubmitActions: availableEvents,
+            canSubmitActions: filteredEvents,
             canSelectUsers: false,
             editorReadonly: true,
             showForm: true,

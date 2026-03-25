@@ -10,6 +10,7 @@ import {
 
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
+import { fieldValidation } from "../../Form/FormField";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import colors from "../../../styles/colors";
@@ -32,7 +33,7 @@ import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
 
-const EVENTS_REQUIRING_CLASSIFICATION = [
+const EVENTS_REQUIRING_FULL_VALIDATION = [
     ReviewTaskEvents.finishReport,
     ReviewTaskEvents.publish,
 ];
@@ -68,13 +69,14 @@ const DynamicReviewTaskForm = ({
         addCommentCrossCheckingSelector
     );
     const isReported = useSelector(machineService, reportSelector);
-    const { comments } = useContext(VisualEditorContext);
+    const { comments, editorSources } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState({});
     const [reviewerError, setReviewerError] = useState(false);
+    const [submitValidationError, setSubmitValidationError] = useState("");
     const [gobackWarningModal, setGobackWarningModal] = useState(false);
     const [finishReportWarningModal, setFinishReportWarningModal] =
         useState(false);
@@ -115,6 +117,7 @@ const DynamicReviewTaskForm = ({
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
+        setSubmitValidationError("");
     }, [events, form]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
@@ -239,31 +242,52 @@ const DynamicReviewTaskForm = ({
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (!validateSelectedReviewer(data, event)) return;
 
-        // Classification is required for report completion and publish events
-        if (
-            EVENTS_REQUIRING_CLASSIFICATION.includes(event) &&
-            (!data.classification || data.classification === "")
-        ) {
-            setError("classification", {
-                type: "manual",
-                message: t("common:requiredFieldError"),
-            });
-            const classificationField = document.getElementById(
-                "field-classification"
-            );
-            if (classificationField) {
-                classificationField.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            } else {
-                errorAlertRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
+        // All fields are required for report completion and publish events
+        if (EVENTS_REQUIRING_FULL_VALIDATION.includes(event)) {
+            const errors = [];
+
+            if (!data.classification || data.classification === "") {
+                errors.push(
+                    `${t("claimReviewForm:classificationLabel")}: ${t(
+                        "common:requiredFieldError"
+                    )}`
+                );
             }
-            return;
+
+            // Validate editor content — each block (summary, questions, report, verification) must have text
+            if (data.visualEditor) {
+                const validationResult = fieldValidation(
+                    data.visualEditor,
+                    (v) => !!v?.trim()
+                );
+                if (validationResult !== true) {
+                    errors.push(
+                        t(
+                            typeof validationResult === "string"
+                                ? validationResult
+                                : "common:requiredFieldError"
+                        )
+                    );
+                }
+            }
+
+            if (!editorSources || editorSources.length === 0) {
+                errors.push(t("common:sourceRequiredFieldError"));
+            }
+
+            if (errors.length > 0) {
+                setSubmitValidationError(errors.join(". "));
+                setTimeout(() => {
+                    errorAlertRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                    });
+                }, 0);
+                return;
+            }
         }
+
+        setSubmitValidationError("");
 
         if (CAPTCHA_EXEMPT_EVENTS.includes(event)) {
             handleSendEvent(event, data);
@@ -333,7 +357,8 @@ const DynamicReviewTaskForm = ({
         >
             {form && (
                 <>
-                    {Object.keys(errors).length > 0 && (
+                    {(Object.keys(errors).length > 0 ||
+                        submitValidationError) && (
                         <div
                             ref={errorAlertRef}
                             style={{ margin: "0 20px 16px" }}
@@ -343,9 +368,12 @@ const DynamicReviewTaskForm = ({
                                 message={t(
                                     "claimReviewForm:validationErrorTitle"
                                 )}
-                                description={t(
-                                    "claimReviewForm:validationErrorDescription"
-                                )}
+                                description={
+                                    submitValidationError ||
+                                    t(
+                                        "claimReviewForm:validationErrorDescription"
+                                    )
+                                }
                                 showIcon
                             />
                         </div>
@@ -392,10 +420,13 @@ const DynamicReviewTaskForm = ({
                 })}
                 width={400}
                 handleOk={() => {
-                    handleSendEvent(ReviewTaskEvents.goback);
-                    setGobackWarningModal(!gobackWarningModal);
+                    setGobackWarningModal(false);
+                    setPendingAction({
+                        event: ReviewTaskEvents.goback,
+                        data: getValues(),
+                    });
                 }}
-                handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
+                handleCancel={() => setGobackWarningModal(false)}
             />
 
             <WarningModal
@@ -406,11 +437,9 @@ const DynamicReviewTaskForm = ({
                 width={400}
                 handleOk={() => {
                     handleSendEvent(ReviewTaskEvents.finishReport, null, true);
-                    setFinishReportWarningModal(!finishReportWarningModal);
+                    setFinishReportWarningModal(false);
                 }}
-                handleCancel={() =>
-                    setFinishReportWarningModal(!finishReportWarningModal)
-                }
+                handleCancel={() => setFinishReportWarningModal(false)}
             />
         </form>
     );
