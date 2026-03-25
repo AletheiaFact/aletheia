@@ -1,5 +1,5 @@
 import { ReviewTaskEvents } from "./enums";
-import { fieldValidation } from "../../components/Form/FormField";
+import { EditorParser } from "../../../lib/editor-parser";
 
 export interface ValidationError {
     field: string;
@@ -43,20 +43,31 @@ export function validateFormSubmission(
         });
     }
 
-    // Editor content required — each block must have text
-    if (formData.visualEditor) {
-        const validationResult = fieldValidation(
-            formData.visualEditor,
-            (v) => !!v?.trim()
-        );
-        if (validationResult !== true) {
-            errors.push({
-                field: "visualEditor",
-                message:
-                    typeof validationResult === "string"
-                        ? validationResult
-                        : "common:requiredFieldError",
-            });
+    // Editor content required — check each block individually to report ALL missing fields
+    if (!formData.visualEditor) {
+        errors.push({
+            field: "visualEditor",
+            message: "common:requiredFieldError",
+        });
+    } else {
+        const editorParser = new EditorParser();
+        const editorJson =
+            formData.visualEditor.toJSON?.() || formData.visualEditor;
+        const schema = editorParser.editor2schema(editorJson);
+        const SKIP_KEYS = ["paragraph", "sources"];
+
+        for (const key in schema) {
+            if (SKIP_KEYS.includes(key)) continue;
+            const value = schema[key];
+            const isEmpty = Array.isArray(value)
+                ? value.length <= 0
+                : !value?.trim();
+            if (isEmpty) {
+                errors.push({
+                    field: "visualEditor",
+                    message: `common:${key}RequiredFieldError`,
+                });
+            }
         }
     }
 
