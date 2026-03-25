@@ -368,6 +368,14 @@ const DynamicReviewTaskForm = ({
                                                 (err) => (
                                                     <li
                                                         key={err.field}
+                                                        data-cy={
+                                                            err.field ===
+                                                                "reviewerId" ||
+                                                            err.field ===
+                                                                "crossCheckerId"
+                                                                ? "testReviewerError"
+                                                                : undefined
+                                                        }
                                                         style={{
                                                             cursor: "pointer",
                                                             padding: "4px 0",
