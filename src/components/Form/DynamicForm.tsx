@@ -13,6 +13,7 @@ const DynamicForm = ({
     errors,
     machineValues = {},
     disabledFuture = true,
+    submitErrors = [],
 }) => {
     const { t } = useTranslation();
     return (
@@ -29,6 +30,9 @@ const DynamicForm = ({
                 } = fieldItem;
 
                 const defaultValue = machineValues[fieldName];
+                const hasError =
+                    errors[fieldName] ||
+                    submitErrors?.some((e) => e.field === fieldName);
 
                 return (
                     <Grid
@@ -73,7 +77,7 @@ const DynamicForm = ({
                             style={{
                                 margin: "10px 0",
                                 wordBreak: "break-word",
-                                ...(errors[fieldName] && {
+                                ...(hasError && {
                                     borderLeft: `3px solid ${colors.error}`,
                                     paddingLeft: "8px",
                                 }),
@@ -97,6 +101,7 @@ const DynamicForm = ({
                                         extraProps={extraProps}
                                         disabledFuture={disabledFuture}
                                         disabled={fieldItem.disabled}
+                                        hasError={hasError}
                                     />
                                 )}
                             />

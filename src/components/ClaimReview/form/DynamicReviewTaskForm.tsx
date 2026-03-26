@@ -11,6 +11,10 @@ import {
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import {
+    validateFormSubmission,
+    ValidationError,
+} from "../../../machines/reviewTask/validation";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import colors from "../../../styles/colors";
 import AletheiaAlert from "../../AletheiaAlert";
@@ -31,11 +35,6 @@ import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
-
-const EVENTS_REQUIRING_CLASSIFICATION = [
-    ReviewTaskEvents.finishReport,
-    ReviewTaskEvents.publish,
-];
 
 const DynamicReviewTaskForm = ({
     data_hash,
@@ -68,13 +67,15 @@ const DynamicReviewTaskForm = ({
         addCommentCrossCheckingSelector
     );
     const isReported = useSelector(machineService, reportSelector);
-    const { comments } = useContext(VisualEditorContext);
+    const { comments, editorSources } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState({});
-    const [reviewerError, setReviewerError] = useState(false);
+    const [submitValidationErrors, setSubmitValidationErrors] = useState<
+        ValidationError[]
+    >([]);
     const [gobackWarningModal, setGobackWarningModal] = useState(false);
     const [finishReportWarningModal, setFinishReportWarningModal] =
         useState(false);
@@ -114,7 +115,7 @@ const DynamicReviewTaskForm = ({
         clearErrors();
         reset(reviewData);
         resetIsLoading();
-        setReviewerError(false);
+        setSubmitValidationErrors([]);
     }, [events, form]);
 
     useAutoSaveDraft(data_hash, personality, target, watch);
@@ -151,6 +152,7 @@ const DynamicReviewTaskForm = ({
             reportModel,
             reviewData: {
                 ...filteredFormData,
+                sources: editorSources || reviewData.sources || [],
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review
@@ -185,7 +187,17 @@ const DynamicReviewTaskForm = ({
                 : !data.reviewerId ||
                   !reviewData.usersId.includes(data.reviewerId);
 
-        setReviewerError(!isValidReviewer);
+        if (!isValidReviewer) {
+            setSubmitValidationErrors([
+                {
+                    field:
+                        event === ReviewTaskEvents.sendToCrossChecking
+                            ? "crossCheckerId"
+                            : "reviewerId",
+                    message: "reviewTask:invalidReviewerMessage",
+                },
+            ]);
+        }
         return isValidReviewer;
     };
 
@@ -239,31 +251,29 @@ const DynamicReviewTaskForm = ({
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (!validateSelectedReviewer(data, event)) return;
 
-        // Classification is required for report completion and publish events
-        if (
-            EVENTS_REQUIRING_CLASSIFICATION.includes(event) &&
-            (!data.classification || data.classification === "")
-        ) {
-            setError("classification", {
-                type: "manual",
-                message: t("common:requiredFieldError"),
-            });
-            const classificationField = document.getElementById(
-                "field-classification"
-            );
-            if (classificationField) {
-                classificationField.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            } else {
+        // Centralized validation based on event type
+        const validationErrors = validateFormSubmission({
+            event,
+            formData: data,
+            editorSources: editorSources || [],
+            machineSources:
+                reviewData?.sources ||
+                machineService.state.context.reviewData?.sources ||
+                [],
+        });
+
+        if (validationErrors.length > 0) {
+            setSubmitValidationErrors(validationErrors);
+            setTimeout(() => {
                 errorAlertRef.current?.scrollIntoView({
                     behavior: "smooth",
                     block: "center",
                 });
-            }
+            }, 0);
             return;
         }
+
+        setSubmitValidationErrors([]);
 
         if (CAPTCHA_EXEMPT_EVENTS.includes(event)) {
             handleSendEvent(event, data);
@@ -333,7 +343,8 @@ const DynamicReviewTaskForm = ({
         >
             {form && (
                 <>
-                    {Object.keys(errors).length > 0 && (
+                    {(Object.keys(errors).length > 0 ||
+                        submitValidationErrors.length > 0) && (
                         <div
                             ref={errorAlertRef}
                             style={{ margin: "0 20px 16px" }}
@@ -343,10 +354,68 @@ const DynamicReviewTaskForm = ({
                                 message={t(
                                     "claimReviewForm:validationErrorTitle"
                                 )}
-                                description={t(
-                                    "claimReviewForm:validationErrorDescription"
-                                )}
                                 showIcon
+                                description={
+                                    submitValidationErrors.length > 0 ? (
+                                        <ul
+                                            style={{
+                                                margin: "8px 0 0",
+                                                paddingLeft: "20px",
+                                                listStyle: "none",
+                                            }}
+                                        >
+                                            {submitValidationErrors.map(
+                                                (err) => (
+                                                    <li
+                                                        key={err.field}
+                                                        data-cy={
+                                                            err.field ===
+                                                                "reviewerId" ||
+                                                            err.field ===
+                                                                "crossCheckerId"
+                                                                ? "testReviewerError"
+                                                                : undefined
+                                                        }
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            padding: "4px 0",
+                                                            color: colors.error,
+                                                            fontWeight: 500,
+                                                            fontSize: "13px",
+                                                        }}
+                                                        onClick={() => {
+                                                            const el =
+                                                                document.getElementById(
+                                                                    `field-${err.field}`
+                                                                ) ||
+                                                                document.getElementById(
+                                                                    "field-visualEditor"
+                                                                );
+                                                            el?.scrollIntoView({
+                                                                behavior:
+                                                                    "smooth",
+                                                                block: "center",
+                                                            });
+                                                        }}
+                                                    >
+                                                        {"\u2022 "}
+                                                        {err.label
+                                                            ? `${t(
+                                                                  err.label
+                                                              )}: ${t(
+                                                                  err.message
+                                                              )}`
+                                                            : t(err.message)}
+                                                    </li>
+                                                )
+                                            )}
+                                        </ul>
+                                    ) : (
+                                        t(
+                                            "claimReviewForm:validationErrorDescription"
+                                        )
+                                    )
+                                }
                             />
                         </div>
                     )}
@@ -355,17 +424,8 @@ const DynamicReviewTaskForm = ({
                         machineValues={reviewData}
                         control={control}
                         errors={errors}
+                        submitErrors={submitValidationErrors}
                     />
-                    <div style={{ paddingBottom: 20, marginLeft: 20 }}>
-                        {reviewerError && (
-                            <AletheiaAlert
-                                type="error"
-                                message={t("reviewTask:invalidReviewerMessage")}
-                                showIcon
-                                data-cy="testReviewerError"
-                            />
-                        )}
-                    </div>
                 </>
             )}
             {showButtons && (
@@ -392,10 +452,13 @@ const DynamicReviewTaskForm = ({
                 })}
                 width={400}
                 handleOk={() => {
-                    handleSendEvent(ReviewTaskEvents.goback);
-                    setGobackWarningModal(!gobackWarningModal);
+                    setGobackWarningModal(false);
+                    setPendingAction({
+                        event: ReviewTaskEvents.goback,
+                        data: getValues(),
+                    });
                 }}
-                handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
+                handleCancel={() => setGobackWarningModal(false)}
             />
 
             <WarningModal
@@ -406,11 +469,9 @@ const DynamicReviewTaskForm = ({
                 width={400}
                 handleOk={() => {
                     handleSendEvent(ReviewTaskEvents.finishReport, null, true);
-                    setFinishReportWarningModal(!finishReportWarningModal);
+                    setFinishReportWarningModal(false);
                 }}
-                handleCancel={() =>
-                    setFinishReportWarningModal(!finishReportWarningModal)
-                }
+                handleCancel={() => setFinishReportWarningModal(false)}
             />
         </form>
     );

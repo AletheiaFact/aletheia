@@ -55,4 +55,24 @@ export class SaveDraftDTO {
     @IsObject()
     @ApiProperty()
     machine: SaveDraftMachine;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty()
+    reportModel?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty()
+    nameSpace?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty()
+    reviewTaskType?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty()
+    target?: string;
 }

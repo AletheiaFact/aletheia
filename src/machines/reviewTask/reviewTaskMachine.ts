@@ -66,7 +66,15 @@ export const transitionHandler = (state) => {
             },
         };
 
-        api.saveDraft(data_hash, draftContext, t)
+        api.saveDraft(
+            data_hash,
+            draftContext,
+            t,
+            reportModel,
+            nameSpace,
+            reviewTaskType,
+            target
+        )
             .then(() => {
                 setFormAndEvents(
                     event,

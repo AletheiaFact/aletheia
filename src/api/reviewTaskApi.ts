@@ -75,9 +75,23 @@ const autoSaveDraft = (params, t) => {
         });
 };
 
-const saveDraft = (data_hash: string, machine: { context: any }, t) => {
+const saveDraft = (
+    data_hash: string,
+    machine: { context: any },
+    t,
+    reportModel?: string,
+    nameSpace?: string,
+    reviewTaskType?: string,
+    target?: string
+) => {
     return request
-        .put(`/save-draft/${data_hash}`, { machine })
+        .put(`/save-draft/${data_hash}`, {
+            machine,
+            reportModel,
+            nameSpace,
+            reviewTaskType,
+            target,
+        })
         .then((response) => {
             MessageManager.showMessage(
                 "success",

@@ -130,6 +130,9 @@ const factCheckingWorkflow: StatesConfig<
     },
     [States.crossChecking]: {
         on: {
+            [Events.goback]: {
+                target: States.reported,
+            },
             [Events.addComment]: {
                 target: States.addCommentCrossChecking,
                 actions: [saveContext],
@@ -176,6 +179,9 @@ const factCheckingWorkflow: StatesConfig<
     //TODO: Investigate how to move rejected and addComment crossChecking as substates
     [States.submitted]: {
         on: {
+            [Events.goback]: {
+                target: States.reported,
+            },
             [Events.addRejectionComment]: {
                 target: States.rejected,
                 actions: [saveContext],

@@ -73,17 +73,18 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
             required: !disabled && required && "common:requiredFieldError",
             ...rules,
             validate: {
-                ...(!disabled && required && {
+                ...(!disabled &&
+                    required && {
                     notBlank: (v) =>
                         validateBlank(v) || "common:requiredFieldError",
                 }),
-                ...(!disabled && isURLField && {
+                ...(!disabled &&
+                    isURLField && {
                     validURL: (v) =>
                         !v ||
                         URL_PATTERN.test(v) ||
                         "sourceForm:errorMessageValidURL",
                 }),
-
                 ...(!disabled && mustBeAfterField && {
                     afterDate: (value, formValues) => {
                         const otherValue = formValues[mustBeAfterField];
@@ -106,12 +107,15 @@ const validateBlank = (value): boolean => {
 const validateSchema = (
     schema: ReviewTaskMachineContextReviewData
 ): boolean | string => {
+    // Sources are validated separately in the submit validation module
+    const SKIP_KEYS = ["paragraph", "sources"];
     for (const key in schema) {
         const value = schema[key];
-        if (Array.isArray(value) && value.length <= 0 && key !== "paragraph") {
+        if (SKIP_KEYS.includes(key)) continue;
+        if (Array.isArray(value) && value.length <= 0) {
             return `common:${key}RequiredFieldError`;
         }
-        if (!Array.isArray(value) && !value.trim() && key !== "paragraph") {
+        if (!Array.isArray(value) && !value.trim()) {
             return `common:${key}RequiredFieldError`;
         }
         if (key === "source" && !URL_PATTERN.test(schema[key])) {
@@ -130,7 +134,11 @@ const fieldValidation = (value, validationFunction) => {
         return dayjs(value).isValid()
     }
 
-    if (Array.isArray(value) && value.length > 0 && (value[0].uid || value[0].originFileObj)) {
+    if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        (value[0].uid || value[0].originFileObj)
+    ) {
         return true;
     }
 
