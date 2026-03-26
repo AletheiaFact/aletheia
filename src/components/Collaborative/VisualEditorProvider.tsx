@@ -7,6 +7,7 @@ import {
     useRef,
     useState,
 } from "react";
+import { useSelector } from "@xstate/react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ReviewTaskApi from "../../api/reviewTaskApi";
@@ -67,6 +68,21 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const [comments, setComments] = useState(null);
     // Use centralized permission system
     const permissions = useReviewTaskPermissions();
+
+    // Sync editorSources from machine context when it updates (e.g., after reload/hydration)
+    const machineContextSources = useSelector(
+        machineService,
+        (state) => state.context.reviewData.sources
+    );
+    useEffect(() => {
+        if (
+            machineContextSources &&
+            machineContextSources.length > 0 &&
+            (!editorSources || editorSources.length === 0)
+        ) {
+            setEditorSources(machineContextSources);
+        }
+    }, [machineContextSources]);
 
     const isInitialFormLoad = useRef(true);
 

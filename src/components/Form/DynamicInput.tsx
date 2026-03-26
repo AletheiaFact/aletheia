@@ -34,6 +34,7 @@ interface DynamicInputProps {
     extraProps: any;
     disabledDate?: any;
     disabled?: boolean;
+    hasError?: boolean;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -114,6 +115,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     ignoreEditorReadonly={
                         props.extraProps?.ignoreEditorReadonly
                     }
+                    error={props.hasError}
                 />
             );
         case "selectReportType":

@@ -620,9 +620,34 @@ export class ReviewTaskService {
     ];
 
     async saveDraft(data_hash: string, saveDraftBody: SaveDraftDTO) {
-        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        let reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
-        if (!reviewTask) {
+        // If review task doesn't exist yet (e.g. InformativeNews auto-assigns
+        // before first submission), create a minimal document for the draft
+        if (!reviewTask && saveDraftBody.reportModel && saveDraftBody.target) {
+            const loggedInUserId = this.req.user._id;
+            const newReviewTask = new this.ReviewTaskModel({
+                data_hash,
+                reportModel: saveDraftBody.reportModel,
+                nameSpace: saveDraftBody.nameSpace || "main",
+                reviewTaskType: saveDraftBody.reviewTaskType || "Claim",
+                target: saveDraftBody.target,
+                machine: {
+                    context: {
+                        reviewData: { usersId: [loggedInUserId] },
+                        review: {
+                            personality:
+                                saveDraftBody.machine.context.review
+                                    ?.personality || "",
+                            isPartialReview: true,
+                        },
+                    },
+                    value: "assigned",
+                },
+            });
+            await newReviewTask.save();
+            reviewTask = newReviewTask;
+        } else if (!reviewTask) {
             throw new NotFoundException("Review task not found");
         }
 

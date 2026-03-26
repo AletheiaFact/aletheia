@@ -12,7 +12,6 @@ import { PermissionContext } from "../../../machines/reviewTask/permissions";
 
 export const CAPTCHA_EXEMPT_EVENTS = [
     ReviewTaskEvents.draft,
-    ReviewTaskEvents.goback,
     ReviewTaskEvents.viewPreview,
     ReviewTaskEvents.selectedReview,
     ReviewTaskEvents.selectedCrossChecking,

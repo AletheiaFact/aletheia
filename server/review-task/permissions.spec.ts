@@ -273,7 +273,7 @@ describe("resolvePermissions", () => {
     });
 
     describe("submitted state", () => {
-        it("should allow reviewer to act", () => {
+        it("should allow reviewer to act but filter goback", () => {
             const events = [ReviewTaskEvents.publish, ReviewTaskEvents.goback];
             const result = resolvePermissions(
                 buildInput({
@@ -289,7 +289,8 @@ describe("resolvePermissions", () => {
             );
 
             expect(result.showForm).toBe(true);
-            expect(result.canSubmitActions).toEqual(events);
+            // Reviewers can't go back — only admins can
+            expect(result.canSubmitActions).toEqual([ReviewTaskEvents.publish]);
         });
 
         it("should deny non-reviewer form access", () => {
