@@ -310,7 +310,7 @@ export class ReviewTaskService {
     }
 
     /**
-     * Post-processes review task data after aggregation pipeline
+     * Post-processes review task data after aggregation pipeline.
      * Handles optional fields gracefully for different review types
      * @param params - PostProcess parameters
      * @returns Formatted review task data
