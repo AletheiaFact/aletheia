@@ -1,9 +1,10 @@
 import React from "react";
-import { AppBar, } from "@mui/material";
+import { AppBar, useTheme } from "@mui/material";
 import HeaderContent from "./HeaderContent";
-import colors from "../../styles/colors";
 
 const AletheiaHeader = () => {
+    const theme = useTheme()
+
     return (
         <AppBar
             style={{
@@ -11,8 +12,8 @@ const AletheiaHeader = () => {
                 top: 0,
                 zIndex: 1000,
                 width: "100%",
-                background: `${colors.primary}`,
-                backgroundColor: `${colors.primary}`,
+                background: theme.palette.primary.main,
+                backgroundColor: theme.palette.primary.main,
                 height: "64px",
                 padding: 0,
                 minWidth: "265px",

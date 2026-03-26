@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
-import { Grid } from "@mui/material";
+import { Grid, Menu } from "@mui/material";
 import colors from "../../styles/colors";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const HeaderGridStyle = styled(Grid)`
   display: flex;
@@ -100,4 +101,120 @@ const HeaderGridStyle = styled(Grid)`
   }
 `;
 
-export default HeaderGridStyle;
+const StyledMenu = styled(Menu)`
+  & .MuiPaper-root {
+    border-radius: 8px;
+    box-shadow: 0px 4px 20px ${colors.shadow};
+    min-width: 280px;
+  }
+
+  .section-header {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: ${colors.secondary};
+    letter-spacing: 0.05em;
+    padding: 12px 16px 6px;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .menu-item-container {
+    padding: 0 8px;
+  }
+
+  .menu-item-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background-color: ${colors.lightNeutral};
+    border-radius: 8px;
+    color: ${colors.secondary};
+    flex-shrink: 0;
+
+    svg {
+      font-size: 16px;
+    }
+  }
+
+  .text-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: ${colors.black};
+    line-height: 1.2;
+  }
+
+  .item-subtitle {
+    font-size: 0.75rem;
+    color: ${colors.secondary};
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .menu-divider {
+    margin: 8px 0;
+    border-color: ${colors.lightTertiary};
+  }
+
+  .menu-header {
+    display: flex;
+    width: 100%;
+    padding: 12px 16px 6px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .menu-header-avatar {
+    background: ${colors.quartiary};
+    margin: 0px;
+  }
+
+  .menu-header-info {
+    width: 100%;
+    margin: 0;
+  }
+
+  .menu-header-info.name {
+    font-weight: 600;
+  }
+
+  .menu-header-info.email {
+    font-size: 12px;
+    color: ${colors.neutral};
+  }
+
+  .menu-header-info.namespace{
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .select-namespace {
+    display: flex;
+    justify-content: flex-end;
+    color: ${colors.lightSecondary};
+    cursor: pointer;
+  }
+
+  .select-namespace:hover{
+    text-decoration: underline;
+  }
+`;
+
+export { HeaderGridStyle, StyledMenu };
