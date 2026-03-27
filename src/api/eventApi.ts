@@ -3,8 +3,6 @@ import { TFunction } from "i18next";
 import { MessageManager } from "../components/Messages";
 import { HEX24 } from "../types/History";
 import { EventPayload, ListEventsOptions } from "../types/event";
-import { NextRouter } from "next/router";
-import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -13,23 +11,14 @@ const request = axios.create({
 
 const createEvent = (
     newEvent: EventPayload,
-    router: NextRouter,
     t?: TFunction
 ) => {
-    const { nameSpace = NameSpaceEnum.Main } = newEvent;
-
     return request
         .post("/", newEvent)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
                 t("events:eventCreateSuccess")
-            );
-
-            router.push(
-                nameSpace === NameSpaceEnum.Main
-                    ? "/event"
-                    : `/${nameSpace}/event`
             );
 
             return response.data

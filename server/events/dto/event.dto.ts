@@ -9,6 +9,7 @@ import {
 import { ApiProperty, PartialType } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import type { TopicData } from "../../topic/types/topic.interfaces";
+import { IsAfter } from "./is-after.decorator";
 
 export class CreateEventDTO {
     @IsString()
@@ -46,6 +47,7 @@ export class CreateEventDTO {
     @IsNotEmpty()
     @Type(() => Date)
     @ApiProperty()
+    @IsAfter("startDate")
     endDate: Date;
 
     @IsObject()

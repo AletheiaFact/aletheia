@@ -286,7 +286,7 @@ export class EventsService {
     private buildStatusQuery(status?: EventsStatus): FilterQuery<Event> {
         const query: FilterQuery<Event> = {};
         const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        now.setUTCHours(0, 0, 0, 0);
 
         if (!status || status === "all") return query;
 

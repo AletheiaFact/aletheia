@@ -6,9 +6,10 @@ import DynamicEventForm from "./DynamicEventForm";
 import useEventsHook from "../hooks/useEventsHook";
 
 const CreateEventView = () => {
-    const { state, actions } = useEventsHook()
-    const { nameSpace, isLoading, hasCaptcha, recaptchaString } = state
-    const { setRecaptchaString, t, router, setIsLoading } = actions
+    const { state, actions } = useEventsHook();
+    const { eventHref, nameSpace, isLoading, hasCaptcha, recaptchaString } =
+        state;
+    const { setRecaptchaString, t, router, setIsLoading } = actions;
 
     const onSubmit = (data) => {
         const newEvent = {
@@ -23,16 +24,24 @@ const CreateEventView = () => {
             recaptcha: recaptchaString,
         };
 
-        EventApi
-            .createEvent(newEvent, router, t)
+        EventApi.createEvent(newEvent, t)
             .then((event) => {
-                router.push(`/event/${event.data_hash}/${event.slug}`);
+                router.push(`${eventHref}/${event.data_hash}/${event.slug}`);
+            })
+            .catch((err) => {
+                console.error("Error creating event:", err);
+            })
+            .finally(() => {
                 setIsLoading(false);
             });
     };
 
     return (
-        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+        <Grid
+            container
+            justifyContent="center"
+            style={{ background: colors.lightNeutral }}
+        >
             <Grid item xs={9} padding="30px 0px">
                 <DynamicEventForm
                     onSubmit={onSubmit}
