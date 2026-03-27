@@ -130,6 +130,9 @@ describe("Test events infrastructure", () => {
             cy.get("[data-cy=frase1]").click();
             cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 
+            cy.get(".remirror-editor").should("be.visible").and("have.attr", "contenteditable", "true");
+            cy.get("[data-testid='report - loading - spinner']").should("not.exist");
+
             addTopicFlow(topic.aliases[0], topic.name);
         });
 
