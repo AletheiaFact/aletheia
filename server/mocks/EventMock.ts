@@ -7,19 +7,19 @@ export const mockEventModel = {
 };
 
 export const mockVerificationRequestService = {
-    listAll: jest.fn(),
+    getBatchCountsByTopics: jest.fn(),
 };
 
 export const mockSentenceService = {
-    countUniqueSentenceClaimsByTopic: jest.fn(),
+    getBatchCountsByTopics: jest.fn(),
 };
 
 export const mockImageService = {
-    countUniqueImageClaimsByTopic: jest.fn(),
+    getBatchCountsByTopics: jest.fn(),
 };
 
 export const mockClaimReviewService = {
-    count: jest.fn(),
+    getBatchCountsByTopics: jest.fn(),
 };
 
 export const mockTopicService = {

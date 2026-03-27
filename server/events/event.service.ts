@@ -14,7 +14,7 @@ import { VerificationRequestService } from "../verification-request/verification
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { FilterEventsDTO } from "./dto/filter.dto";
 import { TopicService } from "../topic/topic.service";
-import { EventMetricsResponse, FindAllResponse } from "./types/event.interfaces";
+import { EventMetricsData, EventMetricsResponse, FindAllResponse } from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
@@ -193,71 +193,105 @@ export class EventsService {
     }
 
     /**
-     * Fetches and aggregates metrics for an array of events concurrently.
+     * Fetches and aggregates metrics for an array of events concurrently using batching.
+     * Orchestrates the extraction, data fetching, and mapping processes.
      * @param events - Array of event documents.
-     * @returns A dictionary of metrics keyed by the event ID.
+     * @returns A dictionary of metrics keyed by the event's data hash.
      */
     private async getBatchEventMetrics(events: EventDocument[]): Promise<Record<string, EventMetricsResponse>> {
-        const metricsPromises = events.map(async (event) => {
-            const topicId = event.mainTopic?._id || "";
-            const topicName = event.mainTopic?.name || "";
+        if (!events || events.length === 0) {
+            this.logger.debug("No events provided for batch metrics processing.");
+            return {};
+        }
 
-            const metrics = await this.getEventMetrics(topicId, topicName);
+        const topicIds = [...new Set(events.map((event) => event.mainTopic?._id).filter(Boolean) as string[])];
 
-            return { eventDataHash: event.data_hash.toString(), metrics };
-        });
+        this.logger.debug(`Starting batch metrics processing for ${events.length} events (${topicIds.length} unique topics).`);
 
-        const metricsResults = await Promise.all(metricsPromises);
+        try {
+            const metricsData = await this.fetchBatchMetricsData(topicIds);
+            this.logger.debug(
+                `Batch data fetched successfully. ` +
+                `Stats found: Verification(${Object.keys(metricsData.verificationStats).length}), ` +
+                `Reviews(${Object.keys(metricsData.claimReviewsStats).length}), ` +
+                `Sentences(${Object.keys(metricsData.sentencesStats).length}), ` +
+                `Images(${Object.keys(metricsData.imagesStats).length})`
+            );
 
-        return metricsResults.reduce((accumulator, current) => {
-            accumulator[current.eventDataHash] = current.metrics;
-            return accumulator;
-        }, {} as Record<string, EventMetricsResponse>);
+            const mappedResults = this.mapMetricsToEvents(events, metricsData);
+            this.logger.debug(`Successfully mapped metrics to ${events.length} event hashes.`);
+
+            return mappedResults;
+        } catch (error) {
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to process batch event metrics. Returning zeroed fallback metrics.`, stackTrace);
+
+            return events.reduce((accumulator, event) => {
+                accumulator[event.data_hash.toString()] = {
+                    verificationRequests: 0,
+                    claims: 0,
+                    reviews: 0,
+                };
+                return accumulator;
+            }, {} as Record<string, EventMetricsResponse>);
+        }
     }
 
     /**
-     * Get metrics for an event by its main topic identifier and name.
-     * @param topicId - The unique identifier (main topic ID) for the event.
-     * @param topicName - The name of the topic associated with the event.
-     * @returns A promise that resolves to the event metrics data.
-    */
-    async getEventMetrics(topicId: string, topicName: string): Promise<EventMetricsResponse> {
-        this.logger.debug(`Getting event metrics for topic ID: ${topicId}`);
+     * Executes concurrent batched database queries to fetch metrics for the given topics.
+     * @param topicIds - Array of unique main topic IDs.
+     * @returns A promise that resolves to an object containing the batched metrics maps.
+     */
+    private async fetchBatchMetricsData(topicIds: string[]) {
+        const namespace = this.req.params.namespace || NameSpaceEnum.Main;
 
-        try {
-            const [verificationRequestStats, claimReviewsStats, claimStats] = await Promise.all([
-                this.verificationRequestService.count({ topics: [topicName] }),
-
-                this.claimReviewService.count({
-                    query: {
-                        isHidden: false,
-                        isDeleted: false,
-                        nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
-                    },
-                    topicId: topicId
+        const [verificationStats, claimReviewsStats, sentencesStats, imagesStats] =
+            await Promise.all([
+                this.verificationRequestService.getBatchCountsByTopics(topicIds),
+                this.claimReviewService.getBatchCountsByTopics(topicIds, {
+                    isHidden: false,
+                    isDeleted: false,
+                    nameSpace: namespace
                 }),
-
-                Promise.all([
-                    this.sentenceService.countUniqueSentenceClaimsByTopic(topicId),
-                    this.imageService.countUniqueImageClaimsByTopic(topicId)
-                ]).then(([countSentences, countImages]) => countSentences + countImages)
+                this.sentenceService.getBatchCountsByTopics(topicIds),
+                this.imageService.getBatchCountsByTopics(topicIds),
             ]);
 
-            return {
-                verificationRequests: verificationRequestStats,
-                claims: claimStats,
-                reviews: claimReviewsStats
+        const metricsData = {
+            verificationStats,
+            claimReviewsStats,
+            sentencesStats,
+            imagesStats,
+        };
+
+        return metricsData;
+    }
+
+    /**
+     * Maps the fetched batched metrics data back to their respective events.
+     * @param events - Array of event documents.
+     * @param metricsData - The resolved batched metrics data containing counts per topic.
+     * @returns A dictionary of metrics keyed by the event's data hash.
+     */
+    private mapMetricsToEvents(
+        events: EventDocument[],
+        metricsData: EventMetricsData
+    ): Record<string, EventMetricsResponse> {
+        return events.reduce((accumulator, event) => {
+            const eventHash = event.data_hash.toString();
+            const topicId = event.mainTopic?._id || "";
+
+            const countSentences = metricsData.sentencesStats[topicId] || 0;
+            const countImages = metricsData.imagesStats[topicId] || 0;
+
+            accumulator[eventHash] = {
+                verificationRequests: metricsData.verificationStats[topicId] || 0,
+                reviews: metricsData.claimReviewsStats[topicId] || 0,
+                claims: countSentences + countImages,
             };
 
-        } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to get event metrics for topic ${topicId}`, stackTrace);
-            return {
-                verificationRequests: 0,
-                claims: 0,
-                reviews: 0
-            };
-        }
+            return accumulator;
+        }, {} as Record<string, EventMetricsResponse>);
     }
 
     /**

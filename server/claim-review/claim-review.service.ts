@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import mongoose, {
     LeanDocument,
     Model,
@@ -31,9 +31,12 @@ import {
     ClaimReviewList,
     listAllData,
 } from "./types/claim-review.interfaces";
+import { mapAggregateToRecord } from "../util/mongo-utils";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
+    private readonly logger = new Logger(ClaimReviewService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)
@@ -526,5 +529,80 @@ export class ClaimReviewService {
             };
         }
         return personality;
+    }
+
+    /**
+     * Fetches the total count of claim reviews for multiple topics concurrently.
+     * Respects the complex base pipeline and lookup constraints by batching via data_hash.
+     * @param topicIds - Array of unique topic IDs.
+     * @param query - The base query filters (e.g., isHidden, isDeleted).
+     * @returns A dictionary mapping each topic ID to its respective review count.
+     */
+    async getBatchCountsByTopics(topicIds: string[], query: IListAllQuery): Promise<Record<string, number>> {
+        if (!topicIds || topicIds.length === 0) {
+            this.logger.debug("No topic IDs provided for batch claim review counts.");
+            return {};
+        }
+
+        try {
+            const [sentencesHashesMap, imagesHashesMap] = await Promise.all([
+                this.sentenceService.getBatchHashesByTopics(topicIds),
+                this.imageService.getBatchHashesByTopics(topicIds)
+            ]);
+
+            const allHashesSet = new Set<string>();
+            const topicToHashesMap: Record<string, string[]> = {};
+
+            for (const topicId of topicIds) {
+                const topicHashes = [
+                    ...(sentencesHashesMap[topicId] || []),
+                    ...(imagesHashesMap[topicId] || [])
+                ];
+                topicToHashesMap[topicId] = topicHashes;
+                topicHashes.forEach(hash => allHashesSet.add(hash));
+            }
+
+            const allValidHashes = Array.from(allHashesSet);
+
+            if (allValidHashes.length === 0) {
+                this.logger.debug("No valid hashes found for the provided topics.");
+                return {};
+            }
+
+            const initialMatch = {
+                ...query,
+                targetModel: ReviewTaskTypeEnum.Claim,
+                data_hash: { $in: allValidHashes }
+            };
+
+            const basePipeline = this.buildClaimReviewBasePipeline(initialMatch, query);
+
+            const pipeline = [
+                ...basePipeline,
+                {
+                    $group: {
+                        _id: "$data_hash",
+                        count: { $sum: 1 }
+                    }
+                }
+            ];
+
+            const aggregatedCounts = await this.ClaimReviewModel.aggregate(pipeline);
+
+            const hashCountMap = mapAggregateToRecord<number>(aggregatedCounts, "count");
+
+            const result: Record<string, number> = {};
+
+            for (const topicId of topicIds) {
+                const hashesForThisTopic = topicToHashesMap[topicId] || [];
+                result[topicId] = hashesForThisTopic.reduce((sum, hash) => sum + (hashCountMap[hash] || 0), 0);
+            }
+
+            return result;
+        } catch (error) {
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to fetch batch claim review counts`, stackTrace);
+            throw error;
+        }
     }
 }

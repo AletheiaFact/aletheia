@@ -19,6 +19,7 @@ import { REQUEST } from "@nestjs/core";
 import { ReportService } from "../../../report/report.service";
 import type { BaseRequest } from "../../../types";
 import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
+import { mapAggregateToRecord } from "../../../util/mongo-utils";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
@@ -122,27 +123,72 @@ export class ImageService {
         }
     }
 
-    /**
-     * Counts the number of unique claims associated with a specific topic
-     * by extracting distinct claimRevisionIds from Image records.
-     * * @param topicId - The unique identifier of the topic.
-     * @returns The total count of unique claims derived from images.
+   /**
+     * Counts the number of unique claims associated with multiple topics concurrently.
+     * Uses aggregation to extract distinct claimRevisionIds per topic from Image records in a single query.
+     * @param topicIds - Array of unique topic IDs.
+     * @returns A dictionary mapping each topic ID to its total count of unique image claims.
      */
-    async countUniqueImageClaimsByTopic(topicId: string): Promise<number> {
-        this.logger.debug(`Counting unique image claims for topic: ${topicId}`);
+    async getBatchCountsByTopics(topicIds: string[]): Promise<Record<string, number>> {
+        if (!topicIds || topicIds.length === 0) return {};
 
         try {
-            const uniqueClaimIds = await this.ImageModel.distinct(
-                "claimRevisionId",
-                { "topics.id": new Types.ObjectId(topicId) }
-            );
+            const objectIds = topicIds.map(id => new Types.ObjectId(id));
 
-            this.logger.debug(`Successfully found ${uniqueClaimIds.length} unique image claims for topic: ${topicId}`);
+            const aggregations = await this.ImageModel.aggregate([
+                { $match: { "topics.id": { $in: objectIds } } },
+                { $unwind: "$topics" },
+                { $match: { "topics.id": { $in: objectIds } } },
+                {
+                    $group: {
+                        _id: "$topics.id",
+                        uniqueClaims: { $addToSet: "$claimRevisionId" }
+                    }
+                },
+                {
+                    $project: {
+                        count: { $size: "$uniqueClaims" }
+                    }
+                }
+            ]);
 
-            return uniqueClaimIds.length;
+            return mapAggregateToRecord<number>(aggregations, "count");
         } catch (error) {
-            this.logger.error(`Failed to count unique image claims for topic: ${topicId}`, error.stack);
-            throw new InternalServerErrorException(`An error occurred while counting image claims for the requested topic.`);
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to count batch unique image claims`, stackTrace);
+            throw new InternalServerErrorException(`An error occurred while counting batch image claims.`);
+        }
+    }
+
+    /**
+     * Retrieves image data hashes for multiple topics concurrently.
+     * Uses aggregation to group hashes by topic ID in a single database roundtrip.
+     * @param topicIds - Array of unique topic IDs.
+     * @returns A dictionary mapping each topic ID to an array of its associated image data hashes.
+     */
+    async getBatchHashesByTopics(topicIds: string[]): Promise<Record<string, string[]>> {
+        if (!topicIds || topicIds.length === 0) return {};
+
+        try {
+            const objectIds = topicIds.map(id => new Types.ObjectId(id));
+
+            const aggregations = await this.ImageModel.aggregate([
+                { $match: { "topics.id": { $in: objectIds } } },
+                { $unwind: "$topics" },
+                { $match: { "topics.id": { $in: objectIds } } },
+                {
+                    $group: {
+                        _id: "$topics.id",
+                        hashes: { $addToSet: "$data_hash" }
+                    }
+                }
+            ]);
+
+            return mapAggregateToRecord<string[]>(aggregations, "hashes");
+        } catch (error) {
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to fetch batch image hashes`, stackTrace);
+            throw new InternalServerErrorException(`An error occurred while retrieving batch images.`);
         }
     }
 }

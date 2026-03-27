@@ -220,29 +220,13 @@ describe("EventController (e2e)", () => {
             });
     });
 
-    it("/api/event (GET) - should accept unknown status and still return list", () => {
+    it("/api/event (GET) - should REJECT unknown status", () => {
         return request(app.getHttpServer())
             .get("/api/event")
             .query({
-                page: 0,
-                pageSize: 20,
-                order: "asc",
                 status: "unknown-status",
             })
-            .expect(200)
-            .expect(({ body }) => {
-                expect(body).toHaveProperty("events");
-                expect(body).toHaveProperty("eventMetrics");
-                expect(body).toHaveProperty("total");
-                expect(Array.isArray(body.events)).toBe(true);
-                expect(typeof body.eventMetrics).toBe("object");
-                expect(body.events.length).toBeGreaterThanOrEqual(1);
-                expect(body.total).toBeGreaterThanOrEqual(1);
-                const firstEvent = body.events[0];
-                if (firstEvent) {
-                    expect(body.eventMetrics[firstEvent.data_hash]).toBeDefined();
-                }
-            });
+            .expect(400);
     });
 
     it("/api/event (POST) - should validate required fields", () => {

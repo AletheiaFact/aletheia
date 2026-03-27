@@ -220,7 +220,7 @@ describe("EventsService (Unit)", () => {
     });
 
     describe("findAll", () => {
-        it("should return events list with pagination and order", async () => {
+        it("should return events list with pagination, order, and batched metrics", async () => {
             const eventsResult = [
                 {
                     data_hash: "mock-hash-1",
@@ -246,8 +246,10 @@ describe("EventsService (Unit)", () => {
             const countExec = jest.fn().mockResolvedValue(eventsResult.length);
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
 
-            const mockMetrics = { verificationRequests: 5, claims: 10, reviews: 15 };
-            jest.spyOn(service, 'getEventMetrics').mockResolvedValue(mockMetrics);
+            mockVerificationRequestService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 2 });
+            mockClaimReviewService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 15, "Q456": 0 });
+            mockSentenceService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 8 });
+            mockImageService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 2 });
 
             const result = await service.findAll({
                 page: 1,
@@ -267,20 +269,53 @@ describe("EventsService (Unit)", () => {
             expect(sort).toHaveBeenCalledWith({ endDate: -1 });
             expect(populate).toHaveBeenCalledWith("mainTopic");
 
-            expect(service.getEventMetrics).toHaveBeenCalledTimes(2);
-            expect(service.getEventMetrics).toHaveBeenCalledWith("Q123", "Topic A");
+            const expectedTopicIds = ["Q123", "Q456"];
+            expect(mockVerificationRequestService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
+            expect(mockClaimReviewService.getBatchCountsByTopics).toHaveBeenCalledWith(
+                expectedTopicIds,
+                expect.objectContaining({ isHidden: false, isDeleted: false })
+            );
+            expect(mockSentenceService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
+            expect(mockImageService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
 
             expect(result).toEqual({
                 events: eventsResult,
                 total: eventsResult.length,
                 eventMetrics: {
-                    "mock-hash-1": mockMetrics,
-                    "mock-hash-2": mockMetrics,
+                    "mock-hash-1": { verificationRequests: 5, reviews: 15, claims: 10 }, // sentences(5) + images(5)
+                    "mock-hash-2": { verificationRequests: 2, reviews: 0, claims: 10 },  // sentences(8) + images(2)
                 }
             });
         });
 
-        it("should throw InternalServerErrorException when querying fails", async () => {
+        it("should return events with fallback zeroed metrics if batch fetching fails", async () => {
+            const eventsResult = [
+                {
+                    data_hash: "mock-hash-1",
+                    mainTopic: { _id: "Q123" }
+                }
+            ];
+
+            const exec = jest.fn().mockResolvedValue(eventsResult);
+            const populate = jest.fn().mockReturnValue({ exec });
+            const lean = jest.fn().mockReturnValue({ populate });
+            const sort = jest.fn().mockReturnValue({ lean });
+            const limit = jest.fn().mockReturnValue({ sort });
+            const skip = jest.fn().mockReturnValue({ limit });
+            mockEventModel.find.mockReturnValue({ skip });
+
+            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(1) });
+
+            mockSentenceService.getBatchCountsByTopics = jest.fn().mockRejectedValue(new Error("DB Timeout"));
+
+            const result = await service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.ALL });
+
+            expect(result.eventMetrics).toEqual({
+                "mock-hash-1": { verificationRequests: 0, reviews: 0, claims: 0 }
+            });
+        });
+
+        it("should throw InternalServerErrorException when primary event querying fails", async () => {
             const exec = jest.fn().mockRejectedValue(new Error("db fail"));
             const populate = jest.fn().mockReturnValue({ exec });
             const lean = jest.fn().mockReturnValue({ populate });

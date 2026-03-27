@@ -6,6 +6,15 @@ export interface FindAllResponse {
     total: number;
 }
 
+type TopicMetrics = Record<string, number>;
+
+export interface EventMetricsData {
+    verificationStats: TopicMetrics,
+    claimReviewsStats: TopicMetrics,
+    sentencesStats: TopicMetrics,
+    imagesStats: TopicMetrics
+}
+
 export interface EventMetricsResponse {
     verificationRequests: number,
     claims: number,
