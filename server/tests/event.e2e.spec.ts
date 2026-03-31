@@ -14,6 +14,8 @@ import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 import { EventsStatus } from "../types/enums";
+import { Model } from "mongoose";
+import { getModelToken } from "@nestjs/mongoose";
 
 jest.setTimeout(10000);
 
@@ -77,6 +79,9 @@ describe("EventController (e2e)", () => {
         );
 
         await app.init();
+
+        const eventModel = moduleFixture.get<Model<any>>(getModelToken("Event"));
+        await eventModel.ensureIndexes();
     });
 
     it("/api/event (GET) - should return empty list initially", () => {

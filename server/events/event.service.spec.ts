@@ -9,23 +9,20 @@ import {
 import * as crypto from "crypto";
 import { EventsService } from "./event.service";
 import { Event } from "./schema/event.schema";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { TopicService } from "../topic/topic.service";
 import {
     mockCreateEventDto,
     mockEventModel,
-    mockSentenceService,
-    mockImageService,
     mockClaimReviewService,
     mockTopicService,
-    mockVerificationRequestService,
     mockRequest,
+    mockTopicModel,
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { REQUEST } from "@nestjs/core";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ImageService } from "../claim/types/image/image.service";
+import { Types } from "mongoose";
+import { Topic } from "../topic/schemas/topic.schema";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -43,16 +40,8 @@ describe("EventsService (Unit)", () => {
                     useValue: mockEventModel,
                 },
                 {
-                    provide: VerificationRequestService,
-                    useValue: mockVerificationRequestService,
-                },
-                {
-                    provide: SentenceService,
-                    useValue: mockSentenceService,
-                },
-                {
-                    provide: ImageService,
-                    useValue: mockImageService,
+                    provide: getModelToken(Topic.name),
+                    useValue: mockTopicModel,
                 },
                 {
                     provide: ClaimReviewService,
@@ -220,17 +209,20 @@ describe("EventsService (Unit)", () => {
     });
 
     describe("findAll", () => {
+        const topicId1 = "507f1f77bcf86cd799439011";
+        const topicId2 = "507f1f77bcf86cd799439012";
+
         it("should return events list with pagination, order, and batched metrics", async () => {
             const eventsResult = [
                 {
                     data_hash: "mock-hash-1",
                     endDate: "2025-11-20T23:00:00.000+00:00",
-                    mainTopic: { _id: "Q123", name: "Topic A" }
+                    mainTopic: { _id: topicId1, name: "Topic A" }
                 },
                 {
                     data_hash: "mock-hash-2",
                     endDate: "2025-12-15T18:30:00.000+00:00",
-                    mainTopic: { _id: "Q456", name: "Topic B" }
+                    mainTopic: { _id: topicId2, name: "Topic B" }
                 }
             ];
 
@@ -246,10 +238,41 @@ describe("EventsService (Unit)", () => {
             const countExec = jest.fn().mockResolvedValue(eventsResult.length);
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
 
-            mockVerificationRequestService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 2 });
-            mockClaimReviewService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 15, "Q456": 0 });
-            mockSentenceService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 8 });
-            mockImageService.getBatchCountsByTopics = jest.fn().mockResolvedValue({ "Q123": 5, "Q456": 2 });
+            mockTopicModel.aggregate = jest.fn().mockResolvedValue([{
+                verificationStats: [
+                    { _id: new Types.ObjectId(topicId1), count: 5 },
+                    { _id: new Types.ObjectId(topicId2), count: 2 }
+                ],
+                sentencesData: [
+                    {
+                        _id: new Types.ObjectId(topicId1),
+                        hashes: ["hash-sent-1"],
+                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439001"), new Types.ObjectId("607f1f77bcf86cd799439002")]
+                    },
+                    {
+                        _id: new Types.ObjectId(topicId2),
+                        hashes: ["hash-sent-2"],
+                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439003")]
+                    }
+                ],
+                imagesData: [
+                    {
+                        _id: new Types.ObjectId(topicId1),
+                        hashes: ["hash-img-1"],
+                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439001")]
+                    },
+                    {
+                        _id: new Types.ObjectId(topicId2),
+                        hashes: [],
+                        claimRevisionIds: []
+                    }
+                ]
+            }]);
+
+            mockClaimReviewService.getBatchCountsByTopics = jest.fn().mockResolvedValue({
+                [topicId1]: 15,
+                [topicId2]: 0
+            });
 
             const result = await service.findAll({
                 page: 1,
@@ -269,21 +292,29 @@ describe("EventsService (Unit)", () => {
             expect(sort).toHaveBeenCalledWith({ endDate: -1 });
             expect(populate).toHaveBeenCalledWith("mainTopic");
 
-            const expectedTopicIds = ["Q123", "Q456"];
-            expect(mockVerificationRequestService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
+            const expectedTopicIds = [topicId1, topicId2];
+            const expectedObjectIds = expectedTopicIds.map(id => new Types.ObjectId(id));
+
+            expect(mockTopicModel.aggregate).toHaveBeenCalledWith([
+                { $match: { _id: { $in: expectedObjectIds } } },
+                expect.any(Object)
+            ]);
+
             expect(mockClaimReviewService.getBatchCountsByTopics).toHaveBeenCalledWith(
                 expectedTopicIds,
-                expect.objectContaining({ isHidden: false, isDeleted: false })
+                expect.objectContaining({ isHidden: false, isDeleted: false }),
+                {
+                    [topicId1]: ["hash-sent-1", "hash-img-1"],
+                    [topicId2]: ["hash-sent-2"]
+                }
             );
-            expect(mockSentenceService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
-            expect(mockImageService.getBatchCountsByTopics).toHaveBeenCalledWith(expectedTopicIds);
 
             expect(result).toEqual({
                 events: eventsResult,
                 total: eventsResult.length,
                 eventMetrics: {
-                    "mock-hash-1": { verificationRequests: 5, reviews: 15, claims: 10 }, // sentences(5) + images(5)
-                    "mock-hash-2": { verificationRequests: 2, reviews: 0, claims: 10 },  // sentences(8) + images(2)
+                    "mock-hash-1": { verificationRequests: 5, reviews: 15, claims: 2 },
+                    "mock-hash-2": { verificationRequests: 2, reviews: 0, claims: 1 },
                 }
             });
         });
@@ -292,7 +323,7 @@ describe("EventsService (Unit)", () => {
             const eventsResult = [
                 {
                     data_hash: "mock-hash-1",
-                    mainTopic: { _id: "Q123" }
+                    mainTopic: { _id: topicId1 }
                 }
             ];
 
@@ -306,7 +337,7 @@ describe("EventsService (Unit)", () => {
 
             mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(1) });
 
-            mockSentenceService.getBatchCountsByTopics = jest.fn().mockRejectedValue(new Error("DB Timeout"));
+            mockTopicModel.aggregate = jest.fn().mockRejectedValue(new Error("DB Timeout"));
 
             const result = await service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.ALL });
 

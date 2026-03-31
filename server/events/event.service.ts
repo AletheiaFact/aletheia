@@ -10,11 +10,16 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
 import { EventDocument, Event } from "./schema/event.schema";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { FilterEventsDTO } from "./dto/filter.dto";
 import { TopicService } from "../topic/topic.service";
-import { EventMetricsData, EventMetricsResponse, FindAllResponse } from "./types/event.interfaces";
+import {
+    BuildMetricsParams,
+    EventMetricsData,
+    EventMetricsResponse,
+    FindAllResponse,
+    TopicDataAggregation
+} from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
@@ -22,8 +27,8 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ImageService } from "../claim/types/image/image.service";
+import { Topic, TopicDocument } from "../topic/schemas/topic.schema";
+import { mapAggregateToRecord } from "../util/mongo-utils";
 
 @Injectable()
 export class EventsService {
@@ -32,10 +37,8 @@ export class EventsService {
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
-        private readonly sentenceService: SentenceService,
-        private readonly imageService: ImageService,
+        @InjectModel(Topic.name) private TopicModel: Model<TopicDocument>,
         private readonly claimReviewService: ClaimReviewService,
-        private readonly verificationRequestService: VerificationRequestService,
         private readonly topicService: TopicService,
     ) { }
 
@@ -182,7 +185,14 @@ export class EventsService {
                 this.eventModel.countDocuments(query).exec()
             ]);
 
-            const eventMetrics = await this.getBatchEventMetrics(events);
+            const eventMetrics = await this.fetchBatchMetricsData(events);
+
+            this.logger.log({
+                message: "FindAll events and metrics completed successfully",
+                eventCount: events.length,
+                metricsCount: Object.keys(eventMetrics).length,
+                query: JSON.stringify(query)
+            });
 
             return { events, eventMetrics, total };
         } catch (error) {
@@ -190,108 +200,6 @@ export class EventsService {
             this.logger.error(`Failed to fetch events list: ${error instanceof Error ? error.message : 'Unknown error'}`, stackTrace);
             throw new InternalServerErrorException("An error occurred while fetching the events list.");
         }
-    }
-
-    /**
-     * Fetches and aggregates metrics for an array of events concurrently using batching.
-     * Orchestrates the extraction, data fetching, and mapping processes.
-     * @param events - Array of event documents.
-     * @returns A dictionary of metrics keyed by the event's data hash.
-     */
-    private async getBatchEventMetrics(events: EventDocument[]): Promise<Record<string, EventMetricsResponse>> {
-        if (!events || events.length === 0) {
-            this.logger.debug("No events provided for batch metrics processing.");
-            return {};
-        }
-
-        const topicIds = [...new Set(events.map((event) => event.mainTopic?._id).filter(Boolean) as string[])];
-
-        this.logger.debug(`Starting batch metrics processing for ${events.length} events (${topicIds.length} unique topics).`);
-
-        try {
-            const metricsData = await this.fetchBatchMetricsData(topicIds);
-            this.logger.debug(
-                `Batch data fetched successfully. ` +
-                `Stats found: Verification(${Object.keys(metricsData.verificationStats).length}), ` +
-                `Reviews(${Object.keys(metricsData.claimReviewsStats).length}), ` +
-                `Sentences(${Object.keys(metricsData.sentencesStats).length}), ` +
-                `Images(${Object.keys(metricsData.imagesStats).length})`
-            );
-
-            const mappedResults = this.mapMetricsToEvents(events, metricsData);
-            this.logger.debug(`Successfully mapped metrics to ${events.length} event hashes.`);
-
-            return mappedResults;
-        } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to process batch event metrics. Returning zeroed fallback metrics.`, stackTrace);
-
-            return events.reduce((accumulator, event) => {
-                accumulator[event.data_hash.toString()] = {
-                    verificationRequests: 0,
-                    claims: 0,
-                    reviews: 0,
-                };
-                return accumulator;
-            }, {} as Record<string, EventMetricsResponse>);
-        }
-    }
-
-    /**
-     * Executes concurrent batched database queries to fetch metrics for the given topics.
-     * @param topicIds - Array of unique main topic IDs.
-     * @returns A promise that resolves to an object containing the batched metrics maps.
-     */
-    private async fetchBatchMetricsData(topicIds: string[]) {
-        const namespace = this.req.params.namespace || NameSpaceEnum.Main;
-
-        const [verificationStats, claimReviewsStats, sentencesStats, imagesStats] =
-            await Promise.all([
-                this.verificationRequestService.getBatchCountsByTopics(topicIds),
-                this.claimReviewService.getBatchCountsByTopics(topicIds, {
-                    isHidden: false,
-                    isDeleted: false,
-                    nameSpace: namespace
-                }),
-                this.sentenceService.getBatchCountsByTopics(topicIds),
-                this.imageService.getBatchCountsByTopics(topicIds),
-            ]);
-
-        const metricsData = {
-            verificationStats,
-            claimReviewsStats,
-            sentencesStats,
-            imagesStats,
-        };
-
-        return metricsData;
-    }
-
-    /**
-     * Maps the fetched batched metrics data back to their respective events.
-     * @param events - Array of event documents.
-     * @param metricsData - The resolved batched metrics data containing counts per topic.
-     * @returns A dictionary of metrics keyed by the event's data hash.
-     */
-    private mapMetricsToEvents(
-        events: EventDocument[],
-        metricsData: EventMetricsData
-    ): Record<string, EventMetricsResponse> {
-        return events.reduce((accumulator, event) => {
-            const eventHash = event.data_hash.toString();
-            const topicId = event.mainTopic?._id || "";
-
-            const countSentences = metricsData.sentencesStats[topicId] || 0;
-            const countImages = metricsData.imagesStats[topicId] || 0;
-
-            accumulator[eventHash] = {
-                verificationRequests: metricsData.verificationStats[topicId] || 0,
-                reviews: metricsData.claimReviewsStats[topicId] || 0,
-                claims: countSentences + countImages,
-            };
-
-            return accumulator;
-        }, {} as Record<string, EventMetricsResponse>);
     }
 
     /**
@@ -340,5 +248,177 @@ export class EventsService {
         }
 
         return query;
+    }
+
+    /**
+     * Executes batched database queries to fetch metrics for the given topics.
+     * Uses a 2-step approach to resolve data dependencies (hashes) before querying ClaimReviews.
+     * @param topicIds - Array of unique main topic IDs.
+     * @returns A promise that resolves to an object containing the batched metrics maps.
+    */
+    private async fetchBatchMetricsData(events: EventDocument[]): Promise<EventMetricsData> {
+        const namespace = this.req.params.namespace || NameSpaceEnum.Main;
+        const topicIds = [...new Set(events.map(event => event.mainTopic?._id).filter(Boolean) as string[])];
+
+        const objectIds = topicIds.map(id => new Types.ObjectId(id));
+
+        try {
+            const [metricsResult] = await this.TopicModel.aggregate([
+                { $match: { _id: { $in: objectIds } } },
+                {
+                    $facet: {
+                        verificationStats: [
+                            {
+                                $lookup: {
+                                    from: "verificationrequests",
+                                    localField: "_id",
+                                    foreignField: "topics",
+                                    as: "verifications"
+                                }
+                            },
+                            { $project: { count: { $size: "$verifications" } } }
+                        ],
+                        sentencesData: [
+                            {
+                                $lookup: {
+                                    from: "sentences",
+                                    localField: "_id",
+                                    foreignField: "topics.id",
+                                    as: "sentences"
+                                }
+                            },
+                            {
+                                $project: {
+                                    hashes: { $setUnion: ["$sentences.data_hash", []] },
+                                    claimRevisionIds: { $setUnion: ["$sentences.claimRevisionId", []] }
+                                }
+                            }
+                        ],
+                        imagesData: [
+                            {
+                                $lookup: {
+                                    from: "images",
+                                    localField: "_id",
+                                    foreignField: "topics.id",
+                                    as: "images"
+                                }
+                            },
+                            {
+                                $project: {
+                                    hashes: { $setUnion: ["$images.data_hash", []] },
+                                    claimRevisionIds: { $setUnion: ["$images.claimRevisionId", []] }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]);
+
+            const { verificationStats, sentencesData, imagesData } = metricsResult;
+
+            const topicToHashesMap: Record<string, string[]> = {};
+
+            for (const topicId of topicIds) {
+                const sentenceHashes = sentencesData.find(sentence => String(sentence._id) === String(topicId))?.hashes || [];
+                const imageHashes = imagesData.find(image => String(image._id) === String(topicId))?.hashes || [];
+
+                topicToHashesMap[topicId] = [...sentenceHashes, ...imageHashes];
+            }
+
+            const claimReviewsStats = await this.claimReviewService.getBatchCountsByTopics(
+                topicIds,
+                {
+                    isHidden: false,
+                    isDeleted: false,
+                    nameSpace: namespace
+                },
+                topicToHashesMap
+            );
+
+            return this.buildFinalMetricsDictionary({
+                events,
+                verificationStats,
+                claimReviewsStats,
+                sentencesData,
+                imagesData
+            });
+
+        } catch (error) {
+            this.logger.error(`Metrics fetch failed, using fallback: ${error.message}`);
+
+            return events.reduce((acc, event) => {
+                acc[String(event.data_hash)] = {
+                    verificationRequests: 0,
+                    claims: 0,
+                    reviews: 0
+                };
+                return acc;
+            }, {});
+        }
+    }
+
+    /**
+     * Builds the final metrics dictionary mapped by the event's data_hash,
+     * formatting and summing the raw data from the database.
+    */
+    private buildFinalMetricsDictionary({
+        events,
+        verificationStats,
+        claimReviewsStats,
+        sentencesData,
+        imagesData
+    }: BuildMetricsParams): Record<string, EventMetricsResponse> {
+        const verificationMap = mapAggregateToRecord<number>(verificationStats, "count");
+        const claimsMap = this.calculateUniqueClaims(sentencesData, imagesData);
+
+        const finalMetrics: Record<string, EventMetricsResponse> = {};
+
+        for (const event of events) {
+            const eventHash = String(event.data_hash);
+            const topicId = String(event.mainTopic?._id);
+
+            finalMetrics[eventHash] = {
+                verificationRequests: verificationMap[topicId] || 0,
+                claims: claimsMap[topicId] || 0,
+                reviews: claimReviewsStats[topicId] || 0,
+            };
+        }
+
+        return finalMetrics;
+    }
+
+    /**
+     * Calculates the total number of unique claims per topic based on claimRevisionId.
+     * Aggregates IDs from sentences and images and returns the count of distinct IDs.
+    */
+    private calculateUniqueClaims(sentencesData: TopicDataAggregation[], imagesData: TopicDataAggregation[]): Record<string, number> {
+        const topicClaimsSet: Record<string, Set<string>> = {};
+
+        const processItem = (item: TopicDataAggregation) => {
+            if (!item) return;
+            const topicId = String(item._id);
+
+            const revisionIds = item.claimRevisionIds || [];
+
+            if (!topicClaimsSet[topicId]) {
+                topicClaimsSet[topicId] = new Set<string>();
+            }
+
+            revisionIds.forEach((revisionId: Types.ObjectId) => {
+                if (revisionId) {
+                    topicClaimsSet[topicId].add(String(revisionId));
+                }
+            });
+        };
+
+        sentencesData?.forEach(processItem);
+        imagesData?.forEach(processItem);
+
+        const claimsCountMap: Record<string, number> = {};
+        for (const [topicId, claimSet] of Object.entries(topicClaimsSet)) {
+            claimsCountMap[topicId] = claimSet.size;
+        }
+
+        return claimsCountMap;
     }
 }

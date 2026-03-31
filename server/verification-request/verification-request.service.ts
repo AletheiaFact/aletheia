@@ -34,7 +34,6 @@ import {
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
-import { mapAggregateToRecord } from "../util/mongo-utils";
 
 const md5 = require("md5");
 
@@ -1521,40 +1520,5 @@ export class VerificationRequestService {
         await this.revalidateAndRunMissingStates(updatedVr);
 
         return updatedVr;
-    }
-
-    /**
-      * Fetches the total count of verification requests for multiple topics concurrently.
-      * Uses MongoDB aggregation to prevent N+1 query performance issues.
-      * @param topicIds - Array of unique topic IDs (strings).
-      * @returns A dictionary mapping each topic ID to its respective count.
-      */
-    async getBatchCountsByTopics(topicIds: string[]): Promise<Record<string, number>> {
-        if (!topicIds || topicIds.length === 0) {
-            this.logger.debug("No topic IDs provided for batch verification request counts.");
-            return {};
-        }
-
-        try {
-            const objectIds = topicIds.map(id => new Types.ObjectId(id));
-
-            const aggregations = await this.VerificationRequestModel.aggregate([
-                { $match: { topics: { $in: objectIds } } },
-                { $unwind: "$topics" },
-                { $match: { topics: { $in: objectIds } } },
-                {
-                    $group: {
-                        _id: "$topics",
-                        count: { $sum: 1 }
-                    }
-                }
-            ]);
-
-            return mapAggregateToRecord<number>(aggregations, "count");
-        } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to fetch batch verification request counts`, stackTrace);
-            throw error;
-        }
     }
 }

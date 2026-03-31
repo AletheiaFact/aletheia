@@ -536,37 +536,25 @@ export class ClaimReviewService {
      * Respects the complex base pipeline and lookup constraints by batching via data_hash.
      * @param topicIds - Array of unique topic IDs.
      * @param query - The base query filters (e.g., isHidden, isDeleted).
+     * @param topicToHashesMap - Um dicionário mapeando cada topicId para o seu array de hashes (Sentences + Images).
      * @returns A dictionary mapping each topic ID to its respective review count.
      */
-    async getBatchCountsByTopics(topicIds: string[], query: IListAllQuery): Promise<Record<string, number>> {
+    async getBatchCountsByTopics(
+        topicIds: string[],
+        query: IListAllQuery,
+        topicToHashesMap: Record<string, string[]>
+    ): Promise<Record<string, number>> {
         if (!topicIds || topicIds.length === 0) {
             this.logger.debug("No topic IDs provided for batch claim review counts.");
             return {};
         }
 
         try {
-            const [sentencesHashesMap, imagesHashesMap] = await Promise.all([
-                this.sentenceService.getBatchHashesByTopics(topicIds),
-                this.imageService.getBatchHashesByTopics(topicIds)
-            ]);
-
-            const allHashesSet = new Set<string>();
-            const topicToHashesMap: Record<string, string[]> = {};
-
-            for (const topicId of topicIds) {
-                const topicHashes = [
-                    ...(sentencesHashesMap[topicId] || []),
-                    ...(imagesHashesMap[topicId] || [])
-                ];
-                topicToHashesMap[topicId] = topicHashes;
-                topicHashes.forEach(hash => allHashesSet.add(hash));
-            }
-
-            const allValidHashes = Array.from(allHashesSet);
+            const allValidHashes = [...new Set(Object.values(topicToHashesMap).flat())];
 
             if (allValidHashes.length === 0) {
                 this.logger.debug("No valid hashes found for the provided topics.");
-                return {};
+                return topicIds.reduce((acc, topicId) => ({ ...acc, [topicId]: 0 }), {});
             }
 
             const initialMatch = {

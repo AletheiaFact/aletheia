@@ -6,16 +6,8 @@ export const mockEventModel = {
     findOne: jest.fn(),
 };
 
-export const mockVerificationRequestService = {
-    getBatchCountsByTopics: jest.fn(),
-};
-
-export const mockSentenceService = {
-    getBatchCountsByTopics: jest.fn(),
-};
-
-export const mockImageService = {
-    getBatchCountsByTopics: jest.fn(),
+export const mockTopicModel = {
+    aggregate: jest.fn(),
 };
 
 export const mockClaimReviewService = {
