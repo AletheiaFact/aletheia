@@ -472,8 +472,25 @@ export class EditorParser {
                 continue;
             } else {
                 const sources = this.getSourceByProperty(schema.sources, key);
+                // Recompute textRange from the content string to handle stale ranges
+                const recomputedSources = sources.map((source) => {
+                    const recomputedRange = this.findTextRange(
+                        content,
+                        source.props?.targetText || source.props?.textRange,
+                        source.props?.id
+                    );
+                    return recomputedRange.length === 2
+                        ? {
+                              ...source,
+                              props: {
+                                  ...source.props,
+                                  textRange: recomputedRange,
+                              },
+                          }
+                        : source;
+                });
                 const { rawSourcesRanges, sourcesRanges } =
-                    this.getRawSourcesAndSourcesRanges(sources);
+                    this.getRawSourcesAndSourcesRanges(recomputedSources);
                 doc.content.push(
                     ...this.buildContentFragments({
                         content,
@@ -525,6 +542,17 @@ export class EditorParser {
                         href,
                         id
                     );
+                }
+                // Fallback: if textRange is stale, search for the markup by ID
+                if (id && targetText) {
+                    const markupPattern = `{{${id}|${targetText}}}`;
+                    if (content.includes(markupPattern)) {
+                        return this.getContentObjectWithMarks(
+                            targetText,
+                            href,
+                            id
+                        );
+                    }
                 }
             // Fall through to the default case if type is "source" and the text doesn't match targetText
             default:

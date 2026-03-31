@@ -35,18 +35,36 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
                 editorParser.removeTrailingParagraph(visualEditorJSON);
             const schema = editorParser.editor2schema(cleanedVisualEditor);
 
-            // Strip orphaned source markup {{id|text}} from content strings.
-            // Sources added via button (not attached to text) produce markup
-            // that can't be reconstructed on reload. The sources are preserved
-            // separately in schema.sources.
-            const sourceMarkupPattern = /\{\{[^|]*\|[^}]*\}\}/g;
-            for (const key in schema) {
-                const value = schema[key];
-                if (
-                    typeof value === "string" &&
-                    sourceMarkupPattern.test(value)
-                ) {
-                    schema[key] = value.replace(sourceMarkupPattern, "").trim();
+            // Strip only orphaned source markup from content strings.
+            // Sources added via button (field: null/paragraph) can leave
+            // {{id|text}} in content that can't be reconstructed on reload.
+            // In-text sources (field matches a content key) must be preserved.
+            const orphanedSourceIds = new Set(
+                (schema.sources || [])
+                    .filter(
+                        (s: any) =>
+                            !s?.props?.field || s?.props?.field === "paragraph"
+                    )
+                    .map((s: any) => s?.props?.id)
+                    .filter(Boolean)
+            );
+            if (orphanedSourceIds.size > 0) {
+                for (const key in schema) {
+                    const value = schema[key];
+                    if (typeof value === "string") {
+                        let cleaned = value;
+                        for (const id of orphanedSourceIds) {
+                            const pattern = new RegExp(
+                                `\\{\\{${id}\\|[^}]*\\}\\}`,
+                                "g"
+                            );
+                            cleaned = cleaned.replace(pattern, "");
+                        }
+                        cleaned = cleaned.trim();
+                        if (cleaned !== value) {
+                            schema[key] = cleaned;
+                        }
+                    }
                 }
             }
 
@@ -54,6 +72,7 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             event.reviewData = {
                 ...event.reviewData,
                 ...schema,
+                visualEditor: cleanedVisualEditor,
                 reviewDataHtml,
             };
         }
