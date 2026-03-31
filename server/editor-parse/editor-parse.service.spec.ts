@@ -1072,4 +1072,261 @@ describe("EditorParseService", () => {
             expect(roundTripSchema.report).toEqual(schema.report);
         });
     });
+
+    describe("Source Markup Reconstruction (schema2editor)", () => {
+        it("Should reconstruct single in-text source as link mark", async () => {
+            const schema = {
+                verification: "lorem dawuigduia ipsum",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 24],
+                            targetText: "lorem",
+                            sup: 1,
+                            id: "src1",
+                        },
+                    },
+                ],
+            };
+            // The content with markup as stored in DB
+            schema.verification = "{{src1|lorem}} dawuigduia ipsum";
+            schema.sources[0].props.textRange = [0, 14];
+
+            const result = await editorParseService.schema2editor(schema);
+            const verificationNode = result.content.find(
+                (n) => n.type === "verification"
+            );
+            const paragraphContent = verificationNode.content[0].content;
+
+            // First fragment should be a link mark
+            expect(paragraphContent[0].marks).toBeDefined();
+            expect((paragraphContent[0].marks[0] as any).type).toBe("link");
+            expect((paragraphContent[0].marks[0] as any).attrs.href).toBe(
+                "https://google.com"
+            );
+            expect(paragraphContent[0].text).toBe("lorem");
+
+            // Second fragment should be plain text
+            expect(paragraphContent[1].text).toContain("dawuigduia ipsum");
+            expect(paragraphContent[1].marks).toBeUndefined();
+        });
+
+        it("Should reconstruct multiple in-text sources in same field", async () => {
+            const schema = {
+                verification: "{{src1|lorem}} middle text {{src2|ipsum}}",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 14],
+                            targetText: "lorem",
+                            sup: 1,
+                            id: "src1",
+                        },
+                    },
+                    {
+                        href: "https://youtube.com",
+                        props: {
+                            field: "verification",
+                            textRange: [27, 41],
+                            targetText: "ipsum",
+                            sup: 2,
+                            id: "src2",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2editor(schema);
+            const verificationNode = result.content.find(
+                (n) => n.type === "verification"
+            );
+            const paragraphContent = verificationNode.content[0].content;
+
+            // Should have 3 fragments: link, text, link
+            expect(paragraphContent).toHaveLength(3);
+            expect((paragraphContent[0].marks[0] as any).type).toBe("link");
+            expect(paragraphContent[0].text).toBe("lorem");
+            expect(paragraphContent[1].text).toBe(" middle text ");
+            expect((paragraphContent[2].marks[0] as any).type).toBe("link");
+            expect(paragraphContent[2].text).toBe("ipsum");
+        });
+
+        it("Should handle stale textRange by recomputing from content", async () => {
+            const schema = {
+                verification: "{{src1|lorem}} dawdwaddwd {{src2|lorem}}",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 99], // Intentionally wrong range
+                            targetText: "lorem",
+                            sup: 1,
+                            id: "src1",
+                        },
+                    },
+                    {
+                        href: "https://youtube.com",
+                        props: {
+                            field: "verification",
+                            textRange: [50, 150], // Intentionally wrong range
+                            targetText: "lorem",
+                            sup: 2,
+                            id: "src2",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2editor(schema);
+            const verificationNode = result.content.find(
+                (n) => n.type === "verification"
+            );
+            const paragraphContent = verificationNode.content[0].content;
+
+            // Despite stale ranges, sources should be reconstructed via recomputation
+            const linkFragments = paragraphContent.filter(
+                (f) => f.marks && (f.marks[0] as any)?.type === "link"
+            );
+            expect(linkFragments.length).toBe(2);
+            expect(linkFragments[0].text).toBe("lorem");
+            expect(linkFragments[1].text).toBe("lorem");
+        });
+
+        it("Should not include orphaned paragraph sources as raw markup", async () => {
+            const schema = {
+                summary: "summary text",
+                paragraph: "",
+                sources: [
+                    {
+                        href: "https://wikipedia.com",
+                        props: {
+                            field: "paragraph",
+                            textRange: [0, 14],
+                            targetText: " ",
+                            sup: 1,
+                            id: "orphan1",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2editor(schema);
+
+            // Check no content node contains raw {{orphan1| }} markup
+            const allText = JSON.stringify(result);
+            expect(allText).not.toContain("{{orphan1");
+        });
+
+        it("Should handle field with sources and no markup gracefully", async () => {
+            const schema = {
+                verification: "plain text without any markup",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 10],
+                            targetText: "plain text",
+                            sup: 1,
+                            id: "nosrc",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2editor(schema);
+            const verificationNode = result.content.find(
+                (n) => n.type === "verification"
+            );
+
+            // Should still produce valid editor content without crashing
+            expect(verificationNode).toBeDefined();
+            expect(verificationNode.content[0].type).toBe("paragraph");
+        });
+    });
+
+    describe("Source Round-Trip Integrity", () => {
+        it("Should preserve in-text sources through editor → schema → editor round-trip", async () => {
+            const editorWithSources: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "verification",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "word1",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "s1",
+                                                    href: "https://a.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    { type: "text", text: " between " },
+                                    {
+                                        type: "text",
+                                        text: "word2",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "s2",
+                                                    href: "https://b.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            // Editor → Schema
+            const schema = await editorParseService.editor2schema(
+                editorWithSources
+            );
+            expect(schema.verification).toContain("{{s1|word1}}");
+            expect(schema.verification).toContain("{{s2|word2}}");
+            expect(schema.sources).toHaveLength(2);
+
+            // Schema → Editor (round-trip)
+            const editorResult = await editorParseService.schema2editor(schema);
+            const verNode = editorResult.content.find(
+                (n) => n.type === "verification"
+            );
+            const content = verNode.content[0].content;
+
+            // Both links should be reconstructed
+            const links = content.filter(
+                (f) => f.marks && (f.marks[0] as any)?.type === "link"
+            );
+            expect(links).toHaveLength(2);
+            expect(links[0].text).toBe("word1");
+            expect((links[0].marks[0] as any).attrs.href).toBe("https://a.com");
+            expect(links[1].text).toBe("word2");
+            expect((links[1].marks[0] as any).attrs.href).toBe("https://b.com");
+
+            // Plain text between should be preserved
+            const plainText = content.find((f) => !f.marks);
+            expect(plainText.text).toBe(" between ");
+        });
+    });
 });
