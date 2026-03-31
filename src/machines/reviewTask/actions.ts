@@ -24,7 +24,8 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
 
         if (
             supportedEvents.includes(event.type as ReviewTaskEvents) &&
-            "visualEditor" in event.reviewData
+            "visualEditor" in event.reviewData &&
+            typeof event.reviewData.visualEditor?.toJSON === "function"
         ) {
             const visualEditorJSON = event.reviewData.visualEditor.toJSON();
             // Remove the trailing paragraph added by Remirror's TrailingNodeExtension.
@@ -33,6 +34,22 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             const cleanedVisualEditor =
                 editorParser.removeTrailingParagraph(visualEditorJSON);
             const schema = editorParser.editor2schema(cleanedVisualEditor);
+
+            // Strip orphaned source markup {{id|text}} from content strings.
+            // Sources added via button (not attached to text) produce markup
+            // that can't be reconstructed on reload. The sources are preserved
+            // separately in schema.sources.
+            const sourceMarkupPattern = /\{\{[^|]*\|[^}]*\}\}/g;
+            for (const key in schema) {
+                const value = schema[key];
+                if (
+                    typeof value === "string" &&
+                    sourceMarkupPattern.test(value)
+                ) {
+                    schema[key] = value.replace(sourceMarkupPattern, "").trim();
+                }
+            }
+
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
                 ...event.reviewData,

@@ -15,7 +15,6 @@ export const CAPTCHA_EXEMPT_EVENTS = [
     ReviewTaskEvents.viewPreview,
     ReviewTaskEvents.selectedReview,
     ReviewTaskEvents.selectedCrossChecking,
-    ReviewTaskEvents.addComment,
 ];
 
 const PRIMARY_ACTIONS: Partial<Record<ReviewTaskStates, ReviewTaskEvents>> = {
