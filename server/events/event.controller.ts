@@ -27,6 +27,15 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
 export class EventsController {
+    private getSafeNamespaceRedirect(namespace?: string): string {
+        if (!namespace) {
+            return "/";
+        }
+
+        const isValid = /^[a-zA-Z0-9_-]+$/.test(namespace);
+        return isValid ? `/${namespace}` : "/";
+    }
+
     private readonly logger = new Logger(EventsController.name);
 
     constructor(
@@ -78,7 +87,7 @@ export class EventsController {
         @Res() res: Response
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
             return res.redirect(namespace);
         }
 
@@ -105,7 +114,7 @@ export class EventsController {
         @Res() res: Response
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
             return res.redirect(namespace);
         }
 
@@ -132,7 +141,7 @@ export class EventsController {
         @Res() res: Response,
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
             return res.redirect(namespace);
         }
 
