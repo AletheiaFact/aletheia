@@ -184,7 +184,7 @@ export class ClaimController {
 
             const path =
                 req.user.role[claim.nameSpace] === Roles.Admin ||
-                req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return {
@@ -540,12 +540,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                  {
-                      slug: query.personality,
-                      isDeleted: false,
-                  },
-                  req.language
-              )
+                {
+                    slug: query.personality,
+                    isDeleted: false,
+                },
+                req.language
+            )
             : null;
 
         const queryObject = Object.assign(parsedUrl.query, {
