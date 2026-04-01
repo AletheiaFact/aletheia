@@ -517,7 +517,6 @@ export class EditorParser {
                     const expected = `{{${id}|${targetText}}}`;
                     if (sliced === expected) return source;
 
-                    // Stale range — recompute
                     const recomputedRange = this.findTextRange(
                         content,
                         targetText,
