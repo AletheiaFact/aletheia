@@ -282,8 +282,40 @@ export class EditorParser {
                     key
                 );
 
+                // Recompute stale textRanges and ensure sup is set
+                const recomputedSources = sources.map((source, index) => {
+                    if (!source.props?.sup) {
+                        source = {
+                            ...source,
+                            props: { ...source.props, sup: index + 1 },
+                        };
+                    }
+                    const { textRange, targetText, id } = source.props || {};
+                    if (!targetText || !id) return source;
+                    const sliced =
+                        typeof content === "string"
+                            ? content.slice(...(textRange || []))
+                            : "";
+                    const expected = `{{${id}|${targetText}}}`;
+                    if (sliced === expected) return source;
+                    const recomputedRange = this.findTextRange(
+                        content,
+                        targetText,
+                        id
+                    );
+                    return recomputedRange.length === 2
+                        ? {
+                              ...source,
+                              props: {
+                                  ...source.props,
+                                  textRange: recomputedRange,
+                              },
+                          }
+                        : source;
+                });
+
                 const { rawSourcesRanges, sourcesRanges } =
-                    this.getRawSourcesAndSourcesRanges(sources);
+                    this.getRawSourcesAndSourcesRanges(recomputedSources);
 
                 newSchema[key] = this.buildHtmlContent({
                     content,

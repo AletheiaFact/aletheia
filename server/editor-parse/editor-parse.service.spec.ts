@@ -1329,4 +1329,125 @@ describe("EditorParseService", () => {
             expect(plainText.text).toBe(" between ");
         });
     });
+
+    describe("Source HTML Rendering (schema2html)", () => {
+        it("Should render in-text sources as citation links in HTML", async () => {
+            const schema = {
+                verification: "{{src1|lorem}} middle text {{src2|ipsum}}",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 14],
+                            targetText: "lorem",
+                            sup: 1,
+                            id: "src1",
+                        },
+                    },
+                    {
+                        href: "https://youtube.com",
+                        props: {
+                            field: "verification",
+                            textRange: [27, 41],
+                            targetText: "ipsum",
+                            sup: 2,
+                            id: "src2",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2html(schema);
+
+            expect(result.verification).toContain("<a href='#lorem'");
+            expect(result.verification).toContain("lorem<sup>1</sup></a>");
+            expect(result.verification).toContain("<a href='#ipsum'");
+            expect(result.verification).toContain("ipsum<sup>2</sup></a>");
+            expect(result.verification).toContain("middle text");
+            expect(result.verification).not.toContain("{{");
+        });
+
+        it("Should handle stale textRange in HTML rendering", async () => {
+            const schema = {
+                verification: "{{src1|lorem}} dawdwaddwd {{src2|lorem}}",
+                sources: [
+                    {
+                        href: "https://google.com",
+                        props: {
+                            field: "verification",
+                            textRange: [0, 99], // Intentionally wrong
+                            targetText: "lorem",
+                            sup: 1,
+                            id: "src1",
+                        },
+                    },
+                    {
+                        href: "https://youtube.com",
+                        props: {
+                            field: "verification",
+                            textRange: [50, 150], // Intentionally wrong
+                            targetText: "lorem",
+                            sup: 2,
+                            id: "src2",
+                        },
+                    },
+                ],
+            };
+
+            const result = await editorParseService.schema2html(schema);
+
+            // Despite stale ranges, HTML should not contain raw markup
+            expect(result.verification).not.toContain("{{src1|lorem}}");
+            expect(result.verification).not.toContain("{{src2|lorem}}");
+            expect(result.verification).toContain("lorem");
+            expect(result.verification).toContain("dawdwaddwd");
+        });
+
+        it("Should render complete round-trip: editor → schema → HTML with sources intact", async () => {
+            const editorWithSources: RemirrorJSON = {
+                type: "doc",
+                content: [
+                    {
+                        type: "report",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    { type: "text", text: "text before " },
+                                    {
+                                        type: "text",
+                                        text: "cited",
+                                        marks: [
+                                            {
+                                                type: "link",
+                                                attrs: {
+                                                    id: "rt1",
+                                                    href: "https://example.com",
+                                                    target: null,
+                                                    auto: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    { type: "text", text: " text after" },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const schema = await editorParseService.editor2schema(
+                editorWithSources
+            );
+            const html = await editorParseService.schema2html(schema);
+
+            expect(html.report).toContain("text before");
+            expect(html.report).toContain("text after");
+            expect(html.report).toContain("<a href='#cited'");
+            expect(html.report).toContain("cited<sup>1</sup></a>");
+            expect(html.report).not.toContain("{{");
+        });
+    });
 });
