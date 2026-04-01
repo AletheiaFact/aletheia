@@ -16,5 +16,8 @@
     "copilotClearHistoryTooltip": "Clear conversation history",
     "copilotCloseSidebarTooltip": "Close sidebar",
     "sessionLoadingError": "Failed to load conversation. Please try again.",
-    "sessionCreateError": "Failed to start a new conversation. Please try again."
+    "sessionCreateError": "Failed to start a new conversation. Please try again.",
+    "startReviewTitle": "Review Not Started",
+    "startReviewMessage": "To use the Copilot, you must first start the fact-check and assign this task to a user.",
+    "understoodBtn": "Got it"
 }

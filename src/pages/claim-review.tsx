@@ -137,8 +137,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                         hideDescriptions={hideDescriptions}
                     />
                 </VisualEditorProvider>
+                {enableCopilotChatBot && <AffixCopilotButton />}
             </ReviewTaskMachineProvider>
-            {enableCopilotChatBot && <AffixCopilotButton />}
         </>
     );
 };
