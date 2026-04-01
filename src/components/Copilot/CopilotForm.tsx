@@ -32,7 +32,7 @@ const CopilotForm = ({ handleSendMessage }) => {
                     }
                 }}
             />
-            <button className="submit-message-button">
+            <button onClick={handleSubmit} className="submit-message-button">
                 <ArrowUpwardIcon />
             </button>
         </form>

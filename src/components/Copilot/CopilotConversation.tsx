@@ -65,7 +65,7 @@ const CopilotConversation = ({
             {showSuggestions && (
                 <CopilotConversationSuggestions handleClick={handleClick} />
             )}
-            {showButtons.ADD_REPORT && editorReport && (
+            {!isLoading && showButtons.ADD_REPORT && editorReport && (
                 <div
                     style={{
                         display: "flex",
