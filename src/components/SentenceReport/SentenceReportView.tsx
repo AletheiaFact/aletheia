@@ -51,6 +51,7 @@ const SentenceReportView = ({
         publishedReview?.review;
 
     // Show comments/classification based on centralized permissions + machine state
+    const hasCrossCheckingComments = context?.crossCheckingComments?.length > 0;
     const canShowClassificationAndCrossChecking =
         ((isCrossChecking || isAddCommentCrossChecking) &&
             (permissions.isAdmin || permissions.isCrossChecker)) ||
@@ -58,7 +59,8 @@ const SentenceReportView = ({
         (isReport &&
             (permissions.isAdmin ||
                 permissions.isAssignee ||
-                permissions.isCrossChecker));
+                permissions.isCrossChecker)) ||
+        (hasCrossCheckingComments && permissions.isAssignee);
 
     // Only show SentenceReportContent if the report is published
     const shouldShowReportContent = useMemo(() => {

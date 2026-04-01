@@ -113,7 +113,18 @@ const DynamicReviewTaskForm = ({
 
     useEffect(() => {
         clearErrors();
-        reset(reviewData);
+        // Exclude editor-managed fields from reset to prevent
+        // {{id|text}} markup strings from corrupting the Remirror editor.
+        // The editor manages its own state via editorContentObject.
+        const {
+            visualEditor,
+            summary,
+            questions,
+            report,
+            verification,
+            ...safeReviewData
+        } = reviewData || {};
+        reset(safeReviewData);
         resetIsLoading();
         setSubmitValidationErrors([]);
     }, [events, form]);
