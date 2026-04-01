@@ -39,10 +39,9 @@ export class MongoPersonalityService {
         private readonly PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
             Model<PersonalityDocument>,
         private readonly claimReview: ClaimReviewService,
-        private readonly history: HistoryService,
+        private readonly historyService: HistoryService,
         private readonly wikidata: WikidataService,
         private readonly util: UtilService,
-        private readonly historyService: HistoryService
     ) {}
 
     async getWikidataEntities(regex: string, language: string) {
@@ -156,7 +155,7 @@ export class MongoPersonalityService {
 
                 const user = this.req.user?._id;
 
-                const history = this.history.getHistoryParams(
+                const history = this.historyService.getHistoryParams(
                     newPersonality._id,
                     TargetModel.Personality,
                     user,
@@ -164,11 +163,14 @@ export class MongoPersonalityService {
                     personality
                 );
 
-                this.history.createHistory(history);
+                await this.historyService.createHistory(history);
 
                 return newPersonality.save();
             }
-        } catch (err) {}
+        } catch (err) {
+            this.logger.error(`Error creating personality: ${err.message}`);
+            throw err;
+        }
     }
 
     getDeletedPersonalityByWikidata(wikidata) {
@@ -258,8 +260,7 @@ export class MongoPersonalityService {
             this.req
         );
 
-        const personality = await this.PersonalityModel
-            .findOne(queryOptions)
+        const personality = await this.PersonalityModel.findOne(queryOptions)
             .populate({
                 path: "claims",
                 match: {
@@ -355,7 +356,7 @@ export class MongoPersonalityService {
             personality.claims = await Promise.all(
                 personality.claims.map((claim) => {
                     return {
-                        ...claim.lastestRevision,
+                        ...claim.latestRevision,
                         ...claim,
                     };
                 })
@@ -380,7 +381,6 @@ export class MongoPersonalityService {
 
     async postProcess(personality, language: string = "en") {
         if (personality) {
-            // TODO: allow wikdiata resolver to fetch in batches
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
                 language,
@@ -445,7 +445,7 @@ export class MongoPersonalityService {
 
         const user = this.req.user?._id;
 
-        const history = this.history.getHistoryParams(
+        const history = this.historyService.getHistoryParams(
             personalityId,
             TargetModel.Personality,
             user,
@@ -453,7 +453,7 @@ export class MongoPersonalityService {
             personalityUpdate,
             previousPersonality
         );
-        await this.history.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return personalityUpdate;
     }
@@ -481,7 +481,7 @@ export class MongoPersonalityService {
             after,
             before
         );
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
 
         return this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
@@ -497,17 +497,21 @@ export class MongoPersonalityService {
      */
     async delete(personalityId: string) {
         const user = this.req.user?._id;
-        this.logger.log(`Initiating soft delete for personalityId: ${personalityId} by user: ${user}`);
+        this.logger.log(
+            `Initiating soft delete for personalityId: ${personalityId} by user: ${user}`
+        );
 
         try {
             const previousPersonality = await this.getById(personalityId);
 
             if (!previousPersonality) {
-                this.logger.warn(`Attempted to soft delete non-existent personalityId: ${personalityId}`);
+                this.logger.warn(
+                    `Attempted to soft delete non-existent personalityId: ${personalityId}`
+                );
                 return null;
             }
 
-            const history = this.history.getHistoryParams(
+            const history = this.historyService.getHistoryParams(
                 personalityId,
                 TargetModel.Personality,
                 user,
@@ -515,14 +519,20 @@ export class MongoPersonalityService {
                 null,
                 previousPersonality
             );
-            await this.history.createHistory(history);
+            await this.historyService.createHistory(history);
 
-            const result = await this.PersonalityModel.softDelete({ _id: personalityId });
-            this.logger.log(`Personality ${personalityId} successfully marked as isDeleted`);
+            const result = await this.PersonalityModel.softDelete({
+                _id: personalityId,
+            });
+            this.logger.log(
+                `Personality ${personalityId} successfully marked as isDeleted`
+            );
 
             return result;
         } catch (error) {
-            this.logger.error(`Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`);
+            this.logger.error(
+                `Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`
+            );
             throw error;
         }
     }

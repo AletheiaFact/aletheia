@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    InternalServerErrorException,
     Param,
     Post,
     Query,
@@ -71,7 +72,7 @@ export class CopilotChatController {
                 req.user._id
             );
         } catch (e) {
-            throw new Error(e);
+            throw new InternalServerErrorException(e);
         }
     }
 
@@ -89,11 +90,10 @@ export class CopilotChatController {
         @Param("sessionId") sessionId: string,
         @Param("executionId") executionId: string
     ) {
-        const execution =
-            await this.automatedFactCheckingService.getExecution(
-                sessionId,
-                executionId
-            );
+        const execution = await this.automatedFactCheckingService.getExecution(
+            sessionId,
+            executionId
+        );
         return { execution };
     }
 }

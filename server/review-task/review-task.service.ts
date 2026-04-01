@@ -381,7 +381,7 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
-    _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
+    async _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
         let historyType;
 
         if (typeof newReviewTask.machine.value === "object") {
@@ -412,7 +412,7 @@ export class ReviewTaskService {
             }
         );
 
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
     }
 
     _createStateEvent(newReviewTask) {

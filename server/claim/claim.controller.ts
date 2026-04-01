@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -148,7 +149,6 @@ export class ClaimController {
         }
     }
 
-    // TODO: create a image controller under types and move the endpoints to it
     @ApiTags("claim")
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
@@ -173,7 +173,6 @@ export class ClaimController {
         }
     }
 
-    // TODO: create a debate controller under types and move the endpoints to it
     @ApiTags("claim")
     @Post("api/claim/debate")
     async createClaimDebate(
@@ -185,7 +184,7 @@ export class ClaimController {
 
             const path =
                 req.user.role[claim.nameSpace] === Roles.Admin ||
-                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return {
@@ -256,7 +255,7 @@ export class ClaimController {
             createClaimDTO.recaptcha
         );
         if (!validateCaptcha && !overrideCaptchaValidation) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
         return this.claimService.create(createClaimDTO);
     }
@@ -286,7 +285,7 @@ export class ClaimController {
             body.recaptcha
         );
         if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
 
         return this.claimService.hideOrUnhideClaim(
@@ -541,12 +540,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                {
-                    slug: query.personality,
-                    isDeleted: false,
-                },
-                req.language
-            )
+                  {
+                      slug: query.personality,
+                      isDeleted: false,
+                  },
+                  req.language
+              )
             : null;
 
         const queryObject = Object.assign(parsedUrl.query, {

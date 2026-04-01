@@ -1,4 +1,11 @@
-import { Controller, Get, Logger, Param, Query } from "@nestjs/common";
+import {
+    BadRequestException,
+    Controller,
+    Get,
+    Logger,
+    Param,
+    Query,
+} from "@nestjs/common";
 import { HistoryService } from "./history.service";
 import { ApiTags } from "@nestjs/swagger";
 import type {
@@ -11,7 +18,7 @@ import type {
 @Controller("api/history")
 export class HistoryController {
     private readonly logger = new Logger(HistoryController.name);
-    constructor(private historyService: HistoryService) { }
+    constructor(private historyService: HistoryService) {}
 
     @Get(":targetModel/:targetId")
     public async getHistory(
@@ -21,7 +28,9 @@ export class HistoryController {
         const { targetId, targetModel } = param;
 
         if (!targetId || !targetModel) {
-            throw new Error("targetId and targetModel are required");
+            throw new BadRequestException(
+                "targetId and targetModel are required"
+            );
         }
 
         try {

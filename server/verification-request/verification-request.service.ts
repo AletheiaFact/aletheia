@@ -22,6 +22,7 @@ import {
     Inject,
     forwardRef,
     Logger,
+    NotFoundException,
     Scope,
 } from "@nestjs/common";
 import {
@@ -162,14 +163,14 @@ export class VerificationRequestService {
             content: string;
             impactArea?: { label: string; value: string } | string;
             source?: Array<{ href: string }>;
-            data_hash?: string
+            data_hash?: string;
         },
         user?: any
     ): Promise<VerificationRequestDocument> {
         try {
             this.logger.debug("Creating verification request", { data });
 
-            const data_hash = data.data_hash || md5(data.content)
+            const data_hash = data.data_hash || md5(data.content);
 
             const vr = await this.VerificationRequestModel.create({
                 ...data,
@@ -709,7 +710,7 @@ export class VerificationRequestService {
                 ).populate("group");
 
             if (!verificationRequest) {
-                throw new Error("Verification request not found");
+                throw new NotFoundException("Verification request not found");
             }
 
             const latestVerificationRequest = verificationRequest.toObject();

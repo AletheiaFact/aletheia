@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -78,7 +79,7 @@ export class SourceController {
             createSourceDTO.recaptcha
         );
         if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
 
         return this.sourceService.create(createSourceDTO);
