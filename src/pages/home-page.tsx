@@ -18,6 +18,7 @@ const HomePage: NextPage<{
     nameSpace;
     reviews;
     eventsData;
+    enableEventsFeature;
 }> = (props) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
@@ -26,7 +27,7 @@ const HomePage: NextPage<{
         <>
             <Seo title="Home" description={t("landingPage:description")} />
             <Home {...props} />
-            <AffixButton />
+            <AffixButton enableEventsFeature={props.enableEventsFeature} />
         </>
     );
 };
@@ -40,11 +41,12 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             reviews: JSON.parse(JSON.stringify(query.reviews)),
-            eventsData: JSON.parse(JSON.stringify(query.eventsData)),
+            eventsData: query.eventsData ? JSON.parse(JSON.stringify(query.eventsData)) : null,
             claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            enableEventsFeature: query.enableEventsFeature === 'true' || query.enableEventsFeature === true,
         },
     };
 }

@@ -9,6 +9,7 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { TopicModule } from "../topic/topic.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { Topic, TopicSchema } from "../topic/schemas/topic.schema";
+import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 
 const EventModel = MongooseModule.forFeature([
     {
@@ -28,7 +29,8 @@ const EventModel = MongooseModule.forFeature([
         ViewModule,
         AbilityModule,
         ClaimReviewModule,
-        TopicModule
+        TopicModule,
+        FeatureFlagModule,
     ],
     controllers: [EventsController],
     providers: [EventsService],

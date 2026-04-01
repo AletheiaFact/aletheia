@@ -7,6 +7,7 @@ import { DebateModule } from "../claim/types/debate/debate.module";
 import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { EventsModule } from "../events/event.module";
+import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { EventsModule } from "../events/event.module";
         ClaimRevisionModule,
         ClaimReviewModule,
         EventsModule,
+        FeatureFlagModule,
     ],
     providers: [],
     controllers: [HomeController],

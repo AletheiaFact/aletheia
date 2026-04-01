@@ -4,7 +4,7 @@ import React from "react";
 import HomeContent from "./HomeContent";
 import HomeHeader from "./HomeHeader/HomeHeader";
 
-const Home = ({ personalities, stats, href, claims, reviews, eventsData }) => {
+const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableEventsFeature }) => {
     const { t } = useTranslation();
 
     return (
@@ -15,6 +15,7 @@ const Home = ({ personalities, stats, href, claims, reviews, eventsData }) => {
                 debateClaims={claims}
                 reviews={reviews}
                 eventsData={eventsData}
+                enableEventsFeature={enableEventsFeature}
                 href={href}
                 title={t("home:sectionTitle1")}
             />

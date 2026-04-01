@@ -23,7 +23,7 @@ import { ObjectIdValidationPipe } from "../ai-task/pipes/objectid-validation.pip
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
-
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
 export class EventsController {
@@ -33,12 +33,16 @@ export class EventsController {
         private configService: ConfigService,
         private readonly eventsService: EventsService,
         private viewService: ViewService,
+        private featureFlagService: FeatureFlagService,
     ) { }
 
     @FactCheckerOnly()
     @ApiTags("event")
     @Post("api/event")
     async create(@Body() newEvent: CreateEventDTO) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            throw new NotFoundException("Endpoint disabled");
+        }
         return this.eventsService.create(newEvent);
     }
 
@@ -49,6 +53,9 @@ export class EventsController {
         @Param("id", ObjectIdValidationPipe) eventId: string,
         @Body() updatedEvent: UpdateEventDTO
     ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            throw new NotFoundException("Endpoint disabled");
+        }
         return this.eventsService.update(eventId, updatedEvent);
     }
 
@@ -56,6 +63,9 @@ export class EventsController {
     @ApiTags("event")
     @Get("api/event")
     public async findAll(@Query() query: FilterEventsDTO) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            throw new NotFoundException("Endpoint disabled");
+        }
         return this.eventsService.findAll(query);
     }
 
@@ -67,6 +77,11 @@ export class EventsController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            return res.redirect(namespace);
+        }
+
         const parsedUrl = parse(req.url, true);
 
         const queryObject = Object.assign(parsedUrl.query, {
@@ -89,6 +104,11 @@ export class EventsController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            return res.redirect(namespace);
+        }
+
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
@@ -111,6 +131,11 @@ export class EventsController {
         @Req() req: BaseRequest,
         @Res() res: Response,
     ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            const namespace = req.params.namespace ? `/${req.params.namespace}` : '/';
+            return res.redirect(namespace);
+        }
+
         const parsedUrl = parse(req.url, true);
         const { data_hash } = req.params;
         try {
