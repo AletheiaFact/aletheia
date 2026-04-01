@@ -48,3 +48,7 @@ export const mockRequest = {
         namespace: "main"
     }
 };
+
+export const mockFeatureFlagService = {
+    isEnableEventsFeature: jest.fn(),
+};

@@ -16,12 +16,17 @@ import { CleanupDatabase } from "./utils/CleanupDatabase";
 import { EventsStatus } from "../types/enums";
 import { Model } from "mongoose";
 import { getModelToken } from "@nestjs/mongoose";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 jest.setTimeout(10000);
 
 describe("EventController (e2e)", () => {
     let app: any;
     let createdEventId: string;
+
+    const mockFeatureFlagService = {
+        isEnableEventsFeature: jest.fn(),
+    };
 
     const createEventPayload = (
         name: string,
@@ -66,6 +71,8 @@ describe("EventController (e2e)", () => {
             .useValue(M2MGuardMock)
             .overrideGuard(AbilitiesGuard)
             .useValue(AbilitiesGuardMock)
+            .overrideProvider(FeatureFlagService)
+            .useValue(mockFeatureFlagService)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -82,6 +89,27 @@ describe("EventController (e2e)", () => {
 
         const eventModel = moduleFixture.get<Model<any>>(getModelToken("Event"));
         await eventModel.ensureIndexes();
+    });
+
+    beforeEach(() => {
+        mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(true);
+    });
+
+    describe("Feature Flag Security", () => {
+        it("should return 404 for API when feature flag is DISABLED", async () => {
+            mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
+            return request(app.getHttpServer())
+                .get("/api/event")
+                .expect(404);
+        });
+
+        it("should redirect to '/' for Public Pages when feature flag is DISABLED", async () => {
+            mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
+            return request(app.getHttpServer())
+                .get("/event")
+                .expect(302)
+                .expect("Location", "/");
+        });
     });
 
     it("/api/event (GET) - should return empty list initially", () => {
@@ -171,6 +199,8 @@ describe("EventController (e2e)", () => {
     });
 
     it("/api/event/:id (PATCH) - should update event name", () => {
+        expect(createdEventId).toBeDefined();
+
         return request(app.getHttpServer())
             .patch(`/api/event/${createdEventId}`)
             .send({
