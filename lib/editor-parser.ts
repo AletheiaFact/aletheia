@@ -472,12 +472,24 @@ export class EditorParser {
                 continue;
             } else {
                 const sources = this.getSourceByProperty(schema.sources, key);
-                // Recompute textRange from the content string to handle stale ranges
+                // Recompute textRange only when the stored range doesn't match
                 const recomputedSources = sources.map((source) => {
+                    const { textRange, targetText, id } = source.props || {};
+                    if (!targetText || !id) return source;
+
+                    // Check if stored range produces the expected markup
+                    const sliced =
+                        typeof content === "string"
+                            ? content.slice(...(textRange || []))
+                            : "";
+                    const expected = `{{${id}|${targetText}}}`;
+                    if (sliced === expected) return source;
+
+                    // Stale range — recompute
                     const recomputedRange = this.findTextRange(
                         content,
-                        source.props?.targetText || source.props?.textRange,
-                        source.props?.id
+                        targetText,
+                        id
                     );
                     return recomputedRange.length === 2
                         ? {
@@ -542,17 +554,6 @@ export class EditorParser {
                         href,
                         id
                     );
-                }
-                // Fallback: if textRange is stale, search for the markup by ID
-                if (id && targetText) {
-                    const markupPattern = `{{${id}|${targetText}}}`;
-                    if (content.includes(markupPattern)) {
-                        return this.getContentObjectWithMarks(
-                            targetText,
-                            href,
-                            id
-                        );
-                    }
                 }
             // Fall through to the default case if type is "source" and the text doesn't match targetText
             default:

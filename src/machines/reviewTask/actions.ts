@@ -49,21 +49,28 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
                     .filter(Boolean)
             );
             if (orphanedSourceIds.size > 0) {
+                const cleanMarkup = (str: string) => {
+                    let cleaned = str;
+                    for (const id of orphanedSourceIds) {
+                        const pattern = new RegExp(
+                            `\\{\\{${id}\\|[^}]*\\}\\}`,
+                            "g"
+                        );
+                        cleaned = cleaned.replace(pattern, "");
+                    }
+                    return cleaned.trim();
+                };
                 for (const key in schema) {
                     const value = schema[key];
                     if (typeof value === "string") {
-                        let cleaned = value;
-                        for (const id of orphanedSourceIds) {
-                            const pattern = new RegExp(
-                                `\\{\\{${id}\\|[^}]*\\}\\}`,
-                                "g"
-                            );
-                            cleaned = cleaned.replace(pattern, "");
-                        }
-                        cleaned = cleaned.trim();
+                        const cleaned = cleanMarkup(value);
                         if (cleaned !== value) {
                             schema[key] = cleaned;
                         }
+                    } else if (Array.isArray(value)) {
+                        schema[key] = value.map((v) =>
+                            typeof v === "string" ? cleanMarkup(v) : v
+                        );
                     }
                 }
             }
