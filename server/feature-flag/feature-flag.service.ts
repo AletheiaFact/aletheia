@@ -1,7 +1,6 @@
 import { Injectable, Optional } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { UnleashService } from "nestjs-unleash";
-import { Environments } from "../types/enums";
 
 @Injectable()
 export class FeatureFlagService {
@@ -27,7 +26,7 @@ export class FeatureFlagService {
     isEnableEventsFeature() {
         const config = this.configService.get<string>("feature_flag");
 
-        return config ? this.unleash.isEnabled("enable_events_feature") : true;
+        return config ? this.unleash.isEnabled("enable_events_feature") : false;
     }
 
     isEnableEditorAnnotations() {
