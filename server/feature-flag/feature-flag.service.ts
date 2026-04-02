@@ -26,15 +26,8 @@ export class FeatureFlagService {
 
     isEnableEventsFeature() {
         const config = this.configService.get<string>("feature_flag");
-        const isNotProduction = process.env.ENVIRONMENT !== Environments.PRODUCTION;
 
-        if (!config) {
-            return isNotProduction;
-        }
-
-        const isEnabledOnUnleash = this.unleash.isEnabled("enable_events_feature");
-
-        return isEnabledOnUnleash || isNotProduction;
+        return config ? this.unleash.isEnabled("enable_events_feature") : true;
     }
 
     isEnableEditorAnnotations() {
