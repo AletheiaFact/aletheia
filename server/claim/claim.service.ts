@@ -7,7 +7,7 @@ import {
     InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Model, Types } from "mongoose";
+import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
@@ -27,11 +27,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-        personalities: string;
-        slug: string;
-        isHidden?: boolean;
-        nameSpace?: string;
-    }
+          personalities: string;
+          slug: string;
+          isHidden?: boolean;
+          nameSpace?: string;
+      }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -56,7 +56,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = Types.ObjectId(query.personalities);
+            query.personalities = new Types.ObjectId(query.personalities);
         }
 
         const [claims, total] = await Promise.all([
@@ -67,7 +67,7 @@ export class ClaimService {
                 .sort({ _id: order })
                 .lean(),
 
-            this.ClaimModel.countDocuments(query)
+            this.ClaimModel.countDocuments(query),
         ]);
 
         const processedClaim = await Promise.all(
@@ -81,8 +81,8 @@ export class ClaimService {
 
         return {
             data: processedClaim,
-            total
-        }
+            total,
+        };
     }
 
     async count(query: any = {}) {
@@ -97,11 +97,11 @@ export class ClaimService {
      */
     async create(claim) {
         claim.personalities = claim.personalities.map((personality) => {
-            return Types.ObjectId(personality);
+            return new Types.ObjectId(personality);
         });
 
         if (claim.group) {
-            claim.group = Types.ObjectId(claim.group);
+            claim.group = new Types.ObjectId(claim.group);
         }
 
         const newClaim = new this.ClaimModel(claim);
@@ -126,7 +126,7 @@ export class ClaimService {
             TypeModel.Claim
         );
 
-        this.historyService.createHistory(history);
+        await this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
         if (claim.group) {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
@@ -186,14 +186,20 @@ export class ClaimService {
      * Executes a soft delete on a specific claim record.
      * * @param {string} claimId - The ID of the claim to mark as deleted.
      * @returns {Promise<Claim>} The claim document with isDeleted set to true.
-    */
+     */
     async delete(claimId: string) {
         const user = this.req.user?._id;
-        this.logger.log(`Initiating soft delete for claimId: ${claimId} by user: ${user || 'system'}`);
+        this.logger.log(
+            `Initiating soft delete for claimId: ${claimId} by user: ${
+                user || "system"
+            }`
+        );
         try {
             const previousClaim = await this.getById(claimId);
             if (!previousClaim) {
-                this.logger.warn(`Attempted to soft delete non-existent claimId: ${claimId}`);
+                this.logger.warn(
+                    `Attempted to soft delete non-existent claimId: ${claimId}`
+                );
                 return null;
             }
 
@@ -208,45 +214,47 @@ export class ClaimService {
             await this.historyService.createHistory(history);
 
             const result = await this.ClaimModel.softDelete({ _id: claimId });
-            this.logger.log(`Claim ${claimId} successfully marked as isDeleted`);
+            this.logger.log(
+                `Claim ${claimId} successfully marked as isDeleted`
+            );
 
             return result;
-
         } catch (error) {
-            this.logger.error(`Error during soft delete for claimId: ${claimId}. Details: ${error.message}`);
+            this.logger.error(
+                `Error during soft delete for claimId: ${claimId}. Details: ${error.message}`
+            );
             throw error;
         }
     }
 
-    async hideOrUnhideClaim(claimId, isHidden, description) {
+    async hideOrUnhideClaim(
+        claimId,
+        isHidden,
+        description
+    ): Promise<UpdateWriteOpResult> {
         try {
             const claim = await this.ClaimModel.findById(claimId);
 
             if (!claim) {
-                throw new Error("Claim not found");
+                throw new NotFoundException("Claim not found");
             }
-
-            const newClaim = {
-                ...claim.toObject(),
-                isHidden,
-            };
 
             const before = { isHidden: !isHidden };
             const after = isHidden ? { isHidden, description } : { isHidden };
 
             const history = this.historyService.getHistoryParams(
-                newClaim._id,
+                claim._id,
                 TargetModel.Claim,
                 this.req.user?._id,
                 isHidden ? HistoryType.Hide : HistoryType.Unhide,
                 after,
                 before
             );
-            this.historyService.createHistory(history);
+            await this.historyService.createHistory(history);
 
             return await this.ClaimModel.updateOne(
                 { _id: claim._id },
-                newClaim
+                { $set: { isHidden } }
             );
         } catch (e) {
             this.logger.error("Failed to update claim:", e);
@@ -275,7 +283,6 @@ export class ClaimService {
         return this._getClaim(queryOptions, revisionId, true, population);
     }
 
-
     /**
      * Retrieves the claim IDs associated with a specific personality based on the user's role.
      * This method searches for claims matching the given personality ID and namespace,
@@ -284,21 +291,27 @@ export class ClaimService {
      * @param {NameSpaceEnum} [nameSpace=NameSpaceEnum.Main] - The namespace to filter the claims.
      * @returns {Promise<Array<{ _id: any }>>} A promise that resolves to an array of claim documents containing only their IDs.
 s    */
-    async getByPersonalityId(personalityId: string, nameSpace = NameSpaceEnum.Main) {
-        this.logger.debug(`Fetching claim IDs for personality: ${personalityId}`);
+    async getByPersonalityId(
+        personalityId: string,
+        nameSpace = NameSpaceEnum.Main
+    ) {
+        this.logger.debug(
+            `Fetching claim IDs for personality: ${personalityId}`
+        );
         try {
             const queryOptions = this.util.getParamsBasedOnUserRole(
                 { personalities: personalityId, nameSpace },
                 this.req
             );
 
-            const result = await this.ClaimModel
-                .find(queryOptions)
+            const result = await this.ClaimModel.find(queryOptions)
                 .select("_id")
                 .lean()
                 .exec();
 
-            this.logger.debug(`Found ${result.length} claims for personality ${personalityId}`);
+            this.logger.debug(
+                `Found ${result.length} claims for personality ${personalityId}`
+            );
             return result;
         } catch (error) {
             this.logger.error(
@@ -411,9 +424,10 @@ s    */
             latestRevision: undefined,
         };
         if (claim) {
-            const reviews = await this.claimReviewService.getReviewClassificationCountsByClaimId(
-                claim._id
-            );
+            const reviews =
+                await this.claimReviewService.getReviewClassificationCountsByClaimId(
+                    claim._id
+                );
             const reviewTasks =
                 await this.reviewTaskService.getReviewTasksByClaimId(claim._id);
 

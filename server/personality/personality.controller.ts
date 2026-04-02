@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -89,7 +90,7 @@ export class PersonalityController {
             body.recaptcha
         );
         if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+            throw new BadRequestException("Error validating captcha");
         }
 
         return this.personalityService.hideOrUnhidePersonality(
@@ -98,7 +99,6 @@ export class PersonalityController {
             body.description
         );
     }
-
 
     @Public()
     @ApiTags("personality")

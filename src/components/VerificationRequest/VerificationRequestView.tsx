@@ -7,19 +7,19 @@ import VerificationRequestHeader from "./VerificationRequestHeader";
 import VerificationRequestFilters from "./VerificationRequestFilters";
 
 const VerificationRequestView = () => {
-  const { state, actions } = useVerificationRequestFilters();
-  const { viewMode } = state;
+    const { state, actions } = useVerificationRequestFilters();
+    const { viewMode } = state;
 
-  return (
-    <VerificationRequestGrid container>
-      <VerificationRequestHeader />
-      <VerificationRequestFilters state={state} actions={actions} />
-      {viewMode === "left" && (
-        <VerificationRequestBoardView state={state} actions={actions} />
-      )}
-      {viewMode === "right" && <VerificationRequestDashboard />}
-    </VerificationRequestGrid>
-  );
+    return (
+        <VerificationRequestGrid container>
+            <VerificationRequestHeader />
+            <VerificationRequestFilters state={state} actions={actions} />
+            {viewMode === "left" && (
+                <VerificationRequestBoardView state={state} actions={actions} />
+            )}
+            {viewMode === "right" && <VerificationRequestDashboard />}
+        </VerificationRequestGrid>
+    );
 };
 
 export default VerificationRequestView;

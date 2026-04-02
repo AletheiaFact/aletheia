@@ -21,6 +21,8 @@
     "SEND_TO_REVIEW_ERROR": "Erro ao enviar para revisão",
     "ADD_REJECTION_COMMENT_SUCCESS": "Rejeição salva com sucesso",
     "ADD_REJECTION_COMMENT_ERROR": "Erro ao salvar rejeição",
+    "CONFIRM_REJECTION_SUCCESS": "Rejeição confirmada com sucesso",
+    "CONFIRM_REJECTION_ERROR": "Erro ao confirmar a rejeição",
     "PARTIAL_REVIEW_SUCCESS": "Resumo salvo com sucesso",
     "PARTIAL_REVIEW_ERROR": "Erro ao salvar resumo",
     "FULL_REVIEW_SUCCESS": "Resumo salvo com sucesso",
@@ -33,6 +35,7 @@
     "RESET_ERROR": "Não foi possível reiniciar o fluxo",
 
     "ADD_REJECTION_COMMENT": "Enviar comentário",
+    "CONFIRM_REJECTION": "Confirmar rejeição",
     "ASSIGN_USER": "Atribuir",
     "ASSIGN_REQUEST": "Atribuir",
     "FINISH_REPORT": "Concluir Relatório",
@@ -68,5 +71,26 @@
     "invalidReviewerMessage": "O revisor não pode ser um usuário atribuído a essa checagem.",
     "seeFullPage": "Ver página completa",
 
-    "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact."
+    "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact.",
+
+    "recaptchaModalTitle": "Por favor, complete o captcha para continuar",
+    "recaptchaModalConfirm": "Confirmar",
+    "recaptchaModalCancel": "Cancelar",
+
+    "unassigned": "Não atribuído",
+    "cross-checking": "Cross-checking",
+    "selectReviewer": "Selecionando revisor",
+    "selectCrossChecker": "Selecionando cross-checker",
+    "addCommentCrossChecking": "Adicionando comentário",
+    "rejected": "Rejeitado",
+
+    "stageAssign": "Atribuição",
+    "stageAssigned": "Atribuído",
+    "stageDraft": "Rascunho",
+    "stageReview": "Revisão",
+    "stageApproval": "Aprovação",
+    "stagePublished": "Publicado",
+
+    "rejectionCommentTitle": "Revisão rejeitada",
+    "reviewerInstructions": "Revise o relatório e aprove ou rejeite com um comentário."
 }

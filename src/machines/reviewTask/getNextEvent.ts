@@ -25,13 +25,21 @@ const getNextEvents = (
         [Events.assignRequest]: [Events.rejectRequest, Events.publish],
         [States.assignedRequest]: [Events.rejectRequest, Events.publish],
 
-        [Events.finishReport]: 
+        [Events.finishReport]:
             reportModel === ReportModelEnum.FactChecking
-                ? [Events.goback ,Events.selectedCrossChecking, Events.selectedReview]
+                ? [
+                      Events.goback,
+                      Events.selectedCrossChecking,
+                      Events.selectedReview,
+                  ]
                 : [Events.goback, Events.publish],
         [States.reported]:
             reportModel === ReportModelEnum.FactChecking
-                ? [Events.goback,Events.selectedCrossChecking, Events.selectedReview]
+                ? [
+                      Events.goback,
+                      Events.selectedCrossChecking,
+                      Events.selectedReview,
+                  ]
                 : [Events.goback, Events.publish],
         [Events.submitCrossChecking]: [
             Events.goback,
@@ -52,10 +60,15 @@ const getNextEvents = (
         [States.selectReviewer]: [Events.goback, Events.sendToReview],
 
         [Events.sendToCrossChecking]: [
+            Events.goback,
             Events.addComment,
             Events.submitCrossChecking,
         ],
-        [States.crossChecking]: [Events.addComment, Events.submitCrossChecking],
+        [States.crossChecking]: [
+            Events.goback,
+            Events.addComment,
+            Events.submitCrossChecking,
+        ],
 
         [States.addCommentCrossChecking]: [Events.goback, Events.submitComment],
         [Events.addComment]: [Events.goback, Events.submitComment],
@@ -64,13 +77,25 @@ const getNextEvents = (
             ? [Events.goback, Events.sendToCrossChecking, Events.selectedReview]
             : [...defaultEvents, Events.finishReport],
 
-        [States.submitted]: [Events.addRejectionComment, Events.publish],
-        [Events.sendToReview]: [Events.addRejectionComment, Events.publish],
+        [States.submitted]: [
+            Events.goback,
+            Events.addRejectionComment,
+            Events.publish,
+        ],
+        [Events.sendToReview]: [
+            Events.goback,
+            Events.addRejectionComment,
+            Events.publish,
+        ],
 
+        [States.rejected]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.confirmRejection]
+                : [Events.draft, Events.confirmRejection],
         [Events.addRejectionComment]:
             reportModel === ReportModelEnum.FactChecking
-                ? [...defaultEvents, Events.finishReport]
-                : [Events.draft, Events.finishReport],
+                ? [...defaultEvents, Events.confirmRejection]
+                : [Events.draft, Events.confirmRejection],
 
         [States.published]:
             reportModel === ReportModelEnum.Request ? [Events.reset] : [],

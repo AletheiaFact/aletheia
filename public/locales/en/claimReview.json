@@ -27,5 +27,7 @@
     "unhideError": "Error while unhide personality",
     "hiddenPersonalityAvatarTooltip": "Hidden personality",
     "crossCheckingClassification": "Cross classification",
-    "crossCheckingComments": "Comments"
+    "crossCheckingComments": "Comments",
+    "factCheckingInProgress": "Fact-checking in progress",
+    "factCheckingInfoMessage": "This content is currently being fact-checked by our team. The report will be available once the review process is complete."
 }

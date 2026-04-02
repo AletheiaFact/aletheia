@@ -10,13 +10,22 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
         const supportedEvents = [
             ReviewTaskEvents.finishReport,
             ReviewTaskEvents.draft,
-            ReviewTaskEvents.addRejectionComment,
             ReviewTaskEvents.viewPreview,
+            ReviewTaskEvents.submitComment,
+            ReviewTaskEvents.addComment,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.assignUser,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.selectedCrossChecking,
+            ReviewTaskEvents.selectedReview,
         ];
 
         if (
             supportedEvents.includes(event.type as ReviewTaskEvents) &&
-            "visualEditor" in event.reviewData
+            "visualEditor" in event.reviewData &&
+            typeof event.reviewData.visualEditor?.toJSON === "function"
         ) {
             const visualEditorJSON = event.reviewData.visualEditor.toJSON();
             // Remove the trailing paragraph added by Remirror's TrailingNodeExtension.
@@ -25,10 +34,52 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             const cleanedVisualEditor =
                 editorParser.removeTrailingParagraph(visualEditorJSON);
             const schema = editorParser.editor2schema(cleanedVisualEditor);
+
+            // Strip only orphaned source markup from content strings.
+            // Sources added via button (field: null/paragraph) can leave
+            // {{id|text}} in content that can't be reconstructed on reload.
+            // In-text sources (field matches a content key) must be preserved.
+            const orphanedSourceIds = new Set(
+                (schema.sources || [])
+                    .filter(
+                        (s: any) =>
+                            !s?.props?.field || s?.props?.field === "paragraph"
+                    )
+                    .map((s: any) => s?.props?.id)
+                    .filter(Boolean)
+            );
+            if (orphanedSourceIds.size > 0) {
+                const cleanMarkup = (str: string) => {
+                    let cleaned = str;
+                    for (const id of orphanedSourceIds) {
+                        const pattern = new RegExp(
+                            `\\{\\{${id}\\|[^}]*\\}\\}`,
+                            "g"
+                        );
+                        cleaned = cleaned.replace(pattern, "");
+                    }
+                    return cleaned.trim();
+                };
+                for (const key in schema) {
+                    const value = schema[key];
+                    if (typeof value === "string") {
+                        const cleaned = cleanMarkup(value);
+                        if (cleaned !== value) {
+                            schema[key] = cleaned;
+                        }
+                    } else if (Array.isArray(value)) {
+                        schema[key] = value.map((v) =>
+                            typeof v === "string" ? cleanMarkup(v) : v
+                        );
+                    }
+                }
+            }
+
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
                 ...event.reviewData,
                 ...schema,
+                visualEditor: cleanedVisualEditor,
                 reviewDataHtml,
             };
         }

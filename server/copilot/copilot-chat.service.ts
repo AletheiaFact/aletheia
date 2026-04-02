@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
 import { ChatOpenAI } from "@langchain/openai";
 import customMessage from "./customMessage.response";
 import { MESSAGES } from "./messages.constants";
@@ -101,8 +107,7 @@ export class CopilotChatService {
                     }
 
                     if (json?.messages) {
-                        const agenciaSources =
-                            json.messages?.sources || [];
+                        const agenciaSources = json.messages?.sources || [];
 
                         // Persist Agencia sources and normalize url→href
                         const normalizedSources =
@@ -175,14 +180,19 @@ export class CopilotChatService {
         return `${content}\n\nFontes:\n${sourceLines.join("\n")}`;
     }
 
-    async agentChat(sessionAgentChatDto: SessionAgentChatDto, language, userId: string) {
+    async agentChat(
+        sessionAgentChatDto: SessionAgentChatDto,
+        language,
+        userId: string
+    ) {
         try {
             const { sessionId, message } = sessionAgentChatDto;
 
-            const session =
-                await this.copilotSessionService.getSessionById(sessionId);
+            const session = await this.copilotSessionService.getSessionById(
+                sessionId
+            );
             if (!session) {
-                throw new Error("Session not found");
+                throw new NotFoundException("Session not found");
             }
 
             const context = session.context as Context;
@@ -197,9 +207,7 @@ export class CopilotChatService {
                     : context.personalityName || "unknown";
             const contentModel = context.contentModel || "";
             const topics =
-                context.topics?.length > 0
-                    ? context.topics.join(", ")
-                    : "";
+                context.topics?.length > 0 ? context.topics.join(", ") : "";
 
             // Persist the user message
             await this.copilotSessionService.addMessage(sessionId, {

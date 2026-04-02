@@ -4,10 +4,7 @@ import { User } from "../../entities/user.entity";
 import { M2M } from "../../entities/m2m.entity";
 
 /**
- * Static ability definitions for clean decorator usage.
- * @M2MOrAbilities(ADMIN_USER_ABILITY)
- * @UseGuards(AbilitiesGuard)
- * @CheckAbilities(ADMIN_USER_ABILITY)
+ * Static ability definitions for use with @Auth(), @AdminOnly(), @FactCheckerOnly(), etc.
  */
 
 export const ADMIN_USER_ABILITY: RequiredRule = {

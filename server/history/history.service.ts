@@ -1,7 +1,12 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types, isValidObjectId } from "mongoose";
-import { History, HistoryDocument, HistoryType, TargetModel } from "./schema/history.schema";
+import {
+    History,
+    HistoryDocument,
+    HistoryType,
+    TargetModel,
+} from "./schema/history.schema";
 import {
     AfterAndBeforeType,
     HistoryItem,
@@ -51,19 +56,18 @@ export class HistoryService {
         previousChange?: AfterAndBeforeType
     ) {
         if (!isValidObjectId(dataId)) {
-            throw new Error(`Invalid dataId received: ${dataId}`);
+            throw new BadRequestException(`Invalid dataId received: ${dataId}`);
         }
 
         const date = new Date();
-        const targetId = Types.ObjectId(dataId);
+        const targetId = new Types.ObjectId(dataId);
         let currentPerformedBy = null;
 
         if (typeof performedBy === "string" && HEX24_REGEX.test(performedBy)) {
-            currentPerformedBy = Types.ObjectId(performedBy);
+            currentPerformedBy = new Types.ObjectId(performedBy);
         } else {
             currentPerformedBy = performedBy;
         }
-
 
         return {
             targetId: targetId,
@@ -100,7 +104,7 @@ export class HistoryService {
         const order = query.order === "desc" ? -1 : 1;
 
         const mongoQuery: HistoryItem = {
-            targetId: Types.ObjectId(targetId),
+            targetId: new Types.ObjectId(targetId),
             targetModel,
         };
         if (query.type && query.type.length > 0) {
@@ -144,11 +148,16 @@ export class HistoryService {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: [{ $type: "$$userId" }, "objectId"] },
-                                        { $eq: ["$_id", "$$userId"] }
-                                    ]
-                                }
-                            }
+                                        {
+                                            $eq: [
+                                                { $type: "$$userId" },
+                                                "objectId",
+                                            ],
+                                        },
+                                        { $eq: ["$_id", "$$userId"] },
+                                    ],
+                                },
+                            },
                         },
                         { $project: { _id: 1, name: 1 } },
                     ],
@@ -177,12 +186,16 @@ export class HistoryService {
         if (!content?._id || !content?.isHidden) {
             return "";
         }
-        const { history } = await this.getHistoryForTarget(content._id, target, {
-            page: 0,
-            pageSize: 1,
-            order: "desc",
-            type: [HistoryType.Hide],
-        });
+        const { history } = await this.getHistoryForTarget(
+            content._id,
+            target,
+            {
+                page: 0,
+                pageSize: 1,
+                order: "desc",
+                type: [HistoryType.Hide],
+            }
+        );
 
         return history[0]?.details?.after?.description || "";
     }

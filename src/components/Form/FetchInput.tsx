@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
@@ -28,6 +28,7 @@ const FetchInput = ({
 }: FetchInputProps) => {
     const [treatedValue, setTreatedValue] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const optimisticallySetRef = useRef(false);
     const userFields = ["usersId", "crossCheckerId", "reviewerId"];
     const apiFunction = userFields.includes(fieldName)
         ? userApi.getById
@@ -38,6 +39,12 @@ const FetchInput = ({
             if (
                 Array.isArray(value) ? value.length > 0 : value !== "" && value
             ) {
+                // Skip fetch if value was just set optimistically from the dropdown
+                if (optimisticallySetRef.current) {
+                    optimisticallySetRef.current = false;
+                    return;
+                }
+
                 try {
                     setIsLoading(true);
                     const Promises = Array.isArray(value)
@@ -65,12 +72,25 @@ const FetchInput = ({
         });
     }, [value]);
 
+    // Optimistically update displayed chips when user selects from dropdown
+    const onSelectionChange = (ids, selectedOptions) => {
+        if (selectedOptions) {
+            optimisticallySetRef.current = true;
+            setTreatedValue(
+                Array.isArray(selectedOptions)
+                    ? selectedOptions
+                    : [selectedOptions]
+            );
+        }
+        onChange(ids);
+    };
+
     return (
         <SelectOptions
             fieldName={fieldName}
             fetchOptions={dataLoader}
             placeholder={placeholder}
-            onChange={onChange}
+            onChange={onSelectionChange}
             data-cy={dataCy}
             style={{ width: "100%", ...style }}
             isMultiple={isMultiple}

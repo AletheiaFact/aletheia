@@ -7,15 +7,14 @@ import {
     reviewingSelector,
     reviewNotStartedSelector,
     crossCheckingSelector,
-    reviewDataSelector,
     addCommentCrossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useAtom } from "jotai";
 import {
-    currentUserId,
     currentUserRole,
     isUserLoggedIn,
+    isAuthResolved,
 } from "../../atoms/currentUser";
 import { TargetModel } from "../../types/enums";
 import { isAdmin } from "../../utils/GetUserPermission";
@@ -24,14 +23,13 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
-    const [userId] = useAtom(currentUserId);
+    const [authResolved] = useAtom(isAuthResolved);
 
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewNotStarted = useSelector(
         machineService,
         reviewNotStartedSelector
     );
-    const reviewData = useSelector(machineService, reviewDataSelector);
     const userIsAdmin = isAdmin(role);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isAddCommentCrossChecking = useSelector(
@@ -39,9 +37,6 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         addCommentCrossCheckingSelector
     );
     const isReviewing = useSelector(machineService, reviewingSelector);
-    const userIsReviewer = reviewData.reviewerId === userId;
-    const userIsAssignee = reviewData.usersId.includes(userId);
-    const userHasPermission = userIsReviewer || userIsAssignee;
     const [hide, setHide] = useState(isHidden);
 
     useEffect(() => {
@@ -78,26 +73,16 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
 
     const [alert, setAlert] = useState(alertTypes.noAlert);
     const getAlert = () => {
-        if (!isLoggedIn) {
+        // Don't show alerts until auth state is resolved to prevent flash
+        if (!authResolved) {
             return alertTypes.noAlert;
         }
-        if (hide && !userIsAdmin) {
+
+        // Only show hidden report warning to logged-in non-admins
+        if (isLoggedIn && hide && !userIsAdmin) {
             return alertTypes.hiddenReport;
         }
-        if (!isPublished) {
-            if (
-                (isCrossChecking || isAddCommentCrossChecking) &&
-                (!userIsAdmin || !userHasPermission)
-            ) {
-                return alertTypes.crossChecking;
-            }
-            if (isReviewing && (!userIsAdmin || !userHasPermission)) {
-                return alertTypes.reviewing;
-            }
-            if (!userHasPermission && !userIsAdmin && !reviewNotStarted) {
-                return alertTypes.hasStarted;
-            }
-        }
+
         return alertTypes.noAlert;
     };
 
@@ -105,11 +90,13 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         const newAlert = getAlert();
         setAlert(newAlert);
     }, [
+        authResolved,
         isCrossChecking,
         isReviewing,
         hide,
         isLoggedIn,
-        userHasPermission,
+        isPublished,
+        reviewNotStarted,
         userIsAdmin,
     ]);
 

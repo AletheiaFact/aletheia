@@ -4,8 +4,10 @@ import {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from "react";
+import { useSelector } from "@xstate/react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ReviewTaskApi from "../../api/reviewTaskApi";
@@ -13,13 +15,7 @@ import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
-import {
-    crossCheckingSelector,
-    addCommentCrossCheckingSelector,
-    reportSelector,
-    reviewingSelector,
-} from "../../machines/reviewTask/selectors";
-import { useSelector } from "@xstate/react";
+import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
 
 interface ContextType {
     editorConfiguration?: any;
@@ -30,6 +26,7 @@ interface ContextType {
     comments?: any[];
     setComments?: (data: any) => void;
     source?: string;
+    canShowEditor?: boolean;
 }
 
 export const VisualEditorContext = createContext<ContextType>({});
@@ -43,9 +40,14 @@ interface VisualEditorProviderProps {
 }
 
 export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
-    const { machineService, reportModel, reviewTaskType } = useContext(
-        ReviewTaskMachineContext
-    );
+    const editorConfig = new EditorConfig();
+    const {
+        machineService,
+        reportModel,
+        reviewTaskType,
+        publishedReview,
+        form,
+    } = useContext(ReviewTaskMachineContext);
     const {
         enableCollaborativeEdit,
         enableEditorAnnotations,
@@ -64,35 +66,82 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     );
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
     const [comments, setComments] = useState(null);
-    const isReviewing = useSelector(machineService, reviewingSelector);
-    const isReported = useSelector(machineService, reportSelector);
-    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const isAddCommentCrossChecking = useSelector(
+    // Use centralized permission system
+    const permissions = useReviewTaskPermissions();
+
+    // Sync editorSources from machine context when it updates (e.g., after reload/hydration)
+    const machineContextSources = useSelector(
         machineService,
-        addCommentCrossCheckingSelector
+        (state) => state.context.reviewData.sources
+    );
+    useEffect(() => {
+        if (
+            machineContextSources &&
+            machineContextSources.length > 0 &&
+            (!editorSources || editorSources.length === 0)
+        ) {
+            setEditorSources(machineContextSources);
+        }
+    }, [machineContextSources]);
+
+    const isInitialFormLoad = useRef(true);
+
+    const fetchEditorContent = useCallback(
+        (cancelled: { current: boolean }) => {
+            if (!reportModel) return;
+
+            const params = { reportModel, reviewTaskType };
+            setIsFetchingEditor(true);
+            ReviewTaskApi.getEditorContentObject(props.data_hash, params).then(
+                (content) => {
+                    if (cancelled.current) return;
+                    setEditorContentObject(content);
+                    const currentSources =
+                        machineService.state.context.reviewData.sources;
+                    if (currentSources) {
+                        setEditorSources(currentSources);
+                    }
+                    setIsFetchingEditor(false);
+                }
+            );
+        },
+        [props.data_hash, reportModel, reviewTaskType]
     );
 
-    const readonly = (() => {
-        if (isReported) return true;
-        if (isCrossChecking && !isAddCommentCrossChecking) return true;
-        if (isReviewing && !enableReviewersUpdateReport) return true;
-        return false;
-    })();
-
+    // Fetch editor content on mount
     useEffect(() => {
-        const params = { reportModel, reviewTaskType };
-        const fetchEditorContentObject = (data_hash) => {
-            setIsFetchingEditor(true);
-            return ReviewTaskApi.getEditorContentObject(data_hash, params);
+        const cancelled = { current: false };
+        fetchEditorContent(cancelled);
+        return () => {
+            cancelled.current = true;
         };
-
-        if (reportModel) {
-            fetchEditorContentObject(props.data_hash).then((content) => {
-                setEditorContentObject(content);
-                setIsFetchingEditor(false);
-            });
-        }
     }, [props.data_hash, reportModel]);
+
+    // Re-fetch editor content when the form changes (e.g., after state transitions).
+    // Also reset comments so they are re-initialized from machine context
+    // (prevents resolved comments from reappearing).
+    useEffect(() => {
+        if (isInitialFormLoad.current) {
+            isInitialFormLoad.current = false;
+            return;
+        }
+
+        if (!form || !reportModel) return;
+
+        // Reset comments so CommentContainer re-filters from machine context
+        setComments(null);
+
+        const hasVisualEditor = form.some(
+            (field) => field.fieldName === "visualEditor"
+        );
+        if (!hasVisualEditor) return;
+
+        const cancelled = { current: false };
+        fetchEditorContent(cancelled);
+        return () => {
+            cancelled.current = true;
+        };
+    }, [form]);
 
     const { websocketProvider, isCollaborative } = useMemo(() => {
         if (!enableCollaborativeEdit) {
@@ -121,7 +170,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
 
     const editorConfiguration = useMemo(
         () => ({
-            readonly,
+            readonly: permissions.editorReadonly,
             extensions: getExtensions,
             isCollaborative,
             core: { excludeExtensions: ["history"] },
@@ -130,7 +179,12 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
                 ? undefined
                 : (editorContentObject as RemirrorContentType),
         }),
-        [readonly, getExtensions, isCollaborative, editorContentObject]
+        [
+            permissions.editorReadonly,
+            getExtensions,
+            isCollaborative,
+            editorContentObject,
+        ]
     );
 
     const value = useMemo(
@@ -143,6 +197,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
             comments,
             setComments,
             source: props.source,
+            canShowEditor: permissions.canViewEditor,
         }),
         [
             editorConfiguration,
@@ -153,6 +208,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
             setComments,
             props.data_hash,
             props.source,
+            permissions.canViewEditor,
         ]
     );
 

@@ -16,5 +16,8 @@
     "copilotClearHistoryTooltip": "Limpar histórico de conversa",
     "copilotCloseSidebarTooltip": "Fechar menu lateral",
     "sessionLoadingError": "Falha ao carregar conversa. Por favor, tente novamente.",
-    "sessionCreateError": "Falha ao iniciar nova conversa. Por favor, tente novamente."
+    "sessionCreateError": "Falha ao iniciar nova conversa. Por favor, tente novamente.",
+    "startReviewTitle": "Checagem Não Iniciada",
+    "startReviewMessage": "Para utilizar o Copilot, você precisa primeiro iniciar a checagem e atribuir esta tarefa a um usuário.",
+    "understoodBtn": "Entendi"
 }

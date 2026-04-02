@@ -140,7 +140,6 @@ export class SearchController {
                     totalPages,
                 };
             } else if (searchText) {
-                //TODO: Create Search Logic for Local Usage
                 searchResults = await this.personalityService.combinedListAll({
                     name: searchText,
                     pageSize,

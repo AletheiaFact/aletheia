@@ -3,15 +3,15 @@ import { Avatar } from "@mui/material";
 import colors from "../../styles/colors";
 import CopilotConversationCardStyle from "./CopilotConversationCard.style";
 import { SenderEnum } from "../../types/enums";
-import { useTranslation } from "next-i18next";
 
 const CopilotConversationCard = ({ message }) => {
-    const { t } = useTranslation();
     const { type, sender, content } = message;
+    const isAssistant = sender === SenderEnum.Assistant;
+
     return (
-        <CopilotConversationCardStyle item>
+        <CopilotConversationCardStyle item $isAssistant={isAssistant}>
             <div className="conversation-card-header">
-                {sender === SenderEnum.Assistant ? (
+                {isAssistant && (
                     <img
                         height={32}
                         width={32}
@@ -19,14 +19,16 @@ const CopilotConversationCard = ({ message }) => {
                         src="/favicon-32x32.png"
                         style={{ borderRadius: 16 }}
                     />
-                ) : (
-                    <Avatar style={{ background: colors.quartiary, width: 30, height: 30}}>
+                )}
+            </div>
+            <p className={`conversation-card-content ${type}`}>{content}</p>
+            <div className="conversation-card-header">
+                {!isAssistant && (
+                    <Avatar style={{ background: colors.quartiary, width: 30, height: 30 }}>
                         {SenderEnum.User.slice(0, 1).toUpperCase()}
                     </Avatar>
                 )}
-                <span>{t(`copilotChatBot:${sender}`)}</span>
             </div>
-            <p className={`conversation-card-content ${type}`}>{content}</p>
         </CopilotConversationCardStyle>
     );
 };

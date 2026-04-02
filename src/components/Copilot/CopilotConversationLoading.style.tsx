@@ -1,45 +1,29 @@
-import colors from "../../styles/colors";
 import styled from "styled-components";
 
 const CopilotConversationLoadingStyle = styled.span`
     display: flex;
+    align-items: center;
     gap: 8px;
-
-    .loading {
-        font-size: 16px;
-        color: ${colors.primary};
-        display: flex;
-    }
 
     .loading-text {
         position: relative;
-        width: fit-content;
+        font-family: inherit;
         margin: 0;
+        white-space: nowrap;
     }
 
     .loading-text::after {
-        content: "";
+        content: "...";
         display: inline-block;
-        animation: dots 2s steps(4) infinite;
-        position: absolute;
-        left: 100%;
+        vertical-align: bottom;
+        width: 0;
+        overflow: hidden;
+        animation: dots-horizontal 2s steps(4) infinite;
     }
 
-    @keyframes dots {
-        0% {
-            content: "";
-        }
-        25% {
-            content: ".";
-        }
-        50% {
-            content: "..";
-        }
-        75% {
-            content: "...";
-        }
-        100% {
-            content: "";
+    @keyframes dots-horizontal {
+        to {
+            width: 1.25em;
         }
     }
 `;

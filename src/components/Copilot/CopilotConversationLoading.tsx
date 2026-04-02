@@ -7,7 +7,7 @@ const CopilotConversationLoading = () => {
     const { t } = useTranslation();
     return (
         <CopilotConversationLoadingStyle>
-            <CircularProgress className="loading" />
+            <CircularProgress size={22} />
             <span className="loading-text">
                 {t("copilotChatBot:agentLoadingThoughts")}
             </span>

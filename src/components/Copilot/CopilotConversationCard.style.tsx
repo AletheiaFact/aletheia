@@ -1,43 +1,39 @@
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
 const CopilotConversationCardStyle = styled(Grid)`
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    gap: 12px;
+    padding-bottom: 12px;
+    justify-content: ${({ $isAssistant }) => ($isAssistant ? "flex-start" : "flex-end")};
 
     .conversation-card-header {
         display: flex;
         align-items: center;
-        gap: 8px;
+        flex-shrink: 0;
     }
 
     .conversation-card-content {
-        position: relative;
-        margin: 12px 0 16px 0;
-        padding: 16px;
-        border-radius: 10px;
-        background-color: ${colors.white};
-        margin-left: 40px;
+        margin: 0;
+        padding: 12px 20px;
+        border-radius: 20px;
         word-break: break-word;
-        color: ${colors.primary};
-        &:after {
-            width: 0;
-            height: 0;
-            content: " ";
-            position: absolute;
-            border-top: none;
-            border-right: 9px solid transparent;
-            border-left: 9px solid transparent;
-            border-bottom: 9px solid ${colors.white};
-            left: 8px;
-            top: -8px;
-            transform: rotate(0deg);
-        }
+        max-width: 80%;
+        line-height: 1.5;
+        background-color: ${({ $isAssistant }) => ($isAssistant ? colors.white : colors.lightPrimary)};
+        color: ${({ $isAssistant }) => ($isAssistant ? colors.primary : colors.white)};
+        border: ${({ $isAssistant }) => ($isAssistant ? `1px solid ${colors.neutralTertiary}` : `1px solid ${colors.lightTertiary}`)};
+        box-shadow: ${({ $isAssistant }) => ($isAssistant ? "0px 2px 4px rgba(0, 0, 0, 0.05)" : "none")};
     }
 
     .conversation-card-content.error {
-        color: ${colors.error};
+        color: ${colors.white};
+        background-color: ${colors.error};
+        border: none;
     }
 `;
 

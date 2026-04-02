@@ -25,10 +25,11 @@ const addCommentCrossCheckingSelector = (state) => {
 };
 
 const reviewingSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.submitted) ||
-        state.matches(ReviewTaskStates.rejected)
-    );
+    return state.matches(ReviewTaskStates.submitted);
+};
+
+const rejectedSelector = (state) => {
+    return state.matches(ReviewTaskStates.rejected);
 };
 
 const reviewNotStartedSelector = (state) => {
@@ -39,13 +40,20 @@ const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
+const currentStateSelector = (state) => {
+    const value = state.value;
+    return typeof value === "string" ? value : Object.keys(value)[0];
+};
+
 export {
     publishedSelector,
     crossCheckingSelector,
     addCommentCrossCheckingSelector,
     reviewingSelector,
+    rejectedSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
     reportSelector,
     assignedSelector,
+    currentStateSelector,
 };

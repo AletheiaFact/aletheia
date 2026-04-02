@@ -17,16 +17,16 @@ export const SelectInput = styled(Select)`
     padding: 10px;
 
     .MuiSelect-select {
-    background: none !important;
-    color: ${colors.blackSecondary};
-    padding: 0 !important;
-  }
+        background: none !important;
+        color: ${colors.blackSecondary};
+        padding: 0 !important;
+    }
 
     .MuiOutlinedInput-notchedOutline {
-    border: none !important;
-  }
+        border: none !important;
+    }
 
-     :focus .MuiOutlinedInput-notchedOutline {
+    :focus .MuiOutlinedInput-notchedOutline {
         border: none;
         box-shadow: 0px 2px 2px ${colors.shadow};
     }
@@ -46,6 +46,9 @@ const ClaimReviewSelect = ({
     defaultValue,
     placeholder,
     style = {},
+    disabled = false,
+    ignoreEditorReadonly = false,
+    error = false,
 }) => {
     const { vw } = useAppSelector((state) => state);
     const [open, setOpen] = useState(false);
@@ -83,39 +86,75 @@ const ClaimReviewSelect = ({
                     onChange={onChangeSelect}
                     onClick={handleOnClick}
                     value={value}
-                    disabled={editorConfiguration?.readonly}
+                    disabled={
+                        disabled ||
+                        (!ignoreEditorReadonly && editorConfiguration?.readonly)
+                    }
+                    style={{
+                        ...style,
+                        ...(error && {
+                            border: `1px solid ${colors.error}`,
+                            boxShadow: `0px 0px 0px 1px ${colors.error}`,
+                        }),
+                    }}
                     data-cy={"testClassificationText"}
                     dropdownStyle={vw?.sm && { display: "none" }}
-                    style={style}
                 >
                     <MenuItem value="" disabled>
                         {placeholder}
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="not-fact">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="not-fact"
+                    >
                         <ClassificationText classification="not-fact" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="trustworthy"
+                    >
                         <ClassificationText classification="trustworthy" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy-but">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="trustworthy-but"
+                    >
                         <ClassificationText classification="trustworthy-but" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="arguable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="arguable"
+                    >
                         <ClassificationText classification="arguable" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="misleading">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="misleading"
+                    >
                         <ClassificationText classification="misleading" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="false">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="false"
+                    >
                         <ClassificationText classification="false" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unsustainable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="unsustainable"
+                    >
                         <ClassificationText classification="unsustainable" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="exaggerated">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="exaggerated"
+                    >
                         <ClassificationText classification="exaggerated" />
                     </MenuItem>
-                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unverifiable">
+                    <MenuItem
+                        sx={{ fontFamily: "open-sans, sans-serif" }}
+                        value="unverifiable"
+                    >
                         <ClassificationText classification="unverifiable" />
                     </MenuItem>
                 </SelectInput>
