@@ -1,5 +1,5 @@
 import { List, ListItemButton } from "@mui/material";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -13,12 +13,14 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import localConfig from "../../config/localConfig";
 import { isAdmin } from "../utils/GetUserPermission";
+import { featureFlagsAtom } from "../atoms/featureFlags";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
     const [nameSpace] = useAtom(currentNameSpace);
+    const { enableEventsFeature } = useAtomValue(featureFlagsAtom);
 
     const handleClick = (menuItem) => {
         dispatch(actions.openSideMenu());
@@ -88,17 +90,19 @@ const AletheiaMenu = () => {
                 {t("menu:verificationRequestItem")}
             </ListItemButton>
 
-            <ListItemButton
-                onClick={() => handleClick({
-                    key:
-                        nameSpace !== NameSpaceEnum.Main
-                            ? `/${nameSpace}/event`
-                            : "/event"
-                })}
-                data-cy={"testEventItem"}
-            >
-                {t("menu:eventItem")}
-            </ListItemButton>
+            {enableEventsFeature && (
+                <ListItemButton
+                    onClick={() => handleClick({
+                        key:
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/event`
+                                : "/event"
+                    })}
+                    data-cy={"testEventItem"}
+                >
+                    {t("menu:eventItem")}
+                </ListItemButton>
+            )}
 
             {role !== Roles.Regular && (
                 <ListItemButton

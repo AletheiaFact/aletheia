@@ -25,17 +25,17 @@ export class FeatureFlagService {
     }
 
     isEnableEventsFeature() {
-    const config = this.configService.get<string>("feature_flag");
-    const isWatchDevOrTest = process.env.ENVIRONMENT === Environments.WATCH_DEV || process.env.ENVIRONMENT === Environments.DEVELOPMENT;
+        const config = this.configService.get<string>("feature_flag");
+        const isNotProduction = process.env.ENVIRONMENT !== Environments.PRODUCTION;
 
-    if (!config) {
-        return isWatchDevOrTest;
+        if (!config) {
+            return isNotProduction;
+        }
+
+        const isEnabledOnUnleash = this.unleash.isEnabled("enable_events_feature");
+
+        return isEnabledOnUnleash || isNotProduction;
     }
-
-    const isEnabledOnUnleash = this.unleash.isEnabled("enable_events_feature");
-
-    return isEnabledOnUnleash || isWatchDevOrTest;
-}
 
     isEnableEditorAnnotations() {
         const config = this.configService.get<string>("feature_flag");
