@@ -14,7 +14,7 @@ const AletheiaHeader = () => {
                 width: "100%",
                 background: theme.palette.primary.main,
                 backgroundColor: theme.palette.primary.main,
-                height: "56px",
+                height: "64px",
                 padding: 0,
                 minWidth: "265px",
             }}
