@@ -24,6 +24,7 @@ export interface IlistAll {
     pageSize: number;
     order: "asc" | "desc";
     query: IListAllQuery;
+    mainTopicId?: string;
     latest?: boolean;
 }
 
@@ -49,7 +50,7 @@ export interface ClaimReviewAggregated {
     __v?: number;
 }
 
-interface listAllData {
+export interface listAllData {
     content: Image | Sentence;
     personality?: Personality;
     reviewHref: string;

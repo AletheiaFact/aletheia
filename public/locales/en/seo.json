@@ -17,5 +17,7 @@
     "verificationRequestTitle": "Verification Requests",
     "verificationRequestDescription": "See verification requests on AletheiaFact.org",
     "createVerificationRequestTitle": "Create verification request",
-    "createVerificationRequestDescription": "Create verification requests to AletheiaFact.org"
+    "createVerificationRequestDescription": "Create verification requests to AletheiaFact.org",
+    "createEventTitle": "Create event",
+    "createEventDescription": "Create event to AletheiaFact.org"
 }

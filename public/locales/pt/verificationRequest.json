@@ -120,5 +120,8 @@
     "noPersonalitiesFound": "Nenhuma personalidade identificada nesta denúncia",
     "errorLoadingPersonalities": "Erro ao carregar personalidades. Por favor, tente novamente.",
     "retryLoadingPersonalities": "Tentar novamente",
-    "viewPersonalityPage": "Ver página da personalidade {{name}}"
+    "viewPersonalityPage": "Ver página da personalidade {{name}}",
+    "submittedAt": "Enviado em <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
+    "requestStatus": "Status da solicitação: ",
+    "cardLinkToFullRequest": "veja a denúncia completa"
 }

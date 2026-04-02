@@ -65,6 +65,7 @@ import { M2MGuard } from "./auth/m2m.guard";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
 import { TrackingModule } from "./tracking/tracking.module";
+import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
 
 @Module({})
@@ -123,6 +124,7 @@ export class AppModule implements NestModule {
                 ClaimRevisionModule,
                 HistoryModule,
                 TrackingModule,
+                EventsModule,
                 ManagementModule,
                 StateEventModule,
                 SourceModule,

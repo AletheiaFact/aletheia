@@ -104,7 +104,6 @@ const ClaimUploadImage = () => {
             </div>
 
             <BaseClaimForm
-                disableFutureDates
                 handleSubmit={handleSubmit}
                 isLoading={isLoading}
                 dateExtraText={t("claimForm:dateFieldHelpImage")}

@@ -28,9 +28,11 @@ export class StatsService {
                 isDeleted: false,
             }),
             this.claimReviewService.count({
-                isHidden: false,
-                isDeleted: false,
-                nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
+                query: {
+                    isHidden: false,
+                    isDeleted: false,
+                    nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
+                }
             }),
         ]).then((values) => {
             return {

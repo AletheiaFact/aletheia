@@ -68,7 +68,7 @@ const ReviewCard = ({ review, summarized = false }) => {
 
     return (
         <CardBase>
-            <ReviewCardStyled $hasPersonality={hasPersonality}>
+            <ReviewCardStyled $hasPersonality={hasPersonality} data-cy="testReviewCardContainer">
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
                         <PersonalityMinimalCard

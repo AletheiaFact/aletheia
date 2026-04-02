@@ -13,10 +13,14 @@ const GridList = ({
     dataCy = "",
     seeMoreButtonLabel = "",
     disableSeeMoreButton = false,
+    hasDivider = false,
 }) => {
     return (
         <>
-            <SectionTitle>{title}</SectionTitle>
+            <SectionTitle
+                children={title}
+                hasDivider={hasDivider}
+            />
 
             <Grid container columnSpacing={1}>
                 {dataSource.map((item) => (
@@ -41,7 +45,7 @@ const GridList = ({
                     }}
                 >
                     <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
-                        {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small"/>
+                        {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small" />
                     </Button>
                 </Grid>
             )}

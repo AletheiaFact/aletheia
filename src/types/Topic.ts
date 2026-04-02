@@ -9,6 +9,7 @@ export interface Topic {
     wikidataId: string;
     slug: string;
     language: string;
+    aliases?: string[];
 }
 
 export interface ManualTopic {

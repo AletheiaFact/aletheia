@@ -51,8 +51,21 @@ const locators = {
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
         ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
-        ADD_VERIFICATION_REQUEST:
-            "[data-cy=testFloatButtonAddVerificationRequest]",
+        ADD_VERIFICATION_REQUEST: "[data-cy=testFloatButtonAddVerificationRequest]",
+        ADD_EVENT: "[data-cy=testFloatButtonAddEvent]"
+    },
+
+    toggleButton: {
+        TOGGLE_BUTTON_LEFT: "[data-cy=testToggleButtonLeft]",
+        TOGGLE_BUTTON_RIGHT: "[data-cy=testToggleButtonRight]",
+    },
+
+    topic: {
+        ADD_TOPIC_ICON: "[data-cy=testAddTopicsToggle]",
+        TYPE_TOPIC_INPUT: "[data-cy=testAddTopicsInput]",
+        ADD_TOPIC_SUBMIT: "[data-cy=testAddTopicButton]",
+        DETAIL_TOPIC_TAG: "[data-cy=testTopicChip0]",
+        REMOVE_TOPIC_ICON: "[data-cy=testTopicRemoveButton0]",
     },
 
     claimReview: {
@@ -82,6 +95,9 @@ const locators = {
             "[data-cy=testClaimReviewSourcesInput]",
         ADD_EDITOR_SOURCES_DIALOG_BUTTON:
             "[data-cy=testClaimReviewSourcesButton]",
+        BTN_REVIEW_CLAIM_IMAGE: "[data-cy=testReviewClaimImage]",
+
+        REVIEW_CARD_CONTAINER: "[data-cy=testReviewCardContainer]",
         BTN_RECAPTCHA_CONFIRM: "[data-cy=testRecaptchaConfirm]",
     },
 
@@ -117,17 +133,42 @@ const locators = {
         DETAIL_CARD_CONTENT: "[data-cy=testVerificationRequestCardContent0]",
         DETAIL_CARD_CONTENT_1: "[data-cy=testVerificationRequestCardContent1]",
 
-        ADD_TOPIC_ICON: "[data-cy=testVerificationRequestTopicsToggle]",
-        TYPE_TOPIC_INPUT: "[data-cy=testVerificationRequestTopicsInput]",
-        ADD_TOPIC_SUBMIT: "[data-cy=testVerificationRequestAddTopicButton]",
-        DETAIL_TOPIC_TAG: "[data-cy=testVerificationRequestTopicChip0]",
-        REMOVE_TOPIC_ICON:
-            "[data-cy=testVerificationRequestTopicRemoveButton0]",
-
         SEE_FULL_BUTTON: "[data-cy=testSeeFullVerificationRequest]",
         EDIT_BUTTON: "[data-cy=testVerificationRequestEditButton]",
         SAVE_BUTTON: "[data-cy=testSaveButton]",
         CANCEL_BUTTON: "[data-cy=testCancelButton]",
+
+        VERIFICATION_REQUEST_CARD_CONTAINER: "[data-cy=testVerificationRequestCardContainer]"
+    },
+
+    event: {
+        FORM_BADGE: "[data-cy=testClaimReviewbadge]",
+        FORM_NAME: "[data-cy=testClaimReviewname]",
+        FORM_DESCRIPTION: "[data-cy=testClaimReviewdescription]",
+        FORM_LOCATION: "[data-cy=testClaimReviewlocation]",
+        FORM_START_DATE: "[data-cy=testClaimReviewstartDate]",
+        FORM_END_DATE: "[data-cy=testClaimReviewendDate]",
+        FORM_MAIN_TOPIC: "[data-cy=testClaimReviewmainTopic]",
+
+        DETAIL_TITLE: "[data-cy=testEventTitle]",
+        DETAIL_DESCRIPTION: "[data-cy=testEventDescription]",
+        DETAIL_LOCATION: "[data-cy=testEventLocationText]",
+        DETAIL_BADGE: "[data-cy=testEventBadgeChip]",
+        EVENT_ITEMS_TOTAL_COUNT: "[data-cy=testTotalCountText]",
+        OPEN_EDIT_DRAWER_BTN: "[data-cy=testEventEditButton]",
+
+        SEE_MORE_EVENTS: "[data-cy=testSeeMoreEvents]",
+
+        EVENT_CARD: "[data-cy=event-card]",
+        METRICS_REVIEWS: "[data-cy=testEventMetricsReviews]",
+        METRICS_VERIFICATION_REQUESTS: "[data-cy=testEventMetricsVerificationRequests]",
+        METRICS_CLAIMS: "[data-cy=testEventMetricsClaims]",
+        SEE_FULL_EVENT: "[data-cy=testOpenEventButton]",
+
+        ERROR_VALIDATION_NAME: "[data-cy=testClaimReviewErrorname]",
+        ERROR_VALIDATION_MAIN_TOPIC: "[data-cy=testClaimReviewErrormainTopic]",
+
+        SAVE_BUTTON: "[data-cy=testSaveButton]",
     },
 
     menu: {

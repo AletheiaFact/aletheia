@@ -58,18 +58,30 @@ Cypress.Commands.add(
     }
 );
 
-Cypress.Commands.add("selectDatePickerDate", (dateToSelect: dayjs.Dayjs) => {
-    const today = dayjs();
+Cypress.Commands.add("selectDatePickerDate", (index: number, dateToSelect: dayjs.Dayjs) => {
+    cy.get(locators.claim.INPUT_DATA).eq(index).click();
 
-    cy.get(locators.claim.INPUT_DATA).click();
+    const targetMonthYear = dateToSelect.format("MMMM YYYY");
 
-    if (dateToSelect.month() < today.month() || dateToSelect.year() < today.year()) {
-        cy.get('[aria-label="Previous month"]').click();
-    } else if (dateToSelect.month() > today.month() || dateToSelect.year() > today.year()) {
-        cy.get('[aria-label="Next month"]').click();
+    function navigateToMonth() {
+        cy.get("[role='presentation'] .MuiPickersCalendarHeader-label").first().then((headerElement) => {
+            const currentText = headerElement.text();
+
+            if (currentText !== targetMonthYear) {
+                const displayedMonth = dayjs(currentText, "MMMM YYYY");
+                const isFuture = dateToSelect.isAfter(displayedMonth, "month");
+                const buttonSelector = isFuture ? "[aria-label='Next month']" : "[aria-label='Previous month']";
+
+                cy.get(buttonSelector).click({ force: true });
+                navigateToMonth();
+            }
+        });
     }
 
-    cy.contains('[role="gridcell"]', dateToSelect.format("D")).click();
+    navigateToMonth();
+
+    const dayValue = dateToSelect.date().toString();
+    cy.contains('button[role="gridcell"]', new RegExp(`^${dayValue}$`)).click({ force: true });
 });
 
 declare global {
@@ -84,7 +96,7 @@ declare global {
                 email: string,
                 password: string
             ): Chainable<Element>;
-            selectDatePickerDate(date: dayjs.Dayjs): Chainable<Element>;
+            selectDatePickerDate(index: number, date: dayjs.Dayjs): Chainable<Element>;
         }
     }
 }

@@ -23,6 +23,12 @@ export class FeatureFlagService {
         return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
     }
 
+    isEnableEventsFeature() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config ? this.unleash.isEnabled("enable_events_feature") : false;
+    }
+
     isEnableEditorAnnotations() {
         const config = this.configService.get<string>("feature_flag");
 
