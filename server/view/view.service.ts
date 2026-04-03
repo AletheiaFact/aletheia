@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import createServer from "next";
 import { NextServer, RequestHandler } from "next/dist/server/next";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { Environments } from "../types/enums";
+const createServer = require("next");
 
 @Injectable()
 export class ViewService implements OnModuleInit {
