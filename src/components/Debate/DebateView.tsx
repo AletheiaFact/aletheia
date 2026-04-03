@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claim";
@@ -38,13 +38,15 @@ const DebateView = ({ claim }) => {
     return (
         <>
             <CallbackTimerProvider
-                //@ts-ignore
-                initialValues={[
-                    [callbackTimerInitialConfig, timerConfig],
-                    [currentNameSpace, nameSpace],
-                ]}
+                initialValues={
+                    [
+                        [callbackTimerInitialConfig, timerConfig],
+                        [currentNameSpace, nameSpace],
+                    ] as Iterable<readonly [unknown, unknown]>
+                }
             >
-                <Grid container
+                <Grid
+                    container
                     style={{
                         width: "100%",
                         justifyContent: "center",
@@ -56,14 +58,14 @@ const DebateView = ({ claim }) => {
                         personalities={claim?.personalities}
                         userRole={userRole}
                     />
-                    <Grid item
+                    <Grid
+                        item
                         xs={10}
                         style={{
                             width: "100%",
                             display: "flex",
                             justifyContent: "flex-start",
                             alignItems: "flex-start",
-
                         }}
                     >
                         <DebateTimelineWrapper

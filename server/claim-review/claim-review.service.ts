@@ -51,23 +51,35 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(params: IlistAll): Promise<ClaimReviewList> {
-        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicId);
+        const basePipeline = await this.createSharedPipeline(
+            params.query,
+            params.mainTopicId
+        );
 
         const [total, data] = await Promise.all([
             this.countReviews(basePipeline),
-            this.findReviews(basePipeline, params)
+            this.findReviews(basePipeline, params),
         ]);
 
         return { data, total };
     }
 
-    async count(params: { query: IListAllQuery, topicId?: string }): Promise<number> {
-        const basePipeline = await this.createSharedPipeline(params.query, params.topicId);
+    async count(params: {
+        query: IListAllQuery;
+        topicId?: string;
+    }): Promise<number> {
+        const basePipeline = await this.createSharedPipeline(
+            params.query,
+            params.topicId
+        );
 
         return this.countReviews(basePipeline);
     }
 
-    private async createSharedPipeline(query: IListAllQuery, topicId?: string): Promise<any[]> {
+    private async createSharedPipeline(
+        query: IListAllQuery,
+        topicId?: string
+    ): Promise<any[]> {
         let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
@@ -76,7 +88,7 @@ export class ClaimReviewService {
         if (topicId) {
             const [sentenceHashes, imageHashes] = await Promise.all([
                 this.sentenceService.getHashesByTopic(topicId),
-                this.imageService.getHashesByTopic(topicId)
+                this.imageService.getHashesByTopic(topicId),
             ]);
 
             const validHashes = [...sentenceHashes, ...imageHashes];
@@ -87,7 +99,10 @@ export class ClaimReviewService {
         return this.buildClaimReviewBasePipeline(initialMatch, query);
     }
 
-    private async findReviews(basePipeline: any[], params: IlistAll): Promise<listAllData[]> {
+    private async findReviews(
+        basePipeline: any[],
+        params: IlistAll
+    ): Promise<listAllData[]> {
         const { page, pageSize, order, latest = false } = params;
         const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
 
@@ -95,12 +110,14 @@ export class ClaimReviewService {
             ...basePipeline,
             { $sort: sort },
             { $skip: page * pageSize },
-            { $limit: pageSize }
+            { $limit: pageSize },
         ];
 
         const reviews = await this.ClaimReviewModel.aggregate(pipeline);
         const data = await Promise.all(
-            reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review))
+            reviews.map(async (review: ClaimReviewAggregated) =>
+                this.postProcess(review)
+            )
         );
 
         return data;
@@ -113,7 +130,10 @@ export class ClaimReviewService {
         return countResult[0]?.totalCount || 0;
     }
 
-    private buildClaimReviewBasePipeline(match: any, query: IListAllQuery): any[] {
+    private buildClaimReviewBasePipeline(
+        match: any,
+        query: IListAllQuery
+    ): any[] {
         const pipeline: any[] = [
             { $match: match },
             {
@@ -297,7 +317,7 @@ export class ClaimReviewService {
      * @param reportModel FactChecking or InformativeNews
      * @returns Return a new claim review object.
      */
-    async create(claimReview, data_hash, reportModel) {
+    async create(claimReview: any, data_hash: string, reportModel: string) {
         if (claimReview.personality) {
             claimReview.personality = new Types.ObjectId(
                 claimReview.personality
@@ -332,7 +352,7 @@ export class ClaimReviewService {
         return newClaimReview.save();
     }
 
-    getById(claimReviewId) {
+    getById(claimReviewId: string) {
         return this.ClaimReviewModel.findById(claimReviewId)
             .populate("claims", "_id title")
             .populate("sources", "_id href classification");
@@ -373,7 +393,7 @@ export class ClaimReviewService {
      * @param claimReviewId claimId Claim id which wants to delete
      * @returns Returns the claim review with the param isDeleted equal to true
      */
-    async delete(claimReviewId) {
+    async delete(claimReviewId: string) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId);
 
@@ -390,9 +410,9 @@ export class ClaimReviewService {
     }
 
     async hideOrUnhideReview(
-        _id,
-        hide,
-        description
+        _id: string,
+        hide: boolean,
+        description?: string
     ): Promise<UpdateWriteOpResult> {
         const review = await this.getById(_id);
         const newReview = {
@@ -545,51 +565,75 @@ export class ClaimReviewService {
         topicToHashesMap: Record<string, string[]>
     ): Promise<Record<string, number>> {
         if (!topicIds || topicIds.length === 0) {
-            this.logger.debug("No topic IDs provided for batch claim review counts.");
+            this.logger.debug(
+                "No topic IDs provided for batch claim review counts."
+            );
             return {};
         }
 
         try {
-            const allValidHashes = [...new Set(Object.values(topicToHashesMap).flat())];
+            const allValidHashes = [
+                ...new Set(Object.values(topicToHashesMap).flat()),
+            ];
 
             if (allValidHashes.length === 0) {
-                this.logger.debug("No valid hashes found for the provided topics.");
-                return topicIds.reduce((acc, topicId) => ({ ...acc, [topicId]: 0 }), {});
+                this.logger.debug(
+                    "No valid hashes found for the provided topics."
+                );
+                return topicIds.reduce(
+                    (acc, topicId) => ({ ...acc, [topicId]: 0 }),
+                    {}
+                );
             }
 
             const initialMatch = {
                 ...query,
                 targetModel: ReviewTaskTypeEnum.Claim,
-                data_hash: { $in: allValidHashes }
+                data_hash: { $in: allValidHashes },
             };
 
-            const basePipeline = this.buildClaimReviewBasePipeline(initialMatch, query);
+            const basePipeline = this.buildClaimReviewBasePipeline(
+                initialMatch,
+                query
+            );
 
             const pipeline = [
                 ...basePipeline,
                 {
                     $group: {
                         _id: "$data_hash",
-                        count: { $sum: 1 }
-                    }
-                }
+                        count: { $sum: 1 },
+                    },
+                },
             ];
 
-            const aggregatedCounts = await this.ClaimReviewModel.aggregate(pipeline);
+            const aggregatedCounts = await this.ClaimReviewModel.aggregate(
+                pipeline
+            );
 
-            const hashCountMap = mapAggregateToRecord<number>(aggregatedCounts, "count");
+            const hashCountMap = mapAggregateToRecord<number>(
+                aggregatedCounts,
+                "count"
+            );
 
             const result: Record<string, number> = {};
 
             for (const topicId of topicIds) {
                 const hashesForThisTopic = topicToHashesMap[topicId] || [];
-                result[topicId] = hashesForThisTopic.reduce((sum, hash) => sum + (hashCountMap[hash] || 0), 0);
+                result[topicId] = hashesForThisTopic.reduce(
+                    (sum, hash) => sum + (hashCountMap[hash] || 0),
+                    0
+                );
             }
 
             return result;
         } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to fetch batch claim review counts`, stackTrace);
+            const stackTrace =
+                error instanceof Error ? error.stack : String(error);
+            this.logger.error(
+                `Failed to fetch batch claim review counts`,
+                stackTrace
+            );
             throw error;
         }
     }

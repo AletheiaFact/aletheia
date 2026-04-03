@@ -87,15 +87,20 @@ export class BadgeController {
                 this.usersService.updateUser(user._id, {
                     badges: user.badges.filter(
                         (userBadge) =>
-                            // @ts-ignore
-                            userBadge._id.toString() !==
-                            updatedBadge._id.toString()
+                            (
+                                userBadge as unknown as {
+                                    _id: { toString(): string };
+                                }
+                            )._id.toString() !== updatedBadge._id.toString()
                     ),
                 });
                 user.badges = user.badges.filter(
                     (userBadge) =>
-                        // @ts-ignore
-                        userBadge._id.toString() !== updatedBadge._id.toString()
+                        (
+                            userBadge as unknown as {
+                                _id: { toString(): string };
+                            }
+                        )._id.toString() !== updatedBadge._id.toString()
                 );
             }
         });

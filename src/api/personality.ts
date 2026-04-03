@@ -2,6 +2,8 @@ import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { Personality } from "../types/Personality";
+import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
 
 const baseUrl = `/api/personality`;
 
@@ -18,7 +20,10 @@ interface FetchOptions {
     nameSpace?: string;
 }
 
-const getPersonalities = (options: FetchOptions, dispatch) => {
+const getPersonalities = (
+    options: FetchOptions,
+    dispatch: (action: { type: ActionTypes; [key: string]: unknown }) => void
+): Promise<PaginatedResponse<Personality> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -58,7 +63,11 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         });
 };
 
-const getPersonality = (id, params, t) => {
+const getPersonality = (
+    id: string,
+    params: Record<string, unknown>,
+    t: TranslationFn
+): Promise<Personality | void> => {
     return axios
         .get(`${baseUrl}/${id}`, {
             params,
@@ -67,18 +76,25 @@ const getPersonality = (id, params, t) => {
             return response.data;
         })
         .catch(() => {
-            MessageManager.showMessage("error", t("personality:errorWhileFetching"));
+            MessageManager.showMessage(
+                "error",
+                t("personality:errorWhileFetching")
+            );
         });
 };
 
-const createPersonality = (personality, t) => {
+const createPersonality = (
+    personality: Record<string, unknown>,
+    t: TranslationFn
+): Promise<Personality | void> => {
     return axios
         .post(`${baseUrl}`, personality, {
             withCredentials: true,
         })
         .then((response) => {
             const { name } = response.data;
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage(
+                "success",
                 `"${name}" ${t("personalityCreateForm:successMessage")}`
             );
             return response.data;
@@ -91,7 +107,8 @@ const createPersonality = (personality, t) => {
                 // console.log(err);
             }
             const { data } = response;
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 data && data.message
                     ? data.message
                     : t("personalityCreateForm:errorMessage")
@@ -99,11 +116,14 @@ const createPersonality = (personality, t) => {
         });
 };
 
-const deletePersonality = (id: string, t: any) => {
+const deletePersonality = (id: string, t: TranslationFn): Promise<void> => {
     return axios
         .delete(`${baseUrl}/${id}`)
         .then(() => {
-            MessageManager.showMessage("success", t("personality:deleteSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("personality:deleteSuccess")
+            );
         })
         .catch((err) => {
             console.error(err);
@@ -114,10 +134,10 @@ const deletePersonality = (id: string, t: any) => {
 const updatePersonalityHiddenStatus = (
     id: string,
     isHidden: boolean,
-    t: any,
+    t: TranslationFn,
     recaptcha: string,
     description: string
-) => {
+): Promise<void> => {
     return axios
         .put(`${baseUrl}/hidden/${id}`, {
             isHidden,
@@ -125,13 +145,15 @@ const updatePersonalityHiddenStatus = (
             description,
         })
         .then(() => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage(
+                "success",
                 t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t(`personality:${isHidden ? "hideError" : "unhideError"}`)
             );
         });

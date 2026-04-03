@@ -36,12 +36,13 @@ const ClaimCreatePage: NextPage<any> = ({
                 })}
             />
             <CreateClaimMachineProvider
-                //@ts-ignore
-                initialValues={[
-                    [claimPersonalities, personality ? [personality] : []],
-                    [claimVerificationRequests, verificationRequestGroup],
-                    [currentNameSpace, nameSpace],
-                ]}
+                initialValues={
+                    [
+                        [claimPersonalities, personality ? [personality] : []],
+                        [claimVerificationRequests, verificationRequestGroup],
+                        [currentNameSpace, nameSpace],
+                    ] as Iterable<readonly [unknown, unknown]>
+                }
             >
                 <CreateClaimView />
                 <AffixButton />

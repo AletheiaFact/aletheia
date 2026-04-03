@@ -7,6 +7,7 @@ import { GlobalMessage } from "../components/Messages";
 import { SessionExpiredModal } from "../components/SessionExpiredModal";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
+import ErrorBoundary from "../components/ErrorBoundary";
 import * as umamiConfig from "../lib/umami";
 import CookieConsent from "react-cookie-consent";
 import colors from "../styles/colors";
@@ -46,7 +47,7 @@ function MyApp({ Component, pageProps }) {
     useEffect(() => {
         if (pageProps.enableEventsFeature !== undefined) {
             setFeatureFlags({
-                enableEventsFeature: pageProps.enableEventsFeature
+                enableEventsFeature: pageProps.enableEventsFeature,
             });
         }
     }, [pageProps.enableEventsFeature, setFeatureFlags]);
@@ -112,7 +113,9 @@ function MyApp({ Component, pageProps }) {
                                 cardType: "summary",
                             }}
                         />
-                        <Component {...pageProps} />
+                        <ErrorBoundary>
+                            <Component {...pageProps} />
+                        </ErrorBoundary>
                         <CookieConsent
                             location="bottom"
                             buttonText={t("cookieConsent:button")}

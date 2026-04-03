@@ -21,7 +21,9 @@ interface FetchOptions {
     fetchOnly?: boolean;
 }
 
-const get = (options: FetchOptions) => {
+const get = (
+    options: FetchOptions
+): Promise<PaginatedResponse<Claim> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -49,23 +51,34 @@ const get = (options: FetchOptions) => {
         });
 };
 
-const getById = (id, t, params = {}) => {
+const getById = (
+    id: string,
+    t: TranslationFn,
+    params = {}
+): Promise<Claim | void> => {
     return request
         .get(`/${id}`, { params })
         .then((response) => {
             return response.data;
         })
         .catch(() => {
-            MessageManager.showMessage("error", `${t("claim:errorWhileFetching")}`)
+            MessageManager.showMessage(
+                "error",
+                `${t("claim:errorWhileFetching")}`
+            );
         });
 };
 
-const saveSpeech = (t, claim = {}) => {
+const saveSpeech = (
+    t: TranslationFn,
+    claim = {}
+): Promise<ClaimCreateResponse | void> => {
     return request
         .post("/", claim)
         .then((response) => {
             const { title } = response.data;
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -76,7 +89,8 @@ const saveSpeech = (t, claim = {}) => {
                 // TODO: Track errors with Sentry
             }
             const { data } = response;
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 data && data.message
                     ? data.message
                     : t("claimForm:errorCreateMessage")
@@ -84,19 +98,24 @@ const saveSpeech = (t, claim = {}) => {
         });
 };
 
-const saveImage = (t, claimImage = {}) => {
+const saveImage = (
+    t: TranslationFn,
+    claimImage = {}
+): Promise<ClaimCreateResponse | void> => {
     return request
         .post("/image", claimImage)
         .then((response) => {
             const { title } = response.data;
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 response?.data && response?.data.message
                     ? response?.data.message
                     : t("claimForm:errorCreateMessage")
@@ -104,12 +123,16 @@ const saveImage = (t, claimImage = {}) => {
         });
 };
 
-const saveDebate = (t, debate = {}) => {
+const saveDebate = (
+    t: TranslationFn,
+    debate = {}
+): Promise<ClaimCreateResponse | void> => {
     return request
         .post("/debate", debate)
         .then((response) => {
             const { title } = response.data;
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -123,12 +146,16 @@ const saveDebate = (t, debate = {}) => {
         });
 };
 
-const saveUnattributed = (t, unattributed = {}) => {
+const saveUnattributed = (
+    t: TranslationFn,
+    unattributed = {}
+): Promise<ClaimCreateResponse | void> => {
     return request
         .post("/unattributed", unattributed)
         .then((response) => {
             const { title } = response.data;
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -143,10 +170,10 @@ const saveUnattributed = (t, unattributed = {}) => {
 };
 
 const updateDebate = (
-    debateId,
-    t,
+    debateId: string,
+    t: TranslationFn,
     params: { content: string; personality: string; isLive: boolean }
-) => {
+): Promise<unknown> => {
     return request
         .put(`/debate/${debateId}`, params)
         .then((response) => {
@@ -158,7 +185,8 @@ const updateDebate = (
                 // TODO: Track errors with Sentry
             }
             const { data } = response;
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 data && data.message
                     ? data.message
                     : t("claimForm:errorUpdateMessage")
@@ -166,7 +194,7 @@ const updateDebate = (
         });
 };
 
-const deleteClaim = (id: string, t: any) => {
+const deleteClaim = (id: string, t: TranslationFn): Promise<void> => {
     return request
         .delete(`/${id}`)
         .then(() => {
@@ -181,10 +209,10 @@ const deleteClaim = (id: string, t: any) => {
 const updateClaimHiddenStatus = (
     id: string,
     isHidden: boolean,
-    t: any,
+    t: TranslationFn,
     recaptcha: string,
     description: string
-) => {
+): Promise<void> => {
     return request
         .put(`/hidden/${id}`, {
             isHidden,
@@ -192,13 +220,17 @@ const updateClaimHiddenStatus = (
             description,
         })
         .then(() => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t(`claim:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error", t(`claim:${isHidden ? "hideError" : "unhideError"}`));
+            MessageManager.showMessage(
+                "error",
+                t(`claim:${isHidden ? "hideError" : "unhideError"}`)
+            );
         });
 };
 

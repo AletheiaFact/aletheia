@@ -27,11 +27,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-        personalities: string;
-        slug: string;
-        isHidden?: boolean;
-        nameSpace?: string;
-    }
+          personalities: string;
+          slug: string;
+          isHidden?: boolean;
+          nameSpace?: string;
+      }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -50,10 +50,15 @@ export class ClaimService {
         private claimRevisionService: ClaimRevisionService,
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
-        private groupService: GroupService,
+        private groupService: GroupService
     ) {}
 
-    async listAll(page, pageSize, order, query) {
+    async listAll(
+        page: number,
+        pageSize: number,
+        order: string,
+        query: FilterQuery<ClaimDocument>
+    ) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
             query.personalities = new Types.ObjectId(query.personalities);
@@ -64,7 +69,7 @@ export class ClaimService {
                 .populate("latestRevision")
                 .skip(page * pageSize)
                 .limit(pageSize)
-                .sort({ _id: order })
+                .sort({ _id: order as "asc" | "desc" })
                 .lean(),
 
             this.ClaimModel.countDocuments(query),
@@ -85,7 +90,7 @@ export class ClaimService {
         };
     }
 
-    async count(query: any = {}) {
+    async count(query: FilterQuery<ClaimDocument> = {}): Promise<number> {
         return this.ClaimModel.countDocuments(query);
     }
 
@@ -95,7 +100,7 @@ export class ClaimService {
      * @param claim ClaimBody received of the client.
      * @returns Return a new claim object.
      */
-    async create(claim) {
+    async create(claim: any) {
         claim.personalities = claim.personalities.map((personality) => {
             return new Types.ObjectId(personality);
         });
@@ -147,7 +152,7 @@ export class ClaimService {
      * @param claimRevisionUpdate ClaimBody received of the client.
      * @returns Return a new claim object.
      */
-    async update(claimId, claimRevisionUpdate) {
+    async update(claimId: string, claimRevisionUpdate: any) {
         const claim = await this._getClaim(
             { _id: claimId, isHidden: false },
             undefined,
@@ -190,7 +195,8 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${
+                user || "system"
             }`
         );
         try {
@@ -227,9 +233,9 @@ export class ClaimService {
     }
 
     async hideOrUnhideClaim(
-        claimId,
-        isHidden,
-        description
+        claimId: string,
+        isHidden: boolean,
+        description?: string
     ): Promise<UpdateWriteOpResult> {
         try {
             const claim = await this.ClaimModel.findById(claimId);
@@ -261,7 +267,7 @@ export class ClaimService {
         }
     }
 
-    async getById(claimId, nameSpace = NameSpaceEnum.Main) {
+    async getById(claimId: string, nameSpace: string = NameSpaceEnum.Main) {
         return this._getClaim(
             this.util.getParamsBasedOnUserRole(
                 { _id: claimId, nameSpace },

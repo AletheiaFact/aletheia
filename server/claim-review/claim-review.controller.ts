@@ -18,6 +18,7 @@ import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { listAllResponse } from "./types/claim-review.interfaces";
+import { UpdateClaimReviewDTO } from "./dto/update-claim-review.dto";
 
 @Controller()
 export class ClaimReviewController {
@@ -41,7 +42,7 @@ export class ClaimReviewController {
             isHidden = false,
             latest = false,
             nameSpace = NameSpaceEnum.Main,
-            mainTopicId
+            mainTopicId,
         } = getClaimReviewsDto;
 
         const reviews = await this.claimReviewService.listAll({
@@ -54,7 +55,7 @@ export class ClaimReviewController {
                 isDeleted: false,
             },
             latest,
-            mainTopicId
+            mainTopicId,
         });
 
         return {
@@ -69,7 +70,10 @@ export class ClaimReviewController {
     @AdminOnly()
     @ApiTags("claim-review")
     @Put("api/review/:id")
-    async update(@Param("id") reviewId, @Body() body): Promise<any> {
+    async update(
+        @Param("id") reviewId: string,
+        @Body() body: UpdateClaimReviewDTO
+    ): Promise<unknown> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -86,7 +90,7 @@ export class ClaimReviewController {
     @AdminOnly()
     @ApiTags("claim-review")
     @Delete("api/review/:id")
-    async delete(@Param("id") reviewId) {
+    async delete(@Param("id") reviewId: string) {
         return this.claimReviewService.delete(reviewId);
     }
 
@@ -94,7 +98,7 @@ export class ClaimReviewController {
     @ApiTags("claim-review")
     @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async getReviewByDataHash(@Param("data_hash") data_hash) {
+    async getReviewByDataHash(@Param("data_hash") data_hash: string) {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );
