@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import Head from "next/head";
 import "../styles/app.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
@@ -23,6 +23,7 @@ import { GetUserRole } from "../utils/GetUserRole";
 import { AletheiaThemeConfig } from "../styles/namespaceThemes";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { featureFlagsAtom } from "../atoms/featureFlags";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
@@ -32,6 +33,7 @@ function MyApp({ Component, pageProps }) {
     const setCurrentUserId = useSetAtom(currentUserId);
     const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
     const setAuthResolved = useSetAtom(isAuthResolved);
+    const setFeatureFlags = useSetAtom(featureFlagsAtom);
 
     const [nameSpace] = useAtom(currentNameSpace);
     const safeNamespace = nameSpace || NameSpaceEnum.Main;
@@ -39,6 +41,14 @@ function MyApp({ Component, pageProps }) {
         () => AletheiaThemeConfig(safeNamespace),
         [safeNamespace]
     );
+
+    useEffect(() => {
+        if (pageProps.enableEventsFeature !== undefined) {
+            setFeatureFlags({
+                enableEventsFeature: pageProps.enableEventsFeature
+            });
+        }
+    }, [pageProps.enableEventsFeature, setFeatureFlags]);
 
     GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);

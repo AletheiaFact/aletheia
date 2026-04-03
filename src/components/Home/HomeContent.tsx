@@ -8,8 +8,9 @@ import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
+import EventsGrid from "../Event/EventList/EventGrid";
 
-const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
+const HomeContent = ({ personalities, href, title, debateClaims, reviews, eventsData, enableEventsFeature }) => {
     const { results } = useAppSelector((state) => ({
         results: [
             state?.search?.searchResults?.personalities || [],
@@ -60,6 +61,16 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
                     />
                 </Grid>
 
+                {enableEventsFeature && eventsData && (
+                    <Grid item xs={11} sm={11} md={9}>
+                        <EventsGrid
+                            events={eventsData.events}
+                            eventMetrics={eventsData.eventMetrics}
+                            t={t}
+                            title={t("events:latestEvents")}
+                        />
+                    </Grid>
+                )}
 
                 <Grid item xs={11} sm={11} md={9} order={3}>
                     <CTAFolder />

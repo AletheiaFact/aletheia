@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import mongoose, {
     LeanDocument,
     Model,
@@ -29,10 +29,14 @@ import {
     IListAllQuery,
     ClaimReviewAggregated,
     ClaimReviewList,
+    listAllData,
 } from "./types/claim-review.interfaces";
+import { mapAggregateToRecord } from "../util/mongo-utils";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
+    private readonly logger = new Logger(ClaimReviewService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)
@@ -46,20 +50,70 @@ export class ClaimReviewService {
         private wikidata: WikidataService
     ) {}
 
-    async listAll({
-        page,
-        pageSize,
-        order,
-        query,
-        latest = false,
-    }: IlistAll): Promise<ClaimReviewList> {
-        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
+    async listAll(params: IlistAll): Promise<ClaimReviewList> {
+        const basePipeline = await this.createSharedPipeline(params.query, params.mainTopicId);
 
-        const match = {
+        const [total, data] = await Promise.all([
+            this.countReviews(basePipeline),
+            this.findReviews(basePipeline, params)
+        ]);
+
+        return { data, total };
+    }
+
+    async count(params: { query: IListAllQuery, topicId?: string }): Promise<number> {
+        const basePipeline = await this.createSharedPipeline(params.query, params.topicId);
+
+        return this.countReviews(basePipeline);
+    }
+
+    private async createSharedPipeline(query: IListAllQuery, topicId?: string): Promise<any[]> {
+        let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
         };
 
+        if (topicId) {
+            const [sentenceHashes, imageHashes] = await Promise.all([
+                this.sentenceService.getHashesByTopic(topicId),
+                this.imageService.getHashesByTopic(topicId)
+            ]);
+
+            const validHashes = [...sentenceHashes, ...imageHashes];
+
+            initialMatch.data_hash = { $in: validHashes };
+        }
+
+        return this.buildClaimReviewBasePipeline(initialMatch, query);
+    }
+
+    private async findReviews(basePipeline: any[], params: IlistAll): Promise<listAllData[]> {
+        const { page, pageSize, order, latest = false } = params;
+        const sort = latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 };
+
+        const pipeline = [
+            ...basePipeline,
+            { $sort: sort },
+            { $skip: page * pageSize },
+            { $limit: pageSize }
+        ];
+
+        const reviews = await this.ClaimReviewModel.aggregate(pipeline);
+        const data = await Promise.all(
+            reviews.map(async (review: ClaimReviewAggregated) => this.postProcess(review))
+        );
+
+        return data;
+    }
+
+    private async countReviews(basePipeline: any[]): Promise<number> {
+        const pipeline = [...basePipeline, { $count: "totalCount" }];
+
+        const countResult = await this.ClaimReviewModel.aggregate(pipeline);
+        return countResult[0]?.totalCount || 0;
+    }
+
+    private buildClaimReviewBasePipeline(match: any, query: IListAllQuery): any[] {
         const pipeline: any[] = [
             { $match: match },
             {
@@ -115,35 +169,7 @@ export class ClaimReviewService {
             });
         }
 
-        const countResult = await this.ClaimReviewModel.aggregate([
-            ...pipeline,
-            { $count: "totalCount" },
-        ]);
-        const total = countResult[0]?.totalCount || 0;
-
-        pipeline.push(
-            { $sort: sort },
-            { $skip: page * pageSize },
-            { $limit: pageSize }
-        );
-
-        const reviews = await this.ClaimReviewModel.aggregate(pipeline);
-        const data = await Promise.all(
-            reviews.map(async (review: ClaimReviewAggregated) =>
-                this.postProcess(review)
-            )
-        );
-
-        return { data, total };
-    }
-
-    async count(query: IListAllQuery = {}): Promise<number> {
-        const match = {
-            ...query,
-            targetModel: ReviewTaskTypeEnum.Claim,
-        };
-
-        return await this.ClaimReviewModel.countDocuments(match);
+        return pipeline;
     }
 
     async listDailyClaimReviews(query) {
@@ -503,5 +529,68 @@ export class ClaimReviewService {
             };
         }
         return personality;
+    }
+
+    /**
+     * Fetches the total count of claim reviews for multiple topics concurrently.
+     * Respects the complex base pipeline and lookup constraints by batching via data_hash.
+     * @param topicIds - Array of unique topic IDs.
+     * @param query - The base query filters (e.g., isHidden, isDeleted).
+     * @param topicToHashesMap - Um dicionário mapeando cada topicId para o seu array de hashes (Sentences + Images).
+     * @returns A dictionary mapping each topic ID to its respective review count.
+     */
+    async getBatchCountsByTopics(
+        topicIds: string[],
+        query: IListAllQuery,
+        topicToHashesMap: Record<string, string[]>
+    ): Promise<Record<string, number>> {
+        if (!topicIds || topicIds.length === 0) {
+            this.logger.debug("No topic IDs provided for batch claim review counts.");
+            return {};
+        }
+
+        try {
+            const allValidHashes = [...new Set(Object.values(topicToHashesMap).flat())];
+
+            if (allValidHashes.length === 0) {
+                this.logger.debug("No valid hashes found for the provided topics.");
+                return topicIds.reduce((acc, topicId) => ({ ...acc, [topicId]: 0 }), {});
+            }
+
+            const initialMatch = {
+                ...query,
+                targetModel: ReviewTaskTypeEnum.Claim,
+                data_hash: { $in: allValidHashes }
+            };
+
+            const basePipeline = this.buildClaimReviewBasePipeline(initialMatch, query);
+
+            const pipeline = [
+                ...basePipeline,
+                {
+                    $group: {
+                        _id: "$data_hash",
+                        count: { $sum: 1 }
+                    }
+                }
+            ];
+
+            const aggregatedCounts = await this.ClaimReviewModel.aggregate(pipeline);
+
+            const hashCountMap = mapAggregateToRecord<number>(aggregatedCounts, "count");
+
+            const result: Record<string, number> = {};
+
+            for (const topicId of topicIds) {
+                const hashesForThisTopic = topicToHashesMap[topicId] || [];
+                result[topicId] = hashesForThisTopic.reduce((sum, hash) => sum + (hashCountMap[hash] || 0), 0);
+            }
+
+            return result;
+        } catch (error) {
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            this.logger.error(`Failed to fetch batch claim review counts`, stackTrace);
+            throw error;
+        }
     }
 }

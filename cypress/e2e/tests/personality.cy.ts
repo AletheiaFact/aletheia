@@ -47,7 +47,7 @@ describe("Create personality and claim", () => {
             .should("be.visible")
             .type(claim.content);
 
-        cy.selectDatePickerDate(today)
+        cy.selectDatePickerDate(0, today)
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
@@ -77,7 +77,7 @@ describe("Create personality and claim", () => {
         cy.get(locators.claim.INPUT_TITLE)
             .should("be.visible")
             .type(claim.imageTitle);
-        cy.selectDatePickerDate(today)
+        cy.selectDatePickerDate(0, today)
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
             .type(claim.source);

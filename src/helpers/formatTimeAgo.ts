@@ -15,3 +15,17 @@ export function formatTimeAgo(date: Date | string, t: TFunction) {
 
   return new Date(date).toLocaleDateString("pt-BR");
 }
+
+export function formatMonthYear(dateString: Date | string, locale: string = "pt-BR"): string {
+    const date = new Date(dateString);
+    const month = date.toLocaleString(locale, { month: "long" });
+    const year = date.getFullYear();
+
+    const capitalizedMonth = `${month[0].toUpperCase()}${month.slice(1)}`;
+
+    if (locale === "pt-BR") {
+        return `${capitalizedMonth} de ${year}`;
+    }
+
+    return `${capitalizedMonth} ${year}`;
+}

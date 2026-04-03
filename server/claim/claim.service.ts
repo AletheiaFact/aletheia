@@ -27,11 +27,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -50,7 +50,7 @@ export class ClaimService {
         private claimRevisionService: ClaimRevisionService,
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
-        private groupService: GroupService
+        private groupService: GroupService,
     ) {}
 
     async listAll(page, pageSize, order, query) {
@@ -190,8 +190,7 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${
-                user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
             }`
         );
         try {

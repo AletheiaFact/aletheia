@@ -50,7 +50,7 @@ describe("Test verification request", () => {
                 cy.intercept("GET", "**/verification-request/**").as("getVerification");
 
                 cy.get(locators.verificationRequest.FORM_CONTENT).type(fullVerificationRequest.content);
-                cy.selectDatePickerDate(today);
+                cy.selectDatePickerDate(0, today);
                 cy.get(locators.verificationRequest.FORM_REPORT_TYPE).click();
                 cy.contains(fullVerificationRequest.reportType).click();
                 cy.get(locators.verificationRequest.FORM_IMPACT_AREA).type(fullVerificationRequest.impactArea, { delay: 200 });
@@ -85,7 +85,7 @@ describe("Test verification request", () => {
                     cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                     cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
                     cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-                    cy.selectDatePickerDate(getPastDay(1));
+                    cy.selectDatePickerDate(0, getPastDay(1));
                     saveVerificationRequest();
                     cy.url().should("match", regexVerificationRequestPage);
 
@@ -100,23 +100,23 @@ describe("Test verification request", () => {
                 goToVerificationRequest(fullRequestHash)
                 cy.intercept("PUT", "**/verification-request/*/topics").as("updateTopics");
 
-                cy.get(locators.verificationRequest.ADD_TOPIC_ICON).click();
-                cy.get(locators.verificationRequest.TYPE_TOPIC_INPUT).type(fullVerificationRequest.topic, { delay: 200 });
+                cy.get(locators.topic.ADD_TOPIC_ICON).click();
+                cy.get(locators.topic.TYPE_TOPIC_INPUT).type(fullVerificationRequest.topic, { delay: 200 });
                 cy.contains(fullVerificationRequest.topic).click();
-                cy.get(locators.verificationRequest.ADD_TOPIC_SUBMIT).click();
+                cy.get(locators.topic.ADD_TOPIC_SUBMIT).click();
 
                 cy.wait("@updateTopics").then((interception) => {
                     expect(interception.response.statusCode).to.be.oneOf([200, 201]);
                 });
 
-                cy.contains(locators.verificationRequest.DETAIL_TOPIC_TAG, fullVerificationRequest.topic.toUpperCase())
+                cy.contains(locators.topic.DETAIL_TOPIC_TAG, fullVerificationRequest.topic.toUpperCase())
                     .should("be.visible")
                     .within(() => {
-                        cy.get(locators.verificationRequest.REMOVE_TOPIC_ICON).click();
+                        cy.get(locators.topic.REMOVE_TOPIC_ICON).click();
                     });
 
 
-                cy.contains(locators.verificationRequest.DETAIL_TOPIC_TAG, fullVerificationRequest.topic.toUpperCase()).should("not.exist");
+                cy.contains(locators.topic.DETAIL_TOPIC_TAG, fullVerificationRequest.topic.toUpperCase()).should("not.exist");
             })
 
             it("should discard unsaved changes when the edition form is canceled", () => {
@@ -125,7 +125,7 @@ describe("Test verification request", () => {
                 cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ADD).click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_1).type(`https://${updatedSource}`);
-                cy.selectDatePickerDate(getPastDay(10));
+                cy.selectDatePickerDate(0, getPastDay(10));
                 cy.get(locators.verificationRequest.CANCEL_BUTTON).click();
 
                 cy.get(locators.verificationRequest.DETAIL_PUBLICATION_DATE).should("be.visible").and("not.contain", getPastDay(10).format("DD/MM/YYYY"));
@@ -141,7 +141,7 @@ describe("Test verification request", () => {
                 cy.intercept("GET", "**/verification-request/**").as("getVerification");
 
                 cy.get(locators.verificationRequest.FORM_CONTENT).type(minimumContent);
-                cy.selectDatePickerDate(today);
+                cy.selectDatePickerDate(0, today);
                 saveVerificationRequest();
                 cy.wait("@getVerification").then((interception) => {
                     getHashFromUrl(interception)
@@ -162,7 +162,7 @@ describe("Test verification request", () => {
 
                 cy.get(locators.verificationRequest.EDIT_BUTTON).should("be.visible").click();
                 cy.get(locators.verificationRequest.FORM_SOURCE_ITEM_0).type(`https://${fullVerificationRequest.source}`);
-                cy.selectDatePickerDate(getPastDay(1));
+                cy.selectDatePickerDate(0, getPastDay(1));
                 saveVerificationRequest();
                 cy.url().should("match", regexVerificationRequestPage);
 

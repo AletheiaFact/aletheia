@@ -67,6 +67,7 @@ export class VerificationRequestService {
         return this.VerificationRequestModel.find(query, { embedding: 0 })
             .populate("impactArea")
             .populate("topics")
+            .populate("identifiedData")
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
@@ -400,7 +401,7 @@ export class VerificationRequestService {
                                 await this.topicService.findOrCreateTopic(
                                     topicData
                                 );
-                            return (topic as any)._id;
+                            return topic._id;
                         })
                     );
 
@@ -417,7 +418,7 @@ export class VerificationRequestService {
                     const topic = await this.topicService.findOrCreateTopic(
                         result
                     );
-                    valueToUpdate = (topic as any)._id;
+                    valueToUpdate = topic._id;
                     this.logger.log(
                         `Impact area topic created/found with ID: ${valueToUpdate}`
                     );

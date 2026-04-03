@@ -4,13 +4,15 @@ import DynamicInput from "./DynamicInput";
 import React from "react";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
+import InfoTooltip from "../Claim/InfoTooltip";
+import { InfoOutlined } from "@mui/icons-material";
 
 const DynamicForm = ({
     currentForm,
     control,
     errors,
     machineValues = {},
-    disabledDate = {},
+    disabledFuture = true,
     submitErrors = [],
 }) => {
     const { t } = useTranslation();
@@ -58,6 +60,15 @@ const DynamicForm = ({
                                     </span>
                                 )}
                                 {t(label)}
+                                {fieldItem.hasTooltip ?
+                                    <InfoTooltip
+                                        content={t(`${label}Tooltip`)}
+                                        children={
+                                            <InfoOutlined style={{ height: 14, color: colors.neutralSecondary }} />
+                                        }
+                                        useCustomStyle={false}
+                                    /> : null
+                                }
                             </h4>
                         </Grid>
                         <Grid
@@ -88,7 +99,7 @@ const DynamicForm = ({
                                         defaultValue={defaultValue}
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
-                                        disabledDate={disabledDate}
+                                        disabledFuture={disabledFuture}
                                         disabled={fieldItem.disabled}
                                         hasError={hasError}
                                     />

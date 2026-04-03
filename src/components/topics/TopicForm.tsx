@@ -83,13 +83,13 @@ const TopicForm = ({
                             setIsLoading={setIsLoading}
                             isLoading={isLoading}
                             setSelectedTags={setSelectedTags}
-                            dataCy="testVerificationRequestTopicsInput"
+                            dataCy="testAddTopicsInput"
                         />
                     )}
                 />
                 <AletheiaButton
                     htmlType="submit"
-                    data-cy="testVerificationRequestAddTopicButton"
+                    data-cy="testAddTopicButton"
                     loading={isLoading}
                     style={{
                         height: 40,

@@ -55,7 +55,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
 
                     return (
                         <Chip
-                            data-cy={`testVerificationRequestTopicChip${index}`}
+                            data-cy={`testTopicChip${index}`}
                             label={
                                 typeof displayLabel === "string"
                                     ? displayLabel.toUpperCase()
@@ -75,7 +75,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             }
                             deleteIcon={
                                 <CloseOutlined
-                                    data-cy={`testVerificationRequestTopicRemoveButton${index}`}
+                                    data-cy={`testTopicRemoveButton${index}`}
                                     style={{
                                         fontSize: 15,
                                         color: colors.white,

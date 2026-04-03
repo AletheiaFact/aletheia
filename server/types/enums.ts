@@ -24,4 +24,11 @@ enum Environments {
     TEST_CI = "test.ci",
 }
 
-export { ContentModelEnum, Environments, ReportModelEnum, ReviewTaskTypeEnum };
+enum EventsStatus {
+    FINALIZED = "finalized",
+    UPCOMING = "upcoming",
+    HAPPENING = "happening",
+    ALL = "all"
+}
+
+export { ContentModelEnum, Environments, ReportModelEnum, ReviewTaskTypeEnum, EventsStatus };

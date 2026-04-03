@@ -14,6 +14,7 @@ interface FetchOptions {
     isHidden?: boolean;
     latest?: boolean;
     nameSpace?: NameSpaceEnum;
+    mainTopicId?: string;
 }
 
 const get = (options: FetchOptions = {}) => {
@@ -24,6 +25,7 @@ const get = (options: FetchOptions = {}) => {
         isHidden: options?.isHidden || false,
         latest: options?.latest,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
+        mainTopicId: options?.mainTopicId
     };
 
     return request
@@ -50,13 +52,13 @@ const updateClaimReviewHiddenStatus = (
     return request
         .put(`/review/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage("success",
                 t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
-           MessageManager.showMessage("error",
+            MessageManager.showMessage("error",
                 t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
             );
             throw err;
@@ -71,7 +73,7 @@ const deleteClaimReview = (id: string, t: any) => {
         })
         .catch((err) => {
             console.error(err);
-           MessageManager.showMessage("error",t("claim:deleteError"));
+            MessageManager.showMessage("error", t("claim:deleteError"));
         });
 };
 

@@ -2,12 +2,14 @@ import {
     BadRequestException,
     Inject,
     Injectable,
+    InternalServerErrorException,
+    Logger,
     NotFoundException,
     Scope,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
     TargetModel,
@@ -20,13 +22,15 @@ import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
+    private readonly logger = new Logger(ImageService.name);
+
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
         private historyService: HistoryService,
         private reportService: ReportService
-    ) {}
+    ) { }
 
     async create(image, claimRevisionId = null) {
         const imageSchema = {
@@ -89,5 +93,32 @@ export class ImageService {
         };
 
         return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
+    }
+
+    /**
+     * Searches for image data hashes associated with a specific topic.
+     * @param topicId - The topic identifier.
+     * @returns Array of image data hashes.
+     */
+    async getHashesByTopic(topicId: string): Promise<string[]> {
+        this.logger.debug(`Fetching image hashes for topic: ${topicId}`);
+        try {
+            const images = await this.ImageModel.find(
+                { "topics.id": { $eq: new Types.ObjectId(topicId) } },
+                { data_hash: 1 }
+            ).lean();
+
+            this.logger.debug(
+                `Successfully retrieved ${images.length} image hashes for topic: ${topicId}`
+            );
+
+            return images.map(image => image.data_hash);
+        } catch (error) {
+            this.logger.error(
+                `Failed to fetch image hashes for topic: ${topicId}`,
+                error.stack
+            );
+            throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
+        }
     }
 }

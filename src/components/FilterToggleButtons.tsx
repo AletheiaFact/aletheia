@@ -1,5 +1,6 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import colors from "../styles/colors";
+import { CSSProperties } from "react";
 
 export type ViewMode = "left" | "right";
 
@@ -8,10 +9,11 @@ type FilterToggleProps = {
     setViewMode: (mode: ViewMode) => void;
     leftOption: React.ReactNode;
     rightOption: React.ReactNode;
-    isRounded?: boolean
+    isRounded?: boolean;
+    style?: CSSProperties;
 }
 
-const FilterToggleButtons = ({ viewMode, setViewMode, leftOption, rightOption, isRounded }: FilterToggleProps) => {
+const FilterToggleButtons = ({ viewMode, setViewMode, leftOption, rightOption, isRounded, style }: FilterToggleProps) => {
     return (
         <ToggleButtonGroup
             value={viewMode}
@@ -45,14 +47,16 @@ const FilterToggleButtons = ({ viewMode, setViewMode, leftOption, rightOption, i
             <ToggleButton
                 value="left"
                 aria-label="board view"
-                style={{ borderRadius: isRounded ? "50px 0px 0px 50px " : "4px" }}
+                style={{ borderRadius: isRounded ? "50px 0px 0px 50px " : "4px", ...style }}
+                data-cy="testToggleButtonLeft"
             >
                 {leftOption}
             </ToggleButton>
             <ToggleButton
                 value="right"
                 aria-label="dashboard view"
-                style={{ borderRadius: isRounded ? "0px 50px 50px 0px " : "4px" }}
+                style={{ borderRadius: isRounded ? "0px 50px 50px 0px " : "4px", ...style }}
+                data-cy="testToggleButtonRight"
             >
                 {rightOption}
             </ToggleButton>
