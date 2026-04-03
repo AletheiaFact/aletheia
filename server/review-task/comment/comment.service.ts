@@ -40,11 +40,15 @@ export class CommentService {
             ? comment?.replies?.map((reply) => new Types.ObjectId(reply?._id))
             : existingComment.replies;
 
+        const { comment: commentText, text, resolved, type } = comment;
         const updatedComment = await this.CommentModel.findByIdAndUpdate(
             id,
             {
                 ...existingComment.toObject(),
-                ...comment,
+                ...(commentText !== undefined && { comment: commentText }),
+                ...(text !== undefined && { text }),
+                ...(resolved !== undefined && { resolved }),
+                ...(type !== undefined && { type }),
                 replies,
                 user: user._id,
             },
