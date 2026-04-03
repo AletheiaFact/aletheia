@@ -11,6 +11,7 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { GetUsersDTO } from "./dto/get-users.dto";
+import { escapeRegex } from "../util/regex.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UsersService {
@@ -36,7 +37,10 @@ export class UsersService {
 
         const matchCondition = canAssignUsers
             ? {
-                  name: { $regex: searchName || "", $options: "i" },
+                  name: {
+                      $regex: escapeRegex(searchName || ""),
+                      $options: "i",
+                  },
                   [`role.${nameSpaceSlug}`]: {
                       $nin: [...(filterOutRoles || []), null],
                   },
