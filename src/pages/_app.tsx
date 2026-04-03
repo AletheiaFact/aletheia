@@ -7,7 +7,9 @@ import { GlobalMessage } from "../components/Messages";
 import { SessionExpiredModal } from "../components/SessionExpiredModal";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
-import ErrorBoundary from "../components/ErrorBoundary";
+// ErrorBoundary is available but should be added at feature-level, not app-level,
+// to avoid catching errors that prevent modals (e.g. RecaptchaModal) from rendering
+// import ErrorBoundary from "../components/ErrorBoundary";
 import * as umamiConfig from "../lib/umami";
 import CookieConsent from "react-cookie-consent";
 import colors from "../styles/colors";
@@ -113,9 +115,7 @@ function MyApp({ Component, pageProps }) {
                                 cardType: "summary",
                             }}
                         />
-                        <ErrorBoundary>
-                            <Component {...pageProps} />
-                        </ErrorBoundary>
+                        <Component {...pageProps} />
                         <CookieConsent
                             location="bottom"
                             buttonText={t("cookieConsent:button")}
