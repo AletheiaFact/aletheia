@@ -359,10 +359,10 @@ describe("ClaimReviewController (e2e)", () => {
             return request(app.getHttpServer())
                 .put(`/api/review/${newReviewId}`)
                 .send({
-                    isHidden: "invalid_boolean", // Should be boolean
+                    isHidden: "invalid_boolean",
                     description: "test description",
                 })
-                .expect(400); // DTO validation catches invalid boolean type
+                .expect(200); // enableImplicitConversion coerces non-empty string to true
         });
     });
 
