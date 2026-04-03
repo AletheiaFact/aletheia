@@ -130,7 +130,7 @@
         "dompurify": "3.3.3",
         "express": "4.19.2",
         "express-session": "^1.17.2",
-        "handlebars": "^4.7.7",
+        "handlebars": "^4.7.9",
         "helmet": "^6.0.0",
         "i18next": "^21.6.10",
         "jotai": "^1.9.2",
