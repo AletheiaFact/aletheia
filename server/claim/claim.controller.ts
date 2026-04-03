@@ -49,6 +49,7 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { Types, UpdateWriteOpResult } from "mongoose";
 import { GroupService } from "../group/group.service";
 import { GetByDataHashDto } from "../claim/dto/get-by-datahash.dto";
+import { UpdateHiddenStatusDTO } from "./dto/update-hidden-status.dto";
 
 @Controller(":namespace?")
 export class ClaimController {
@@ -82,8 +83,7 @@ export class ClaimController {
         }
         if (query.personality && !query.isHidden) {
             inputs.personalities = new mongoose.Types.ObjectId(
-                // @ts-ignore
-                query.personality
+                query.personality as string
             );
         }
 
@@ -128,49 +128,41 @@ export class ClaimController {
     @ApiTags("claim")
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
-        try {
-            const claim = await this._createClaim(createClaimDTO);
-            const personality = await this.personalityService.getById(
-                claim.personalities[0]
-            );
-            const path = claim.slug
-                ? `/personality/${personality.slug}/claim/${claim.slug}`
-                : `/personality/${personality.slug}`;
-            return {
-                _id: claim._id,
-                title: claim.title,
-                path:
-                    claim.nameSpace !== NameSpaceEnum.Main
-                        ? `/${claim.nameSpace}${path}`
-                        : path,
-            };
-        } catch (error) {
-            return error;
-        }
+        const claim = await this._createClaim(createClaimDTO);
+        const personality = await this.personalityService.getById(
+            claim.personalities[0]
+        );
+        const path = claim.slug
+            ? `/personality/${personality.slug}/claim/${claim.slug}`
+            : `/personality/${personality.slug}`;
+        return {
+            _id: claim._id,
+            title: claim.title,
+            path:
+                claim.nameSpace !== NameSpaceEnum.Main
+                    ? `/${claim.nameSpace}${path}`
+                    : path,
+        };
     }
 
     @ApiTags("claim")
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
-        try {
-            const claim = await this._createClaim(createClaimDTO);
+        const claim = await this._createClaim(createClaimDTO);
 
-            const personality = claim.personalities[0]
-                ? await this.personalityService.getById(claim.personalities[0])
-                : null;
-            const path = personality
-                ? `/personality/${personality.slug}/claim/${claim.slug}`
-                : `/claim/${claim.slug}`;
-            return {
-                title: claim.title,
-                path:
-                    claim.nameSpace !== NameSpaceEnum.Main
-                        ? `/${claim.nameSpace}${path}`
-                        : path,
-            };
-        } catch (error) {
-            return error;
-        }
+        const personality = claim.personalities[0]
+            ? await this.personalityService.getById(claim.personalities[0])
+            : null;
+        const path = personality
+            ? `/personality/${personality.slug}/claim/${claim.slug}`
+            : `/claim/${claim.slug}`;
+        return {
+            title: claim.title,
+            path:
+                claim.nameSpace !== NameSpaceEnum.Main
+                    ? `/${claim.nameSpace}${path}`
+                    : path,
+        };
     }
 
     @ApiTags("claim")
@@ -179,43 +171,34 @@ export class ClaimController {
         @Body() createClaimDTO: CreateDebateClaimDTO,
         @Req() req: BaseRequest
     ) {
-        try {
-            const claim = await this._createClaim(createClaimDTO);
+        const claim = await this._createClaim(createClaimDTO);
 
-            const path =
-                req.user.role[claim.nameSpace] === Roles.Admin ||
-                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
-                    ? `/claim/${claim._id}/debate/edit`
-                    : `/claim/${claim._id}/debate`;
-            return {
-                title: claim.title,
-                path:
-                    claim.nameSpace !== NameSpaceEnum.Main
-                        ? `/${claim.nameSpace}${path}`
-                        : path,
-            };
-        } catch (error) {
-            return error;
-        }
+        const userRole = req.user?.role?.[claim.nameSpace];
+        const path =
+            userRole === Roles.Admin || userRole === Roles.SuperAdmin
+                ? `/claim/${claim._id}/debate/edit`
+                : `/claim/${claim._id}/debate`;
+        return {
+            title: claim.title,
+            path:
+                claim.nameSpace !== NameSpaceEnum.Main
+                    ? `/${claim.nameSpace}${path}`
+                    : path,
+        };
     }
 
-    @Public() // Allow this route to be public temporarily for testing
     @ApiTags("claim")
     @Post("api/claim/unattributed")
     async createUnattributedClaim(@Body() createClaimDTO) {
-        try {
-            const claim = await this._createClaim(createClaimDTO, true);
+        const claim = await this._createClaim(createClaimDTO, true);
 
-            return {
-                title: claim.title,
-                path:
-                    claim.nameSpace !== NameSpaceEnum.Main
-                        ? `/${claim.nameSpace}/claim/${claim.slug}`
-                        : `/claim/${claim.slug}`,
-            };
-        } catch (error) {
-            return error;
-        }
+        return {
+            title: claim.title,
+            path:
+                claim.nameSpace !== NameSpaceEnum.Main
+                    ? `/${claim.nameSpace}/claim/${claim.slug}`
+                    : `/claim/${claim.slug}`,
+        };
     }
 
     @ApiTags("claim")
@@ -278,8 +261,8 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/hidden/:id")
     async updateHiddenStatus(
-        @Param("id") claimId,
-        @Body() body
+        @Param("id") claimId: string,
+        @Body() body: UpdateHiddenStatusDTO
     ): Promise<UpdateWriteOpResult> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
@@ -540,12 +523,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                {
-                    slug: query.personality,
-                    isDeleted: false,
-                },
-                req.language
-            )
+                  {
+                      slug: query.personality,
+                      isDeleted: false,
+                  },
+                  req.language
+              )
             : null;
 
         const queryObject = Object.assign(parsedUrl.query, {

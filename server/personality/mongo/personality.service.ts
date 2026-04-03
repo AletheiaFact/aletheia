@@ -24,6 +24,7 @@ import {
     IFindAllOptions,
     IFindAllResult,
 } from "../../interfaces/personality.interface";
+import { escapeRegex } from "../../util/regex.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoPersonalityService {
@@ -41,7 +42,7 @@ export class MongoPersonalityService {
         private readonly claimReview: ClaimReviewService,
         private readonly historyService: HistoryService,
         private readonly wikidata: WikidataService,
-        private readonly util: UtilService,
+        private readonly util: UtilService
     ) {}
 
     async getWikidataEntities(regex: string, language: string) {
@@ -561,8 +562,10 @@ export class MongoPersonalityService {
     verifyInputsQuery(query) {
         const queryInputs: any = {};
         if (query.name) {
-            // @ts-ignore
-            queryInputs.name = { $regex: query.name, $options: "i" };
+            (queryInputs as Record<string, unknown>).name = {
+                $regex: escapeRegex(query.name),
+                $options: "i",
+            };
         }
         queryInputs.isHidden = query?.isHidden || false;
         queryInputs.isDeleted = false;

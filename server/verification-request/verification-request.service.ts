@@ -1,4 +1,5 @@
 import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
+import { escapeRegex } from "../util/regex.util";
 import { SourceService } from "../source/source.service";
 import {
     VerificationRequest,
@@ -85,7 +86,9 @@ export class VerificationRequestService {
         return this.VerificationRequestModel.find(
             {
                 content: {
-                    $regex: verifiedRequestQuery.searchContent || "",
+                    $regex: escapeRegex(
+                        verifiedRequestQuery.searchContent || ""
+                    ),
                     $options: "i",
                 },
             },
@@ -1029,7 +1032,7 @@ export class VerificationRequestService {
 
         if (contentFilters?.length) {
             const contentConditions = contentFilters.map((filter) => ({
-                content: { $regex: filter, $options: "i" },
+                content: { $regex: escapeRegex(filter), $options: "i" },
             }));
             orConditions.push(...contentConditions);
         }

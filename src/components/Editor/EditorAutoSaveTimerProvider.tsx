@@ -23,11 +23,12 @@ export const EditorAutoSaveTimerProvider = ({ reference, children }) => {
 
     return (
         <CallbackTimerProvider
-            //@ts-ignore
-            initialValues={[
-                [callbackTimerInitialConfig, timerConfig],
-                [currentNameSpace, nameSpace],
-            ]}
+            initialValues={
+                [
+                    [callbackTimerInitialConfig, timerConfig],
+                    [currentNameSpace, nameSpace],
+                ] as Iterable<readonly [unknown, unknown]>
+            }
         >
             {children}
         </CallbackTimerProvider>

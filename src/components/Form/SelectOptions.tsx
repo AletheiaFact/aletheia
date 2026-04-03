@@ -46,7 +46,7 @@ function SelectOptions({
     const { t } = useTranslation();
 
     const getOptions = useMemo(() => {
-        return (value: string) => {
+        return (_event: unknown, value: string) => {
             setOptions([]);
             setFetching(true);
             const canAssignUsers = !(

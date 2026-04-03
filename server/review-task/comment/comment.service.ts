@@ -26,8 +26,8 @@ export class CommentService {
     }
 
     async updateManyComments(comments) {
-        return await comments.forEach((comment) =>
-            this.update(comment?._id, comment)
+        await Promise.all(
+            comments.map((comment) => this.update(comment?._id, comment))
         );
     }
 
@@ -40,11 +40,15 @@ export class CommentService {
             ? comment?.replies?.map((reply) => new Types.ObjectId(reply?._id))
             : existingComment.replies;
 
+        const { comment: commentText, text, resolved, type } = comment;
         const updatedComment = await this.CommentModel.findByIdAndUpdate(
             id,
             {
                 ...existingComment.toObject(),
-                ...comment,
+                ...(commentText !== undefined && { comment: commentText }),
+                ...(text !== undefined && { text }),
+                ...(resolved !== undefined && { resolved }),
+                ...(type !== undefined && { type }),
                 replies,
                 user: user._id,
             },
@@ -78,8 +82,7 @@ export class CommentService {
         const comment = await this.CommentModel.findById(id);
 
         const replies = comment.replies.filter((reply) => {
-            //@ts-ignore
-            return !Types.ObjectId(reply?._id).equals(replyId);
+            return !new Types.ObjectId(reply?._id).equals(replyId);
         });
 
         await this.CommentModel.updateOne(
