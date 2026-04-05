@@ -14,6 +14,7 @@ import actions from "../../store/actions";
 
 import Fab from "./Fab";
 import StartReviewAlertModal from "../Modal/StartReviewAlertModal";
+import { CompoundStates, ReviewTaskStates } from "../../machines/reviewTask/enums";
 
 const AffixCopilotButton = () => {
     const { t } = useTranslation();
@@ -34,14 +35,14 @@ const AffixCopilotButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const currentStateValue = typeof currentState === "object" ? currentState?.assigned : currentState;
-    const isCopilotAvailable = ["undraft", "reported", "unassigned"].includes(currentStateValue);
+    const isCopilotAvailable = [CompoundStates.undraft, ReviewTaskStates.reported, ReviewTaskStates.unassigned].includes(currentStateValue);
     const isUserInReview = reviewData.usersId?.includes(userId) ?? false;
 
-    const hasAccess = (isUserInReview || currentState === "unassigned") && userRole !== Roles.Regular;
+    const hasAccess = (isUserInReview || currentState === ReviewTaskStates.unassigned) && userRole !== Roles.Regular;
     const shouldRender = hasAccess && copilotDrawerCollapsed && isCopilotAvailable;
 
     const handleClick = () => {
-        if (currentState === "unassigned") {
+        if (currentState === ReviewTaskStates.unassigned) {
             setIsModalOpen(true);
         } else {
             dispatch(actions.openCopilotDrawer());
