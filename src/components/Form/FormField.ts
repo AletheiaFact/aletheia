@@ -17,6 +17,7 @@ export type FormField = {
     defaultValue: string | [];
     extraProps?: FormFieldExtraProps;
     disabled?: boolean;
+    hasTooltip?: boolean;
 };
 
 // Use to add properties specific to one type of field
@@ -40,6 +41,8 @@ interface CreateFormFieldProps extends Partial<FormField> {
     required?: boolean;
     isURLField?: boolean;
     disabled?: boolean;
+    hasTooltip?: boolean;
+    mustBeAfterField?: string;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -53,6 +56,8 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         required = true,
         isURLField = false,
         disabled = false,
+        hasTooltip = false,
+        mustBeAfterField,
     } = props;
 
     return {
@@ -62,6 +67,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
         defaultValue,
         disabled,
+        hasTooltip,
         ...props,
         rules: {
             required: !disabled && required && "common:requiredFieldError",
@@ -69,16 +75,25 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
             validate: {
                 ...(!disabled &&
                     required && {
-                        notBlank: (v) =>
-                            validateBlank(v) || "common:requiredFieldError",
-                    }),
+                    notBlank: (v) =>
+                        validateBlank(v) || "common:requiredFieldError",
+                }),
                 ...(!disabled &&
                     isURLField && {
-                        validURL: (v) =>
-                            !v ||
-                            URL_PATTERN.test(v) ||
-                            "sourceForm:errorMessageValidURL",
-                    }),
+                    validURL: (v) =>
+                        !v ||
+                        URL_PATTERN.test(v) ||
+                        "sourceForm:errorMessageValidURL",
+                }),
+                ...(!disabled && mustBeAfterField && {
+                    afterDate: (value, formValues) => {
+                        const otherValue = formValues[mustBeAfterField];
+                        if (!value || !otherValue) return true;
+                        const isAfterOrSame = dayjs(value).isAfter(dayjs(otherValue)) || dayjs(value).isSame(dayjs(otherValue));
+
+                        return isAfterOrSame || "common:endDateMustBeAfterStartDate";
+                    }
+                }),
                 ...rules?.validate,
             },
         },
@@ -116,7 +131,7 @@ const fieldValidation = (value, validationFunction) => {
     }
 
     if (dayjs.isDayjs(value)) {
-        return dayjs(value).isValid() && dayjs(value).isBefore(dayjs());
+        return dayjs(value).isValid()
     }
 
     if (
@@ -138,6 +153,10 @@ const fieldValidation = (value, validationFunction) => {
     if (Array.isArray(value)) {
         return value.every((v) => validationFunction(v));
     }
+    if (typeof value === "object" && value !== null && "value" in value) {
+        return validationFunction(value.value);
+    }
+
     return false;
 };
 

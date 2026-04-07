@@ -12,6 +12,7 @@ import { useTranslation } from "next-i18next";
 import AletheiaButton from "./Button";
 import { MessageManager } from "../components/Messages";
 import { UnifiedDefaultValue } from "./Form/DynamicInput";
+import { sanitizeUrl } from "../utils/ValidateFloatingLink";
 
 export interface UploadFile {
     uid: string;
@@ -149,7 +150,7 @@ const ImageUpload = ({
         <Grid item xs={12}>
             <Box display="flex" flexDirection="column" alignItems="flex-start">
                 {fileList.map((file) => {
-                    const imageSrc = file.preview || file.url;
+                    const imageSrc = sanitizeUrl(file.preview || file.url);
                     return (
                         <Box
                             key={file.uid}
@@ -224,7 +225,7 @@ const ImageUpload = ({
                         <img
                             alt={`preview of ${previewTitle}`}
                             style={{ maxWidth: "100%", maxHeight: "80vh" }}
-                            src={previewImage}
+                            src={sanitizeUrl(previewImage)}
                         />
                     )}
                 </Box>

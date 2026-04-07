@@ -14,7 +14,6 @@ import SourceInput from "../../Source/SourceInput";
 interface BaseClaimFormProps {
     content?: React.ReactNode;
     handleSubmit: (values: any) => void;
-    disableFutureDates?: boolean;
     isLoading: boolean;
     disclaimer?: string;
     dateExtraText: string;
@@ -38,7 +37,6 @@ interface BaseClaimFormProps {
 const BaseClaimForm = ({
     content,
     handleSubmit,
-    disableFutureDates,
     isLoading,
     disclaimer,
     dateExtraText,
@@ -56,10 +54,6 @@ const BaseClaimForm = ({
     const { t } = useTranslation();
     const router = useRouter();
     const [disableSubmit, setDisableSubmit] = useState(true);
-
-    const disabledDate = (current) => {
-        return disableFutureDates && current && current > moment().endOf("day");
-    };
 
     const onChangeCaptcha = (captchaString) => {
         setRecaptcha(captchaString);
@@ -127,8 +121,7 @@ const BaseClaimForm = ({
                         setDate(value);
                         clearError("date");
                     }}
-                    data-cy={"testSelectDate"}
-                    disabledDate={disabledDate}
+                    dataCy="testSelectDate"
                 />
                 {errors?.date && (
                     <FormHelperText className="require-label">

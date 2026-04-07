@@ -1,8 +1,14 @@
 import React from "react";
 import GridList from "../GridList";
 import ReviewCard from "./ReviewCard";
+import { Review } from "../../types/Review";
 
-const ReviewsGrid = ({ reviews, title }) => {
+type ReviewsGridProps = {
+    reviews: Review[];
+    title: React.ReactNode;
+}
+
+const ReviewsGrid = ({ reviews, title, }: ReviewsGridProps) => {
     return (
         <GridList
             title={title}

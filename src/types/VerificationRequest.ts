@@ -1,9 +1,10 @@
 import { Group } from "./Group";
 import { Source } from "../../server/source/schemas/source.schema";
 import { ActionTypes } from "../store/types";
-import { Topic } from "./Topic";
+import { Topic, ManualTopic } from "./Topic";
 import { UnifiedDefaultValue } from "../components/Form/DynamicInput";
 import { ViewMode } from "../components/FilterToggleButtons";
+import { Personality } from "./Personality";
 
 export enum FilterType {
   TOPIC = "topic",
@@ -38,11 +39,15 @@ interface VerificationRequest {
   group: Group;
   date: Date;
   source?: Source[] | string[];
+  sourceChannel: string;
   _id?: string;
   publicationDate: string;
   heardFrom: string;
   reportType?: string;
   impactArea?: Topic;
+  status: string;
+  topics: Topic[];
+  identifiedData: Personality[];
 };
 interface FiltersState {
   loading: Record<verificationRequestStatus, boolean>;
@@ -143,8 +148,8 @@ interface IDynamicVerificationRequestForm {
     setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
     hasCaptcha: boolean;
     isEdit: boolean;
-    isDrawerOpen: boolean;
-    onClose: () => void;
+    isDrawerOpen?: boolean;
+    onClose?: () => void;
 }
 
 export type {

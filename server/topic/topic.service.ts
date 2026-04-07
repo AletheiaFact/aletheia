@@ -5,6 +5,7 @@ import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ContentModelEnum } from "../types/enums";
+import { TopicData } from "../topic/types/topic.interfaces";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 
@@ -94,12 +95,12 @@ export class TopicService {
         }: {
             contentModel?: ContentModelEnum;
             topics:
-                | { label: string; value: string; aliases?: string[] }[]
-                | string[]
-                | (
-                      | string
-                      | { label: string; value: string; aliases?: string[] }
-                  )[];
+            | { label: string; value: string; aliases?: string[] }[]
+            | string[]
+            | (
+                | string
+                | { label: string; value: string; aliases?: string[] }
+            )[];
             data_hash?: string;
         },
         language: string = "pt"
@@ -116,10 +117,10 @@ export class TopicService {
                     if (findedTopic) {
                         return findedTopic?.wikidataId
                             ? {
-                                  id: findedTopic._id,
-                                  label: findedTopic?.name,
-                                  value: findedTopic?.wikidataId,
-                              }
+                                id: findedTopic._id,
+                                label: findedTopic?.name,
+                                value: findedTopic?.wikidataId,
+                            }
                             : findedTopic.slug;
                     } else {
                         const newTopic = {
@@ -217,12 +218,7 @@ export class TopicService {
      * @param topicData object with { slug?, name, wikidataId?, language?, description? }
      * @returns the existing or newly created topic document
      */
-    async findOrCreateTopic(topicData: {
-        name: string;
-        wikidataId?: string;
-        language?: string;
-        description?: string; // Future use
-    }): Promise<Topic> {
+    async findOrCreateTopic(topicData: TopicData): Promise<TopicDocument> {
         try {
             const slug = slugify(topicData.name, { lower: true, strict: true });
 
@@ -236,7 +232,7 @@ export class TopicService {
                 name: topicData.name,
                 slug,
                 language: topicData.language || "pt",
-                wikidataId: topicData.wikidataId || undefined,
+                wikidataId: topicData.wikidataId || topicData.value || undefined,
             };
 
             const createdTopic = await new this.TopicModel(newTopic).save();

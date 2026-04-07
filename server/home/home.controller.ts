@@ -19,6 +19,9 @@ import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { EventsService } from "../events/event.service";
+import { EventsStatus } from "../types/enums";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller("/")
 export class HomeController {
@@ -29,7 +32,9 @@ export class HomeController {
         private statsService: StatsService,
         private debateService: DebateService,
         private claimRevisionService: ClaimRevisionService,
-        private claimReviewService: ClaimReviewService
+        private claimReviewService: ClaimReviewService,
+        private readonly eventsService: EventsService,
+        private featureFlagService: FeatureFlagService,
     ) {}
 
     @ApiTags("pages")
@@ -45,6 +50,8 @@ export class HomeController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const isEventsEnabled = this.featureFlagService.isEnableEventsFeature();
+
         const reviews = await this.claimReviewService.listAll({
             page: 0,
             pageSize: 6,
@@ -56,6 +63,17 @@ export class HomeController {
             },
             latest: true,
         });
+
+        let eventsData = null;
+
+        if (isEventsEnabled) {
+            eventsData = await this.eventsService.findAll({
+                page: 0,
+                pageSize: 6,
+                order: "desc",
+                status: EventsStatus.FINALIZED
+            });
+        }
 
         const { personalities } = await this.personalityService.combinedListAll(
             {
@@ -105,6 +123,8 @@ export class HomeController {
             stats,
             claims,
             reviews: reviews.data,
+            eventsData: eventsData,
+            enableEventsFeature: isEventsEnabled,
             nameSpace: req.params.namespace || NameSpaceEnum.Main,
         });
 

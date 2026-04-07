@@ -11,7 +11,6 @@ const ClaimCreate = () => {
     return (
         <BaseClaimForm
             handleSubmit={handleSubmit}
-            disableFutureDates
             isLoading={isLoading}
             disclaimer={t("claimForm:disclaimer")}
             dateExtraText={t("claimForm:dateFieldHelp")}

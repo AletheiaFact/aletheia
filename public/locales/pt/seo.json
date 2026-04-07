@@ -16,6 +16,8 @@
     "createSourceDescription": "Adiciona uma fonte na AletheiaFact.org",
     "verificationRequestTitle": "Denúncias",
     "verificationRequestDescription": "Veja as denúncias na AletheiaFact.org",
-    "createVerificationRequestTitle": "Adicione uma denuncia",
-    "createVerificationRequestDescription": "Adiciona uma denúncia na AletheiaFact.org"
+    "createVerificationRequestTitle": "Adicione uma denúncia",
+    "createVerificationRequestDescription": "Adiciona uma denúncia na AletheiaFact.org",
+    "createEventTitle": "Adicione um evento",
+    "createEventDescription": "Adicione um evento na AletheiaFact.org"
 }
