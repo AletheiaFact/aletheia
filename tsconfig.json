@@ -26,17 +26,24 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
   },
   "include": [
-    "server/**/*",
-    "lib/**/*",
     "config/**/*",
+    "lib/**/*",
+    "server/**/*",
+    "./dist/.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "docs",
-    "server/**/*.spec.ts",
+    "server/**/*.spec.ts"
   ]
 }
