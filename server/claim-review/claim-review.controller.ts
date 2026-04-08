@@ -19,6 +19,7 @@ import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { listAllResponse } from "./types/claim-review.interfaces";
 import { UpdateClaimReviewDTO } from "./dto/update-claim-review.dto";
+import { UpdateWriteOpResult } from "mongoose";
 
 @Controller()
 export class ClaimReviewController {
@@ -73,7 +74,7 @@ export class ClaimReviewController {
     async update(
         @Param("id") reviewId: string,
         @Body() body: UpdateClaimReviewDTO
-    ): Promise<unknown> {
+    ): Promise<UpdateWriteOpResult> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
