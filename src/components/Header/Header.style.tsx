@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 import { Grid, Menu } from "@mui/material";
 import colors from "../../styles/colors";
-import { NameSpaceEnum } from "../../types/Namespace";
 
 const HeaderGridStyle = styled(Grid)`
   display: flex;
@@ -86,12 +85,6 @@ const HeaderGridStyle = styled(Grid)`
     padding: 0;
   }
 
-  @media ${queries.md} {
-    .headerNav {
-      display: none;
-    }
-  }
-
   @media ${queries.xs} {
     justify-content: space-between;
 
@@ -119,7 +112,14 @@ const StyledMenu = styled(Menu)`
   }
 
   .menu-item-container {
-    padding: 0 8px;
+    display: flex;
+    width: 100%;
+    padding: 0px 8px;
+    cursor: pointer;
+  }
+
+  .menu-item-container:hover {
+    background-color: ${colors.lightNeutral};
   }
 
   .menu-item-content {

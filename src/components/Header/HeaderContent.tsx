@@ -1,23 +1,37 @@
 import React from "react";
 import Logo from "./Logo";
-import { NameSpaceEnum } from "../../types/Namespace";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
-import { Link } from "@mui/material";
-import HeaderNav from "./HeaderNav";
+import { Grid, Link } from "@mui/material";
 import HeaderActions from "./HeaderActions";
 import { HeaderGridStyle } from "./Header.style";
+import HeaderNavLinks from "./HeaderNavLinks";
+import HeaderInstitutionMenu from "./HeaderInstitutionMenu";
+import UserMenu from "./UserMenu";
+import { useHeaderData } from "./useHeaderData";
+import { useAppSelector } from "../../store/store";
 
 const HeaderContent = () => {
-    const [nameSpace] = useAtom(currentNameSpace);
-    const baseHref = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+    const { state, actions } = useHeaderData();
+    const { baseHref } = state;
+    const { t } = actions;
+    const { vw } = useAppSelector((state) => state);
 
     return (
         <HeaderGridStyle container>
-            <Link href={baseHref} className="headerLogo">
+            <Link
+                href={`${baseHref}/`}
+                className="headerLogo">
                 <Logo />
             </Link>
-            <HeaderNav />
+            {!vw?.md && (
+                <Grid item className="headerNav">
+                    <HeaderNavLinks
+                        t={t}
+                        baseHref={baseHref}
+                    />
+                    <HeaderInstitutionMenu />
+                    <UserMenu />
+                </Grid>
+            )}
             <HeaderActions />
         </HeaderGridStyle>
     );

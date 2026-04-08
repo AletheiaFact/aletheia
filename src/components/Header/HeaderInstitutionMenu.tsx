@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { MenuItem, Button, Divider, Box, Typography } from "@mui/material";
+import React from "react";
+import { Button, Divider, Box, Typography, Link } from "@mui/material";
 
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -9,18 +7,14 @@ import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import BalanceOutlinedIcon from "@mui/icons-material/BalanceOutlined";
 import { StyledMenu } from "./Header.style";
+import { useHeaderData } from "./useHeaderData";
 
 const HeaderInstitutionMenu = () => {
-    const { t } = useTranslation();
-    const router = useRouter();
-    const [institutionAnchor, setInstitutionAnchor] = useState<null | HTMLElement>(null);
+    const { state, actions } = useHeaderData();
+    const { anchorEl } = state;
+    const { t, setAnchorEl } = actions;
 
-    const handleNavigate = (path: string) => {
-        setInstitutionAnchor(null);
-        router.push(path);
-    };
-
-    const menuSections = [
+    const menuInstitutionSections = [
         {
             title: "platform",
             items: [
@@ -57,42 +51,65 @@ const HeaderInstitutionMenu = () => {
         <>
             <Button
                 className="navLink"
-                onClick={(event) => setInstitutionAnchor(event.currentTarget)}
+                onClick={(event) => setAnchorEl(event.currentTarget)}
                 endIcon={<KeyboardArrowDown fontSize="inherit" />}
                 aria-haspopup="true"
-                aria-expanded={Boolean(institutionAnchor)}
+                aria-expanded={Boolean(anchorEl)}
+                data-cy="testInstitutionalItem"
             >
                 {t("menu:institutionalItem")}
             </Button>
 
             <StyledMenu
-                anchorEl={institutionAnchor}
-                open={Boolean(institutionAnchor)}
-                onClose={() => setInstitutionAnchor(null)}
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 transformOrigin={{ vertical: "top", horizontal: "center" }}
             >
-                {menuSections.map((section, index) => (
-                    <React.Fragment key={section.title}>
-                        {index > 0 && <Divider className="menu-divider" />}
+                {menuInstitutionSections.flatMap((section, index) => {
+                    const sectionElements = [];
 
-                        <Box className="section-header">{t(`menu:${section.title}Section`)}</Box>
+                    if (index > 0) {
+                        sectionElements.push(
+                            <Divider key={`divider-${section.title}`} className="menu-divider" />
+                        );
+                    }
 
-                        {section.items.map((item) => (
-                            <MenuItem key={item.path} onClick={() => handleNavigate(item.path)} className="menu-item-container">
+                    sectionElements.push(
+                        <Box key={`header-${section.title}`} className="section-header">
+                            {t(`menu:${section.title}Section`)}
+                        </Box>
+                    );
+
+                    section.items.forEach((item) => {
+                        sectionElements.push(
+                            <Link
+                                key={item.key}
+                                href={item.path}
+                                className="menu-item-container"
+                                underline="none"
+                                data-cy={`test${item.key}`}
+                            >
                                 <Box className="menu-item-content">
                                     <Box className="icon-wrapper">
                                         {item.icon}
                                     </Box>
                                     <Box className="text-wrapper">
-                                        <Typography variant="h2" className="item-title">{t(`menu:${item.key}Title`)}</Typography>
-                                        <Typography variant="body1" className="item-subtitle">{t(`menu:${item.key}Subtitle`)}</Typography>
+                                        <Typography variant="h2" className="item-title">
+                                            {t(`menu:${item.key}Title`)}
+                                        </Typography>
+                                        <Typography variant="body1" className="item-subtitle">
+                                            {t(`menu:${item.key}Subtitle`)}
+                                        </Typography>
                                     </Box>
                                 </Box>
-                            </MenuItem>
-                        ))}
-                    </React.Fragment>
-                ))}
+                            </Link>
+                        );
+                    });
+
+                    return sectionElements;
+                })}
             </StyledMenu>
         </>
     );
