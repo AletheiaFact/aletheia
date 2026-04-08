@@ -147,7 +147,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             </Grid>
             {nameSpace === NameSpaceEnum.Main ?
                 <Grid item xs={10} mt={2}>
-                    <Label>{t("menu:nameSpaceItem")}</Label>
+                    <Label>{t("header:nameSpaceItem")}</Label>
                     <Autocomplete
                         disabled={!shouldEdit}
                         multiple
@@ -172,7 +172,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 : null
             }
             <Grid item xs={10} mt={2}>
-                <Label>{t("menu:badgesItem")}</Label>
+                <Label>{t("header:badgesItem")}</Label>
                 <Autocomplete
                     disabled={!shouldEdit}
                     multiple

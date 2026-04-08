@@ -98,7 +98,7 @@ const StyledMenu = styled(Menu)`
   & .MuiPaper-root {
     border-radius: 8px;
     box-shadow: 0px 4px 20px ${colors.shadow};
-    min-width: 280px;
+    width: 280px;
   }
 
   .section-header {
@@ -149,6 +149,7 @@ const StyledMenu = styled(Menu)`
   .text-wrapper {
     display: flex;
     flex-direction: column;
+    gap: 4px;
   }
 
   .item-title {

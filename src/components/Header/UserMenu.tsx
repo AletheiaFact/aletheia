@@ -20,7 +20,7 @@ const UserMenu = () => {
                 aria-haspopup="true"
                 aria-expanded={Boolean(anchorEl)}
             >
-                {t("menu:myAccountItem")}
+                {t("header:myAccountItem")}
             </Button >
 
             <StyledMenu

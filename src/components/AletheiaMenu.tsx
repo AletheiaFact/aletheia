@@ -51,7 +51,7 @@ const AletheiaMenu = () => {
                 })}
                 data-cy={"testPersonalitytItem"}
             >
-                {t("menu:personalityItem")}
+                {t("header:personalityItem")}
             </ListItemButton>
             <ListItemButton
                 onClick={() => handleClick({
@@ -62,7 +62,7 @@ const AletheiaMenu = () => {
                 })}
                 data-cy={"testClaimtItem"}
             >
-                {t("menu:claimItem")}
+                {t("header:claimItem")}
             </ListItemButton>
 
             {/*Temporarily removing source redirect from the hamburger menu.*/}
@@ -75,7 +75,7 @@ const AletheiaMenu = () => {
                 })}
                 data-cy={"testSourcetItem"}
             >
-                {t("menu:sourcesItem")}
+                {t("header:sourcesItem")}
             </ListItemButton> */}
 
             <ListItemButton
@@ -87,7 +87,7 @@ const AletheiaMenu = () => {
                 })}
                 data-cy={"testVerificationRequestItem"}
             >
-                {t("menu:verificationRequestItem")}
+                {t("header:verificationRequestItem")}
             </ListItemButton>
 
             {enableEventsFeature && (
@@ -100,7 +100,7 @@ const AletheiaMenu = () => {
                     })}
                     data-cy={"testEventItem"}
                 >
-                    {t("menu:eventItem")}
+                    {t("header:eventItem")}
                 </ListItemButton>
             )}
 
@@ -114,7 +114,7 @@ const AletheiaMenu = () => {
                     })}
                     data-cy={"testKanbantItem"}
                 >
-                    {t("menu:kanbanItem")}
+                    {t("header:kanbanItem")}
                 </ListItemButton>
             )}
             {isAdmin(role) && (
@@ -128,7 +128,7 @@ const AletheiaMenu = () => {
                                     : "/admin"
                         })}
                     >
-                        {t("menu:adminItem")}
+                        {t("header:adminItem")}
                     </ListItemButton>
                     <ListItemButton
                         data-cy={"testadminBadgeItem"}
@@ -139,7 +139,7 @@ const AletheiaMenu = () => {
                                     : "/admin/badges"
                         })}
                     >
-                        {t("menu:Badges")}
+                        {t("header:Badges")}
                     </ListItemButton>
                     <ListItemButton
                         data-cy={"testadminNameSpaceItem"}
@@ -147,7 +147,7 @@ const AletheiaMenu = () => {
                             key: "/admin/name-spaces"
                         })}
                     >
-                        {t("menu:nameSpaceItem")}
+                        {t("header:nameSpaceItem")}
                     </ListItemButton>
                 </>
             )}
@@ -157,7 +157,7 @@ const AletheiaMenu = () => {
                     key: "/about",
                 })}
             >
-                {t("menu:aboutItem")}
+                {t("header:aboutItemTitle")}
             </ListItemButton>
             <ListItemButton
                 data-cy={"testPrivacyPolicyItem"}
@@ -165,7 +165,7 @@ const AletheiaMenu = () => {
                     key: "/privacy-policy",
                 })}
             >
-                {t("menu:privacyPolicyItem")}
+                {t("header:privacyPolicyItemTitle")}
             </ListItemButton>
             <ListItemButton
                 data-cy={"testCodeOfConductItem"}
@@ -173,7 +173,7 @@ const AletheiaMenu = () => {
                     key: "/code-of-conduct",
                 })}
             >
-                {t("menu:codeOfConductItem")}
+                {t("header:codeOfConductItemTitle")}
             </ListItemButton>
             <ListItemButton
                 data-cy={"testSupportiveMaterialsItem"}
@@ -181,7 +181,7 @@ const AletheiaMenu = () => {
                     key: "/supportive-materials",
                 })}
             >
-                {t("menu:supportiveMaterials")}
+                {t("header:supportiveMaterialsItemTitle")}
             </ListItemButton>
 
             {localConfig.header.donateButton.show

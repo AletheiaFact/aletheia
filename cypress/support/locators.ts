@@ -172,10 +172,13 @@ const locators = {
     },
 
     header: {
-        PERSONALITY_ITEM: "[data-cy=testPersonalityNavLink]",
-        CLAIM_ITEM: "[data-cy=testClaimNavLink]",
         SOURCE_ITEM: "[data-cy=testSourceNavLink]",
         VERIFICATION_REQUEST_ITEM: "[data-cy=testVerificationRequestNavLink]",
+        EVENT_ITEM: "[data-cy=testEventNavLink]",
+
+        OPEN_REPOSITORY_MENU: "[data-cy=testRepositoryItem]",
+        PERSONALITY_ITEM: "[data-cy=testpersonalityItem]",
+        CLAIM_ITEM: "[data-cy=testclaimItem]",
 
         OPEN_INSTITUTION_MENU: "[data-cy=testInstitutionalItem]",
         ABOUT_ITEM: "[data-cy=testaboutItem]",

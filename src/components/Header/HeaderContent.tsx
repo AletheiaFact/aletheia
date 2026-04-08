@@ -8,6 +8,7 @@ import HeaderInstitutionMenu from "./HeaderInstitutionMenu";
 import UserMenu from "./UserMenu";
 import { useHeaderData } from "./useHeaderData";
 import { useAppSelector } from "../../store/store";
+import HeaderRepositoryMenu from "./HeaderRepositoryMenu";
 
 const HeaderContent = () => {
     const { state, actions } = useHeaderData();
@@ -24,11 +25,12 @@ const HeaderContent = () => {
             </Link>
             {!vw?.md && (
                 <Grid item className="headerNav">
+                    <HeaderInstitutionMenu />
+                    <HeaderRepositoryMenu />
                     <HeaderNavLinks
                         t={t}
                         baseHref={baseHref}
                     />
-                    <HeaderInstitutionMenu />
                     <UserMenu />
                 </Grid>
             )}

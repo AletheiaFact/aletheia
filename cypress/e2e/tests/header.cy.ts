@@ -9,25 +9,36 @@ describe("Header - Navigation and Menus", () => {
     });
 
     describe("Public Navigation (Direct Links)", () => {
-        it("Should navigate to Personality page", () => {
-            cy.get(locators.header.PERSONALITY_ITEM).click();
-            cy.url().should("contain", "/personality");
-        });
-
-        it("Should navigate to Claim page", () => {
-            cy.get(locators.header.CLAIM_ITEM).click();
-            cy.url().should("contain", "/claim");
-        });
-
         it("Should navigate to Verification Request page", () => {
             cy.get(locators.header.VERIFICATION_REQUEST_ITEM).click();
             cy.url().should("contain", "/verification-request");
+        });
+
+        it("Should navigate to Event page", () => {
+            cy.get(locators.header.EVENT_ITEM).click();
+            cy.url().should("contain", "/event");
         });
 
         //functionality temporarily removed
         it.skip("Should navigate to Source page", () => {
             cy.get(locators.header.SOURCE_ITEM).click();
             cy.url().should("contain", "/source");
+        });
+    });
+
+    describe("Repository Menu (Dropdown)", () => {
+        beforeEach(() => {
+            cy.get(locators.header.OPEN_REPOSITORY_MENU).click();
+        });
+
+        it("Should navigate to Personality page via repository Menu", () => {
+            cy.get(locators.header.PERSONALITY_ITEM).click();
+            cy.url().should("contain", "/personality");
+        });
+
+        it("Should navigate to Claim page via repository Menu", () => {
+            cy.get(locators.header.CLAIM_ITEM).click();
+            cy.url().should("contain", "/claim");
         });
     });
 

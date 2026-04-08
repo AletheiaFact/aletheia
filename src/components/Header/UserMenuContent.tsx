@@ -32,7 +32,7 @@ const UserMenuContent = () => {
         if (section.title !== "account") {
             menuElements.push(
                 <Box key={`header-${section.title}`} className="section-header">
-                    {t(`menu:${section.title}Section`)}
+                    {t(`header:${section.title}Section`)}
                 </Box>
             );
         }
@@ -67,7 +67,7 @@ const UserMenuContent = () => {
                                 className="item-title"
                                 style={item.isDestructive ? { color: `${colors.error}` } : {}}
                             >
-                                {t(item.key === "signUp" ? "login:signup" : `menu:${item.key}Item`)}
+                                {t(item.key === "signUp" ? "login:signup" : `header:${item.key}Item`)}
                             </Typography>
                         </Box>
                     </Box>
