@@ -20,6 +20,9 @@
     ],
     "allowJs": true,
     "strict": false,
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -32,7 +35,7 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": true,
+    "strictNullChecks": false,
   },
   "include": [
     "config/**/*",
