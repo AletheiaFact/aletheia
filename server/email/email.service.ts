@@ -5,6 +5,10 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * @deprecated This service is unused. Email is handled by NotificationService via Novu.
+ * Scheduled for removal.
+ */
 @Injectable()
 export class EmailService {
     private readonly logger = new Logger("EmailService");
