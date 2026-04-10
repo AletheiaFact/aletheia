@@ -90,20 +90,23 @@ export default defineConfig({
                     globalSetup: "./server/tests/globalSetup.ts",
                     teardownTimeout: 10000,
                     testTimeout: 30000,
-                    // TODO(vitest-phase2): E2E tests run sequentially (singleFork
-                    // + fileParallelism: false) because the test files share
-                    // mongo collections without isolating per-file state. This
-                    // is slower than necessary. Improve test isolation by:
+                    // TODO(vitest-phase2): E2E tests run sequentially
+                    // (fileParallelism: false + maxWorkers: 1) because the
+                    // test files share mongo collections without isolating
+                    // per-file state. This is slower than necessary. Improve
+                    // test isolation by:
                     // 1) Using a unique DB name per worker, or
                     // 2) Adding stronger CleanupDatabase calls between suites,
                     // then re-enable parallel execution for ~3-5x speedup.
+                    //
+                    // Note: Vitest 4 removed `poolOptions.forks.singleFork`.
+                    // The replacement is `fileParallelism: false` plus
+                    // `maxWorkers: 1` (and `minWorkers: 1`) to force a single
+                    // worker process running files sequentially.
                     pool: "forks",
-                    poolOptions: {
-                        forks: {
-                            singleFork: true,
-                        },
-                    },
                     fileParallelism: false,
+                    maxWorkers: 1,
+                    minWorkers: 1,
                 },
             },
         ],
