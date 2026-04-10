@@ -1,19 +1,19 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ParserService } from "./parser.service";
+import { ParserService } from "../claim/parser/parser.service";
 import * as fs from "fs";
-import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
+import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { Types } from "mongoose";
-import { AppModule } from "../../app.module";
-import { SessionGuard } from "../../auth/session.guard";
-import { SessionGuardMock } from "../../tests/mocks/SessionGuardMock";
-import { SessionOrM2MGuard } from "../../auth/m2m-or-session.guard";
-import { SessionOrM2MGuardMock } from "../../tests/mocks/SessionOrM2MGuardMock";
-import { M2MGuard } from "../../auth/m2m.guard";
-import { M2MGuardMock } from "../../tests/mocks/M2MGuardMock";
-import { CleanupDatabase } from "../../tests/utils/CleanupDatabase";
+import { AppModule } from "../app.module";
+import { SessionGuard } from "../auth/session.guard";
+import { SessionGuardMock } from "./mocks/SessionGuardMock";
+import { SessionOrM2MGuard } from "../auth/m2m-or-session.guard";
+import { SessionOrM2MGuardMock } from "./mocks/SessionOrM2MGuardMock";
+import { M2MGuard } from "../auth/m2m.guard";
+import { M2MGuardMock } from "./mocks/M2MGuardMock";
+import { CleanupDatabase } from "./utils/CleanupDatabase";
 
 /**
- * ParserService Unit Test Suite
+ * ParserService Integration Test Suite (e2e)
  *
  * Tests the claim text parsing service that converts unstructured text into
  * structured speech components (paragraphs and sentences) for fact-checking analysis.
@@ -33,25 +33,20 @@ import { CleanupDatabase } from "../../tests/utils/CleanupDatabase";
  * 1. Raw claim text → paragraph splitting → sentence tokenization
  * 2. Speech object creation → paragraph/sentence entities → database persistence
  * 3. Population of nested relationships for complete object graph
+ *
+ * NOTE: This file lives in `server/tests/` and is part of the e2e Vitest project
+ * because it bootstraps the full AppModule and requires a real MongoDB instance
+ * (provided by the e2e project's globalSetup + per-worker-setup). It was moved
+ * here from `server/claim/parser/parser.service.spec.ts` during the Vitest
+ * Phase 2 cleanup, where it was misclassified as a unit test.
  */
-// TODO(vitest-migration): This file is currently picked up by the `unit`
-// Vitest project (because it lives outside server/tests/ and matches *.spec.ts)
-// but it bootstraps the full AppModule and requires a real MongoDB instance
-// reachable via process.env.MONGO_URI. Under Vitest's separated projects, the
-// unit project does not run globalSetup, so this only passes when:
-//   (a) the combined `yarn test` runs (e2e globalSetup leaks into unit), or
-//   (b) a real MongoDB is running locally / in CI.
-// Move this to server/tests/parser.service.e2e.spec.ts (or similar) so that
-// it lives in the e2e project where the mongodb-memory-server globalSetup
-// runs deterministically. This is technically an integration test, not a unit
-// test, and was misclassified by the original Jest setup.
 describe("ParserService", () => {
     let parserService: ParserService;
     let moduleFixture: TestingModule;
     const claimRevisionIdMock = new Types.ObjectId();
 
     beforeAll(async () => {
-        // Use shared MongoDB instance from global setup
+        // Use the per-worker MongoDB instance set up by per-worker-setup.ts
         const mongoUri = process.env.MONGO_URI!;
 
         // Update the test config with the actual MongoDB URI
@@ -292,5 +287,8 @@ describe("ParserService", () => {
 
     afterAll(async () => {
         await CleanupDatabase(process.env.MONGO_URI!);
+        if (moduleFixture) {
+            await moduleFixture.close();
+        }
     });
 });

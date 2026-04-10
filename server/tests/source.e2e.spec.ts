@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -20,7 +20,6 @@ import { SeedTestClaim } from "./utils/SeedTestClaim";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 const { ObjectId } = require("mongodb");
 
-jest.setTimeout(10000);
 
 /**
  * SourceController E2E Test Suite
@@ -366,7 +365,7 @@ describe("SourceController (e2e)", () => {
     });
 
     afterAll(async () => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
         await app.close();
         await CleanupDatabase(process.env.MONGO_URI!);
     });

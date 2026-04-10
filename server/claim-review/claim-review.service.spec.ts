@@ -22,24 +22,24 @@ describe("ClaimReviewService (Unit)", () => {
     };
 
     const mockClaimReviewModel: any = {
-        aggregate: jest.fn(),
-        find: jest.fn(),
-        findOne: jest.fn(),
-        create: jest.fn(),
-        findByIdAndUpdate: jest.fn(),
+        aggregate: vi.fn(),
+        find: vi.fn(),
+        findOne: vi.fn(),
+        create: vi.fn(),
+        findByIdAndUpdate: vi.fn(),
     };
 
     const mockHistoryService = {
-        createHistory: jest.fn(),
+        createHistory: vi.fn(),
     };
 
     const mockUtilService = {
-        formatStats: jest.fn().mockImplementation((stats) => stats),
+        formatStats: vi.fn().mockImplementation((stats) => stats),
     };
 
     const mockSentenceService = {
-        getHashesByTopic: jest.fn().mockResolvedValue(["hash-s1", "hash-s2"]),
-        getByDataHash: jest.fn().mockResolvedValue({
+        getHashesByTopic: vi.fn().mockResolvedValue(["hash-s1", "hash-s2"]),
+        getByDataHash: vi.fn().mockResolvedValue({
             _id: "sentence-1",
             data_hash: "hash-1",
             content: "Test sentence",
@@ -48,15 +48,15 @@ describe("ClaimReviewService (Unit)", () => {
     };
 
     const mockImageService = {
-        getHashesByTopic: jest.fn().mockResolvedValue(["hash-i1"]),
-        getByDataHash: jest.fn().mockResolvedValue(null),
+        getHashesByTopic: vi.fn().mockResolvedValue(["hash-i1"]),
+        getByDataHash: vi.fn().mockResolvedValue(null),
     };
 
     const mockEditorParseService = {
-        schema: { text: jest.fn() },
+        schema: { text: vi.fn() },
     };
     const mockWikidataService = {
-        fetchProperties: jest.fn().mockResolvedValue({
+        fetchProperties: vi.fn().mockResolvedValue({
             description: "Test description",
             image: "test.jpg",
         }),
@@ -87,7 +87,7 @@ describe("ClaimReviewService (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("listAll", () => {
@@ -189,17 +189,17 @@ describe("ClaimReviewService (Unit)", () => {
                 {
                     data_hash: "hash-1",
                     report: { classification: "true" },
-                    toObject: jest.fn().mockReturnThis(),
+                    toObject: vi.fn().mockReturnThis(),
                 },
                 {
                     data_hash: "hash-1",
                     report: { classification: "true" },
-                    toObject: jest.fn().mockReturnThis(),
+                    toObject: vi.fn().mockReturnThis(),
                 },
                 {
                     data_hash: "hash-1",
                     report: { classification: "false" },
-                    toObject: jest.fn().mockReturnThis(),
+                    toObject: vi.fn().mockReturnThis(),
                 },
             ];
 
@@ -244,7 +244,7 @@ describe("ClaimReviewService (Unit)", () => {
         it("should find all reviews for a claim using lean query", async () => {
             const mockReviews = [{ _id: "r1" }, { _id: "r2" }];
             mockClaimReviewModel.find.mockReturnValue({
-                lean: jest.fn().mockResolvedValue(mockReviews),
+                lean: vi.fn().mockResolvedValue(mockReviews),
             });
 
             const result =

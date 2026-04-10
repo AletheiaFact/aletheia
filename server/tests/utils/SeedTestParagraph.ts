@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { ParagraphMock } from "./ParagraphMock";
+import { getTestDbName } from "./getTestDbName";
 
 export const SeedTestParagraph = async (uri, sentenceId) => {
     const client = await new MongoClient(uri);
@@ -7,7 +8,7 @@ export const SeedTestParagraph = async (uri, sentenceId) => {
 
     try {
         return await client
-            .db("test")
+            .db(getTestDbName(uri))
             .collection("paragraphs")
             .insertOne(ParagraphMock(sentenceId));
     } finally {

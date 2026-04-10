@@ -12,8 +12,8 @@ describe("AbilitiesGuard", () => {
 
     const createMockContext = (user: any = null, namespace = "main"): ExecutionContext => {
         return {
-            getHandler: jest.fn(),
-            getClass: jest.fn(),
+            getHandler: vi.fn(),
+            getClass: vi.fn(),
             switchToHttp: () => ({
                 getRequest: () => ({
                     user,
@@ -35,12 +35,12 @@ describe("AbilitiesGuard", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should return false when no user is present on request", async () => {
         const context = createMockContext(null);
-        jest.spyOn(reflector, "get").mockReturnValue([]);
+        vi.spyOn(reflector, "get").mockReturnValue([]);
 
         const result = await guard.canActivate(context);
         expect(result).toBe(false);
@@ -52,7 +52,7 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.Regular };
 
         const context = createMockContext(user);
-        jest.spyOn(reflector, "get").mockReturnValue([]);
+        vi.spyOn(reflector, "get").mockReturnValue([]);
 
         const result = await guard.canActivate(context);
         expect(result).toBe(true);
@@ -64,7 +64,7 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.Admin };
 
         const context = createMockContext(user);
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Manage, subject: User },
         ]);
 
@@ -78,7 +78,7 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.Regular };
 
         const context = createMockContext(user);
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Manage, subject: User },
         ]);
 
@@ -93,7 +93,7 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.FactChecker };
 
         const context = createMockContext(user);
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Create, subject: User },
         ]);
 
@@ -107,7 +107,7 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.Regular };
 
         const context = createMockContext(user);
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Create, subject: User },
         ]);
 
@@ -123,7 +123,7 @@ describe("AbilitiesGuard", () => {
         (user.role as any)["custom-ns"] = Roles.Admin;
 
         const context = createMockContext(user, "custom-ns");
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Manage, subject: User },
         ]);
 
@@ -137,8 +137,8 @@ describe("AbilitiesGuard", () => {
         user.role = { main: Roles.Admin };
 
         const context = {
-            getHandler: jest.fn(),
-            getClass: jest.fn(),
+            getHandler: vi.fn(),
+            getClass: vi.fn(),
             switchToHttp: () => ({
                 getRequest: () => ({
                     user,
@@ -148,7 +148,7 @@ describe("AbilitiesGuard", () => {
             }),
         } as unknown as ExecutionContext;
 
-        jest.spyOn(reflector, "get").mockReturnValue([
+        vi.spyOn(reflector, "get").mockReturnValue([
             { action: Action.Manage, subject: User },
         ]);
 

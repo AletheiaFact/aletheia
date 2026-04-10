@@ -11,18 +11,10 @@ import {
 } from "../mocks/AuthMock";
 import { Roles } from "./ability/ability.factory";
 
-// TODO(vitest-migration): This file uses vi.* APIs directly (not jest.*)
-// because:
-//   1. Vitest's hoister only recognizes `vi.mock()` (not `jest.mock()` even
-//      with the global alias), so the jest.mock() pattern from the original
-//      Jest version did not get hoisted above imports.
-//   2. Variables referenced inside vi.mock() factories must be declared via
-//      vi.hoisted() so they exist when the hoisted mock runs.
-//   3. Vitest 4 strictly requires constructor mock implementations to use
-//      `function` (not arrow functions) so `new` works.
-// After Phase 2 (Jest removal), all test files in the codebase should be
-// migrated to use vi.* directly to remove the global jest=vi shim entirely.
-// Mock @ory/client module - use vi.hoisted for variables used in vi.mock factory
+// Mock @ory/client. Variables referenced inside a vi.mock() factory must be
+// declared via vi.hoisted() because vi.mock() is hoisted above all imports
+// during the Vitest transform pipeline. Constructor mocks must use `function`
+// (not arrow functions) so `new Configuration(...)` works under Vitest 4.
 const {
     mockToSession,
     mockCreateBrowserLogoutFlow,
@@ -58,17 +50,17 @@ describe("SessionGuard", () => {
         isPublic = false,
         url = "/api/test"
     ) => {
-        const mockRedirect = jest.fn();
+        const mockRedirect = vi.fn();
         const request: any = {
-            header: jest.fn().mockReturnValue(cookie),
+            header: vi.fn().mockReturnValue(cookie),
             url,
             params: {},
         };
         const response = { redirect: mockRedirect };
-        const handler = jest.fn();
+        const handler = vi.fn();
         const context = {
-            getHandler: jest.fn().mockReturnValue(handler),
-            getClass: jest.fn(),
+            getHandler: vi.fn().mockReturnValue(handler),
+            getClass: vi.fn(),
             switchToHttp: () => ({
                 getRequest: () => request,
                 getResponse: () => response,
@@ -94,7 +86,7 @@ describe("SessionGuard", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         // Re-apply default config mock after clearAllMocks
         configService.get.mockImplementation((key: string) => {
             const config = {

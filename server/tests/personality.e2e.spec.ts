@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -16,7 +16,6 @@ import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 
-jest.setTimeout(10000);
 
 /**
  * PersonalityController E2E Test Suite
@@ -100,25 +99,6 @@ describe("PersonalityController (e2e)", () => {
      * - Response structure includes personalities property
      * - Pagination and language query parameters are accepted
      */
-    // TODO(test-isolation): This assertion ("personalities should be empty")
-    // depends on global database state — it assumes no other E2E test file
-    // has created personalities in the shared mongodb-memory-server. That
-    // assumption is the reason the e2e Vitest project is forced to run
-    // sequentially (maxWorkers: 1, fileParallelism: false) in vitest.config.ts.
-    //
-    // Proper fix (separate follow-up PR):
-    //   1) Make globalSetup.ts assign a unique database name per worker
-    //      (e.g., `test-${process.env.VITEST_POOL_ID}`), so each worker has
-    //      its own clean DB. Re-enable parallel e2e execution afterward
-    //      (~3-5x speedup). OR
-    //   2) Rewrite this assertion to be test-scoped — query for the
-    //      personality created by THIS test instead of asserting on the
-    //      total collection size.
-    //
-    // The same issue affects other "should be empty" / "list all" assertions
-    // across the e2e suite (claim.e2e.spec.ts, source.e2e.spec.ts, etc.).
-    // This was a latent bug in the original Jest setup that the Vitest
-    // migration surfaced — it didn't introduce it.
     it("/api/personality (GET) - personalities should be empty", () => {
         return request(app.getHttpServer())
             .get("/api/personality")

@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AppModule } from "../app.module";
 import { SessionGuard } from "../auth/session.guard";
@@ -26,7 +26,6 @@ import { ValidationPipe } from "@nestjs/common";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 const { ObjectId } = require("mongodb");
 
-jest.setTimeout(10000);
 
 /**
  * ClaimReviewController E2E Test Suite

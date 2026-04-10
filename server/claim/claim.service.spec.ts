@@ -22,20 +22,20 @@ describe("ClaimService (Unit)", () => {
     };
 
     const mockClaimModel: any = {
-        find: jest.fn(),
-        findById: jest.fn(),
-        findOne: jest.fn(),
-        countDocuments: jest.fn(),
-        softDelete: jest.fn(),
-        aggregate: jest.fn(),
+        find: vi.fn(),
+        findById: vi.fn(),
+        findOne: vi.fn(),
+        countDocuments: vi.fn(),
+        softDelete: vi.fn(),
+        aggregate: vi.fn(),
     };
 
     // Make mockClaimModel callable as constructor while keeping same reference
-    const ClaimModelConstructor: any = jest.fn().mockImplementation((data) => ({
+    const ClaimModelConstructor: any = vi.fn().mockImplementation((data) => ({
         ...data,
         _id: new Types.ObjectId(),
-        save: jest.fn().mockResolvedValue(data),
-        toObject: jest.fn().mockReturnValue(data),
+        save: vi.fn().mockResolvedValue(data),
+        toObject: vi.fn().mockReturnValue(data),
     }));
     // Assign model methods directly so mutations are shared
     Object.keys(mockClaimModel).forEach((key) => {
@@ -47,15 +47,15 @@ describe("ClaimService (Unit)", () => {
     });
 
     const mockClaimReviewService = {
-        getReviewClassificationCountsByClaimId: jest.fn().mockResolvedValue([]),
-        getReviewStatsByClaimId: jest.fn().mockResolvedValue({}),
+        getReviewClassificationCountsByClaimId: vi.fn().mockResolvedValue([]),
+        getReviewStatsByClaimId: vi.fn().mockResolvedValue({}),
     };
 
     const mockClaimRevisionService = {
-        create: jest.fn().mockResolvedValue({
+        create: vi.fn().mockResolvedValue({
             _id: "revision-123",
             slug: "test-claim",
-            toObject: jest.fn().mockReturnValue({
+            toObject: vi.fn().mockReturnValue({
                 _id: "revision-123",
                 slug: "test-claim",
             }),
@@ -63,26 +63,26 @@ describe("ClaimService (Unit)", () => {
     };
 
     const mockHistoryService = {
-        getHistoryParams: jest.fn().mockReturnValue({}),
-        createHistory: jest.fn().mockResolvedValue({}),
+        getHistoryParams: vi.fn().mockReturnValue({}),
+        createHistory: vi.fn().mockResolvedValue({}),
     };
 
     const mockStateEventService = {
-        getStateEventParams: jest.fn().mockReturnValue({}),
-        createStateEvent: jest.fn(),
+        getStateEventParams: vi.fn().mockReturnValue({}),
+        createStateEvent: vi.fn(),
     };
 
     const mockReviewTaskService = {
-        getReviewTasksByClaimId: jest.fn().mockResolvedValue([]),
+        getReviewTasksByClaimId: vi.fn().mockResolvedValue([]),
     };
 
     const mockUtilService = {
-        formatStats: jest.fn().mockImplementation((stats) => stats),
-        getParamsBasedOnUserRole: jest.fn().mockImplementation((params) => params),
+        formatStats: vi.fn().mockImplementation((stats) => stats),
+        getParamsBasedOnUserRole: vi.fn().mockImplementation((params) => params),
     };
 
     const mockGroupService = {
-        updateWithTargetId: jest.fn(),
+        updateWithTargetId: vi.fn(),
     };
 
     beforeAll(async () => {
@@ -114,7 +114,7 @@ describe("ClaimService (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("count", () => {
@@ -154,11 +154,11 @@ describe("ClaimService (Unit)", () => {
                 },
             ];
 
-            const lean = jest.fn().mockResolvedValue(mockClaims);
-            const sort = jest.fn().mockReturnValue({ lean });
-            const limit = jest.fn().mockReturnValue({ sort });
-            const skip = jest.fn().mockReturnValue({ limit });
-            const populate = jest.fn().mockReturnValue({ skip });
+            const lean = vi.fn().mockResolvedValue(mockClaims);
+            const sort = vi.fn().mockReturnValue({ lean });
+            const limit = vi.fn().mockReturnValue({ sort });
+            const skip = vi.fn().mockReturnValue({ limit });
+            const populate = vi.fn().mockReturnValue({ skip });
 
             mockClaimModel.find.mockReturnValue({ populate });
             mockClaimModel.countDocuments.mockResolvedValue(1);
@@ -182,12 +182,12 @@ describe("ClaimService (Unit)", () => {
     describe("delete", () => {
         const setupFindOneMock = (result: any) => {
             const chain: any = {
-                populate: jest.fn().mockReturnThis(),
-                lean: jest.fn().mockResolvedValue(result),
-                select: jest.fn().mockReturnThis(),
+                populate: vi.fn().mockReturnThis(),
+                lean: vi.fn().mockResolvedValue(result),
+                select: vi.fn().mockReturnThis(),
             };
             chain.populate.mockReturnValue(chain);
-            mockClaimModel.findOne = jest.fn().mockReturnValue(chain);
+            mockClaimModel.findOne = vi.fn().mockReturnValue(chain);
             return chain;
         };
 

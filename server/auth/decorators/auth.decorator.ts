@@ -2,14 +2,6 @@ import { UseGuards, applyDecorators, SetMetadata } from "@nestjs/common";
 import { SessionOrM2MGuard } from "../m2m-or-session.guard";
 import { AbilitiesGuard } from "../ability/abilities.guard";
 import { M2MOrAbilitiesGuard } from "./m2m-or-abilities.decorator";
-// TODO(vitest-migration): The ability classes (AdminUserAbility,
-// FactCheckerUserAbility, RegularUserAbility) used to be loaded via
-// `require("../ability/ability.decorator")` inside each shorthand decorator
-// factory below to avoid a perceived circular dependency. The static import
-// works fine and is required for Vitest (which does not register a require
-// hook for .ts files like ts-jest does). If a real circular import surfaces
-// in the future, prefer extracting the ability classes into their own module
-// rather than going back to dynamic require().
 import {
     RequiredRule,
     CHECK_ABILITY,
