@@ -1,61 +1,89 @@
 /// <reference types="cypress" />
 
 import React from "react";
-import { mount } from "cypress/react";
+import { mount } from "cypress/react18";
 import BackButton from "../../src/components/BackButton";
+import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
+
+const createMockRouter = (overrides = {}) => ({
+    pathname: "/test-page",
+    route: "/test-page",
+    query: {},
+    asPath: "/test-page",
+    push: cy.stub(),
+    replace: cy.stub(),
+    prefetch: cy.stub().resolves(),
+    back: cy.stub(),
+    events: {
+        on: cy.stub(),
+        off: cy.stub(),
+        emit: cy.stub(),
+    },
+    isReady: true,
+    basePath: "",
+    isLocaleDomain: false,
+    ...overrides,
+});
+
+const mountWithRouter = (component: React.ReactNode, routerOverrides = {}) => {
+    const router = createMockRouter(routerOverrides);
+
+    return mount(
+        <RouterContext.Provider value={router}>
+            {component}
+        </RouterContext.Provider>
+    ).then(() => router);
+};
 
 describe("BackButton Component", () => {
     describe("should not render on home page or root path", () => {
-        const mockRouter = (pathname: string) => {
-            cy.stub(require("next/router"), "useRouter").returns({
-                pathname,
-                route: pathname,
-                query: {},
-                asPath: pathname,
-                push: cy.stub(),
-                replace: cy.stub(),
-                prefetch: cy.stub().resolves(),
+
+        beforeEach(() => {
+            cy.stub(require("next-i18next"), "useTranslation").returns({
+                t: (key: string) => key,
             });
-        };
+        });
 
         it("should render and handle callback", () => {
             const callbackSpy = cy.spy().as("callbackSpy");
 
-            mount(<BackButton callback={callbackSpy} isVisible={true} />);
+            mountWithRouter(
+                <BackButton callback={callbackSpy} isVisible={true} />
+            );
 
-            cy.get('[data-cy="testBackButton"]').should("be.visible").click();
+            cy.get('[data-cy="testBackButton"]')
+                .should("be.visible")
+                .click();
+
             cy.get("@callbackSpy").should("have.been.calledOnce");
         });
 
         it("should call router.back when no callback is provided", () => {
-            const routerBackSpy = cy.spy().as("routerBackSpy");
-
-            cy.stub(require("next/router"), "useRouter").returns({
-                pathname: "/another-page",
-                back: routerBackSpy,
+            mountWithRouter(<BackButton isVisible={true} />).then((router) => {
+                cy.get('[data-cy="testBackButton"]').click();
+                cy.wrap(router.back).should("have.been.calledOnce");
             });
-
-            mount(<BackButton isVisible={true} />);
-
-            cy.get('[data-cy="testBackButton"]').click();
-            cy.get("@routerBackSpy").should("have.been.calledOnce");
         });
 
         it("should not render when isVisible is false", () => {
-            mount(<BackButton isVisible={false} />);
+            mountWithRouter(<BackButton isVisible={false} />);
 
             cy.get('[data-cy="testBackButton"]').should("not.exist");
         });
 
         it("should not render on the root path", () => {
-            mockRouter("/");
-            mount(<BackButton isVisible={true} />);
+            mountWithRouter(<BackButton isVisible={true} />, {
+                pathname: "/",
+            });
+
             cy.get('[data-cy="testBackButton"]').should("not.exist");
         });
 
         it("should not render on the home page path", () => {
-            mockRouter("/home-page");
-            mount(<BackButton isVisible={true} />);
+            mountWithRouter(<BackButton isVisible={true} />, {
+                pathname: "/home-page",
+            });
+
             cy.get('[data-cy="testBackButton"]').should("not.exist");
         });
     });
