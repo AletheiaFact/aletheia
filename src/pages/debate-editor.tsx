@@ -15,14 +15,11 @@ const Editor = dynamic<IEditorProps>(
     }
 );
 
-const DebateEditor: NextPage<{ data: string }> = ({
-    claim,
-    sitekey,
-    nameSpace,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const DebateEditor: NextPage<
+    InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ claim, sitekey, nameSpace }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
-    // @ts-ignore
     return <Editor claim={claim} sitekey={sitekey} />;
 };
 

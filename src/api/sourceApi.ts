@@ -1,6 +1,8 @@
 import { MessageManager } from "../components/Messages";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { SourceType } from "../types/Source";
+import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
 
 const request = axios.create({
     withCredentials: true,
@@ -15,7 +17,9 @@ type optionsType = {
     i18n: { languages: string[] };
     nameSpace?: string;
 };
-const getByTargetId = (options: optionsType) => {
+const getByTargetId = (
+    options: optionsType
+): Promise<PaginatedResponse<SourceType> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -38,7 +42,9 @@ const getByTargetId = (options: optionsType) => {
         });
 };
 
-const get = (options: optionsType) => {
+const get = (
+    options: optionsType
+): Promise<PaginatedResponse<SourceType> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -63,12 +69,19 @@ const get = (options: optionsType) => {
         });
 };
 
-const createSource = (t, router, source: any = {}) => {
+const createSource = (
+    t: TranslationFn,
+    router: { push: (path: string) => void },
+    source: Record<string, unknown> = {}
+): Promise<SourceType | void> => {
     const { nameSpace = NameSpaceEnum.Main } = source;
     return request
         .post("/", source)
         .then((response) => {
-            MessageManager.showMessage("success", t("sources:sourcesCreateSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("sources:sourcesCreateSuccess")
+            );
             router.push(
                 nameSpace === NameSpaceEnum.Main
                     ? "/sources"
@@ -78,18 +91,28 @@ const createSource = (t, router, source: any = {}) => {
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error", t("sources:sourcesCreateError"));
+            MessageManager.showMessage(
+                "error",
+                t("sources:sourcesCreateError")
+            );
         });
 };
 
-const getById = (id, t, params = {}) => {
+const getById = (
+    id: string,
+    t: TranslationFn,
+    params = {}
+): Promise<SourceType | void> => {
     return request
         .get(`/${id}`, { params })
         .then((response) => {
             return response.data;
         })
         .catch(() => {
-            MessageManager.showMessage("error", t("sources:sourcesErrorFetching")); 
+            MessageManager.showMessage(
+                "error",
+                t("sources:sourcesErrorFetching")
+            );
         });
 };
 

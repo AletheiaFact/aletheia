@@ -119,8 +119,6 @@ export class PersonalityController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
         });

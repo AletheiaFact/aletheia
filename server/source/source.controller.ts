@@ -59,17 +59,18 @@ export class SourceController {
         const { targetId } = params;
         const { page, order } = getSources;
         const pageSize = parseInt(getSources.pageSize, 10);
-        return this.sourceService
-            .getByTargetId(targetId, page, pageSize, order)
-            .then((sources) => {
-                const totalSources = sources.length;
-                const totalPages = Math.ceil(totalSources / pageSize);
-                this.logger.log(
-                    `Found ${totalSources} sources for targetId ${targetId}. Page ${page} of ${totalPages}`
-                );
-                return { sources, totalSources, totalPages, page, pageSize };
-            })
-            .catch();
+        const sources = await this.sourceService.getByTargetId(
+            targetId,
+            page,
+            pageSize,
+            order
+        );
+        const totalSources = sources.length;
+        const totalPages = Math.ceil(totalSources / pageSize);
+        this.logger.log(
+            `Found ${totalSources} sources for targetId ${targetId}. Page ${page} of ${totalPages}`
+        );
+        return { sources, totalSources, totalPages, page, pageSize };
     }
 
     @ApiTags("source")

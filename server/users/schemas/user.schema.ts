@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Roles, Status } from "../../auth/ability/ability.factory";
 import { Document, Types } from "mongoose";
-import { Badge } from "../../badge/schemas/badge.schema";
+import { BadgeDocument } from "../../badge/schemas/badge.schema";
 
 export interface UserDocument extends User, Document {
     authenticate(): any;
@@ -36,7 +36,7 @@ export class User {
             },
         ],
     })
-    badges: Badge[];
+    badges: BadgeDocument[];
 
     @Prop({ required: true, default: Status.Active })
     state: Status;

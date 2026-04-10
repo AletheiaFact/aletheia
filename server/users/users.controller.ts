@@ -120,21 +120,13 @@ export class UsersController {
     @Put("api/user/password-change")
     @Auth()
     async changePassword(@Req() req: BaseRequest, @Res() res) {
-        try {
-            this.usersService
-                .registerPasswordChange(new Types.ObjectId(req.user._id))
-                .then(() => {
-                    res.status(200).json({
-                        success: true,
-                        message: "Password reset successful",
-                    });
-                })
-                .catch((e) => {
-                    res.status(500).json({ message: e.message });
-                });
-        } catch (e) {
-            res.status(500).json({ message: e.message });
-        }
+        await this.usersService.registerPasswordChange(
+            new Types.ObjectId(req.user._id)
+        );
+        res.status(200).json({
+            success: true,
+            message: "Password reset successful",
+        });
     }
 
     @ApiTags("user")
@@ -146,31 +138,22 @@ export class UsersController {
         @Res() res,
         @Req() request
     ) {
-        try {
-            const user = await this.usersService.getById(userId);
+        const user = await this.usersService.getById(userId);
 
-            const shouldEdit = this.util.canEditUser(user, request);
+        const shouldEdit = this.util.canEditUser(user, request);
 
-            if (shouldEdit) {
-                this.usersService
-                    .updateUser(new Types.ObjectId(userId), updates)
-                    .then(() => {
-                        res.status(200).json({
-                            success: true,
-                            message: "User updated successfully",
-                        });
-                    })
-                    .catch((e) => {
-                        res.status(500).json({ message: e.message });
-                    });
-            } else {
-                res.status(403).json({
-                    message: "Unauthorized to edit this user",
-                });
-            }
-        } catch (e) {
-            res.status(500).json({ message: e.message });
+        if (!shouldEdit) {
+            res.status(403).json({
+                message: "Unauthorized to edit this user",
+            });
+            return;
         }
+
+        await this.usersService.updateUser(new Types.ObjectId(userId), updates);
+        res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+        });
     }
 
     @ApiTags("pages")

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { User } from "../../../users/schemas/user.schema";
+import { UserDocument } from "../../../users/schemas/user.schema";
 
 export type NameSpaceDocument = NameSpace & mongoose.Document;
 
@@ -24,7 +24,7 @@ export class NameSpace {
             },
         ],
     })
-    users: User[];
+    users: UserDocument[];
 
     // TODO: Add logo and description field
 }

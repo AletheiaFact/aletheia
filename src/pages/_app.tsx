@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }) {
     useEffect(() => {
         if (pageProps.enableEventsFeature !== undefined) {
             setFeatureFlags({
-                enableEventsFeature: pageProps.enableEventsFeature
+                enableEventsFeature: pageProps.enableEventsFeature,
             });
         }
     }, [pageProps.enableEventsFeature, setFeatureFlags]);

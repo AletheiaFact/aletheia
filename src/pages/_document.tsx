@@ -40,8 +40,7 @@ class MyDocument extends Document {
     }
 
     render() {
-        // @ts-ignore
-        const { language } = this.props;
+        const { language } = this.props as { language?: string };
         return (
             <Html lang={language}>
                 <Head>
