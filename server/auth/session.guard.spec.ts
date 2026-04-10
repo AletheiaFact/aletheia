@@ -11,20 +11,41 @@ import {
 } from "../mocks/AuthMock";
 import { Roles } from "./ability/ability.factory";
 
-// Mock @ory/client module
-const mockToSession = jest.fn();
-const mockCreateBrowserLogoutFlow = jest.fn().mockResolvedValue({
-    data: { logout_token: "mock-logout-token" },
-});
-const mockUpdateLogoutFlow = jest.fn().mockResolvedValue({});
+// TODO(vitest-migration): This file uses vi.* APIs directly (not jest.*)
+// because:
+//   1. Vitest's hoister only recognizes `vi.mock()` (not `jest.mock()` even
+//      with the global alias), so the jest.mock() pattern from the original
+//      Jest version did not get hoisted above imports.
+//   2. Variables referenced inside vi.mock() factories must be declared via
+//      vi.hoisted() so they exist when the hoisted mock runs.
+//   3. Vitest 4 strictly requires constructor mock implementations to use
+//      `function` (not arrow functions) so `new` works.
+// After Phase 2 (Jest removal), all test files in the codebase should be
+// migrated to use vi.* directly to remove the global jest=vi shim entirely.
+// Mock @ory/client module - use vi.hoisted for variables used in vi.mock factory
+const {
+    mockToSession,
+    mockCreateBrowserLogoutFlow,
+    mockUpdateLogoutFlow,
+} = vi.hoisted(() => ({
+    mockToSession: vi.fn(),
+    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+        data: { logout_token: "mock-logout-token" },
+    }),
+    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+}));
 
-jest.mock("@ory/client", () => ({
-    Configuration: jest.fn().mockImplementation(() => ({})),
-    FrontendApi: jest.fn().mockImplementation(() => ({
-        toSession: mockToSession,
-        createBrowserLogoutFlow: mockCreateBrowserLogoutFlow,
-        updateLogoutFlow: mockUpdateLogoutFlow,
-    })),
+vi.mock("@ory/client", () => ({
+    Configuration: vi.fn().mockImplementation(function () {
+        return {};
+    }),
+    FrontendApi: vi.fn().mockImplementation(function () {
+        return {
+            toSession: mockToSession,
+            createBrowserLogoutFlow: mockCreateBrowserLogoutFlow,
+            updateLogoutFlow: mockUpdateLogoutFlow,
+        };
+    }),
 }));
 
 describe("SessionGuard", () => {

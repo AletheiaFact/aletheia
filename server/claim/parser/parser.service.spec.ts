@@ -34,6 +34,17 @@ import { CleanupDatabase } from "../../tests/utils/CleanupDatabase";
  * 2. Speech object creation → paragraph/sentence entities → database persistence
  * 3. Population of nested relationships for complete object graph
  */
+// TODO(vitest-migration): This file is currently picked up by the `unit`
+// Vitest project (because it lives outside server/tests/ and matches *.spec.ts)
+// but it bootstraps the full AppModule and requires a real MongoDB instance
+// reachable via process.env.MONGO_URI. Under Vitest's separated projects, the
+// unit project does not run globalSetup, so this only passes when:
+//   (a) the combined `yarn test` runs (e2e globalSetup leaks into unit), or
+//   (b) a real MongoDB is running locally / in CI.
+// Move this to server/tests/parser.service.e2e.spec.ts (or similar) so that
+// it lives in the e2e project where the mongodb-memory-server globalSetup
+// runs deterministically. This is technically an integration test, not a unit
+// test, and was misclassified by the original Jest setup.
 describe("ParserService", () => {
     let parserService: ParserService;
     let moduleFixture: TestingModule;

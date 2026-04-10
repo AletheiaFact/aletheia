@@ -5,13 +5,29 @@ import { ConfigService } from "@nestjs/config";
 import { M2MGuard } from "./m2m.guard";
 import { mockAuthConfigService } from "../mocks/AuthMock";
 
-// Mock @ory/client
-const mockIntrospectOAuth2Token = jest.fn();
-jest.mock("@ory/client", () => ({
-    Configuration: jest.fn().mockImplementation(() => ({})),
-    OAuth2Api: jest.fn().mockImplementation(() => ({
-        introspectOAuth2Token: mockIntrospectOAuth2Token,
-    })),
+// TODO(vitest-migration): This file uses vi.* APIs directly (not jest.*)
+// because:
+//   1. Vitest's hoister only recognizes `vi.mock()` (not `jest.mock()` even
+//      with the global alias), so the jest.mock() pattern from the original
+//      Jest version did not get hoisted above imports.
+//   2. Variables referenced inside vi.mock() factories must be declared via
+//      vi.hoisted() so they exist when the hoisted mock runs.
+//   3. Vitest 4 strictly requires constructor mock implementations to use
+//      `function` (not arrow functions) so `new` works.
+// After Phase 2 (Jest removal), all test files in the codebase should be
+// migrated to use vi.* directly to remove the global jest=vi shim entirely.
+// Mock @ory/client - use vi.hoisted for variables used in vi.mock factory
+const { mockIntrospectOAuth2Token } = vi.hoisted(() => ({
+    mockIntrospectOAuth2Token: vi.fn(),
+}));
+
+vi.mock("@ory/client", () => ({
+    Configuration: vi.fn().mockImplementation(function () {
+        return {};
+    }),
+    OAuth2Api: vi.fn().mockImplementation(function () {
+        return { introspectOAuth2Token: mockIntrospectOAuth2Token };
+    }),
 }));
 
 describe("M2MGuard", () => {

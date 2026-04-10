@@ -47,6 +47,7 @@ export class ClaimReview {
     report: ReportDocument;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
             validator: (v) => {

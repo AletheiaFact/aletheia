@@ -2,7 +2,21 @@ import { UseGuards, applyDecorators, SetMetadata } from "@nestjs/common";
 import { SessionOrM2MGuard } from "../m2m-or-session.guard";
 import { AbilitiesGuard } from "../ability/abilities.guard";
 import { M2MOrAbilitiesGuard } from "./m2m-or-abilities.decorator";
-import { RequiredRule, CHECK_ABILITY } from "../ability/ability.decorator";
+// TODO(vitest-migration): The ability classes (AdminUserAbility,
+// FactCheckerUserAbility, RegularUserAbility) used to be loaded via
+// `require("../ability/ability.decorator")` inside each shorthand decorator
+// factory below to avoid a perceived circular dependency. The static import
+// works fine and is required for Vitest (which does not register a require
+// hook for .ts files like ts-jest does). If a real circular import surfaces
+// in the future, prefer extracting the ability classes into their own module
+// rather than going back to dynamic require().
+import {
+    RequiredRule,
+    CHECK_ABILITY,
+    AdminUserAbility,
+    FactCheckerUserAbility,
+    RegularUserAbility,
+} from "../ability/ability.decorator";
 
 /**
  * Authentication and Authorization decorator options
@@ -121,8 +135,6 @@ export const Public = () => Auth({ public: true });
  * @AdminOnly({ allowM2M: true })
  */
 export const AdminOnly = (options: { allowM2M?: boolean } = {}) => {
-    // Import at usage to avoid circular deps
-    const { AdminUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new AdminUserAbility()],
         allowM2M: options.allowM2M,
@@ -134,8 +146,6 @@ export const AdminOnly = (options: { allowM2M?: boolean } = {}) => {
  * @example @FactCheckerOnly()
  */
 export const FactCheckerOnly = () => {
-    // Import at usage to avoid circular deps
-    const { FactCheckerUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new FactCheckerUserAbility()],
     });
@@ -146,8 +156,6 @@ export const FactCheckerOnly = () => {
  * @example @RegularUserOnly()
  */
 export const RegularUserOnly = () => {
-    // Import at usage to avoid circular deps
-    const { RegularUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new RegularUserAbility()],
     });

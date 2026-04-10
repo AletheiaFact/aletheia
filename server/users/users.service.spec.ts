@@ -25,15 +25,22 @@ describe("UsersService (Unit)", () => {
         aggregate: jest.fn(),
     };
 
+    // TODO(vitest-migration): Vitest 4 strictly requires constructor mock
+    // implementations to use `function` syntax (not arrow functions) so that
+    // `new UserModelConstructor(data)` works. The original Jest version used
+    // an arrow function which Vitest rejects. Once on Vitest fully, consider
+    // refactoring to a proper class declaration for clarity.
     const UserModelConstructor = Object.assign(
-        jest.fn().mockImplementation((data) => ({
-            ...data,
-            _id: data._id || "new-user-id",
-            save: jest.fn().mockResolvedValue({
+        jest.fn().mockImplementation(function (data: any) {
+            return {
                 ...data,
                 _id: data._id || "new-user-id",
-            }),
-        })),
+                save: jest.fn().mockResolvedValue({
+                    ...data,
+                    _id: data._id || "new-user-id",
+                }),
+            };
+        }),
         mockUserModel
     );
 

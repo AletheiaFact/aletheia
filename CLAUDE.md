@@ -232,3 +232,10 @@ Active flags:
 - `server/feature-flag/feature-flag.service.ts` — Feature flag service
 - `migrate-mongo-config.ts` — Migration configuration
 - `migrations/` — 54+ database migrations
+
+## Active Technologies
+- TypeScript (ES2017 target), Node.js 20.18.0 + NestJS 9.x, Vitest (latest), unplugin-swc, @swc/core, @vitest/coverage-v8 (2200-vitest-testing-setup)
+- MongoDB via mongoose (unchanged), mongodb-memory-server for test isolation (2200-vitest-testing-setup)
+
+## Recent Changes
+- 2200-vitest-testing-setup: Added TypeScript (ES2017 target), Node.js 20.18.0 + NestJS 9.x, Vitest (latest), unplugin-swc, @swc/core, @vitest/coverage-v8

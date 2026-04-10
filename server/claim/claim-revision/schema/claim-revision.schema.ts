@@ -22,6 +22,7 @@ export class ClaimRevision {
     contentId: mongoose.Types.ObjectId;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
             validator: (v) => {

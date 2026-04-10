@@ -1,3 +1,6 @@
+// TODO(vitest-phase2): Drop this `@jest/globals` import after Jest is removed.
+// Under Vitest, this import is redirected to a stub via resolve.alias in
+// vitest.config.ts. Under Jest, it provides typed access to `jest.fn<...>()`.
 import { jest } from "@jest/globals";
 
 /**
