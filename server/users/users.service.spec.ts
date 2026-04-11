@@ -18,27 +18,31 @@ describe("UsersService (Unit)", () => {
     };
 
     const mockUserModel: any = {
-        find: jest.fn(),
-        findById: jest.fn(),
-        findOne: jest.fn(),
-        findByIdAndUpdate: jest.fn(),
-        aggregate: jest.fn(),
+        find: vi.fn(),
+        findById: vi.fn(),
+        findOne: vi.fn(),
+        findByIdAndUpdate: vi.fn(),
+        aggregate: vi.fn(),
     };
 
+    // Vitest 4 requires constructor mocks to use `function` syntax (not arrow
+    // functions) so that `new UserModelConstructor(data)` works correctly.
     const UserModelConstructor = Object.assign(
-        jest.fn().mockImplementation((data) => ({
-            ...data,
-            _id: data._id || "new-user-id",
-            save: jest.fn().mockResolvedValue({
+        vi.fn().mockImplementation(function (data: any) {
+            return {
                 ...data,
                 _id: data._id || "new-user-id",
-            }),
-        })),
+                save: vi.fn().mockResolvedValue({
+                    ...data,
+                    _id: data._id || "new-user-id",
+                }),
+            };
+        }),
         mockUserModel
     );
 
     const mockNotificationService = {
-        createSubscriber: jest.fn(),
+        createSubscriber: vi.fn(),
     };
 
     beforeAll(async () => {
@@ -64,7 +68,7 @@ describe("UsersService (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("getById", () => {
@@ -75,7 +79,7 @@ describe("UsersService (Unit)", () => {
                 badges: [],
             };
             mockUserModel.findById.mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
+                populate: vi.fn().mockResolvedValue(mockUser),
             });
 
             const result = await service.getById("user-123");
@@ -160,7 +164,7 @@ describe("UsersService (Unit)", () => {
                 role: { main: Roles.Regular },
             };
             mockUserModel.findById.mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
+                populate: vi.fn().mockResolvedValue(mockUser),
             });
             mockUserModel.findByIdAndUpdate.mockResolvedValue({
                 ...mockUser,
@@ -184,7 +188,7 @@ describe("UsersService (Unit)", () => {
         it("should update user state via Ory", async () => {
             const mockUser = { _id: "user-123", role: { main: Roles.Regular } };
             mockUserModel.findById.mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
+                populate: vi.fn().mockResolvedValue(mockUser),
             });
             mockUserModel.findByIdAndUpdate.mockResolvedValue(mockUser);
 
@@ -202,10 +206,10 @@ describe("UsersService (Unit)", () => {
             const mockUser = {
                 _id: "user-123",
                 firstPasswordChanged: false,
-                save: jest.fn(),
+                save: vi.fn(),
             };
             mockUserModel.findById.mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
+                populate: vi.fn().mockResolvedValue(mockUser),
             });
 
             await service.registerPasswordChange("user-123");
@@ -218,10 +222,10 @@ describe("UsersService (Unit)", () => {
             const mockUser = {
                 _id: "user-123",
                 firstPasswordChanged: true,
-                save: jest.fn(),
+                save: vi.fn(),
             };
             mockUserModel.findById.mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
+                populate: vi.fn().mockResolvedValue(mockUser),
             });
 
             await service.registerPasswordChange("user-123");
@@ -237,7 +241,7 @@ describe("UsersService (Unit)", () => {
                 { _id: "user-2", name: "User 2" },
             ];
             mockUserModel.find.mockReturnValue({
-                exec: jest.fn().mockResolvedValue(mockUsers),
+                exec: vi.fn().mockResolvedValue(mockUsers),
             });
 
             const result = await service.getAllUsers();
@@ -250,10 +254,10 @@ describe("UsersService (Unit)", () => {
     describe("findAll", () => {
         it("should build aggregation pipeline with search and role filtering", async () => {
             const mockPipeline = {
-                match: jest.fn().mockReturnThis(),
-                lookup: jest.fn().mockReturnThis(),
-                project: jest.fn().mockReturnThis(),
-                exec: jest.fn().mockResolvedValue([]),
+                match: vi.fn().mockReturnThis(),
+                lookup: vi.fn().mockReturnThis(),
+                project: vi.fn().mockReturnThis(),
+                exec: vi.fn().mockResolvedValue([]),
             };
             mockUserModel.aggregate.mockReturnValue(mockPipeline);
 

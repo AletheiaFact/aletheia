@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -18,14 +18,13 @@ import { Model } from "mongoose";
 import { getModelToken } from "@nestjs/mongoose";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
-jest.setTimeout(10000);
 
 describe("EventController (e2e)", () => {
     let app: any;
     let createdEventId: string;
 
     const mockFeatureFlagService = {
-        isEnableEventsFeature: jest.fn(),
+        isEnableEventsFeature: vi.fn(),
     };
 
     const createEventPayload = (
@@ -281,7 +280,7 @@ describe("EventController (e2e)", () => {
     });
 
     afterAll(async () => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
         await app.close();
         await CleanupDatabase(process.env.MONGO_URI!);
     });

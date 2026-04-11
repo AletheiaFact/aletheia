@@ -19,7 +19,7 @@ describe("HistoryController (Unit)", () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getHistory", () => {

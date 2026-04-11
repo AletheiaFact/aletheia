@@ -36,7 +36,7 @@ describe("TrackingService (Unit)", () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     mockVerificationRequestModel.getById.mockResolvedValue({
       id: String(mockHistoryItem.targetId),
@@ -89,7 +89,7 @@ describe("TrackingService (Unit)", () => {
     it("should throw NotFoundException and log warning when no history exists", async () => {
       historyService.getHistoryForTarget.mockResolvedValue({ history: [] });
 
-      const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
+      const loggerWarnSpy = vi.spyOn(service['logger'], 'warn');
 
       await expect(service.getTrackingStatus(targetIdStr)).rejects.toThrow(
         NotFoundException
@@ -103,7 +103,7 @@ describe("TrackingService (Unit)", () => {
       const unexpectedError = new Error("Database connection lost");
       historyService.getHistoryForTarget.mockRejectedValue(unexpectedError);
 
-      const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
+      const loggerErrorSpy = vi.spyOn(service['logger'], 'error');
 
       await expect(service.getTrackingStatus(targetIdStr)).rejects.toThrow(
         "Internal server error while fetching tracking status."

@@ -5,13 +5,21 @@ import { ConfigService } from "@nestjs/config";
 import { M2MGuard } from "./m2m.guard";
 import { mockAuthConfigService } from "../mocks/AuthMock";
 
-// Mock @ory/client
-const mockIntrospectOAuth2Token = jest.fn();
-jest.mock("@ory/client", () => ({
-    Configuration: jest.fn().mockImplementation(() => ({})),
-    OAuth2Api: jest.fn().mockImplementation(() => ({
-        introspectOAuth2Token: mockIntrospectOAuth2Token,
-    })),
+// Mock @ory/client. Variables referenced inside a vi.mock() factory must be
+// declared via vi.hoisted() because vi.mock() is hoisted above all imports
+// during the Vitest transform pipeline. Constructor mocks must use `function`
+// (not arrow functions) so `new Configuration(...)` works under Vitest 4.
+const { mockIntrospectOAuth2Token } = vi.hoisted(() => ({
+    mockIntrospectOAuth2Token: vi.fn(),
+}));
+
+vi.mock("@ory/client", () => ({
+    Configuration: vi.fn().mockImplementation(function () {
+        return {};
+    }),
+    OAuth2Api: vi.fn().mockImplementation(function () {
+        return { introspectOAuth2Token: mockIntrospectOAuth2Token };
+    }),
 }));
 
 describe("M2MGuard", () => {
@@ -23,8 +31,8 @@ describe("M2MGuard", () => {
             params: {},
         };
         const context = {
-            getHandler: jest.fn(),
-            getClass: jest.fn(),
+            getHandler: vi.fn(),
+            getClass: vi.fn(),
             switchToHttp: () => ({
                 getRequest: () => request,
                 getResponse: () => ({}),
@@ -48,7 +56,7 @@ describe("M2MGuard", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should return false when no authorization header is present", async () => {

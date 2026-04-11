@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import { PersonalitiesMock } from "./PersonalitiesMock";
-import { TEST_DB_NAME } from "./TestConstants";
+import { getTestDbName } from "./getTestDbName";
 
 export const SeedTestPersonality = async (uri) => {
     const client = await new MongoClient(uri);
@@ -17,13 +17,13 @@ export const SeedTestPersonality = async (uri) => {
         }));
 
         const result = await client
-            .db(TEST_DB_NAME)
+            .db(getTestDbName(uri))
             .collection("personalities")
             .bulkWrite(operations);
 
         // Get the inserted/updated IDs with explicit ordering for consistency
         const personalities = await client
-            .db(TEST_DB_NAME)
+            .db(getTestDbName(uri))
             .collection("personalities")
             .find({ slug: { $in: PersonalitiesMock.map((p) => p.slug) } })
             .sort({ slug: 1 })

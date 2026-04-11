@@ -24,7 +24,7 @@ describe("TrackingController (Unit)", () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getTracking", () => {

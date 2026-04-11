@@ -12,6 +12,7 @@ export class Report {
     data_hash: string;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
             validator: (v) => {
@@ -45,6 +46,7 @@ export class Report {
     sources: string[];
 
     @Prop({
+        type: String,
         required: true,
         enum: ClassificationEnum,
     })

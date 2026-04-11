@@ -43,6 +43,7 @@ export class History {
     targetId: mongoose.Types.ObjectId;
 
     @Prop({
+        type: String,
         required: true,
     })
     targetModel: TargetModel;
@@ -54,6 +55,7 @@ export class History {
     user: User | M2M | string;
 
     @Prop({
+        type: String,
         required: true,
     })
     type: HistoryType; //TODO: Validate if details field(after, before) it's optional or required based on type
