@@ -3,3 +3,19 @@ export interface Review {
     usersId: string;
     isPartialReview: boolean;
 }
+
+export interface SourceProps {
+    id?: string;
+    field?: string | null;
+    targetText?: string | null;
+    textRange?: number[] | string | null;
+};
+
+export interface ReviewSource {
+    id?: string;
+    href?: string;
+    props?: SourceProps;
+    field?: string | null;
+};
+
+export type ReviewSourceInput = ReviewSource | string;
