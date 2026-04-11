@@ -38,7 +38,6 @@ COPY config.seed.example.yaml ./config.seed.yaml
 COPY migrate-mongo-config-example.ts ./migrate-mongo-config.ts
 COPY ./migrations ./migrations
 COPY ./eslint.config.mjs ./
-COPY server/jest.config.json ./jest.config.json
 COPY ./next.config.js ./
 COPY ./tsconfig.json ./
 COPY ./next-i18next.config.js ./

@@ -30,7 +30,7 @@ describe("NotificationService (Unit)", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("when Novu is configured", () => {

@@ -16,7 +16,7 @@ import {
 } from "../mocks/VerificationRequestMock";
 
 const mockSourceService = {
-  getSourceByHref: jest.fn(),
+  getSourceByHref: vi.fn(),
 };
 
 describe("VerificationRequestService (Unit)", () => {
@@ -56,7 +56,7 @@ describe("VerificationRequestService (Unit)", () => {
       VerificationRequestService
     );
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should be defined", () => {

@@ -37,12 +37,12 @@ describe("VerificationRequestStatsService (Unit)", () => {
       VerificationRequestStatsService
     );
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getStatsRecentActivity", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     const setupMockData = (data: any[]) =>
@@ -90,7 +90,7 @@ describe("VerificationRequestStatsService (Unit)", () => {
 
   describe("getStatsCount", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should aggregate statuses correctly and calculate totals using $facet structure", async () => {
@@ -133,7 +133,7 @@ describe("VerificationRequestStatsService (Unit)", () => {
       ];
 
       mockVerificationRequestModel.aggregate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(EMPTY_FACET_RESULT),
+        exec: vi.fn().mockResolvedValue(EMPTY_FACET_RESULT),
       });
 
       const result = await (service as any).getStatsCount(new Date());
@@ -158,7 +158,7 @@ describe("VerificationRequestStatsService (Unit)", () => {
 
   describe("getStatsSourceChannels", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should calculate percentages correctly based on provided totalCount", async () => {
@@ -216,13 +216,13 @@ describe("VerificationRequestStatsService (Unit)", () => {
         { id: "1", status: "Posted", data_hash: "ABC", timestamp: new Date() },
       ];
 
-      const countSpy = jest
+      const countSpy = vi
         .spyOn(service as any, "getStatsCount")
         .mockResolvedValue(mockCount);
-      const channelsSpy = jest
+      const channelsSpy = vi
         .spyOn(service as any, "getStatsSourceChannels")
         .mockResolvedValue(mockChannels);
-      const activitySpy = jest
+      const activitySpy = vi
         .spyOn(service as any, "getStatsRecentActivity")
         .mockResolvedValue(mockActivity);
 

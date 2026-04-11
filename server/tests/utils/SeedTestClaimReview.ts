@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { ReviewMock } from "./ClaimReviewMock";
+import { getTestDbName } from "./getTestDbName";
 
 export const SeedTestClaimReview = async (
     uri,
@@ -13,7 +14,7 @@ export const SeedTestClaimReview = async (
 
     try {
         return await client
-            .db("test")
+            .db(getTestDbName(uri))
             .collection("claimreviews")
             .insertOne(ReviewMock(claimId, personalitiesId, reportId, userId));
     } finally {

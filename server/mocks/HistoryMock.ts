@@ -1,9 +1,10 @@
+import { vi, Mock } from "vitest";
 import { VerificationRequestStatus } from "../verification-request/dto/types";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { Types } from "mongoose";
 
 export const historyServiceMock = {
-  getHistoryForTarget: jest.fn(),
+  getHistoryForTarget: vi.fn(),
 };
 
 export const mockHistoryItem = {
@@ -39,17 +40,17 @@ export const mockAggregateMongoResult = [
   },
 ];
 
-type MockedModel = jest.Mock & {
-  aggregate: jest.Mock;
+type MockedModel = Mock & {
+  aggregate: Mock;
 };
 
-export const mockHistoryModel = jest.fn() as MockedModel;
+export const mockHistoryModel = vi.fn() as MockedModel;
 
 mockHistoryModel.mockImplementation(function (this: any, data) {
-  this.save = jest.fn().mockResolvedValue({
+  this.save = vi.fn().mockResolvedValue({
     ...mockHistoryItem,
     _id: "abc",
   });
 });
 
-mockHistoryModel.aggregate = jest.fn();
+mockHistoryModel.aggregate = vi.fn();

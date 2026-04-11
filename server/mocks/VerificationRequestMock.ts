@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { VerificationRequestDocument } from "../verification-request/schemas/verification-request.schema";
 
 export const createFakeVerificationRequest = (
@@ -12,15 +13,15 @@ export const createFakeVerificationRequest = (
 });
 
 export const mockQuery = {
-  sort: jest.fn().mockReturnThis(),
-  limit: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  lean: jest.fn().mockReturnThis(),
-  exec: jest.fn(),
+  sort: vi.fn().mockReturnThis(),
+  limit: vi.fn().mockReturnThis(),
+  select: vi.fn().mockReturnThis(),
+  lean: vi.fn().mockReturnThis(),
+  exec: vi.fn(),
 };
 
 export const mockVerificationRequestModel = {
-  find: jest.fn().mockReturnValue(mockQuery),
-  aggregate: jest.fn().mockReturnThis(),
-  getById: jest.fn(),
+  find: vi.fn().mockReturnValue(mockQuery),
+  aggregate: vi.fn().mockReturnThis(),
+  getById: vi.fn(),
 };

@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { SpeechMock } from "./SpeechMock";
+import { getTestDbName } from "./getTestDbName";
 
 export const SeedTestSpeech = async (uri, paragraphId) => {
     const client = await new MongoClient(uri);
@@ -7,7 +8,7 @@ export const SeedTestSpeech = async (uri, paragraphId) => {
 
     try {
         return await client
-            .db("test")
+            .db(getTestDbName(uri))
             .collection("speeches")
             .insertOne(SpeechMock(paragraphId));
     } finally {

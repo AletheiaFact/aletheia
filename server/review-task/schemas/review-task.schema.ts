@@ -16,6 +16,7 @@ export class ReviewTask {
     data_hash: string;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
             validator: (v) => {
@@ -37,6 +38,7 @@ export class ReviewTask {
     target: mongoose.Types.ObjectId;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
             validator: (v) => {

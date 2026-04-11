@@ -28,7 +28,7 @@ describe("ManagementService (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("deletePersonalityHierarchy", () => {
@@ -54,7 +54,7 @@ describe("ManagementService (Unit)", () => {
 
         it("should throw NotFoundException and log warning if personality does not exist", async () => {
             personalityService.delete.mockRejectedValue(new NotFoundException());
-            const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
+            const loggerWarnSpy = vi.spyOn(service['logger'], 'warn');
 
             await expect(service.deletePersonalityHierarchy(personalityId)).rejects.toThrow(
                 NotFoundException
@@ -67,7 +67,7 @@ describe("ManagementService (Unit)", () => {
         it("should handle error and log it when unexpected failure occurs", async () => {
             const unexpectedError = new Error("Database error");
             personalityService.delete.mockRejectedValue(unexpectedError);
-            const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
+            const loggerErrorSpy = vi.spyOn(service['logger'], 'error');
 
             await expect(service.deletePersonalityHierarchy(personalityId)).rejects.toThrow(
                 InternalServerErrorException
@@ -99,7 +99,7 @@ describe("ManagementService (Unit)", () => {
             claimReviewService.findAllReviewsForCascadeDelete.mockResolvedValue([]);
             claimService.delete.mockRejectedValue(new NotFoundException());
 
-            const loggerWarnSpy = jest.spyOn(service['logger'], 'warn');
+            const loggerWarnSpy = vi.spyOn(service['logger'], 'warn');
 
             await expect(service.deleteClaimHierarchy(claimId)).rejects.toThrow(
                 NotFoundException
@@ -113,7 +113,7 @@ describe("ManagementService (Unit)", () => {
             const unexpectedError = new Error("Database connection lost");
             claimReviewService.findAllReviewsForCascadeDelete.mockRejectedValue(unexpectedError);
 
-            const loggerErrorSpy = jest.spyOn(service['logger'], 'error');
+            const loggerErrorSpy = vi.spyOn(service['logger'], 'error');
 
             await expect(service.deleteClaimHierarchy(claimId)).rejects.toThrow(
                 InternalServerErrorException

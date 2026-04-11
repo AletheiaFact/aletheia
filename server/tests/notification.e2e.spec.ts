@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -16,7 +16,6 @@ import { AdminUserMock } from "./utils/AdminUserMock";
 import { NotificationService } from "../notifications/notifications.service";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 
-jest.setTimeout(10000);
 
 /**
  * NotificationController E2E Test Suite
@@ -39,8 +38,8 @@ jest.setTimeout(10000);
  */
 
 const notificationService = {
-    sendNotification: jest.fn(),
-    generateHmacHash: jest.fn(),
+    sendNotification: vi.fn(),
+    generateHmacHash: vi.fn(),
 };
 
 describe("NotificationController (e2e)", () => {
@@ -142,7 +141,7 @@ describe("NotificationController (e2e)", () => {
      */
     it("api/notification/token/:subscriberId (GET) - should get tokens and generate HmacHash", () => {
         const mockHash = "fobwejf";
-        jest.spyOn(notificationService, "generateHmacHash").mockReturnValueOnce(
+        vi.spyOn(notificationService, "generateHmacHash").mockReturnValueOnce(
             mockHash
         );
 
@@ -201,7 +200,7 @@ describe("NotificationController (e2e)", () => {
         const invalidSubscriberId = "invalid_subscriber_id";
         const mockHash = "generated_hash_for_invalid_id";
         
-        jest.spyOn(notificationService, "generateHmacHash").mockReturnValueOnce(
+        vi.spyOn(notificationService, "generateHmacHash").mockReturnValueOnce(
             mockHash
         );
 
@@ -243,7 +242,7 @@ describe("NotificationController (e2e)", () => {
     });
 
     afterAll(async () => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
         await app.close();
         await CleanupDatabase(process.env.MONGO_URI!);
     });

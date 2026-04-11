@@ -11,20 +11,33 @@ import {
 } from "../mocks/AuthMock";
 import { Roles } from "./ability/ability.factory";
 
-// Mock @ory/client module
-const mockToSession = jest.fn();
-const mockCreateBrowserLogoutFlow = jest.fn().mockResolvedValue({
-    data: { logout_token: "mock-logout-token" },
-});
-const mockUpdateLogoutFlow = jest.fn().mockResolvedValue({});
+// Mock @ory/client. Variables referenced inside a vi.mock() factory must be
+// declared via vi.hoisted() because vi.mock() is hoisted above all imports
+// during the Vitest transform pipeline. Constructor mocks must use `function`
+// (not arrow functions) so `new Configuration(...)` works under Vitest 4.
+const {
+    mockToSession,
+    mockCreateBrowserLogoutFlow,
+    mockUpdateLogoutFlow,
+} = vi.hoisted(() => ({
+    mockToSession: vi.fn(),
+    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+        data: { logout_token: "mock-logout-token" },
+    }),
+    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+}));
 
-jest.mock("@ory/client", () => ({
-    Configuration: jest.fn().mockImplementation(() => ({})),
-    FrontendApi: jest.fn().mockImplementation(() => ({
-        toSession: mockToSession,
-        createBrowserLogoutFlow: mockCreateBrowserLogoutFlow,
-        updateLogoutFlow: mockUpdateLogoutFlow,
-    })),
+vi.mock("@ory/client", () => ({
+    Configuration: vi.fn().mockImplementation(function () {
+        return {};
+    }),
+    FrontendApi: vi.fn().mockImplementation(function () {
+        return {
+            toSession: mockToSession,
+            createBrowserLogoutFlow: mockCreateBrowserLogoutFlow,
+            updateLogoutFlow: mockUpdateLogoutFlow,
+        };
+    }),
 }));
 
 describe("SessionGuard", () => {
@@ -37,17 +50,17 @@ describe("SessionGuard", () => {
         isPublic = false,
         url = "/api/test"
     ) => {
-        const mockRedirect = jest.fn();
+        const mockRedirect = vi.fn();
         const request: any = {
-            header: jest.fn().mockReturnValue(cookie),
+            header: vi.fn().mockReturnValue(cookie),
             url,
             params: {},
         };
         const response = { redirect: mockRedirect };
-        const handler = jest.fn();
+        const handler = vi.fn();
         const context = {
-            getHandler: jest.fn().mockReturnValue(handler),
-            getClass: jest.fn(),
+            getHandler: vi.fn().mockReturnValue(handler),
+            getClass: vi.fn(),
             switchToHttp: () => ({
                 getRequest: () => request,
                 getResponse: () => response,
@@ -73,7 +86,7 @@ describe("SessionGuard", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         // Re-apply default config mock after clearAllMocks
         configService.get.mockImplementation((key: string) => {
             const config = {

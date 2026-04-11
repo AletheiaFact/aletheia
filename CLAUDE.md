@@ -217,7 +217,7 @@ Active flags:
 3. **Component Structure**: Functional components with hooks. Material-UI for styling
 4. **Validation**: class-validator DTOs on `@Body()`, `@Query()`, `@Param()` in controllers
 5. **Error Handling**: Global `AllExceptionsFilter` in NestJS. Frontend uses `MessageManager` for toast messages
-6. **Testing**: Jest for unit/e2e (server), Cypress for browser e2e. E2E tests use MongoDB memory server with `globalSetup.ts`/`globalTeardown.ts`
+6. **Testing**: Vitest for unit/e2e (server), Cypress for browser e2e. E2E tests use mongodb-memory-server with per-worker DB isolation via `server/tests/globalSetup.ts` (provides `mongoBaseUri`) and `server/tests/per-worker-setup.ts` (assigns each Vitest worker its own database). Globals mode is enabled — use `vi.fn()`, `vi.mock()`, etc.
 
 ## Important Files
 
@@ -232,3 +232,10 @@ Active flags:
 - `server/feature-flag/feature-flag.service.ts` — Feature flag service
 - `migrate-mongo-config.ts` — Migration configuration
 - `migrations/` — 54+ database migrations
+
+## Active Technologies
+- TypeScript (ES2017 target), Node.js 20.18.0 + NestJS 9.x, Vitest (latest), unplugin-swc, @swc/core, @vitest/coverage-v8 (2200-vitest-testing-setup)
+- MongoDB via mongoose (unchanged), mongodb-memory-server for test isolation (2200-vitest-testing-setup)
+
+## Recent Changes
+- 2200-vitest-testing-setup: Added TypeScript (ES2017 target), Node.js 20.18.0 + NestJS 9.x, Vitest (latest), unplugin-swc, @swc/core, @vitest/coverage-v8

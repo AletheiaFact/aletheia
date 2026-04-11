@@ -75,12 +75,14 @@ export class VerificationRequest {
     topics: Topic[];
 
     @Prop({
+        type: String,
         required: false,
         enum: SeverityEnum,
     })
     severity: string;
 
     @Prop({
+        type: String,
         required: true,
         enum: VerificationRequestStatus,
     })
