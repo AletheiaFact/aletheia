@@ -11923,7 +11923,6 @@ __metadata:
     express: 4.19.2
     express-session: ^1.17.2
     globals: ^17.3.0
-    handlebars: ^4.7.7
     helmet: ^6.0.0
     husky: ^8.0.1
     i18next: ^21.6.10
@@ -11946,7 +11945,6 @@ __metadata:
     next: ^12.1.0
     next-i18next: ^10.2.0
     next-seo: ^5.4.0
-    nodemailer: 7.0.11
     nodemon: ^2.0.12
     prettier: 2.3.2
     react: ^18.3.1
@@ -22410,13 +22408,6 @@ __metadata:
   version: 2.0.20
   resolution: "node-releases@npm:2.0.20"
   checksum: 2a0a6e1505e0a5fad1b82de1779ca98c4950f1e2450afe18ccb5d00bf745104b017bf87db31a00bd0c017abcc24b11ed0ef5bd77a71fa7c19ee64394576c40ef
-  languageName: node
-  linkType: hard
-
-"nodemailer@npm:7.0.11":
-  version: 7.0.11
-  resolution: "nodemailer@npm:7.0.11"
-  checksum: 02940a5a620e219522c049f54f69af7abdc99c2ec168f592d3c67e26980a9857d7c45c65989cbd835af2c0ffabc66c20198aff484197566385594b2653069cb8
   languageName: node
   linkType: hard
 

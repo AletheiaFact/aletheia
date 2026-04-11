@@ -16,7 +16,6 @@ import { RootController } from "./root/root.controller";
 import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
-import { EmailModule } from "./email/email.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
@@ -133,7 +132,6 @@ export class AppModule implements NestModule {
                 SentenceModule,
                 StatsModule,
                 ViewModule,
-                EmailModule,
                 SitemapModule,
                 OryModule,
                 ReportModule,
