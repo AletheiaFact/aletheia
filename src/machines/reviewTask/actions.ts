@@ -3,6 +3,56 @@ import { ReviewTaskMachineContextType } from "./context";
 import { SaveEvent } from "./events";
 import { EditorParser } from "../../../lib/editor-parser";
 import { ReviewTaskEvents } from "./enums";
+import { ReviewSource, ReviewSourceInput } from "../../types/Review";
+
+const normalizeSource = (source: ReviewSourceInput): ReviewSource => {
+    if (typeof source === "string") {
+        return { href: source };
+    }
+    return source || {};
+};
+
+const getSourceKey = (source: ReviewSourceInput) => {
+    const normalized = normalizeSource(source);
+    const id = normalized?.props?.id || normalized?.id;
+    if (id) {
+        return `id:${id}`;
+    }
+    const href = normalized?.href || "";
+    const field = normalized?.props?.field || normalized?.field || "";
+    const targetText =
+        normalized?.props?.targetText ||
+        normalized?.props?.textRange ||
+        "";
+    return `href:${href}|field:${field}|target:${targetText}`;
+};
+
+const mergeSources = (
+    baseSources: ReviewSourceInput[] = [],
+    schemaSources: ReviewSourceInput[] = []
+) => {
+    const merged = new Map<string, ReviewSource>();
+
+    baseSources.forEach((source) => {
+        if (!source) return;
+        const normalized = normalizeSource(source);
+        merged.set(getSourceKey(normalized), normalized);
+    });
+
+    schemaSources.forEach((source) => {
+        if (!source) return;
+        const normalized = normalizeSource(source);
+        const key = getSourceKey(normalized);
+        if (!key) return;
+        if (merged.has(key)) {
+            merged.set(key, { ...merged.get(key), ...normalized });
+        } else {
+            merged.set(key, normalized);
+        }
+    });
+
+    return Array.from(merged.values());
+};
 
 const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
     (context, event) => {
@@ -76,9 +126,16 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             }
 
             const reviewDataHtml = editorParser.schema2html(schema);
+
+            const mergedSources =
+                "sources" in schema
+                    ? mergeSources(event.reviewData?.sources, schema.sources)
+                    : event.reviewData?.sources;
+
             event.reviewData = {
                 ...event.reviewData,
                 ...schema,
+                ...(mergedSources ? { sources: mergedSources } : {}),
                 visualEditor: cleanedVisualEditor,
                 reviewDataHtml,
             };
