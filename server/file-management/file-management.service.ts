@@ -1,36 +1,66 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { S3 } from "aws-sdk";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { AwsConfigValidator } from "./aws-config.validator";
 const md5 = require("md5");
+
+interface S3Config {
+    region: string;
+    endpoint?: string;
+    forcePathStyle: boolean;
+    /**
+     * Optional credentials to use when connecting to S3.
+     * Useful for connecting to a local S3 emulator (LocalStack).
+     * If not provided, the default credentials provider will be used.
+     */
+    credentials?: {
+        accessKeyId: string;
+        secretAccessKey: string;
+    };
+}
 
 @Injectable()
 export class FileManagementService {
-    private readonly bucket;
-    private s3;
+    private readonly bucket: string;
+    private readonly endpoint: string | undefined;
+    private readonly region: string;
+    private s3Client: S3Client;
 
     constructor(private configService: ConfigService) {
+        // Validate required AWS configuration before constructing the client.
+        // Throws if any required env var is missing — this is the safety net
+        // that prevents the failure mode that caused PR #2331 to be rolled back.
+        AwsConfigValidator.validate(configService);
+
         this.bucket = this.configService.get<string>("aws.bucket");
-        const s3Config = {
-            accessKeyId: this.configService.get<string>("aws.accessKeyId"),
-            secretAccessKey: this.configService.get<string>(
-                "aws.secretAccessKey"
-            ),
-            endpoint: this.configService.get<string>("aws.endpoint"),
-            s3ForcePathStyle: true,
+        this.endpoint = this.configService.get<string>("aws.endpoint");
+        this.region = this.configService.get<string>("aws.region");
+
+        const s3Config: S3Config = {
+            region: this.region,
+            endpoint: this.endpoint,
+            forcePathStyle: true,
+            credentials: {
+                accessKeyId: this.configService.get<string>("aws.accessKeyId"),
+                secretAccessKey: this.configService.get<string>(
+                    "aws.secretAccessKey"
+                ),
+            },
         };
 
-        this.s3 = new S3(s3Config);
+        this.s3Client = new S3Client(s3Config);
     }
 
     /**
-     * Upload file on AWS
-     * @param file file to upload on AWS-S3
-     * @param bucket bucket where the file will send
+     * Upload file to S3 (or LocalStack)
+     * @param file file to upload
+     * @param bucket optional bucket override
      */
     async upload(file, bucket?: string) {
         if (!bucket && !this.bucket) {
             throw Error("S3 bucket is not defined");
         }
+        const targetBucket = bucket || this.bucket;
         const name = file.originalname;
         const fileExtension = name.substring(
             name.lastIndexOf(".") + 1,
@@ -43,9 +73,9 @@ export class FileManagementService {
 
         const imageDataHash = md5(file.buffer);
 
-        const { Location, Key } = await this.s3
-            .upload({
-                Bucket: bucket || this.bucket,
+        await this.s3Client.send(
+            new PutObjectCommand({
+                Bucket: targetBucket,
                 Key: fileName,
                 ContentType: file?.mimetype,
                 ContentEncoding: file?.encoding,
@@ -53,14 +83,26 @@ export class FileManagementService {
                 Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })
-            .promise();
+        );
 
-        const result = {
-            FileURL: Location,
-            Key,
-            Extension: Key.substring(Key.lastIndexOf(".") + 1, Key.length),
+        // Construct the public URL based on whether an endpoint is configured.
+        // - LocalStack (endpoint set): use path-style URL
+        //   e.g. http://localhost:4566/aletheia/filename.png
+        // - Real S3 (no endpoint): use virtual-host-style URL
+        //   e.g. https://aletheia.s3.us-east-1.amazonaws.com/filename.png
+        // This matches what the AWS SDK v2 upload() helper returned.
+        const FileURL = this.endpoint
+            ? `${this.endpoint}/${targetBucket}/${fileName}`
+            : `https://${targetBucket}.s3.${this.region}.amazonaws.com/${fileName}`;
+
+        return {
+            FileURL,
+            Key: fileName,
+            Extension: fileName.substring(
+                fileName.lastIndexOf(".") + 1,
+                fileName.length
+            ),
             DataHash: imageDataHash,
         };
-        return result;
     }
 }

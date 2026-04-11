@@ -25,6 +25,12 @@ export const TestConfigOptions = {
             appName: process.env.ENV,
             instanceId: process.env.GITLAB_FEATURE_FLAG_INSTANCE_ID,
         },
+        aws: {
+            bucket: "aletheia-test",
+            accessKeyId: "test",
+            secretAccessKey: "test",
+            region: "us-east-1",
+        },
         nextjs: {
             dir: "../",
         },
