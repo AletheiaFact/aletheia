@@ -27,7 +27,7 @@ const getSourceKey = (source: ReviewSourceInput) => {
     return `href:${href}|field:${field}|target:${targetText}`;
 };
 
-const mergeSources = (
+export const mergeSources = (
     baseSources: ReviewSourceInput[] = [],
     schemaSources: ReviewSourceInput[] = []
 ) => {
