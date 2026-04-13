@@ -191,7 +191,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    @Public()
+    @Auth()
     public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
     }
