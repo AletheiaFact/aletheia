@@ -5,6 +5,7 @@ import {
     NotFoundException,
     Scope,
     Logger,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
@@ -620,6 +621,15 @@ export class ReviewTaskService {
     ];
 
     async saveDraft(data_hash: string, saveDraftBody: SaveDraftDTO) {
+        if (!this.req.user) {
+            this.logger.warn(
+                `Unauthenticated save-draft attempt for data_hash=${data_hash}`
+            );
+            throw new UnauthorizedException(
+                "Authentication required to save a draft"
+            );
+        }
+
         let reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
         // If review task doesn't exist yet (e.g. InformativeNews auto-assigns

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
@@ -7,11 +6,9 @@ import type {
     TranslationFn,
     PasswordChangeResponse,
 } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/user`,
-});
+const request = createApiInstance("/api/user");
 
 const getById = (id: string, params = {}): Promise<User | void> => {
     return request
@@ -39,6 +36,7 @@ const getByOryId = (id: string): Promise<User | void> => {
 
 const updatePassword = (): Promise<PasswordChangeResponse> => {
     return request
+        // TODO: missing leading slash — should be `/password-change`, verify endpoint before fixing
         .put(`password-change`)
         .then((response) => {
             return response?.data;

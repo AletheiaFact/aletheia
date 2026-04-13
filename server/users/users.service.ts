@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
+import {
+    Inject,
+    Injectable,
+    Logger,
+    Scope,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Status } from "../auth/ability/ability.factory";
 import { Model, Aggregate, Types } from "mongoose";
@@ -32,6 +38,16 @@ export class UsersService {
             nameSpaceSlug = NameSpaceEnum.Main,
             canAssignUsers = true,
         } = userQuery;
+
+        if (!this.req.user) {
+            this.logger.warn(
+                `Unauthenticated user search attempt (searchName=${searchName}, canAssignUsers=${canAssignUsers})`
+            );
+            throw new UnauthorizedException(
+                "Authentication required to search users"
+            );
+        }
+
         const { _id: userId } = this.req.user;
         const pipeline: Aggregate<any[]> = this.UserModel.aggregate();
 

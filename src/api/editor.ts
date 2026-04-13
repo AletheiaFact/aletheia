@@ -1,10 +1,7 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/editor`,
-});
+const request = createApiInstance("/api/editor");
 
 const update = (reference, editorContentObject, t) => {
     return request
