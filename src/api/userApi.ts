@@ -36,7 +36,6 @@ const getByOryId = (id: string): Promise<User | void> => {
 
 const updatePassword = (): Promise<PasswordChangeResponse> => {
     return request
-        // TODO: missing leading slash — should be `/password-change`, verify endpoint before fixing
         .put(`password-change`)
         .then((response) => {
             return response?.data;

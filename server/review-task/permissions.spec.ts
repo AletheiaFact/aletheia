@@ -418,6 +418,20 @@ describe("resolvePermissions", () => {
             expect(result.editorReadonly).toBe(true);
         });
 
+        it("should restrict admin editing in reported state", () => {
+            const result = resolvePermissions(
+                buildInput({
+                    state: ReviewTaskStates.reported,
+                    userRole: Roles.Admin,
+                    userAssignments: adminAssignments,
+                })
+            );
+
+            expect(result.canEditEditor).toBe(false);
+            expect(result.editorReadonly).toBe(true);
+            expect(result.canSaveDraft).toBe(false);
+        });
+
         it("should restrict admin editing in published state", () => {
             const result = resolvePermissions(
                 buildInput({

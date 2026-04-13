@@ -38,7 +38,6 @@ const get = (
         .get("/", { params })
         .then((response) => {
             const { claims, totalPages, totalClaims } = response.data;
-            // TODO: this function returns undefined when fetchOnly is false — review callers and fix return value
             if (options.fetchOnly) {
                 return {
                     data: claims,
