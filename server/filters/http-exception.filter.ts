@@ -101,9 +101,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
                     message: safeMessage,
                 });
             } else if (status === HttpStatus.NOT_FOUND) {
-                response.status(status).redirect("/404");
+                response.redirect("/404");
             } else if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-                response.status(status).redirect("/404");
+                response.redirect("/404");
             } else {
                 response.status(status).json({
                     requestId,

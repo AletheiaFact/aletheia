@@ -39,8 +39,11 @@ export class UsersService {
         } = userQuery;
 
         if (!this.req.user) {
+            const safeSearchName = String(searchName || "")
+                .replace(/[\n\r]/g, "")
+                .slice(0, 100);
             this.logger.warn(
-                `Unauthenticated user search attempt (searchName=${searchName}, canAssignUsers=${canAssignUsers})`
+                `Unauthenticated user search attempt (searchName=${safeSearchName}, canAssignUsers=${canAssignUsers})`
             );
             throw new UnauthorizedException(
                 "Authentication required to search users"
