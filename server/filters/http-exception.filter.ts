@@ -105,28 +105,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
         // Send error response only if headers haven't been sent
         if (!response.headersSent) {
             const isApiRequest = request.originalUrl.startsWith("/api");
+            const shouldRedirect = [
+                HttpStatus.NOT_FOUND,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            ].includes(status);
 
-            if (isApiRequest) {
-                response.status(status).json({
-                    requestId,
-                    statusCode: status,
-                    timestamp: new Date().toISOString(),
-                    path: request.url,
-                    message: safeMessage,
-                });
-            } else if (status === HttpStatus.NOT_FOUND) {
-                response.redirect("/404");
-            } else if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-                response.redirect("/404");
-            } else {
-                response.status(status).json({
-                    requestId,
-                    statusCode: status,
-                    timestamp: new Date().toISOString(),
-                    path: request.url,
-                    message: safeMessage,
-                });
+            if (!isApiRequest && shouldRedirect) {
+                return response.redirect("/404");
             }
+
+            response.status(status).json({
+                requestId,
+                statusCode: status,
+                timestamp: new Date().toISOString(),
+                path: request.url,
+                message: safeMessage,
+            });
         }
     }
 }
