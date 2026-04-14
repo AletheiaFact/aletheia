@@ -274,4 +274,42 @@ describe("UsersService (Unit)", () => {
             );
         });
     });
+
+    describe("findAll - unauthenticated", () => {
+        let unauthService: UsersService;
+
+        beforeAll(async () => {
+            const module: TestingModule = await Test.createTestingModule({
+                providers: [
+                    UsersService,
+                    { provide: REQUEST, useValue: { user: null, params: {} } },
+                    {
+                        provide: getModelToken(User.name),
+                        useValue: UserModelConstructor,
+                    },
+                    { provide: OryService, useValue: mockOryService() },
+                    {
+                        provide: NotificationService,
+                        useValue: mockNotificationService,
+                    },
+                ],
+            }).compile();
+
+            unauthService = await module.resolve<UsersService>(UsersService);
+        });
+
+        it("should throw UnauthorizedException when user is not authenticated", async () => {
+            await expect(
+                unauthService.findAll({ searchName: "test" })
+            ).rejects.toThrow("Authentication required to search users");
+        });
+
+        it("should sanitize searchName in log to prevent log injection", async () => {
+            await expect(
+                unauthService.findAll({
+                    searchName: "test\nINJECTED_LOG_LINE\rmore",
+                })
+            ).rejects.toThrow("Authentication required to search users");
+        });
+    });
 });

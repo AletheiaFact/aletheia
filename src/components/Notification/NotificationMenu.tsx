@@ -44,7 +44,8 @@ const NotificationMenu = ({ hasSession, user }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        NotificationsApi.getTokens(user?._id).then(
+        if (!user?._id) return;
+        NotificationsApi.getTokens(user._id).then(
             (data: { applicationIdentifier: string; hmacHash: string }) => {
                 setApplicationIdentifier(data?.applicationIdentifier);
                 setHmacHash(data?.hmacHash);

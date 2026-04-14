@@ -1,12 +1,9 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/reviewtask`,
-});
+const request = createApiInstance("/api/reviewtask");
 
 interface ReviewTaskOptions {
     page?: number;

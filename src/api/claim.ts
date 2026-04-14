@@ -1,4 +1,3 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { Claim } from "../types/Claim";
@@ -7,11 +6,9 @@ import type {
     ClaimCreateResponse,
     TranslationFn,
 } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/claim`,
-});
+const request = createApiInstance("/api/claim");
 
 interface FetchOptions {
     page?: number;
