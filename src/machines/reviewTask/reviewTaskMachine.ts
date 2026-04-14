@@ -23,7 +23,7 @@ export const createNewMachine = ({ value, context }, reportModel) => {
 /**
  * Intercepts the event sent to the machine to save the context on the database
  */
-export const transitionHandler = (state) => {
+export const transitionHandler = (state, extraContext) => {
     const {
         data_hash,
         reportModel,
@@ -116,23 +116,24 @@ export const transitionHandler = (state) => {
             return event === Events.goback
                 ? setFormAndEvents(nextState)
                 : setFormAndEvents(
-                      event,
-                      isSameLabel(state.context, state.event)
-                  );
+                    event,
+                    isSameLabel(state.context, state.event)
+                );
         })
         .catch((e) => {
             console.error("[ReviewTask] Create review task failed:", e);
         })
         .finally(() => resetIsLoading());
 
-    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
+    sendReviewNotifications(data_hash, event, reviewData, extraContext.claimSlug, extraContext.personalitySlug, currentUserId, t);
 };
 
 export const createNewMachineService = (
     machine: any,
-    reportModel: string = ReportModelEnum.FactChecking
+    reportModel: string = ReportModelEnum.FactChecking,
+    extraContext: any = {}
 ) => {
     return interpret(createNewMachine(machine, reportModel))
-        .onTransition(transitionHandler)
+        .onTransition((state) => transitionHandler(state, extraContext))
         .start();
 };

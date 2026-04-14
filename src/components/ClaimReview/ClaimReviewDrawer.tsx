@@ -54,6 +54,8 @@ const ClaimReviewDrawer = () => {
             {target && data_hash && !isLoading ? (
                 <ReviewTaskMachineProvider
                     data_hash={data_hash}
+                    claim={target}
+                    personality={personality}
                     reviewTaskType={
                         content?.reviewTaskType || ReviewTaskTypeEnum.Claim
                     }

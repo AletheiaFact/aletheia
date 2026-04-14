@@ -1,4 +1,3 @@
-import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimView from "../components/Claim/ClaimView";
 import { GetLocale } from "../utils/GetLocale";

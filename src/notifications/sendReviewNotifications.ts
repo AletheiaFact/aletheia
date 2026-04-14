@@ -5,14 +5,14 @@ const sendReviewNotifications = (
     data_hash,
     event,
     reviewData,
+    claimId,
+    personalitySlug,
     currentUserId,
     t
 ) => {
     const payload = {
         messageIdentifier: "",
-        redirectUrl: window.location.href.includes("/sentence")
-            ? window.location.href
-            : `${window.location.href}/sentence/${data_hash}`,
+        redirectUrl: `/personality/${personalitySlug}/claim/${claimId}/sentence/${data_hash}`
     };
 
     if (event === Events.assignUser) {
