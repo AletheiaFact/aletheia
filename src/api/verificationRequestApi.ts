@@ -24,23 +24,13 @@ const request = axios.create({
     baseURL: `/api/verification-request`,
 });
 
-const createVerificationRequest = (
-    t,
-    router,
-    verificationRequest: any = {}
-) => {
-    const { nameSpace = NameSpaceEnum.Main } = verificationRequest;
+const createVerificationRequest = (t, verificationRequest: any = {}) => {
     return request
         .post("/", verificationRequest)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
                 t("verificationRequest:verificationRequestCreateSuccess")
-            );
-            router.push(
-                nameSpace === NameSpaceEnum.Main
-                    ? "/verification-request"
-                    : `/${nameSpace}/verification-request`
             );
             return response.data;
         })
