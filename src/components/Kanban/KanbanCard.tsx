@@ -86,6 +86,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                     borderRadius: 4,
                     marginBottom: 0,
                     boxShadow: `0px 1px 1px ${colors.shadow}`,
+                    cursor: "pointer"
                 }}
             >
                 <Grid container style={{ width: "100%", padding: "10px" }}>
@@ -138,8 +139,8 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                                         alignSelf: "flex-start",
                                         backgroundColor:
                                             reviewColors[
-                                                reviewTask.content.props
-                                                    .classification
+                                            reviewTask.content.props
+                                                .classification
                                             ],
                                     }}
                                 />
