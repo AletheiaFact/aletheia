@@ -125,7 +125,15 @@ export const transitionHandler = (state, extraContext) => {
         })
         .finally(() => resetIsLoading());
 
-    sendReviewNotifications(data_hash, event, reviewData, extraContext.claimSlug, extraContext.personalitySlug, currentUserId, t);
+    sendReviewNotifications(
+        data_hash,
+        event,
+        reviewData,
+        extraContext.claim,
+        extraContext.personality,
+        nameSpace,
+        currentUserId,
+        t);
 };
 
 export const createNewMachineService = (

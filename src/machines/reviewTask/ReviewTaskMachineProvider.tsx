@@ -89,8 +89,8 @@ export const ReviewTaskMachineProvider = (
         globalMachineService?.state?.context?.preloadedOptions;
 
     const extraContext = {
-        personalitySlug: props.personality?.slug,
-        claimSlug: props.claim?.slug
+        personality: props.personality,
+        claim: props.claim
     };
 
     useEffect(() => {
