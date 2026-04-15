@@ -22,6 +22,13 @@ const sendReviewNotifications = (
         }
     }
 
+    if (event === Events.reAssignUser) {
+        payload.messageIdentifier = t("notification:reAssignedUser");
+        for (const user of reviewData.usersId) {
+            NotificationsApi.sendNotification(user, payload);
+        }
+    }
+
     if (event === Events.finishReport) {
         payload.messageIdentifier = t("notification:reviewProgress");
         const inactiveUsers = reviewData.usersId.filter(
@@ -52,6 +59,17 @@ const sendReviewNotifications = (
         }
     }
 
+    if (event === Events.submitCrossChecking) {
+        payload.messageIdentifier = t("notification:crossCheckingFinished");
+        const inactiveUsers = reviewData.usersId.filter(
+            (userId) => userId !== currentUserId
+        );
+
+        for (const user of inactiveUsers) {
+            NotificationsApi.sendNotification(user, payload);
+        }
+    }
+
     if (event === Events.sendToReview) {
         payload.messageIdentifier = t("notification:reviewSubmit");
         const inactiveUsers = reviewData.usersId.filter(
@@ -68,7 +86,29 @@ const sendReviewNotifications = (
         }
     }
 
-    if (event === Events.addRejectionComment) {
+    if (event === Events.submitComment) {
+        payload.messageIdentifier = t("notification:newComment");
+        const inactiveUsers = reviewData.usersId.filter(
+            (userId) => userId !== currentUserId
+        );
+
+        for (const user of inactiveUsers) {
+            NotificationsApi.sendNotification(user, payload);
+        }
+    }
+
+    if (event === Events.reject) {
+        payload.messageIdentifier = t("notification:reviewRejectRequested");
+        const inactiveUsers = reviewData.usersId.filter(
+            (userId) => userId !== currentUserId
+        );
+
+        for (const user of inactiveUsers) {
+            NotificationsApi.sendNotification(user, payload);
+        }
+    }
+
+    if (event === Events.confirmRejection) {
         payload.messageIdentifier = t("notification:reviewRejected");
         for (const user of reviewData.usersId) {
             NotificationsApi.sendNotification(user, payload);
