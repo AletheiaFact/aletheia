@@ -13,9 +13,7 @@ export const generateSentenceContentPath = (
     const isDebate = contentModel === ContentModelEnum.Debate;
 
     const basePath = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
-    let path = `${basePath}/claim/${
-        claim.contentModel === ContentModelEnum.Debate ? claim._id : claim?.slug
-    }`;
+    let path = `${basePath}/claim/${claim.contentModel === ContentModelEnum.Debate || ContentModelEnum.Image ? claim._id : claim?.slug}`;
 
     if (isSpeech || (isImage && personality)) {
         path = `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}`;

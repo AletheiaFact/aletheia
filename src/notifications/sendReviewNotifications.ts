@@ -1,18 +1,29 @@
 import NotificationsApi from "../api/notificationsApi";
 import { ReviewTaskEvents as Events } from "../machines/reviewTask/enums";
+import { generateSentenceContentPath } from "../utils/GetSentenceContentHref";
 
 const sendReviewNotifications = (
     data_hash,
     event,
     reviewData,
-    claimId,
-    personalitySlug,
+    claim,
+    personality,
+    nameSpace,
     currentUserId,
     t
 ) => {
+
+    const currentPath = generateSentenceContentPath(
+        nameSpace,
+        personality,
+        claim,
+        claim?.contentModel,
+        data_hash
+    );
+
     const payload = {
         messageIdentifier: "",
-        redirectUrl: `/personality/${personalitySlug}/claim/${claimId}/sentence/${data_hash}`
+        redirectUrl: currentPath
     };
 
     if (event === Events.assignUser) {
