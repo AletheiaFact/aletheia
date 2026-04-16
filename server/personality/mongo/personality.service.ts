@@ -432,7 +432,13 @@ export class MongoPersonalityService {
             return;
         }
 
-        return Object.assign(personality, wikidataExtract, {
+        const definedWikidataFields = Object.fromEntries(
+            Object.entries(wikidataExtract).filter(
+                ([, value]) => value !== undefined
+            )
+        );
+
+        return Object.assign(personality, definedWikidataFields, {
             stats:
                 personality._id &&
                 (await this.getReviewStats(personality._id)),
