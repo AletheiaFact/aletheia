@@ -547,6 +547,11 @@ export class ReviewTaskService {
         }
 
         if (reviewTask) {
+            this.logger.log(
+                `[ReviewTask] State transition for data_hash=${reviewTaskBody.data_hash} ` +
+                    `by user=${this.req.user?._id}: ` +
+                    `"${reviewTask.machine?.value}" → "${reviewTaskBody.machine?.value}"`
+            );
             return this.update(
                 reviewTaskBody.data_hash,
                 reviewTaskBody,
@@ -554,6 +559,12 @@ export class ReviewTaskService {
                 reviewTask.reportModel
             );
         } else {
+            this.logger.log(
+                `[ReviewTask] Creating new review task: data_hash=${reviewTaskBody.data_hash}, ` +
+                    `reportModel=${reviewTaskBody.reportModel}, ` +
+                    `initialState="${reviewTaskBody.machine?.value}", ` +
+                    `user=${this.req.user?._id}`
+            );
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
             newReviewTask.save();
             this._createReviewTaskHistory(newReviewTask);
@@ -656,6 +667,10 @@ export class ReviewTaskService {
                 },
             });
             await newReviewTask.save();
+            this.logger.log(
+                `[ReviewTask] Auto-created draft for data_hash=${data_hash}, ` +
+                    `reportModel=${saveDraftBody.reportModel}, user=${loggedInUserId}`
+            );
             reviewTask = newReviewTask;
         } else if (!reviewTask) {
             throw new NotFoundException("Review task not found");
@@ -673,6 +688,10 @@ export class ReviewTaskService {
             userRole === Roles.Admin || userRole === Roles.SuperAdmin;
 
         if (!isAssignee && !isAdminUser) {
+            this.logger.warn(
+                `[ReviewTask] Draft save denied for data_hash=${data_hash}: ` +
+                    `user=${loggedInUser._id} is not assignee and role="${userRole}" is not admin`
+            );
             throw new ForbiddenException("Not authorized to save this draft");
         }
 
@@ -967,10 +986,19 @@ export class ReviewTaskService {
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {
+                this.logger.warn(
+                    `[ReviewTask] Publish denied for data_hash=${data_hash}: ` +
+                        `user=${loggedInUser._id} role="${loggedInUser.role[nameSpace]}" ` +
+                        `is not reviewer (${machine.context.reviewData.reviewerId}) and not admin`
+                );
                 throw new ForbiddenException(
                     "This user does not have permission to publish the report"
                 );
             }
+            this.logger.log(
+                `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
+                    `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
+            );
             this._createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,
