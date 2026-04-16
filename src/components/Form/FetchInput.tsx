@@ -20,6 +20,14 @@ interface FetchInputProps {
     preloadedOptions?: string[];
 }
 
+const USER_FIELDS = ["usersId", "crossCheckerId", "reviewerId"];
+
+const getApiFunction = (fieldName: string) => {
+    return USER_FIELDS.includes(fieldName)
+        ? userApi.getById
+        : verificationRequestApi.getById;
+};
+
 const FetchInput = ({
     fieldName,
     placeholder,
@@ -35,10 +43,7 @@ const FetchInput = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const optimisticallySetRef = useRef(null);
-    const userFields = ["usersId", "crossCheckerId", "reviewerId"];
-    const apiFunction = userFields.includes(fieldName)
-        ? userApi.getById
-        : verificationRequestApi.getById;
+    const apiFunction = getApiFunction(fieldName);
 
     useEffect(() => {
         const hydrateValues = async () => {

@@ -38,7 +38,7 @@ function SelectOptions({
 
     const { t } = useTranslation();
 
-    const debounceTimeout = useRef(null);
+    const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const filteredOptions = options.filter((options) => {
         if (!options?.value) return true;
