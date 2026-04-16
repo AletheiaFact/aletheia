@@ -42,7 +42,7 @@ export class MongoPersonalityService {
         private readonly historyService: HistoryService,
         private readonly wikidata: WikidataService,
         private readonly util: UtilService,
-    ) {}
+    ) { }
 
     async getWikidataEntities(regex: string, language: string) {
         return await this.wikidata.queryWikibaseEntities(
@@ -399,7 +399,28 @@ export class MongoPersonalityService {
                     this.extractClaimWithTextSummary(personality.claims),
             });
         }
-        return personality;
+
+        if (wikidataExtract.isAllowedProp === false) {
+            this.logger.warn(
+                `Personality ${personality._id} filtered out: wikidata entity ${personality.wikidata} is not an allowed type`
+            );
+            return;
+        }
+
+        const definedWikidataFields = Object.fromEntries(
+            Object.entries(wikidataExtract).filter(
+                ([, value]) => value !== undefined
+            )
+        );
+
+        return Object.assign(personality, definedWikidataFields, {
+            stats:
+                personality._id &&
+                (await this.getReviewStats(personality._id)),
+            claims:
+                personality.claims &&
+                this.extractClaimWithTextSummary(personality.claims),
+        });
     }
 
     async getReviewStats(_id) {
