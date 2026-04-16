@@ -88,6 +88,20 @@ export class AllExceptionsFilter implements ExceptionFilter {
             exception instanceof Error ? exception.stack : ""
         );
 
+        // Sanitize response message to prevent stack trace / XSS exposure
+        let safeMessage: string | object;
+        if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+            safeMessage = "Internal server error";
+        } else if (exception instanceof HttpException) {
+            const exceptionResponse = exception.getResponse();
+            safeMessage =
+                typeof exceptionResponse === "object"
+                    ? exceptionResponse
+                    : String(exceptionResponse);
+        } else {
+            safeMessage = "An error occurred";
+        }
+
         // Send error response only if headers haven't been sent
         if (!response.headersSent) {
             const isApiRequest = request.originalUrl.startsWith("/api");
