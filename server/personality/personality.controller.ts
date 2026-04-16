@@ -139,33 +139,46 @@ export class PersonalityController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        const slug = req.params.slug;
         const hideDescriptions: any = {};
         const parsedUrl = parse(req.url, true);
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
                 {
-                    slug: req.params.slug,
+                    slug,
                     isDeleted: false,
                 },
                 req.language
             );
 
-        const { personalities } = await this.personalityService.combinedListAll(
-            {
-                language: req.language,
-                order: "random",
-                pageSize: 6,
-                fetchOnly: true,
-                filter: personality._id,
-            }
-        );
-
-        hideDescriptions[TargetModel.Personality] =
-            await this.historyService.getDescriptionForHide(
-                personality,
-                TargetModel.Personality
+        let personalities = [];
+        try {
+            ({ personalities } =
+                await this.personalityService.combinedListAll({
+                    language: req.language,
+                    order: "random",
+                    pageSize: 6,
+                    fetchOnly: true,
+                    filter: personality._id,
+                }));
+        } catch (error) {
+            this.logger.error(
+                `Failed to fetch related personalities for "${slug}": ${error.message}`
             );
+        }
+
+        try {
+            hideDescriptions[TargetModel.Personality] =
+                await this.historyService.getDescriptionForHide(
+                    personality,
+                    TargetModel.Personality
+                );
+        } catch (error) {
+            this.logger.error(
+                `Failed to fetch hide descriptions for "${slug}": ${error.message}`
+            );
+        }
 
         const queryObject = Object.assign(parsedUrl.query, {
             personality,
