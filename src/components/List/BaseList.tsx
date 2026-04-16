@@ -30,7 +30,7 @@ const BaseList = ({
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
     const [items, setItems] = useState([]);
-    const [sortByOrder] = useState("asc");
+    const [sortByOrder] = useState("desc");
     const [execLoadMore, setExecLoadMore] = useState<boolean>(true);
     const [nameSpace] = useAtom(currentNameSpace);
 

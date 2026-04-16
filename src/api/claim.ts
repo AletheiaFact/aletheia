@@ -1,11 +1,14 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { Claim } from "../types/Claim";
+import type {
+    PaginatedResponse,
+    ClaimCreateResponse,
+    TranslationFn,
+} from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/claim`,
-});
+const request = createApiInstance("/api/claim");
 
 interface FetchOptions {
     page?: number;
@@ -62,7 +65,7 @@ const saveSpeech = (t, claim = {}) => {
         .post("/", claim)
         .then((response) => {
             const { title } = response.data;
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage("success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -73,7 +76,7 @@ const saveSpeech = (t, claim = {}) => {
                 // TODO: Track errors with Sentry
             }
             const { data } = response;
-            MessageManager.showMessage("error", 
+            MessageManager.showMessage("error",
                 data && data.message
                     ? data.message
                     : t("claimForm:errorCreateMessage")

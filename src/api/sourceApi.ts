@@ -1,11 +1,10 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { SourceType } from "../types/Source";
+import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/source`,
-});
+const request = createApiInstance("/api/source");
 
 type optionsType = {
     targetId: string;
@@ -89,7 +88,7 @@ const getById = (id, t, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            MessageManager.showMessage("error", t("sources:sourcesErrorFetching")); 
+            MessageManager.showMessage("error", t("sources:sourcesErrorFetching"));
         });
 };
 

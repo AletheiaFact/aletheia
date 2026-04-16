@@ -127,6 +127,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Claim}
                 claim={claim}
+                personality={personality}
                 sentenceContent={content.content}
             >
                 <VisualEditorProvider data_hash={content.data_hash}>

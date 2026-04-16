@@ -1,7 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import SelectOptions from "./SelectOptions";
+import { useEffect, useRef, useState } from "react";
 import userApi from "../../api/userApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
+import SelectOptions from "./SelectOptions";
+
+interface SelectOption {
+    label: string;
+    value: any;
+}
 
 interface FetchInputProps {
     fieldName: string;
@@ -15,6 +20,14 @@ interface FetchInputProps {
     preloadedOptions?: string[];
 }
 
+const USER_FIELDS = ["usersId", "crossCheckerId", "reviewerId"];
+
+const getApiFunction = (fieldName: string) => {
+    return USER_FIELDS.includes(fieldName)
+        ? userApi.getById
+        : verificationRequestApi.getById;
+};
+
 const FetchInput = ({
     fieldName,
     placeholder,
@@ -26,62 +39,48 @@ const FetchInput = ({
     value = null,
     preloadedOptions = [],
 }: FetchInputProps) => {
-    const [treatedValue, setTreatedValue] = useState([]);
+    const [treatedValue, setTreatedValue] = useState<SelectOption | SelectOption[] | null>(isMultiple ? [] : null);
     const [isLoading, setIsLoading] = useState(false);
-    const optimisticallySetRef = useRef(false);
-    const userFields = ["usersId", "crossCheckerId", "reviewerId"];
-    const apiFunction = userFields.includes(fieldName)
-        ? userApi.getById
-        : verificationRequestApi.getById;
+
+    const optimisticallySetRef = useRef(null);
+    const apiFunction = getApiFunction(fieldName);
 
     useEffect(() => {
-        const fetchSelectedContent = async () => {
-            if (
-                Array.isArray(value) ? value.length > 0 : value !== "" && value
-            ) {
-                // Skip fetch if value was just set optimistically from the dropdown
-                if (optimisticallySetRef.current) {
-                    optimisticallySetRef.current = false;
-                    return;
-                }
+        const hydrateValues = async () => {
+            if (JSON.stringify(value) === JSON.stringify(optimisticallySetRef.current)) return;
 
+            if (value && (Array.isArray(value) ? value.length > 0 : value !== "")) {
                 try {
                     setIsLoading(true);
                     const Promises = Array.isArray(value)
-                        ? value.map((id) => apiFunction(id))
+                        ? value.map(id => apiFunction(id))
                         : [apiFunction(value)];
                     const results = await Promise.all(Promises);
-                    const treatedValues = results.map((user) => ({
-                        label: user?.name || user?.content,
-                        value: user?._id,
+                    const treatedValues = results.map(item => ({
+                        label: item?.name || item?.content || "",
+                        value: item?._id,
                     }));
-                    setTreatedValue(treatedValues);
+
+                    const finalValue = isMultiple ? treatedValues : treatedValues[0];
+
+                    setTreatedValue(finalValue);
+                    optimisticallySetRef.current = value;
                 } catch (error) {
-                    console.error(error);
+                    console.error("Hydration error:", error);
                 } finally {
                     setIsLoading(false);
                 }
             } else {
-                setTreatedValue(value);
+                setTreatedValue(isMultiple ? [] : null);
             }
         };
 
-        fetchSelectedContent().catch((error) => {
-            console.error(error);
-            setIsLoading(false);
-        });
-    }, [value]);
+        hydrateValues();
+    }, [value, isMultiple, apiFunction]);
 
-    // Optimistically update displayed chips when user selects from dropdown
     const onSelectionChange = (ids, selectedOptions) => {
-        if (selectedOptions) {
-            optimisticallySetRef.current = true;
-            setTreatedValue(
-                Array.isArray(selectedOptions)
-                    ? selectedOptions
-                    : [selectedOptions]
-            );
-        }
+        setTreatedValue(selectedOptions);
+        optimisticallySetRef.current = ids;
         onChange(ids);
     };
 

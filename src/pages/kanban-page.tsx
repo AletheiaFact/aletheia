@@ -1,4 +1,3 @@
-import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import { GetLocale } from "../utils/GetLocale";
 import KanbanView from "../components/Kanban/KanbanView";

@@ -59,20 +59,20 @@ const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
         >
             <Stack sx={{ marginTop: "30px" }} spacing={2}>
                 <FormControlLabel
-                    value="asc"
-                    control={<RadioInput namespace={nameSpace} />}
-                    label={
-                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
-                            {t("orderModal:radioAsc")}
-                        </span>
-                    }
-                />
-                <FormControlLabel
                     value="desc"
                     control={<RadioInput namespace={nameSpace} />}
                     label={
                         <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
                             {t("orderModal:radioDesc")}
+                        </span>
+                    }
+                />
+                <FormControlLabel
+                    value="asc"
+                    control={<RadioInput namespace={nameSpace} />}
+                    label={
+                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
+                            {t("orderModal:radioAsc")}
                         </span>
                     }
                 />

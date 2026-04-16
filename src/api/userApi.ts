@@ -1,12 +1,14 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
+import type { User } from "../types/User";
+import type {
+    TranslationFn,
+    PasswordChangeResponse,
+} from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/user`,
-});
+const request = createApiInstance("/api/user");
 
 const getById = (id, params = {}) => {
     return request

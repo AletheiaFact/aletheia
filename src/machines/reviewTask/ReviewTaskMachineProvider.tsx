@@ -41,6 +41,7 @@ interface ReviewTaskMachineProviderProps {
     baseReportModel?: any;
     publishedReview?: { review: any };
     claim?: any;
+    personality?: any;
     sentenceContent?: any;
 }
 
@@ -87,13 +88,18 @@ export const ReviewTaskMachineProvider = (
     const preloadedOptions =
         globalMachineService?.state?.context?.preloadedOptions;
 
+    const extraContext = {
+        personality: props.personality,
+        claim: props.claim
+    };
+
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
                 ? Promise.resolve({
-                      machine: props.baseMachine,
-                      reportModel: props.baseReportModel,
-                  })
+                    machine: props.baseMachine,
+                    reportModel: props.baseReportModel,
+                })
                 : ReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
@@ -111,12 +117,12 @@ export const ReviewTaskMachineProvider = (
             const newMachine =
                 machine ||
                 getMachineInitialState(props.reviewTaskType)[
-                    ReportModelEnum.FactChecking
+                ReportModelEnum.FactChecking
                 ];
 
             setReportModel(reportModel);
             setGlobalMachineService(
-                createNewMachineService(newMachine, reportModel)
+                createNewMachineService(newMachine, reportModel, extraContext)
             );
             setLoading(false);
         });
@@ -169,7 +175,7 @@ export const ReviewTaskMachineProvider = (
             reportModel
         ];
         setGlobalMachineService(
-            createNewMachineService(newMachine, reportModel)
+            createNewMachineService(newMachine, reportModel, extraContext)
         );
         setLoading(false);
     };
