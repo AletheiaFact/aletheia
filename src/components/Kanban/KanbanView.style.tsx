@@ -16,11 +16,19 @@ const KanbanViewStyled = styled.div`
 
     .kanban-board {
         display: flex;
+        justify-content: flex-start;
         flex-direction: row;
         flex-wrap: nowrap;
         overflow-x: auto;
         gap: 12px;
     }
+
+         @media (min-width: 2000px) {
+            .kanban-board {
+                justify-content: center;
+            }
+        }
+
 `;
 
 export default KanbanViewStyled;
