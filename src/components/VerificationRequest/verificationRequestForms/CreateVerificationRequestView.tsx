@@ -34,11 +34,11 @@ const CreateVerificationRequestView = () => {
 
         verificationRequestApi
             .createVerificationRequest(t, newVerificationRequest)
-            .then((s) => {
-                if (s?.data_hash) {
+            .then((createdVerificationRequest) => {
+                if (createdVerificationRequest?.data_hash) {
                     const path = nameSpace === NameSpaceEnum.Main
-                        ? `/verification-request/${s.data_hash}`
-                        : `/${nameSpace}/verification-request/${s.data_hash}`;
+                        ? `/verification-request/${createdVerificationRequest.data_hash}`
+                        : `/${nameSpace}/verification-request/${createdVerificationRequest.data_hash}`;
                     router.push(path);
                 }
                 setIsLoading(false);

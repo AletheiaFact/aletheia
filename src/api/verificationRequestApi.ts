@@ -1,7 +1,6 @@
 import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
-import { NameSpaceEnum } from "../types/Namespace";
 import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
 interface SearchOptions {
     searchText?: string;
