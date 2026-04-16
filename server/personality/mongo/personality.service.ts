@@ -340,67 +340,106 @@ export class MongoPersonalityService {
             this.req
         );
 
-        try {
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
-            const personality: any = await this.PersonalityModel.findOne(
-                queryOptions
-            ).populate({
-                path: "claims",
-                match: { isHidden: false, isDeleted: false, nameSpace },
-                populate: {
-                    path: "latestRevision",
-                    select: "_id title content",
-                },
-                select: "_id",
-            });
-            personality.claims = await Promise.all(
-                personality.claims.map((claim) => {
-                    return {
-                        ...claim.latestRevision,
-                        ...claim,
-                    };
-                })
-            );
-            this.logger.log(`Found personality ${personality._id}`);
-            const processed = await this.postProcess(
-                personality.toObject(),
-                language
-            );
+        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
+        const personality: any = await this.PersonalityModel.findOne(
+            queryOptions
+        ).populate({
+            path: "claims",
+            match: { isHidden: false, isDeleted: false, nameSpace },
+            populate: {
+                path: "latestRevision",
+                select: "_id title content",
+            },
+            select: "_id",
+        });
 
-            if (!processed) {
-                throw new NotFoundException(
-                    `Personality not found or has invalid instance type`
-                );
-            }
-
-            return processed;
-        } catch {
-            throw new NotFoundException();
+        if (!personality) {
+            this.logger.warn(
+                `Personality not found for slug "${query.slug}" in namespace "${nameSpace}"`
+            );
+            throw new NotFoundException(
+                `Personality not found for slug "${query.slug}"`
+            );
         }
+
+        const claimsWithMissingRevisions = personality.claims.filter(
+            (claim) => !claim.latestRevision
+        );
+        if (claimsWithMissingRevisions.length > 0) {
+            const claimIds = claimsWithMissingRevisions.map((c) => c._id);
+            const displayedIds = claimIds.slice(0, 10).join(", ");
+            const remaining =
+                claimIds.length > 10
+                    ? ` and ${claimIds.length - 10} more`
+                    : "";
+            this.logger.warn(
+                `Personality "${query.slug}" has ${claimsWithMissingRevisions.length} claims with missing latestRevision. ` +
+                    `Claim IDs: ${displayedIds}${remaining}`
+            );
+        }
+
+        personality.claims = personality.claims
+            .filter((claim) => claim.latestRevision)
+            .map((claim) => ({
+                ...claim.latestRevision,
+                ...claim,
+            }));
+
+        this.logger.log(
+            `Found personality "${query.slug}" (${personality._id}) with ${personality.claims.length} claims`
+        );
+
+        const processed = await this.postProcess(
+            personality.toObject(),
+            language
+        );
+
+        if (!processed) {
+            this.logger.warn(
+                `Personality "${query.slug}" (${personality._id}) filtered out during postProcess (invalid wikidata type)`
+            );
+            throw new NotFoundException(
+                `Personality not found or has invalid instance type`
+            );
+        }
+
+        return processed;
     }
 
     async postProcess(personality, language: string = "en") {
-        if (personality) {
-            const wikidataExtract = await this.wikidata.fetchProperties({
+        if (!personality) {
+            return personality;
+        }
+
+        let wikidataExtract;
+        try {
+            wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
                 language,
             });
-            // bail out if wikidata property is not allowed
-            if (wikidataExtract.isAllowedProp === false) {
-                return;
-            }
-            //The order of wikidataExtract should be after personality
-            return Object.assign(personality, wikidataExtract, {
-                stats:
-                    personality._id &&
-                    (await this.getReviewStats(personality._id)),
-                claims:
-                    personality.claims &&
-                    this.extractClaimWithTextSummary(personality.claims),
-            });
+        } catch (error) {
+            this.logger.error(
+                `Wikidata fetch failed for personality ${personality._id} ` +
+                    `(wikidataId: ${personality.wikidata}): ${error.message}`
+            );
+            throw error;
         }
-        return personality;
+
+        if (wikidataExtract.isAllowedProp === false) {
+            this.logger.warn(
+                `Personality ${personality._id} filtered out: wikidata entity ${personality.wikidata} is not an allowed type`
+            );
+            return;
+        }
+
+        return Object.assign(personality, wikidataExtract, {
+            stats:
+                personality._id &&
+                (await this.getReviewStats(personality._id)),
+            claims:
+                personality.claims &&
+                this.extractClaimWithTextSummary(personality.claims),
+        });
     }
 
     async getReviewStats(_id) {
