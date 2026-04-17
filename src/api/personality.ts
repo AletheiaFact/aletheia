@@ -1,11 +1,11 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { Personality } from "../types/Personality";
 import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const baseUrl = `/api/personality`;
+const request = createApiInstance("/api/personality");
 
 interface FetchOptions {
     searchName: string;
@@ -36,8 +36,8 @@ const getPersonalities = (
     };
     const headers = options?.headers || {};
 
-    return axios
-        .get(`${baseUrl}`, { params, headers })
+    return request
+        .get(`/`, { params, headers })
         .then((response) => {
             const { personalities, totalPages, totalPersonalities } =
                 response.data;
@@ -68,8 +68,8 @@ const getPersonality = (
     params: Record<string, unknown>,
     t: TranslationFn
 ): Promise<Personality | void> => {
-    return axios
-        .get(`${baseUrl}/${id}`, {
+    return request
+        .get(`/${id}`, {
             params,
         })
         .then((response) => {
@@ -87,10 +87,8 @@ const createPersonality = (
     personality: Record<string, unknown>,
     t: TranslationFn
 ): Promise<Personality | void> => {
-    return axios
-        .post(`${baseUrl}`, personality, {
-            withCredentials: true,
-        })
+    return request
+        .post(`/`, personality)
         .then((response) => {
             const { name } = response.data;
             MessageManager.showMessage(
@@ -117,8 +115,8 @@ const createPersonality = (
 };
 
 const deletePersonality = (id: string, t: TranslationFn): Promise<void> => {
-    return axios
-        .delete(`${baseUrl}/${id}`)
+    return request
+        .delete(`/${id}`)
         .then(() => {
             MessageManager.showMessage(
                 "success",
@@ -138,8 +136,8 @@ const updatePersonalityHiddenStatus = (
     recaptcha: string,
     description: string
 ): Promise<void> => {
-    return axios
-        .put(`${baseUrl}/hidden/${id}`, {
+    return request
+        .put(`/hidden/${id}`, {
             isHidden,
             recaptcha,
             description,

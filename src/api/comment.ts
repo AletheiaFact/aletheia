@@ -1,10 +1,7 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/comment`,
-});
+const request = createApiInstance("/api/comment");
 
 const createComment = (comment) => {
     return request

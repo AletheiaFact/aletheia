@@ -1,6 +1,6 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
+import { createApiInstance } from "./apiFactory";
 
 interface IGetTopicsOptions {
     topicName: string;
@@ -8,10 +8,7 @@ interface IGetTopicsOptions {
     dispatch?: Function;
 }
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/topics`,
-});
+const request = createApiInstance("/api/topics");
 
 const searchTopics = ({ query, limit = 5, language = "pt", dispatch, t }) => {
   const params = { query, limit, language };

@@ -1,9 +1,6 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/summarization`,
-});
+const request = createApiInstance("/api/summarization");
 
 const summarizeSource = (source) => {
     return request
