@@ -1,9 +1,6 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/speech`,
-});
+const request = createApiInstance("/api/speech");
 
 const getById = (speechId) => {
     return request

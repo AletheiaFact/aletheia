@@ -1,14 +1,8 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const chatRequest = axios.create({
-    withCredentials: true,
-    baseURL: `/api/agent-chat`,
-});
+const chatRequest = createApiInstance("/api/agent-chat");
 
-const sessionRequest = axios.create({
-    withCredentials: true,
-    baseURL: `/api/copilot-session`,
-});
+const sessionRequest = createApiInstance("/api/copilot-session");
 
 const getSession = (claimReviewDataHash: string) => {
     return sessionRequest

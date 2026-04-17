@@ -1,9 +1,6 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/history`,
-});
+const request = createApiInstance("/api/history");
 
 type OptionsType = {
     targetId: string;

@@ -1,13 +1,10 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { Review } from "../types/Review";
 import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api`,
-});
+const request = createApiInstance("/api/review");
 
 interface FetchOptions {
     page?: number;
@@ -33,7 +30,7 @@ const get = (
     };
 
     return request
-        .get(`/review`, { params })
+        .get(`/`, { params })
         .then((response) => {
             const { totalPages, totalReviews, reviews } = response.data;
 
@@ -54,7 +51,7 @@ const updateClaimReviewHiddenStatus = (
     description = ""
 ): Promise<Review> => {
     return request
-        .put(`/review/${id}`, { isHidden, description, recaptcha })
+        .put(`/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
             MessageManager.showMessage(
                 "success",
@@ -73,7 +70,7 @@ const updateClaimReviewHiddenStatus = (
 
 const deleteClaimReview = (id: string, t: TranslationFn): Promise<void> => {
     return request
-        .delete(`/review/${id}`)
+        .delete(`/${id}`)
         .then(() => {
             MessageManager.showMessage("success", t("claim:deleteSuccess"));
         })
@@ -85,7 +82,7 @@ const deleteClaimReview = (id: string, t: TranslationFn): Promise<void> => {
 
 const getClaimReviewByHash = (dataHash: string): Promise<Review> => {
     return request
-        .get(`/review/${dataHash}`)
+        .get(`/${dataHash}`)
         .then((response) => {
             return response.data;
         })

@@ -1,10 +1,7 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/name-space`,
-});
+const request = createApiInstance("/api/name-space");
 
 const createNameSpace = (nameSpace, t) => {
     return request
