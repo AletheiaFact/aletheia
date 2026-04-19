@@ -5,8 +5,6 @@ import actions from "../store/actions";
 import { useAppSelector } from "../store/store";
 
 import colors from "../styles/colors";
-import AletheiaMenu from "./AletheiaMenu";
-import Logo from "./Header/Logo";
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -24,13 +22,21 @@ const Sidebar = () => {
         <Drawer
             open={!menuCollapsed}
             onClose={() => dispatch(actions.closeSideMenu())}
-            anchor="left"
+            anchor="top"
             variant="temporary"
+            slotProps={{
+                backdrop: {
+                    sx: {
+                        backgroundColor: "transparent",
+                    },
+                },
+            }}
             sx={{
                 "& .MuiDrawer-paper": {
-                    width: "17rem",
+                    marginTop: "64px",
+                    width: "100%",
                     padding: "0",
-                    backgroundColor: colors.lightNeutral,
+                    backgroundColor: colors.primary,
                 }
             }}
         >
@@ -40,13 +46,9 @@ const Sidebar = () => {
                     paddingLeft: "48px",
                 }}
             >
-                <Logo
-                    color={colors.primary}
-                    height="48px"
-                    lineHeight="36px"
-                />
+
+                {"teste"}
             </div>
-            <AletheiaMenu />
         </Drawer>
     );
 };

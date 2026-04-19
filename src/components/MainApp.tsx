@@ -47,6 +47,7 @@ const MainApp = ({ children }) => {
                 overflowX: "hidden",
             }}
         >
+            <AletheiaHeader />
             <Sidebar />
             <Box sx={{
                 display: "grid",
@@ -55,7 +56,6 @@ const MainApp = ({ children }) => {
                 gridTemplateColumns: "minmax(0, 1fr)",
             }}>
                 <Box>
-                    <AletheiaHeader />
                     <DonationBanner />
                     {renderCTAButton()}
                     <ContentWrapper>{children}</ContentWrapper>

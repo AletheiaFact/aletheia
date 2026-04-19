@@ -16,7 +16,7 @@ import { useHeaderData } from "./useHeaderData";
 
 const HeaderActions = () => {
     const { state } = useHeaderData();
-    const { user, hasSession } = state;
+    const { userId, hasSession } = state;
     const dispatch = useDispatch();
     const router = useRouter();
     const { vw } = useAppSelector((state) => state);
@@ -36,7 +36,7 @@ const HeaderActions = () => {
             {!vw?.md &&
                 <SelectLanguage dataCy="LanguageButton" defaultLanguage="pt" />
             }
-            <NotificationMenu hasSession={hasSession} user={user} />
+            <NotificationMenu hasSession={hasSession} userId={userId} />
             {localConfig.header.donateButton.show &&
                 <DonateButton header={true} />
             }
