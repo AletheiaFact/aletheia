@@ -7,7 +7,14 @@ import { useHeaderData } from "./useHeaderData";
 
 const UserMenu = () => {
     const { state, actions } = useHeaderData();
-    const { nameSpace, anchorEl } = state;
+    const {
+        nameSpace,
+        anchorEl,
+        myAccountSections,
+        hasSession,
+        userId,
+        isLoading
+    } = state;
     const { t, setAnchorEl, handleClose } = actions;
 
     return (
@@ -32,7 +39,15 @@ const UserMenu = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 transformOrigin={{ vertical: "top", horizontal: "center" }}
             >
-                <UserMenuContent />
+                <UserMenuContent
+                    myAccountSections={myAccountSections}
+                    hasSession={hasSession}
+                    userId={userId}
+                    isLoading={isLoading}
+                    handleClose={handleClose}
+                    nameSpace={nameSpace}
+                    t={t}
+                />
             </StyledMenu>
         </>
     );

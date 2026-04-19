@@ -7,7 +7,7 @@ import colors from "../styles/colors";
 import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
-import Header from "./Header/Header";
+import AletheiaHeader from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
@@ -55,7 +55,7 @@ const MainApp = ({ children }) => {
                 gridTemplateColumns: "minmax(0, 1fr)",
             }}>
                 <Box>
-                    <Header />
+                    <AletheiaHeader />
                     <DonationBanner />
                     {renderCTAButton()}
                     <ContentWrapper>{children}</ContentWrapper>

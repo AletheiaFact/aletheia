@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
-import { useEffect, useState } from "react";
-import userApi from "../../api/userApi";
+import { useState } from "react";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -26,7 +25,6 @@ export const useHeaderData = () => {
     const [userId] = useAtom(currentUserId);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [role] = useAtom(currentUserRole);
-    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const baseHref = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
@@ -127,17 +125,9 @@ export const useHeaderData = () => {
 
     const myAccountSections = buildMyAccountSections();
 
-    useEffect(() => {
-        if (hasSession) {
-            userApi.getById(userId).then((user) => {
-                setUser(user);
-            });
-        }
-    }, [hasSession, userId]);
-
     return {
         state: {
-            user,
+            userId,
             isLoading,
             anchorEl,
             isOpen: Boolean(anchorEl),

@@ -1,24 +1,31 @@
 import React, { useRef } from "react";
 
 import { Avatar, Box, Stack, Typography } from "@mui/material";
-import { currentNameSpace } from "../../atoms/namespace";
-import { useAtom } from "jotai";
 import NameSpaceMenu from "./NameSpaceMenu";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { useTranslation } from "next-i18next";
+import { User } from "../../types/User";
+import { TFunction } from "next-i18next";
+import { useHeaderData } from "./useHeaderData";
 
-const UserMenuHeader = ({ isLoading, user }) => {
-    const { t } = useTranslation();
-    const [nameSpace] = useAtom(currentNameSpace);
-    const nameSpaceName =
-        nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
+interface UserMenuHeaderProps {
+    isLoading: boolean;
+    user: User;
+    nameSpace: string | null;
+    t: TFunction;
+}
+
+const UserMenuHeader = ({
+    isLoading,
+    user,
+    nameSpace,
+    t,
+}: UserMenuHeaderProps) => {
+    const { state, actions } = useHeaderData();
+    const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
     const UserMenuHeaderRef = useRef();
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-        null
-    );
 
     const showNameSpaces = () => {
-        setAnchorEl(UserMenuHeaderRef.current);
+        actions.setAnchorEl(UserMenuHeaderRef.current);
     };
 
     return (
@@ -47,7 +54,7 @@ const UserMenuHeader = ({ isLoading, user }) => {
                             onClick={showNameSpaces}
                             className="select-namespace"
                         >
-                            {t("common:change")}
+                            {t<string>("common:change")}
                         </Typography>
                     </Stack>
                 </Box>
@@ -56,8 +63,9 @@ const UserMenuHeader = ({ isLoading, user }) => {
             <NameSpaceMenu
                 isLoading={isLoading}
                 userRole={user?.role}
-                anchorEl={anchorEl}
-                setAnchorEl={setAnchorEl}
+                anchorEl={state.anchorEl}
+                setAnchorEl={actions.setAnchorEl}
+                nameSpace={nameSpace}
             />
         </>
     );
