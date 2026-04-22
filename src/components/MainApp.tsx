@@ -9,7 +9,7 @@ import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import AletheiaHeader from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Header/Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 import DonationBanner from "./Home/DonationBanner";
 import localConfig from "../../config/localConfig";

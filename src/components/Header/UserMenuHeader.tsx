@@ -6,12 +6,14 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { User } from "../../types/User";
 import { TFunction } from "next-i18next";
 import { useHeaderData } from "./useHeaderData";
+import { BoxMenuHeader } from "./Header.style";
 
 interface UserMenuHeaderProps {
     isLoading: boolean;
     user: User;
     nameSpace: string | null;
     t: TFunction;
+    isSidebar?: boolean;
 }
 
 const UserMenuHeader = ({
@@ -19,6 +21,7 @@ const UserMenuHeader = ({
     user,
     nameSpace,
     t,
+    isSidebar
 }: UserMenuHeaderProps) => {
     const { state, actions } = useHeaderData();
     const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
@@ -29,7 +32,7 @@ const UserMenuHeader = ({
     };
 
     return (
-        <>
+        <BoxMenuHeader $isSidebar={isSidebar}>
             <Box ref={UserMenuHeaderRef} className="menu-header">
                 <Avatar className="menu-header-avatar" sx={{ m: 0 }}>
                     {user?.name?.slice(0, 1).toUpperCase()}
@@ -45,7 +48,7 @@ const UserMenuHeader = ({
                     </Typography>
 
                     <Stack className="menu-header-info namespace">
-                        <Typography variant="caption" className="menu-header-info name">
+                        <Typography variant="caption" className="menu-header-info name title-namespace">
                             {nameSpaceName.replace("-", " ")}
                         </Typography>
 
@@ -67,7 +70,7 @@ const UserMenuHeader = ({
                 setAnchorEl={actions.setAnchorEl}
                 nameSpace={nameSpace}
             />
-        </>
+        </BoxMenuHeader>
     );
 };
 

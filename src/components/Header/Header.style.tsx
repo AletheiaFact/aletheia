@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
-import { Grid, Menu } from "@mui/material";
+import { Box, Grid, Menu } from "@mui/material";
 import colors from "../../styles/colors";
 
 const HeaderGridStyle = styled(Grid)`
@@ -170,7 +170,9 @@ const StyledMenu = styled(Menu)`
     margin: 8px 0;
     border-color: ${colors.lightTertiary};
   }
+`;
 
+const BoxMenuHeader = styled(Box)`
   .menu-header {
     display: flex;
     width: 100%;
@@ -182,6 +184,7 @@ const StyledMenu = styled(Menu)`
   .menu-header-avatar {
     background: ${colors.quartiary};
     margin: 0px;
+    border: 2px solid ${({ $isSidebar }) => ($isSidebar ? colors.neutral : colors.lightNeutral)};
   }
 
   .menu-header-info {
@@ -190,12 +193,17 @@ const StyledMenu = styled(Menu)`
   }
 
   .menu-header-info.name {
+    color: ${({ $isSidebar }) => ($isSidebar ? colors.white : colors.black)};
     font-weight: 600;
+  }
+
+  .menu-header-info.title-namespace {
+    color: ${({ $isSidebar }) => ($isSidebar ? colors.lightSecondary : colors.black)};
   }
 
   .menu-header-info.email {
     font-size: 12px;
-    color: ${colors.neutral};
+    color: ${({ $isSidebar }) => ($isSidebar ? colors.neutralTertiary : colors.neutral)};
   }
 
   .menu-header-info.namespace{
@@ -218,4 +226,4 @@ const StyledMenu = styled(Menu)`
   }
 `;
 
-export { HeaderGridStyle, StyledMenu };
+export { HeaderGridStyle, StyledMenu, BoxMenuHeader };
