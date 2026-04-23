@@ -1,6 +1,8 @@
+import React from "react";
 import dayjs from "dayjs";
 import user from "../fixtures/user";
 import locators from "./locators";
+import { mount } from "cypress/react18";
 
 Cypress.Commands.add("goToLoginPage", () => {
     cy.visit("http://localhost:3000");
@@ -58,31 +60,62 @@ Cypress.Commands.add(
     }
 );
 
-Cypress.Commands.add("selectDatePickerDate", (index: number, dateToSelect: dayjs.Dayjs) => {
-    cy.get(locators.claim.INPUT_DATA).eq(index).click();
+Cypress.Commands.add(
+    "selectDatePickerDate",
+    (index: number, dateToSelect: dayjs.Dayjs) => {
+        cy.get(locators.claim.INPUT_DATA).eq(index).click();
 
-    const targetMonthYear = dateToSelect.format("MMMM YYYY");
+        const targetMonthYear = dateToSelect.format("MMMM YYYY");
 
-    function navigateToMonth() {
-        cy.get("[role='presentation'] .MuiPickersCalendarHeader-label").first().then((headerElement) => {
-            const currentText = headerElement.text();
+        function navigateToMonth() {
+            cy.get("[role='presentation'] .MuiPickersCalendarHeader-label")
+                .first()
+                .then((headerElement) => {
+                    const currentText = headerElement.text();
 
-            if (currentText !== targetMonthYear) {
-                const displayedMonth = dayjs(currentText, "MMMM YYYY");
-                const isFuture = dateToSelect.isAfter(displayedMonth, "month");
-                const buttonSelector = isFuture ? "[aria-label='Next month']" : "[aria-label='Previous month']";
+                    if (currentText !== targetMonthYear) {
+                        const displayedMonth = dayjs(currentText, "MMMM YYYY");
+                        const isFuture = dateToSelect.isAfter(
+                            displayedMonth,
+                            "month"
+                        );
+                        const buttonSelector = isFuture
+                            ? "[aria-label='Next month']"
+                            : "[aria-label='Previous month']";
 
-                cy.get(buttonSelector).click({ force: true });
-                navigateToMonth();
-            }
-        });
+                        cy.get(buttonSelector).click({ force: true });
+                        navigateToMonth();
+                    }
+                });
+        }
+
+        navigateToMonth();
+
+        const dayValue = dateToSelect.date().toString();
+        cy.contains(
+            'button[role="gridcell"]',
+            new RegExp(`^${dayValue}$`)
+        ).click({ force: true });
     }
+);
 
-    navigateToMonth();
+Cypress.Commands.add(
+    "mountWithRouter",
+    (component: React.ReactNode, routerOverrides = {}) => {
+        const router = {
+            pathname: "/test-page",
+            push: cy.stub(),
+            replace: cy.stub(),
+            back: cy.stub(),
+            prefetch: cy.stub(),
+            ...routerOverrides,
+        };
 
-    const dayValue = dateToSelect.date().toString();
-    cy.contains('button[role="gridcell"]', new RegExp(`^${dayValue}$`)).click({ force: true });
-});
+        cy.stub(require("next/router"), "useRouter").returns(router); // After update to App Router, useRouter is imported from next/navigation
+
+        return mount(component).then(() => router);
+    }
+);
 
 declare global {
     namespace Cypress {
@@ -96,7 +129,14 @@ declare global {
                 email: string,
                 password: string
             ): Chainable<Element>;
-            selectDatePickerDate(index: number, date: dayjs.Dayjs): Chainable<Element>;
+            selectDatePickerDate(
+                index: number,
+                date: dayjs.Dayjs
+            ): Chainable<Element>;
+            mountWithRouter(
+                component: React.ReactElement,
+                options?: { pathname?: string }
+            ): Chainable<any>;
         }
     }
 }

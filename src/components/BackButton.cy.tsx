@@ -1,39 +1,15 @@
 /// <reference types="cypress" />
 
+declare global {
+    namespace Cypress {
+        interface Chainable<Subject = any> {
+            mountWithRouter(component: React.ReactElement, options?: { pathname?: string }): Chainable<any>;
+        }
+    }
+}
+
 import React from "react";
-import { mount } from "cypress/react18";
 import BackButton from "../../src/components/BackButton";
-import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
-
-const createMockRouter = (overrides = {}) => ({
-    pathname: "/test-page",
-    route: "/test-page",
-    query: {},
-    asPath: "/test-page",
-    push: cy.stub(),
-    replace: cy.stub(),
-    prefetch: cy.stub().resolves(),
-    back: cy.stub(),
-    events: {
-        on: cy.stub(),
-        off: cy.stub(),
-        emit: cy.stub(),
-    },
-    isReady: true,
-    basePath: "",
-    isLocaleDomain: false,
-    ...overrides,
-});
-
-const mountWithRouter = (component: React.ReactNode, routerOverrides = {}) => {
-    const router = createMockRouter(routerOverrides);
-
-    return mount(
-        <RouterContext.Provider value={router}>
-            {component}
-        </RouterContext.Provider>
-    ).then(() => router);
-};
 
 describe("BackButton Component", () => {
     describe("should not render on home page or root path", () => {
@@ -47,7 +23,7 @@ describe("BackButton Component", () => {
         it("should render and handle callback", () => {
             const callbackSpy = cy.spy().as("callbackSpy");
 
-            mountWithRouter(
+            cy.mountWithRouter(
                 <BackButton callback={callbackSpy} isVisible={true} />
             );
 
@@ -59,20 +35,20 @@ describe("BackButton Component", () => {
         });
 
         it("should call router.back when no callback is provided", () => {
-            mountWithRouter(<BackButton isVisible={true} />).then((router) => {
+            cy.mountWithRouter(<BackButton isVisible={true} />).then((router) => {
                 cy.get('[data-cy="testBackButton"]').click();
                 cy.wrap(router.back).should("have.been.calledOnce");
             });
         });
 
         it("should not render when isVisible is false", () => {
-            mountWithRouter(<BackButton isVisible={false} />);
+            cy.mountWithRouter(<BackButton isVisible={false} />);
 
             cy.get('[data-cy="testBackButton"]').should("not.exist");
         });
 
         it("should not render on the root path", () => {
-            mountWithRouter(<BackButton isVisible={true} />, {
+            cy.mountWithRouter(<BackButton isVisible={true} />, {
                 pathname: "/",
             });
 
@@ -80,7 +56,7 @@ describe("BackButton Component", () => {
         });
 
         it("should not render on the home page path", () => {
-            mountWithRouter(<BackButton isVisible={true} />, {
+            cy.mountWithRouter(<BackButton isVisible={true} />, {
                 pathname: "/home-page",
             });
 
