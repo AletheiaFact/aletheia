@@ -17,6 +17,8 @@ import {
   getSeverityColor,
   getSeverityLabel,
 } from "../../helpers/verificationRequestCardHelper";
+import InfoTooltip from "../Claim/InfoTooltip";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const VerificationRequestBoardView = ({ state, actions }) => {
   const { loading, filteredRequests, totalVerificationRequests, paginationModel } = state;
@@ -72,6 +74,8 @@ const VerificationRequestBoardView = ({ state, actions }) => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const formatStatusToTranslationKey = (key: string) => key.replace(/\s+/g, "");
+
   return (
     <Box sx={{ width: "100%", p: 2, backgroundColor: colors.lightNeutralSecondary }}>
       <Grid container spacing={2} justifyContent="center">
@@ -99,13 +103,23 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   pb: 1,
                 }}
               >
-                <Grid item>
+                <Grid item sx={{ display: "flex", alignItems: "center" }}>
                   {status.label}
                   <Chip
                     label={groupedRequests[status.key].length}
                     size="small"
                     sx={{ ml: 1 }}
                   />
+                  <InfoTooltip
+                    placement="bottom"
+                    content={t(`verificationRequest:${formatStatusToTranslationKey(status.key)}Description`)}
+                    useCustomStyle={false}
+                  >
+                    <InfoOutlinedIcon
+                      sx={{ ml: 1 }}
+                      fontSize="small"
+                    />
+                  </InfoTooltip>
                 </Grid>
                 <Typography
                   variant="body2"
