@@ -1,9 +1,6 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/notification`,
-});
+const request = createApiInstance("/api/notification");
 
 const sendNotification = (subscriberId, payload) => {
     return request

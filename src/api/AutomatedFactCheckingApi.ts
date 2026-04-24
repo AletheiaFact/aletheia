@@ -1,9 +1,6 @@
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/ai-fact-checking`,
-});
+const request = createApiInstance("/api/ai-fact-checking");
 
 const createReviewTaskUsingAIAgents = (params) => {
     return request

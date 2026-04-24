@@ -1,10 +1,7 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/daily-report`,
-});
+const request = createApiInstance("/api/daily-report");
 
 const sendDailyReportEmail = (topic, nameSpace, t) => {
     return request
