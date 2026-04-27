@@ -61,7 +61,7 @@ const HeaderMenu = ({
                                     </Box>
                                     <Box className="text-wrapper">
                                         <Typography variant="h2" className="item-title">
-                                            {t(`header:${item.key}Title`)}
+                                            {t(`header:${item.key}Item`)}
                                         </Typography>
                                         <Typography variant="body1" className="item-subtitle">
                                             {t(`header:${item.key}Subtitle`)}

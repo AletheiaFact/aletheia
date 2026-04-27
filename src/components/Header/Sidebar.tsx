@@ -28,6 +28,8 @@ const Sidebar = () => {
                     width: "100%",
                     padding: "0",
                     backgroundColor: colors.primary,
+                    maxHeight: "calc(100vh - 64px)",
+                    overflowY: "auto",
                 }
             }}
         >

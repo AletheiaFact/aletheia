@@ -1,24 +1,24 @@
 import { Link } from "@mui/material";
+import { useHeaderData } from "./useHeaderData";
 
-const HeaderNavLinks = ({ t, baseHref }) => {
+const HeaderNavLinks = () => {
+    const { state, actions } = useHeaderData();
+    const { navigationConfig } = state;
+    const { t } = actions;
+
     return (
         <>
-            <Link
-                href={`${baseHref}/verification-request`}
-                className="navLink"
-                underline="none"
-                data-cy="testVerificationRequestNavLink"
-            >
-                {t("header:verificationRequestItem")}
-            </Link>
-            <Link
-                href={`${baseHref}/event`}
-                className="navLink"
-                underline="none"
-                data-cy="testEventNavLink"
-            >
-                {t("header:eventItem")}
-            </Link>
+            {navigationConfig.main.map((link) => (
+                <Link
+                    key={link.key}
+                    href={link.path}
+                    className="navLink"
+                    underline="none"
+                    data-cy={link.dataCy}
+                >
+                    {t(`header:${link.key}Item`)}
+                </Link>
+            ))}
         </>
     );
 };

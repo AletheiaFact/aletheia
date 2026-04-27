@@ -11,9 +11,8 @@ import { useAppSelector } from "../../store/store";
 import HeaderRepositoryMenu from "./HeaderRepositoryMenu";
 
 const HeaderContent = () => {
-    const { state, actions } = useHeaderData();
+    const { state } = useHeaderData();
     const { baseHref } = state;
-    const { t } = actions;
     const { vw } = useAppSelector((state) => state);
 
     return (
@@ -27,10 +26,7 @@ const HeaderContent = () => {
                 <Grid item className="headerNav">
                     <HeaderInstitutionMenu />
                     <HeaderRepositoryMenu />
-                    <HeaderNavLinks
-                        t={t}
-                        baseHref={baseHref}
-                    />
+                    <HeaderNavLinks />
                     <UserMenu />
                 </Grid>
             )}

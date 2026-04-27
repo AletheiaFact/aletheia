@@ -21,6 +21,10 @@ const UserMenuHeaderSidebar = ({
         }
     }, [hasSession, userId]);
 
+    if (!hasSession) {
+        return null
+    }
+
     if (hasSession && !user) {
         return <Loading isWhiteLoading={true} />;
     }

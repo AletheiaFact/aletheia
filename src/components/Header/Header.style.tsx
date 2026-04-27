@@ -83,6 +83,10 @@ const HeaderGridStyle = styled(Grid)`
 
   @media ${queries.lg} {
     padding: 0;
+
+    .headerActions {
+        justify-content: flex-end;
+    }
   }
 
   @media ${queries.xs} {

@@ -37,7 +37,7 @@ const HeaderActions = () => {
                 <SelectLanguage dataCy="LanguageButton" defaultLanguage="pt" />
             }
             <NotificationMenu hasSession={hasSession} userId={userId} />
-            {localConfig.header.donateButton.show &&
+            {localConfig.header.donateButton.show && !vw?.md &&
                 <DonateButton header={true} />
             }
             {vw?.md &&

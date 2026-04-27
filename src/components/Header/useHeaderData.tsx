@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -15,6 +15,13 @@ import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import NumbersOutlinedIcon from "@mui/icons-material/NumbersOutlined";
+import PortraitOutlinedIcon from "@mui/icons-material/PortraitOutlined";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import BalanceOutlinedIcon from "@mui/icons-material/BalanceOutlined";
+
 import { isAdmin, isStaff } from "../../utils/GetUserPermission";
 
 export const useHeaderData = () => {
@@ -63,7 +70,7 @@ export const useHeaderData = () => {
         const sections = [];
 
         sections.push({
-            title: "account",
+            title: "myAccount",
             items: [
                 {
                     icon: hasSession ? <PersonIcon /> : <LoginIcon />,
@@ -125,6 +132,73 @@ export const useHeaderData = () => {
 
     const myAccountSections = buildMyAccountSections();
 
+    const navigationConfig = useMemo(() => ({
+        main: [
+            {
+                key: "verificationRequest",
+                path: `${baseHref}/verification-request`,
+                dataCy: "testVerificationRequestNavLink",
+            },
+            {
+                key: "event",
+                path: `${baseHref}/event`,
+                dataCy: "testEventNavLink",
+            },
+        ],
+        repository: [
+            {
+                title: "repository",
+                items: [
+                    {
+                        icon: <PortraitOutlinedIcon />,
+                        key: "personality",
+                        path: `${baseHref}/personality`,
+                        showIcon: false,
+                    },
+                    {
+                        icon: <FactCheckOutlinedIcon />,
+                        key: "claim",
+                        path: `${baseHref}/claim`,
+                        showIcon: false,
+                    },
+                ]
+            }
+        ]
+    }), [baseHref]);
+
+    const menuInstitutionSections = [
+        {
+            title: "platform",
+            items: [
+                {
+                    icon: <InfoOutlinedIcon />,
+                    key: "aboutUs",
+                    path: "/about",
+                },
+                {
+                    icon: <MenuBookOutlinedIcon />,
+                    key: "supportiveMaterials",
+                    path: "/supportive-materials",
+                },
+            ],
+        },
+        {
+            title: "legal",
+            items: [
+                {
+                    icon: <DescriptionOutlinedIcon />,
+                    key: "privacyPolicy",
+                    path: "/privacy-policy",
+                },
+                {
+                    icon: <BalanceOutlinedIcon />,
+                    key: "codeOfConduct",
+                    path: "/code-of-conduct",
+                },
+            ],
+        },
+    ];
+
     return {
         state: {
             userId,
@@ -134,7 +208,9 @@ export const useHeaderData = () => {
             myAccountSections,
             hasSession,
             nameSpace,
-            baseHref
+            baseHref,
+            navigationConfig,
+            menuInstitutionSections
         },
         actions: {
             t,
