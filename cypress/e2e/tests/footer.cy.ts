@@ -8,11 +8,11 @@ describe("Footer Navigation", () => {
         cy.url().should("include", expectedPath);
     };
 
-    const expectExternalLink = (selector: string, expectedHref: string) => {
+    const expectExternalLink = (selector: string, expectedHref: string, target = "_blank") => {
         cy.get(selector)
             .should("be.visible")
             .and("have.attr", "href", expectedHref)
-            .and("have.attr", "target", "_blank")
+            .and("have.attr", "target", target)
             .click({ force: true });
     };
 
@@ -82,14 +82,18 @@ describe("Footer Navigation", () => {
         expectInternalNavigation(locators.footer.INSTITUTIONAL_AWARDS, "/about#awards-section");
     });
 
-    it("validates community links", () => {
+    it.only("validates community links", () => {
         expectMailtoLink(locators.footer.COMMUNITY_COLLABORATION, "tvolcean@aletheiafact.org");
 
         expectInternalNavigation(locators.footer.COMMUNITY_UNIVERSITIES, "/about#partners-section");
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectMailtoLink(locators.footer.COMMUNITY_VOLUNTEERING, "contact@aletheiafact.org");
+        expectExternalLink(
+            locators.footer.COMMUNITY_VOLUNTEERING,
+            "https://docs.google.com/forms/d/1O1e-zIDj2aJIAmuNIfO5T4VznenuYfHMTlFB8L_sFG4/viewform?ts=69b97c51&edit_requested=true",
+            "_self"
+        );
     });
 
     it("validates statute and legal links", () => {

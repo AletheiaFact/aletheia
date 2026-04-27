@@ -60,7 +60,7 @@ const FooterMainContent = () => {
         },
         {
             label: t("footer:sections.community.links.volunteering"),
-            href: t("footer:sections.community.links.sendEmailButton"),
+            href: t("footer:sections.community.links.volunteerForm"),
             dataCy: "testFooterLinkCommunityVolunteering",
         },
     ];
