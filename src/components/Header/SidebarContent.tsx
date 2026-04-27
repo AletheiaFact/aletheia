@@ -15,7 +15,8 @@ const SidebarContent = () => {
         nameSpace,
         navigationConfig,
         menuInstitutionSections,
-        myAccountSections
+        myAccountSections,
+        languageSections
     } = state;
     const { t } = actions;
 
@@ -59,6 +60,11 @@ const SidebarContent = () => {
                         items: flatInstitutionItems
                     }
                 ]}
+            />
+
+            <SidebarNavLinks
+                t={t}
+                sections={languageSections}
             />
 
             <Box

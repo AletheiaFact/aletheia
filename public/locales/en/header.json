@@ -32,5 +32,8 @@
     "claimSubtitle": "Fact-checking in speeches, debates, media and information.",
     "search_placeholder": "Search",
     "donateButton": "Donate",
-    "principalSection": "Principal"
+    "principalSection": "Principal",
+    "languageSection": "Language",
+    "portugueseItem": "Portuguese",
+    "englishItem": "English"
 }

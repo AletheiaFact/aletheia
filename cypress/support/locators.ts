@@ -181,7 +181,7 @@ const locators = {
         CLAIM_ITEM: "[data-cy=testclaimItem]",
 
         OPEN_INSTITUTION_MENU: "[data-cy=testInstitutionalItem]",
-        ABOUT_ITEM: "[data-cy=testaboutItem]",
+        ABOUT_ITEM: "[data-cy=testaboutUsItem]",
         PRIVACY_POLICY_ITEM: "[data-cy=testprivacyPolicyItem]",
         CODE_OF_CONDUCT_ITEM: "[data-cy=testcodeOfConductItem]",
         SUPPORTIVE_MATERIALS_ITEM: "[data-cy=testsupportiveMaterialsItem]",

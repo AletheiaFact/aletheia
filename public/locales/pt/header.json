@@ -32,5 +32,8 @@
     "claimSubtitle": "Checagem de fatos em falas, debates, mídias e informações.",
     "search_placeholder": "Busca",
     "donateButton": "Doar",
-    "principalSection": "Principal"
+    "principalSection": "Principal",
+    "languageSection": "Idioma",
+    "portugueseItem": "Português",
+    "englishItem": "Inglês"
 }

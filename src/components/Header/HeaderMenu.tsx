@@ -53,7 +53,7 @@ const HeaderMenu = ({
                                 href={item.path}
                                 className="menu-item-container"
                                 underline="none"
-                                data-cy={`test${item.key}`}
+                                data-cy={`test${item.key}Item`}
                             >
                                 <Box className="menu-item-content">
                                     <Box className="icon-wrapper">

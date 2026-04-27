@@ -23,6 +23,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import BalanceOutlinedIcon from "@mui/icons-material/BalanceOutlined";
 
 import { isAdmin, isStaff } from "../../utils/GetUserPermission";
+import { Cookies } from "react-cookie-consent";
+import ReactCountryFlag from "react-country-flag";
 
 export const useHeaderData = () => {
     const { t } = useTranslation();
@@ -33,6 +35,17 @@ export const useHeaderData = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState(false);
+    const [language, setLanguageState] = useState(
+        Cookies.get("default_language") || "pt"
+    );
+
+    const changeLanguage = (newLanguage: string) => {
+        if (language !== newLanguage) {
+            document.cookie = `default_language=${newLanguage}; path=/`;
+            setLanguageState(newLanguage);
+            window.location.reload();
+        }
+    };
 
     const baseHref = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
 
@@ -199,6 +212,32 @@ export const useHeaderData = () => {
         },
     ];
 
+    const languageSections = [
+        {
+            title: "language",
+            items: [
+                {
+                    value: "pt",
+                    label: "Português",
+                    displayAbbreviation: "BR",
+                    icon: <ReactCountryFlag countryCode="BR" style={{ fontSize: "18px" }} />,
+                    key: "portuguese",
+                    action: () => changeLanguage("pt"),
+                    dataCy: "testLanguagePt",
+                },
+                {
+                    value: "en",
+                    label: "English",
+                    displayAbbreviation: "US",
+                    icon: <ReactCountryFlag countryCode="GB" style={{ fontSize: "18px" }} />,
+                    key: "english",
+                    action: () => changeLanguage("en"),
+                    dataCy: "testLanguageEn",
+                },
+            ],
+        },
+    ];
+
     return {
         state: {
             userId,
@@ -210,13 +249,16 @@ export const useHeaderData = () => {
             nameSpace,
             baseHref,
             navigationConfig,
-            menuInstitutionSections
+            menuInstitutionSections,
+            languageSections,
+            language,
         },
         actions: {
             t,
             handleClose,
             setAnchorEl,
             onLogout,
+            changeLanguage,
         }
     };
 };
