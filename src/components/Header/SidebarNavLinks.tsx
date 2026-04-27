@@ -1,8 +1,15 @@
 import { Box, Divider, MenuItem, Typography } from "@mui/material";
 import React from "react";
 import colors from "../../styles/colors";
+import { SidebarSection } from "../../types/header";
+import { TFunction } from "next-i18next";
 
-const SidebarNavLinks = ({ sections, t }) => {
+export interface SidebarNavLinksProps {
+    sections: SidebarSection[];
+    t: TFunction;
+}
+
+const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
     return (
         <Box>
             {sections.map((section, index) => (

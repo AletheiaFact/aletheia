@@ -3,12 +3,12 @@ import React, { useRef } from "react";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import NameSpaceMenu from "./NameSpaceMenu";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { User } from "../../types/User";
-import { TFunction } from "next-i18next";
 import { useHeaderData } from "./useHeaderData";
 import { BoxMenuHeader } from "./Header.style";
+import { User } from "../../types/User";
+import { TFunction } from "next-i18next";
 
-interface UserMenuHeaderProps {
+export interface UserMenuHeaderProps {
     isLoading: boolean;
     user: User;
     nameSpace: string | null;

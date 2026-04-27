@@ -13,6 +13,11 @@ import { NotificationsOff } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 
+export interface NotificationMenuProps {
+    hasSession: boolean;
+    userId: string | null;
+}
+
 const notificationStyles: INotificationCenterStyles = {
     popover: {
         dropdown: {
@@ -39,7 +44,7 @@ const notificationStyles: INotificationCenterStyles = {
     },
 };
 
-const NotificationMenu = ({ hasSession, userId }) => {
+const NotificationMenu = ({ hasSession, userId }: NotificationMenuProps) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);

@@ -1,7 +1,18 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Button, Divider, Box, Typography, Link } from "@mui/material";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { StyledMenu } from "./Header.style";
+import { MenuSection } from "../../types/header";
+import { TFunction } from "next-i18next";
+
+export interface HeaderMenuProps {
+    buttonLabel: string;
+    buttonDataCy: string;
+    sections: MenuSection[];
+    anchorEl: HTMLElement | null;
+    setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
+    t: TFunction;
+}
 
 const HeaderMenu = ({
     buttonLabel,
@@ -10,7 +21,7 @@ const HeaderMenu = ({
     anchorEl,
     setAnchorEl,
     t,
-}) => {
+}: HeaderMenuProps) => {
     return (
         <>
             <Button

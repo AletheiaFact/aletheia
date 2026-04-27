@@ -1,31 +1,17 @@
-import React, { useEffect, useState, ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Divider, Link } from "@mui/material";
 import UserMenuHeader from "./UserMenuHeader";
 import colors from "../../styles/colors";
 import Loading from "../Loading";
 import userApi from "../../api/userApi";
-import { TFunction } from "i18next";
+import { SidebarSection } from "../../types/header";
+import { TFunction } from "next-i18next";
 
-interface MenuItem {
-    key: string;
-    dataCy: string;
-    icon: ReactNode;
-    action?: () => void;
-    path: string
-    isDestructive?: boolean;
-}
-
-interface MenuSection {
-    title: string;
-    items: MenuItem[];
-}
-
-interface UserMenuContentProps {
-    myAccountSections: MenuSection[];
+export interface UserMenuContentProps {
+    myAccountSections: SidebarSection[];
     hasSession: boolean;
-    userId: string;
+    userId: string | null;
     isLoading: boolean;
-    handleClose: () => void;
     nameSpace: string | null;
     t: TFunction;
 }
@@ -35,7 +21,6 @@ const UserMenuContent = ({
     hasSession,
     userId,
     isLoading,
-    handleClose,
     nameSpace,
     t
 }: UserMenuContentProps) => {
@@ -94,8 +79,6 @@ const UserMenuContent = ({
                         if (item.action) {
                             event.preventDefault();
                             item.action();
-                        } else {
-                            handleClose();
                         }
                     }}
                 >

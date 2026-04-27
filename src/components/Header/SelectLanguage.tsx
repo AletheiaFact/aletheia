@@ -1,24 +1,10 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Grid, MenuItem, Select, Typography } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import colors from "../../styles/colors";
+import { LanguageSection } from "../../types/header";
 
-interface LanguageOption {
-    value: string;
-    label: string;
-    displayAbbreviation: string;
-    icon: ReactNode;
-    key: string;
-    action: () => void;
-    dataCy: string;
-}
-
-interface LanguageSection {
-    title: string;
-    items: LanguageOption[];
-}
-
-interface SelectLanguageProps {
+export interface SelectLanguageProps {
     dataCy: string;
     currentLanguage: string;
     sections: LanguageSection[];

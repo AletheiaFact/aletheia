@@ -3,7 +3,7 @@ import colors from "../../styles/colors";
 import { Badge, Button } from "@mui/material";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 
-const NotificationIcon = ({ unseenCount }) => {
+const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
     return (
         <Button
             className="navLink"

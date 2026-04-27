@@ -6,7 +6,7 @@ import { Menu } from "@mui/material";
 import { NameSpaceEnum } from "../../types/Namespace";
 import colors from "../../styles/colors";
 
-interface NameSpaceMenuProps {
+export interface NameSpaceMenuProps {
     isLoading: boolean;
     userRole: string;
     anchorEl: HTMLElement | null;

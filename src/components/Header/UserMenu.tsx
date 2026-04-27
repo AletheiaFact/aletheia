@@ -44,7 +44,6 @@ const UserMenu = () => {
                     hasSession={hasSession}
                     userId={userId}
                     isLoading={isLoading}
-                    handleClose={handleClose}
                     nameSpace={nameSpace}
                     t={t}
                 />

@@ -25,8 +25,9 @@ import BalanceOutlinedIcon from "@mui/icons-material/BalanceOutlined";
 import { isAdmin, isStaff } from "../../utils/GetUserPermission";
 import { Cookies } from "react-cookie-consent";
 import ReactCountryFlag from "react-country-flag";
+import { UseHeaderDataReturn } from "../../types/header";
 
-export const useHeaderData = () => {
+export const useHeaderData = (): UseHeaderDataReturn => {
     const { t } = useTranslation();
     const router = useRouter();
 
