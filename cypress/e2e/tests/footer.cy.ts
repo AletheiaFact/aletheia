@@ -89,7 +89,7 @@ describe("Footer Navigation", () => {
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectMailtoLink(locators.footer.COMMUNITY_VOLUNTEERING, "contact@aletheiafact.org");
+        expectExternalLink(locators.footer.COMMUNITY_VOLUNTEERING, "https://docs.google.com/forms/d/1O1e-zIDj2aJIAmuNIfO5T4VznenuYfHMTlFB8L_sFG4/viewform?ts=69b97c51&edit_requested=true");
     });
 
     it("validates statute and legal links", () => {
