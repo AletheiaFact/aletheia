@@ -45,7 +45,7 @@ export class CreateVerificationRequestDTO {
     @IsDateString()
     @ApiProperty()
     @IsOptional()
-    date: string;
+    date: Date;
 
     @IsString()
     @ApiProperty()
