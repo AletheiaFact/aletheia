@@ -103,16 +103,18 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim: any) {
-        const existingClaim = await this.ClaimModel.findOne({
-            slug: slugify(claim.title, {
-                lower: true,
-                strict: true,
-            })
+        const generatedSlug = slugify(claim.title, {
+            lower: true,
+            strict: true,
         });
+
+        const existingClaim = await this.ClaimModel.findOne({ slug: generatedSlug });
 
         if (existingClaim) {
             throw new ConflictException("There is already a claim with this title.");
         }
+
+        claim.slug = generatedSlug;
 
         claim.personalities = claim.personalities.map((personality) => {
             return new Types.ObjectId(personality);
@@ -123,10 +125,12 @@ export class ClaimService {
         }
 
         const newClaim = new this.ClaimModel(claim);
+
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
             claim
         );
+
         newClaim.latestRevision = newClaimRevision._id;
         newClaim.slug = newClaimRevision.slug;
 
@@ -146,6 +150,7 @@ export class ClaimService {
 
         await this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
+
         if (claim.group) {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
         }
