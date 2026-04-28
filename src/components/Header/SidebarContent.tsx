@@ -9,14 +9,13 @@ import localConfig from "../../../config/localConfig";
 const SidebarContent = () => {
     const { state, actions } = useHeaderData();
     const {
-        hasSession,
-        userId,
-        isLoading,
         nameSpace,
         navigationConfig,
         menuInstitutionSections,
         myAccountSections,
-        languageSections
+        languageSections,
+        user,
+        isLoadingUser
     } = state;
     const { t } = actions;
 
@@ -27,9 +26,8 @@ const SidebarContent = () => {
     return (
         <>
             <UserMenuHeaderSidebar
-                hasSession={hasSession}
-                userId={userId}
-                isLoading={isLoading}
+                isLoadingUser={isLoadingUser}
+                user={user}
                 nameSpace={nameSpace}
                 t={t}
             />

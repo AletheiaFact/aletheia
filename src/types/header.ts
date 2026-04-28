@@ -1,6 +1,7 @@
 import { TFunction } from "next-i18next";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { NameSpaceEnum } from "./Namespace";
+import { User } from "./User";
 
 export interface BaseNavItem {
     key: string;
@@ -60,6 +61,8 @@ export interface UseHeaderDataReturn {
         menuInstitutionSections: MenuSection[];
         languageSections: LanguageSection[];
         language: string;
+        user: User | null;
+        isLoadingUser: boolean;
     };
     actions: {
         t: TFunction;

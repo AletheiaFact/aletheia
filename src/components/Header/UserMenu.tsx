@@ -12,8 +12,8 @@ const UserMenu = () => {
         anchorEl,
         myAccountSections,
         hasSession,
-        userId,
-        isLoading
+        user,
+        isLoadingUser
     } = state;
     const { t, setAnchorEl, handleClose } = actions;
 
@@ -42,8 +42,8 @@ const UserMenu = () => {
                 <UserMenuContent
                     myAccountSections={myAccountSections}
                     hasSession={hasSession}
-                    userId={userId}
-                    isLoading={isLoading}
+                    user={user}
+                    isLoadingUser={isLoadingUser}
                     nameSpace={nameSpace}
                     t={t}
                 />

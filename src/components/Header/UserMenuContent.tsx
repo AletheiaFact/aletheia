@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Typography, Divider, Link } from "@mui/material";
 import UserMenuHeader from "./UserMenuHeader";
 import colors from "../../styles/colors";
-import Loading from "../Loading";
-import userApi from "../../api/userApi";
 import { SidebarSection } from "../../types/header";
 import { TFunction } from "next-i18next";
+import { User } from "../../types/User";
 
 export interface UserMenuContentProps {
     myAccountSections: SidebarSection[];
     hasSession: boolean;
-    userId: string | null;
-    isLoading: boolean;
+    user: User | null;
+    isLoadingUser: boolean;
     nameSpace: string | null;
     t: TFunction;
 }
@@ -19,38 +18,22 @@ export interface UserMenuContentProps {
 const UserMenuContent = ({
     myAccountSections,
     hasSession,
-    userId,
-    isLoading,
+    user,
+    isLoadingUser,
     nameSpace,
     t
 }: UserMenuContentProps) => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        if (hasSession) {
-            userApi.getById(userId).then((user) => {
-                setUser(user);
-            });
-        }
-    }, [hasSession, userId]);
-
     const menuElements = [];
 
-    if (hasSession) {
-        if (!user) {
-            return <Loading />;
-        }
-
-        menuElements.push(
-            <UserMenuHeader
-                key="user-menu-header"
-                isLoading={isLoading}
-                user={user}
-                nameSpace={nameSpace}
-                t={t}
-            />
-        );
-    }
+    menuElements.push(
+        <UserMenuHeader
+            key="user-menu-header"
+            isLoadingUser={isLoadingUser}
+            user={user}
+            nameSpace={nameSpace}
+            t={t}
+        />
+    );
 
     myAccountSections.forEach((section, index) => {
         if (index > 0 || hasSession) {

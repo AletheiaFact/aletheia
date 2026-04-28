@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -26,12 +26,16 @@ import { isAdmin, isStaff } from "../../utils/GetUserPermission";
 import { Cookies } from "react-cookie-consent";
 import ReactCountryFlag from "react-country-flag";
 import { UseHeaderDataReturn } from "../../types/header";
+import userApi from "../../api/userApi";
 
 export const useHeaderData = (): UseHeaderDataReturn => {
     const { t } = useTranslation();
     const router = useRouter();
 
     const [nameSpace] = useAtom(currentNameSpace);
+    const [user, setUser] = useState(null);
+    const [isLoadingUser, setIsLoadingUser] = useState(false);
+
     const [userId] = useAtom(currentUserId);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [role] = useAtom(currentUserRole);
@@ -51,6 +55,16 @@ export const useHeaderData = (): UseHeaderDataReturn => {
     const baseHref = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
 
     const hasSession = !!userId;
+
+    useEffect(() => {
+        if (hasSession && userId) {
+            setIsLoadingUser(true);
+            userApi.getById(userId).then((userData) => {
+                setUser(userData);
+                setIsLoadingUser(false);
+            });
+        }
+    }, [hasSession, userId]);
 
     const loginOrProfile = () => {
         handleClose();
@@ -253,6 +267,8 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             menuInstitutionSections,
             languageSections,
             language,
+            user,
+            isLoadingUser
         },
         actions: {
             t,

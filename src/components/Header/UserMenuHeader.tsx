@@ -1,35 +1,42 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import NameSpaceMenu from "./NameSpaceMenu";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { useHeaderData } from "./useHeaderData";
 import { BoxMenuHeader } from "./Header.style";
 import { User } from "../../types/User";
 import { TFunction } from "next-i18next";
+import Loading from "../Loading";
 
 export interface UserMenuHeaderProps {
-    isLoading: boolean;
-    user: User;
+    isLoadingUser: boolean;
+    isWhiteLoading?: boolean;
+    user: User | null;
     nameSpace: string | null;
     t: TFunction;
     isSidebar?: boolean;
 }
 
 const UserMenuHeader = ({
-    isLoading,
+    isLoadingUser,
+    isWhiteLoading,
     user,
     nameSpace,
     t,
     isSidebar
 }: UserMenuHeaderProps) => {
-    const { state, actions } = useHeaderData();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
     const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
     const UserMenuHeaderRef = useRef();
 
     const showNameSpaces = () => {
-        actions.setAnchorEl(UserMenuHeaderRef.current);
+        setAnchorEl(UserMenuHeaderRef.current);
     };
+
+    if (isLoadingUser) {
+        return <Loading isWhiteLoading={isWhiteLoading} style={{ height: "20vh" }} />;
+    }
 
     return (
         <BoxMenuHeader $isSidebar={isSidebar}>
@@ -64,10 +71,10 @@ const UserMenuHeader = ({
             </Box>
 
             <NameSpaceMenu
-                isLoading={isLoading}
+                isLoading={isLoadingUser}
                 userRole={user?.role}
-                anchorEl={state.anchorEl}
-                setAnchorEl={actions.setAnchorEl}
+                anchorEl={anchorEl}
+                setAnchorEl={setAnchorEl}
                 nameSpace={nameSpace}
             />
         </BoxMenuHeader>

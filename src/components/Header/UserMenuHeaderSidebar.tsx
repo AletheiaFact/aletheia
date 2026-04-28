@@ -1,44 +1,22 @@
-import { useEffect, useState } from "react";
-import userApi from "../../api/userApi";
 import colors from "../../styles/colors";
 import UserMenuHeader from "./UserMenuHeader";
-import Loading from "../Loading";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { TFunction } from "next-i18next";
+import { User } from "../../types/User";
 
 export interface UserMenuHeaderSidebarProps {
-    hasSession: boolean;
-    userId: string | null;
-    isLoading: boolean;
+    isLoadingUser: boolean;
+    user: User | null;
     nameSpace: NameSpaceEnum;
     t: TFunction;
 }
 
 const UserMenuHeaderSidebar = ({
-    hasSession,
-    userId,
-    isLoading,
+    isLoadingUser,
+    user,
     nameSpace,
     t,
 }: UserMenuHeaderSidebarProps) => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        if (hasSession && userId) {
-            userApi.getById(userId).then((userData) => {
-                setUser(userData);
-            });
-        }
-    }, [hasSession, userId]);
-
-    if (!hasSession) {
-        return null
-    }
-
-    if (hasSession && !user) {
-        return <Loading isWhiteLoading={true} />;
-    }
-
     return (
         <div
             style={{
@@ -49,7 +27,8 @@ const UserMenuHeaderSidebar = ({
         >
             <UserMenuHeader
                 key="user-menu-header-sidebar"
-                isLoading={isLoading}
+                isLoadingUser={isLoadingUser}
+                isWhiteLoading={true}
                 user={user}
                 nameSpace={nameSpace}
                 t={t}
