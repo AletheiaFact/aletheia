@@ -6,7 +6,7 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import { Grid } from "@mui/material";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import ClaimCard from "../Claim/ClaimCard";
 import claimReviewApi from "../../api/claimReviewApi";
 import DashboardViewStyle from "./DashboardView.style";

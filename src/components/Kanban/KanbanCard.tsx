@@ -1,7 +1,7 @@
 import React from "react";
 import CardBase from "../CardBase";
 import UserTag from "./UserTag";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import personalityApy from "../../api/personality";
 import { useTranslation } from "next-i18next";
 import actions from "../../store/actions";

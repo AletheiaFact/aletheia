@@ -5,6 +5,7 @@ import {
     NotFoundException,
     Logger,
     InternalServerErrorException,
+    ConflictException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
@@ -23,15 +24,16 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
+import slugify from "slugify";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -101,6 +103,17 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim: any) {
+        const existingClaim = await this.ClaimModel.findOne({
+            slug: slugify(claim.title, {
+                lower: true,
+                strict: true,
+            })
+        });
+
+        if (existingClaim) {
+            throw new ConflictException("There is already a claim with this title.");
+        }
+
         claim.personalities = claim.personalities.map((personality) => {
             return new Types.ObjectId(personality);
         });

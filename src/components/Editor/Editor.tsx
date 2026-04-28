@@ -11,7 +11,7 @@ import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension
 import { EditorContent } from "./EditorContent";
 import Button, { ButtonType } from "../Button";
 import { useTranslation } from "next-i18next";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../store/types";
 
