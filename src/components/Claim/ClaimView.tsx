@@ -12,7 +12,7 @@ import ClaimInfo from "./ClaimInfo";
 import ClaimContentDisplay from "./ClaimContentDisplay";
 import SocialMediaShare from "../SocialMediaShare";
 import AdminToolBar from "../Toolbar/AdminToolBar";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";

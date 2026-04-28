@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import BaseList from "../List/BaseList";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
