@@ -65,10 +65,12 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId = claimId;
-        claim.slug = slugify(claim.title, {
-            lower: true, // convert to lower case, defaults to `false`
-            strict: true, // strip special characters except replacement, defaults to `false`
+
+        claim.slug = claim.slug || slugify(claim.title, {
+            lower: true,
+            strict: true,
         });
+
         const newClaimRevision = new this.ClaimRevisionModel(claim);
         const newclaimRevisionId = new Types.ObjectId(newClaimRevision._id);
 
