@@ -2,9 +2,8 @@
     "compilerOptions": {
       "target": "es2017",
       "lib": ["es2017", "dom"],
-      "types": ["cypress"],
-      "moduleResolution": "node",
+      "types": ["cypress", "node"],
       "esModuleInterop": true
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts", "**/*.tsx"]
   }

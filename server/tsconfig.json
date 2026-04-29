@@ -11,8 +11,13 @@
         "sourceMap": true,
         "outDir": "../dist/",
         "rootDir": "../",
-        "baseUrl": "./",
-        "incremental": true
+        "incremental": true,
+        // TODO: These includes need to be removed in the future due to typing in modules, functions and properties.
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "useUnknownInCatchVariables": false,
+        "strictPropertyInitialization": false,
+        // 
     },
     "include": ["./**/*"],
     "exclude": [

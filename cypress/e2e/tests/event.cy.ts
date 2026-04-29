@@ -6,7 +6,7 @@ import locators from "../../support/locators";
 import { getFutureDay, getPastDay, today } from "../../utils/dateUtils";
 import { formatMonthYear } from "../../../src/helpers/formatTimeAgo";
 import { buildEvent, routes, topic, cop28Topic } from "../../fixtures/event";
-
+import { Dayjs } from "dayjs";
 
 let createdEventUrl = "";
 
@@ -16,13 +16,21 @@ const openCreateEventForm = () => {
     cy.url().should("contain", routes.createPage);
 };
 
-const fillEventForm = (startDate, endDate, overrides = {}) => {
+const fillEventForm = (startDate: Dayjs, endDate: Dayjs, overrides = {}) => {
     const event = buildEvent(overrides);
 
-    cy.get(locators.event.FORM_BADGE).type(`{selectall}{backspace}${event.badge}`);
-    cy.get(locators.event.FORM_NAME).type(`{selectall}{backspace}${event.name}`);
-    cy.get(locators.event.FORM_DESCRIPTION).type(`{selectall}{backspace}${event.description}`);
-    cy.get(locators.event.FORM_LOCATION).type(`{selectall}{backspace}${event.location}`);
+    cy.get(locators.event.FORM_BADGE).type(
+        `{selectall}{backspace}${event.badge}`
+    );
+    cy.get(locators.event.FORM_NAME).type(
+        `{selectall}{backspace}${event.name}`
+    );
+    cy.get(locators.event.FORM_DESCRIPTION).type(
+        `{selectall}{backspace}${event.description}`
+    );
+    cy.get(locators.event.FORM_LOCATION).type(
+        `{selectall}{backspace}${event.location}`
+    );
 
     cy.selectDatePickerDate(0, startDate);
     cy.wait(500);
@@ -42,7 +50,7 @@ const saveEvent = () => {
     cy.get(locators.event.SAVE_BUTTON).click();
 };
 
-const fillAndSaveEvent = (startDate, endDate, overrides = {}) => {
+const fillAndSaveEvent = (startDate: Dayjs, endDate: Dayjs, overrides = {}) => {
     fillEventForm(startDate, endDate, overrides);
     saveEvent();
 };
@@ -53,26 +61,34 @@ const addTopicFlow = (aliasType: string, labelToClick: string) => {
 
     cy.wait(300);
 
-    cy.get(locators.topic.TYPE_TOPIC_INPUT).clear().type(aliasType, { delay: 200 });
+    cy.get(locators.topic.TYPE_TOPIC_INPUT)
+        .clear()
+        .type(aliasType, { delay: 200 });
     cy.contains(labelToClick).should("be.visible").click();
 
     cy.get(locators.topic.ADD_TOPIC_SUBMIT).click();
 
     cy.wait("@postTopic").then((interception) => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 201]);
+        expect(interception.response?.statusCode).to.be.oneOf([200, 201]);
     });
 };
 
-const assertEventCardMetrics = (reviews: number, verificationRequests: number, claims: number) => {
+const assertEventCardMetrics = (
+    reviews: number,
+    verificationRequests: number,
+    claims: number
+) => {
     cy.get(locators.event.EVENT_CARD).within(() => {
         cy.get(locators.event.METRICS_REVIEWS).should("contain", reviews);
-        cy.get(locators.event.METRICS_VERIFICATION_REQUESTS).should("contain", verificationRequests);
+        cy.get(locators.event.METRICS_VERIFICATION_REQUESTS).should(
+            "contain",
+            verificationRequests
+        );
         cy.get(locators.event.METRICS_CLAIMS).should("contain", claims);
     });
 };
 
 describe("Test events infrastructure", () => {
-
     describe("event creation", () => {
         beforeEach(() => {
             cy.login();
@@ -84,7 +100,9 @@ describe("Test events infrastructure", () => {
             saveEvent();
 
             cy.get(locators.event.ERROR_VALIDATION_NAME).should("be.visible");
-            cy.get(locators.event.ERROR_VALIDATION_MAIN_TOPIC).should("be.visible");
+            cy.get(locators.event.ERROR_VALIDATION_MAIN_TOPIC).should(
+                "be.visible"
+            );
             cy.url().should("contain", routes.createPage);
         });
 
@@ -92,7 +110,9 @@ describe("Test events infrastructure", () => {
             openCreateEventForm();
             fillAndSaveEvent(getFutureDay(10), getFutureDay(5));
 
-            cy.contains("A data de término não pode ser anterior à data de início").should("be.visible");
+            cy.contains(
+                "A data de término não pode ser anterior à data de início"
+            ).should("be.visible");
             cy.url().should("contain", routes.createPage);
         });
 
@@ -104,12 +124,16 @@ describe("Test events infrastructure", () => {
             fillAndSaveEvent(today, getFutureDay(2));
 
             cy.wait("@createEvent").then((interception) => {
-                expect(interception.response.statusCode).to.be.oneOf([200, 201]);
-                const { data_hash, slug } = interception.response.body;
+                expect(interception.response?.statusCode).to.be.oneOf([
+                    200, 201,
+                ]);
+                const { data_hash, slug } = interception.response?.body;
 
                 createdEventUrl = `/event/${data_hash}/${slug}`;
                 cy.url().should("contain", createdEventUrl);
-                cy.get(locators.event.DETAIL_TITLE).should("be.visible").and("contain", event.name);
+                cy.get(locators.event.DETAIL_TITLE)
+                    .should("be.visible")
+                    .and("contain", event.name);
             });
         });
     });
@@ -131,7 +155,9 @@ describe("Test events infrastructure", () => {
             cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 
             cy.get(".remirror-editor").should("exist");
-            cy.get("[data-testid='report - loading - spinner']").should("not.exist");
+            cy.get("[data-testid='report - loading - spinner']").should(
+                "not.exist"
+            );
 
             addTopicFlow(topic.aliases[0], topic.name);
         });
@@ -154,7 +180,9 @@ describe("Test events infrastructure", () => {
 
     describe("Event populated state", () => {
         it("should display updated metrics and claim cards after linking topics", () => {
-            cy.intercept("GET", "**/api/verification-request/**").as("getVerificationRequests");
+            cy.intercept("GET", "**/api/verification-request/**").as(
+                "getVerificationRequests"
+            );
 
             cy.login();
             cy.visit(routes.listPage);
@@ -162,7 +190,9 @@ describe("Test events infrastructure", () => {
             assertEventCardMetrics(0, 1, 2);
 
             cy.get(locators.event.EVENT_CARD).within(() => {
-                cy.get(locators.event.SEE_FULL_EVENT).invoke("removeAttr", "target").click();
+                cy.get(locators.event.SEE_FULL_EVENT)
+                    .invoke("removeAttr", "target")
+                    .click();
             });
 
             cy.url().should("contain", createdEventUrl);
@@ -170,14 +200,17 @@ describe("Test events infrastructure", () => {
             cy.get(locators.toggleButton.TOGGLE_BUTTON_RIGHT).click();
             cy.wait("@getVerificationRequests");
 
-            cy.get(locators.verificationRequest.VERIFICATION_REQUEST_CARD_CONTAINER)
-                .should("be.visible");
+            cy.get(
+                locators.verificationRequest.VERIFICATION_REQUEST_CARD_CONTAINER
+            ).should("be.visible");
             cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 1);
 
             cy.get(locators.toggleButton.TOGGLE_BUTTON_LEFT).click();
             // Note: Testing populated reviews requires 2 seeded users to publish a
             // report, which we don't have yet. Asserting as 0 for now.
-            cy.get(locators.claimReview.REVIEW_CARD_CONTAINER).should("not.exist");
+            cy.get(locators.claimReview.REVIEW_CARD_CONTAINER).should(
+                "not.exist"
+            );
             cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 0);
         });
     });
@@ -213,8 +246,12 @@ describe("Test events infrastructure", () => {
             cy.get(locators.event.DETAIL_DESCRIPTION)
                 .should("be.visible")
                 .and("contain", updatedOverrides.description);
-            cy.get(locators.event.DETAIL_LOCATION)
-                .should("have.text", `${updatedOverrides.location} • ${formatMonthYear(pastStart.toDate())}`);
+            cy.get(locators.event.DETAIL_LOCATION).should(
+                "have.text",
+                `${updatedOverrides.location} • ${formatMonthYear(
+                    pastStart.toDate()
+                )}`
+            );
             cy.get(locators.event.DETAIL_BADGE)
                 .should("be.visible")
                 .and("contain", updatedOverrides.badge);

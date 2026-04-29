@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import verificationRequestApi from "../../../api/verificationRequestApi";
+import { NameSpaceEnum } from "../../../types/Namespace";
 
 const CreateVerificationRequestView = () => {
     const router = useRouter();
@@ -32,9 +33,14 @@ const CreateVerificationRequestView = () => {
         };
 
         verificationRequestApi
-            .createVerificationRequest(t, router, newVerificationRequest)
-            .then((s) => {
-                router.push(`/verification-request/${s.data_hash}`);
+            .createVerificationRequest(t, newVerificationRequest)
+            .then((createdVerificationRequest) => {
+                if (createdVerificationRequest?.data_hash) {
+                    const path = nameSpace === NameSpaceEnum.Main
+                        ? `/verification-request/${createdVerificationRequest.data_hash}`
+                        : `/${nameSpace}/verification-request/${createdVerificationRequest.data_hash}`;
+                    router.push(path);
+                }
                 setIsLoading(false);
             });
     };
