@@ -30,6 +30,7 @@ const UserMenuContent = ({
             key="user-menu-header"
             isLoadingUser={isLoadingUser}
             user={user}
+            hasSession={hasSession}
             nameSpace={nameSpace}
             t={t}
         />

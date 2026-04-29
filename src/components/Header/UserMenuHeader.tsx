@@ -12,6 +12,7 @@ export interface UserMenuHeaderProps {
     isLoadingUser: boolean;
     isWhiteLoading?: boolean;
     user: User | null;
+    hasSession: boolean;
     nameSpace: string | null;
     t: TFunction;
     isSidebar?: boolean;
@@ -21,6 +22,7 @@ const UserMenuHeader = ({
     isLoadingUser,
     isWhiteLoading,
     user,
+    hasSession,
     nameSpace,
     t,
     isSidebar
@@ -33,6 +35,10 @@ const UserMenuHeader = ({
     const showNameSpaces = () => {
         setAnchorEl(UserMenuHeaderRef.current);
     };
+
+    if (!hasSession) {
+        return
+    }
 
     if (isLoadingUser) {
         return <Loading isWhiteLoading={isWhiteLoading} style={{ height: "20vh" }} />;

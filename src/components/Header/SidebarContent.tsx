@@ -15,6 +15,7 @@ const SidebarContent = () => {
         myAccountSections,
         languageSections,
         user,
+        hasSession,
         isLoadingUser
     } = state;
     const { t } = actions;
@@ -28,6 +29,7 @@ const SidebarContent = () => {
             <UserMenuHeaderSidebar
                 isLoadingUser={isLoadingUser}
                 user={user}
+                hasSession={hasSession}
                 nameSpace={nameSpace}
                 t={t}
             />

@@ -7,6 +7,7 @@ import { User } from "../../types/User";
 export interface UserMenuHeaderSidebarProps {
     isLoadingUser: boolean;
     user: User | null;
+    hasSession: boolean;
     nameSpace: NameSpaceEnum;
     t: TFunction;
 }
@@ -14,6 +15,7 @@ export interface UserMenuHeaderSidebarProps {
 const UserMenuHeaderSidebar = ({
     isLoadingUser,
     user,
+    hasSession,
     nameSpace,
     t,
 }: UserMenuHeaderSidebarProps) => {
@@ -30,6 +32,7 @@ const UserMenuHeaderSidebar = ({
                 isLoadingUser={isLoadingUser}
                 isWhiteLoading={true}
                 user={user}
+                hasSession={hasSession}
                 nameSpace={nameSpace}
                 t={t}
                 isSidebar={true}
