@@ -42,7 +42,7 @@ export class CreateVerificationRequestDTO {
     @IsOptional()
     email: string;
 
-    @IsDateString()
+    @IsDate()
     @ApiProperty()
     @IsOptional()
     date: Date;
