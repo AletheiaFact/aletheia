@@ -5,7 +5,7 @@
     "license": "GPL-3.0",
     "main": "./dist/server/main.js",
     "scripts": {
-        "prepare": "husky install",
+        "prepare": "husky",
         "start": "node dist/server/main.js",
         "seed": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
@@ -226,7 +226,7 @@
         "eslint-plugin-react-hooks": "^4.0.8",
         "eslint-plugin-storybook": "^0.6.14",
         "globals": "^17.3.0",
-        "husky": "^8.0.1",
+        "husky": "^9",
         "lint-staged": "^13.0.3",
         "nodemon": "^2.0.12",
         "prettier": "2.3.2",
