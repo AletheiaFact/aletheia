@@ -53,7 +53,7 @@ export class EventsService {
 
             const createdTopic = await this.topicService.findOrCreateTopic({
                 ...createEventDto.mainTopic,
-                name: createEventDto.mainTopic.label
+                name: createEventDto.mainTopic.label!
             })
 
             const slug = slugify(createEventDto.name, {
@@ -109,7 +109,7 @@ export class EventsService {
 
             const { mainTopic, filterTopics, ...otherFields } = updateEventDto;
 
-            const slug = slugify(updateEventDto.name, {
+            const slug = slugify(updateEventDto.name!, {
                 lower: true,
                 strict: true,
                 trim: true
@@ -118,7 +118,7 @@ export class EventsService {
             const updateData: Partial<Event> = { ...otherFields, slug: slug };
 
             if (mainTopic) {
-                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: mainTopic.label });
+                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: mainTopic.label! });
             }
 
             if (filterTopics !== undefined) {
@@ -168,7 +168,7 @@ export class EventsService {
         try {
             const query = this.buildStatusQuery(status);
             const limit = parseInt(`${pageSize}`, 10);
-            const skip = page * limit;
+            const skip = (page ?? 0) * limit;
 
             this.logger.debug(`Fetching events list. Page: ${page}, PageSize: ${pageSize}, Status: ${status}`);
             this.logger.verbose(`Built MongoDB Query: ${JSON.stringify(query)}`);

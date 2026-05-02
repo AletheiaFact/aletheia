@@ -27,12 +27,12 @@ export class ParserService {
     async parse(
         content: string,
         claimRevisionId: object,
-        personality = null,
+        personality: any = null,
         contentModel = ContentModelEnum.Speech
     ): Promise<SpeechDocument | UnattributedDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
-        const result = [];
+        const result: Promise<any>[] = [];
         const nlpContent = nlp(content);
         const paragraphs = nlpContent.paragraphs();
         const text = nlpContent.text(this.nlpOptions);

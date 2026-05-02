@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Post, Put, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
@@ -66,6 +66,9 @@ export class BadgeController {
         }
 
         const updatedBadge = await this.badgeService.update(rest);
+        if (!updatedBadge) {
+            throw new NotFoundException("Badge not found");
+        }
         updatedBadge.image = rest.image;
 
         const usersWithBadge = await this.usersService.findAll({

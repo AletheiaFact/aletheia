@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EditorService } from "../../../editor/editor.service";
 import { Model } from "mongoose";
@@ -49,6 +49,9 @@ export class DebateService {
 
     async addSpeechToDebate(debateId, speechId) {
         const debate = await this.DebateModel.findById(debateId);
+        if (!debate) {
+            throw new NotFoundException();
+        }
         const previousDebate = debate.toObject();
         debate.content.push(speechId);
         debate.updatedAt = new Date();
@@ -61,6 +64,9 @@ export class DebateService {
 
     async updateDebateStatus(debateId, isLive) {
         const debate = await this.DebateModel.findById(debateId);
+        if (!debate) {
+            throw new NotFoundException();
+        }
         const previousDebate = debate.toObject();
         debate.updatedAt = new Date();
         debate.isLive = isLive;

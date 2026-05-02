@@ -22,7 +22,7 @@ export class AutomatedFactCheckingService {
     ) {
         this.agenciaURL = this.configService.get<string>(
             "automatedFactCheckingAPIUrl"
-        );
+        ) ?? "";
     }
 
     private getAgenciaToken(): string {
@@ -74,7 +74,7 @@ export class AutomatedFactCheckingService {
                 );
             }
 
-            const reader = response.body.getReader();
+            const reader = response.body!.getReader();
             const decoder = new TextDecoder();
 
             let streamResponse = "";

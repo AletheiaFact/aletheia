@@ -346,11 +346,11 @@ export class EditorParser {
                 break;
         }
 
-        const questions = [];
-        for (const cardContent of content) {
+        const questions: string[] = [];
+        for (const cardContent of content!) {
             if (getEditorSchemaArray().includes(cardContent?.type)) {
                 if (cardContent?.type === "questions") {
-                    for (const { content } of cardContent.content) {
+                    for (const { content } of cardContent.content!) {
                         if (content) {
                             const questionTexts = content?.map(
                                 ({ text }) => text
@@ -397,7 +397,7 @@ export class EditorParser {
     ): MultiParagraphContent {
         const paragraphContents: ParagraphContent[] = [];
 
-        for (const { content } of cardContent) {
+        for (const { content } of cardContent!) {
             const textFragments: TextFragment[] = [];
 
             if (content) {
@@ -406,14 +406,13 @@ export class EditorParser {
                         schema.sources.push(
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );
-                        const markId = marks.map(
-                            ({ attrs }: ObjectMark) => attrs.id
-                        );
+                        const markId = marks
+                            .filter((mark): mark is ObjectMark => typeof mark !== "string")
+                            .map(({ attrs }) => attrs?.id);
 
-                        // Pushing the text into content with markup based on its source id
                         textFragments.push(`{{${markId}|${text}}}`);
                     } else {
-                        textFragments.push(text);
+                        textFragments.push(text as string);
                     }
                 }
             }
@@ -429,17 +428,17 @@ export class EditorParser {
 
     getSourcesFromEditorMarks(text, field, marks) {
         return marks.map(({ attrs }: ObjectMark) => ({
-            href: attrs.href,
+            href: attrs?.href,
             props: {
                 field,
                 textRange: text,
-                id: attrs.id,
+                id: attrs?.id,
             },
         }));
     }
 
     replaceSourceContentToTextRange(schema) {
-        const newSources = [];
+        const newSources: any[] = [];
 
         for (const key in schema) {
             schema.sources.forEach(({ props, href }, index) => {
@@ -498,7 +497,7 @@ export class EditorParser {
         )) {
             const content = schema[key];
             if (!this.hasSources(schema?.sources)) {
-                doc.content.push(
+                doc.content!.push(
                     ...this.buildContentWithoutSouces(key, content)
                 );
                 continue;
@@ -534,7 +533,7 @@ export class EditorParser {
                 });
                 const { rawSourcesRanges, sourcesRanges } =
                     this.getRawSourcesAndSourcesRanges(recomputedSources);
-                doc.content.push(
+                doc.content!.push(
                     ...this.buildContentFragments({
                         content,
                         key,
@@ -595,7 +594,7 @@ export class EditorParser {
     }
 
     getMissingRanges(ranges, length) {
-        const missingRanges = [];
+        const missingRanges: number[][] = [];
 
         if (ranges.length === 0) {
             // If there are no provided ranges, the missing range is the entire length.

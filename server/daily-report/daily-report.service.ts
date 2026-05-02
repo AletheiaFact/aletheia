@@ -33,7 +33,7 @@ export class DailyReportService {
 
     async generateDailyReport(
         dailyReviews,
-        nameSpace?: string
+        nameSpace: string = ""
     ): Promise<string> {
         try {
             const summarizedReviews =

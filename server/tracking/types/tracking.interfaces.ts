@@ -5,7 +5,7 @@ export interface TrackingResponseDTO {
   historyEvents: HistoryItem[];
 }
 interface HistoryItem {
-  id: string;
-  status: VerificationRequestStatus;
+  id: string | undefined;
+  status: string;
   date: Date;
 }

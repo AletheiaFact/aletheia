@@ -127,7 +127,7 @@ export class VerificationRequestService {
      * @param verificationRequestId verification request ID string
      * @returns the verification request document
      */
-    async getById(verificationRequestId: string): Promise<VerificationRequest> {
+    async getById(verificationRequestId: string): Promise<VerificationRequest | null> {
         return this.VerificationRequestModel.findById(verificationRequestId, {
             embedding: 0,
         }).populate("group");
@@ -142,7 +142,7 @@ export class VerificationRequestService {
     async getByIdWithPopulatedFields(
         verificationRequestId: string,
         fieldsToPopulate: string[] = []
-    ): Promise<VerificationRequest> {
+    ): Promise<VerificationRequest | null> {
         let query = this.VerificationRequestModel.findById(
             verificationRequestId,
             { embedding: 0 }
@@ -453,7 +453,7 @@ export class VerificationRequestService {
                 await this.handleInvalidResult(
                     targetId,
                     field,
-                    validation.error
+                    validation.error ?? ""
                 );
                 throw new BadRequestException(
                     `Invalid ${field} result: ${validation.error}`
@@ -494,6 +494,12 @@ export class VerificationRequestService {
             this.logger.log(
                 `Cleared pending AI task for ${field} on VR ${targetId}`
             );
+
+            if (!updated) {
+                throw new BadRequestException(
+                    `Verification request ${targetId} not found after update`
+                );
+            }
 
             // Track state transition
             const duration = Date.now() - startTime;
@@ -633,7 +639,7 @@ export class VerificationRequestService {
     async findByDataHash(
         data_hash: string,
         populate = true
-    ): Promise<VerificationRequestDocument> {
+    ): Promise<VerificationRequestDocument | null> {
         if (populate) {
             return this.VerificationRequestModel.findOne({
                 data_hash,
@@ -675,6 +681,12 @@ export class VerificationRequestService {
                 await this.VerificationRequestModel.findById(
                     verificationRequestId
                 );
+
+            if (!verificationRequest) {
+                throw new BadRequestException(
+                    `Verification request ${verificationRequestId} not found`
+                );
+            }
 
             await this.groupService.removeContent(
                 groupId,
@@ -828,7 +840,7 @@ export class VerificationRequestService {
         if (flattenedRemovedIds?.length) {
             await Promise.all(
                 flattenedRemovedIds.map((id) =>
-                    this.update(id, { group: null }, false)
+                    this.update(id, { group: undefined }, false)
                 )
             );
         }
@@ -958,8 +970,11 @@ export class VerificationRequestService {
     async updateVerificationRequestWithTopics(
         topics,
         data_hash
-    ): Promise<VerificationRequestDocument> {
+    ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
+        if (!verificationRequest) {
+            return null;
+        }
         const foundTopics = await this.topicService.findByWikidataIds(
             topics.map((topic) => topic.value || topic.wikidataId)
         );
@@ -1184,6 +1199,9 @@ export class VerificationRequestService {
         state: string
     ): Promise<number> {
         const vr = await this.VerificationRequestModel.findById(vrId);
+        if (!vr) {
+            return 0;
+        }
         const retries = (vr.stateRetries?.get(state) || 0) + 1;
 
         const stateRetries = new Map(Object.entries(vr.stateRetries || {}));
@@ -1519,6 +1537,12 @@ export class VerificationRequestService {
             },
             { new: true }
         );
+
+        if (!updatedVr) {
+            throw new BadRequestException(
+                `VerificationRequest ${vrId} not found after update`
+            );
+        }
 
         // Continue with next steps
         await this.revalidateAndRunMissingStates(updatedVr);

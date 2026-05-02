@@ -8,7 +8,7 @@ export const NovuProvider: Provider = {
     provide: NOVU_PROVIDER_TOKEN,
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => {
-        return new Novu(configService.get<string>("novu.api_key"));
+        return new Novu(configService.get<string>("novu.api_key")!);
     },
 };
 

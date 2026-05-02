@@ -139,6 +139,9 @@ export class UsersService {
 
     async getById(userId) {
         const user = await this.UserModel.findById(userId).populate("badges");
+        if (!user) {
+            throw new Error(`User not found: ${userId}`);
+        }
         this.logger.log(`Found user ${user._id}`);
         return user;
     }

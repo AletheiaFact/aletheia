@@ -22,7 +22,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }
@@ -121,7 +121,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }

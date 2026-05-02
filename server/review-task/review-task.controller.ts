@@ -56,7 +56,7 @@ export class ReviewTaskController {
                 pageSize,
                 order,
                 value,
-                filterUser,
+                filterUser: filterUser ?? { assigned: false, crossChecked: false, reviewed: false },
                 nameSpace,
                 reviewTaskType,
             }),
@@ -126,8 +126,8 @@ export class ReviewTaskController {
                     return this.reviewTaskService.update(
                         data_hash,
                         reviewTaskBody,
-                        reviewTaskBody.nameSpace,
-                        reviewTaskBody.reportModel,
+                        reviewTaskBody.nameSpace ?? "",
+                        reviewTaskBody.reportModel ?? "",
                         history
                     );
                 }

@@ -317,6 +317,9 @@ export class MongoPersonalityService {
             const personality = await this.PersonalityModel.findOne(
                 queryOptions
             );
+            if (!personality) {
+                throw new NotFoundException();
+            }
             const processed = await this.postProcess(
                 personality.toObject(),
                 language
@@ -532,7 +535,7 @@ export class MongoPersonalityService {
         return this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
             newPersonality
-        );
+        ).exec() as Promise<PersonalityDocument>;
     }
 
     /**

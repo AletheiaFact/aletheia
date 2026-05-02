@@ -177,7 +177,7 @@ export class WikidataService {
         const siteLinkName = this.getSiteLinkName(language);
 
         if (wikidata?.sitelinks && wikidata?.sitelinks[siteLinkName]) {
-            const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
+            const wikiLang = siteLinkName.match(/^(.*)wiki$/)?.[1];
             const wikiTitle = wikidata.sitelinks[siteLinkName].title;
             if (wikiLang && wikiTitle) {
                 wikidataProps.wikipedia = `https://${wikiLang.replace(

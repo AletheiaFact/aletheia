@@ -13,7 +13,7 @@ export default class OryService {
             this.configService.get("ory");
         this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
-        this.app_affiliation = this.configService.get<string>("app_affiliation");
+        this.app_affiliation = this.configService.get<string>("app_affiliation") ?? "";
     }
 
     async updateIdentity(

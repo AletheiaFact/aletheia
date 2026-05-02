@@ -17,7 +17,7 @@ export class GroupService {
      * @param groupId group id typeof string
      * @returns
      */
-    async getById(groupId: string): Promise<GroupDocument> {
+    async getById(groupId: string): Promise<GroupDocument | null> {
         return this.GroupModel.findById(groupId);
     }
 
@@ -26,7 +26,7 @@ export class GroupService {
      * @param contentId content id string
      * @returns the group document
      */
-    async getByContentId(contentId): Promise<GroupDocument> {
+    async getByContentId(contentId): Promise<GroupDocument | null> {
         return this.GroupModel.findOne({ content: contentId }).populate(
             "content"
         );
@@ -44,11 +44,12 @@ export class GroupService {
             });
 
             if (existingGroup) {
-                return await this.GroupModel.findByIdAndUpdate(
+                const updated = await this.GroupModel.findByIdAndUpdate(
                     existingGroup._id,
                     group,
                     { new: true }
                 );
+                return updated!;
             }
 
             return await new this.GroupModel(group).save();
@@ -67,8 +68,11 @@ export class GroupService {
     async updateWithTargetId(
         groupId: string,
         targetId: string
-    ): Promise<GroupDocument> {
+    ): Promise<GroupDocument | null> {
         const group = await this.GroupModel.findById(groupId);
+        if (!group) {
+            return null;
+        }
 
         return this.GroupModel.findByIdAndUpdate(
             group._id,
@@ -90,9 +94,14 @@ export class GroupService {
     ): Promise<
         | GroupDocument
         | ({ ok?: number; n?: number } & { deletedCount?: number })
+        | undefined
     > {
         try {
             const group = await this.GroupModel.findById(groupId);
+            if (!group) {
+                return undefined;
+            }
+
             const newContent = group.content.filter(
                 (content: any) => content.toString() !== contentId.toString()
             );
@@ -101,13 +110,11 @@ export class GroupService {
                 return await this.GroupModel.deleteOne({ _id: group._id });
             }
 
-            if (group) {
-                return await this.GroupModel.findByIdAndUpdate(
-                    group._id,
-                    { content: newContent },
-                    { new: true }
-                );
-            }
+            return await this.GroupModel.findByIdAndUpdate(
+                group._id,
+                { content: newContent },
+                { new: true }
+            ) ?? undefined;
         } catch (error) {
             this.logger.error("Failed to remove content:", error);
             throw error;

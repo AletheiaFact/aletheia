@@ -33,6 +33,9 @@ export class CommentService {
 
     async update(id, comment) {
         const existingComment = await this.CommentModel.findById(id);
+        if (!existingComment) {
+            throw new Error(`Comment not found: ${id}`);
+        }
         const user = await this.usersService.getById(
             comment.user || existingComment.user
         );
@@ -50,7 +53,7 @@ export class CommentService {
                 ...(resolved !== undefined && { resolved }),
                 ...(type !== undefined && { type }),
                 replies,
-                user: user._id,
+                user: user!._id,
             },
             { new: true }
         );
@@ -63,6 +66,9 @@ export class CommentService {
 
     async createReplyComment(id, commentBody) {
         const existingComment = await this.CommentModel.findById(id);
+        if (!existingComment) {
+            throw new Error(`Comment not found: ${id}`);
+        }
         const newComment = await this.create({
             ...commentBody,
             targetId: existingComment._id,
@@ -80,6 +86,9 @@ export class CommentService {
 
     async deleteReplyComment(id, replyId) {
         const comment = await this.CommentModel.findById(id);
+        if (!comment) {
+            throw new Error(`Comment not found: ${id}`);
+        }
 
         const replies = comment.replies.filter((reply) => {
             return !new Types.ObjectId(reply?._id).equals(replyId);

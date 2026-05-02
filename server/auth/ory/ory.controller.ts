@@ -17,7 +17,7 @@ export default class OryController {
     public async whoAmI(@Req() req: Request, @Res() res: Response) {
         try {
             // forward cookie string because the cookie names may vary between ory cloud installations
-            const data = await this.oryService.whoAmI(req.headers["cookie"]);
+            const data = await this.oryService.whoAmI(req.headers["cookie"] ?? "");
             return res.status(200).json(data);
         } catch (error) {
             if (error.status) {
@@ -49,7 +49,7 @@ export default class OryController {
         @Req() req: NextApiRequest,
         @Res() res: NextApiResponse
     ) {
-        const parsedUrl = parse(req.url, true);
-        await this.viewService.getRequestHandler()(req, res, parsedUrl);
+        const parsedUrl = parse(req.url!, true);
+        await this.viewService.getRequestHandler()(req as any, res as any, parsedUrl);
     }
 }

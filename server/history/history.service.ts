@@ -52,8 +52,8 @@ export class HistoryService {
         targetModel: TargetModel,
         performedBy: PerformedBy,
         type: HistoryType,
-        latestChange: AfterAndBeforeType,
-        previousChange?: AfterAndBeforeType
+        latestChange: AfterAndBeforeType | null,
+        previousChange?: AfterAndBeforeType | null
     ) {
         if (!isValidObjectId(dataId)) {
             throw new BadRequestException(`Invalid dataId received: ${dataId}`);
@@ -61,7 +61,7 @@ export class HistoryService {
 
         const date = new Date();
         const targetId = new Types.ObjectId(dataId);
-        let currentPerformedBy = null;
+        let currentPerformedBy: PerformedBy = null;
 
         if (typeof performedBy === "string" && HEX24_REGEX.test(performedBy)) {
             currentPerformedBy = new Types.ObjectId(performedBy);
