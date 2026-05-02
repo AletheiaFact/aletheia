@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
@@ -34,7 +34,7 @@ export class CommentService {
     async update(id, comment) {
         const existingComment = await this.CommentModel.findById(id);
         if (!existingComment) {
-            throw new Error(`Comment not found: ${id}`);
+            throw new NotFoundException(`Comment not found: ${id}`);
         }
         const user = await this.usersService.getById(
             comment.user || existingComment.user
@@ -67,7 +67,7 @@ export class CommentService {
     async createReplyComment(id, commentBody) {
         const existingComment = await this.CommentModel.findById(id);
         if (!existingComment) {
-            throw new Error(`Comment not found: ${id}`);
+            throw new NotFoundException(`Comment not found: ${id}`);
         }
         const newComment = await this.create({
             ...commentBody,
@@ -87,7 +87,7 @@ export class CommentService {
     async deleteReplyComment(id, replyId) {
         const comment = await this.CommentModel.findById(id);
         if (!comment) {
-            throw new Error(`Comment not found: ${id}`);
+            throw new NotFoundException(`Comment not found: ${id}`);
         }
 
         const replies = comment.replies.filter((reply) => {

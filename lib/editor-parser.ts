@@ -347,10 +347,16 @@ export class EditorParser {
         }
 
         const questions: string[] = [];
-        for (const cardContent of content!) {
+        if (!content) {
+            return schema;
+        }
+        for (const cardContent of content) {
             if (getEditorSchemaArray().includes(cardContent?.type)) {
                 if (cardContent?.type === "questions") {
-                    for (const { content } of cardContent.content!) {
+                    if (!cardContent.content) {
+                        continue;
+                    }
+                    for (const { content } of cardContent.content) {
                         if (content) {
                             const questionTexts = content?.map(
                                 ({ text }) => text
@@ -397,7 +403,10 @@ export class EditorParser {
     ): MultiParagraphContent {
         const paragraphContents: ParagraphContent[] = [];
 
-        for (const { content } of cardContent!) {
+        if (!cardContent) {
+            return "" as MultiParagraphContent;
+        }
+        for (const { content } of cardContent) {
             const textFragments: TextFragment[] = [];
 
             if (content) {
@@ -411,8 +420,8 @@ export class EditorParser {
                             .map(({ attrs }) => attrs?.id);
 
                         textFragments.push(`{{${markId}|${text}}}`);
-                    } else {
-                        textFragments.push(text as string);
+                    } else if (typeof text === "string") {
+                        textFragments.push(text);
                     }
                 }
             }

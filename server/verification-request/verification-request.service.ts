@@ -840,7 +840,7 @@ export class VerificationRequestService {
         if (flattenedRemovedIds?.length) {
             await Promise.all(
                 flattenedRemovedIds.map((id) =>
-                    this.update(id, { group: undefined }, false)
+                    this.update(id, { group: null }, false)
                 )
             );
         }

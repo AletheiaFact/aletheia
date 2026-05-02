@@ -118,9 +118,6 @@ export class NameSpaceController {
         const promises = users.map(async (user) => {
             const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
-            if (!existingUser) {
-                throw new NotFoundException(`User ${userId} not found`);
-            }
 
             let updatedRoles = { ...existingUser.role };
 
@@ -167,9 +164,6 @@ export class NameSpaceController {
         const updatePromises = usersId.map(async (userId) => {
             const id = new Types.ObjectId(userId);
             const user = await this.usersService.getById(id);
-            if (!user) {
-                throw new NotFoundException(`User ${id} not found`);
-            }
             delete user.role[key];
             return this.usersService.updateUser(user._id, { role: user.role });
         });

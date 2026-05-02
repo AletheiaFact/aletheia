@@ -612,7 +612,10 @@ export class ReviewTaskService {
         const updated = await this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
             $set: { machine: newReviewTaskMachine },
         });
-        return updated as ReviewTaskDocument;
+        if (!updated) {
+            throw new NotFoundException(`ReviewTask not found: ${reviewTask._id}`);
+        }
+        return updated;
     }
 
     private static readonly ALLOWED_DRAFT_REVIEW_DATA_FIELDS = [

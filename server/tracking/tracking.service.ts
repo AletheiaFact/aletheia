@@ -43,7 +43,7 @@ export class TrackingService {
         date: new Date(history.date as string | Date),
       }));
 
-    const latestStatus = verificationRequest?.status ?? ""
+    const latestStatus = verificationRequest?.status ?? "unknown"
 
     return {
       currentStatus: latestStatus,

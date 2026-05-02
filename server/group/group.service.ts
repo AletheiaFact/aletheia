@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Group, GroupDocument } from "./schemas/group.schema";
@@ -49,7 +49,10 @@ export class GroupService {
                     group,
                     { new: true }
                 );
-                return updated!;
+                if (!updated) {
+                    throw new NotFoundException(`Group not found: ${existingGroup._id}`);
+                }
+                return updated;
             }
 
             return await new this.GroupModel(group).save();

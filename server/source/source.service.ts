@@ -66,7 +66,7 @@ export class SourceService {
         // false positive in sonar cloud
         const source = await this.SourceModel.findById(sourceId);
         if (!source) {
-            throw new Error(`Source not found: ${sourceId}`);
+            throw new NotFoundException(`Source not found: ${sourceId}`);
         }
         source.targetId = [...source.targetId, newTargetId];
         source.save();
