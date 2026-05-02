@@ -6,14 +6,14 @@ import { Roles } from "../../auth/ability/ability.factory";
 export default class OryService {
     private adminUrl: string;
     private url: string;
-    private app_affiliation: string;
+    private app_affiliation: string | undefined;
 
     constructor(private configService: ConfigService) {
         const { admin_url, admin_endpoint, url } =
             this.configService.get("ory");
         this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
-        this.app_affiliation = this.configService.get<string>("app_affiliation") ?? "";
+        this.app_affiliation = this.configService.get<string>("app_affiliation");
     }
 
     async updateIdentity(
