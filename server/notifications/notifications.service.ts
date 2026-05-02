@@ -154,7 +154,10 @@ export class NotificationService {
             return;
         }
 
-        const NOVU_API_KEY = this.configService.get<string>("novu.api_key")!;
+        const NOVU_API_KEY = this.configService.get<string>("novu.api_key");
+        if (!NOVU_API_KEY) {
+            return;
+        }
 
         return createHmac("sha256", NOVU_API_KEY)
             .update(subscriberId)

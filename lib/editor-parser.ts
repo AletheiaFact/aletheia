@@ -404,7 +404,7 @@ export class EditorParser {
         const paragraphContents: ParagraphContent[] = [];
 
         if (!cardContent) {
-            return "" as MultiParagraphContent;
+            return "";
         }
         for (const { content } of cardContent) {
             const textFragments: TextFragment[] = [];

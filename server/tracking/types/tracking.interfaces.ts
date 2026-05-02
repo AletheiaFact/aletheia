@@ -5,7 +5,7 @@ export interface TrackingResponseDTO {
   historyEvents: HistoryItem[];
 }
 interface HistoryItem {
-  id: string | undefined;
+  id?: string;
   status: string;
   date: Date;
 }
