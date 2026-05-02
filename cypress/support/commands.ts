@@ -13,13 +13,15 @@ Cypress.Commands.add("goToLoginPage", () => {
 });
 
 Cypress.Commands.add("login", () => {
-    cy.goToLoginPage();
-    cy.get(locators.login.USER).type(user.email);
-    cy.get(locators.login.PASSWORD).type(user.password);
-    cy.get(locators.login.BTN_LOGIN).click();
-    cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
-    cy.wait("@confirmLogin", { timeout: 30000 });
-    // The tutorial modal will show up in the home page after the login
+    cy.session("default-user", () => {
+        cy.goToLoginPage();
+        cy.get(locators.login.USER).type(user.email);
+        cy.get(locators.login.PASSWORD).type(user.password);
+        cy.get(locators.login.BTN_LOGIN).click();
+        cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
+        cy.wait("@confirmLogin", { timeout: 30000 });
+    });
+    cy.visit("/");
     cy.get(`${locators.claim.BTN_OK_TUTORIAL}`).should("be.visible").click();
 });
 
