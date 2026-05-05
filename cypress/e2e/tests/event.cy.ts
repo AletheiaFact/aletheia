@@ -33,7 +33,7 @@ const fillEventForm = (startDate: Dayjs, endDate: Dayjs, overrides = {}) => {
     );
 
     cy.selectDatePickerDate(0, startDate);
-    cy.wait(500);
+    cy.get(".MuiPickersPopper-root").should("not.exist");
     cy.selectDatePickerDate(1, endDate);
 
     cy.intercept("GET", "**/api/topics/?topicName=*").as("searchTopics");
@@ -58,8 +58,7 @@ const fillAndSaveEvent = (startDate: Dayjs, endDate: Dayjs, overrides = {}) => {
 const addTopicFlow = (aliasType: string, labelToClick: string) => {
     cy.get(locators.topic.ADD_TOPIC_ICON).click();
     cy.get(locators.topic.TYPE_TOPIC_INPUT).should("be.visible").click();
-
-    cy.wait(300);
+    cy.get(locators.topic.TYPE_TOPIC_INPUT).find("input").should("have.focus");
 
     cy.get(locators.topic.TYPE_TOPIC_INPUT)
         .clear()
