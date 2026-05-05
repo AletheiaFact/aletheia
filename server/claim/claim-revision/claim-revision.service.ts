@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import slugify from "slugify";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../../source/source.service";
 import { SourceTargetModel } from "../../source/schemas/source.schema";
@@ -65,11 +64,6 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId = claimId;
-
-        claim.slug = claim.slug || slugify(claim.title, {
-            lower: true,
-            strict: true,
-        });
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);
         const newclaimRevisionId = new Types.ObjectId(newClaimRevision._id);
