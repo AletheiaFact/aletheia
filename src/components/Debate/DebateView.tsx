@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Grid } from "@mui/material";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
 import DebateHeader from "./DebateHeader";
 import DebateTimelineWrapper from "./DebateTimelineWrapper";

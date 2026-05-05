@@ -5,6 +5,7 @@ import {
     NotFoundException,
     Logger,
     InternalServerErrorException,
+    ConflictException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
@@ -23,15 +24,16 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
+import slugify from "slugify";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -101,6 +103,26 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim: any) {
+        const generatedSlug = slugify(claim.title, {
+            lower: true,
+            strict: true,
+        });
+
+        const safeNameSpace =
+            typeof claim.nameSpace === "string" ? claim.nameSpace : undefined;
+
+        const existingClaim = await this.ClaimModel.findOne({
+            slug: generatedSlug,
+            nameSpace: { $eq: safeNameSpace },
+            isDeleted: false
+        });
+
+        if (existingClaim) {
+            throw new ConflictException("There is already a claim with this title.");
+        }
+
+        claim.slug = generatedSlug;
+
         claim.personalities = claim.personalities.map((personality) => {
             return new Types.ObjectId(personality);
         });
@@ -110,10 +132,12 @@ export class ClaimService {
         }
 
         const newClaim = new this.ClaimModel(claim);
+
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
             claim
         );
+
         newClaim.latestRevision = newClaimRevision._id;
         newClaim.slug = newClaimRevision.slug;
 
@@ -133,6 +157,7 @@ export class ClaimService {
 
         await this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
+
         if (claim.group) {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
         }
