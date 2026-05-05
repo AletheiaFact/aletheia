@@ -108,9 +108,12 @@ export class ClaimService {
             strict: true,
         });
 
+        const safeNameSpace =
+            typeof claim.nameSpace === "string" ? claim.nameSpace : undefined;
+
         const existingClaim = await this.ClaimModel.findOne({
             slug: generatedSlug,
-            nameSpace: claim.nameSpace,
+            nameSpace: { $eq: safeNameSpace },
             isDeleted: false
         });
 
