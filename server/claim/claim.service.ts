@@ -108,7 +108,11 @@ export class ClaimService {
             strict: true,
         });
 
-        const existingClaim = await this.ClaimModel.findOne({ slug: generatedSlug });
+        const existingClaim = await this.ClaimModel.findOne({
+            slug: generatedSlug,
+            nameSpace: claim.nameSpace,
+            isDeleted: false
+        });
 
         if (existingClaim) {
             throw new ConflictException("There is already a claim with this title.");
