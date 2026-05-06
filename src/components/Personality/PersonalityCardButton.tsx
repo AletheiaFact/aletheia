@@ -2,7 +2,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 const PersonalityCardButton = ({
     personality,
@@ -15,22 +15,19 @@ const PersonalityCardButton = ({
 }) => {
     const { t } = useTranslation();
     const buttonProps = {
-        type: ButtonType.blue,
+        type: ButtonType.primary,
         "data-cy": personality.name,
         disabled: isFormSubmitted || personalityIsSelected,
     };
 
     if (personality?._id) {
         return (
-            <Button
+            <AletheiaButton
                 {...personalityFoundProps}
                 {...buttonProps}
                 style={{
-                    height: "auto",
-                    fontSize: isMobileDevice ? "12px" : "14px",
+                    fontSize: isMobileDevice ? "12px" : "12px",
                     padding: isMobileDevice ? "4px 8px" : "4px 12px",
-                    textAlign: "center",
-                    justifyContent: "center",
                 }}
             >
                 <span>
@@ -38,31 +35,33 @@ const PersonalityCardButton = ({
                         ? t("claimForm:personalityFound")
                         : t("personality:profile_button")}
                 </span>
-            </Button>
+            </AletheiaButton>
         );
     } else {
         return (
-            <Button
+            <AletheiaButton
                 {...buttonProps}
+                startIcon={
+                    <AddOutlinedIcon
+                        style={{
+                            fontSize: isMobileDevice ? "18px" : "24px"
+                        }}
+                    />
+                }
                 onClick={() => {
                     if (!isFormSubmitted) {
                         onClick(personality);
                     }
                 }}
                 style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "auto",
                     fontSize: isMobileDevice ? "12px" : "14px",
                     padding: isMobileDevice ? "2px 8px" : "4px 12px",
                 }}
             >
-                <AddOutlinedIcon style={{ margin: "0 3px 3px 0", fontSize: isMobileDevice ? "18px" : "24px", }} />
                 {isCreatingClaim
                     ? t("claimForm:personalityNotFound")
                     : t("personality:add_button")}
-            </Button>
+            </AletheiaButton>
         );
     }
 };

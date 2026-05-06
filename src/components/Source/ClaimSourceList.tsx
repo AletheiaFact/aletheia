@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { Grid, Typography } from "@mui/material";
 
 import React from "react";
@@ -44,7 +44,7 @@ const ClaimSourceList = ({
             )}
             {!showAllSources && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     href={seeMoreHref}
                     className="all-sources-link-button"
                 >

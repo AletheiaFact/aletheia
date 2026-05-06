@@ -3,7 +3,7 @@ import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "next-i18next";
-import AletheiaButton, { ButtonType } from "../../../Button";
+import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import AletheiaInput from "../../../AletheiaInput";
 import { IInputExtraSourcesList } from "../../../../types/VerificationRequest";
 import { SourceType } from "../../../../types/Source";
@@ -101,7 +101,7 @@ const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder
             {!disabled && (
                 <Grid item>
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         onClick={addField}
                         data-cy={`${dataCy}-addSources`}
                         style={{ marginTop: 12 }}

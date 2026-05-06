@@ -8,7 +8,7 @@ import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import OverlaySearchInput from "./OverlaySearchInput";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
@@ -70,6 +70,7 @@ const SearchOverlay = () => {
                 >
                     {vw?.xs && isOpen && (
                         <AletheiaButton
+                            type={ButtonType.primary}
                             onClick={() => {
                                 dispatch(actions.closeResultsOverlay());
                             }}

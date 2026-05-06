@@ -1,7 +1,7 @@
 import { useCommands } from "@remirror/react";
 import React, { useCallback } from "react";
 import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 
 const AddPersonalityEditorButton = ({

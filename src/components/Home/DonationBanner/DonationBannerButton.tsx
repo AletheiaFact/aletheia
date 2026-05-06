@@ -1,4 +1,4 @@
-import Button from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import { trackUmamiEvent } from "../../../lib/umami";
 
 interface DonationBannerButtonProps {
@@ -17,7 +17,7 @@ const DonationBannerButton = ({
     trackEvent,
 }: DonationBannerButtonProps) => {
     return (
-        <Button
+        <AletheiaButton
             type={type}
             href={href}
             target="_blank"
@@ -26,10 +26,10 @@ const DonationBannerButton = ({
                 if (closeClick) closeClick();
                 trackUmamiEvent(trackEvent, text);
             }}
-            className="banner-button"
+            fontWeight={700}
         >
             {text}
-        </Button>
+        </AletheiaButton>
     );
 };
 

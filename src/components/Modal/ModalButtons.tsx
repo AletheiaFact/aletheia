@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { ModalCancelButton } from "./AletheiaModal.style";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 
 const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
@@ -31,7 +31,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
                 disabled={!hasCaptcha}
                 loading={isLoading}
                 htmlType="submit"
-                type={ButtonType.blue}
+                type={ButtonType.primary}
             >
                 {t("orderModal:okButton")}
             </AletheiaButton>

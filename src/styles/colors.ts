@@ -23,6 +23,7 @@ const colors = {
     activeTranslucent: "rgba(73, 222, 128, 0.1)",
     whiteLow: "rgba(255, 255, 255, 0.05)",
     whiteHigh: "rgba(255, 255, 255, 0.87)",
+    primaryHover: "rgb(40, 68, 92)",
     logo: "#E8E8E8",
     error: "#ff4d4f",
     active: "#49DE80",

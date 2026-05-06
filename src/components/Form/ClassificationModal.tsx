@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
@@ -121,7 +121,7 @@ const ClassificationModal = ({
                 </ModalCancelButton>
 
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     onClick={handleOk}
                     style={{ width: "48%", paddingTop: 0 }}
                 >

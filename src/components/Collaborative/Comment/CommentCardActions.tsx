@@ -3,7 +3,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CheckIcon from "@mui/icons-material/Check";
 import CommentPopoverContent from "./CommentPopoverContent";
 import PopoverClick from "../../Claim/Popover";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import CommentApi from "../../../api/comment";
 import { VisualEditorContext } from "../VisualEditorProvider";
@@ -80,12 +80,12 @@ const CommentCardActions = ({ content, setIsResolved }) => {
         <div className="comment-card-actions">
             <div className="comment-card-actions-resolve-button">
                 {!content.isReply && canResolveComment && (
-                    <Button
+                    <AletheiaButton
                         type={ButtonType.white}
                         onClick={handleResolvedClick}
                     >
                         <CheckIcon style={{ fontSize: "16px" }} />
-                    </Button>
+                    </AletheiaButton>
                 )}
             </div>
             {(permissions.isAdmin ||

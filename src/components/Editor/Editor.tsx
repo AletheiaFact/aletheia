@@ -9,7 +9,7 @@ import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
 import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
 import { EditorContent } from "./EditorContent";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claim";
 import { useDispatch } from "react-redux";
@@ -81,19 +81,18 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
             }}
         >
             <Grid item sm={11} style={{ display: "flex", justifyContent: "end" }}>
-                <Button
+                <AletheiaButton
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={handleClickUpdateStatus}
                     type={ButtonType.whiteBlack}
                 >
                     {t(
-                        `debates:${
-                            isLive
-                                ? "finishDebateButtonLabel"
-                                : "reopenDebateButtonLabel"
+                        `debates:${isLive
+                            ? "finishDebateButtonLabel"
+                            : "reopenDebateButtonLabel"
                         }`
                     )}
-                </Button>
+                </AletheiaButton>
             </Grid>
             <AllStyledComponent
                 style={{

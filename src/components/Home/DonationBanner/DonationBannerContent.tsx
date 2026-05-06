@@ -1,6 +1,6 @@
 import React from "react";
 import DonationBannerButton from "./DonationBannerButton";
-import { ButtonType } from "../../Button";
+import { ButtonType } from "../../AletheiaButton";
 import { Grid } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 import DonationBannerStyle from "../DonationBanner.style";
@@ -22,7 +22,7 @@ function DonationBannerContent({ closeClick }) {
                         trackEvent={"banner-donate-button-no"}
                     />
                     <DonationBannerButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         href={t("home:donateUrlButton")}
                         text={t("donationBanner:yesDonateButton")}
                         closeClick={closeClick}

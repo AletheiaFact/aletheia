@@ -9,7 +9,7 @@ import SpeechApi from "../../../api/speechApi";
 import { debateAtom } from "../../../atoms/debate";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import ClaimCardHeader from "../../Claim/ClaimCardHeader";
 import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
@@ -126,9 +126,9 @@ export const EditorClaimCard = ({
                         <EditorClaimCardContent>
                             <p ref={forwardRef} />
                         </EditorClaimCardContent>
-                        <Button
+                        <AletheiaButton
                             loading={isLoading}
-                            type={ButtonType.blue}
+                            type={ButtonType.primary}
                             onClick={() =>
                                 createSpeechFromEditor(t, {
                                     personality,
@@ -139,7 +139,7 @@ export const EditorClaimCard = ({
                             data-cy={"testSaveButton"}
                         >
                             {t("debates:saveButtonLabel")}
-                        </Button>
+                        </AletheiaButton>
                     </>
                 ) : (
                     <div
@@ -157,7 +157,7 @@ export const EditorClaimCard = ({
                                         ? speech.content
                                         : [speech.content]
                                 }
-                                showHighlights={true}
+                                showHighlights="left"
                                 handleSentenceClick={dispatchPersonality}
                             />
                         </EditorClaimCardContent>

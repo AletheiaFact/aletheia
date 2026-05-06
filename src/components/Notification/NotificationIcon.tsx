@@ -2,12 +2,12 @@ import React from "react";
 import colors from "../../styles/colors";
 import { Badge } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 const NotificationIcon = ({ unseenCount }) => {
     return (
         <AletheiaButton
-            style={{ padding: "4px 15px 0 15px" }}
+            type={ButtonType.text}
             data-cy="testNotificationIcon"
         >
             <Badge

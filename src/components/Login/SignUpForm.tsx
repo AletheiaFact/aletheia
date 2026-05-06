@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 
 import AletheiaAlert from "../AletheiaAlert";
 import Input from "../AletheiaInput";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import InputPassword from "../InputPassword";
 import { Grid } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -150,14 +150,14 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </Grid>
                 </Grid>
                 <Grid container>
-                    <Button
+                    <AletheiaButton
                         loading={isLoading}
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType="submit"
                         data-cy="loginButton"
                     >
                         {t("login:submitButton")}
-                    </Button>
+                    </AletheiaButton>
                 </Grid>
             </form>
         </div>

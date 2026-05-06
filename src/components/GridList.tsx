@@ -1,7 +1,7 @@
 import SectionTitle from "./SectionTitle";
 import { Grid } from "@mui/material";
 import React from "react";
-import Button, { ButtonType } from "./Button";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 import { ArrowForwardOutlined } from "@mui/icons-material";
 
 const GridList = ({
@@ -44,9 +44,14 @@ const GridList = ({
                         margin: "48px 0 64px 0",
                     }}
                 >
-                    <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
-                        {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small" />
-                    </Button>
+                    <AletheiaButton
+                        href={href}
+                        type={ButtonType.primary}
+                        data-cy={dataCy}
+                        endIcon={<ArrowForwardOutlined fontSize="small" />}
+                    >
+                        {seeMoreButtonLabel}
+                    </AletheiaButton>
                 </Grid>
             )}
         </>

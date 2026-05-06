@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
 import { SortByAlphaOutlined } from "@mui/icons-material";
 import OrderModal from "../Modal/OrderModal";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 const SortByButton = ({ refreshListItems }) => {
     const { t } = useTranslation();
@@ -12,39 +11,15 @@ const SortByButton = ({ refreshListItems }) => {
 
     return (
         <>
-            <Button
-                startIcon={
-                    <SortByAlphaOutlined
-                        fontSize="small"
-                        style={{
-                            color: colors.blackSecondary,
-                        }}
-                    />
-                }
+            <AletheiaButton
+                type={ButtonType.whiteBlack}
+                rounded
+                fontWeight={700}
+                startIcon={<SortByAlphaOutlined fontSize="small" />}
                 onClick={() => setOpen(!open)}
-                style={{
-                    border: "1px solid",
-                    borderWidth: "2px",
-                    borderColor: colors.blackSecondary,
-                    borderRadius: "20px",
-                    height: "40px",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    marginLeft: 10,
-                }}
             >
-                <span
-                    style={{
-                        margin: 0,
-                        fontSize: "14px",
-                        lineHeight: "15px",
-                        fontWeight: 700,
-                        color: colors.blackSecondary,
-                    }}
-                >
-                    {t("sortButton:title")}
-                </span>
-            </Button>
+                {t("sortButton:title")}
+            </AletheiaButton>
 
             <OrderModal
                 open={open}

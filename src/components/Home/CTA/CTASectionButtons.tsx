@@ -6,7 +6,7 @@ import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
 import localConfig from "../../../../config/localConfig";
 import CTAButton from "../CTAButton";
-import { ButtonType } from "../../Button";
+import { ButtonType } from "../../AletheiaButton";
 
 const CTASectionButtons = () => {
     const { vw } = useAppSelector((state) => state);

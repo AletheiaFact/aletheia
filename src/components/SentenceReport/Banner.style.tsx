@@ -6,6 +6,7 @@ const BannerStyle = styled(Grid)`
     justify-content: center;
     padding: 18px;
     background-color: ${colors.black};
+    gap: 12px;
 
     .text {
         color: ${colors.white};
@@ -16,16 +17,13 @@ const BannerStyle = styled(Grid)`
     }
 
     .cta-registration-button {
-        white-space: pre-wrap;
-        margin-top: 20px;
-
-        span {
-            padding: 24px 0 20px 0;
-            font-size: 18px;
-            line-height: 22px;
-            text-align: center;
-            font-weight: 900;
-        }
+        height: fit-content;
+        border-radius: 10px;
+        padding: 18px 0;
+        font-size: 18px;
+        line-height: 22px;
+        text-align: center;
+        font-weight: 900;
     }
 
     .video-container {

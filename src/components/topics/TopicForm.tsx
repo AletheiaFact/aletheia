@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Grid } from "@mui/material";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
@@ -91,17 +91,8 @@ const TopicForm = ({
                     htmlType="submit"
                     data-cy="testAddTopicButton"
                     loading={isLoading}
-                    style={{
-                        height: 40,
-                        borderRadius: 4,
-                        borderTopRightRadius: 4,
-                        borderBottomRightRadius: 4,
-                        padding: "0 5px",
-                        fontSize: 12,
-                        marginLeft: 5,
-                        textAlign: "center",
-                        justifyContent: "center",
-                    }}
+                    style={{ marginLeft: 5 }}
+                    type={ButtonType.primary}
                 >
                     {t("topics:addTopicsButton")}
                 </AletheiaButton>

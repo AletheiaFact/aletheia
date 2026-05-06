@@ -6,6 +6,7 @@
     "addInformativeNewsButton": "Start an informative news",
     "addSourceReviewButton": "Start a source review",
     "addVerificationRequestButton": "Start a verification request review",
+    "submitCommentButton": "Submit",
     "cancelButton": "Cancel",
     "classificationPlaceholder": "Choose a classification",
     "not-fact": "Not fact",

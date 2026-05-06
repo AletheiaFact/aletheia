@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from "react";
-import AletheiaButton from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import { Grid } from "@mui/material";
 import SummarizationApi from "../../../api/summarizationApi";
 import { useTranslation } from "next-i18next";

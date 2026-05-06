@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from "react";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaInput from "../../AletheiaInput";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
@@ -62,9 +62,9 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                     comments.map((comment) =>
                         comment._id === content._id
                             ? {
-                                  ...comment,
-                                  replies: [...comment.replies, replyComment],
-                              }
+                                ...comment,
+                                replies: [...comment.replies, replyComment],
+                            }
                             : comment
                     )
                 );
@@ -130,16 +130,19 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
 
             {(isEditing || showButtons) && (
                 <div className="comment-card-form-actions">
-                    <Button onClick={handleOnSubmit} loading={isLoading}>
-                        Submit
-                    </Button>
-                    <Button
+                    <AletheiaButton
+                        onClick={handleOnSubmit}
+                        loading={isLoading}
+                    >
+                        {t("claimReviewForm:submitCommentButton")}
+                    </AletheiaButton>
+                    <AletheiaButton
                         type={ButtonType.whiteBlack}
                         onClick={handleCancel}
                         loading={isLoading}
                     >
-                        Cancel
-                    </Button>
+                        {t("claimReviewForm:cancelButton")}
+                    </AletheiaButton>
                 </div>
             )}
         </div>

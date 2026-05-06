@@ -19,7 +19,7 @@ import Loading from "../Loading";
 import OryLoginForm from "./OryLoginForm";
 import SignUpForm from "./SignUpForm";
 import CTAButton from "../Home/CTAButton";
-import { ButtonType } from "../Button";
+import { ButtonType } from "../AletheiaButton";
 
 const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
     const [flow, setFlow] = useState<LoginFlow>();
@@ -183,7 +183,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                             <h2>{t("login:signUpHeader")}</h2>
                         </Grid>
                         <CTAButton
-                            type={ButtonType.blue}
+                            type={ButtonType.primary}
                             textWhenLoggedOut={t("CTAFolder:button")}
                         />
                     </>

@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import colors from "../../styles/colors";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { VerificationRequestStatus } from "../../types/enums";
 import VerificationRequestDetailDrawer from "./VerificationRequestDetailDrawer";
 import {

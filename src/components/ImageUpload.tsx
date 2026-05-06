@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { FileUploadOutlined, DeleteOutline } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import AletheiaButton from "./Button";
+import AletheiaButton from "./AletheiaButton";
 import { MessageManager } from "../components/Messages";
 import { UnifiedDefaultValue } from "./Form/DynamicInput";
 import { sanitizeUrl } from "../utils/ValidateFloatingLink";

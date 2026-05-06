@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 
 interface EventLoadMoreProps {
     visible: boolean;
@@ -19,7 +19,7 @@ const EventLoadMore = ({ visible, onLoadMore, label }: EventLoadMoreProps) => {
                 data-cy={"testSeeMoreEvents"}
                 type={ButtonType.gray}
                 onClick={onLoadMore}
-                rounded={"true"}
+                rounded
             >
                 {label}
             </AletheiaButton>
