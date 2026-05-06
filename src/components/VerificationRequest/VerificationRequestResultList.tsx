@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import React, { useContext, useState } from "react";
 import VerificationRequestCard from "./VerificationRequestCard";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
 import { useTranslation } from "next-i18next";
 

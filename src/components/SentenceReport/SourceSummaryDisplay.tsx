@@ -2,7 +2,7 @@ import React from "react";
 import { Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import SentenceReportSummary from "./SentenceReportSummary";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 
 const SourceSummaryDisplay = ({ href }) => {
     const { t } = useTranslation();

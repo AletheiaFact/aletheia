@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Grid, Link, Typography } from "@mui/material";
 import TagsList from "../../topics/TagsList";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaAvatar from "../../AletheiaAvatar";
 import { Topic } from "../../../types/Topic";
 import { PersonalityWithWikidata } from "../../../types/PersonalityWithWikidata";
@@ -46,7 +46,10 @@ const VerificationRequestMinimumCardActions = ({
                         ))}
                     </Box>
                 </Box>
-                <AletheiaButton type={ButtonType.blue} href={`/verification-request/${dataHash}`}>
+                <AletheiaButton
+                    type={ButtonType.primary}
+                    href={`/verification-request/${dataHash}`}
+                >
                     {t("verificationRequest:openVerificationRequest")}
                 </AletheiaButton>
             </Box>

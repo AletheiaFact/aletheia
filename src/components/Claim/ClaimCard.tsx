@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ClaimCardHeader from "./ClaimCardHeader";
 import colors from "../../styles/colors";
 import ClaimSummaryContent from "./ClaimSummaryContent";
@@ -102,7 +102,7 @@ const ClaimCard = ({
                                 dispatchPersonalityAndClaim
                             }
                             paragraphs={paragraphs}
-                            showHighlights={true}
+                            showHighlights="left"
                         />
                     )}
                 </ClaimSummary>
@@ -167,8 +167,8 @@ const ClaimCard = ({
                 </Grid>
                 <Grid item>
                     {!isInsideDebate && (
-                        <Button
-                            type={ButtonType.blue}
+                        <AletheiaButton
+                            type={ButtonType.primary}
                             href={href}
                             data-cy={personality?.name}
                         >
@@ -184,7 +184,7 @@ const ClaimCard = ({
                             >
                                 {t("claim:cardReviewButton")}
                             </span>
-                        </Button>
+                        </AletheiaButton>
                     )}
                 </Grid>
             </Grid>

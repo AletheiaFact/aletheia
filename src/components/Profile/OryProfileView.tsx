@@ -11,7 +11,7 @@ import React, { useEffect, useState, } from "react";
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import userApi from "../../api/userApi";
 import { getUiNode } from "../../lib/orysdk/utils";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import InputPassword from "../InputPassword";
 import Label from "../Label";
 import Loading from "../Loading";
@@ -134,6 +134,7 @@ const OryProfileView = ({ user }) => {
                             <TextError
                                 stateError={errors.newPassword}
                                 children={t("common:requiredFieldError")}
+                                data-cy="testNewPasswordError"
                             />
                         </Grid>
                         <Grid item xs={12} sm={4.5} md={3.25} lg={2.5} xl={2}>
@@ -155,17 +156,18 @@ const OryProfileView = ({ user }) => {
                                         ? t("common:requiredFieldError")
                                         : t("profile:passwordMatchErrorMessage")
                                 }
+                                data-cy="testRepeatedNewPasswordError"
                             />
                         </Grid>
                     </Grid>
-                    <Button
+                    <AletheiaButton
                         loading={isLoading}
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType="submit"
                         data-cy="submitChangePasswordButton"
                     >
                         {t("login:submitButton")}
-                    </Button>
+                    </AletheiaButton>
                 </form>
                 <Totp flow={flow} setFlow={setFlow} />
             </Grid>

@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useState } from "react";
 import ForumAlertModal from "../Modal/ForumAlertModal";
 
@@ -46,7 +46,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
     return (
         <>
-            <Button
+            <AletheiaButton
                 onClick={handleClick}
                 type={type || ButtonType.white}
                 href={!isLoggedIn ? "/sign-up" : undefined}
@@ -65,7 +65,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
                 }}
             >
                 {!isLoggedIn ? textWhenLoggedOut || t("home:createAccountButton") : t("home:forumButton")}
-            </Button>
+            </AletheiaButton>
 
             {isModalVisible && (
                 <ForumAlertModal open={isModalVisible} onCancel={handleHideModal} />

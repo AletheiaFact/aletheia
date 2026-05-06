@@ -1,5 +1,5 @@
 import React from "react";
-import Button, { ButtonType } from "../../../Button";
+import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import { Grid } from "@mui/material";
 import InfoTooltip from "../../../Claim/InfoTooltip";
 import ArchiveIcon from "@mui/icons-material/Archive";
@@ -15,8 +15,9 @@ const EditorSourcePopoverContent = ({
 
     const ButtonTooltip = (
         <span>
-            <Button
+            <AletheiaButton
                 type={ButtonType.white}
+                startIcon={<ArchiveIcon />}
                 onClick={handleArchiveClick}
                 style={{
                     gap: 8,
@@ -27,9 +28,8 @@ const EditorSourcePopoverContent = ({
                     marginTop: 10,
                 }}
             >
-                <ArchiveIcon />
                 Internet archive
-            </Button>
+            </AletheiaButton>
         </span>
     );
 
@@ -42,8 +42,9 @@ const EditorSourcePopoverContent = ({
                     content={t("sourceForm:intertArchiveTooltip")}
                 />
             )}
-            <Button
+            <AletheiaButton
                 type={ButtonType.white}
+                startIcon={<DeleteIcon />}
                 style={{
                     textDecoration: "underline",
                     gap: 8,
@@ -51,12 +52,12 @@ const EditorSourcePopoverContent = ({
                     display: "flex",
                     justifyContent: "start",
                     marginBottom: 10,
+                    width: "100%"
                 }}
                 onClick={handleDeleteClick}
             >
-                <DeleteIcon />
                 {t("sourceForm:deleteSourceButton")}
-            </Button>
+            </AletheiaButton>
         </Grid>
     );
 };

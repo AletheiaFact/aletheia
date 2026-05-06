@@ -9,7 +9,7 @@ import userApi from "../../../api/userApi";
 import { finishEditingItem } from "../../../atoms/editDrawer";
 import { atomBadgesList } from "../../../atoms/badges";
 import { Badge } from "../../../types/Badge";
-import Button from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import { currentUserId } from "../../../atoms/currentUser";
 import { canEdit } from "../../../utils/GetUserPermission";
 import UserEditRoles from "./UserEditRoles";
@@ -203,9 +203,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             </Grid>
             <Grid item xs={10} mt={5}>
                 {shouldEdit && (
-                    <Button onClick={handleClickSave}>
+                    <AletheiaButton onClick={handleClickSave}>
                         {t("admin:saveButtonLabel")}
-                    </Button>
+                    </AletheiaButton>
                 )}
             </Grid>
         </>

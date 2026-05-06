@@ -3,7 +3,7 @@ import LargeDrawer from "../LargeDrawer";
 import { Grid, Typography } from "@mui/material"
 import colors from "../../styles/colors";
 import VerificationRequestCard from "./VerificationRequestCard";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import  { DeleteOutlined }  from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../Modal/WarningModal";
@@ -42,6 +42,7 @@ const VerificationRequestDrawer = ({
                                             setRemoveWarningModal(true)
                                         }
                                         loading={isLoading}
+                                        type={ButtonType.primary}
                                     >
                                         <DeleteOutlined fontSize="small" />
                                     </AletheiaButton>,

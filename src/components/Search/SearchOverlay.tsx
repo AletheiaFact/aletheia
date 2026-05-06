@@ -8,11 +8,11 @@ import { ArrowCircleLeft } from "@mui/icons-material";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
-import AletheiaButton from "../Button";
+import { queries } from "../../styles/mediaQueries";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import OverlaySearchInput from "./OverlaySearchInput";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
-import { queries } from "../../styles/mediaQueries";
 
 const OverlayWrapper = styled.div`
   position: fixed;
@@ -60,9 +60,9 @@ const SearchOverlay = () => {
             <div className="content-container">
                 <AletheiaButton
                     onClick={() => dispatch(actions.closeResultsOverlay())}
-                    style={{ minWidth: "auto", padding: 0 }}
+                    type={ButtonType.primary}
                 >
-                    <ArrowCircleLeft style={{ fontSize: "28px", color: colors.white }} />
+                    <ArrowCircleLeft style={{ fontSize: "24px" }} />
                 </AletheiaButton>
 
                 <OverlaySearchInput />

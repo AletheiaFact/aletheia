@@ -1,7 +1,7 @@
-import { 
-    InsertDriveFileOutlined,  
-    PhotoSizeSelectActualOutlined, 
-    VideocamOutlined 
+import {
+    InsertDriveFileOutlined,
+    PhotoSizeSelectActualOutlined,
+    VideocamOutlined
 } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
@@ -11,7 +11,7 @@ import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
-import AletheiaButton from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 
 const ClaimSelectType = () => {
     const [, send] = useAtom(createClaimMachineAtom);

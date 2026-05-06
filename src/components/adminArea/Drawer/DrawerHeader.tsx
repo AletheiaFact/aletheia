@@ -8,7 +8,7 @@ import { Status } from "../../../types/enums";
 import { finishEditingItem } from "../../../atoms/editDrawer";
 import userApi from "../../../api/userApi";
 import HeaderUserStatus from "./HeaderUserStatus";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { canEdit } from "../../../utils/GetUserPermission";
 
 const DrawerHeader = ({ currentUser, setIsLoading }) => {
@@ -74,12 +74,12 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                     </h3>
                 </div>
                 {userId !== currentUser?._id && shouldEdit && (
-                    <Button
+                    <AletheiaButton
                         type={ButtonType.whiteBlue}
                         onClick={handleClickChangeStatus}
                     >
                         {t(`admin:user-status-${status}-button`)}
-                    </Button>
+                    </AletheiaButton>
                 )}
             </div>
             <Divider />
