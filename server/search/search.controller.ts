@@ -53,10 +53,10 @@ export class SearchController {
                     page > 1 ? processedPageSize * (page - 1) : 0;
 
                 const findPersonalities = async (
-                    searchText,
-                    processedPageSize,
-                    req,
-                    skippedDocuments
+                    searchText: string,
+                    processedPageSize: number,
+                    req: BaseRequest,
+                    skippedDocuments: number
                 ) => {
                     if (searchText) {
                         return await this.personalityService.findAll({
@@ -71,10 +71,10 @@ export class SearchController {
                 };
 
                 const findSentences = async (
-                    searchText,
-                    processedPageSize,
-                    skippedDocuments,
-                    filter
+                    searchText: string,
+                    processedPageSize: number,
+                    skippedDocuments: number,
+                    filter: string | Array<string>
                 ) => {
                     if (searchText || filter) {
                         return await this.sentenceService.findAll({
@@ -89,9 +89,9 @@ export class SearchController {
                 };
 
                 const findClaims = async (
-                    searchText,
-                    processedPageSize,
-                    skippedDocuments
+                    searchText: string,
+                    processedPageSize: number,
+                    skippedDocuments: number
                 ) => {
                     if (searchText) {
                         return await this.claimRevisionService.findAll({
@@ -171,7 +171,10 @@ export class SearchController {
     @ApiTags("search")
     @Get("api/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async listAll(@Query() query, @Req() req) {
+    async listAll(
+        @Query() query: Record<string, any>,
+        @Req() req: BaseRequest
+    ) {
         const { pageSize, searchText, nameSpace } = query;
         const parsedPageSize = parseInt(pageSize, 10);
 

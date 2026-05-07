@@ -110,7 +110,7 @@ export class UsersService {
         }
     }
 
-    async register(user) {
+    async register(user: any) {
         const newUser = new this.UserModel(user);
         this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
@@ -137,7 +137,7 @@ export class UsersService {
         return await newUser.save();
     }
 
-    async getById(userId) {
+    async getById(userId: string | Types.ObjectId) {
         const user = await this.UserModel.findById(userId).populate("badges");
         if (!user) {
             throw new Error(`User not found: ${userId}`);
@@ -151,11 +151,11 @@ export class UsersService {
         return user;
     }
 
-    getByOryId(oryId) {
+    getByOryId(oryId: string) {
         return this.UserModel.findOne({ oryId }, "email name oryId role");
     }
 
-    async registerPasswordChange(userId) {
+    async registerPasswordChange(userId: string | Types.ObjectId) {
         const user = await this.getById(userId);
         if (user.firstPasswordChanged === false) {
             user.firstPasswordChanged = true;
@@ -165,7 +165,7 @@ export class UsersService {
     }
 
     async updateUser(
-        userId,
+        userId: string | Types.ObjectId,
         updates: { role?: object; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
@@ -174,14 +174,14 @@ export class UsersService {
             await this.oryService.updateUserState(user, updates.state);
         }
         if (updates.role) {
-            await this.oryService.updateUserRole(user, updates.role);
+            await this.oryService.updateUserRole(user, updates.role as any);
         }
 
         const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
             new: true,
         });
 
-        this.logger.log(`Updated user ${userId._id}`);
+        this.logger.log(`Updated user ${(userId as any)._id}`);
         return updatedUser;
     }
 }

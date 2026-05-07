@@ -115,7 +115,7 @@ export class ReviewTaskController {
     @Put("api/reviewtask/:data_hash")
     @Header("Cache-Control", "no-cache")
     async autoSaveDraft(
-        @Param("data_hash") data_hash,
+        @Param("data_hash") data_hash: string,
         @Body() reviewTaskBody: UpdateReviewTaskDTO
     ) {
         const history = false;
@@ -163,14 +163,20 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Put("api/reviewtask/add-comment/:data_hash")
     @Header("Cache-Control", "no-cache")
-    async addComment(@Param("data_hash") data_hash: string, @Body() body) {
+    async addComment(
+        @Param("data_hash") data_hash: string,
+        @Body() body: { comment: any }
+    ) {
         return this.reviewTaskService.addComment(data_hash, body.comment);
     }
 
     @ApiTags("review-task")
     @Put("api/reviewtask/delete-comment/:data_hash")
     @Header("Cache-Control", "no-cache")
-    async deleteComment(@Param("data_hash") data_hash: string, @Body() body) {
+    async deleteComment(
+        @Param("data_hash") data_hash: string,
+        @Body() body: { commentId: string }
+    ) {
         return this.reviewTaskService.deleteComment(data_hash, body.commentId);
     }
 

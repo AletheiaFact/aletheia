@@ -9,7 +9,7 @@ import {
 
 const axios = require("axios");
 
-const languageVariantMap = {
+const languageVariantMap: Record<string, string> = {
     "pt-br": "pt",
 };
 
@@ -205,7 +205,7 @@ export class WikidataService {
         const hasP31Claims =
             wikidata.claims?.P31 && wikidata.claims?.P31?.length > 0;
         if (hasP31Claims) {
-            const isAllowedProp = wikidata.claims?.P31?.some((claim) => {
+            const isAllowedProp = wikidata.claims?.P31?.some((claim: any) => {
                 const instance = claim.mainsnak.datavalue.value;
                 return allowedInstances.includes(instance.id);
             });
@@ -224,7 +224,7 @@ export class WikidataService {
         }
         // Extract Twitter accounts if they exist
         if (wikidata?.claims?.P2002) {
-            wikidata.claims.P2002.forEach((claim) => {
+            wikidata.claims.P2002.forEach((claim: any) => {
                 const twitterAccount = claim.mainsnak.datavalue.value;
                 wikidataProps.twitterAccounts.push(twitterAccount);
             });
@@ -291,7 +291,7 @@ export class WikidataService {
                 params,
                 headers: WIKIMEDIA_HEADERS,
             })
-            .then((response) => {
+            .then((response: any) => {
                 const { search }: { search: WikibaseSearchResult[] } =
                     response && response.data;
 

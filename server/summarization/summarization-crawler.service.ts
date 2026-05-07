@@ -20,7 +20,7 @@ export class SummarizationCrawlerService {
     constructor(
         private chainService: SummarizationCrawlerChainService,
         private configService: ConfigService
-    ) { }
+    ) {}
 
     async getSummarizedReviews(dailyReviews: any[]): Promise<any[]> {
         try {
@@ -48,7 +48,7 @@ export class SummarizationCrawlerService {
     }
 
     generateHTMLReport(summarizedReviews: any[], nameSpace: string): string {
-        const classificationTranslations = {
+        const classificationTranslations: Record<string, string> = {
             "not-fact": "Não é fato",
             trustworthy: "Confiável",
             "trustworthy-but": "Confiável, mas",
@@ -63,16 +63,17 @@ export class SummarizationCrawlerService {
         const reportContent =
             summarizedReviews.length > 0
                 ? summarizedReviews
-                    .map(
-                        (review) => `
+                      .map(
+                          (review) => `
                 <div class="claim-review">
-                    <p><span class="classification ${review.classification}">${classificationTranslations[review.classification]
-                            }</span> | ${review.summary}</p>
+                    <p><span class="classification ${review.classification}">${
+                              classificationTranslations[review.classification]
+                          }</span> | ${review.summary}</p>
                     <p><a href="${review.href}">Link para Checagem</a></p>
                 </div>
             `
-                    )
-                    .join("")
+                      )
+                      .join("")
                 : `<div class="claim-review">
                 <p>Nenhuma informação disponível na atualização de hoje. Caso tenha encontrado um problema, por favor, entre em contato conosco através do email contato@aletheiafact.org</p>
             </div>`;
@@ -127,12 +128,12 @@ export class SummarizationCrawlerService {
         `;
     }
 
-    async bulletPoints(content) {
+    async bulletPoints(content: string) {
         const stuffChain = this.chainService.createBulletPointsChain();
         return await this.chainService.generateAnswer(stuffChain, content);
     }
 
-    async summarizePage(source, language = "pt") {
+    async summarizePage(source: string, language = "pt") {
         language = language === "pt" ? "Portuguese" : "English";
         const prompt = ChatPromptTemplate.fromMessages([
             [

@@ -10,7 +10,7 @@ export class BadgeService {
         private BadgeModel: Model<BadgeDocument>
     ) {}
 
-    async create(badge) {
+    async create(badge: any) {
         const newBadge = new this.BadgeModel({
             ...badge,
             image: new Types.ObjectId(badge.image._id),
@@ -18,7 +18,7 @@ export class BadgeService {
         return await newBadge.save();
     }
 
-    async update(badge) {
+    async update(badge: any) {
         const { image, ...updatedFields } = badge;
         const controlledBadge = {
             ...updatedFields,
@@ -68,7 +68,7 @@ export class BadgeService {
         return badge;
     }
 
-    async getById(badgeId) {
+    async getById(badgeId: string) {
         const badge = this.BadgeModel.findById(badgeId);
         return badge;
     }

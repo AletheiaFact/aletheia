@@ -26,7 +26,7 @@ export class GroupService {
      * @param contentId content id string
      * @returns the group document
      */
-    async getByContentId(contentId): Promise<GroupDocument | null> {
+    async getByContentId(contentId: string): Promise<GroupDocument | null> {
         return this.GroupModel.findOne({ content: contentId }).populate(
             "content"
         );

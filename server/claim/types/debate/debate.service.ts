@@ -22,22 +22,27 @@ export class DebateService {
         @Inject(REQUEST) private req: BaseRequest
     ) {}
 
-    async listAll(page, pageSize, order, query) {
+    async listAll(
+        page: number,
+        pageSize: number,
+        order: string,
+        query: Record<string, any>
+    ) {
         return this.DebateModel.find({
             ...query,
         })
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ _id: order })
+            .sort({ _id: order as any })
             .lean();
     }
 
-    async create(claim, claimRevisionId) {
+    async create(claim: Record<string, any>, claimRevisionId: any) {
         let hashString = claim.personalities.join(" ");
         hashString += ` ${claim.title} ${claim.date.toString()}`;
         const data_hash = md5(hashString);
         const debate = {
-            content: [],
+            content: [] as any[],
             isLive: false,
             data_hash,
             claimRevisionId: claimRevisionId,
@@ -47,7 +52,7 @@ export class DebateService {
         return debateCreated;
     }
 
-    async addSpeechToDebate(debateId, speechId) {
+    async addSpeechToDebate(debateId: string, speechId: any) {
         const debate = await this.DebateModel.findById(debateId);
         if (!debate) {
             throw new NotFoundException();
@@ -62,7 +67,7 @@ export class DebateService {
         return newDebate;
     }
 
-    async updateDebateStatus(debateId, isLive) {
+    async updateDebateStatus(debateId: string, isLive: boolean) {
         const debate = await this.DebateModel.findById(debateId);
         if (!debate) {
             throw new NotFoundException();
@@ -77,7 +82,10 @@ export class DebateService {
         return newDebate;
     }
 
-    private async saveHistory(newDebate, previousDebate) {
+    private async saveHistory(
+        newDebate: DebateDocument,
+        previousDebate: Record<string, any>
+    ) {
         const history = this.historyService.getHistoryParams(
             newDebate._id,
             TargetModel.Debate,
@@ -87,6 +95,6 @@ export class DebateService {
             previousDebate
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
     }
 }

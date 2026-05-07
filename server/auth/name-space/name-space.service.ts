@@ -22,7 +22,7 @@ export class NameSpaceService {
         return this.NameSpaceModel.find({ users: { $eq: userId } }).exec();
     }
 
-    async create(nameSpace) {
+    async create(nameSpace: any) {
         const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
 
         await this.notificationService.createTopic(
@@ -32,14 +32,14 @@ export class NameSpaceService {
         if (newNameSpace.users.length > 0) {
             await this.notificationService.addTopicSubscriber(
                 newNameSpace._id,
-                newNameSpace.users
+                newNameSpace.users as any
             );
         }
         return newNameSpace;
     }
 
     async update(
-        id,
+        id: string,
         newNameSpace: UpdateNameSpaceDTO
     ): Promise<NameSpaceDocument | null> {
         const isNameSpaceTopic = await this.notificationService.getTopic(
@@ -60,10 +60,10 @@ export class NameSpaceService {
     }
 
     async ensureTopicAndSubscribers(
-        namespaceId,
-        namespaceName,
-        users,
-        isNameSpaceTopic
+        namespaceId: any,
+        namespaceName: string,
+        users: any[],
+        isNameSpaceTopic: any
     ) {
         if (!isNameSpaceTopic) {
             await this.notificationService.createTopic(
@@ -74,7 +74,7 @@ export class NameSpaceService {
         await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
-    findOne(match): Promise<NameSpaceDocument | null> {
+    findOne(match: Record<string, any>): Promise<NameSpaceDocument | null> {
         return this.NameSpaceModel.findOne(match).exec();
     }
 

@@ -208,6 +208,7 @@
         "@types/node": "^16.4.13",
         "@types/react": "^18.3.1",
         "@types/react-dom": "^18.3.0",
+        "@types/ws": "^8.18.1",
         "@typescript-eslint/parser": "^8.54.0",
         "@vitest/coverage-v8": "^4.1.4",
         "babel-eslint": "^10.1.0",

@@ -30,7 +30,7 @@ export class SentenceService {
         private util: UtilService
     ) {}
 
-    async create(sentenceBody) {
+    async create(sentenceBody: Record<string, any>) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
         return newSentence._id;
     }
@@ -57,8 +57,8 @@ export class SentenceService {
     }
 
     async updateSentenceWithTopics(
-        topics,
-        data_hash
+        topics: any[],
+        data_hash: string
     ): Promise<SentenceDocument | null> {
         const sentence = await this.getByDataHash(data_hash);
 
@@ -186,7 +186,7 @@ export class SentenceService {
         return {
             totalRows: sentences[0].totalRows,
             processedSentences: await Promise.all(
-                sentences[0].rows.map(async (sentence) => {
+                sentences[0].rows.map(async (sentence: any) => {
                     const sentenceWithProps = await this.getByDataHash(
                         sentence.data_hash
                     );
@@ -212,12 +212,19 @@ export class SentenceService {
                 { data_hash: 1 }
             ).lean();
 
-            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicId}`);
+            this.logger.debug(
+                `Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicId}`
+            );
 
             return sentences.map((sentence) => sentence.data_hash);
-        } catch (error) {
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, error.stack);
-            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
+        } catch (error: any) {
+            this.logger.error(
+                `Failed to fetch sentence hashes for topic: ${topicId}`,
+                error.stack
+            );
+            throw new InternalServerErrorException(
+                `An error occurred while retrieving sentences for the requested topic.`
+            );
         }
     }
 }

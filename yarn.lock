@@ -10716,6 +10716,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ws@npm:^8.18.1":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 0331b14cde388e2805af66cad3e3f51857db8e68ed91e5b99750915e96fe7572e58296dc99999331bbcf08f0ff00a227a0bb214e991f53c2a5aca7b0e71173fa
+  languageName: node
+  linkType: hard
+
 "@types/yargs-parser@npm:*":
   version: 21.0.3
   resolution: "@types/yargs-parser@npm:21.0.3"
@@ -12121,6 +12130,7 @@ __metadata:
     "@types/node": ^16.4.13
     "@types/react": ^18.3.1
     "@types/react-dom": ^18.3.0
+    "@types/ws": ^8.18.1
     "@typescript-eslint/eslint-plugin": ^4.29.0
     "@typescript-eslint/parser": ^8.54.0
     "@vitest/coverage-v8": ^4.1.4

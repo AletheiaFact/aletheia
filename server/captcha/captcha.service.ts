@@ -11,7 +11,7 @@ export class CaptchaService {
         private configService: ConfigService
     ) {}
 
-    async _checkCaptchaResponse(secret, response) {
+    async _checkCaptchaResponse(secret: string, response: string) {
         const RECAPTCHA_API_URL = "https://www.google.com/recaptcha/api";
         const querystring = new URLSearchParams({
             secret,

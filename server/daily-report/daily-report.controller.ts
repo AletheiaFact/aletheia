@@ -12,6 +12,7 @@ interface DailyReportQuery {
     isDeleted?: boolean;
     nameSpace: string;
     props?: SourceProps;
+    [key: string]: any;
 }
 
 @Controller()
@@ -26,8 +27,8 @@ export class DailyReportController {
     @AdminOnly()
     @Post("api/daily-report/topic/:topic/send/:nameSpace")
     async sendDailyReport(
-        @Param("topic") topic,
-        @Param("nameSpace") nameSpace
+        @Param("topic") topic: string,
+        @Param("nameSpace") nameSpace: string
     ) {
         const claimReviewsQuery: DailyReportQuery = {
             isHidden: false,

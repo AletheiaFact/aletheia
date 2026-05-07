@@ -37,7 +37,6 @@ import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
 import { Source } from "../source/schemas/source.schema";
-import { Update } from "aws-sdk/clients/dynamodb";
 
 interface IListAllQuery {
     value: any;
@@ -70,7 +69,7 @@ export interface IReviewTask {
 @Injectable({ scope: Scope.REQUEST })
 export class ReviewTaskService {
     private readonly logger = new Logger(ReviewTaskService.name);
-    fieldMap: { assigned: string; crossChecked: string; reviewed: string };
+    fieldMap: Record<string, string>;
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ReviewTask.name)
@@ -91,7 +90,10 @@ export class ReviewTaskService {
         };
     }
 
-    getQueryObject(value, filterUser) {
+    getQueryObject(
+        value: string,
+        filterUser: Record<string, boolean | string>
+    ): Record<string, any> {
         const query = getQueryMatchForMachineValue(value);
 
         Object.keys(filterUser).forEach((key) => {
@@ -105,7 +107,11 @@ export class ReviewTaskService {
         return query;
     }
 
-    _verifyMachineValueAndAddMatchPipeline(pipeline: any[], value, reviewTaskType) {
+    _verifyMachineValueAndAddMatchPipeline(
+        pipeline: any[],
+        value: string,
+        reviewTaskType: ReviewTaskTypeEnum
+    ): number {
         if (
             value === "published" &&
             reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
@@ -144,7 +150,7 @@ export class ReviewTaskService {
     }
 
     buildLookupPipeline(reviewTaskType: ReviewTaskTypeEnum) {
-        let pipeline: any = [
+        let pipeline: any[] = [
             {
                 $match: {
                     $expr: {
@@ -179,7 +185,7 @@ export class ReviewTaskService {
         filterUser,
         nameSpace,
         reviewTaskType,
-    }: IListAllQuery) {
+    }: IListAllQuery): any[] {
         const pipeline: any[] = [];
         const query = this.getQueryObject(value, filterUser);
 
@@ -309,7 +315,7 @@ export class ReviewTaskService {
         ).exec();
 
         return Promise.all(
-            reviewTasks?.map((reviewTask) => this.postProcess(reviewTask))
+            reviewTasks?.map((reviewTask: any) => this.postProcess(reviewTask))
         );
     }
 
@@ -382,8 +388,11 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
-    async _createReviewTaskHistory(newReviewTask, previousReviewTask: any = null) {
-        let historyType;
+    async _createReviewTaskHistory(
+        newReviewTask: any,
+        previousReviewTask: any = null
+    ) {
+        let historyType: HistoryType | string | undefined;
 
         if (typeof newReviewTask.machine.value === "object") {
             historyType =
@@ -400,7 +409,7 @@ export class ReviewTaskService {
             newReviewTask._id,
             TargetModel.ReviewTask,
             user,
-            historyType || HistoryType.Published,
+            (historyType || HistoryType.Published) as HistoryType,
             {
                 ...newReviewTask.machine.context.reviewData,
                 ...newReviewTask.machine.context.review.target,
@@ -413,11 +422,11 @@ export class ReviewTaskService {
             }
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
     }
 
-    _createStateEvent(newReviewTask) {
-        let typeModel;
+    _createStateEvent(newReviewTask: any) {
+        let typeModel: string | undefined;
         let draft = false;
 
         if (typeof newReviewTask.machine.value === "object") {
@@ -432,22 +441,24 @@ export class ReviewTaskService {
         }
 
         const stateEvent = this.stateEventService.getStateEventParams(
-            new Types.ObjectId(newReviewTask.machine.context.review.target),
+            new Types.ObjectId(
+                newReviewTask.machine.context.review.target
+            ) as any,
             typeModel || TypeModel.Published,
             draft,
             newReviewTask._id
         );
 
-        this.stateEventService.createStateEvent(stateEvent);
+        this.stateEventService.createStateEvent(stateEvent as any);
     }
 
     async _createReportAndClaimReview(
-        data_hash,
-        machine,
-        reportModel,
-        nameSpace,
-        target,
-        targetModel
+        data_hash: string,
+        machine: Machine,
+        reportModel: string,
+        nameSpace: string,
+        target: any,
+        targetModel: string
     ) {
         const reviewData = machine.context.review;
 
@@ -471,9 +482,9 @@ export class ReviewTaskService {
         );
     }
 
-    _returnObjectId(data): any {
+    _returnObjectId(data: any): any {
         if (Array.isArray(data)) {
-            return data.map((item) =>
+            return data.map((item: any) =>
                 item._id
                     ? new Types.ObjectId(item._id) || ""
                     : new Types.ObjectId(item)
@@ -481,7 +492,11 @@ export class ReviewTaskService {
         }
     }
 
-    _createCrossCheckingComment(comment, text, targetId) {
+    _createCrossCheckingComment(
+        comment: string,
+        text: string,
+        targetId: Types.ObjectId
+    ) {
         const newCrossCheckingComment = {
             comment,
             text,
@@ -688,9 +703,11 @@ export class ReviewTaskService {
         const assignees =
             reviewTask.machine?.context?.reviewData?.usersId || [];
         const isAssignee = assignees
-            .map((id) => id.toString())
+            .map((id: any) => id.toString())
             .includes(loggedInUser._id.toString());
-        const userRole = loggedInUser.role?.[reviewTask.nameSpace];
+        const userRole = (loggedInUser.role as Record<string, Roles>)?.[
+            reviewTask.nameSpace
+        ];
         const isAdminUser =
             userRole === Roles.Admin || userRole === Roles.SuperAdmin;
 
@@ -801,7 +818,7 @@ export class ReviewTaskService {
             const preloadedAsignees: any[] = [];
             const usersId: any[] = [];
             reviewTask.machine.context.reviewData.usersId!.forEach(
-                (assignee) => {
+                (assignee: any) => {
                     preloadedAsignees.push({
                         value: assignee._id,
                         label: assignee.name,
@@ -849,11 +866,11 @@ export class ReviewTaskService {
     }
 
     async countReviewTasksNotDeleted(
-        value,
-        filterUser,
-        nameSpace,
-        reviewTaskType
-    ) {
+        value: string,
+        filterUser: Record<string, boolean | string>,
+        nameSpace: string,
+        reviewTaskType: ReviewTaskTypeEnum
+    ): Promise<number> {
         try {
             const query: any = this.getQueryObject(value, filterUser);
 
@@ -914,16 +931,20 @@ export class ReviewTaskService {
         }
     }
 
-    async getEditorContentObject(schema, reportModel, reviewTaskType) {
+    async getEditorContentObject(
+        schema: any,
+        reportModel: ReportModelEnum | string,
+        reviewTaskType: string
+    ) {
         const editorContent = await this.editorParseService.schema2editor(
             schema,
-            reportModel,
+            reportModel as ReportModelEnum,
             reviewTaskType
         );
         return this.editorParseService.removeTrailingParagraph(editorContent);
     }
 
-    async addComment(data_hash, comment) {
+    async addComment(data_hash: string, comment: any) {
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         if (!reviewTask) {
             throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
@@ -952,7 +973,7 @@ export class ReviewTaskService {
         };
     }
 
-    async deleteComment(data_hash, commentId) {
+    async deleteComment(data_hash: string, commentId: string) {
         const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         if (!reviewTask) {
@@ -960,11 +981,11 @@ export class ReviewTaskService {
         }
         const reviewData = reviewTask.machine.context.reviewData;
         reviewData.reviewComments = (reviewData.reviewComments ?? []).filter(
-            (comment) => !comment._id.equals(commentIdObject)
+            (comment: any) => !comment._id.equals(commentIdObject)
         );
         reviewData.crossCheckingComments =
             (reviewData.crossCheckingComments ?? []).filter(
-                (comment) => !comment._id.equals(commentIdObject)
+                (comment: any) => !comment._id.equals(commentIdObject)
             );
 
         return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
@@ -972,7 +993,7 @@ export class ReviewTaskService {
         });
     }
 
-    async getHtmlFromSchema(schema) {
+    async getHtmlFromSchema(schema: any) {
         const htmlContent = this.editorParseService.schema2html(schema);
         return {
             ...schema,
@@ -981,27 +1002,28 @@ export class ReviewTaskService {
     }
 
     private _publishReviewTask(
-        reviewTaskMachine,
-        nameSpace,
-        machine,
-        data_hash,
-        reportModel
+        reviewTaskMachine: any,
+        nameSpace: string,
+        machine: Machine,
+        data_hash: string,
+        reportModel: string
     ) {
         const loggedInUser = this.req.user;
+        const userRole = loggedInUser.role as Record<string, Roles>;
 
         if (
             reviewTaskMachine.machine.value === "published" &&
             reportModel !== ReportModelEnum.Request
         ) {
             if (
-                loggedInUser.role[nameSpace] !== Roles.Admin &&
-                loggedInUser.role[nameSpace] !== Roles.SuperAdmin &&
+                userRole[nameSpace] !== Roles.Admin &&
+                userRole[nameSpace] !== Roles.SuperAdmin &&
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {
                 this.logger.warn(
                     `[ReviewTask] Publish denied for data_hash=${data_hash}: ` +
-                        `user=${loggedInUser._id} role="${loggedInUser.role[nameSpace]}" ` +
+                        `user=${loggedInUser._id} role="${userRole[nameSpace]}" ` +
                         `is not reviewer (${machine.context.reviewData.reviewerId}) and not admin`
                 );
                 throw new ForbiddenException(

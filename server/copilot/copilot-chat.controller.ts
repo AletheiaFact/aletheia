@@ -29,7 +29,7 @@ export class CopilotChatController {
     @Get("api/copilot-session")
     async getSession(
         @Query("claimReviewDataHash") claimReviewDataHash: string,
-        @Req() req
+        @Req() req: any
     ) {
         const session = await this.copilotSessionService.getActiveSession(
             req.user._id,
@@ -42,7 +42,7 @@ export class CopilotChatController {
     @Post("api/copilot-session")
     async createSession(
         @Body() createSessionDto: CreateSessionDto,
-        @Req() req
+        @Req() req: any
     ) {
         const session = await this.copilotSessionService.createSession(
             req.user._id,
@@ -63,7 +63,7 @@ export class CopilotChatController {
     @Post("api/agent-chat")
     async agentChat(
         @Body() sessionAgentChatDto: SessionAgentChatDto,
-        @Req() req
+        @Req() req: any
     ) {
         try {
             return await this.copilotChatService.agentChat(

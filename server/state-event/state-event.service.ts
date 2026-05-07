@@ -10,7 +10,12 @@ export class StateEventService {
         private StateEventModel: Model<StateEventDocument>
     ) {}
 
-    getStateEventParams(claimId, type, draft = false, taskId = null) {
+    getStateEventParams(
+        claimId: string,
+        type: string,
+        draft = false,
+        taskId: string | null = null
+    ) {
         const date = new Date();
         return {
             claimId,
@@ -21,7 +26,7 @@ export class StateEventService {
         };
     }
 
-    async createStateEvent(data) {
+    async createStateEvent(data: Partial<StateEvent>) {
         const newStateEvent = new this.StateEventModel(data);
         return newStateEvent.save();
     }

@@ -30,7 +30,7 @@ const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
         return [];
     }
 
-    const editorFields = {
+    const editorFields: Partial<Record<ReportModelEnum, string[]>> = {
         [ReportModelEnum.FactChecking]: [
             "summary",
             "report",
@@ -41,7 +41,7 @@ const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
         [ReportModelEnum.InformativeNews]: ["summary", "paragraph"],
     };
 
-    return editorFields[reportModel];
+    return editorFields[reportModel] || [];
 };
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
@@ -53,7 +53,10 @@ const createParagraphBlock = (
     content: [{ type: "paragraph" }],
 });
 
-const getDefaultDoc = (reviewTaskType, reportModel: string): RemirrorJSON => {
+const getDefaultDoc = (
+    reviewTaskType: string,
+    reportModel: string
+): RemirrorJSON => {
     const baseContent = [
         createParagraphBlock("summary"),
         createParagraphBlock("questions"),
@@ -78,7 +81,7 @@ const getDefaultDoc = (reviewTaskType, reportModel: string): RemirrorJSON => {
 };
 
 export class EditorParser {
-    hasSources(sources): boolean {
+    hasSources(sources: any[] | undefined): boolean {
         return sources?.length > 0;
     }
 
@@ -140,7 +143,7 @@ export class EditorParser {
         };
     }
 
-    getSourceByProperty(sources, property) {
+    getSourceByProperty(sources: any[], property: string): any[] {
         //FIXME: Create migration
         return sources.filter(
             (source) => (source?.props?.field || source?.field) === property
@@ -178,7 +181,10 @@ export class EditorParser {
         return `<div><p>${contentStr}</p></div>`;
     }
 
-    extractHtmlContentFromRange({ props, content }, type = "text") {
+    extractHtmlContentFromRange(
+        { props, content }: { props: Record<string, any>; content: string },
+        type = "text"
+    ): string {
         const { textRange, targetText, sup } = props;
         const fragmentText = content.slice(...textRange);
         if (type === "text") {
@@ -193,7 +199,12 @@ export class EditorParser {
         return fragmentText;
     }
 
-    getHtmlContent(rawSourcesRanges, sourcesRanges, content, key) {
+    getHtmlContent(
+        rawSourcesRanges: number[][],
+        sourcesRanges: any[],
+        content: string,
+        key: string
+    ): string {
         const allRanges = this.getAllTextRanges(
             rawSourcesRanges,
             sourcesRanges,
@@ -239,7 +250,17 @@ export class EditorParser {
         return `<div><p>${joinedContent}</p></div>`;
     }
 
-    buildHtmlContent({ content, rawSourcesRanges, sourcesRanges, key }) {
+    buildHtmlContent({
+        content,
+        rawSourcesRanges,
+        sourcesRanges,
+        key,
+    }: {
+        content: string | string[];
+        rawSourcesRanges: number[][];
+        sourcesRanges: any[];
+        key: string;
+    }): string | string[] {
         if (Array.isArray(content)) {
             return content.map((c) => {
                 return this.getHtmlContent(
@@ -263,7 +284,7 @@ export class EditorParser {
         schema: ReviewTaskMachineContextReviewData,
         reportModel = ReportModelEnum.FactChecking
     ): ReviewTaskMachineContextReviewData {
-        const newSchema = {
+        const newSchema: Record<string, any> = {
             ...schema,
         };
 
@@ -336,7 +357,7 @@ export class EditorParser {
         summary?: string;
         source?: string;
     } {
-        let schema: Partial<ReviewSchemaType>;
+        let schema: Partial<ReviewSchemaType> & Record<string, any>;
         switch (attrs.reviewTaskType) {
             case ReviewTaskTypeEnum.Claim:
                 schema = { summary: "", sources: [] };
@@ -398,7 +419,7 @@ export class EditorParser {
     }
 
     getSchemaContentBasedOnType(
-        schema,
+        schema: Partial<ReviewSchemaType>,
         { type, content: cardContent }: RemirrorJSON
     ): MultiParagraphContent {
         const paragraphContents: ParagraphContent[] = [];
@@ -412,12 +433,19 @@ export class EditorParser {
             if (content) {
                 for (const { text, marks } of content) {
                     if (marks) {
+                        const objectMarks = marks.filter(
+                            (m): m is ObjectMark => typeof m !== "string"
+                        );
                         schema.sources.push(
-                            ...this.getSourcesFromEditorMarks(text, type, marks)
+                            ...this.getSourcesFromEditorMarks(
+                                text,
+                                type!,
+                                objectMarks
+                            )
                         );
                         const markId = marks
                             .filter((mark): mark is ObjectMark => typeof mark !== "string")
-                            .map(({ attrs }) => attrs?.id);
+                            .map(({ attrs }: ObjectMark) => attrs?.id);
 
                         textFragments.push(`{{${markId}|${text}}}`);
                     } else if (typeof text === "string") {
@@ -435,7 +463,11 @@ export class EditorParser {
         return paragraphContents.join("\n") as MultiParagraphContent;
     }
 
-    getSourcesFromEditorMarks(text, field, marks) {
+    getSourcesFromEditorMarks(
+        text: string,
+        field: string,
+        marks: ObjectMark[]
+    ): any[] {
         return marks.map(({ attrs }: ObjectMark) => ({
             href: attrs?.href,
             props: {
@@ -446,11 +478,13 @@ export class EditorParser {
         }));
     }
 
-    replaceSourceContentToTextRange(schema) {
+    replaceSourceContentToTextRange(
+        schema: Partial<ReviewSchemaType> & Record<string, any>
+    ): any[] {
         const newSources: any[] = [];
 
         for (const key in schema) {
-            schema.sources.forEach(({ props, href }, index) => {
+            schema.sources?.forEach(({ props, href }: any, index: number) => {
                 const { field, textRange, id } = props;
                 if (field === key) {
                     newSources.push({
@@ -473,7 +507,11 @@ export class EditorParser {
         return newSources.sort((a, b) => a.sup - b.sup);
     }
 
-    findTextRange(content, textTarget, sourceId) {
+    findTextRange(
+        content: string | string[],
+        textTarget: string,
+        sourceId: string
+    ): number[] {
         const contentArray = Array.isArray(content) ? content : [content];
         const markUpText = `{{${sourceId}|${textTarget}}}`;
 
@@ -504,14 +542,14 @@ export class EditorParser {
         for (const key of Object.keys(schema).filter((key) =>
             getEditorSchemaArray(reportModel).includes(key)
         )) {
-            const content = schema[key];
+            const content = (schema as Record<string, any>)[key];
             if (!this.hasSources(schema?.sources)) {
                 doc.content!.push(
                     ...this.buildContentWithoutSouces(key, content)
                 );
                 continue;
             } else {
-                const sources = this.getSourceByProperty(schema.sources, key);
+                const sources = this.getSourceByProperty(schema.sources!, key);
                 // Recompute textRange only when the stored range doesn't match
                 const recomputedSources = sources.map((source) => {
                     const { textRange, targetText, id } = source.props || {};
@@ -555,7 +593,10 @@ export class EditorParser {
         return doc;
     }
 
-    getRawSourcesAndSourcesRanges(sources) {
+    getRawSourcesAndSourcesRanges(sources: any[]): {
+        rawSourcesRanges: number[][];
+        sourcesRanges: any[];
+    } {
         const rawSourcesRanges = sources.map(({ props }) => props.textRange);
 
         const sourcesRanges = sources.map((source) => {
@@ -572,9 +613,17 @@ export class EditorParser {
     }
 
     extractContentFragmentFromRange(
-        { props, content, href = null },
+        {
+            props,
+            content,
+            href = null,
+        }: {
+            props: Record<string, any>;
+            content: string;
+            href?: string | null;
+        },
         type = "text"
-    ) {
+    ): RemirrorJSON | undefined {
         const { textRange, targetText, id } = props;
         const fragmentText = content.slice(...textRange);
 
@@ -602,7 +651,7 @@ export class EditorParser {
         }
     }
 
-    getMissingRanges(ranges, length) {
+    getMissingRanges(ranges: number[][], length: number): number[][] {
         const missingRanges: number[][] = [];
 
         if (ranges.length === 0) {
@@ -632,7 +681,7 @@ export class EditorParser {
         return missingRanges;
     }
 
-    getContentObject(text): RemirrorJSON {
+    getContentObject(text: string): RemirrorJSON {
         return {
             type: "text",
             /**
@@ -644,7 +693,11 @@ export class EditorParser {
         };
     }
 
-    getContentObjectWithMarks(content, href, id): RemirrorJSON {
+    getContentObjectWithMarks(
+        content: string,
+        href: string | null,
+        id: string
+    ): RemirrorJSON {
         return {
             ...this.getContentObject(content),
             marks: [
@@ -661,7 +714,11 @@ export class EditorParser {
         };
     }
 
-    getAllTextRanges(rawSourcesRanges, sourcesRanges, content) {
+    getAllTextRanges(
+        rawSourcesRanges: number[][],
+        sourcesRanges: any[],
+        content: string
+    ): any[] {
         const missingTextRanges = this.getMissingRanges(
             rawSourcesRanges,
             content.length
@@ -679,7 +736,11 @@ export class EditorParser {
         });
     }
 
-    getParagraphFragments(rawSourcesRanges, sourcesRanges, content) {
+    getParagraphFragments(
+        rawSourcesRanges: number[][],
+        sourcesRanges: any[],
+        content: string
+    ): RemirrorJSON {
         if (content === "") {
             return { type: "paragraph" };
         }
@@ -708,7 +769,10 @@ export class EditorParser {
         };
     }
 
-    buildContentWithoutSouces(key, content): RemirrorJSON[] {
+    buildContentWithoutSouces(
+        key: string,
+        content: string | string[]
+    ): RemirrorJSON[] {
         const isEmpty =
             content === "" || (Array.isArray(content) && content.length === 0);
         const contentArray = isEmpty
@@ -748,6 +812,11 @@ export class EditorParser {
         key,
         rawSourcesRanges,
         sourcesRanges,
+    }: {
+        content: string | string[];
+        key: string;
+        rawSourcesRanges: number[][];
+        sourcesRanges: any[];
     }): RemirrorJSON[] {
         const contentArray = Array.isArray(content) ? content : [content];
 
@@ -765,7 +834,7 @@ export class EditorParser {
         }));
     }
 
-    extractTextFromMarkUp(fragmentText) {
+    extractTextFromMarkUp(fragmentText: string): string {
         const match = fragmentText.match(MarkupCleanerRegex);
         return match ? match[1] : "";
     }

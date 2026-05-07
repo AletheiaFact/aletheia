@@ -1,4 +1,6 @@
-export const getQueryMatchForMachineValue = (value) => {
+export const getQueryMatchForMachineValue = (
+    value: string
+): Record<string, any> => {
     if (value === "cross-checking") {
         return {
             "machine.value": {

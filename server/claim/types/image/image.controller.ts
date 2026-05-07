@@ -8,13 +8,13 @@ export class ImageController {
 
     @ApiTags("claim")
     @Get("api/image/:data_hash")
-    getSentenceByHash(@Param("data_hash") data_hash) {
+    getSentenceByHash(@Param("data_hash") data_hash: string) {
         return this.imageService.getByDataHash(data_hash);
     }
 
     @ApiTags("claim")
     @Put("api/image/:data_hash")
-    update(@Param("data_hash") data_hash, @Body() topics) {
+    update(@Param("data_hash") data_hash: string, @Body() topics: any[]) {
         return this.imageService.updateImageWithTopics(topics, data_hash);
     }
 }
