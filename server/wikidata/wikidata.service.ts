@@ -195,8 +195,9 @@ export class WikidataService {
          * Q5 = Human
          * Q891723 = Public Companies
          * Q1153191 = Online newspaper
+         * Q402263 = Government agency
          */
-        const allowedInstances = ["Q5", "Q891723", "Q1153191"];
+        const allowedInstances = ["Q5", "Q891723", "Q1153191", "Q402263"];
         /**
          * Relation of type constraints
          * https://www.wikidata.org/wiki/Q21503252
