@@ -10606,6 +10606,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/shelljs@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@types/shelljs@npm:0.10.0"
+  dependencies:
+    "@types/node": "*"
+    fast-glob: ^3.3.2
+  checksum: 5c7e3751041a24995d3ab17468b18cd599240188ea80bb9407765efc97498416b13adc51e7d34c049222a2ee3f4a16b6853560d6859b27b337d606ecf53b394e
+  languageName: node
+  linkType: hard
+
 "@types/sinonjs__fake-timers@npm:8.1.1":
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
@@ -12130,6 +12140,7 @@ __metadata:
     "@types/node": ^16.4.13
     "@types/react": ^18.3.1
     "@types/react-dom": ^18.3.0
+    "@types/shelljs": ^0.10.0
     "@types/ws": ^8.18.1
     "@typescript-eslint/eslint-plugin": ^4.29.0
     "@typescript-eslint/parser": ^8.54.0
@@ -17118,7 +17129,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9":
+"fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.2":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
