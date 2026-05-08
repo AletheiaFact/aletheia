@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../../../history/history.service";
+import { toError } from "../../../util/error-handling";
 import { Model, Types } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
@@ -114,9 +115,10 @@ export class ImageService {
 
             return images.map(image => image.data_hash);
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
                 `Failed to fetch image hashes for topic: ${topicId}`,
-                error.stack
+                err.stack
             );
             throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
         }

@@ -8,6 +8,7 @@ import { ContentModelEnum } from "../types/enums";
 import { TopicData } from "../topic/types/topic.interfaces";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
+import { toError } from "../util/error-handling";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TopicService {
@@ -158,9 +159,10 @@ export class TopicService {
                 return createdTopics;
             }
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to create topics or update related content: ${error.message}`,
-                error.stack
+                `Failed to create topics or update related content: ${err.message}`,
+                err.stack
             );
             throw error;
         }
@@ -239,9 +241,10 @@ export class TopicService {
 
             return createdTopic;
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to find or create topic for "${topicData.name}": ${error.message}`,
-                error.stack
+                `Failed to find or create topic for "${topicData.name}": ${err.message}`,
+                err.stack
             );
             throw error;
         }

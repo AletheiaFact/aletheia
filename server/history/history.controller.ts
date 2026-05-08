@@ -7,6 +7,7 @@ import {
     Query,
 } from "@nestjs/common";
 import { HistoryService } from "./history.service";
+import { toError } from "../util/error-handling";
 import { ApiTags } from "@nestjs/swagger";
 import type {
     HistoryParams,
@@ -44,9 +45,10 @@ export class HistoryController {
             );
 
             return response;
-        } catch (err) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(`Error fetching history: ${err.message}`);
-            throw err;
+            throw error;
         }
     }
 }

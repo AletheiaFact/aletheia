@@ -35,6 +35,7 @@ import {
 } from "./dto/types";
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
+import { toError } from "../util/error-handling";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 const md5 = require("md5");
@@ -230,18 +231,19 @@ export class VerificationRequestService {
                 `Verification request created successfully: ${vr._id}`
             );
             return vr;
-        } catch (e) {
-            this.logger.error("Failed to create verification request", e.stack);
+        } catch (error) {
+            const err = toError(error);
+            this.logger.error("Failed to create verification request", err.stack);
 
-            if (e.name === "ValidationError") {
-                const fields = Object.keys(e.errors).join(", ");
+            if (err.name === "ValidationError" && err.errors) {
+                const fields = Object.keys(err.errors).join(", ");
                 throw new BadRequestException(
                     `Validation failed: ${fields} are invalid or missing`
                 );
             }
 
-            if (e.code === 11000) {
-                const field = Object.keys(e.keyPattern)[0];
+            if (err.code === 11000 && err.keyPattern) {
+                const field = Object.keys(err.keyPattern)[0];
                 throw new BadRequestException(
                     `Duplicate value for field: ${field}`
                 );
@@ -518,7 +520,8 @@ export class VerificationRequestService {
 
             return updated;
         } catch (error) {
-            await this.handleStateError(targetId, field, error.message);
+            const err = toError(error);
+            await this.handleStateError(targetId, field, err.message);
             throw error;
         }
     }
@@ -624,9 +627,10 @@ export class VerificationRequestService {
                 verificationRequest.id
             );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to trigger state machine for ${missingState}: ${error.message}`,
-                error.stack
+                `Failed to trigger state machine for ${missingState}: ${err.message}`,
+                err.stack
             );
         }
     }

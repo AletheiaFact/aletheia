@@ -37,6 +37,7 @@ import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
 import { VerificationRequestStatsService } from "./verification-request-stats.service";
+import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -242,9 +243,10 @@ export class VerificationRequestController {
                             wikidata: personality.wikidata,
                         };
                     } catch (error) {
+                        const err = toError(error);
                         this.logger.error(
                             `Error fetching wikidata for personality ${personality.name} (${personality.wikidata}):`,
-                            error.message
+                            err.message
                         );
 
                         return {

@@ -26,6 +26,7 @@ import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
 export class PersonalityController {
@@ -53,14 +54,15 @@ export class PersonalityController {
         try {
             return await this.personalityService.create(createPersonality);
         } catch (error) {
+            const err = toError(error);
             if (
-                error.name === "MongoError" &&
-                error.keyPattern &&
-                error.keyPattern.wikidata
+                err.name === "MongoError" &&
+                err.keyPattern &&
+                err.keyPattern.wikidata
             ) {
-                error.message = `Personality with wikidata id ${error.keyValue.wikidata} already exists`;
+                err.message = `Personality with wikidata id ${err.keyValue?.wikidata} already exists`;
             }
-            this.logger.error(error);
+            this.logger.error(err.message, err.stack);
         }
     }
 
@@ -163,8 +165,9 @@ export class PersonalityController {
                     filter: personality._id,
                 }));
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to fetch related personalities for "${slug}": ${error.message}`
+                `Failed to fetch related personalities for "${slug}": ${err.message}`
             );
         }
 
@@ -175,8 +178,9 @@ export class PersonalityController {
                     TargetModel.Personality
                 );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to fetch hide descriptions for "${slug}": ${error.message}`
+                `Failed to fetch hide descriptions for "${slug}": ${err.message}`
             );
         }
 

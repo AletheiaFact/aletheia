@@ -28,6 +28,7 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { Topic, TopicDocument } from "../topic/schemas/topic.schema";
+import { toError } from "../util/error-handling";
 import { mapAggregateToRecord } from "../util/mongo-utils";
 
 @Injectable()
@@ -79,15 +80,16 @@ export class EventsService {
             this.logger.log(`Event created successfully: ${newEvent._id}`);
             return newEvent;
         } catch (error) {
-            this.logger.error(`Failed to create event: "${error.name}"`, error.stack);
+            const err = toError(error);
+            this.logger.error(`Failed to create event: "${err.name}"`, err.stack);
 
-            if (error.name === "ValidationError") {
-                const fields = Object.keys(error.errors).join(", ");
+            if (err.name === "ValidationError" && err.errors) {
+                const fields = Object.keys(err.errors).join(", ");
                 throw new BadRequestException(`Schema validation failed: missing or invalid fields [${fields}]`);
             }
 
-            if (error.code === 11000) {
-                const duplicateField = Object.keys(error.keyPattern)[0];
+            if (err.code === 11000 && err.keyPattern) {
+                const duplicateField = Object.keys(err.keyPattern)[0];
                 throw new ConflictException(`Duplicate entry: an event with this ${duplicateField} already exists`);
             }
 
@@ -148,14 +150,15 @@ export class EventsService {
 
             return updatedEvent;
         } catch (error) {
-            this.logger.error(`Failed to update event [${id}]`, error.stack);
+            const err = toError(error);
+            this.logger.error(`Failed to update event [${id}]`, err.stack);
 
             if (error instanceof NotFoundException || error instanceof BadRequestException) {
                 throw error;
             }
 
-            if (error.name === "CastError") {
-                throw new BadRequestException(`Invalid format for field: ${error.path}`);
+            if (err.name === "CastError") {
+                throw new BadRequestException(`Invalid format for field: ${err.path}`);
             }
 
             throw new InternalServerErrorException("Unexpected error during event update");
@@ -349,7 +352,8 @@ export class EventsService {
             });
 
         } catch (error) {
-            this.logger.error(`Metrics fetch failed, using fallback: ${error.message}`);
+            const err = toError(error);
+            this.logger.error(`Metrics fetch failed, using fallback: ${err.message}`);
 
             return events.reduce((acc, event) => {
                 acc[String(event.data_hash)] = {
