@@ -1,6 +1,7 @@
 import { Injectable, ExecutionContext, Logger } from "@nestjs/common";
 import { BaseGuard } from "./base.guard";
 import { Configuration, OAuth2Api } from "@ory/client";
+import { toError } from "../util/error-handling";
 
 @Injectable()
 export class M2MGuard extends BaseGuard {
@@ -46,7 +47,10 @@ export class M2MGuard extends BaseGuard {
 
             return true;
         } catch (error) {
-            this.logger.error("M2M token validation failed", error);
+            const err = toError(error);
+
+            this.logger.error(`M2M token validation failed: ${err.message}`, err.stack);
+
             return false;
         }
     }

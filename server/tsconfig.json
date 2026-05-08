@@ -15,7 +15,7 @@
         // TODO: These includes need to be removed in the future due to typing in modules, functions and properties.
         "strictNullChecks": true,
         "noImplicitAny": false,
-        "useUnknownInCatchVariables": false,
+        "useUnknownInCatchVariables": true,
         "strictPropertyInitialization": false,
         //
     },
