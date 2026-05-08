@@ -105,7 +105,7 @@ export class ReviewTaskService {
         return query;
     }
 
-    _verifyMachineValueAndAddMatchPipeline(pipeline, value, reviewTaskType) {
+    _verifyMachineValueAndAddMatchPipeline(pipeline: any[], value, reviewTaskType) {
         if (
             value === "published" &&
             reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
@@ -180,7 +180,7 @@ export class ReviewTaskService {
         nameSpace,
         reviewTaskType,
     }: IListAllQuery) {
-        const pipeline = [];
+        const pipeline: any[] = [];
         const query = this.getQueryObject(value, filterUser);
 
         pipeline.push(
@@ -382,7 +382,7 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
-    async _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
+    async _createReviewTaskHistory(newReviewTask, previousReviewTask: any = null) {
         let historyType;
 
         if (typeof newReviewTask.machine.value === "object") {
@@ -539,9 +539,9 @@ export class ReviewTaskService {
             const crossCheckingComment = await this._createCrossCheckingComment(
                 reviewDataBody.crossCheckingComment,
                 reviewDataBody.crossCheckingClassification,
-                reviewTask._id
+                reviewTask!._id
             );
-            reviewTaskBody.machine.context.reviewData.crossCheckingComments.push(
+            reviewTaskBody.machine.context.reviewData.crossCheckingComments!.push(
                 crossCheckingComment._id
             );
         }
@@ -582,6 +582,9 @@ export class ReviewTaskService {
     ): Promise<ReviewTaskDocument> {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        if (!reviewTask) {
+            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+        }
 
         const newReviewTaskMachine = {
             ...reviewTask.machine,
@@ -606,9 +609,13 @@ export class ReviewTaskService {
             this._createStateEvent(newReviewTask);
         }
 
-        return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
+        const updated = await this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
             $set: { machine: newReviewTaskMachine },
         });
+        if (!updated) {
+            throw new NotFoundException(`ReviewTask not found: ${reviewTask._id}`);
+        }
+        return updated;
     }
 
     private static readonly ALLOWED_DRAFT_REVIEW_DATA_FIELDS = [
@@ -791,9 +798,9 @@ export class ReviewTaskService {
             });
 
         if (reviewTask) {
-            const preloadedAsignees = [];
-            const usersId = [];
-            reviewTask.machine.context.reviewData.usersId.forEach(
+            const preloadedAsignees: any[] = [];
+            const usersId: any[] = [];
+            reviewTask.machine.context.reviewData.usersId!.forEach(
                 (assignee) => {
                     preloadedAsignees.push({
                         value: assignee._id,
@@ -850,7 +857,7 @@ export class ReviewTaskService {
         try {
             const query: any = this.getQueryObject(value, filterUser);
 
-            const pipeline = [
+            const pipeline: any[] = [
                 { $match: { ...query, nameSpace, reviewTaskType } },
                 {
                     $lookup: {
@@ -918,6 +925,9 @@ export class ReviewTaskService {
 
     async addComment(data_hash, comment) {
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        if (!reviewTask) {
+            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+        }
         const reviewData = reviewTask.machine.context.reviewData;
         const newComment = await this.commentService.create({
             ...comment,
@@ -930,14 +940,14 @@ export class ReviewTaskService {
 
         reviewData.reviewComments.push(newComment?._id as Types.ObjectId);
 
-        const { machine } = await this.ReviewTaskModel.findOneAndUpdate(
+        const updatedTask = await this.ReviewTaskModel.findOneAndUpdate(
             { _id: reviewTask._id },
             { "machine.context.reviewData": reviewData },
             { new: true }
         );
 
         return {
-            reviewData: machine.context.reviewData,
+            reviewData: updatedTask!.machine.context.reviewData,
             comment: newComment,
         };
     }
@@ -945,12 +955,15 @@ export class ReviewTaskService {
     async deleteComment(data_hash, commentId) {
         const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        if (!reviewTask) {
+            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+        }
         const reviewData = reviewTask.machine.context.reviewData;
-        reviewData.reviewComments = reviewData.reviewComments.filter(
+        reviewData.reviewComments = (reviewData.reviewComments ?? []).filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
         reviewData.crossCheckingComments =
-            reviewData.crossCheckingComments.filter(
+            (reviewData.crossCheckingComments ?? []).filter(
                 (comment) => !comment._id.equals(commentIdObject)
             );
 

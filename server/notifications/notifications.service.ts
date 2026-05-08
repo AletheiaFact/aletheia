@@ -18,7 +18,7 @@ export class NotificationService {
         return false;
     }
 
-    async createSubscriber({ _id = null, email, name }) {
+    async createSubscriber({ _id = "", email, name }) {
         if (!this.novuIsConfigured()) {
             return;
         }
@@ -155,6 +155,9 @@ export class NotificationService {
         }
 
         const NOVU_API_KEY = this.configService.get<string>("novu.api_key");
+        if (!NOVU_API_KEY) {
+            return;
+        }
 
         return createHmac("sha256", NOVU_API_KEY)
             .update(subscriberId)

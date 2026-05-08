@@ -20,9 +20,7 @@ export class AutomatedFactCheckingService {
         private configService: ConfigService,
         private jwtService: JwtService
     ) {
-        this.agenciaURL = this.configService.get<string>(
-            "automatedFactCheckingAPIUrl"
-        );
+        this.agenciaURL = this.configService.get<string>("automatedFactCheckingAPIUrl") ?? "";
     }
 
     private getAgenciaToken(): string {
@@ -74,6 +72,9 @@ export class AutomatedFactCheckingService {
                 );
             }
 
+            if (!response.body) {
+                throw new Error("Agencia response body is null");
+            }
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
 

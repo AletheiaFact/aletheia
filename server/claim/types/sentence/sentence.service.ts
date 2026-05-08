@@ -59,7 +59,7 @@ export class SentenceService {
     async updateSentenceWithTopics(
         topics,
         data_hash
-    ): Promise<SentenceDocument> {
+    ): Promise<SentenceDocument | null> {
         const sentence = await this.getByDataHash(data_hash);
 
         if (!Array.isArray(topics)) {

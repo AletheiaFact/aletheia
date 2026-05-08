@@ -21,6 +21,7 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { EventsService } from "../events/event.service";
 import { EventsStatus } from "../types/enums";
+import type { FindAllResponse } from "../events/types/event.interfaces";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller("/")
@@ -64,7 +65,7 @@ export class HomeController {
             latest: true,
         });
 
-        let eventsData = null;
+        let eventsData: FindAllResponse | null = null;
 
         if (isEventsEnabled) {
             eventsData = await this.eventsService.findAll({
@@ -93,6 +94,9 @@ export class HomeController {
             liveDebates.map(async (debate) => {
                 const debateRevision =
                     await this.claimRevisionService.getByContentId(debate._id);
+                if (!debateRevision) {
+                    return { title: "", claimId: null, personalities: [] };
+                }
                 const personalities = await Promise.all(
                     debateRevision.personalities.map((personality) => {
                         if (personality) {

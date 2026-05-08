@@ -122,7 +122,7 @@ export class VerificationRequestStatsService {
     return sourceChannelAggregation.map((item) => ({
       label: item._id || "Unknown",
       value: item.count,
-      percentage: totalCount > 0 ? (item.count / totalCount) * 100 : 0,
+      percentage: (totalCount ?? 0) > 0 ? (item.count / (totalCount ?? 1)) * 100 : 0,
     }));
   }
 

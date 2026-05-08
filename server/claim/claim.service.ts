@@ -301,7 +301,7 @@ export class ClaimService {
         );
     }
 
-    async getByClaimSlug(claimSlug, revisionId = undefined, population = true) {
+    async getByClaimSlug(claimSlug, revisionId: string | undefined = undefined, population = true) {
         const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
@@ -357,7 +357,7 @@ s    */
     async getByPersonalityIdAndClaimSlug(
         personalityId,
         claimSlug,
-        revisionId = undefined,
+        revisionId: string | undefined = undefined,
         population = true
     ) {
         const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
@@ -374,7 +374,7 @@ s    */
 
     private async _getClaim(
         match: ClaimMatchParameters,
-        revisionId = undefined,
+        revisionId: string | undefined = undefined,
         postprocess = true,
         population = true
     ) {
@@ -385,12 +385,16 @@ s    */
                     .populate("sources", "_id href")
                     .select({ latestRevision: 0 });
 
+                if (!rawClaim) {
+                    throw new NotFoundException();
+                }
+
                 const revision = await this.claimRevisionService.getRevision({
                     _id: revisionId,
                     claimId: rawClaim._id,
                 });
 
-                if (!revision || !rawClaim) {
+                if (!revision) {
                     throw new NotFoundException();
                 }
 
@@ -423,6 +427,10 @@ s    */
                             },
                         })
                         .lean();
+
+                    if (!foundClaim) {
+                        throw new NotFoundException();
+                    }
 
                     claim = {
                         ...foundClaim.latestRevision,

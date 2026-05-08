@@ -55,7 +55,7 @@ export class DailyReportController {
                     sourceReviewsQuery
                 ),
             ])
-        ).reduce((acc, current) => [...acc, ...current], []);
+        ).reduce<any[]>((acc, current) => [...acc, ...current], []);
 
         if (dailyReviews.length > 0) {
             const reports = dailyReviews.map((review: any) =>

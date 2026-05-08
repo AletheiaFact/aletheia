@@ -9,7 +9,7 @@ export const personalityServiceProvider: Provider = {
         mongoService: MongoPersonalityService | null
     ): IPersonalityService => {
         if (dbConfig.type === "mongodb" && mongoService) {
-            return mongoService;
+            return mongoService as unknown as IPersonalityService;
         } else {
             throw new Error("Invalid DB_TYPE in configuration");
         }

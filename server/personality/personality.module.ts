@@ -29,8 +29,8 @@ const PersonalityModel = MongooseModule.forFeature([
 @Module({})
 export class PersonalityModule {
     static register(): DynamicModule {
-        const imports = [];
-        const providers = [personalityServiceProvider];
+        const imports: any[] = [];
+        const providers: any[] = [personalityServiceProvider];
 
         if (dbConfig.type === "mongodb") {
             imports.push(PersonalityModel);

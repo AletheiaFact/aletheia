@@ -52,7 +52,7 @@ export class History {
         type: mongoose.Schema.Types.Mixed,
         required: false,
     })
-    user: User | M2M | string;
+    user: User | M2M | mongoose.Types.ObjectId | mongoose.Types.ObjectId[] | string | null;
 
     @Prop({
         type: String,

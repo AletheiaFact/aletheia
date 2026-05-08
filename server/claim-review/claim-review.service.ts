@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
+import {
+    Inject,
+    Injectable,
+    Logger,
+    NotFoundException,
+    Scope,
+} from "@nestjs/common";
 import mongoose, {
     LeanDocument,
     Model,
@@ -360,7 +366,7 @@ export class ClaimReviewService {
 
     async getReviewByDataHash(
         data_hash: string
-    ): Promise<LeanDocument<ClaimReviewDocument>> {
+    ): Promise<LeanDocument<ClaimReviewDocument> | null> {
         const claimReview = await this.ClaimReviewModel.findOne({ data_hash })
             .populate("report")
             .lean();
@@ -375,7 +381,7 @@ export class ClaimReviewService {
         return claimReview;
     }
 
-    async getReport(match): Promise<LeanDocument<ReportDocument>> {
+    async getReport(match): Promise<LeanDocument<ReportDocument> | undefined> {
         const claimReview = await this.ClaimReviewModel.findOne({
             personality: match.personality,
             target: match.claim,
@@ -396,6 +402,9 @@ export class ClaimReviewService {
     async delete(claimReviewId: string) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId);
+        if (!claimReview) {
+            throw new NotFoundException();
+        }
 
         const history = this.historyService.getHistoryParams(
             claimReview._id,
@@ -415,6 +424,9 @@ export class ClaimReviewService {
         description?: string
     ): Promise<UpdateWriteOpResult> {
         const review = await this.getById(_id);
+        if (!review) {
+            throw new NotFoundException();
+        }
         const newReview = {
             ...review.toObject(),
             ...{

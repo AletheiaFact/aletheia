@@ -116,6 +116,9 @@ export class ChatbotService {
 
         const { api_url, api_token } = this.configService.get("zenvia");
         const hashSecretKey = this.configService.get<string>("hashSecretKey");
+        if (!hashSecretKey) {
+            throw new Error("hashSecretKey is not configured");
+        }
 
         const data_hash = crypto
             .createHmac("sha256", hashSecretKey)
@@ -125,6 +128,12 @@ export class ChatbotService {
         const channel_api_url = `${api_url}/${channel}/messages`;
 
         const chatbotState = await this.getOrCreateChatBotMachine(data_hash);
+        if (!chatbotState) {
+            this.logger.warn(
+                `Failed to get or create chatbot state [dataHash=${data_hash}]`
+            );
+            return;
+        }
         this.logger.log(
             `Machine state [dataHash=${data_hash}, currentState=${chatbotState.machine.value}]`
         );

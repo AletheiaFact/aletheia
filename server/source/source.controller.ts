@@ -177,11 +177,13 @@ export class SourceController {
                 TargetModel.Claim
             );
 
-        hideDescriptions[TargetModel.ClaimReview] =
-            await this.historyService.getDescriptionForHide(
-                claimReview,
-                TargetModel.ClaimReview
-            );
+        if (claimReview) {
+            hideDescriptions[TargetModel.ClaimReview] =
+                await this.historyService.getDescriptionForHide(
+                    claimReview,
+                    TargetModel.ClaimReview
+                );
+        }
 
         const parsedUrl = parse(req.url, true);
 

@@ -41,7 +41,7 @@ export class NameSpaceService {
     async update(
         id,
         newNameSpace: UpdateNameSpaceDTO
-    ): Promise<NameSpaceDocument> {
+    ): Promise<NameSpaceDocument | null> {
         const isNameSpaceTopic = await this.notificationService.getTopic(
             newNameSpace._id
         );
@@ -74,7 +74,7 @@ export class NameSpaceService {
         await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
-    findOne(match): Promise<NameSpaceDocument> {
+    findOne(match): Promise<NameSpaceDocument | null> {
         return this.NameSpaceModel.findOne(match).exec();
     }
 

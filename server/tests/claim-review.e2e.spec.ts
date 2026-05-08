@@ -375,14 +375,14 @@ describe("ClaimReviewController (e2e)", () => {
      * - Demonstrates need for better error handling in service layer
      *
      * Validates:
-     * - HTTP 500 response for non-existent resource (actual behavior)
+     * - HTTP 404 response for non-existent resource
      * - API error handling for missing resources
      */
     it("api/review/:id (DELETE) - Should handle non-existent review ID", () => {
         const nonExistentId = new ObjectId().toString();
         return request(app.getHttpServer())
             .delete(`/api/review/${nonExistentId}`)
-            .expect(500); // Service returns 500 due to null pointer error
+            .expect(404);
     });
 
     afterAll(async () => {

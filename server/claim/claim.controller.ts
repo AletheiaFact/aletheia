@@ -13,6 +13,7 @@ import {
     Res,
     Header,
     Inject,
+    NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -214,6 +215,9 @@ export class ClaimController {
             new Types.ObjectId(debateId)
         );
 
+        if (!claimRevision) {
+            throw new NotFoundException();
+        }
         const claimRevisionId = new Types.ObjectId(claimRevision._id);
 
         if (content && personality) {
@@ -350,11 +354,13 @@ export class ClaimController {
                 TargetModel.Claim
             );
 
-        hideDescriptions[TargetModel.ClaimReview] =
-            await this.historyService.getDescriptionForHide(
-                claimReview,
-                TargetModel.ClaimReview
-            );
+        if (claimReview) {
+            hideDescriptions[TargetModel.ClaimReview] =
+                await this.historyService.getDescriptionForHide(
+                    claimReview,
+                    TargetModel.ClaimReview
+                );
+        }
 
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
@@ -811,7 +817,7 @@ export class ClaimController {
         });
 
         const queryObject = Object.assign(parsedUrl.query, {
-            targetId: report._id,
+            targetId: report?._id,
             nameSpace: req.params.namespace,
         });
 
@@ -908,6 +914,9 @@ export class ClaimController {
         const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
             data_hash
         );
+        if (!reviewTask) {
+            throw new NotFoundException();
+        }
 
         const queryObject = Object.assign(parsedUrl.query, {
             targetId: reviewTask._id,
@@ -948,7 +957,7 @@ export class ClaimController {
         res,
         claim,
         namespace,
-        data_hash = null
+        data_hash: string | null = null
     ) {
         const { personalities, slug } = claim;
         if (personalities.length <= 0) {

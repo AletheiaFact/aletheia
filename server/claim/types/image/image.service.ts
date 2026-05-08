@@ -80,7 +80,7 @@ export class ImageService {
         }
     }
 
-    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument> {
+    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument | null> {
         if (!Array.isArray(topics)) {
             throw new BadRequestException("Invalid topics array.");
         }

@@ -152,7 +152,7 @@ export class PersonalityController {
                 req.language
             );
 
-        let personalities = [];
+        let personalities: any[] = [];
         try {
             ({ personalities } =
                 await this.personalityService.combinedListAll({

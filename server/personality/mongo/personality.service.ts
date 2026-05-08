@@ -317,6 +317,9 @@ export class MongoPersonalityService {
             const personality = await this.PersonalityModel.findOne(
                 queryOptions
             );
+            if (!personality) {
+                throw new NotFoundException();
+            }
             const processed = await this.postProcess(
                 personality.toObject(),
                 language
@@ -529,10 +532,14 @@ export class MongoPersonalityService {
         );
         await this.historyService.createHistory(history);
 
-        return this.PersonalityModel.findByIdAndUpdate(
+        const updated = await this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
             newPersonality
-        );
+        ).exec();
+        if (!updated) {
+            throw new NotFoundException(`Personality not found: ${personality._id}`);
+        }
+        return updated;
     }
 
     /**

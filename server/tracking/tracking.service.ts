@@ -39,11 +39,11 @@ export class TrackingService {
       .filter((history) => history.details?.after?.status && history.details?.before?.status !== history.details?.after?.status)
       .map((history) => ({
         id: history._id,
-        status: history.details.after.status,
-        date: new Date(history.date),
+        status: history.details?.after?.status,
+        date: new Date(history.date as string | Date),
       }));
 
-    const latestStatus = verificationRequest.status
+    const latestStatus = verificationRequest?.status ?? "unknown"
 
     return {
       currentStatus: latestStatus,

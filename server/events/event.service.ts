@@ -51,9 +51,11 @@ export class EventsService {
         try {
             this.logger.debug("Creating event", { createEventDto });
 
+            const topicName = createEventDto.mainTopic.label ?? createEventDto.mainTopic.name;
+
             const createdTopic = await this.topicService.findOrCreateTopic({
                 ...createEventDto.mainTopic,
-                name: createEventDto.mainTopic.label
+                name: topicName
             })
 
             const slug = slugify(createEventDto.name, {
@@ -109,16 +111,19 @@ export class EventsService {
 
             const { mainTopic, filterTopics, ...otherFields } = updateEventDto;
 
-            const slug = slugify(updateEventDto.name, {
-                lower: true,
-                strict: true,
-                trim: true
-            });
+            const updateData: Partial<Event> = { ...otherFields };
 
-            const updateData: Partial<Event> = { ...otherFields, slug: slug };
+            if (updateEventDto.name) {
+                updateData.slug = slugify(updateEventDto.name, {
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+            }
 
             if (mainTopic) {
-                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: mainTopic.label });
+                const topicName = mainTopic.label ?? mainTopic.name;
+                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName });
             }
 
             if (filterTopics !== undefined) {
@@ -168,7 +173,7 @@ export class EventsService {
         try {
             const query = this.buildStatusQuery(status);
             const limit = parseInt(`${pageSize}`, 10);
-            const skip = page * limit;
+            const skip = (page ?? 0) * limit;
 
             this.logger.debug(`Fetching events list. Page: ${page}, PageSize: ${pageSize}, Status: ${status}`);
             this.logger.verbose(`Built MongoDB Query: ${JSON.stringify(query)}`);

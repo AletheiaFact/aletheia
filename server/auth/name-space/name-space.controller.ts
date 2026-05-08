@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    NotFoundException,
     Param,
     Post,
     Put,
@@ -56,12 +57,15 @@ export class NameSpaceController {
     @Put("api/name-space/:id")
     async update(@Param("id") id, @Body() namespaceBody: UpdateNameSpaceDTO) {
         const nameSpace = await this.nameSpaceService.getById(id);
+        if (!nameSpace) {
+            throw new NotFoundException("Namespace not found");
+        }
         const newNameSpace = {
             ...nameSpace.toObject(),
             ...namespaceBody,
         };
 
-        newNameSpace.slug = slugify(newNameSpace.name, {
+        newNameSpace.slug = slugify(newNameSpace.name ?? "", {
             lower: true,
             strict: true,
         });
@@ -110,7 +114,7 @@ export class NameSpaceController {
         await this.viewService.render(req, res, "/admin-namespaces", query);
     }
 
-    private async updateNameSpaceUsers(users, newKey, oldKey = null) {
+    private async updateNameSpaceUsers(users, newKey, oldKey: string | null = null) {
         const promises = users.map(async (user) => {
             const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);

@@ -13,11 +13,11 @@
         "rootDir": "../",
         "incremental": true,
         // TODO: These includes need to be removed in the future due to typing in modules, functions and properties.
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "noImplicitAny": false,
         "useUnknownInCatchVariables": false,
         "strictPropertyInitialization": false,
-        // 
+        //
     },
     "include": ["./**/*"],
     "exclude": [
