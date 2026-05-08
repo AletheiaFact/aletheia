@@ -35,10 +35,8 @@ export default class OryController {
 
             this.logger.error(`Request failed: ${err.message}`, err.stack);
 
-            const apiError = error as any;
-
-            if (apiError?.status && typeof apiError.json === 'function') {
-                return res.status(apiError.status).json(apiError.json());
+            if (typeof err.status === "number") {
+                return res.status(err.status).json({ message: "Request failed" });
             }
 
             return res.status(500).json({ message: "Internal server error" });
