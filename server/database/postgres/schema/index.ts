@@ -3,4 +3,4 @@
 //
 // Example (added in Task 6):
 // export * from "../../../personality/postgres/schema/personality.schema";
-export {};
+export * from "../../../personality/postgres/schema/personality.schema";
