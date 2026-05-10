@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { randomUUID } from "crypto";
+import { NotImplementedError } from "../database/errors";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -17,6 +18,28 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
+
+        const requestId =
+            (request as any).requestId ||
+            request.headers?.["x-request-id"] ||
+            randomUUID();
+
+        if (exception instanceof NotImplementedError) {
+            this.logger.warn(
+                `Not Implemented: ${request.method} ${request.url} | RequestId: ${requestId} | Backend: ${exception.backend} | Method: ${exception.method}`
+            );
+            response.status(HttpStatus.NOT_IMPLEMENTED).json({
+                requestId,
+                statusCode: HttpStatus.NOT_IMPLEMENTED,
+                timestamp: new Date().toISOString(),
+                path: request.url,
+                error: "Not Implemented",
+                message: exception.message,
+                backend: exception.backend,
+                method: exception.method,
+            });
+            return;
+        }
 
         const status =
             exception instanceof HttpException
@@ -29,11 +52,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
                 : exception instanceof Error
                 ? exception.message
                 : "Internal server error";
-
-        const requestId =
-            (request as any).requestId ||
-            request.headers["x-request-id"] ||
-            randomUUID();
 
         const errorContext = {
             requestId,
