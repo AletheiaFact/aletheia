@@ -24,7 +24,10 @@ export default defineConfig({
                 test: {
                     name: "unit",
                     include: ["server/**/*.spec.ts"],
-                    exclude: ["server/tests/**", "server/**/dist/**"],
+                    exclude: [
+                        "server/tests/**/*.e2e.spec.ts",
+                        "server/**/dist/**",
+                    ],
                 },
             },
             {
