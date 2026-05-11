@@ -34,7 +34,7 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
 
     return (
         <>
-            <Seo title={t("menu:badgesItem")} description={t("badges:title")} />
+            <Seo title={t("header:badgesItem")} description={t("badges:title")} />
             <BadgesView />
             <BadgesFormDrawer />
         </>

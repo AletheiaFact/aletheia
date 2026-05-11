@@ -7,9 +7,9 @@ import colors from "../styles/colors";
 import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
-import Header from "./Header/Header";
+import AletheiaHeader from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Header/Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 import DonationBanner from "./Home/DonationBanner";
 import localConfig from "../../config/localConfig";
@@ -47,6 +47,7 @@ const MainApp = ({ children }) => {
                 overflowX: "hidden",
             }}
         >
+            <AletheiaHeader />
             <Sidebar />
             <Box sx={{
                 display: "grid",
@@ -55,7 +56,6 @@ const MainApp = ({ children }) => {
                 gridTemplateColumns: "minmax(0, 1fr)",
             }}>
                 <Box>
-                    <Header />
                     <DonationBanner />
                     {renderCTAButton()}
                     <ContentWrapper>{children}</ContentWrapper>
