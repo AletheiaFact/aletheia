@@ -145,7 +145,9 @@ export class VerificationRequestService {
      * @param verificationRequestId verification request ID string
      * @returns the verification request document
      */
-    async getById(verificationRequestId: string): Promise<VerificationRequest | null> {
+    async getById(
+        verificationRequestId: string
+    ): Promise<VerificationRequest | null> {
         return this.VerificationRequestModel.findById(verificationRequestId, {
             embedding: 0,
         }).populate("group");
@@ -1012,7 +1014,7 @@ export class VerificationRequestService {
         const foundTopics = await this.topicService.findByWikidataIds(
             topics.map(
                 (topic: { value?: string; wikidataId?: string }) =>
-                    topic.value || topic.wikidataId
+                    (topic.value || topic.wikidataId)!
             )
         );
         const topicIds = foundTopics.map((topic: any) => topic._id);

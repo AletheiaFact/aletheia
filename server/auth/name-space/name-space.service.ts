@@ -48,8 +48,8 @@ export class NameSpaceService {
 
         await this.ensureTopicAndSubscribers(
             id,
-            newNameSpace.name,
-            newNameSpace.users,
+            newNameSpace.name ?? "",
+            newNameSpace.users ?? [],
             isNameSpaceTopic
         );
 

@@ -29,7 +29,8 @@ export class CaptchaService {
 
     async validate(recaptchaString: string) {
         try {
-            const secret = this.configService.get<string>("recaptcha_secret");
+            const secret =
+                this.configService.get<string>("recaptcha_secret") ?? "";
             const captchaVerification = await this._checkCaptchaResponse(
                 secret,
                 recaptchaString

@@ -56,13 +56,21 @@ export class ReviewTaskController {
                 pageSize,
                 order,
                 value,
-                filterUser: filterUser ?? { assigned: false, crossChecked: false, reviewed: false },
+                filterUser: filterUser ?? {
+                    assigned: false,
+                    crossChecked: false,
+                    reviewed: false,
+                },
                 nameSpace,
                 reviewTaskType,
             }),
             this.reviewTaskService.countReviewTasksNotDeleted(
                 value,
-                filterUser,
+                filterUser ?? {
+                    assigned: false,
+                    crossChecked: false,
+                    reviewed: false,
+                },
                 nameSpace,
                 reviewTaskType
             ),

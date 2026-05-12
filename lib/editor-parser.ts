@@ -82,7 +82,7 @@ const getDefaultDoc = (
 
 export class EditorParser {
     hasSources(sources: any[] | undefined): boolean {
-        return sources?.length > 0;
+        return (sources?.length ?? 0) > 0;
     }
 
     /**
@@ -436,15 +436,18 @@ export class EditorParser {
                         const objectMarks = marks.filter(
                             (m): m is ObjectMark => typeof m !== "string"
                         );
-                        schema.sources.push(
+                        schema.sources!.push(
                             ...this.getSourcesFromEditorMarks(
-                                text,
+                                text!,
                                 type!,
                                 objectMarks
                             )
                         );
                         const markId = marks
-                            .filter((mark): mark is ObjectMark => typeof mark !== "string")
+                            .filter(
+                                (mark): mark is ObjectMark =>
+                                    typeof mark !== "string"
+                            )
                             .map(({ attrs }: ObjectMark) => attrs?.id);
 
                         textFragments.push(`{{${markId}|${text}}}`);

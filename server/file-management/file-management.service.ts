@@ -45,11 +45,11 @@ export class FileManagementService {
 
         const { Location, Key } = await this.s3
             .upload({
-                Bucket: bucket || this.bucket,
+                Bucket: (bucket || this.bucket)!,
                 Key: fileName,
-                ContentType: file?.mimetype,
-                ContentEncoding: file?.encoding,
-                ContentLength: file?.size,
+                ContentType: file?.mimetype ?? undefined,
+                ContentEncoding: file?.encoding ?? undefined,
+                ContentLength: file?.size ?? undefined,
                 Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })

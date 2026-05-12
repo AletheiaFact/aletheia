@@ -552,8 +552,8 @@ export class ReviewTaskService {
 
         if (createCrossCheckingComment) {
             const crossCheckingComment = await this._createCrossCheckingComment(
-                reviewDataBody.crossCheckingComment,
-                reviewDataBody.crossCheckingClassification,
+                reviewDataBody.crossCheckingComment!,
+                reviewDataBody.crossCheckingClassification!,
                 reviewTask!._id
             );
             reviewTaskBody.machine.context.reviewData.crossCheckingComments!.push(
@@ -598,7 +598,9 @@ export class ReviewTaskService {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         if (!reviewTask) {
-            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
+            );
         }
 
         const newReviewTaskMachine = {
@@ -614,7 +616,7 @@ export class ReviewTaskService {
         this._publishReviewTask(
             newReviewTask,
             nameSpace,
-            machine,
+            machine!,
             data_hash,
             reportModel
         );
@@ -624,11 +626,16 @@ export class ReviewTaskService {
             this._createStateEvent(newReviewTask);
         }
 
-        const updated = await this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
-            $set: { machine: newReviewTaskMachine },
-        });
+        const updated = await this.ReviewTaskModel.findByIdAndUpdate(
+            reviewTask._id,
+            {
+                $set: { machine: newReviewTaskMachine },
+            }
+        );
         if (!updated) {
-            throw new NotFoundException(`ReviewTask not found: ${reviewTask._id}`);
+            throw new NotFoundException(
+                `ReviewTask not found: ${reviewTask._id}`
+            );
         }
         return updated;
     }
@@ -947,7 +954,9 @@ export class ReviewTaskService {
     async addComment(data_hash: string, comment: any) {
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         if (!reviewTask) {
-            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
+            );
         }
         const reviewData = reviewTask.machine.context.reviewData;
         const newComment = await this.commentService.create({
@@ -977,16 +986,17 @@ export class ReviewTaskService {
         const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
         if (!reviewTask) {
-            throw new NotFoundException(`Review task not found for data_hash: ${data_hash}`);
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
+            );
         }
         const reviewData = reviewTask.machine.context.reviewData;
         reviewData.reviewComments = (reviewData.reviewComments ?? []).filter(
             (comment: any) => !comment._id.equals(commentIdObject)
         );
-        reviewData.crossCheckingComments =
-            (reviewData.crossCheckingComments ?? []).filter(
-                (comment: any) => !comment._id.equals(commentIdObject)
-            );
+        reviewData.crossCheckingComments = (
+            reviewData.crossCheckingComments ?? []
+        ).filter((comment: any) => !comment._id.equals(commentIdObject));
 
         return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
             "machine.context.reviewData": reviewData,

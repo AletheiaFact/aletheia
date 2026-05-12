@@ -74,7 +74,7 @@ export class NameSpaceController {
         });
 
         (newNameSpace as any).users = await this.updateNameSpaceUsers(
-            newNameSpace.users,
+            newNameSpace.users ?? [],
             newNameSpace.slug,
             nameSpace.slug
         );
@@ -82,8 +82,8 @@ export class NameSpaceController {
         await this.findNameSpaceUsersAndDelete(
             id,
             nameSpace.slug,
-            newNameSpace.users,
-            nameSpace.users
+            newNameSpace.users ?? [],
+            nameSpace.users ?? []
         );
 
         return await this.nameSpaceService.update(id, newNameSpace);

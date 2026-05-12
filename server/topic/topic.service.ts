@@ -147,12 +147,12 @@ export class TopicService {
             if (contentModel === ContentModelEnum.Image) {
                 return this.imageService.updateImageWithTopics(
                     createdTopics,
-                    data_hash
+                    data_hash!
                 );
             } else if (contentModel) {
                 return this.sentenceService.updateSentenceWithTopics(
                     createdTopics,
-                    data_hash
+                    data_hash!
                 );
             } else {
                 return createdTopics;

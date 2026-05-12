@@ -20,10 +20,14 @@ async function updateUserAppAffiliation(
         logger.log(
             `Updating user ${userFromDB.email} with app_affiliation: ${app_affiliation}`
         );
-        await oryService.updateIdentity(userFromDB, null, {
-            app_affiliation,
-            role: userFromDB.role,
-        } as any);
+        await oryService.updateIdentity(
+            userFromDB,
+            null as any,
+            {
+                app_affiliation,
+                role: userFromDB.role,
+            } as any
+        );
     } else {
         throw new Error(`Can't update user ${userFromDB.email}`);
     }

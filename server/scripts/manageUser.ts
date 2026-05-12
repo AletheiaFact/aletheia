@@ -33,10 +33,14 @@ async function updateUserAppAffiliation(
 
     const app_affiliation = configService.get("app_affiliation");
     if (userFromDB && app_affiliation) {
-        await oryService.updateIdentity(userFromDB, null, {
-            app_affiliation,
-            role: userFromDB.role,
-        } as any);
+        await oryService.updateIdentity(
+            userFromDB,
+            null as any,
+            {
+                app_affiliation,
+                role: userFromDB.role,
+            } as any
+        );
     }
 }
 

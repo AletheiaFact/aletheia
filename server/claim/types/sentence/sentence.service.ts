@@ -141,7 +141,7 @@ export class SentenceService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(nameSpace),
+            this.util.getVisibilityMatch(nameSpace ?? ""),
             {
                 $project: {
                     content: 1,

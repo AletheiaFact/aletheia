@@ -112,7 +112,7 @@ export class ClaimRevisionService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(nameSpace),
+            this.util.getVisibilityMatch(nameSpace ?? ""),
             {
                 $project: {
                     title: 1,
