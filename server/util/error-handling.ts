@@ -8,20 +8,20 @@ export interface AppError extends Error {
     response?: unknown;
 }
 
-export function toError(maybeError: unknown): AppError {
-    if (maybeError instanceof Error) return maybeError as AppError;
+export function toError(error: unknown): AppError {
+    if (error instanceof Error) return error as AppError;
 
     let message: string;
     try {
-        message = JSON.stringify(maybeError);
+        message = JSON.stringify(error);
     } catch {
-        message = String(maybeError);
+        message = String(error);
     }
 
     const normalizedError = new Error(message) as AppError;
 
-    if (maybeError && typeof maybeError === "object") {
-        Object.assign(normalizedError, maybeError);
+    if (error && typeof error === "object") {
+        Object.assign(normalizedError, error);
     }
 
     return normalizedError;
