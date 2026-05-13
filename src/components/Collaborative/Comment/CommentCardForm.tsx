@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from "react";
 import Button, { ButtonType } from "../../Button";
-import AletheiaInput from "../../AletheiaInput";
+import AletheiaTextArea from "../../AletheiaTextArea";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
@@ -116,7 +116,9 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
 
     return (
         <div className="comment-card-form">
-            <AletheiaInput
+            <AletheiaTextArea
+                multiline
+                minRows={3}
                 value={commentValue}
                 onChange={({ target }) => setCommentValue(target.value)}
                 onFocus={() => setShowButtons(true)}
