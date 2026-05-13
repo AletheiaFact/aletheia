@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ErrorOutlineOutlined, WarningAmberOutlined} from "@mui/icons-material";
+import { ErrorOutlineOutlined, WarningAmberOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import { useAppSelector } from "../../store/store";
 import ModalButtons from "./ModalButtons";
 import { useTranslation } from "react-i18next";
-import TextArea from "../TextArea";
+import AletheiaTextArea from "../AletheiaTextArea";
 import colors from "../../styles/colors";
 
 const UnhideContentModal = ({
@@ -85,7 +85,7 @@ const UnhideContentModal = ({
                         <div
                             style={{ marginBottom: 16 }}
                         >
-                            <TextArea
+                            <AletheiaTextArea
                                 multiline
                                 white="white"
                                 placeholder={t(
