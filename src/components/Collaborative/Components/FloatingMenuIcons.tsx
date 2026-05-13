@@ -8,7 +8,10 @@ import { useAppSelector } from "../../../store/store";
 import { ReviewTaskTypeEnum } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useSelector } from "@xstate/react";
-import { reviewingSelector } from "../../../machines/reviewTask/selectors";
+import {
+    crossCheckingSelector,
+    reviewingSelector,
+} from "../../../machines/reviewTask/selectors";
 
 const FloatingMenuIcons = ({
     handleClickEditLink,
@@ -28,6 +31,7 @@ const FloatingMenuIcons = ({
     const { addAnnotation } = useCommands();
     const { empty } = useCurrentSelection();
     const isReviewing = useSelector(machineService, reviewingSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const enabled = enableEditorAnnotations
         ? addAnnotation?.enabled({ id: "" })
         : true;
@@ -47,7 +51,7 @@ const FloatingMenuIcons = ({
                     enabled
                 />
             )}
-            {isReviewing &&
+            {(isReviewing || isCrossChecking) &&
                 role !== Roles.Regular &&
                 role !== Roles.FactChecker && (
                     <CommandButton
