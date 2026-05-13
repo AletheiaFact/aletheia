@@ -10669,13 +10669,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@types/uuid@npm:10.0.0"
-  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
-  languageName: node
-  linkType: hard
-
 "@types/uuid@npm:^9.0.1":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
@@ -14395,15 +14388,6 @@ __metadata:
   version: 1.2.0
   resolution: "console-browserify@npm:1.2.0"
   checksum: 226591eeff8ed68e451dffb924c1fb750c654d54b9059b3b261d360f369d1f8f70650adecf2c7136656236a4bfeb55c39281b5d8a55d792ebbb99efd3d848d52
-  languageName: node
-  linkType: hard
-
-"console-table-printer@npm:^2.12.1":
-  version: 2.15.0
-  resolution: "console-table-printer@npm:2.15.0"
-  dependencies:
-    simple-wcswidth: ^1.1.2
-  checksum: a878e446303eabaa86a2fd7f0d956d24252e0837be23249e7ad24daf3f304ce7bf155ca79b25ccd4f380f31fa35e427adc762e49ff29236f82a96c4b1d88551e
   languageName: node
   linkType: hard
 
@@ -20192,20 +20176,16 @@ __metadata:
   linkType: hard
 
 "langsmith@npm:>=0.4.0 <1.0.0, langsmith@npm:>=0.5.0 <1.0.0":
-  version: 0.5.4
-  resolution: "langsmith@npm:0.5.4"
+  version: 0.6.3
+  resolution: "langsmith@npm:0.6.3"
   dependencies:
-    "@types/uuid": ^10.0.0
-    chalk: ^4.1.2
-    console-table-printer: ^2.12.1
-    p-queue: ^6.6.2
-    semver: ^7.6.3
-    uuid: ^10.0.0
+    p-queue: 6.6.2
   peerDependencies:
     "@opentelemetry/api": "*"
     "@opentelemetry/exporter-trace-otlp-proto": "*"
     "@opentelemetry/sdk-trace-base": "*"
     openai: "*"
+    ws: ">=7"
   peerDependenciesMeta:
     "@opentelemetry/api":
       optional: true
@@ -20215,7 +20195,9 @@ __metadata:
       optional: true
     openai:
       optional: true
-  checksum: 11b68ced854b9dbefa2917f091069b9e62f0de327073e995021d6d57ecbbdc91d5cf87a877a485e9c455a4e0f194c4cb7673ec89633d74258d677f44ac91da0a
+    ws:
+      optional: true
+  checksum: 4666ba67459d5867fd7595fec2394d464ed5e72f1105e467e78ec04a690c537cde0e5b9e9bc4da84f02290962bab47799b6680fcb1766e334c3beaf55f0d7c53
   languageName: node
   linkType: hard
 
@@ -23268,7 +23250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^6.6.2":
+"p-queue@npm:6.6.2, p-queue@npm:^6.6.2":
   version: 6.6.2
   resolution: "p-queue@npm:6.6.2"
   dependencies:
@@ -25988,7 +25970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.1, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.3, semver@npm:^7.7.2":
+"semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.1, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.2":
   version: 7.7.2
   resolution: "semver@npm:7.7.2"
   bin:
@@ -26482,13 +26464,6 @@ __metadata:
   dependencies:
     semver: ~7.0.0
   checksum: 1012e9b6c504e559a948078177b3eedbb9d7e4d15878e2bda56314d08db609ca5da485be4ac9f838759faae8057935ee0246fcdf63f1233c86bd9fecb2a5544b
-  languageName: node
-  linkType: hard
-
-"simple-wcswidth@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "simple-wcswidth@npm:1.1.2"
-  checksum: 210eea36d28fb8dbadb1dcf5a19e747c1435548ec56bfd86f1c79fb9ddf676b252d84632d3ab9a787251281c499520e63bca1d9f5997cbd66c25996c10e056b1
   languageName: node
   linkType: hard
 
