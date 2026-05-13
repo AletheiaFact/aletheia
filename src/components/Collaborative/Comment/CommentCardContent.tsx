@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useCurrentSelection, useHelpers } from "@remirror/react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
-import { Divider } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import reviewColors from "../../../constants/reviewColors";
 import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
@@ -91,7 +91,12 @@ const CommentCardContent = ({
                     )}
                 </>
             )}
-            <p style={{ margin: 0, fontSize: 14 }}>{content?.comment}</p>
+            <Typography
+                variant="body2"
+                style={{ margin: 0, whiteSpace: "pre-wrap" }}
+            >
+                {content?.comment}
+            </Typography>
             {!content.isReply && (
                 <>
                     {content.replies?.map((replyComment) => (
