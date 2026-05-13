@@ -161,6 +161,7 @@ const SentenceReportView = ({
                                         style={{
                                             color: colors.blackSecondary,
                                             lineHeight: 1.5,
+                                            whiteSpace: "pre-wrap",
                                         }}
                                     >
                                         {context.rejectionComment}
