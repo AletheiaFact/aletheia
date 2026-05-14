@@ -19,17 +19,16 @@ export class BadgeService {
     }
 
     async update(badge: any) {
-        const { image, ...updatedFields } = badge;
+        const { image, _id, ...updatedFields } = badge;
         const controlledBadge = {
             ...updatedFields,
-            image: new Types.ObjectId(badge.image._id),
+            image: new Types.ObjectId(image._id),
         };
-        const updatedBadge = this.BadgeModel.findByIdAndUpdate(
-            badge._id,
-            controlledBadge,
+        return this.BadgeModel.findByIdAndUpdate(
+            new Types.ObjectId(_id),
+            { $set: controlledBadge },
             { new: true }
         );
-        return updatedBadge;
     }
 
     async listAll() {

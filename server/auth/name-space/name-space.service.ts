@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
-import { Model, isValidObjectId } from "mongoose";
+import { Model, Types, isValidObjectId } from "mongoose";
 import { NameSpaceDocument, NameSpace } from "./schemas/name-space.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
@@ -53,9 +53,10 @@ export class NameSpaceService {
             isNameSpaceTopic
         );
 
+        const { _id, name, users, ...safeFields } = newNameSpace;
         return await this.NameSpaceModel.findByIdAndUpdate(
-            { _id: newNameSpace._id },
-            newNameSpace
+            new Types.ObjectId(_id),
+            { $set: { ...safeFields, name, users } }
         );
     }
 

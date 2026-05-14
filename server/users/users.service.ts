@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Status } from "../auth/ability/ability.factory";
-import { Model, Aggregate, Types } from "mongoose";
+import { Model, Aggregate, Types, isValidObjectId } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
@@ -138,7 +138,11 @@ export class UsersService {
     }
 
     async getById(userId: string | Types.ObjectId) {
-        const user = await this.UserModel.findById(userId).populate("badges");
+        const user = await this.UserModel.findById(
+            typeof userId === "string" && isValidObjectId(userId)
+                ? new Types.ObjectId(userId)
+                : userId
+        ).populate("badges");
         if (!user) {
             throw new Error(`User not found: ${userId}`);
         }

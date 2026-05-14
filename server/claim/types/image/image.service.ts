@@ -90,12 +90,15 @@ export class ImageService {
 
         const image = await this.getByDataHash(data_hash);
 
-        const newImage = {
-            ...image.toObject,
-            topics,
-        };
+        const sanitizedTopics = topics.map(
+            (t: any) => new Types.ObjectId(t._id || t)
+        );
 
-        return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
+        return this.ImageModel.findByIdAndUpdate(
+            image._id,
+            { $set: { topics: sanitizedTopics } },
+            { new: true }
+        );
     }
 
     /**

@@ -50,7 +50,9 @@ export class GroupService {
                     { new: true }
                 );
                 if (!updated) {
-                    throw new NotFoundException(`Group not found: ${existingGroup._id}`);
+                    throw new NotFoundException(
+                        `Group not found: ${existingGroup._id}`
+                    );
                 }
                 return updated;
             }
@@ -79,7 +81,7 @@ export class GroupService {
 
         return this.GroupModel.findByIdAndUpdate(
             group._id,
-            { targetId: new Types.ObjectId(targetId) },
+            { $set: { targetId: new Types.ObjectId(targetId) } },
             { new: true }
         );
     }
@@ -113,11 +115,13 @@ export class GroupService {
                 return await this.GroupModel.deleteOne({ _id: group._id });
             }
 
-            return await this.GroupModel.findByIdAndUpdate(
-                group._id,
-                { content: newContent },
-                { new: true }
-            ) ?? undefined;
+            return (
+                (await this.GroupModel.findByIdAndUpdate(
+                    group._id,
+                    { content: newContent },
+                    { new: true }
+                )) ?? undefined
+            );
         } catch (error) {
             this.logger.error("Failed to remove content:", error);
             throw error;
