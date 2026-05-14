@@ -1,42 +1,51 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import CommentCardContent from "./CommentCardContent";
 import CommentCardStyle from "./CommentCard.style";
 import { useCommands } from "@remirror/react";
 import { useAppSelector } from "../../../store/store";
+import { Comment } from "../../../types/Comment";
+import { CommentEnum } from "../../../types/enums";
+import { User } from "../../../types/User";
+
+interface CommentCardProps {
+    user: User | null;
+    comment: Comment;
+    isEditing?: boolean;
+    setIsCommentVisible?: Dispatch<SetStateAction<boolean>>;
+}
 
 const CommentCard = ({
     user,
-    comment = {},
+    comment,
     isEditing = false,
-    setIsCommentVisible = null,
-}: {
-    user: any;
-    comment?: any;
-    isEditing?: boolean;
-    setIsCommentVisible?: any;
-}) => {
+    setIsCommentVisible,
+}: CommentCardProps) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
     const { selectText } = useCommands();
-    const [isResolved, setIsResolved] = useState(comment?.resolved);
-    const [isSelected, setIsSelected] = useState(false);
+    const [isResolved, setIsResolved] = useState<boolean>(!!comment?.resolved);
+    const [isSelected, setIsSelected] = useState<boolean>(false);
+    const [showForm, setShowForm] = useState<boolean>(false);
 
     const handleClickCard = () => {
-        const isCrossCheckingComment = comment.type === "cross-checking";
+        const isCrossCheckingComment =
+            comment.type === CommentEnum.crossChecking;
         if (enableEditorAnnotations && comment?.from && comment?.to) {
             selectText({ from: comment.from, to: comment.to });
         }
         setIsSelected(isCrossCheckingComment);
+        setShowForm((prev) => !prev);
     };
 
-    return !isResolved ? (
+    if (isResolved) return null;
+
+    return (
         <CommentCardStyle
             onClick={handleClickCard}
             isselected={isSelected.toString()}
         >
             <CommentCardContent
-                key={`${comment.id}_content`}
                 content={comment}
                 user={user}
                 isSelected={isSelected}
@@ -44,10 +53,10 @@ const CommentCard = ({
                 setIsResolved={setIsResolved}
                 isEditing={isEditing}
                 setIsCommentVisible={setIsCommentVisible}
+                showForm={showForm}
+                setShowForm={setShowForm}
             />
         </CommentCardStyle>
-    ) : (
-        <></>
     );
 };
 
