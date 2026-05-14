@@ -181,9 +181,16 @@ export class UsersService {
             await this.oryService.updateUserRole(user, updates.role as any);
         }
 
-        const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
-            new: true,
-        });
+        const safeUpdate: Record<string, any> = {};
+        if (updates.role !== undefined) safeUpdate.role = updates.role;
+        if (updates.badges !== undefined) safeUpdate.badges = updates.badges;
+        if (updates.state !== undefined) safeUpdate.state = updates.state;
+
+        const updatedUser = this.UserModel.findByIdAndUpdate(
+            userId,
+            { $set: safeUpdate },
+            { new: true }
+        );
 
         this.logger.log(`Updated user ${(userId as any)._id}`);
         return updatedUser;
