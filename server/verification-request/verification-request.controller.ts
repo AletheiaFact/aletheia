@@ -64,7 +64,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Public()
-    public async listAll(@Query() getVerificationRequest) {
+    public async listAll(@Query() getVerificationRequest: Record<string, any>) {
         const {
             pageSize,
             page,
@@ -136,7 +136,14 @@ export class VerificationRequestController {
         type: Number,
         description: "Number of results to return",
     })
-    public async getAll(@Query() getVerificationRequest) {
+    public async getAll(
+        @Query()
+        getVerificationRequest: {
+            sourceUrl?: string;
+            searchContent?: string;
+            pageSize?: number;
+        }
+    ) {
         if (getVerificationRequest.sourceUrl) {
             return this.verificationRequestService.findBySourceUrl(
                 getVerificationRequest.sourceUrl,
@@ -325,7 +332,7 @@ export class VerificationRequestController {
     @Put("api/verification-request/:data_hash/topics")
     async updateVerificationRequestWithTopics(
         @Param("data_hash") data_hash: string,
-        @Body() topics
+        @Body() topics: Array<{ value?: string; wikidataId?: string }>
     ) {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,

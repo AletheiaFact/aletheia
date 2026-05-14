@@ -25,14 +25,16 @@ export class DailyReportService {
         return new this.DailyReportModel(dailyReportBody).save();
     }
 
-    async getLastDailyReportSent(query): Promise<DailyReport[]> {
+    async getLastDailyReportSent(
+        query: Record<string, any>
+    ): Promise<DailyReport[]> {
         return await this.DailyReportModel.find(query)
             .sort({ date: -1 })
             .limit(1);
     }
 
     async generateDailyReport(
-        dailyReviews,
+        dailyReviews: any[],
         nameSpace: string = ""
     ): Promise<string> {
         try {

@@ -25,6 +25,7 @@ import {
     IFindAllResult,
 } from "../../interfaces/personality.interface";
 import { escapeRegex } from "../../util/regex.util";
+import { CreatePersonalityDTO } from "../dto/create-personality.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoPersonalityService {
@@ -52,18 +53,18 @@ export class MongoPersonalityService {
             false
         );
     }
-    async getWikidataList(regex, language) {
+    async getWikidataList(regex: string, language: string) {
         const wbentities = await this.getWikidataEntities(regex, language);
         return wbentities.map((entity) => entity.wikidata);
     }
 
     async listAll(
-        page,
-        pageSize,
-        order,
-        query,
-        filter,
-        language,
+        page: number,
+        pageSize: number,
+        order: string,
+        query: any,
+        filter: any,
+        language: string,
         withSuggestions = false
     ) {
         let personalities;
@@ -87,13 +88,13 @@ export class MongoPersonalityService {
             })
                 .skip(page * pageSize)
                 .limit(pageSize)
-                .sort({ _id: order })
+                .sort({ _id: order as any })
                 .lean();
         } else {
             personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
-                .sort({ _id: order })
+                .sort({ _id: order as any })
                 .lean();
         }
 
@@ -111,10 +112,10 @@ export class MongoPersonalityService {
         }
 
         const processedPersonalities = await Promise.all(
-            personalities.map(async (personality) => {
+            personalities.map(async (personality: any) => {
                 try {
                     return await this.postProcess(personality, language);
-                } catch (error) {
+                } catch (error: any) {
                     this.logger.log(
                         `It was not possible to do postProcess the personality ${personality}`
                     );
@@ -124,7 +125,7 @@ export class MongoPersonalityService {
         );
 
         return processedPersonalities.filter(
-            (personalities) =>
+            (personalities: any) =>
                 personalities !== null && personalities !== undefined
         );
     }
@@ -135,7 +136,7 @@ export class MongoPersonalityService {
      * @param personality PersonalityBody received of the client.
      * @returns Return a new personality.
      */
-    async create(personality) {
+    async create(personality: CreatePersonalityDTO & { slug?: string }) {
         try {
             const personalityExists =
                 await this.getDeletedPersonalityByWikidata(
@@ -164,17 +165,17 @@ export class MongoPersonalityService {
                     personality
                 );
 
-                await this.historyService.createHistory(history);
+                await this.historyService.createHistory(history as any);
 
                 return newPersonality.save();
             }
-        } catch (err) {
+        } catch (err: any) {
             this.logger.error(`Error creating personality: ${err.message}`);
             throw err;
         }
     }
 
-    getDeletedPersonalityByWikidata(wikidata) {
+    getDeletedPersonalityByWikidata(wikidata: string) {
         return this.PersonalityModel.findOne({
             isDeleted: true,
             wikidata,
@@ -287,7 +288,7 @@ export class MongoPersonalityService {
                 personality.toObject(),
                 query.language
             );
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 `Post-processing failed for personality ${personalityId}`,
                 error.stack
@@ -307,7 +308,7 @@ export class MongoPersonalityService {
         return processed;
     }
 
-    async getPersonalityBySlug(query, language = "pt") {
+    async getPersonalityBySlug(query: Record<string, any>, language = "pt") {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             query,
             this.req
@@ -337,7 +338,10 @@ export class MongoPersonalityService {
         }
     }
 
-    async getClaimsByPersonalitySlug(query, language = "pt") {
+    async getClaimsByPersonalitySlug(
+        query: Record<string, any>,
+        language = "pt"
+    ) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             query,
             this.req
@@ -366,15 +370,13 @@ export class MongoPersonalityService {
         }
 
         const claimsWithMissingRevisions = personality.claims.filter(
-            (claim) => !claim.latestRevision
+            (claim: any) => !claim.latestRevision
         );
         if (claimsWithMissingRevisions.length > 0) {
-            const claimIds = claimsWithMissingRevisions.map((c) => c._id);
+            const claimIds = claimsWithMissingRevisions.map((c: any) => c._id);
             const displayedIds = claimIds.slice(0, 10).join(", ");
             const remaining =
-                claimIds.length > 10
-                    ? ` and ${claimIds.length - 10} more`
-                    : "";
+                claimIds.length > 10 ? ` and ${claimIds.length - 10} more` : "";
             this.logger.warn(
                 `Personality "${query.slug}" has ${claimsWithMissingRevisions.length} claims with missing latestRevision. ` +
                     `Claim IDs: ${displayedIds}${remaining}`
@@ -382,8 +384,8 @@ export class MongoPersonalityService {
         }
 
         personality.claims = personality.claims
-            .filter((claim) => claim.latestRevision)
-            .map((claim) => ({
+            .filter((claim: any) => claim.latestRevision)
+            .map((claim: any) => ({
                 ...claim.latestRevision,
                 ...claim,
             }));
@@ -409,7 +411,7 @@ export class MongoPersonalityService {
         return processed;
     }
 
-    async postProcess(personality, language: string = "en") {
+    async postProcess(personality: any, language: string = "en") {
         if (!personality) {
             return personality;
         }
@@ -420,7 +422,7 @@ export class MongoPersonalityService {
                 wikidataId: personality.wikidata,
                 language,
             });
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 `Wikidata fetch failed for personality ${personality._id} ` +
                     `(wikidataId: ${personality.wikidata}): ${error.message}`
@@ -443,15 +445,14 @@ export class MongoPersonalityService {
 
         return Object.assign(personality, definedWikidataFields, {
             stats:
-                personality._id &&
-                (await this.getReviewStats(personality._id)),
+                personality._id && (await this.getReviewStats(personality._id)),
             claims:
                 personality.claims &&
                 this.extractClaimWithTextSummary(personality.claims),
         });
     }
 
-    async getReviewStats(_id) {
+    async getReviewStats(_id: string) {
         const reviews = await this.claimReview.agreggateClassification({
             personality: _id,
             isDeleted: false,
@@ -474,7 +475,7 @@ export class MongoPersonalityService {
      * @param newPersonalityBody PersonalityBody received of the client.
      * @returns Return changed personality.
      */
-    async update(personalityId, newPersonalityBody) {
+    async update(personalityId: string, newPersonalityBody: any) {
         // eslint-disable-next-line no-useless-catch
         if (newPersonalityBody.name) {
             newPersonalityBody.slug = slugify(newPersonalityBody.name, {
@@ -502,15 +503,15 @@ export class MongoPersonalityService {
             personalityUpdate,
             previousPersonality
         );
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         return personalityUpdate;
     }
 
     async hideOrUnhidePersonality(
-        personalityId,
-        isHidden,
-        description
+        personalityId: string,
+        isHidden: boolean,
+        description: string
     ): Promise<PersonalityDocument> {
         const personality = await this.getById(personalityId);
 
@@ -530,7 +531,7 @@ export class MongoPersonalityService {
             after,
             before
         );
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         const updated = await this.PersonalityModel.findByIdAndUpdate(
             { _id: personality._id },
@@ -572,7 +573,7 @@ export class MongoPersonalityService {
                 null,
                 previousPersonality
             );
-            await this.historyService.createHistory(history);
+            await this.historyService.createHistory(history as any);
 
             const result = await this.PersonalityModel.softDelete({
                 _id: personalityId,
@@ -582,7 +583,7 @@ export class MongoPersonalityService {
             );
 
             return result;
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 `Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`
             );
@@ -603,7 +604,7 @@ export class MongoPersonalityService {
 
     extractClaimWithTextSummary(claims: any) {
         claims = Array.isArray(claims) ? claims : [claims];
-        return claims.map((claim) => {
+        return claims.map((claim: any) => {
             if (!claim.content) {
                 return claim;
             }
@@ -611,7 +612,7 @@ export class MongoPersonalityService {
         });
     }
 
-    verifyInputsQuery(query) {
+    verifyInputsQuery(query: Record<string, any>) {
         const queryInputs: any = {};
         if (query.name) {
             (queryInputs as Record<string, unknown>).name = {
@@ -624,7 +625,7 @@ export class MongoPersonalityService {
         return queryInputs;
     }
 
-    combinedListAll(query): Promise<ICombinedListResult> {
+    combinedListAll(query: Record<string, any>): Promise<ICombinedListResult> {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
 
@@ -657,7 +658,7 @@ export class MongoPersonalityService {
                     pageSize,
                 };
             })
-            .catch((error) => {
+            .catch((error: any) => {
                 this.logger.error(error);
                 return error;
             });
@@ -710,10 +711,10 @@ export class MongoPersonalityService {
         ]);
 
         const processedPersonalities = await Promise.all(
-            personalities[0].rows.map(async (personality) => {
+            personalities[0].rows.map(async (personality: any) => {
                 try {
                     return await this.postProcess(personality, language);
-                } catch (error) {
+                } catch (error: any) {
                     this.logger.log(
                         `It was not possible to do postProcess the personality ${personality._id}`
                     );

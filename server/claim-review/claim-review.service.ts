@@ -26,7 +26,11 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
+import {
+    ContentModelEnum,
+    ReportModelEnum,
+    ReviewTaskTypeEnum,
+} from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -198,7 +202,7 @@ export class ClaimReviewService {
         return pipeline;
     }
 
-    async listDailyClaimReviews(query) {
+    async listDailyClaimReviews(query: Record<string, any>) {
         const pipeline = this.ClaimReviewModel.find({
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
@@ -245,7 +249,7 @@ export class ClaimReviewService {
             .exec();
 
         return Promise.all(
-            claimReviews.map(async (review) => this.postProcess(review))
+            claimReviews.map(async (review: any) => this.postProcess(review))
         );
     }
 
@@ -262,7 +266,7 @@ export class ClaimReviewService {
         return this.sortReviewStats(claimReviews);
     }
 
-    async getReviewStatsByClaimId(claimId) {
+    async getReviewStatsByClaimId(claimId: string | Types.ObjectId) {
         const reviews = await this.ClaimReviewModel.find({
             target: claimId,
             isDeleted: false,
@@ -288,8 +292,10 @@ export class ClaimReviewService {
      * @param claimId claim Id
      * @returns
      */
-    async getReviewClassificationCountsByClaimId(claimId) {
-        const classificationCounts = {};
+    async getReviewClassificationCountsByClaimId(
+        claimId: string | Types.ObjectId
+    ) {
+        const classificationCounts: Record<string, number> = {};
         const claimReviews = await this.ClaimReviewModel.find({
             target: claimId,
             isDeleted: false,
@@ -334,9 +340,11 @@ export class ClaimReviewService {
             claimReview.target = new Types.ObjectId(claimReview.target);
         }
 
-        claimReview.usersId = claimReview.report.usersId.map((userId) => {
-            return new Types.ObjectId(userId);
-        });
+        claimReview.usersId = claimReview.report.usersId.map(
+            (userId: string) => {
+                return new Types.ObjectId(userId);
+            }
+        );
         claimReview.report = new Types.ObjectId(claimReview.report._id);
         claimReview.data_hash = data_hash;
         claimReview.reportModel = reportModel;
@@ -353,7 +361,7 @@ export class ClaimReviewService {
             newClaimReview
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         return newClaimReview.save();
     }
@@ -381,7 +389,11 @@ export class ClaimReviewService {
         return claimReview;
     }
 
-    async getReport(match): Promise<LeanDocument<ReportDocument> | undefined> {
+    async getReport(match: {
+        personality: any;
+        claim: any;
+        data_hash: string;
+    }): Promise<LeanDocument<ReportDocument> | undefined> {
         const claimReview = await this.ClaimReviewModel.findOne({
             personality: match.personality,
             target: match.claim,
@@ -414,7 +426,7 @@ export class ClaimReviewService {
             null,
             claimReview
         );
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 
@@ -449,12 +461,12 @@ export class ClaimReviewService {
             after,
             before
         );
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
 
-    private async postProcess(review) {
+    private async postProcess(review: any) {
         const { data_hash, report } = review;
         const personality = await this.personalityPostProcess(
             review.personality
@@ -519,12 +531,15 @@ export class ClaimReviewService {
         };
     }
 
-    private sortReviewStats(claimReviews) {
-        const classificationCounts = claimReviews.reduce((acc, review) => {
-            const classification = review.report.classification;
-            acc[classification] = (acc[classification] || 0) + 1;
-            return acc;
-        }, {});
+    private sortReviewStats(claimReviews: ClaimReviewDocument[]) {
+        const classificationCounts = claimReviews.reduce(
+            (acc: Record<string, number>, review: ClaimReviewDocument) => {
+                const classification = review.report.classification;
+                acc[classification] = (acc[classification] || 0) + 1;
+                return acc;
+            },
+            {}
+        );
 
         return Object.entries(classificationCounts)
             .sort((a, b) => (b[1] as number) - (a[1] as number))
@@ -533,10 +548,10 @@ export class ClaimReviewService {
                 count: count as number,
             }));
     }
-    getHtmlFromSchema(schema, reportModel) {
+    getHtmlFromSchema(schema: any, reportModel: string) {
         const htmlContent = this.editorParseService.schema2html(
             schema,
-            reportModel
+            reportModel as ReportModelEnum
         );
         return {
             ...schema,
@@ -544,7 +559,7 @@ export class ClaimReviewService {
         };
     }
 
-    async personalityPostProcess(personality) {
+    async personalityPostProcess(personality: any) {
         if (personality) {
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,

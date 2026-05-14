@@ -27,7 +27,7 @@ export class ParserService {
     async parse(
         content: string,
         claimRevisionId: object,
-        personality: any = null,
+        personality: string | null = null,
         contentModel = ContentModelEnum.Speech
     ): Promise<SpeechDocument | UnattributedDocument> {
         this.paragraphSequence = 0;
@@ -37,7 +37,7 @@ export class ParserService {
         const paragraphs = nlpContent.paragraphs();
         const text = nlpContent.text(this.nlpOptions);
 
-        paragraphs.forEach((paragraph) => {
+        paragraphs.forEach((paragraph: any) => {
             const paragraphId = this.createParagraphId();
             const sentences = this.postProcessSentences(paragraph.sentences());
 
@@ -66,11 +66,11 @@ export class ParserService {
         });
 
         if (personality) {
-            personality = new Types.ObjectId(personality);
+            personality = new Types.ObjectId(personality) as any;
         }
 
         return await Promise.all(result).then(
-            (object): Promise<SpeechDocument | UnattributedDocument> => {
+            (object: any[]): Promise<SpeechDocument | UnattributedDocument> => {
                 if (contentModel === ContentModelEnum.Unattributed) {
                     return this.unattributedService.create({
                         content: object,
@@ -86,15 +86,15 @@ export class ParserService {
         );
     }
 
-    postProcessSentences(sentences) {
-        let newSentences = [];
-        sentences.forEach((sentence) => {
+    postProcessSentences(sentences: any) {
+        let newSentences: string[] = [];
+        sentences.forEach((sentence: any) => {
             const sentenceText = sentence.text(this.nlpOptions);
             // Extract semicolon sentences
             let semicolonSentences = sentenceText.split(";");
             if (sentenceText.includes(";")) {
                 semicolonSentences = semicolonSentences.map(
-                    (semicolonSentence, index) => {
+                    (semicolonSentence: string, index: number) => {
                         return index !== semicolonSentences.length - 1
                             ? `${semicolonSentence};`.trim()
                             : semicolonSentence.trim();
@@ -106,7 +106,11 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent, paragraphDataHash, claimRevisionId) {
+    parseSentence(
+        sentenceContent: string,
+        paragraphDataHash: string,
+        claimRevisionId: object
+    ) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = md5(
             `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`

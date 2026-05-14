@@ -17,7 +17,7 @@ export class YjsGateway implements OnGatewayConnection {
 
     // @TODO - This should be replaced with a database
     handleConnection(connection: WebSocket, request: Request): void {
-        const parsedUrl = url.parse(request.url);
+        const parsedUrl = url.parse(request.url!);
         const parsedQs = querystring.parse(parsedUrl.query ?? "");
         const docName = (parsedQs.claimTask as string) || "";
         // Check if the room already has a Yjs document, if not, create a new one
