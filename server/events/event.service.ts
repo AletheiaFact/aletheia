@@ -5,7 +5,7 @@ import {
     Injectable,
     InternalServerErrorException,
     Logger,
-    NotFoundException
+    NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
@@ -18,7 +18,7 @@ import {
     EventMetricsData,
     EventMetricsResponse,
     FindAllResponse,
-    TopicDataAggregation
+    TopicDataAggregation,
 } from "./types/event.interfaces";
 import * as crypto from "crypto";
 import slugify from "slugify";
@@ -40,8 +40,8 @@ export class EventsService {
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
         @InjectModel(Topic.name) private TopicModel: Model<TopicDocument>,
         private readonly claimReviewService: ClaimReviewService,
-        private readonly topicService: TopicService,
-    ) { }
+        private readonly topicService: TopicService
+    ) {}
 
     /**
      * Creates a new event, processes associated topics, and generates a data hash.
@@ -56,13 +56,13 @@ export class EventsService {
 
             const createdTopic = await this.topicService.findOrCreateTopic({
                 ...createEventDto.mainTopic,
-                name: topicName
-            })
+                name: topicName,
+            });
 
             const slug = slugify(createEventDto.name, {
                 lower: true,
                 strict: true,
-                trim: true
+                trim: true,
             });
 
             const data_hash = crypto
@@ -74,8 +74,8 @@ export class EventsService {
                 ...createEventDto,
                 data_hash,
                 slug: slug,
-                mainTopic: createdTopic._id
-            })
+                mainTopic: createdTopic._id,
+            });
 
             this.logger.log(`Event created successfully: ${newEvent._id}`);
             return newEvent;
@@ -93,7 +93,9 @@ export class EventsService {
                 throw new ConflictException(`Duplicate entry: an event with this ${duplicateField} already exists`);
             }
 
-            throw new InternalServerErrorException("Unexpected error during event creation");
+            throw new InternalServerErrorException(
+                "Unexpected error during event creation"
+            );
         }
     }
 
@@ -103,7 +105,10 @@ export class EventsService {
      * @param updateEventDto - Data transfer object with partial event updates.
      * @returns The updated event document.
      */
-    async update(id: string, updateEventDto: UpdateEventDTO): Promise<EventDocument> {
+    async update(
+        id: string,
+        updateEventDto: UpdateEventDTO
+    ): Promise<EventDocument> {
         try {
             this.logger.debug(`Updating event ${id}`, { updateEventDto });
 
@@ -130,11 +135,15 @@ export class EventsService {
 
             if (filterTopics !== undefined) {
                 const uniqueTopics = Array.from(
-                    new Map(filterTopics.map(topic => [topic.name, topic])).values()
+                    new Map(
+                        filterTopics.map((topic) => [topic.name, topic])
+                    ).values()
                 );
 
                 updateData.filterTopics = await Promise.all(
-                    uniqueTopics.map(topic => this.topicService.findOrCreateTopic(topic))
+                    uniqueTopics.map((topic) =>
+                        this.topicService.findOrCreateTopic(topic)
+                    )
                 );
             }
 
@@ -153,7 +162,10 @@ export class EventsService {
             const err = toError(error);
             this.logger.error(`Failed to update event [${id}]`, err.stack);
 
-            if (error instanceof NotFoundException || error instanceof BadRequestException) {
+            if (
+                error instanceof NotFoundException ||
+                error instanceof BadRequestException
+            ) {
                 throw error;
             }
 
@@ -161,7 +173,9 @@ export class EventsService {
                 throw new BadRequestException(`Invalid format for field: ${err.path}`);
             }
 
-            throw new InternalServerErrorException("Unexpected error during event update");
+            throw new InternalServerErrorException(
+                "Unexpected error during event update"
+            );
         }
     }
 
@@ -178,11 +192,16 @@ export class EventsService {
             const limit = parseInt(`${pageSize}`, 10);
             const skip = (page ?? 0) * limit;
 
-            this.logger.debug(`Fetching events list. Page: ${page}, PageSize: ${pageSize}, Status: ${status}`);
-            this.logger.verbose(`Built MongoDB Query: ${JSON.stringify(query)}`);
+            this.logger.debug(
+                `Fetching events list. Page: ${page}, PageSize: ${pageSize}, Status: ${status}`
+            );
+            this.logger.verbose(
+                `Built MongoDB Query: ${JSON.stringify(query)}`
+            );
 
             const [events, total] = await Promise.all([
-                this.eventModel.find(query)
+                this.eventModel
+                    .find(query)
                     .skip(skip)
                     .limit(limit)
                     .sort({ endDate: order === "asc" ? 1 : -1 })
@@ -190,7 +209,7 @@ export class EventsService {
                     .populate("mainTopic")
                     .exec(),
 
-                this.eventModel.countDocuments(query).exec()
+                this.eventModel.countDocuments(query).exec(),
             ]);
 
             const eventMetrics = await this.fetchBatchMetricsData(events);
@@ -199,14 +218,22 @@ export class EventsService {
                 message: "FindAll events and metrics completed successfully",
                 eventCount: events.length,
                 metricsCount: Object.keys(eventMetrics).length,
-                query: JSON.stringify(query)
+                query: JSON.stringify(query),
             });
 
             return { events, eventMetrics, total };
         } catch (error) {
-            const stackTrace = error instanceof Error ? error.stack : String(error);
-            this.logger.error(`Failed to fetch events list: ${error instanceof Error ? error.message : 'Unknown error'}`, stackTrace);
-            throw new InternalServerErrorException("An error occurred while fetching the events list.");
+            const stackTrace =
+                error instanceof Error ? error.stack : String(error);
+            this.logger.error(
+                `Failed to fetch events list: ${
+                    error instanceof Error ? error.message : "Unknown error"
+                }`,
+                stackTrace
+            );
+            throw new InternalServerErrorException(
+                "An error occurred while fetching the events list."
+            );
         }
     }
 
@@ -218,10 +245,16 @@ export class EventsService {
     async findByHash(data_hash: string): Promise<EventDocument> {
         this.logger.debug(`Fetching public event with hash: ${data_hash}`);
 
-        const event = (await this.eventModel.findOne({ data_hash }).populate("mainTopic").populate("filterTopics").exec());
+        const event = await this.eventModel
+            .findOne({ data_hash })
+            .populate("mainTopic")
+            .populate("filterTopics")
+            .exec();
 
         if (!event) {
-            this.logger.warn(`Public access attempt failed - Hash not found: ${data_hash}`);
+            this.logger.warn(
+                `Public access attempt failed - Hash not found: ${data_hash}`
+            );
             throw new NotFoundException(`The requested event was not found.`);
         }
 
@@ -263,12 +296,20 @@ export class EventsService {
      * Uses a 2-step approach to resolve data dependencies (hashes) before querying ClaimReviews.
      * @param topicIds - Array of unique main topic IDs.
      * @returns A promise that resolves to an object containing the batched metrics maps.
-    */
-    private async fetchBatchMetricsData(events: EventDocument[]): Promise<EventMetricsData> {
+     */
+    private async fetchBatchMetricsData(
+        events: EventDocument[]
+    ): Promise<EventMetricsData> {
         const namespace = this.req.params.namespace || NameSpaceEnum.Main;
-        const topicIds = [...new Set(events.map(event => event.mainTopic?._id).filter(Boolean) as string[])];
+        const topicIds = [
+            ...new Set(
+                events
+                    .map((event) => event.mainTopic?._id)
+                    .filter(Boolean) as string[]
+            ),
+        ];
 
-        const objectIds = topicIds.map(id => new Types.ObjectId(id));
+        const objectIds = topicIds.map((id) => new Types.ObjectId(id));
 
         try {
             const [metricsResult] = await this.TopicModel.aggregate([
@@ -281,10 +322,14 @@ export class EventsService {
                                     from: "verificationrequests",
                                     localField: "_id",
                                     foreignField: "topics",
-                                    as: "verifications"
-                                }
+                                    as: "verifications",
+                                },
                             },
-                            { $project: { count: { $size: "$verifications" } } }
+                            {
+                                $project: {
+                                    count: { $size: "$verifications" },
+                                },
+                            },
                         ],
                         sentencesData: [
                             {
@@ -292,15 +337,22 @@ export class EventsService {
                                     from: "sentences",
                                     localField: "_id",
                                     foreignField: "topics.id",
-                                    as: "sentences"
-                                }
+                                    as: "sentences",
+                                },
                             },
                             {
                                 $project: {
-                                    hashes: { $setUnion: ["$sentences.data_hash", []] },
-                                    claimRevisionIds: { $setUnion: ["$sentences.claimRevisionId", []] }
-                                }
-                            }
+                                    hashes: {
+                                        $setUnion: ["$sentences.data_hash", []],
+                                    },
+                                    claimRevisionIds: {
+                                        $setUnion: [
+                                            "$sentences.claimRevisionId",
+                                            [],
+                                        ],
+                                    },
+                                },
+                            },
                         ],
                         imagesData: [
                             {
@@ -308,48 +360,68 @@ export class EventsService {
                                     from: "images",
                                     localField: "_id",
                                     foreignField: "topics.id",
-                                    as: "images"
-                                }
+                                    as: "images",
+                                },
                             },
                             {
                                 $project: {
-                                    hashes: { $setUnion: ["$images.data_hash", []] },
-                                    claimRevisionIds: { $setUnion: ["$images.claimRevisionId", []] }
-                                }
-                            }
-                        ]
-                    }
-                }
+                                    hashes: {
+                                        $setUnion: ["$images.data_hash", []],
+                                    },
+                                    claimRevisionIds: {
+                                        $setUnion: [
+                                            "$images.claimRevisionId",
+                                            [],
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
             ]);
 
-            const { verificationStats, sentencesData, imagesData } = metricsResult;
+            const { verificationStats, sentencesData, imagesData } =
+                metricsResult;
 
             const topicToHashesMap: Record<string, string[]> = {};
 
             for (const topicId of topicIds) {
-                const sentenceHashes = sentencesData.find(sentence => String(sentence._id) === String(topicId))?.hashes || [];
-                const imageHashes = imagesData.find(image => String(image._id) === String(topicId))?.hashes || [];
+                const sentenceHashes =
+                    sentencesData.find(
+                        (sentence: any) =>
+                            String(sentence._id) === String(topicId)
+                    )?.hashes || [];
+                const imageHashes =
+                    imagesData.find(
+                        (image: any) => String(image._id) === String(topicId)
+                    )?.hashes || [];
 
                 topicToHashesMap[topicId] = [...sentenceHashes, ...imageHashes];
             }
 
-            const claimReviewsStats = await this.claimReviewService.getBatchCountsByTopics(
-                topicIds,
-                {
-                    isHidden: false,
-                    isDeleted: false,
-                    nameSpace: namespace
-                },
-                topicToHashesMap
-            );
+            const claimReviewsStats =
+                await this.claimReviewService.getBatchCountsByTopics(
+                    topicIds,
+                    {
+                        isHidden: false,
+                        isDeleted: false,
+                        nameSpace: namespace,
+                    },
+                    topicToHashesMap
+                );
 
             return this.buildFinalMetricsDictionary({
                 events,
                 verificationStats,
                 claimReviewsStats,
                 sentencesData,
-                imagesData
+                imagesData,
             });
+        } catch (error: any) {
+            this.logger.error(
+                `Metrics fetch failed, using fallback: ${error.message}`
+            );
 
         } catch (error) {
             const err = toError(error);
@@ -359,25 +431,28 @@ export class EventsService {
                 acc[String(event.data_hash)] = {
                     verificationRequests: 0,
                     claims: 0,
-                    reviews: 0
+                    reviews: 0,
                 };
                 return acc;
-            }, {});
+            }, {} as EventMetricsData);
         }
     }
 
     /**
      * Builds the final metrics dictionary mapped by the event's data_hash,
      * formatting and summing the raw data from the database.
-    */
+     */
     private buildFinalMetricsDictionary({
         events,
         verificationStats,
         claimReviewsStats,
         sentencesData,
-        imagesData
+        imagesData,
     }: BuildMetricsParams): Record<string, EventMetricsResponse> {
-        const verificationMap = mapAggregateToRecord<number>(verificationStats, "count");
+        const verificationMap = mapAggregateToRecord<number>(
+            verificationStats,
+            "count"
+        );
         const claimsMap = this.calculateUniqueClaims(sentencesData, imagesData);
 
         const finalMetrics: Record<string, EventMetricsResponse> = {};
@@ -399,8 +474,11 @@ export class EventsService {
     /**
      * Calculates the total number of unique claims per topic based on claimRevisionId.
      * Aggregates IDs from sentences and images and returns the count of distinct IDs.
-    */
-    private calculateUniqueClaims(sentencesData: TopicDataAggregation[], imagesData: TopicDataAggregation[]): Record<string, number> {
+     */
+    private calculateUniqueClaims(
+        sentencesData: TopicDataAggregation[],
+        imagesData: TopicDataAggregation[]
+    ): Record<string, number> {
         const topicClaimsSet: Record<string, Set<string>> = {};
 
         const processItem = (item: TopicDataAggregation) => {

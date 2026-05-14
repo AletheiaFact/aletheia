@@ -53,7 +53,7 @@ export class SourceController {
     @ApiTags("source")
     @Get("api/source/target/:targetId")
     public async getSourcesByTargetId(
-        @Param() params,
+        @Param() params: { targetId: string },
         @Query() getSources: any
     ) {
         const { targetId } = params;
@@ -105,7 +105,7 @@ export class SourceController {
     @ApiTags("source")
     @Get("api/source")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async listAll(@Query() query) {
+    async listAll(@Query() query: any) {
         return Promise.all([
             this.sourceService.listAll(query),
             this.sourceService.count({ nameSpace: query.nameSpace }),
@@ -169,7 +169,7 @@ export class SourceController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
-        const hideDescriptions = {};
+        const hideDescriptions: Record<string, any> = {};
 
         hideDescriptions[TargetModel.Source] =
             await this.historyService.getDescriptionForHide(

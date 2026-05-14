@@ -27,7 +27,7 @@ export class FileManagementService {
      * @param file file to upload on AWS-S3
      * @param bucket bucket where the file will send
      */
-    async upload(file, bucket?: string) {
+    async upload(file: Express.Multer.File, bucket?: string) {
         if (!bucket && !this.bucket) {
             throw Error("S3 bucket is not defined");
         }
@@ -45,11 +45,11 @@ export class FileManagementService {
 
         const { Location, Key } = await this.s3
             .upload({
-                Bucket: bucket || this.bucket,
+                Bucket: (bucket || this.bucket)!,
                 Key: fileName,
-                ContentType: file?.mimetype,
-                ContentEncoding: file?.encoding,
-                ContentLength: file?.size,
+                ContentType: file?.mimetype ?? undefined,
+                ContentEncoding: file?.encoding ?? undefined,
+                ContentLength: file?.size ?? undefined,
                 Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })

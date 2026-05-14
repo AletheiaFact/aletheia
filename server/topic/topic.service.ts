@@ -63,7 +63,7 @@ export class TopicService {
         return topics.map((topic) => {
             const topicObj = topic.toObject();
             const matchedAlias =
-                topicObj.aliases?.find((alias) =>
+                topicObj.aliases?.find((alias: string) =>
                     this.normalizeText(alias)
                         .toLowerCase()
                         .includes(normalizedQueryLower)
@@ -77,7 +77,7 @@ export class TopicService {
      * @param getTopics options to fetch topics
      * @returns return all topics from wikidata database that match to topicName from input
      */
-    async findAll(getTopics, language = "pt") {
+    async findAll(getTopics: { topicName: string }, language = "pt") {
         return this.getWikidataEntities(getTopics.topicName, language);
     }
 
@@ -96,19 +96,19 @@ export class TopicService {
         }: {
             contentModel?: ContentModelEnum;
             topics:
-            | { label: string; value: string; aliases?: string[] }[]
-            | string[]
-            | (
-                | string
-                | { label: string; value: string; aliases?: string[] }
-            )[];
+                | { label: string; value: string; aliases?: string[] }[]
+                | string[]
+                | (
+                      | string
+                      | { label: string; value: string; aliases?: string[] }
+                  )[];
             data_hash?: string;
         },
         language: string = "pt"
     ): Promise<any> {
         try {
             const createdTopics = await Promise.all(
-                topics.map(async (topic) => {
+                topics.map(async (topic: any) => {
                     const slug = slugify(topic?.label || topic.slug || topic, {
                         lower: true,
                         strict: true,
@@ -118,10 +118,10 @@ export class TopicService {
                     if (findedTopic) {
                         return findedTopic?.wikidataId
                             ? {
-                                id: findedTopic._id,
-                                label: findedTopic?.name,
-                                value: findedTopic?.wikidataId,
-                            }
+                                  id: findedTopic._id,
+                                  label: findedTopic?.name,
+                                  value: findedTopic?.wikidataId,
+                              }
                             : findedTopic.slug;
                     } else {
                         const newTopic = {
@@ -148,12 +148,12 @@ export class TopicService {
             if (contentModel === ContentModelEnum.Image) {
                 return this.imageService.updateImageWithTopics(
                     createdTopics,
-                    data_hash
+                    data_hash!
                 );
             } else if (contentModel) {
                 return this.sentenceService.updateSentenceWithTopics(
                     createdTopics,
-                    data_hash
+                    data_hash!
                 );
             } else {
                 return createdTopics;
@@ -173,7 +173,7 @@ export class TopicService {
      * @param slug topic slug
      * @returns topic
      */
-    getBySlug(slug) {
+    getBySlug(slug: string) {
         return this.TopicModel.findOne({ slug });
     }
 
@@ -234,7 +234,8 @@ export class TopicService {
                 name: topicData.name,
                 slug,
                 language: topicData.language || "pt",
-                wikidataId: topicData.wikidataId || topicData.value || undefined,
+                wikidataId:
+                    topicData.wikidataId || topicData.value || undefined,
             };
 
             const createdTopic = await new this.TopicModel(newTopic).save();

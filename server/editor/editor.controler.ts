@@ -8,7 +8,10 @@ export class EditorController {
 
     @ApiTags("editor")
     @Put("api/editor/:reference")
-    public async updateEditor(@Param("reference") reference, @Body() body) {
+    public async updateEditor(
+        @Param("reference") reference: string,
+        @Body() body: { editorContentObject: any }
+    ) {
         const { editorContentObject } = body;
         return this.editorService.updateByReference(
             reference,

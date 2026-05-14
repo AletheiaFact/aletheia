@@ -2,29 +2,38 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
-import { MenuOutlined } from "@mui/icons-material";
+import { MenuOutlined, Close } from "@mui/icons-material";
 import colors from "../../styles/colors";
 import { IconButton } from "@mui/material";
 import { useAppSelector } from "../../store/store";
 
 const Menu = () => {
     const dispatch = useDispatch();
-    const { vw } = useAppSelector((state) => state);
+
+    const { vw, menuCollapsed } = useAppSelector((state) => state);
+
+    const isCollapsed = menuCollapsed !== undefined ? menuCollapsed : true;
+
+    const handleToggleMenu = () => {
+        if (isCollapsed) {
+            dispatch(actions.openSideMenu());
+        } else {
+            dispatch(actions.closeSideMenu());
+        }
+    };
 
     return (
         <IconButton
-            data-cy="testOpenSideMenu"
-            onClick={() => {
-                dispatch(actions.openSideMenu());
-            }}
+            data-cy={isCollapsed ? "testOpenSideMenu" : "testCloseSideMenu"}
+            onClick={handleToggleMenu}
             size="large"
             sx={{ padding: vw?.xs ? "0px" : "5px 15px" }}
         >
-            <MenuOutlined
-                style={{
-                    color: colors.white,
-                }}
-            />
+            {isCollapsed ? (
+                <MenuOutlined style={{ color: colors.white }} />
+            ) : (
+                <Close style={{ color: colors.white }} />
+            )}
         </IconButton>
     );
 };

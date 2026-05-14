@@ -7,8 +7,8 @@ import { mount } from "cypress/react18";
 Cypress.Commands.add("goToLoginPage", () => {
     cy.visit("http://localhost:3000");
     cy.title().should("contain", "AletheiaFact.org");
-    cy.get(locators.menu.USER_ICON).click();
-    cy.get(locators.menu.LOGIN_MENU).click();
+    cy.get(locators.header.OPEN_USER_MENU).click();
+    cy.get(locators.header.LOGIN_ITEM).click();
     cy.url().should("contains", "login");
 });
 

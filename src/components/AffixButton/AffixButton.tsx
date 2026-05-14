@@ -33,11 +33,12 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButtonProps) => {
-    const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed } =
+    const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed, menuCollapsed } =
         useAppSelector((state) => ({
             vw: state?.vw,
             copilotDrawerCollapsed: state?.copilotDrawerCollapsed ?? true,
             reviewDrawerCollapsed: state?.reviewDrawerCollapsed ?? true,
+            menuCollapsed: state?.menuCollapsed ?? true,
         }));
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userRole] = useAtom(currentUserRole);
@@ -128,7 +129,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
         toggleFloatingdrawer();
     };
 
-    if (!isLoggedIn || !reviewDrawerCollapsed) {
+    if (!isLoggedIn || !reviewDrawerCollapsed || !menuCollapsed) {
         return null;
     }
 

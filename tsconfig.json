@@ -20,8 +20,7 @@
     ],
     "allowJs": true,
     "strict": false,
-    "noImplicitAny": false,
-    // TODO: These includes need to be removed in the future due to typing in modules, functions and properties.
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "useUnknownInCatchVariables": false,
     "strictPropertyInitialization": false,

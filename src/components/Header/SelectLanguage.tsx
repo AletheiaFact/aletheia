@@ -1,157 +1,71 @@
-import ReactCountryFlag from "react-country-flag";
-import Cookies from "js-cookie";
-import React, { useLayoutEffect, useState } from "react";
-import styled from "styled-components";
-import { Select, MenuItem, Switch } from "@mui/material";
+import React from "react";
+import { Grid, MenuItem, Select, Typography } from "@mui/material";
+import LanguageIcon from "@mui/icons-material/Language";
 import colors from "../../styles/colors";
-import { useAppSelector } from "../../store/store";
-import { NameSpaceEnum } from "../../types/Namespace";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
+import { LanguageSection } from "../../types/header";
 
+export interface SelectLanguageProps {
+    dataCy: string;
+    currentLanguage: string;
+    sections: LanguageSection[];
+    onChange: (newLanguage: string) => void;
+}
 
-const SelectInput = styled(Select)`
-    .MuiOutlinedInput-notchedOutline {
-        border: none;
-     }
+const SelectLanguage = ({ dataCy, currentLanguage, sections, onChange }: SelectLanguageProps) => {
+    const languageItems = sections[0]?.items || [];
 
-    .MuiSelect-select {
-        display: flex;
-        align-items: center;
-    }
-
-    .MuiSvgIcon-root {
-        color: ${colors.white};
-        font-size: 0.8rem;
-    }
-`;
-
-const StyledSwitch = styled(Switch)`
-  .MuiSwitch-switchBase {
-    padding: 6px;
-  }
-
-  MuiSwitch-thumb {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: ${colors.white};
-    border-radius: 50%;
-  }
-
-  .MuiSwitch-track {
-    border-radius: 22px;
-    background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main ? colors.secondary : colors.primary};
-    opacity: 1;
-    height: 18px;
-  }
-`;
-
-const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
-    const { vw } = useAppSelector((state) => state);
-    const [switchLoading, setSwitchLoading] = useState<boolean>(false);
-    const [nameSpace] = useAtom(currentNameSpace);
-    const language = Cookies.get("default_language") || props.defaultLanguage;
-    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
-
-    useLayoutEffect(() => {
-        setNameSpaceProp(nameSpace);
-    }, [nameSpace]);
-
-    const setDefaultLanguage = (language) => {
-        if (!document.cookie.includes(`default_language=${language}`)) {
-            window.location.reload();
-        }
-        document.cookie = `default_language=${language}`;
-    };
-
-    const onChangeSwitch = (checked: boolean) => {
-        const language = checked ? "pt" : "en";
-        setSwitchLoading((state) => !state);
-        setDefaultLanguage(language);
+    const renderValue = (value: string) => {
+        const selectedItem = languageItems.find(item => item.value === value);
+        return (
+            <Grid item className="language-value-container">
+                <LanguageIcon fontSize="inherit" />
+                <Typography variant="body1">
+                    {selectedItem?.displayAbbreviation || "BR"}
+                </Typography>
+            </Grid>
+        );
     };
 
     return (
-        <>
-            {!vw?.xs && (
-                <SelectInput
-                    bordered={false}
-                    showArrow={true}
-                    value={language}
-                    onChange={(e) => setDefaultLanguage(e.target.value as string)}
-                    onSelect={setDefaultLanguage}
-                    data-cy={props.dataCy}
-                    loading={switchLoading}
-                >
-                    <MenuItem value="pt" data-cy="testLanguagePt">
-                        <ReactCountryFlag
-                            countryCode="BR"
-                            style={{ fontSize: "18px", borderRadius: "50%" }}
-                        />
-                    </MenuItem>
-                    <MenuItem value="en" data-cy="testLanguageEn">
-                        <ReactCountryFlag
-                            countryCode="GB"
-                            style={{ fontSize: "18px", borderRadius: "50%" }}
-                        />
-                    </MenuItem>
-                </SelectInput>
-            )}
-            {vw?.xs && (
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: 4,
-                        alignItems: "center",
-                    }}
-                >
-                    <span style={{ fontSize: 10 }}>
-                        {language === "pt" ? "BR" : "EN"}
-                    </span>
-                    <StyledSwitch
-                        checked={language === "pt"}
-                        onChange={(e) => onChangeSwitch(e.target.checked)}
-                        namespace={nameSpaceProp}
-                        icon={
-                            <ReactCountryFlag
-                                countryCode="GB"
-                                style={{
-                                    fontSize: "16px",
-                                    paddingTop: "6px",
-                                    borderRadius: "50%",
-                                    backgroundColor: colors.white,
-                                    width: "24px",
-                                    height: "24px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                }}
-                            />
+        <Select
+            className="language-select"
+            IconComponent={() => null}
+            value={currentLanguage}
+            onChange={(e) => onChange(e.target.value as string)}
+            data-cy={dataCy}
+            renderValue={renderValue}
+            MenuProps={{
+                slotProps: {
+                    paper: {
+                        sx: {
+                            backgroundColor: `${colors.white}`,
+
+                            "& .MuiMenu-list": {
+                                padding: "8px",
+                            },
+
+                            "& .MuiMenuItem-root": {
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                color: `${colors.blackSecondary}`,
+
+                                "&:hover": {
+                                    backgroundColor: `${colors.lightNeutralSecondary}`,
+                                }
+                            }
                         }
-                        checkedIcon={
-                            <ReactCountryFlag
-                                countryCode="BR"
-                                style={{
-                                    fontSize: "16px",
-                                    paddingTop: "6px",
-                                    borderRadius: "50%",
-                                    backgroundColor: colors.white,
-                                    width: "24px",
-                                    height: "24px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                }}
-                            />
-                        }
-                    />
-                </div>
-            )}
-        </>
+                    }
+                }
+            }}
+        >
+            {languageItems.map((item) => (
+                <MenuItem key={item.key} value={item.value} data-cy={item.dataCy}>
+                    {item.icon}
+                    <Typography variant="body1">{item.label}</Typography>
+                </MenuItem>
+            ))}
+        </Select>
     );
 };
 

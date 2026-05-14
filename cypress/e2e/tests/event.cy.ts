@@ -162,8 +162,7 @@ describe("Test events infrastructure", () => {
         });
 
         it("should add topics to a verification request", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testVerificationRequestItem]").click();
+            cy.get(locators.header.VERIFICATION_REQUEST_ITEM).click();
             cy.contains(minimumContent).click();
 
             addTopicFlow(topic.aliases[0], topic.name);

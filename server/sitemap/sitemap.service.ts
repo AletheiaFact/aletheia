@@ -16,7 +16,7 @@ export class SitemapService {
     ) {}
     private readonly logger = new Logger("SitemapService");
 
-    async getSitemap(hostname) {
+    async getSitemap(hostname: string) {
         const sites: any[] = [
             { url: "/" },
             { url: "/about" },
@@ -73,7 +73,7 @@ export class SitemapService {
         return streamToPromise(sitemapStream);
     }
 
-    async submitSitemap(hostname) {
+    async submitSitemap(hostname: string) {
         try {
             await axios.get(
                 `https://google.com/ping?sitemap=${hostname}/sitemap.xml`

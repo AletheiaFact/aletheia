@@ -32,7 +32,7 @@ export class AutomatedFactCheckingService {
     }
 
     async getResponseFromAgents(
-        data,
+        data: { claim: string; context: any; searchType?: string },
         sessionId?: string
     ): Promise<AgenciaResponse> {
         try {
@@ -68,7 +68,9 @@ export class AutomatedFactCheckingService {
             if (!response.ok) {
                 const errorBody = await response.text();
                 throw new Error(
-                    `Agencia returned HTTP ${response.status}: ${errorBody.substring(0, 200)}`
+                    `Agencia returned HTTP ${
+                        response.status
+                    }: ${errorBody.substring(0, 200)}`
                 );
             }
 
@@ -94,9 +96,7 @@ export class AutomatedFactCheckingService {
             const firstLine = JSON.parse(lines[0]);
             if (firstLine.status === "started" && firstLine.execution_id) {
                 executionId = firstLine.execution_id;
-                this.logger.log(
-                    `Agencia execution started: ${executionId}`
-                );
+                this.logger.log(`Agencia execution started: ${executionId}`);
             }
 
             // Last line has the final result
@@ -181,7 +181,9 @@ export class AutomatedFactCheckingService {
             if (!response.ok) {
                 const errorBody = await response.text();
                 throw new Error(
-                    `Agencia returned HTTP ${response.status}: ${errorBody.substring(0, 200)}`
+                    `Agencia returned HTTP ${
+                        response.status
+                    }: ${errorBody.substring(0, 200)}`
                 );
             }
 
@@ -198,10 +200,7 @@ export class AutomatedFactCheckingService {
      * Get a specific execution by session and execution ID.
      * Calls GET /executions/{session_id}/{execution_id} on Agencia.
      */
-    async getExecution(
-        sessionId: string,
-        executionId: string
-    ): Promise<any> {
+    async getExecution(sessionId: string, executionId: string): Promise<any> {
         try {
             this.validateSessionId(sessionId);
             this.validateExecutionId(executionId);
@@ -222,7 +221,9 @@ export class AutomatedFactCheckingService {
             if (!response.ok) {
                 const errorBody = await response.text();
                 throw new Error(
-                    `Agencia returned HTTP ${response.status}: ${errorBody.substring(0, 200)}`
+                    `Agencia returned HTTP ${
+                        response.status
+                    }: ${errorBody.substring(0, 200)}`
                 );
             }
 

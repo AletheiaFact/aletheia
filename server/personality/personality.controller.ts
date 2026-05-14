@@ -70,7 +70,10 @@ export class PersonalityController {
     @ApiTags("personality")
     @Get("api/personality/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async get(@Param("id") personalityId, @Query() query) {
+    async get(
+        @Param("id") personalityId: string,
+        @Query() query: { language?: string; nameSpace?: string }
+    ) {
         return this.personalityService
             .getById(personalityId, query) // TODO: get language from request object in the future
             .catch((err) => {
@@ -80,14 +83,21 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Put("api/personality/:id")
-    async update(@Param("id") personalityId, @Body() body) {
+    async update(
+        @Param("id") personalityId: string,
+        @Body() body: Partial<CreatePersonalityDTO>
+    ) {
         return this.personalityService.update(personalityId, body);
     }
 
     @AdminOnly()
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
-    async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
+    async updateHiddenStatus(
+        @Param("id") personalityId: string,
+        @Body()
+        body: { recaptcha: string; isHidden: boolean; description: string }
+    ) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -106,7 +116,7 @@ export class PersonalityController {
     @ApiTags("personality")
     @Get("api/personality/:id/reviews")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    getReviewStats(@Param("id") personalityId) {
+    getReviewStats(@Param("id") personalityId: string) {
         return this.personalityService
             .getReviewStats(personalityId)
             .catch((err) => {
@@ -156,14 +166,13 @@ export class PersonalityController {
 
         let personalities: any[] = [];
         try {
-            ({ personalities } =
-                await this.personalityService.combinedListAll({
-                    language: req.language,
-                    order: "random",
-                    pageSize: 6,
-                    fetchOnly: true,
-                    filter: personality._id,
-                }));
+            ({ personalities } = await this.personalityService.combinedListAll({
+                language: req.language,
+                order: "random",
+                pageSize: 6,
+                fetchOnly: true,
+                filter: personality._id,
+            }));
         } catch (error) {
             const err = toError(error);
             this.logger.error(

@@ -42,7 +42,9 @@ export const mockRegularSession = createMockSession({
     traits: { role: { main: Roles.Regular } },
 });
 
-export const mockExpiredSession = new Error("Request failed with status code 401");
+export const mockExpiredSession = new Error(
+    "Request failed with status code 401"
+);
 
 /**
  * Mock Ory FrontendApi
@@ -103,8 +105,8 @@ export const mockAuthConfigService = () => ({
             "ory.access_token": "mock-access-token",
             "ory.hydra.url": "http://localhost:4445",
             app_affiliation: "aletheia",
-            override_public_routes: undefined,
+            override_public_routes: undefined as string | undefined,
         };
-        return config[key];
+        return config[key as keyof typeof config];
     }),
 });

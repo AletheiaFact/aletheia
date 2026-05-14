@@ -119,7 +119,7 @@ export class UsersController {
     @ApiTags("user")
     @Put("api/user/password-change")
     @Auth()
-    async changePassword(@Req() req: BaseRequest, @Res() res) {
+    async changePassword(@Req() req: BaseRequest, @Res() res: Response) {
         await this.usersService.registerPasswordChange(
             new Types.ObjectId(req.user._id)
         );
@@ -133,10 +133,10 @@ export class UsersController {
     @Put("api/user/:id")
     @AdminOnly()
     async updateUser(
-        @Param("id") userId,
+        @Param("id") userId: string,
         @Body() updates: UpdateUserDTO,
-        @Res() res,
-        @Req() request
+        @Res() res: Response,
+        @Req() request: BaseRequest
     ) {
         const user = await this.usersService.getById(userId);
 
@@ -183,7 +183,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user/ory/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getByOryId(@Param("id") oryId) {
+    public async getByOryId(@Param("id") oryId: string) {
         return this.usersService.getByOryId(oryId);
     }
 
@@ -191,7 +191,7 @@ export class UsersController {
     @Get("api/user/:id")
     @Auth()
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getUser(@Param("id") userId) {
+    public async getUser(@Param("id") userId: string) {
         const value = new Types.ObjectId(userId);
         return this.usersService.getById(value);
     }
