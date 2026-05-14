@@ -20,10 +20,6 @@ const CommentCardStyle = styled.div`
 
     &:hover {
         box-shadow: 0px 3px 3px 1px ${colors.shadow};
-
-        .comment-card-actions-resolve-button {
-            display: block;
-        }
     }
 
     .comment-card-header {
@@ -61,10 +57,6 @@ const CommentCardStyle = styled.div`
         flex-direction: column;
         width: 100%;
         gap: 16px;
-    }
-
-    .comment-card-actions-resolve-button {
-        display: none;
     }
 `;
 
