@@ -1,4 +1,4 @@
-import TextArea from "../../TextArea";
+import AletheiaTextArea from "../../AletheiaTextArea";
 import BaseClaimForm from "./BaseClaimForm";
 import { FormControl, FormHelperText } from "@mui/material";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
@@ -35,7 +35,7 @@ const ClaimCreate = () => {
                         <span className="require-label">*</span>
                         <p className="form-label">{t("claimForm:contentField")}</p>
                     </div>
-                    <TextArea
+                    <AletheiaTextArea
                         multiline
                         value={content || ""}
                         onChange={(e) => {

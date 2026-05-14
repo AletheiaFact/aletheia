@@ -31,39 +31,29 @@ export class CommentService {
         );
     }
 
-    async update(id: string, comment: any) {
-        const existingComment = await this.CommentModel.findById(id);
-        if (!existingComment) {
+    async update(id: string, body: any) {
+        const { comment, text, resolved, type, user } = body;
+        const update = {
+            comment,
+            text,
+            resolved,
+            type,
+            ...(user && {
+                user: new Types.ObjectId(
+                    typeof user === "string" ? user : user._id
+                ),
+            }),
+        };
+
+        const updated = await this.CommentModel
+            .findByIdAndUpdate(id, update, { new: true })
+            .populate("user", "name");
+
+        if (!updated) {
             throw new NotFoundException(`Comment not found: ${id}`);
         }
-        const user = await this.usersService.getById(
-            comment.user || existingComment.user
-        );
-        const replies = comment.replies
-            ? comment?.replies?.map(
-                  (reply: any) => new Types.ObjectId(reply?._id)
-              )
-            : existingComment.replies;
 
-        const { comment: commentText, text, resolved, type } = comment;
-        const updatedComment = await this.CommentModel.findByIdAndUpdate(
-            id,
-            {
-                ...existingComment.toObject(),
-                ...(commentText !== undefined && { comment: commentText }),
-                ...(text !== undefined && { text }),
-                ...(resolved !== undefined && { resolved }),
-                ...(type !== undefined && { type }),
-                replies,
-                user: user!._id,
-            },
-            { new: true }
-        );
-
-        return {
-            ...updatedComment,
-            user,
-        };
+        return updated.toObject();
     }
 
     async createReplyComment(id: string, commentBody: any) {
@@ -74,14 +64,11 @@ export class CommentService {
         const newComment = await this.create({
             ...commentBody,
             targetId: existingComment._id,
+            isReply: true,
         });
 
         existingComment.replies.push(newComment._id as Types.ObjectId);
-
-        await this.CommentModel.updateOne(
-            { _id: existingComment._id },
-            existingComment
-        );
+        await existingComment.save();
 
         return newComment;
     }
