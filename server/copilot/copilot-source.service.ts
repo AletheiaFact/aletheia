@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SourceService } from "../source/source.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { toError } from "../util/error-handling";
 
 /**
  * Normalized source format used throughout the copilot module.
@@ -136,8 +137,9 @@ export class CopilotSourceService {
                     `Persisted Agencia source: ${normalized.href}`
                 );
             } catch (error) {
+                const err = toError(error);
                 this.logger.warn(
-                    `Failed to process Agencia source ${normalized.href}: ${error.message}`
+                    `Failed to process Agencia source ${normalized.href}: ${err.message}`
                 );
             }
         }

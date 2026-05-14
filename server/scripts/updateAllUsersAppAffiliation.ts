@@ -6,6 +6,7 @@ import { UsersService } from "../users/users.service";
 import loadConfig from "../configLoader";
 import { WinstonLogger } from "../winstonLogger";
 import OryService from "../auth/ory/ory.service";
+import { toError } from "../util/error-handling";
 
 async function updateUserAppAffiliation(
     userFromDB: any,
@@ -56,7 +57,8 @@ async function initApp() {
 
         logger.log("All users have been updated.");
     } catch (error) {
-        logger.error("An error occurred while updating users:", error);
+        const err = toError(error);
+        logger.error("An error occurred while updating users:", err);
     } finally {
         await app.close();
     }

@@ -13,8 +13,8 @@
         "rootDir": "../",
         "incremental": true,
         "strictNullChecks": true,
+        "useUnknownInCatchVariables": true,
         "noImplicitAny": true,
-        "useUnknownInCatchVariables": false,
         "strictPropertyInitialization": false,
         //
     },
