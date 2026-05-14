@@ -226,8 +226,7 @@ export class EventsService {
             const stackTrace =
                 error instanceof Error ? error.stack : String(error);
             this.logger.error(
-                `Failed to fetch events list: ${
-                    error instanceof Error ? error.message : "Unknown error"
+                `Failed to fetch events list: ${error instanceof Error ? error.message : "Unknown error"
                 }`,
                 stackTrace
             );
@@ -418,11 +417,6 @@ export class EventsService {
                 sentencesData,
                 imagesData,
             });
-        } catch (error: any) {
-            this.logger.error(
-                `Metrics fetch failed, using fallback: ${error.message}`
-            );
-
         } catch (error) {
             const err = toError(error);
             this.logger.error(`Metrics fetch failed, using fallback: ${err.message}`);
