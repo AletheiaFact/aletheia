@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, OmitType } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateCommentDTO {
@@ -33,6 +33,10 @@ export class CreateCommentDTO {
     targetId: string;
 }
 
+export class CreateReplyCommentDTO extends OmitType(CreateCommentDTO, [
+    "targetId",
+] as const) { }
+
 export class UpdateCommentDTO {
     @IsOptional()
     @IsString()
@@ -48,10 +52,6 @@ export class UpdateCommentDTO {
     @IsString()
     @ApiPropertyOptional()
     user?: string;
-
-    @IsOptional()
-    @ApiPropertyOptional()
-    replies?: string[];
 
     @IsOptional()
     @ApiPropertyOptional()
