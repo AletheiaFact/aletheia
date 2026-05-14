@@ -10,9 +10,9 @@ export class ParagraphService {
         private ParagraphModel: Model<ParagraphDocument>
     ) {}
 
-    async create(paragraphBody) {
+    async create(paragraphBody: Record<string, any>) {
         return await Promise.all(paragraphBody.content).then(
-            async (paragraph) => {
+            async (paragraph: any[]) => {
                 paragraphBody.content = paragraph;
                 const newParagraph = await new this.ParagraphModel(
                     paragraphBody

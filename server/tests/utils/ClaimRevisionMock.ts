@@ -1,10 +1,10 @@
 const { ObjectId } = require("mongodb");
 
 export const ClaimRevisionMock = (
-    claimRevisionId,
-    personalitiesId,
-    claimId,
-    speecheId
+    claimRevisionId: string,
+    personalitiesId: string[],
+    claimId: string,
+    speecheId: string
 ) => ({
     _id: claimRevisionId,
     personalities: [new ObjectId(personalitiesId[0])],

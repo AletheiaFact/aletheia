@@ -12,7 +12,7 @@ export class CommentService {
         private usersService: UsersService
     ) {}
 
-    async create(comment) {
+    async create(comment: any) {
         comment.user = new Types.ObjectId(comment.user);
         const [user, newComment] = await Promise.all([
             this.usersService.getById(comment.user),
@@ -25,13 +25,13 @@ export class CommentService {
         };
     }
 
-    async updateManyComments(comments) {
+    async updateManyComments(comments: any[]) {
         await Promise.all(
             comments.map((comment) => this.update(comment?._id, comment))
         );
     }
 
-    async update(id, body) {
+    async update(id: string, body: any) {
         const { comment, text, resolved, type, user } = body;
         const update = {
             comment,
@@ -56,7 +56,7 @@ export class CommentService {
         return updated.toObject();
     }
 
-    async createReplyComment(id, commentBody) {
+    async createReplyComment(id: string, commentBody: any) {
         const existingComment = await this.CommentModel.findById(id);
         if (!existingComment) {
             throw new NotFoundException(`Comment not found: ${id}`);
@@ -73,13 +73,13 @@ export class CommentService {
         return newComment;
     }
 
-    async deleteReplyComment(id, replyId) {
+    async deleteReplyComment(id: string, replyId: string) {
         const comment = await this.CommentModel.findById(id);
         if (!comment) {
             throw new NotFoundException(`Comment not found: ${id}`);
         }
 
-        const replies = comment.replies.filter((reply) => {
+        const replies = comment.replies.filter((reply: any) => {
             return !new Types.ObjectId(reply?._id).equals(replyId);
         });
 

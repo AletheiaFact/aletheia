@@ -13,7 +13,7 @@ export class UnattributedService {
         private UnattributedModel: Model<UnattributedDocument>
     ) {}
 
-    create(UnattributedBody) {
+    create(UnattributedBody: Record<string, any>) {
         return new this.UnattributedModel(UnattributedBody).save();
     }
 }

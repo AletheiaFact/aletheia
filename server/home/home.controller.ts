@@ -35,13 +35,13 @@ export class HomeController {
         private claimRevisionService: ClaimRevisionService,
         private claimReviewService: ClaimReviewService,
         private readonly eventsService: EventsService,
-        private featureFlagService: FeatureFlagService,
+        private featureFlagService: FeatureFlagService
     ) {}
 
     @ApiTags("pages")
     @Get("/home/:namespace?")
     @Redirect()
-    redirect(@Res() res) {
+    redirect(@Res() res: any) {
         return res.redirect("/");
     }
 
@@ -72,7 +72,7 @@ export class HomeController {
                 page: 0,
                 pageSize: 6,
                 order: "desc",
-                status: EventsStatus.FINALIZED
+                status: EventsStatus.FINALIZED,
             });
         }
 
