@@ -2,7 +2,7 @@ import React from "react";
 import colors from "../../styles/colors";
 import { Badge } from "@mui/material";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 
 const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
     return (
@@ -19,7 +19,7 @@ const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
                     style={{ color: colors.white, cursor: "pointer" }}
                 />
             </Badge>
-        </Button>
+        </AletheiaButton>
     );
 };
 
