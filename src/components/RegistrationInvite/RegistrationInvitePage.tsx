@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "next-i18next";
 import CTAButton from "../../components/Home/CTAButton"
-import { ButtonType } from "../Button";
+import { ButtonType } from "../AletheiaButton";
 import { Box } from "@mui/material";
 
 
@@ -28,7 +28,7 @@ const RegistrationInvite = () => {
                     fontWeight: 700,
                 }}
             >
-                <CTAButton type={ButtonType.blue} />
+                <CTAButton type={ButtonType.primary} />
             </Box>
         </Box>
     );

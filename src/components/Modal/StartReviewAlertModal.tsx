@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
@@ -48,7 +48,7 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                 </Typography>
 
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     onClick={onCancel}
                     style={{ minWidth: "120px" }}
                 >

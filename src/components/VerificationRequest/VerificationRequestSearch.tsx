@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InputSearch from "../Form/InputSearch";
 import { SearchOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../store/store";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { Grid, Typography } from "@mui/material";

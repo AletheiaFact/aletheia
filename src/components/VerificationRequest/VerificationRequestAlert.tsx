@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { Grid } from "@mui/material";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import AletheiaAlert from "../AletheiaAlert";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -36,6 +36,7 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
                     <AletheiaButton
                         href={`/claim/create?verificationRequest=${verificationRequestId}`}
                         className="container-alert"
+                        type={ButtonType.primary}
                     >
                         {t("seo:claimCreateTitle")}
                     </AletheiaButton>
@@ -48,14 +49,15 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
                 showIcon: false,
                 message: t("verificationRequest:openVerificationRequestClaimLabel"),
                 description: (
-                        <AletheiaButton
-                            href={`/claim/${targetId?.slug}`}
-                            className="container-alert"
-                        >
-                            {t(
-                                "verificationRequest:openVerificationRequestClaimButton"
-                            )}
-                        </AletheiaButton>
+                    <AletheiaButton
+                        href={`/claim/${targetId?.slug}`}
+                        className="container-alert"
+                        type={ButtonType.primary}
+                    >
+                        {t(
+                            "verificationRequest:openVerificationRequestClaimButton"
+                        )}
+                    </AletheiaButton>
                 ),
             };
         }

@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 import { useTranslation } from "react-i18next";
@@ -49,7 +49,7 @@ function ForumAlertModal({ open, onCancel }: ForumAlertModalProps) {
                 }}
             >
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     onClick={onCancel}
                     href={"https://forum.aletheiafact.org/"}
                     target="_blank"

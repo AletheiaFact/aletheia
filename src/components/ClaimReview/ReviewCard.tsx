@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { ContentModelEnum } from "../../types/enums";
 import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 import { useAtom } from "jotai";
@@ -125,7 +125,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                     <Grid className="review-actions">
                         <TagsList key={0} tags={content.topics || []} />
                         <AletheiaButton
-                            type={ButtonType.blue}
+                            type={ButtonType.primary}
                             href={href}
                             target="_blank"
                             style={{ width: "fit-content" }}

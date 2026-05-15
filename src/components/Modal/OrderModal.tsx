@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import OrderRadio from "../Radio/OrderRadio";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import { useAtom } from "jotai";
@@ -32,7 +32,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
             }
         >
             <OrderRadio value={value} setValue={setValue} />
-            
+
             <div
                 style={{
                     marginTop: 30,
@@ -50,7 +50,10 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton type={ButtonType.blue} onClick={handleOk}>
+                <AletheiaButton
+                    type={ButtonType.primary}
+                    onClick={handleOk}
+                >
                     {t("orderModal:okButton")}
                 </AletheiaButton>
             </div>

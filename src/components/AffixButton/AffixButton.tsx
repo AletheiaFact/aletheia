@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 import colors from "../../styles/colors";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import PulseAnimation from "../PulseAnimation";
 import Fab from "./Fab";
@@ -240,7 +240,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                     }}
                 >
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         onClick={handleHideModal}
                         data-cy={"testButtonTutorialOk"}
                     >

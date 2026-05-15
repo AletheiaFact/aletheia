@@ -48,10 +48,6 @@ const DonationBannerStyle = styled(Grid)`
         text-align: center;
     }
 
-    .banner-button {
-        font-weight: 700;
-    }
-
     @media ${queries.md} {
         .banner-content {
             max-width: 80%;
@@ -69,7 +65,7 @@ const DonationBannerStyle = styled(Grid)`
 
         .close-banner {
             align-self: flex-start;
-            top: 10px;    
+            top: 10px;
         }
     }
 `;

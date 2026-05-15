@@ -1,41 +1,96 @@
-import AletheiaButton, { ButtonType } from "../../../components/Button";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import AletheiaButton, { ButtonType } from "../../../components/AletheiaButton";
+import type { Meta, StoryObj } from "@storybook/react";
 
-export default {
+const SIZE_OPTIONS = ["small", "medium", "large"] as const;
+
+const meta: Meta<typeof AletheiaButton> = {
     title: "Components/Buttons/AletheiaButton",
     component: AletheiaButton,
+    parameters: {
+        controls: {
+            exclude: [
+                "ref",
+                "component",
+                "onClick",
+                "target",
+                "htmlType",
+                "loading",
+                "event",
+            ],
+        },
+    },
     argTypes: {
-        onClick: { action: "clicked" },
         type: {
             options: Object.values(ButtonType),
             mapping: ButtonType,
-            control: {
-                type: "select",
-            },
+            control: { type: "select" },
         },
+        size: {
+            options: SIZE_OPTIONS,
+            control: { type: "inline-radio" },
+        },
+        fullWidth: { control: { type: "boolean" } },
+        rounded: { control: { type: "boolean" } },
+        fontWeight: { control: { type: "text" } },
+        disabled: { control: { type: "boolean" } },
+        children: { control: { type: "text" } },
     },
-} as ComponentMeta<typeof AletheiaButton>;
+};
 
-const Template: ComponentStory<typeof AletheiaButton> = (args) => (
-    <AletheiaButton {...args}>{args.children}</AletheiaButton>
-);
+export default meta;
 
+type Story = StoryObj<typeof AletheiaButton>;
 
-export const Default = Template.bind({});
-Default.args = { children: "Default Button type is blue" };
+// Background per variant — picked so the button stays visible/contrasted
+// against the canvas. Light variants live on the blue/dark backgrounds;
+// dark/coloured variants live on the light background.
 
-export const Blue = Template.bind({});
-Blue.args = { children: "Blue Button", type: ButtonType.blue };
+export const Default: Story = {
+    args: { children: "Default Button (namespace color)" },
+    parameters: { backgrounds: { default: "light" } },
+};
 
-export const White = Template.bind({});
-White.args = { type: ButtonType.white, children: "White Button" };
-White.parameters = {
-    backgrounds: {
-        default: "blue"
-    }
-}
-export const WhiteBlack = Template.bind({});
-WhiteBlack.args = { type: ButtonType.whiteBlack, children: "white Black Button" };
+export const Primary: Story = {
+    args: { type: ButtonType.primary, children: "Primary Button" },
+    parameters: { backgrounds: { default: "light" } },
+};
 
-export const WhiteBlue = Template.bind({});
-WhiteBlue.args = { type: ButtonType.whiteBlue, children: "white Blue Button" };
+export const Secondary: Story = {
+    args: { type: ButtonType.secondary, children: "Secondary Button" },
+    parameters: { backgrounds: { default: "light" } },
+};
+
+export const Outline: Story = {
+    args: { type: ButtonType.outline, children: "Outline Button" },
+    parameters: { backgrounds: { default: "light" } },
+};
+
+export const White: Story = {
+    args: { type: ButtonType.white, children: "White Button" },
+    parameters: { backgrounds: { default: "blue" } },
+};
+
+export const Gray: Story = {
+    args: { type: ButtonType.gray, children: "Gray Button" },
+    parameters: { backgrounds: { default: "blue" } },
+};
+
+export const WhiteBlue: Story = {
+    args: { type: ButtonType.whiteBlue, children: "White Blue Button" },
+    parameters: { backgrounds: { default: "light" } },
+};
+
+export const WhiteBlack: Story = {
+    args: { type: ButtonType.whiteBlack, children: "White Black Button" },
+    parameters: { backgrounds: { default: "blue" } },
+};
+
+export const LightBlue: Story = {
+    args: { type: ButtonType.lightBlue, children: "Light Blue Button" },
+    parameters: { backgrounds: { default: "light" } },
+};
+
+export const Text: Story = {
+    args: { type: ButtonType.text, children: "Text Button" },
+    parameters: { backgrounds: { default: "light" } },
+};

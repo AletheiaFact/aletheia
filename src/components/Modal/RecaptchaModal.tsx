@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 
@@ -75,7 +75,7 @@ const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
 
                     <AletheiaButton
                         onClick={() => onConfirm(token)}
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         disabled={!token}
                         data-cy="testRecaptchaConfirm"
                     >

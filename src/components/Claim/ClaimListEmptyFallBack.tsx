@@ -1,5 +1,5 @@
 import React from "react";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { currentNameSpace } from "../../atoms/namespace";
@@ -64,7 +64,7 @@ const ClaimListEmptyFallBack = ({
                         }}
                     >
                         <AletheiaButton
-                            type={ButtonType.blue}
+                            type={ButtonType.primary}
                             onClick={handleClick}
                         >
                             {t("personality:claimListEmptyFallBack")}

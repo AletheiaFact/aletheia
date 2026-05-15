@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { Grid, Tooltip } from "@mui/material";
-import Button from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
@@ -40,9 +40,9 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         arrow
                     >
                         <span>
-                            <Button
+                            <AletheiaButton
                                 style={{
-                                    height: "40px",
+                                    height: "45px",
                                     margin: "0 auto",
                                     opacity: editorConfiguration?.readonly
                                         ? 0.4
@@ -58,7 +58,7 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                                 suppressContentEditableWarning
                             >
                                 <DeleteOutlined fontSize="small" />
-                            </Button>
+                            </AletheiaButton>
                         </span>
                     </Tooltip>
                 </Grid>

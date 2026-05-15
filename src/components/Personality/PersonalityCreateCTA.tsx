@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import AddIcon from '@mui/icons-material/Add';
 import CreateCTAButton from "../CreateCTAButton";
 
@@ -9,14 +9,14 @@ const PersonalityCreateCTA = ({ href }) => {
 
     return (
         <CreateCTAButton>
-            <Button
-                type={ButtonType.blue}
+            <AletheiaButton
+                type={ButtonType.primary}
                 href={href || `./create`}
                 data-cy="testButtonCreatePersonality"
-                icon={<AddIcon />}
+                startIcon={<AddIcon />}
             >
                 {t("personalityCTA:button")}
-            </Button>
+            </AletheiaButton>
         </CreateCTAButton>
     );
 };
