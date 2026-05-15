@@ -12,7 +12,7 @@ export class NotificationController {
 
     @ApiTags("notifications")
     @Post("api/notification")
-    sendNotification(@Body() body) {
+    sendNotification(@Body() body: { subscriberId: string; payload: any }) {
         const { subscriberId, payload } = body;
         return this.notificationService.sendNotification(subscriberId, payload);
     }
@@ -25,13 +25,13 @@ export class NotificationController {
     @Post("api/topic-subscription/:key/subscribers")
     addSubscriberToTopic(
         @Param("key") key: string,
-        @Body("subscriberId") subscriberId: string
+        @Body("subscriberId") subscriberId: string[]
     ) {
         return this.notificationService.addTopicSubscriber(key, subscriberId);
     }
 
     @Get("api/notification/token/:subscriberId")
-    async getTokens(@Param("subscriberId") subscriberId) {
+    async getTokens(@Param("subscriberId") subscriberId: string) {
         const hmacHash =
             this.notificationService.generateHmacHash(subscriberId);
         const applicationIdentifier = this.configService.get<string>(

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
@@ -12,7 +12,7 @@ export class CommentService {
         private usersService: UsersService
     ) {}
 
-    async create(comment) {
+    async create(comment: any) {
         comment.user = new Types.ObjectId(comment.user);
         const [user, newComment] = await Promise.all([
             this.usersService.getById(comment.user),
@@ -25,19 +25,24 @@ export class CommentService {
         };
     }
 
-    async updateManyComments(comments) {
+    async updateManyComments(comments: any[]) {
         await Promise.all(
             comments.map((comment) => this.update(comment?._id, comment))
         );
     }
 
-    async update(id, comment) {
+    async update(id: string, comment: any) {
         const existingComment = await this.CommentModel.findById(id);
+        if (!existingComment) {
+            throw new NotFoundException(`Comment not found: ${id}`);
+        }
         const user = await this.usersService.getById(
             comment.user || existingComment.user
         );
         const replies = comment.replies
-            ? comment?.replies?.map((reply) => new Types.ObjectId(reply?._id))
+            ? comment?.replies?.map(
+                  (reply: any) => new Types.ObjectId(reply?._id)
+              )
             : existingComment.replies;
 
         const { comment: commentText, text, resolved, type } = comment;
@@ -50,7 +55,7 @@ export class CommentService {
                 ...(resolved !== undefined && { resolved }),
                 ...(type !== undefined && { type }),
                 replies,
-                user: user._id,
+                user: user!._id,
             },
             { new: true }
         );
@@ -61,8 +66,11 @@ export class CommentService {
         };
     }
 
-    async createReplyComment(id, commentBody) {
+    async createReplyComment(id: string, commentBody: any) {
         const existingComment = await this.CommentModel.findById(id);
+        if (!existingComment) {
+            throw new NotFoundException(`Comment not found: ${id}`);
+        }
         const newComment = await this.create({
             ...commentBody,
             targetId: existingComment._id,
@@ -78,10 +86,13 @@ export class CommentService {
         return newComment;
     }
 
-    async deleteReplyComment(id, replyId) {
+    async deleteReplyComment(id: string, replyId: string) {
         const comment = await this.CommentModel.findById(id);
+        if (!comment) {
+            throw new NotFoundException(`Comment not found: ${id}`);
+        }
 
-        const replies = comment.replies.filter((reply) => {
+        const replies = comment.replies.filter((reply: any) => {
             return !new Types.ObjectId(reply?._id).equals(replyId);
         });
 

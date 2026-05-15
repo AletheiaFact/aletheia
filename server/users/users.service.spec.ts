@@ -180,7 +180,7 @@ describe("UsersService (Unit)", () => {
             );
             expect(mockUserModel.findByIdAndUpdate).toHaveBeenCalledWith(
                 "user-123",
-                updates,
+                { $set: { role: updates.role } },
                 { new: true }
             );
         });

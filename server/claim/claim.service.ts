@@ -5,6 +5,7 @@ import {
     NotFoundException,
     Logger,
     InternalServerErrorException,
+    ConflictException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
@@ -23,6 +24,7 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
+import slugify from "slugify";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -76,7 +78,7 @@ export class ClaimService {
         ]);
 
         const processedClaim = await Promise.all(
-            claims.map((claim) => {
+            claims.map((claim: any) => {
                 return this.postProcess({
                     ...claim.latestRevision,
                     ...claim,
@@ -100,8 +102,30 @@ export class ClaimService {
      * @param claim ClaimBody received of the client.
      * @returns Return a new claim object.
      */
-    async create(claim: any) {
-        claim.personalities = claim.personalities.map((personality) => {
+    async create(claim: Record<string, any>) {
+        const generatedSlug = slugify(claim.title, {
+            lower: true,
+            strict: true,
+        });
+
+        const safeNameSpace =
+            typeof claim.nameSpace === "string" ? claim.nameSpace : undefined;
+
+        const existingClaim = await this.ClaimModel.findOne({
+            slug: generatedSlug,
+            nameSpace: { $eq: safeNameSpace },
+            isDeleted: false,
+        });
+
+        if (existingClaim) {
+            throw new ConflictException(
+                "There is already a claim with this title."
+            );
+        }
+
+        claim.slug = generatedSlug;
+
+        claim.personalities = claim.personalities.map((personality: string) => {
             return new Types.ObjectId(personality);
         });
 
@@ -110,10 +134,12 @@ export class ClaimService {
         }
 
         const newClaim = new this.ClaimModel(claim);
+
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
             claim
         );
+
         newClaim.latestRevision = newClaimRevision._id;
         newClaim.slug = newClaimRevision.slug;
 
@@ -131,8 +157,9 @@ export class ClaimService {
             TypeModel.Claim
         );
 
-        await this.historyService.createHistory(history);
-        this.stateEventService.createStateEvent(stateEvent);
+        await this.historyService.createHistory(history as any);
+        this.stateEventService.createStateEvent(stateEvent as any);
+
         if (claim.group) {
             this.groupService.updateWithTargetId(claim.group, newClaim._id);
         }
@@ -152,7 +179,7 @@ export class ClaimService {
      * @param claimRevisionUpdate ClaimBody received of the client.
      * @returns Return a new claim object.
      */
-    async update(claimId: string, claimRevisionUpdate: any) {
+    async update(claimId: string, claimRevisionUpdate: Record<string, any>) {
         const claim = await this._getClaim(
             { _id: claimId, isHidden: false },
             undefined,
@@ -181,7 +208,7 @@ export class ClaimService {
             previousRevision
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         claim.save();
         return newClaimRevision;
@@ -216,7 +243,7 @@ export class ClaimService {
                 null,
                 previousClaim
             );
-            await this.historyService.createHistory(history);
+            await this.historyService.createHistory(history as any);
 
             const result = await this.ClaimModel.softDelete({ _id: claimId });
             this.logger.log(
@@ -224,7 +251,7 @@ export class ClaimService {
             );
 
             return result;
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 `Error during soft delete for claimId: ${claimId}. Details: ${error.message}`
             );
@@ -255,7 +282,7 @@ export class ClaimService {
                 after,
                 before
             );
-            await this.historyService.createHistory(history);
+            await this.historyService.createHistory(history as any);
 
             return await this.ClaimModel.updateOne(
                 { _id: claim._id },
@@ -272,11 +299,15 @@ export class ClaimService {
             this.util.getParamsBasedOnUserRole(
                 { _id: claimId, nameSpace },
                 this.req
-            )
+            ) as ClaimMatchParameters
         );
     }
 
-    async getByClaimSlug(claimSlug, revisionId = undefined, population = true) {
+    async getByClaimSlug(
+        claimSlug: string,
+        revisionId: string | undefined = undefined,
+        population = true
+    ) {
         const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
@@ -285,7 +316,12 @@ export class ClaimService {
             },
             this.req
         );
-        return this._getClaim(queryOptions, revisionId, true, population);
+        return this._getClaim(
+            queryOptions as ClaimMatchParameters,
+            revisionId,
+            true,
+            population
+        );
     }
 
     /**
@@ -318,7 +354,7 @@ s    */
                 `Found ${result.length} claims for personality ${personalityId}`
             );
             return result;
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 `Failed to fetch claims for personality ${personalityId}`,
                 error.stack
@@ -330,9 +366,9 @@ s    */
     }
 
     async getByPersonalityIdAndClaimSlug(
-        personalityId,
-        claimSlug,
-        revisionId = undefined,
+        personalityId: string,
+        claimSlug: string,
+        revisionId: string | undefined = undefined,
         population = true
     ) {
         const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
@@ -344,12 +380,17 @@ s    */
             },
             this.req
         );
-        return this._getClaim(queryOptions, revisionId, true, population);
+        return this._getClaim(
+            queryOptions as ClaimMatchParameters,
+            revisionId,
+            true,
+            population
+        );
     }
 
     private async _getClaim(
         match: ClaimMatchParameters,
-        revisionId = undefined,
+        revisionId: string | undefined = undefined,
         postprocess = true,
         population = true
     ) {
@@ -360,12 +401,16 @@ s    */
                     .populate("sources", "_id href")
                     .select({ latestRevision: 0 });
 
+                if (!rawClaim) {
+                    throw new NotFoundException();
+                }
+
                 const revision = await this.claimRevisionService.getRevision({
                     _id: revisionId,
                     claimId: rawClaim._id,
                 });
 
-                if (!revision || !rawClaim) {
+                if (!revision) {
                     throw new NotFoundException();
                 }
 
@@ -399,6 +444,10 @@ s    */
                         })
                         .lean();
 
+                    if (!foundClaim) {
+                        throw new NotFoundException();
+                    }
+
                     claim = {
                         ...foundClaim.latestRevision,
                         ...foundClaim,
@@ -422,7 +471,7 @@ s    */
      * @param claim claim from query
      * @returns return the claim with available revision and reviewStats data
      */
-    private async postProcess(claim) {
+    private async postProcess(claim: any) {
         let processedClaim = {
             ...(claim?.latestRevision || claim?.revision),
             ...claim,
@@ -441,7 +490,7 @@ s    */
             if (processedClaim?.content) {
                 if (processedClaim?.contentModel === ContentModelEnum.Debate) {
                     processedClaim.content.content =
-                        processedClaim.content.content.map((speech) => {
+                        processedClaim.content.content.map((speech: any) => {
                             const content = this.transformContentObject(
                                 speech.content,
                                 reviews,
@@ -468,7 +517,7 @@ s    */
         return processedClaim;
     }
 
-    private calculateOverallStats(claim) {
+    private calculateOverallStats(claim: any) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
 
@@ -479,9 +528,9 @@ s    */
                     totalClaimsReviewed++;
                 }
             } else if (claim?.content.length > 0) {
-                claim.content.forEach((p) => {
+                claim.content.forEach((p: any) => {
                     totalClaims += p.content.length;
-                    p.content.forEach((sentence) => {
+                    p.content.forEach((sentence: any) => {
                         if (sentence.props.classification) {
                             totalClaimsReviewed++;
                         }
@@ -495,12 +544,16 @@ s    */
         };
     }
 
-    private transformContentObject(claimContent, reviews, reviewTasks) {
+    private transformContentObject(
+        claimContent: any,
+        reviews: any[],
+        reviewTasks: any[]
+    ) {
         if (!claimContent || (reviews.length <= 0 && reviewTasks.length <= 0)) {
             return claimContent;
         }
 
-        const processReview = (sentence, classification) => ({
+        const processReview = (sentence: any, classification: any) => ({
             ...sentence,
             props: {
                 ...sentence.props,
@@ -510,7 +563,7 @@ s    */
 
         if (claimContent.type === ContentModelEnum.Image) {
             const claimReview = reviews.find(
-                (review) => review._id.data_hash === claimContent.data_hash
+                (review: any) => review._id.data_hash === claimContent.data_hash
             );
 
             if (claimReview) {
@@ -520,11 +573,11 @@ s    */
                 };
             }
         } else {
-            claimContent.forEach((paragraph, paragraphIndex) => {
+            claimContent.forEach((paragraph: any, paragraphIndex: number) => {
                 claimContent[paragraphIndex].content = paragraph.content.map(
-                    (sentence) => {
+                    (sentence: any) => {
                         const claimReview = reviews.find(
-                            (review) =>
+                            (review: any) =>
                                 review?._id.data_hash === sentence.data_hash
                         );
 
@@ -536,7 +589,8 @@ s    */
                         }
 
                         const reviewTask = reviewTasks.find(
-                            (task) => task?.data_hash === sentence.data_hash
+                            (task: any) =>
+                                task?.data_hash === sentence.data_hash
                         );
 
                         if (reviewTask) {
@@ -552,7 +606,7 @@ s    */
         return claimContent;
     }
 
-    private getClaimContent(claim) {
+    private getClaimContent(claim: any) {
         if (
             claim.contentModel === ContentModelEnum.Speech ||
             claim.contentModel === ContentModelEnum.Unattributed

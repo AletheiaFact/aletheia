@@ -18,7 +18,15 @@ export class NotificationService {
         return false;
     }
 
-    async createSubscriber({ _id = null, email, name }) {
+    async createSubscriber({
+        _id = "",
+        email,
+        name,
+    }: {
+        _id?: string;
+        email: string;
+        name: string;
+    }) {
         if (!this.novuIsConfigured()) {
             return;
         }
@@ -97,7 +105,7 @@ export class NotificationService {
         }
     }
 
-    async addTopicSubscriber(key: string, subscribersId) {
+    async addTopicSubscriber(key: string, subscribersId: string[]) {
         if (!this.novuIsConfigured()) {
             return;
         }
@@ -109,7 +117,7 @@ export class NotificationService {
         return result.data;
     }
 
-    async removeTopicSubscriber(key: string, subscribersId) {
+    async removeTopicSubscriber(key: string, subscribersId: string[]) {
         if (!this.novuIsConfigured()) {
             return;
         }
@@ -121,7 +129,7 @@ export class NotificationService {
         return result.data;
     }
 
-    async sendDailyReviewsEmail(key: string, body) {
+    async sendDailyReviewsEmail(key: string, body: string) {
         if (!this.novuIsConfigured()) {
             return;
         }
@@ -149,12 +157,15 @@ export class NotificationService {
         return result.data;
     }
 
-    generateHmacHash(subscriberId) {
+    generateHmacHash(subscriberId: string) {
         if (!this.novuIsConfigured()) {
             return;
         }
 
         const NOVU_API_KEY = this.configService.get<string>("novu.api_key");
+        if (!NOVU_API_KEY) {
+            return;
+        }
 
         return createHmac("sha256", NOVU_API_KEY)
             .update(subscriberId)

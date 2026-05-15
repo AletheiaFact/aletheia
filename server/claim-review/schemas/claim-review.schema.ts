@@ -50,11 +50,14 @@ export class ClaimReview {
         type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return Object.values(ReportModelEnum).includes(v);
+            validator: (v: string) => {
+                return Object.values(ReportModelEnum).includes(
+                    v as ReportModelEnum
+                );
             },
         },
-        message: (tag) => `${tag} is not a valid report type.`,
+        message: (tag: { value: string }) =>
+            `${tag} is not a valid report type.`,
     })
     reportModel: ReportModelEnum;
 

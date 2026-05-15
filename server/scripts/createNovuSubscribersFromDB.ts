@@ -6,7 +6,11 @@ import { NotificationService } from "../notifications/notifications.service";
 import { WinstonLogger } from "../winstonLogger";
 import loadConfig from "../configLoader";
 
-async function createNovuSubscriber(userFromDB, novuService, logger) {
+async function createNovuSubscriber(
+    userFromDB: any,
+    novuService: NotificationService,
+    logger: WinstonLogger
+) {
     if (!userFromDB || !userFromDB.id) {
         throw new Error(`Invalid user data: ${JSON.stringify(userFromDB)}`);
     }

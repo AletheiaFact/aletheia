@@ -8,14 +8,13 @@ import { useFooterData } from "./hooks/useFooterData";
 import localConfig from "../../../config/localConfig";
 
 const Footer = () => {
-    const { mediumDevice, isMobile, isMainNamespace } = useFooterData();
+    const { isMobile, isMainNamespace } = useFooterData();
 
     return (
         <FooterBox
             component="footer"
             $isMobile={isMobile}
             $namespacePrefix={isMainNamespace}
-            $mediumDevice={mediumDevice}
         >
             <Box className="footer-inner-container">
                 {localConfig.footer.showCallToAction ? <FooterCta /> : null}

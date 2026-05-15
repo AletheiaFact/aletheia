@@ -3,7 +3,7 @@ import {
     Injectable,
     NotFoundException,
 } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { Model, SortOrder, Types } from "mongoose";
 import { SourceDocument, Source } from "./schemas/source.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import validator from "validator";
@@ -16,7 +16,17 @@ export class SourceService {
         private SourceModel: Model<SourceDocument>
     ) {}
 
-    async listAll({ page, pageSize, order, nameSpace }): Promise<Source[]> {
+    async listAll({
+        page,
+        pageSize,
+        order,
+        nameSpace,
+    }: {
+        page: number;
+        pageSize: string;
+        order: SortOrder;
+        nameSpace: string;
+    }): Promise<Source[]> {
         return this.SourceModel.find({
             nameSpace,
             "props.classification": { $exists: true },
@@ -27,14 +37,14 @@ export class SourceService {
             .lean();
     }
 
-    async listAllDailySourceReviews(query) {
+    async listAllDailySourceReviews(query: Record<string, any>) {
         return this.SourceModel.find({
             ...query,
             "props.classification": { $exists: true },
         });
     }
 
-    async create(data) {
+    async create(data: any) {
         if (data?.targetId) {
             data.targetId = [new Types.ObjectId(data.targetId)];
         }
@@ -62,24 +72,32 @@ export class SourceService {
         return await new this.SourceModel(data).save();
     }
 
-    async updateTargetId(sourceId, newTargetId) {
+    async updateTargetId(sourceId: string, newTargetId: Types.ObjectId) {
         // false positive in sonar cloud
         const source = await this.SourceModel.findById(sourceId);
+        if (!source) {
+            throw new NotFoundException(`Source not found: ${sourceId}`);
+        }
         source.targetId = [...source.targetId, newTargetId];
         source.save();
         return source;
     }
 
-    async getByTargetId(targetId, page, pageSize, order) {
-        targetId = new Types.ObjectId(targetId);
+    async getByTargetId(
+        targetId: string,
+        page: number,
+        pageSize: number,
+        order: SortOrder
+    ) {
+        const objectId = new Types.ObjectId(targetId);
 
-        return this.SourceModel.find({ targetId })
+        return this.SourceModel.find({ targetId: objectId })
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ _id: order, field: "asc" });
+            .sort({ _id: order, field: "asc" as SortOrder });
     }
 
-    find(match) {
+    find(match: Record<string, any>) {
         return this.SourceModel.find({ match }, { _id: 1, href: 1 });
     }
 
@@ -87,11 +105,11 @@ export class SourceService {
         return this.SourceModel.findOne({ href: { $eq: href } }).exec();
     }
 
-    getById(_id) {
+    getById(_id: string) {
         return this.SourceModel.findById(_id);
     }
 
-    async getByDataHash(data_hash) {
+    async getByDataHash(data_hash: string) {
         const source = await this.SourceModel.findOne({ data_hash });
 
         if (source) {
@@ -101,7 +119,7 @@ export class SourceService {
         }
     }
 
-    async update(data_hash, sourceBodyUpdate) {
+    async update(data_hash: string, sourceBodyUpdate: Partial<Source>) {
         const source = await this.getByDataHash(data_hash);
 
         const newSource = Object.assign(source, sourceBodyUpdate);
@@ -117,7 +135,7 @@ export class SourceService {
         return sourceUpdated;
     }
 
-    count(query) {
+    count(query: Record<string, any>) {
         return this.SourceModel.countDocuments().where({
             ...query,
             "props.classification": { $exists: true },

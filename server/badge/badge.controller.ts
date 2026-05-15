@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Post, Put, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
@@ -28,7 +28,10 @@ export class BadgeController {
     @AdminOnly()
     @ApiTags("badge")
     @Post("api/badge")
-    public async createBadge(@Body() badge: CreateBadgeDTO, @Req() request) {
+    public async createBadge(
+        @Body() badge: CreateBadgeDTO,
+        @Req() request: any
+    ) {
         const { users, ...rest } = badge;
         if (!rest.image._id) {
             const image = await this.imageService.create(rest.image);
@@ -57,7 +60,10 @@ export class BadgeController {
     @AdminOnly()
     @ApiTags("badge")
     @Put("api/badge/:id")
-    public async updateBadge(@Body() badge: UpdateBadgeDTO, @Req() request) {
+    public async updateBadge(
+        @Body() badge: UpdateBadgeDTO,
+        @Req() request: any
+    ) {
         const { users, ...rest } = badge;
 
         if (!rest.image._id) {
@@ -66,6 +72,9 @@ export class BadgeController {
         }
 
         const updatedBadge = await this.badgeService.update(rest);
+        if (!updatedBadge) {
+            throw new NotFoundException("Badge not found");
+        }
         updatedBadge.image = rest.image;
 
         const usersWithBadge = await this.usersService.findAll({
@@ -93,8 +102,7 @@ export class BadgeController {
                 });
                 user.badges = user.badges.filter(
                     (userBadge) =>
-                        userBadge._id.toString() !==
-                        updatedBadge._id.toString()
+                        userBadge._id.toString() !== updatedBadge._id.toString()
                 );
             }
         });

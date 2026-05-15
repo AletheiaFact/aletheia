@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { uniqueId } from "remirror";
 
-import claimApi from "../../../api/claim";
+import claimApi from "../../../api/claimApi";
 import personalityApi from "../../../api/personality";
 import SpeechApi from "../../../api/speechApi";
 import { debateAtom } from "../../../atoms/debate";

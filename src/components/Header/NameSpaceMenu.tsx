@@ -1,15 +1,20 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 import MenuItem from "@mui/material/MenuItem";
 import { Menu } from "@mui/material";
-import { currentNameSpace } from "../../atoms/namespace";
-import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
 import colors from "../../styles/colors";
 
-const NameSpaceMenu = ({ isLoading, userRole, anchorEl, setAnchorEl }) => {
-    const [nameSpace] = useAtom(currentNameSpace);
+export interface NameSpaceMenuProps {
+    isLoading: boolean;
+    userRole: string;
+    anchorEl: HTMLElement | null;
+    setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
+    nameSpace: string | null;
+}
+
+const NameSpaceMenu = ({ isLoading, userRole, anchorEl, setAnchorEl, nameSpace }: NameSpaceMenuProps) => {
     const router = useRouter();
 
     const handleClose = () => {

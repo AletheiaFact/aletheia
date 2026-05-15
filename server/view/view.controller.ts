@@ -22,7 +22,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }
@@ -121,7 +121,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }
@@ -157,7 +157,7 @@ export class ViewController {
     public async acessDeniedPage(
         @Req() req: Request,
         @Res() res: Response,
-        @Query() query: { originalUrl }
+        @Query() query: { originalUrl: string }
     ) {
         const parsedUrl = parse(req.url, true);
         const originalUrl = query.originalUrl;

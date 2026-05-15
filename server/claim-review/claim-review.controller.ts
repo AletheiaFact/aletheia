@@ -76,7 +76,7 @@ export class ClaimReviewController {
         @Body() body: UpdateClaimReviewDTO
     ): Promise<UpdateWriteOpResult> {
         const validateCaptcha = await this.captchaService.validate(
-            body.recaptcha
+            body.recaptcha ?? ""
         );
         if (!validateCaptcha) {
             throw new BadRequestException("Error validating captcha");
@@ -103,6 +103,9 @@ export class ClaimReviewController {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );
+        if (!review) {
+            return { review: null, descriptionForHide: null };
+        }
 
         const descriptionForHide =
             await this.historyService.getDescriptionForHide(

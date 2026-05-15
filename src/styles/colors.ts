@@ -1,6 +1,6 @@
 import localConfig from "../../config/localConfig";
 
-const colors = {
+const defaultColors = {
     primary: "rgb(17, 39, 58)", //#11273a
     secondary: "rgb(101, 126, 142)", //#657e8e
     tertiary: "rgb(156, 189, 210)", //#9bbcd1
@@ -32,6 +32,10 @@ const colors = {
     high: "#f57c00",
     medium: "#fbc02d",
     low: "#388e3c",
+};
+
+const colors = {
+    ...defaultColors,
     ...(localConfig?.theme?.colors || {}),
 };
 export default colors;

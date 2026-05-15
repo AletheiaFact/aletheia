@@ -27,7 +27,10 @@ export class FileManagementController {
     @ApiTags("file-management")
     @Post("api/image")
     @UseInterceptors(FilesInterceptor("files"))
-    async upload(@UploadedFiles() files: Express.Multer.File[], @Res() res) {
+    async upload(
+        @UploadedFiles() files: Express.Multer.File[],
+        @Res() res: any
+    ) {
         const result = await Promise.all(
             files.map(async (file) => {
                 const imageDataHash = md5(file.buffer);

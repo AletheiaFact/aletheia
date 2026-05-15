@@ -1,10 +1,10 @@
 import React from "react";
 import colors from "../../styles/colors";
 import { Badge } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 
-const NotificationIcon = ({ unseenCount }) => {
+const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
     return (
         <AletheiaButton
             type={ButtonType.text}
@@ -15,11 +15,11 @@ const NotificationIcon = ({ unseenCount }) => {
                 overlap="circular"
                 badgeContent={unseenCount}
             >
-                <NotificationsIcon
+                <NotificationsNoneIcon
                     style={{ color: colors.white, cursor: "pointer" }}
                 />
             </Badge>
-        </AletheiaButton>
+        </Button>
     );
 };
 

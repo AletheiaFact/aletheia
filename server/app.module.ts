@@ -77,8 +77,8 @@ export class AppModule implements NestModule {
             .forRoutes("*");
     }
 
-    static register(options): DynamicModule {
-        const imports = [];
+    static register(options: any): DynamicModule {
+        const imports: Array<DynamicModule | typeof NotificationModule> = [];
         if (options.db.type === "mongodb") {
             imports.push(
                 MongooseModule.forRoot(

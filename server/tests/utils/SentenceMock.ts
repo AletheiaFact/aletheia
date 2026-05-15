@@ -1,8 +1,8 @@
 export const SentenceMock = {
-    topics: [],
+    topics: [] as string[],
     type: "sentence",
     data_hash: "4be75d25957a3cc0dbc6975a6939a385",
-    deletedAt: null,
+    deletedAt: null as Date | null,
     props: { id: 1 },
     content:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",

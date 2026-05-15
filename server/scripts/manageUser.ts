@@ -24,16 +24,23 @@ const parseArgs = () => {
     return { command, options };
 };
 
-async function updateUserAppAffiliation(userFromDB, app) {
+async function updateUserAppAffiliation(
+    userFromDB: any,
+    app: NestExpressApplication
+) {
     const oryService = await app.resolve(OryService);
     const configService = app.get(ConfigService);
 
     const app_affiliation = configService.get("app_affiliation");
     if (userFromDB && app_affiliation) {
-        await oryService.updateIdentity(userFromDB, null, {
-            app_affiliation,
-            role: userFromDB.role,
-        });
+        await oryService.updateIdentity(
+            userFromDB,
+            null as any,
+            {
+                app_affiliation,
+                role: userFromDB.role,
+            } as any
+        );
     }
 }
 

@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import slugify from "slugify";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../../source/source.service";
 import { SourceTargetModel } from "../../source/schemas/source.schema";
@@ -35,7 +34,7 @@ export class ClaimRevisionService {
         };
     }
 
-    getRevision(match) {
+    getRevision(match: Record<string, any>) {
         try {
             return this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
@@ -47,7 +46,7 @@ export class ClaimRevisionService {
     }
 
     /** get ClaimRevision by ID */
-    getRevisionById(id) {
+    getRevisionById(id: string) {
         try {
             return this.ClaimRevisionModel.findById(id)
                 .populate("personalities")
@@ -63,12 +62,9 @@ export class ClaimRevisionService {
      * @param claim Claim Content
      * @returns Save the claimRevision in database
      */
-    async create(claimId, claim) {
+    async create(claimId: any, claim: Record<string, any>) {
         claim.claimId = claimId;
-        claim.slug = slugify(claim.title, {
-            lower: true, // convert to lower case, defaults to `false`
-            strict: true, // strip special characters except replacement, defaults to `false`
-        });
+
         const newClaimRevision = new this.ClaimRevisionModel(claim);
         const newclaimRevisionId = new Types.ObjectId(newClaimRevision._id);
 
@@ -116,7 +112,7 @@ export class ClaimRevisionService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(nameSpace),
+            this.util.getVisibilityMatch(nameSpace ?? ""),
             {
                 $project: {
                     title: 1,
@@ -165,11 +161,14 @@ export class ClaimRevisionService {
         };
     }
 
-    getByContentId(contentId) {
+    getByContentId(contentId: Types.ObjectId) {
         return this.ClaimRevisionModel.findOne({ contentId });
     }
 
-    private async _createContentModel(claim, claimRevisionId) {
+    private async _createContentModel(
+        claim: Record<string, any>,
+        claimRevisionId: Types.ObjectId
+    ) {
         switch (claim.contentModel) {
             case ContentModelEnum.Speech:
                 return (
@@ -200,7 +199,7 @@ export class ClaimRevisionService {
         }
     }
 
-    private async _createSources(sources, claimId) {
+    private async _createSources(sources: string[] | undefined, claimId: any) {
         if (sources && Array.isArray(sources)) {
             for (let source of sources) {
                 try {
