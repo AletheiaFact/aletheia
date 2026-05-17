@@ -6,6 +6,7 @@ import { useAppSelector } from "../../../store/store";
 import { Comment } from "../../../types/Comment";
 import { CommentEnum } from "../../../types/enums";
 import { User } from "../../../types/User";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
 interface CommentCardProps {
     user: User | null;
@@ -24,9 +25,13 @@ const CommentCard = ({
         (state) => state?.enableEditorAnnotations
     );
     const { selectText } = useCommands();
+    const { isAssignee, isReviewer, isCrossChecker, isAdmin } =
+        useReviewTaskPermissions();
     const [isResolved, setIsResolved] = useState<boolean>(!!comment?.resolved);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [showForm, setShowForm] = useState<boolean>(false);
+
+    const canReply = isAdmin || isAssignee || isReviewer || isCrossChecker;
 
     const handleClickCard = () => {
         const isCrossCheckingComment =
@@ -35,7 +40,9 @@ const CommentCard = ({
             selectText({ from: comment.from, to: comment.to });
         }
         setIsSelected(isCrossCheckingComment);
-        setShowForm((prev) => !prev);
+        if (canReply) {
+            setShowForm((prev) => !prev);
+        }
     };
 
     if (isResolved) return null;
