@@ -7,12 +7,14 @@ import React, {
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Tooltip from "@mui/material/Tooltip";
+import { useAtom } from "jotai";
 import Button, { ButtonType } from "../../Button";
 import CommentApi from "../../../api/comment";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
 import { useAppSelector } from "../../../store/store";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
+import { currentUserId } from "../../../atoms/currentUser";
 import { useTranslation } from "next-i18next";
 import { Comment } from "../../../types/Comment";
 
@@ -34,12 +36,15 @@ const CommentCardActions = ({
     const { setComments } = useContext(VisualEditorContext);
     const { removeAnnotations } = useCommands();
     const permissions = useReviewTaskPermissions();
+    const [userId] = useAtom(currentUserId);
 
     const canActOnComment =
         permissions.isAdmin ||
         permissions.isReviewer ||
         permissions.isCrossChecker ||
         permissions.isAssignee;
+    const isReplyAuthor =
+        !!userId && content.user?._id?.toString() === userId.toString();
 
     const handleResolveThread = async (event: MouseEvent) => {
         event.stopPropagation();
@@ -78,11 +83,11 @@ const CommentCardActions = ({
         }
     };
 
-    if (!canActOnComment) return null;
+    if (content.isReply) {
+        if (!isReplyAuthor) return null;
 
-    return (
-        <div className="comment-card-actions" onClick={stopPropagation}>
-            {content.isReply ? (
+        return (
+            <div className="comment-card-actions" onClick={stopPropagation}>
                 <Tooltip title={t("common:delete") || "Delete"}>
                     <span>
                         <Button
@@ -93,20 +98,26 @@ const CommentCardActions = ({
                         </Button>
                     </span>
                 </Tooltip>
-            ) : (
-                <div className="comment-card-actions-resolve-button">
-                    <Tooltip title={t("common:resolve") || "Resolve"}>
-                        <span>
-                            <Button
-                                type={ButtonType.white}
-                                onClick={handleResolveThread}
-                            >
-                                <CheckIcon style={{ fontSize: "16px" }} />
-                            </Button>
-                        </span>
-                    </Tooltip>
-                </div>
-            )}
+            </div>
+        );
+    }
+
+    if (!canActOnComment) return null;
+
+    return (
+        <div className="comment-card-actions" onClick={stopPropagation}>
+            <div className="comment-card-actions-resolve-button">
+                <Tooltip title={t("common:resolve") || "Resolve"}>
+                    <span>
+                        <Button
+                            type={ButtonType.white}
+                            onClick={handleResolveThread}
+                        >
+                            <CheckIcon style={{ fontSize: "16px" }} />
+                        </Button>
+                    </span>
+                </Tooltip>
+            </div>
         </div>
     );
 };
