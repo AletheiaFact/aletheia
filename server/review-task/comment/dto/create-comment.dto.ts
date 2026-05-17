@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional, OmitType } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from "class-validator";
+import { UserDocument } from "../../../users/schemas/user.schema";
+import { CommentEnum } from "../schema/comment.schema";
 
 export class CreateCommentDTO {
     @IsOptional()
@@ -51,11 +59,16 @@ export class UpdateCommentDTO {
     @IsOptional()
     @IsString()
     @ApiPropertyOptional()
-    user?: string;
+    user?: UserDocument;
 
     @IsOptional()
     @ApiPropertyOptional()
     resolved?: boolean;
+
+    @IsOptional()
+    @IsEnum(CommentEnum)
+    @ApiPropertyOptional({ enum: CommentEnum })
+    type?: CommentEnum;
 }
 
 export class DeleteReplyDTO {

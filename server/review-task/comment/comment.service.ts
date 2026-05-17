@@ -1,11 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
+import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
 import { UsersService } from "../../users/users.service";
+import { UpdateCommentDTO } from "./dto/create-comment.dto";
 
 @Injectable()
 export class CommentService {
+    private readonly logger = new Logger(CommentService.name);
+
     constructor(
         @InjectModel(Comment.name)
         private CommentModel: Model<CommentDocument>,
@@ -31,29 +40,59 @@ export class CommentService {
         );
     }
 
-    async update(id, body) {
-        const { comment, text, resolved, type, user } = body;
-        const update = {
-            comment,
-            text,
-            resolved,
-            type,
-            ...(user && {
-                user: new Types.ObjectId(
+    async update(
+        id: string,
+        UpdateCommentDto: UpdateCommentDTO
+    ) {
+        try {
+            this.logger.debug(`Updating comment ${id}`, { UpdateCommentDto });
+
+            if (!isValidObjectId(id)) {
+                throw new BadRequestException(`Invalid comment ID format: ${id}`);
+            }
+
+            const { user, ...otherFields } = UpdateCommentDto;
+
+            const updateData: UpdateQuery<Comment> = { ...otherFields };
+
+            if (user) {
+                updateData.user = new Types.ObjectId(
                     typeof user === "string" ? user : user._id
-                ),
-            }),
-        };
+                );
+            }
 
-        const updated = await this.CommentModel
-            .findByIdAndUpdate(id, update, { new: true })
-            .populate("user", "name");
+            const updatedComment = await this.CommentModel.findByIdAndUpdate(
+                id,
+                { $set: updateData },
+                { new: true, runValidators: true }
+            )
+                .populate("user", "name");
 
-        if (!updated) {
-            throw new NotFoundException(`Comment not found: ${id}`);
+            if (!updatedComment) {
+                throw new NotFoundException(`Comment not found: ${id}`);
+            }
+
+            return updatedComment;
+        } catch (error: any) {
+            this.logger.error(`Failed to update comment [${id}]`, error.stack);
+
+            if (
+                error instanceof NotFoundException ||
+                error instanceof BadRequestException
+            ) {
+                throw error;
+            }
+
+            if (error.name === "CastError") {
+                throw new BadRequestException(
+                    `Invalid format for field: ${error.path}`
+                );
+            }
+
+            throw new InternalServerErrorException(
+                "Unexpected error during comment update"
+            );
         }
-
-        return updated.toObject();
     }
 
     async createReplyComment(id, commentBody) {
