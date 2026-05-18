@@ -105,12 +105,11 @@ export class ClaimService {
     async create(claim: Record<string, any>) {
         const safeNameSpace =
             typeof claim.nameSpace === "string" ? claim.nameSpace : undefined;
-        const user = this.req.user?._id;
+        const userId = this.req.user?._id;
 
         this.logger.debug(
-            `Creating claim — contentModel=${claim.contentModel} nameSpace=${
-                safeNameSpace ?? "main"
-            } personalities=${claim.personalities?.length ?? 0} hasGroup=${!!claim.group} user=${user || "anonymous"}`
+            `Creating claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
+            } personalities=${claim.personalities?.length ?? 0} hasGroup=${!!claim.group} user=${userId || "anonymous"}`
         );
 
         try {
@@ -127,8 +126,7 @@ export class ClaimService {
 
             if (existingClaim) {
                 this.logger.warn(
-                    `Duplicate claim title — slug=${generatedSlug} nameSpace=${
-                        safeNameSpace ?? "main"
+                    `Duplicate claim title — slug=${generatedSlug} nameSpace=${safeNameSpace ?? "main"
                     } existingId=${existingClaim._id}`
                 );
                 throw new ConflictException(
@@ -164,7 +162,7 @@ export class ClaimService {
             const history = this.historyService.getHistoryParams(
                 newClaim._id,
                 TargetModel.Claim,
-                user,
+                userId,
                 HistoryType.Create,
                 newClaim.latestRevision
             );
@@ -190,17 +188,16 @@ export class ClaimService {
                 ...newClaimRevision.toObject(),
                 ...newClaim.toObject(),
             };
-        } catch (e: any) {
-            if (e instanceof ConflictException) {
-                throw e;
+        } catch (error) {
+            if (error instanceof ConflictException) {
+                throw error;
             }
             this.logger.error(
-                `Failed to create claim — contentModel=${claim.contentModel} nameSpace=${
-                    safeNameSpace ?? "main"
-                }: ${e.message}`,
-                e.stack
+                `Failed to create claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
+                }: ${error.message}`,
+                error.stack
             );
-            throw e;
+            throw error;
         }
     }
 
@@ -255,8 +252,7 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${
-                user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
             }`
         );
         try {
