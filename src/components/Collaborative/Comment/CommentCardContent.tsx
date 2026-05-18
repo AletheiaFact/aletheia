@@ -3,7 +3,7 @@ import { useCurrentSelection, useHelpers } from "@remirror/react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import CommentReplyList from "./CommentReplyList";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import reviewColors from "../../../constants/reviewColors";
 import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
@@ -25,18 +25,16 @@ interface CommentCardContentProps {
     isReplyCard?: boolean;
 }
 
-const emptyBooleanSetter: Dispatch<SetStateAction<boolean>> = () => { };
-
 const CommentCardContent = ({
     user,
     content,
     isEditing = false,
     isSelected = false,
-    setIsSelected = emptyBooleanSetter,
-    setIsResolved = emptyBooleanSetter,
-    setIsCommentVisible = emptyBooleanSetter,
+    setIsSelected,
+    setIsResolved,
+    setIsCommentVisible,
     showForm = false,
-    setShowForm = emptyBooleanSetter,
+    setShowForm,
     isReplyCard = false,
 }: CommentCardContentProps) => {
     const enableEditorAnnotations = useAppSelector(
@@ -79,36 +77,27 @@ const CommentCardContent = ({
 
             {isRootComment && !enableEditorAnnotations &&
                 content.type === CommentEnum.review && (
-                    <p
-                        style={{
-                            padding: "0px 10px",
-                            width: "fit-content",
-                            borderLeft: "2px solid black",
-                            fontStyle: "italic",
-                            margin: 0,
-                        }}
+                    <Typography
+                        variant="body1"
+                        className="comment-card-content-reply-text"
                     >
                         {content?.text}
-                    </p>
+                    </Typography>
                 )}
 
             {isRootComment && content.type === CommentEnum.crossChecking && (
-                <p
-                    style={{
-                        padding: "0 4px",
-                        color: reviewColors[content.text],
-                        fontWeight: "bold",
-                        textTransform: "uppercase",
-                        margin: 0,
-                    }}
+                <Typography
+                    variant="body1"
+                    className="comment-card-classification-text "
+                    sx={{ color: reviewColors[content.text] }}
                 >
                     {t(`claimReviewForm:${content?.text}`)}
-                </p>
+                </Typography>
             )}
 
             <Typography
                 variant="body2"
-                style={{ margin: 0, whiteSpace: "pre-wrap" }}
+                sx={{ margin: 0, whiteSpace: "pre-wrap" }}
             >
                 {content?.comment}
             </Typography>
@@ -124,15 +113,16 @@ const CommentCardContent = ({
             )}
 
             {shouldRenderForm && (
-                <div onClick={(e) => e.stopPropagation()}>
+                <Box onClick={(event) => event.stopPropagation()}>
                     <CommentCardForm
                         user={user}
                         content={content}
                         isEditing={isEditing}
                         setIsCommentVisible={setIsCommentVisible}
                         setShowForm={setShowForm}
+                        t={t}
                     />
-                </div>
+                </Box>
             )}
         </>
     );

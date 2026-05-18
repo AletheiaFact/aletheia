@@ -2,7 +2,6 @@ import React, {
     Dispatch,
     KeyboardEvent,
     SetStateAction,
-    useCallback,
     useContext,
     useState,
 } from "react";
@@ -12,11 +11,12 @@ import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
-import { useTranslation } from "next-i18next";
-import colors from "../../../styles/colors";
+import { TFunction } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
 import { Comment, NewCommentPayload } from "../../../types/Comment";
 import { User } from "../../../types/User";
+import { Box } from "@mui/material";
+import TextError from "../../TextErrorForm";
 
 interface CommentCardFormProps {
     user: User | null;
@@ -24,22 +24,32 @@ interface CommentCardFormProps {
     isEditing: boolean;
     setIsCommentVisible?: Dispatch<SetStateAction<boolean>>;
     setShowForm?: Dispatch<SetStateAction<boolean>>;
+    t: TFunction
 }
 
-const noop = () => { };
 
 const CommentCardForm = ({
     user,
     content,
     isEditing,
-    setIsCommentVisible = noop,
-    setShowForm = noop,
+    setIsCommentVisible,
+    setShowForm,
+    t
 }: CommentCardFormProps) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { t } = useTranslation();
-    const { from, to, $to } = useCurrentSelection();
+
+    const currentSelection = useCurrentSelection();
+
+    const [initialSelection] = useState(() => ({
+        from: currentSelection.from,
+        to: currentSelection.to,
+        text: currentSelection.$to.doc.textBetween(
+            currentSelection.from,
+            currentSelection.to
+        ),
+    }));
     const { addAnnotation } = useCommands();
     const { data_hash, setComments } = useContext(VisualEditorContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,20 +58,20 @@ const CommentCardForm = ({
 
     const isReplying = !!content._id;
 
-    const handleOnSubmit = useCallback(async () => {
+    const handleOnSubmit = async () => {
         if (!commentValue) {
             setError(t("common:requiredFieldError"));
             return;
         }
 
         try {
-            setError(null);
             setIsLoading(true);
-            const selectedText = $to.doc.textBetween(from, to);
+            setError(null);
+
             const newComment: NewCommentPayload = {
-                from,
-                to,
-                text: isReplying ? content.text : selectedText,
+                from: initialSelection.from,
+                to: initialSelection.to,
+                text: isReplying ? content.text : initialSelection.text,
                 comment: commentValue,
                 user: user?._id ?? "",
             };
@@ -108,23 +118,7 @@ const CommentCardForm = ({
             setCommentValue("");
             setIsLoading(false);
         }
-    }, [
-        $to.doc,
-        addAnnotation,
-        content.text,
-        content._id,
-        commentValue,
-        data_hash,
-        enableEditorAnnotations,
-        from,
-        isReplying,
-        setComments,
-        setIsCommentVisible,
-        setShowForm,
-        t,
-        to,
-        user?._id,
-    ]);
+    };
 
     const handleKeyDown = (element: KeyboardEvent<HTMLTextAreaElement>) => {
         if (element.key === "Enter" && (element.ctrlKey || element.metaKey)) {
@@ -146,7 +140,7 @@ const CommentCardForm = ({
     };
 
     return (
-        <div className="comment-card-form">
+        <Box className="comment-card-form">
             <AletheiaTextArea
                 multiline
                 minRows={3}
@@ -155,13 +149,19 @@ const CommentCardForm = ({
                 onKeyDown={handleKeyDown}
             />
             {error && (
-                <span style={{ fontSize: 14, color: colors.error }}>
+                <TextError
+                    stateError={true}
+                    data-cy="testCommentFormError"
+                >
                     {error}
-                </span>
+                </TextError>
             )}
 
-            <div className="comment-card-form-actions">
-                <Button onClick={handleOnSubmit} loading={isLoading}>
+            <Box className="comment-card-form-actions">
+                <Button
+                    onClick={handleOnSubmit}
+                    loading={isLoading}
+                >
                     {t("common:submit")}
                 </Button>
                 <Button
@@ -171,8 +171,8 @@ const CommentCardForm = ({
                 >
                     {t("common:cancel")}
                 </Button>
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 
