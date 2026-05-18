@@ -13,7 +13,7 @@ const CommentsList = ({ comments, user }: CommentsListProps) => {
         <>
             {comments?.map((comment) => (
                 <CommentCard
-                    key={comment._id ?? comment.id}
+                    key={comment._id}
                     comment={comment}
                     user={user}
                 />

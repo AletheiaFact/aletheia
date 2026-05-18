@@ -24,7 +24,7 @@ const CommentReplyList = ({
     return (
         <>
             {replies.map((reply) => (
-                <React.Fragment key={reply._id ?? reply.id}>
+                <React.Fragment key={reply._id}>
                     <Divider />
                     <CommentCardContent
                         user={user}

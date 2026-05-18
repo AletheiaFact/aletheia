@@ -52,6 +52,21 @@ const CommentCardStyle = styled.div`
         gap: 16px;
     }
 
+    .comment-card-content-reply-text {
+        padding: 0px 10px;
+        width: fit-content;
+        border-left: 2px solid black;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .comment-card-classification-text {
+        padding: 0 4px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
     .comment-card-form {
         display: flex;
         flex-direction: column;

@@ -123,7 +123,7 @@ const CommentContainer = ({
                 />
             )}
 
-            <CommentsList comments={comments as Comment[] | null} user={user} />
+            <CommentsList comments={comments} user={user} />
         </Grid>
     );
 };

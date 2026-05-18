@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import Tooltip from "@mui/material/Tooltip";
+import { Box, Tooltip } from "@mui/material";
 import { useAtom } from "jotai";
 import Button, { ButtonType } from "../../Button";
 import CommentApi from "../../../api/comment";
@@ -30,11 +30,13 @@ const CommentCardActions = ({
     setIsResolved,
 }: CommentCardActionsProps) => {
     const { t } = useTranslation();
+
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
     const { setComments } = useContext(VisualEditorContext);
     const { removeAnnotations } = useCommands();
+
     const permissions = useReviewTaskPermissions();
     const [userId] = useAtom(currentUserId);
 
@@ -43,19 +45,23 @@ const CommentCardActions = ({
         permissions.isReviewer ||
         permissions.isCrossChecker ||
         permissions.isAssignee;
+
     const isReplyAuthor =
         !!userId && content.user?._id?.toString() === userId.toString();
 
     const handleResolveThread = async (event: MouseEvent) => {
         event.stopPropagation();
+
         try {
             await CommentApi.updateComment(content._id, { resolved: true });
             setIsResolved(true);
+
             if (enableEditorAnnotations) {
                 removeAnnotations([content._id]);
             }
-            setComments?.((prev: Comment[]) =>
-                (prev ?? []).filter((c) => c._id !== content._id)
+
+            setComments?.((currentComments: Comment[]) =>
+                currentComments.filter((comment) => comment._id !== content._id)
             );
         } catch (error) {
             console.error("Error resolving comment thread:", error);
@@ -70,11 +76,11 @@ const CommentCardActions = ({
                 (comments ?? []).map((comment) =>
                     comment._id === content.targetId
                         ? {
-                              ...comment,
-                              replies: comment.replies.filter(
-                                  (reply) => reply._id !== content._id
-                              ),
-                          }
+                            ...comment,
+                            replies: comment.replies.filter(
+                                (reply) => reply._id !== content._id
+                            ),
+                        }
                         : comment
                 )
             );
@@ -87,8 +93,8 @@ const CommentCardActions = ({
         if (!isReplyAuthor) return null;
 
         return (
-            <div className="comment-card-actions" onClick={stopPropagation}>
-                <Tooltip title={t("common:delete") || "Delete"}>
+            <Box className="comment-card-actions" onClick={stopPropagation}>
+                <Tooltip title={t("common:delete")}>
                     <span>
                         <Button
                             type={ButtonType.white}
@@ -98,27 +104,25 @@ const CommentCardActions = ({
                         </Button>
                     </span>
                 </Tooltip>
-            </div>
+            </Box>
         );
     }
 
     if (!canActOnComment) return null;
 
     return (
-        <div className="comment-card-actions" onClick={stopPropagation}>
-            <div className="comment-card-actions-resolve-button">
-                <Tooltip title={t("common:resolve") || "Resolve"}>
-                    <span>
-                        <Button
-                            type={ButtonType.white}
-                            onClick={handleResolveThread}
-                        >
-                            <CheckIcon style={{ fontSize: "16px" }} />
-                        </Button>
-                    </span>
-                </Tooltip>
-            </div>
-        </div>
+        <Box className="comment-card-actions" onClick={stopPropagation}>
+            <Tooltip title={t("common:resolve")}>
+                <span>
+                    <Button
+                        type={ButtonType.white}
+                        onClick={handleResolveThread}
+                    >
+                        <CheckIcon style={{ fontSize: "16px" }} />
+                    </Button>
+                </span>
+            </Tooltip>
+        </Box>
     );
 };
 

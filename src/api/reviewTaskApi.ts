@@ -1,6 +1,7 @@
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { Comment, NewCommentPayload } from "../types/Comment";
 import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/reviewtask");
@@ -141,15 +142,17 @@ const getEditorContentObject = (
 
 const addComment = (
     hash: string,
-    comment: Record<string, unknown>
-): Promise<unknown> => {
+    comment: NewCommentPayload,
+): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })
         .then((response) => {
             return response.data;
         })
-        .catch((error) => {
-            console.log(error);
+        .catch((err) => {
+            MessageManager.showMessage("error", err.response.data?.message);
+
+            throw err;
         });
 };
 

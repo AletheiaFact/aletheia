@@ -7,7 +7,6 @@ export interface CommentUser {
 
 export interface Comment {
     _id: string;
-    id?: string;
     user: CommentUser;
     comment: string;
     text: string;

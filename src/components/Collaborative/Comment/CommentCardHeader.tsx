@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Avatar } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import CommentCardActions from "./CommentCardActions";
 import { Comment } from "../../../types/Comment";
 import { formatCommentTime } from "../../../utils/date.utils";
@@ -18,36 +18,41 @@ const CommentCardHeader = ({
     setIsResolved,
 }: CommentCardHeaderProps) => {
     return (
-        <div className="comment-card-header">
-            <div className="comment-card-header-info">
+        <Box className="comment-card-header">
+            <Box className="comment-card-header-info">
                 <Avatar className="comment-card-header-info-avatar">
                     {name.slice(0, 1)}
                 </Avatar>
-                <div>
-                    <p style={{ margin: 0, paddingTop: 4 }}>{name}</p>
-                    <p
-                        style={{
-                            margin: 0,
-                            fontSize: 12,
+                <Box>
+                    <Typography variant="body1" sx={{ pt: 0.5 }}>
+                        {name}
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            display: "block",
                             textTransform: "capitalize",
                         }}
                     >
                         {content.type}
-                    </p>
+                    </Typography>
                     {!isEditing && (
-                        <p style={{ margin: 0, fontSize: 12 }}>
+                        <Typography
+                            variant="caption"
+                            sx={{ display: "block" }}
+                        >
                             {formatCommentTime(content?.createdAt)}
-                        </p>
+                        </Typography>
                     )}
-                </div>
-            </div>
+                </Box>
+            </Box>
             {!isEditing && (
                 <CommentCardActions
                     content={content}
                     setIsResolved={setIsResolved}
                 />
             )}
-        </div>
+        </Box>
     );
 };
 
