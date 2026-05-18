@@ -79,17 +79,17 @@ export class ClaimRevisionService {
             );
 
             await this._createSources(claim.sources, claimId);
-            const saved = await newClaimRevision.save();
+            const claimRevisionSaved = await newClaimRevision.save();
             this.logger.log(
-                `Claim revision saved — claimId=${claimId} revisionId=${saved._id} contentId=${saved.contentId}`
+                `Claim revision saved — claimId=${claimId} revisionId=${claimRevisionSaved._id} contentId=${claimRevisionSaved.contentId}`
             );
-            return saved;
-        } catch (e: any) {
+            return claimRevisionSaved;
+        } catch (error) {
             this.logger.error(
-                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${e.message}`,
-                e.stack
+                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${error.message}`,
+                error.stack
             );
-            throw e;
+            throw error;
         }
     }
 
