@@ -17,7 +17,7 @@ import { IFindAllOptions } from "../../interfaces/personality.interface";
 @Injectable()
 export class ClaimRevisionService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
-    private readonly logger = new Logger("ClaimService");
+    private readonly logger = new Logger(ClaimRevisionService.name);
 
     constructor(
         @InjectModel(ClaimRevision.name)
@@ -68,13 +68,29 @@ export class ClaimRevisionService {
         const newClaimRevision = new this.ClaimRevisionModel(claim);
         const newclaimRevisionId = new Types.ObjectId(newClaimRevision._id);
 
-        newClaimRevision.contentId = await this._createContentModel(
-            claim,
-            newclaimRevisionId
+        this.logger.debug(
+            `Creating claim revision — claimId=${claimId} revisionId=${newclaimRevisionId} contentModel=${claim.contentModel}`
         );
 
-        await this._createSources(claim.sources, claimId);
-        return newClaimRevision.save();
+        try {
+            newClaimRevision.contentId = await this._createContentModel(
+                claim,
+                newclaimRevisionId
+            );
+
+            await this._createSources(claim.sources, claimId);
+            const claimRevisionSaved = await newClaimRevision.save();
+            this.logger.log(
+                `Claim revision saved — claimId=${claimId} revisionId=${claimRevisionSaved._id} contentId=${claimRevisionSaved.contentId}`
+            );
+            return claimRevisionSaved;
+        } catch (error) {
+            this.logger.error(
+                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${error.message}`,
+                error.stack
+            );
+            throw error;
+        }
     }
 
     async findAll({
@@ -169,6 +185,9 @@ export class ClaimRevisionService {
         claim: Record<string, any>,
         claimRevisionId: Types.ObjectId
     ) {
+        this.logger.debug(
+            `Dispatching content model — contentModel=${claim.contentModel} revisionId=${claimRevisionId}`
+        );
         switch (claim.contentModel) {
             case ContentModelEnum.Speech:
                 return (
@@ -196,6 +215,11 @@ export class ClaimRevisionService {
                         claim.contentModel
                     )
                 )._id;
+            default:
+                this.logger.warn(
+                    `Unknown contentModel="${claim.contentModel}" — no content document created for revisionId=${claimRevisionId}`
+                );
+                return undefined;
         }
     }
 

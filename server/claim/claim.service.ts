@@ -29,11 +29,11 @@ import slugify from "slugify";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -103,72 +103,102 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim: Record<string, any>) {
-        const generatedSlug = slugify(claim.title, {
-            lower: true,
-            strict: true,
-        });
-
         const safeNameSpace =
             typeof claim.nameSpace === "string" ? claim.nameSpace : undefined;
+        const userId = this.req.user?._id;
 
-        const existingClaim = await this.ClaimModel.findOne({
-            slug: generatedSlug,
-            nameSpace: { $eq: safeNameSpace },
-            isDeleted: false,
-        });
+        this.logger.debug(
+            `Creating claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
+            } personalities=${claim.personalities?.length ?? 0} hasGroup=${!!claim.group} user=${userId || "anonymous"}`
+        );
 
-        if (existingClaim) {
-            throw new ConflictException(
-                "There is already a claim with this title."
+        try {
+            const generatedSlug = slugify(claim.title, {
+                lower: true,
+                strict: true,
+            });
+
+            const existingClaim = await this.ClaimModel.findOne({
+                slug: generatedSlug,
+                nameSpace: { $eq: safeNameSpace },
+                isDeleted: false,
+            });
+
+            if (existingClaim) {
+                this.logger.warn(
+                    `Duplicate claim title — slug=${generatedSlug} nameSpace=${safeNameSpace ?? "main"
+                    } existingId=${existingClaim._id}`
+                );
+                throw new ConflictException(
+                    "There is already a claim with this title."
+                );
+            }
+
+            claim.slug = generatedSlug;
+
+            claim.personalities = claim.personalities.map(
+                (personality: string) => {
+                    return new Types.ObjectId(personality);
+                }
             );
+
+            if (claim.group) {
+                claim.group = new Types.ObjectId(claim.group);
+            }
+
+            const newClaim = new this.ClaimModel(claim);
+
+            this.logger.debug(
+                `Persisting claim revision — claimId=${newClaim._id} slug=${generatedSlug}`
+            );
+            const newClaimRevision = await this.claimRevisionService.create(
+                newClaim._id,
+                claim
+            );
+
+            newClaim.latestRevision = newClaimRevision._id;
+            newClaim.slug = newClaimRevision.slug;
+
+            const history = this.historyService.getHistoryParams(
+                newClaim._id,
+                TargetModel.Claim,
+                userId,
+                HistoryType.Create,
+                newClaim.latestRevision
+            );
+            const stateEvent = this.stateEventService.getStateEventParams(
+                newClaim._id,
+                TypeModel.Claim
+            );
+
+            await this.historyService.createHistory(history as any);
+            this.stateEventService.createStateEvent(stateEvent as any);
+
+            if (claim.group) {
+                this.groupService.updateWithTargetId(claim.group, newClaim._id);
+            }
+
+            await newClaim.save();
+
+            this.logger.log(
+                `Claim created successfully — id=${newClaim._id} contentModel=${claim.contentModel} slug=${newClaim.slug} revision=${newClaimRevision._id}`
+            );
+
+            return {
+                ...newClaimRevision.toObject(),
+                ...newClaim.toObject(),
+            };
+        } catch (error) {
+            if (error instanceof ConflictException) {
+                throw error;
+            }
+            this.logger.error(
+                `Failed to create claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
+                }: ${error.message}`,
+                error.stack
+            );
+            throw error;
         }
-
-        claim.slug = generatedSlug;
-
-        claim.personalities = claim.personalities.map((personality: string) => {
-            return new Types.ObjectId(personality);
-        });
-
-        if (claim.group) {
-            claim.group = new Types.ObjectId(claim.group);
-        }
-
-        const newClaim = new this.ClaimModel(claim);
-
-        const newClaimRevision = await this.claimRevisionService.create(
-            newClaim._id,
-            claim
-        );
-
-        newClaim.latestRevision = newClaimRevision._id;
-        newClaim.slug = newClaimRevision.slug;
-
-        const user = this.req.user?._id;
-
-        const history = this.historyService.getHistoryParams(
-            newClaim._id,
-            TargetModel.Claim,
-            user,
-            HistoryType.Create,
-            newClaim.latestRevision
-        );
-        const stateEvent = this.stateEventService.getStateEventParams(
-            newClaim._id,
-            TypeModel.Claim
-        );
-
-        await this.historyService.createHistory(history as any);
-        this.stateEventService.createStateEvent(stateEvent as any);
-
-        if (claim.group) {
-            this.groupService.updateWithTargetId(claim.group, newClaim._id);
-        }
-
-        await newClaim.save();
-        return {
-            ...newClaimRevision.toObject(),
-            ...newClaim.toObject(),
-        };
     }
 
     /**
@@ -222,8 +252,7 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${
-                user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
             }`
         );
         try {
