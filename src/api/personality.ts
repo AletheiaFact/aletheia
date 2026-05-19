@@ -1,9 +1,11 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { Personality } from "../types/Personality";
+import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const baseUrl = `/api/personality`;
+const request = createApiInstance("/api/personality");
 
 interface FetchOptions {
     searchName: string;
@@ -18,7 +20,10 @@ interface FetchOptions {
     nameSpace?: string;
 }
 
-const getPersonalities = (options: FetchOptions, dispatch) => {
+const getPersonalities = (
+    options: FetchOptions,
+    dispatch: (action: { type: ActionTypes; [key: string]: unknown }) => void
+): Promise<PaginatedResponse<Personality> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -31,8 +36,8 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
     };
     const headers = options?.headers || {};
 
-    return axios
-        .get(`${baseUrl}`, { params, headers })
+    return request
+        .get(`/`, { params, headers })
         .then((response) => {
             const { personalities, totalPages, totalPersonalities } =
                 response.data;
@@ -58,27 +63,36 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         });
 };
 
-const getPersonality = (id, params, t) => {
-    return axios
-        .get(`${baseUrl}/${id}`, {
+const getPersonality = (
+    id: string,
+    params: Record<string, unknown>,
+    t: TranslationFn
+): Promise<Personality | void> => {
+    return request
+        .get(`/${id}`, {
             params,
         })
         .then((response) => {
             return response.data;
         })
         .catch(() => {
-            MessageManager.showMessage("error", t("personality:errorWhileFetching"));
+            MessageManager.showMessage(
+                "error",
+                t("personality:errorWhileFetching")
+            );
         });
 };
 
-const createPersonality = (personality, t) => {
-    return axios
-        .post(`${baseUrl}`, personality, {
-            withCredentials: true,
-        })
+const createPersonality = (
+    personality: Record<string, unknown>,
+    t: TranslationFn
+): Promise<Personality | void> => {
+    return request
+        .post(`/`, personality)
         .then((response) => {
             const { name } = response.data;
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage(
+                "success",
                 `"${name}" ${t("personalityCreateForm:successMessage")}`
             );
             return response.data;
@@ -91,7 +105,8 @@ const createPersonality = (personality, t) => {
                 // console.log(err);
             }
             const { data } = response;
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 data && data.message
                     ? data.message
                     : t("personalityCreateForm:errorMessage")
@@ -99,11 +114,14 @@ const createPersonality = (personality, t) => {
         });
 };
 
-const deletePersonality = (id: string, t: any) => {
-    return axios
-        .delete(`${baseUrl}/${id}`)
+const deletePersonality = (id: string, t: TranslationFn): Promise<void> => {
+    return request
+        .delete(`/${id}`)
         .then(() => {
-            MessageManager.showMessage("success", t("personality:deleteSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("personality:deleteSuccess")
+            );
         })
         .catch((err) => {
             console.error(err);
@@ -114,24 +132,26 @@ const deletePersonality = (id: string, t: any) => {
 const updatePersonalityHiddenStatus = (
     id: string,
     isHidden: boolean,
-    t: any,
+    t: TranslationFn,
     recaptcha: string,
     description: string
-) => {
-    return axios
-        .put(`${baseUrl}/hidden/${id}`, {
+): Promise<void> => {
+    return request
+        .put(`/hidden/${id}`, {
             isHidden,
             recaptcha,
             description,
         })
         .then(() => {
-            MessageManager.showMessage("success", 
+            MessageManager.showMessage(
+                "success",
                 t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t(`personality:${isHidden ? "hideError" : "unhideError"}`)
             );
         });

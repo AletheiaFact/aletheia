@@ -46,5 +46,6 @@
     "fileTypeError": "You can only upload {{types}} files",
     "fileSizeError": "File must smaller than {{size}}",
     "undefined": "Undefined",
-    "noAnswer": "N/A"
+    "noAnswer": "N/A",
+    "errorDuplicateTitle": "A claim with this title already exists. Please choose a different title."
 }

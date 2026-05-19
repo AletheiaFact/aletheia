@@ -1,73 +1,97 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, {
+    Dispatch,
+    KeyboardEvent,
+    SetStateAction,
+    useContext,
+    useState,
+} from "react";
 import Button, { ButtonType } from "../../Button";
-import AletheiaInput from "../../AletheiaInput";
+import AletheiaTextArea from "../../AletheiaTextArea";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
-import { useTranslation } from "next-i18next";
-import colors from "../../../styles/colors";
+import { TFunction } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
+import { Comment, NewCommentPayload } from "../../../types/Comment";
+import { User } from "../../../types/User";
+import { Box } from "@mui/material";
+import TextError from "../../TextErrorForm";
 
-const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
+interface CommentCardFormProps {
+    user: User | null;
+    content: Comment;
+    isEditing: boolean;
+    setIsCommentVisible?: Dispatch<SetStateAction<boolean>>;
+    setShowForm?: Dispatch<SetStateAction<boolean>>;
+    t: TFunction
+}
+
+
+const CommentCardForm = ({
+    user,
+    content,
+    isEditing,
+    setIsCommentVisible,
+    setShowForm,
+    t
+}: CommentCardFormProps) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { t } = useTranslation();
-    const { from, to, $to } = useCurrentSelection();
+
+    const currentSelection = useCurrentSelection();
+
+    const [initialSelection] = useState(() => ({
+        from: currentSelection.from,
+        to: currentSelection.to,
+        text: currentSelection.$to.doc.textBetween(
+            currentSelection.from,
+            currentSelection.to
+        ),
+    }));
     const { addAnnotation } = useCommands();
     const { data_hash, setComments } = useContext(VisualEditorContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showButtons, setShowButtons] = useState<boolean>(false);
-    const [commentValue, setCommentValue] = useState("");
-    const [error, setError] = useState<boolean>(null);
+    const [commentValue, setCommentValue] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
 
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-            handleOnSubmit();
-        }
+    const isReplying = !!content._id;
 
-        if (e.key === "Escape" && isEditing) {
-            setIsCommentVisible(false);
-        }
-    };
-
-    const handleOnSubmit = useCallback(async () => {
+    const handleOnSubmit = async () => {
         if (!commentValue) {
             setError(t("common:requiredFieldError"));
             return;
         }
 
         try {
-            setError(null);
             setIsLoading(true);
-            const text = $to.doc.textBetween(from, to);
-            const createdAt = Date.now();
-            const newComment = {
-                from,
-                to,
-                text,
+            setError(null);
+
+            const newComment: NewCommentPayload = {
+                from: initialSelection.from,
+                to: initialSelection.to,
+                text: isReplying ? content.text : initialSelection.text,
                 comment: commentValue,
-                user: user?._id,
-                isReply: !!content._id,
-                createdAt,
+                user: user?._id ?? "",
             };
-            if (content._id) {
-                newComment.text = content.text;
+
+            if (isReplying) {
                 const replyComment = await CommentApi.createReplyComment(
                     content._id,
                     newComment
                 );
-                setComments((comments) =>
+                setComments?.((comments: Comment[]) =>
                     comments.map((comment) =>
                         comment._id === content._id
                             ? {
-                                  ...comment,
-                                  replies: [...comment.replies, replyComment],
-                              }
+                                ...comment,
+                                replies: [...comment.replies, replyComment],
+                            }
                             : comment
                     )
                 );
+                setShowForm(false);
             } else {
                 const { comment: createdComment } =
                     await ReviewTaskApi.addComment(data_hash, newComment);
@@ -78,71 +102,77 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 ) {
                     addAnnotation({ id: createdComment?._id });
                 }
-                setComments((comments) =>
-                    comments ? [...comments, createdComment] : [createdComment]
+                setComments?.((comments: Comment[] | null) =>
+                    comments
+                        ? [...comments, createdComment]
+                        : [createdComment]
                 );
                 setIsCommentVisible(false);
             }
-        } catch (error) {
-            console.error("Error while handling comment submission:", error);
+        } catch (submitError) {
+            console.error(
+                "Error while handling comment submission:",
+                submitError
+            );
         } finally {
             setCommentValue("");
             setIsLoading(false);
         }
-    }, [
-        $to.doc,
-        addAnnotation,
-        content.text,
-        commentValue,
-        content._id,
-        data_hash,
-        from,
-        setComments,
-        setIsCommentVisible,
-        t,
-        to,
-        user?._id,
-        enableEditorAnnotations,
-    ]);
+    };
+
+    const handleKeyDown = (element: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (element.key === "Enter" && (element.ctrlKey || element.metaKey)) {
+            handleOnSubmit();
+        }
+
+        if (element.key === "Escape" && isEditing) {
+            setIsCommentVisible(false);
+        }
+    };
 
     const handleCancel = () => {
         if (isEditing) {
             setIsCommentVisible(false);
         }
+        setShowForm(false);
         setError(null);
-        setShowButtons(false);
         setCommentValue("");
     };
 
     return (
-        <div className="comment-card-form">
-            <AletheiaInput
+        <Box className="comment-card-form">
+            <AletheiaTextArea
+                multiline
+                minRows={3}
                 value={commentValue}
                 onChange={({ target }) => setCommentValue(target.value)}
-                onFocus={() => setShowButtons(true)}
-                onKeyDown={(e) => handleKeyDown(e)}
+                onKeyDown={handleKeyDown}
             />
             {error && (
-                <span style={{ fontSize: 14, color: colors.error }}>
+                <TextError
+                    stateError={true}
+                    data-cy="testCommentFormError"
+                >
                     {error}
-                </span>
+                </TextError>
             )}
 
-            {(isEditing || showButtons) && (
-                <div className="comment-card-form-actions">
-                    <Button onClick={handleOnSubmit} loading={isLoading}>
-                        Submit
-                    </Button>
-                    <Button
-                        type={ButtonType.whiteBlack}
-                        onClick={handleCancel}
-                        loading={isLoading}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            )}
-        </div>
+            <Box className="comment-card-form-actions">
+                <Button
+                    onClick={handleOnSubmit}
+                    loading={isLoading}
+                >
+                    {t("common:submit")}
+                </Button>
+                <Button
+                    type={ButtonType.whiteBlack}
+                    onClick={handleCancel}
+                    loading={isLoading}
+                >
+                    {t("common:cancel")}
+                </Button>
+            </Box>
+        </Box>
     );
 };
 

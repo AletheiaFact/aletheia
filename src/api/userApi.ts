@@ -10,7 +10,7 @@ import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/user");
 
-const getById = (id, params = {}) => {
+const getById = (id: string, params = {}): Promise<User | void> => {
     return request
         .get(`/${id}`, {
             params,
@@ -23,7 +23,7 @@ const getById = (id, params = {}) => {
         });
 };
 
-const getByOryId = (id) => {
+const getByOryId = (id: string): Promise<User | void> => {
     return request
         .get(`/ory/${id}`)
         .then((response) => {
@@ -34,7 +34,7 @@ const getByOryId = (id) => {
         });
 };
 
-const updatePassword = () => {
+const updatePassword = (): Promise<PasswordChangeResponse> => {
     return request
         .put(`password-change`)
         .then((response) => {
@@ -52,8 +52,8 @@ const getUsers = (
         nameSpaceSlug: string;
         canAssignUsers: boolean;
     },
-    t
-) => {
+    t: TranslationFn
+): Promise<User[]> => {
     return request
         .get(`/`, { params })
         .then((response) => {
@@ -68,29 +68,41 @@ const getUsers = (
         });
 };
 
-const register = (params, t) => {
+const register = (
+    params: Record<string, unknown>,
+    t: TranslationFn
+): Promise<User | undefined> => {
     return request
         .post(`/register`, { ...params })
         .then((response) => {
-            MessageManager.showMessage("success", t("login:signupSuccessfulMessage"));
+            MessageManager.showMessage(
+                "success",
+                t("login:signupSuccessfulMessage")
+            );
             return response?.data;
         })
         .catch((e) => {
             if (e.response?.status === 409) {
-                MessageManager.showMessage("error", t("login:userAlreadyExists"));
+                MessageManager.showMessage(
+                    "error",
+                    t("login:userAlreadyExists")
+                );
             } else {
-                MessageManager.showMessage("error", t("login:signupFailedMessage"));
+                MessageManager.showMessage(
+                    "error",
+                    t("login:signupFailedMessage")
+                );
             }
             return e?.response?.data;
         });
 };
 
 const updateTotp = (
-    userId,
+    userId: string,
     params: {
         totp: boolean;
     }
-) => {
+): Promise<User | undefined> => {
     return request
         .put(`/${userId}`, params)
         .then((response) => {
@@ -102,14 +114,14 @@ const updateTotp = (
 };
 
 const update = (
-    userId,
+    userId: string,
     params: {
         role?: Roles;
         badges?: Badge[];
         state?: Status;
     },
-    t
-) => {
+    t: TranslationFn
+): Promise<User | undefined> => {
     return request
         .put(`/${userId}`, params)
         .then((response) => {

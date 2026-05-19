@@ -71,8 +71,8 @@ function useFloatingLinkState() {
 
         try {
             const id = uniqueId();
-            //@ts-ignore
-            const field = $to?.path[3]?.type?.name;
+            const field = ($to as { path?: { type?: { name?: string } }[] })
+                ?.path?.[3]?.type?.name;
             const targetText = $to.doc.textBetween(from, to);
             const newSource = {
                 href,

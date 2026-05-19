@@ -74,8 +74,8 @@ export class NameSpaceService {
         await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
-    findOne(match) {
-        return this.NameSpaceModel.findOne(match);
+    findOne(match): Promise<NameSpaceDocument> {
+        return this.NameSpaceModel.findOne(match).exec();
     }
 
     getById(_id: string) {

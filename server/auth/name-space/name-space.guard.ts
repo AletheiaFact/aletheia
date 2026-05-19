@@ -46,7 +46,6 @@ export class NameSpaceGuard implements CanActivate {
             }
 
             const userHasAccess = namespace.users.some(
-                //@ts-ignore
                 (user) => user._id.toString() === user_id
             );
             if (!userHasAccess) {

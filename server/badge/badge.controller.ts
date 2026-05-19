@@ -87,15 +87,14 @@ export class BadgeController {
                 this.usersService.updateUser(user._id, {
                     badges: user.badges.filter(
                         (userBadge) =>
-                            // @ts-ignore
                             userBadge._id.toString() !==
                             updatedBadge._id.toString()
                     ),
                 });
                 user.badges = user.badges.filter(
                     (userBadge) =>
-                        // @ts-ignore
-                        userBadge._id.toString() !== updatedBadge._id.toString()
+                        userBadge._id.toString() !==
+                        updatedBadge._id.toString()
                 );
             }
         });

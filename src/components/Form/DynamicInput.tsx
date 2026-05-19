@@ -3,7 +3,7 @@ import React, { Suspense, lazy, useContext } from "react";
 import ClaimReviewSelect from "./ClaimReviewSelect";
 import InputTextList from "../InputTextList";
 import Loading from "../Loading";
-import TextArea from "../TextArea";
+import AletheiaTextArea from "../AletheiaTextArea";
 import FetchInput from "./FetchInput";
 import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
@@ -44,7 +44,7 @@ const DynamicInput = (props: DynamicInputProps) => {
     switch (props.type) {
         case "textArea":
             return (
-                <TextArea
+                <AletheiaTextArea
                     multiline
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}

@@ -1,11 +1,24 @@
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { Comment, NewCommentPayload } from "../types/Comment";
 import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/reviewtask");
 
-const getReviewTasks = (options) => {
+interface ReviewTaskOptions {
+    page?: number;
+    order?: "asc" | "desc";
+    pageSize?: number;
+    value?: string;
+    filterUser?: string;
+    reviewTaskType?: string;
+    nameSpace?: string;
+}
+
+const getReviewTasks = (
+    options: ReviewTaskOptions
+): Promise<PaginatedResponse<unknown>> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -31,7 +44,7 @@ const getReviewTasks = (options) => {
         });
 };
 
-const getMachineByDataHash = (params) => {
+const getMachineByDataHash = (params: string): Promise<unknown> => {
     return request
         .get(`/hash/${params}`)
         .then((response) => {
@@ -42,7 +55,11 @@ const getMachineByDataHash = (params) => {
         });
 };
 
-const createReviewTask = (params, t, type) => {
+const createReviewTask = (
+    params: Record<string, unknown>,
+    t: TranslationFn,
+    type: string
+): Promise<unknown> => {
     return request
         .post("/", { ...params })
         .then((response) => {
@@ -58,7 +75,10 @@ const createReviewTask = (params, t, type) => {
         });
 };
 
-const autoSaveDraft = (params, t) => {
+const autoSaveDraft = (
+    params: Record<string, unknown> & { data_hash: string },
+    t: TranslationFn
+): Promise<unknown> => {
     return request
         .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
@@ -106,7 +126,10 @@ const saveDraft = (
         });
 };
 
-const getEditorContentObject = (data_hash, params) => {
+const getEditorContentObject = (
+    data_hash: string,
+    params: Record<string, unknown>
+): Promise<unknown> => {
     return request
         .get(`/editor-content/${data_hash}`, { params })
         .then((response) => {
@@ -117,18 +140,23 @@ const getEditorContentObject = (data_hash, params) => {
         });
 };
 
-const addComment = (hash, comment) => {
+const addComment = (
+    hash: string,
+    comment: NewCommentPayload,
+): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })
         .then((response) => {
             return response.data;
         })
-        .catch((error) => {
-            console.log(error);
+        .catch((err) => {
+            MessageManager.showMessage("error", err.response.data?.message);
+
+            throw err;
         });
 };
 
-const deleteComment = (hash, commentId) => {
+const deleteComment = (hash: string, commentId: string): Promise<unknown> => {
     return request
         .put(`/delete-comment/${hash}`, { commentId })
         .then((response) => {

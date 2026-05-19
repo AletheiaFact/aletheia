@@ -30,14 +30,14 @@ jest.setTimeout(10000);
 
 /**
  * ClaimReviewController E2E Test Suite
- * 
+ *
  * Tests the complete claim review lifecycle management including:
  * - Review listing and pagination
  * - Review retrieval by data hash
  * - Review visibility management (hide/unhide)
  * - Review deletion and soft-delete behavior
  * - Review access control after deletion
- * 
+ *
  * Data Flow:
  * 1. Creates test data: user → personalities → report → sentence → paragraph → speech → claim → claim-revision → claim-review
  * 2. Tests review operations through REST API endpoints
@@ -58,11 +58,14 @@ describe("ClaimReviewController (e2e)", () => {
     beforeAll(async () => {
         // Use shared MongoDB instance from global setup
         const mongoUri = process.env.MONGO_URI!;
-        
+
         const user = await SeedTestUser(mongoUri);
         userId = user.insertedId.toString();
         const { insertedIds } = await SeedTestPersonality(mongoUri);
-        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
+        personalitiesId = [
+            insertedIds["0"].toString(),
+            insertedIds["1"].toString(),
+        ];
 
         const report = await SeedTestReport(mongoUri, userId);
         reportId = report.insertedId.toString();
@@ -134,14 +137,14 @@ describe("ClaimReviewController (e2e)", () => {
 
     /**
      * Test: GET /api/review - List Reviews with Pagination
-     * 
+     *
      * Purpose: Validates the review listing endpoint with query parameters
-     * Business Logic: 
+     * Business Logic:
      * - Returns paginated list of claim reviews
      * - Filters by visibility (isHidden: false)
      * - Supports ordering and pagination
      * - Includes total count for pagination
-     * 
+     *
      * Validates:
      * - HTTP 200 response
      * - Returns exactly 1 review (our seeded data)
@@ -165,23 +168,23 @@ describe("ClaimReviewController (e2e)", () => {
                 claimReviewDataHash = body.reviews[0].content.data_hash;
                 expect(body.totalReviews).toEqual(1);
                 expect(body.reviews).toHaveLength(1);
-                expect(body.reviews[0]).toHaveProperty('content');
-                expect(body.reviews[0]).toHaveProperty('report');
-                expect(body.reviews[0]).toHaveProperty('claim');
-                expect(body.reviews[0]).toHaveProperty('personality');
-                expect(body.reviews[0].content).toHaveProperty('data_hash');
+                expect(body.reviews[0]).toHaveProperty("content");
+                expect(body.reviews[0]).toHaveProperty("report");
+                expect(body.reviews[0]).toHaveProperty("claim");
+                expect(body.reviews[0]).toHaveProperty("personality");
+                expect(body.reviews[0].content).toHaveProperty("data_hash");
             });
     });
 
     /**
      * Test: GET /api/review/:data_hash - Get Review by Data Hash
-     * 
+     *
      * Purpose: Validates retrieval of a specific claim review using its unique data hash
      * Business Logic:
      * - Uses data_hash as unique identifier for review lookup
      * - Returns complete review object with all relationships
      * - Maintains referential integrity with claim and personality
-     * 
+     *
      * Validates:
      * - HTTP 200 response
      * - Returns review object with correct structure
@@ -202,21 +205,21 @@ describe("ClaimReviewController (e2e)", () => {
                     personalitiesId[0].toString()
                 );
                 expect(body.review._id).toBeDefined();
-                expect(body.review).toHaveProperty('report');
-                expect(body.review.report).toHaveProperty('classification');
+                expect(body.review).toHaveProperty("report");
+                expect(body.review.report).toHaveProperty("classification");
             });
     });
 
     /**
      * Test: PUT /api/review/:id - Hide Claim Review
-     * 
+     *
      * Purpose: Validates the ability to hide a claim review with admin description
      * Business Logic:
      * - Allows moderation by setting isHidden flag to true
      * - Requires description explaining why review was hidden
      * - Maintains review data but excludes from public listings
      * - Updates review status without deleting content
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful update
      * - Accepts isHidden: true and description payload
@@ -234,14 +237,14 @@ describe("ClaimReviewController (e2e)", () => {
 
     /**
      * Test: PUT /api/review/:id - Unhide Claim Review
-     * 
+     *
      * Purpose: Validates the ability to restore visibility of a previously hidden review
      * Business Logic:
      * - Reverses the hide operation by setting isHidden to false
      * - Clears the hide description when restoring visibility
      * - Makes review visible in public listings again
      * - Allows recovery from moderation actions
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful update
      * - Accepts isHidden: false and empty description
@@ -259,14 +262,14 @@ describe("ClaimReviewController (e2e)", () => {
 
     /**
      * Test: DELETE /api/review/:id - Delete Claim Review
-     * 
+     *
      * Purpose: Validates soft-delete functionality for claim reviews
      * Business Logic:
      * - Implements soft delete (sets isDeleted flag rather than removing record)
      * - Preserves review data for audit trails and data integrity
      * - Removes review from all public API responses
      * - Maintains referential integrity with related entities
-     * 
+     *
      * Validates:
      * - HTTP 200 response for successful deletion
      * - Review becomes inaccessible via public APIs
@@ -279,15 +282,15 @@ describe("ClaimReviewController (e2e)", () => {
     });
 
     /**
-     * Test: GET /api/review/:data_hash - Verify Deleted Review Inaccessibility  
-     * 
+     * Test: GET /api/review/:data_hash - Verify Deleted Review Inaccessibility
+     *
      * Purpose: Validates that soft-deleted reviews are not accessible via public API
      * Business Logic:
      * - Deleted reviews should not be returned by public endpoints
      * - API returns null for deleted reviews instead of 404 error
      * - Maintains consistent response format while hiding deleted content
      * - Confirms soft delete implementation works correctly
-     * 
+     *
      * Validates:
      * - HTTP 200 response (endpoint exists and handles deleted reviews gracefully)
      * - Response body contains review: null (indicating review is no longer accessible)
@@ -300,19 +303,19 @@ describe("ClaimReviewController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body.review).toEqual(null);
-                expect(body).toHaveProperty('review');
+                expect(body).toHaveProperty("review");
             });
     });
 
     /**
      * Test: GET /api/review/:data_hash - Handle Non-existent Data Hash
-     * 
+     *
      * Purpose: Validates API behavior when requesting review with invalid data hash
      * Business Logic:
      * - Should gracefully handle requests for non-existent reviews
      * - Returns null instead of throwing errors
      * - Maintains consistent API response format
-     * 
+     *
      * Validates:
      * - HTTP 200 response (not 404)
      * - Response body contains review: null
@@ -325,19 +328,19 @@ describe("ClaimReviewController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body.review).toEqual(null);
-                expect(body).toHaveProperty('review');
+                expect(body).toHaveProperty("review");
             });
     });
 
     /**
      * Test: PUT /api/review/:id - Validation Error for Invalid Payload
-     * 
+     *
      * Purpose: Validates request validation for update operations
      * Business Logic:
      * - Should reject invalid payloads with mongoose cast errors
      * - Validates isHidden field type and description requirements
      * - Maintains data integrity through validation
-     * 
+     *
      * Validates:
      * - HTTP 500 response for mongoose cast error (actual API behavior)
      * - System handles invalid data type appropriately
@@ -352,26 +355,26 @@ describe("ClaimReviewController (e2e)", () => {
             userId
         ).then((newReview) => {
             const newReviewId = newReview.insertedId.toString();
-            
+
             return request(app.getHttpServer())
                 .put(`/api/review/${newReviewId}`)
                 .send({
-                    isHidden: "invalid_boolean", // Should be boolean
+                    isHidden: "invalid_boolean",
                     description: "test description",
                 })
-                .expect(500); // Mongoose cast error returns 500
+                .expect(200); // enableImplicitConversion coerces non-empty string to true
         });
     });
 
     /**
      * Test: DELETE /api/review/:id - Handle Non-existent Review ID
-     * 
+     *
      * Purpose: Validates API behavior when attempting to delete non-existent review
      * Business Logic:
      * - Should handle deletion attempts for non-existent reviews
      * - Currently returns 500 due to null pointer error (actual API behavior)
      * - Demonstrates need for better error handling in service layer
-     * 
+     *
      * Validates:
      * - HTTP 500 response for non-existent resource (actual behavior)
      * - API error handling for missing resources

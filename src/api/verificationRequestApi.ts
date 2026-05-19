@@ -1,8 +1,8 @@
-import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
+import { createApiInstance } from "./apiFactory";
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -19,10 +19,7 @@ interface SearchOptions {
     impactArea?: any;
 }
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/verification-request`,
-});
+const request = createApiInstance("/api/verification-request");
 
 const createVerificationRequest = (
     t,

@@ -1,7 +1,7 @@
-import axios from "axios";
 import actions from "../store/actions";
 import { ActionTypes, SearchTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
+import { createApiInstance } from "./apiFactory";
 
 interface SearchOptions {
     type?: SearchTypes;
@@ -11,10 +11,7 @@ interface SearchOptions {
     nameSpace?: string;
 }
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/search`,
-});
+const request = createApiInstance("/api/search");
 
 const getResults = (dispatch, options: SearchOptions = {}) => {
     const params = {

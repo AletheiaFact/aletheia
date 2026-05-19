@@ -9,7 +9,7 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
-    private readonly logger = new Logger(SessionGuard.name);
+    protected readonly logger = new Logger(SessionGuard.name);
 
     constructor(
         protected configService: ConfigService,
@@ -33,10 +33,7 @@ export class SessionGuard extends BaseGuard {
         }
     }
 
-    // @ts-ignore
-    async canActivate(
-        context: ExecutionContext
-    ): Promise<boolean | Promise<boolean>> {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.get<boolean>(
             "public",
             context.getHandler()

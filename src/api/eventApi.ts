@@ -1,13 +1,10 @@
-import axios from "axios";
 import { TFunction } from "i18next";
 import { MessageManager } from "../components/Messages";
 import { HEX24 } from "../types/History";
 import { EventPayload, ListEventsOptions } from "../types/event";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/event`,
-});
+const request = createApiInstance("/api/event");
 
 const createEvent = (
     newEvent: EventPayload,

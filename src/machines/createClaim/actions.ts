@@ -6,7 +6,7 @@ import {
 } from "./events";
 import { CreateClaimContext } from "./context";
 import { ContentModelEnum } from "../../types/enums";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 
 const saveClaimContext = assign<CreateClaimContext, SaveContextEvent>(
     (context, event) => {

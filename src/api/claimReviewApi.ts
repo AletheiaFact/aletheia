@@ -1,11 +1,10 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
+import type { Review } from "../types/Review";
+import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api`,
-});
+const request = createApiInstance("/api/review");
 
 interface FetchOptions {
     page?: number;
@@ -17,7 +16,9 @@ interface FetchOptions {
     mainTopicId?: string;
 }
 
-const get = (options: FetchOptions = {}) => {
+const get = (
+    options: FetchOptions = {}
+): Promise<PaginatedResponse<Review> | void> => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -25,11 +26,11 @@ const get = (options: FetchOptions = {}) => {
         isHidden: options?.isHidden || false,
         latest: options?.latest,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
-        mainTopicId: options?.mainTopicId
+        mainTopicId: options?.mainTopicId,
     };
 
     return request
-        .get(`/review`, { params })
+        .get(`/`, { params })
         .then((response) => {
             const { totalPages, totalReviews, reviews } = response.data;
 
@@ -43,31 +44,33 @@ const get = (options: FetchOptions = {}) => {
 };
 
 const updateClaimReviewHiddenStatus = (
-    id,
-    isHidden,
-    t,
-    recaptcha,
+    id: string,
+    isHidden: boolean,
+    t: TranslationFn,
+    recaptcha: string,
     description = ""
-) => {
+): Promise<Review> => {
     return request
-        .put(`/review/${id}`, { isHidden, description, recaptcha })
+        .put(`/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
-            MessageManager.showMessage("success",
+            MessageManager.showMessage(
+                "success",
                 t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
             );
             throw err;
         });
 };
 
-const deleteClaimReview = (id: string, t: any) => {
+const deleteClaimReview = (id: string, t: TranslationFn): Promise<void> => {
     return request
-        .delete(`/review/${id}`)
+        .delete(`/${id}`)
         .then(() => {
             MessageManager.showMessage("success", t("claim:deleteSuccess"));
         })
@@ -77,9 +80,9 @@ const deleteClaimReview = (id: string, t: any) => {
         });
 };
 
-const getClaimReviewByHash = (dataHash) => {
+const getClaimReviewByHash = (dataHash: string): Promise<Review> => {
     return request
-        .get(`/review/${dataHash}`)
+        .get(`/${dataHash}`)
         .then((response) => {
             return response.data;
         })
