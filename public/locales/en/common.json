@@ -17,5 +17,9 @@
     "approve": "Approve",
     "reject": "Reject",
     "endDateMustBeAfterStartDate": "End date cannot be earlier than start date",
-    "viewOnly": "View Only"
+    "viewOnly": "View Only",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "resolve": "Resolve",
+    "delete": "Delete"
 }

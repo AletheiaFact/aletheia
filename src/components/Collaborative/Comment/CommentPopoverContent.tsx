@@ -4,7 +4,13 @@ import { Grid } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 
-const CommentPopoverContent = ({ handleDeleteClick }) => {
+interface CommentPopoverContentProps {
+    handleDeleteClick: () => void;
+}
+
+const CommentPopoverContent = ({
+    handleDeleteClick,
+}: CommentPopoverContentProps) => {
     const { t } = useTranslation();
     return (
         <Grid className="source-card-popover-content">

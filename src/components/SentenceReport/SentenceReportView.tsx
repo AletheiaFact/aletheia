@@ -60,7 +60,8 @@ const SentenceReportView = ({
             (permissions.isAdmin ||
                 permissions.isAssignee ||
                 permissions.isCrossChecker)) ||
-        (hasCrossCheckingComments && permissions.isAssignee);
+        (hasCrossCheckingComments &&
+            permissions.isAssignee || permissions.isCrossChecker || permissions.isReviewer);
 
     // Only show SentenceReportContent if the report is published
     const shouldShowReportContent = useMemo(() => {
@@ -161,6 +162,7 @@ const SentenceReportView = ({
                                         style={{
                                             color: colors.blackSecondary,
                                             lineHeight: 1.5,
+                                            whiteSpace: "pre-wrap",
                                         }}
                                     >
                                         {context.rejectionComment}

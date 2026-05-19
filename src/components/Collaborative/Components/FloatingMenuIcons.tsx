@@ -1,14 +1,15 @@
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { CommandButton, FloatingToolbar } from "@remirror/react-ui";
-import { useAtom } from "jotai";
 import React, { useContext } from "react";
-import { currentUserRole } from "../../../atoms/currentUser";
-import { Roles } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
 import { ReviewTaskTypeEnum } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { useSelector } from "@xstate/react";
-import { reviewingSelector } from "../../../machines/reviewTask/selectors";
+import {
+    crossCheckingSelector,
+    reviewingSelector,
+} from "../../../machines/reviewTask/selectors";
+import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 
 const FloatingMenuIcons = ({
     handleClickEditLink,
@@ -24,13 +25,17 @@ const FloatingMenuIcons = ({
     const enableEditorAnnotations = useAppSelector(
         ({ enableEditorAnnotations }) => enableEditorAnnotations
     );
-    const [role] = useAtom(currentUserRole);
+    const { isAssignee, isReviewer, isCrossChecker, isAdmin } =
+        useReviewTaskPermissions();
     const { addAnnotation } = useCommands();
     const { empty } = useCurrentSelection();
     const isReviewing = useSelector(machineService, reviewingSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const enabled = enableEditorAnnotations
         ? addAnnotation?.enabled({ id: "" })
         : true;
+    const canAddComment =
+        isAdmin || isAssignee || isReviewer || isCrossChecker;
 
     return (
         <FloatingToolbar
@@ -47,16 +52,14 @@ const FloatingMenuIcons = ({
                     enabled
                 />
             )}
-            {isReviewing &&
-                role !== Roles.Regular &&
-                role !== Roles.FactChecker && (
-                    <CommandButton
-                        icon="chatNewLine"
-                        commandName="addAnnotation"
-                        enabled={enabled}
-                        onSelect={onSelect}
-                    />
-                )}
+            {(isReviewing || isCrossChecking) && canAddComment && (
+                <CommandButton
+                    icon="chatNewLine"
+                    commandName="addAnnotation"
+                    enabled={enabled}
+                    onSelect={onSelect}
+                />
+            )}
         </FloatingToolbar>
     );
 };

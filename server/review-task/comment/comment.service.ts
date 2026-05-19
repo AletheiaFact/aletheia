@@ -1,11 +1,20 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
+import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
 import { UsersService } from "../../users/users.service";
+import { UpdateCommentDTO } from "./dto/create-comment.dto";
 
 @Injectable()
 export class CommentService {
+    private readonly logger = new Logger(CommentService.name);
+
     constructor(
         @InjectModel(Comment.name)
         private CommentModel: Model<CommentDocument>,
@@ -31,39 +40,59 @@ export class CommentService {
         );
     }
 
-    async update(id: string, comment: any) {
-        const existingComment = await this.CommentModel.findById(id);
-        if (!existingComment) {
-            throw new NotFoundException(`Comment not found: ${id}`);
+    async update(
+        id: string,
+        UpdateCommentDto: UpdateCommentDTO
+    ) {
+        try {
+            this.logger.debug(`Updating comment ${id}`, { UpdateCommentDto });
+
+            if (!isValidObjectId(id)) {
+                throw new BadRequestException(`Invalid comment ID format: ${id}`);
+            }
+
+            const { user, ...otherFields } = UpdateCommentDto;
+
+            const updateData: UpdateQuery<Comment> = { ...otherFields };
+
+            if (user) {
+                updateData.user = new Types.ObjectId(
+                    typeof user === "string" ? user : user._id
+                );
+            }
+
+            const updatedComment = await this.CommentModel.findByIdAndUpdate(
+                id,
+                { $set: updateData },
+                { new: true, runValidators: true }
+            )
+                .populate("user", "name");
+
+            if (!updatedComment) {
+                throw new NotFoundException(`Comment not found: ${id}`);
+            }
+
+            return updatedComment;
+        } catch (error: any) {
+            this.logger.error(`Failed to update comment [${id}]`, error.stack);
+
+            if (
+                error instanceof NotFoundException ||
+                error instanceof BadRequestException
+            ) {
+                throw error;
+            }
+
+            if (error.name === "CastError") {
+                throw new BadRequestException(
+                    `Invalid format for field: ${error.path}`
+                );
+            }
+
+            throw new InternalServerErrorException(
+                "Unexpected error during comment update"
+            );
         }
-        const user = await this.usersService.getById(
-            comment.user || existingComment.user
-        );
-        const replies = comment.replies
-            ? comment?.replies?.map(
-                  (reply: any) => new Types.ObjectId(reply?._id)
-              )
-            : existingComment.replies;
-
-        const { comment: commentText, text, resolved, type } = comment;
-        const updatedComment = await this.CommentModel.findByIdAndUpdate(
-            id,
-            {
-                ...existingComment.toObject(),
-                ...(commentText !== undefined && { comment: commentText }),
-                ...(text !== undefined && { text }),
-                ...(resolved !== undefined && { resolved }),
-                ...(type !== undefined && { type }),
-                replies,
-                user: user!._id,
-            },
-            { new: true }
-        );
-
-        return {
-            ...updatedComment,
-            user,
-        };
     }
 
     async createReplyComment(id: string, commentBody: any) {
@@ -74,14 +103,11 @@ export class CommentService {
         const newComment = await this.create({
             ...commentBody,
             targetId: existingComment._id,
+            isReply: true,
         });
 
         existingComment.replies.push(newComment._id as Types.ObjectId);
-
-        await this.CommentModel.updateOne(
-            { _id: existingComment._id },
-            existingComment
-        );
+        await existingComment.save();
 
         return newComment;
     }

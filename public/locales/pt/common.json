@@ -17,5 +17,9 @@
     "approve": "Aprovar",
     "reject": "Rejeitar",
     "endDateMustBeAfterStartDate": "A data de término não pode ser anterior à data de início",
-    "viewOnly": "Somente leitura"
+    "viewOnly": "Somente leitura",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "resolve": "Resolver",
+    "delete": "Excluir"
 }
