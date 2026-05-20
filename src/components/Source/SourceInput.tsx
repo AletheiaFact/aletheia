@@ -28,11 +28,18 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                             <Input
                                 key={index}
                                 value={source || ""}
-                                onChange={(e) => {
-                                    onChange(e, index)
-                                    if (URL_PATTERN.test(e.target.value)) {
+                                onChange={(event) => {
+                                    onChange(event, index)
+                                    if (URL_PATTERN.test(event.target.value)) {
                                         clearError("sources");
                                     }
+                                }}
+                                onBlur={(event) => {
+                                    const trimmedEvent = {
+                                        ...event,
+                                        target: { ...event.target, value: event.target.value.trim() }
+                                    };
+                                    onChange(trimmedEvent, index);
                                 }}
                                 placeholder={placeholder}
                                 data-cy={'testSource1'}
@@ -70,9 +77,9 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                 <a
                     onClick={addSource}
                     style={{
-                        display:"flex",
-                        justifyContent:"end",
-                        alignContent:"center",
+                        display: "flex",
+                        justifyContent: "end",
+                        alignContent: "center",
                         textDecoration: "underline"
                     }}
                 >
@@ -83,4 +90,4 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
     );
 }
 
-export default SourceInput; 
+export default SourceInput;
