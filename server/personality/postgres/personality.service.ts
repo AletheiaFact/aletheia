@@ -118,8 +118,26 @@ export class PostgresPersonalityService implements IPersonalityService {
     async getReviewStats(_id: string): Promise<any> {
         throw new NotImplementedError("postgres", "getReviewStats");
     }
-    async update(_id: string, _body: any): Promise<IPersonality> {
-        throw new NotImplementedError("postgres", "update");
+    async update(id: string, body: any): Promise<IPersonality> {
+        const patch: Record<string, any> = { updatedAt: new Date() };
+        for (const key of [
+            "name",
+            "slug",
+            "description",
+            "wikidata",
+            "isHidden",
+        ] as const) {
+            if (body[key] !== undefined) patch[key] = body[key];
+        }
+        const [row] = await this.db
+            .update(personality)
+            .set(patch)
+            .where(
+                and(eq(personality.id, id), eq(personality.isDeleted, false))
+            )
+            .returning();
+        if (!row) throw new Error(`Personality not found: ${id}`);
+        return row as unknown as IPersonality;
     }
     async hideOrUnhidePersonality(
         _id: string,

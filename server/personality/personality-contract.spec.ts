@@ -67,7 +67,23 @@ if (backends.length === 0) {
             const fetched = await service.getPersonalityBySlug({ slug: "b" });
             expect((fetched as any).id).toBe((created as any).id);
         });
-        it.todo("update modifies fields and bumps updatedAt");
+        it("update modifies fields and bumps updatedAt", async () => {
+            const c = await service.create({
+                name: "Ada",
+                slug: "ada",
+                description: "x",
+            });
+            const before = (c as any).updatedAt;
+            // 5ms delay to ensure timestamp granularity
+            await new Promise((r) => setTimeout(r, 5));
+            const updated = await service.update((c as any).id, {
+                name: "Ada L.",
+            });
+            expect(updated.name).toBe("Ada L.");
+            expect(
+                new Date((updated as any).updatedAt).getTime()
+            ).toBeGreaterThan(new Date(before).getTime());
+        });
         it.todo("delete soft-deletes; getById then 404s");
         it.todo("hideOrUnhidePersonality flips isHidden");
         it.todo("findOrCreatePersonality is idempotent on wikidata");
