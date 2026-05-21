@@ -11,6 +11,7 @@ import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
 import { eq, and } from "drizzle-orm";
+import slugify from "slugify";
 import { personality } from "./schema/personality.schema";
 import type { PersonalityInsert } from "./schema/personality.schema";
 
@@ -65,15 +66,36 @@ export class PostgresPersonalityService implements IPersonalityService {
             .limit(1);
         return row ?? null;
     }
-    async findOrCreatePersonality(_data: {
+    async findOrCreatePersonality(data: {
         name: string;
-        wikidata?: {
-            id?: string;
-            label?: string;
-            description?: string;
-        };
+        wikidata?: { id?: string; label?: string; description?: string };
     }): Promise<IPersonality> {
-        throw new NotImplementedError("postgres", "findOrCreatePersonality");
+        const wikidataId = data.wikidata?.id ?? null;
+        if (wikidataId) {
+            const [existing] = await this.db
+                .select()
+                .from(personality)
+                .where(
+                    and(
+                        eq(personality.wikidata, wikidataId),
+                        eq(personality.isDeleted, false)
+                    )
+                )
+                .limit(1);
+            if (existing) return existing as unknown as IPersonality;
+        }
+        const slug = slugify(data.name, { lower: true, strict: true });
+        const values: PersonalityInsert = {
+            name: data.name,
+            slug,
+            description: data.wikidata?.description ?? "",
+            wikidata: wikidataId,
+        } as PersonalityInsert;
+        const [created] = await this.db
+            .insert(personality)
+            .values(values)
+            .returning();
+        return created as unknown as IPersonality;
     }
     async getById(
         id: string | LeanDocument<IPersonality>,

@@ -106,7 +106,17 @@ if (backends.length === 0) {
             const after = await service.getById((c as any).id);
             expect((after as any).isHidden).toBe(true);
         });
-        it.todo("findOrCreatePersonality is idempotent on wikidata");
+        it("findOrCreatePersonality is idempotent on wikidata", async () => {
+            const a = await service.findOrCreatePersonality({
+                name: "Ada",
+                wikidata: { id: "Q7259" },
+            });
+            const b = await service.findOrCreatePersonality({
+                name: "Ada Lovelace",
+                wikidata: { id: "Q7259" },
+            });
+            expect((a as any).id).toBe((b as any).id);
+        });
         it.todo("count reflects only non-deleted rows");
         it("getDeletedPersonalityByWikidata returns soft-deleted rows", async () => {
             const c = await service.create({
