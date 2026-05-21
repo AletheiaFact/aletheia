@@ -14,6 +14,7 @@ import { eq, and, sql, desc, asc } from "drizzle-orm";
 import slugify from "slugify";
 import { personality } from "./schema/personality.schema";
 import type { PersonalityInsert } from "./schema/personality.schema";
+import { escapeRegex } from "../../util/regex.util";
 
 @Injectable()
 export class PostgresPersonalityService implements IPersonalityService {
@@ -156,6 +157,11 @@ export class PostgresPersonalityService implements IPersonalityService {
         throw new NotImplementedError("postgres", "getClaimsByPersonalitySlug");
     }
     async postProcess(_personality: any, _language?: string): Promise<any> {
+        // Not DB-agnostic: the Mongo impl calls `this.getReviewStats(...)`
+        // (which queries claim-review) and `this.extractClaimWithTextSummary`
+        // (which expects claim shapes). Both are cross-collection methods that
+        // throw on the postgres backend until claim/claim-review are ported.
+        // Re-enable this once those dependencies are available.
         throw new NotImplementedError("postgres", "postProcess");
     }
     async getReviewStats(_id: string): Promise<any> {
@@ -227,8 +233,21 @@ export class PostgresPersonalityService implements IPersonalityService {
             "extractClaimWithTextSummary"
         );
     }
-    verifyInputsQuery(_query: any): any {
-        throw new NotImplementedError("postgres", "verifyInputsQuery");
+    verifyInputsQuery(query: any): any {
+        // Ported verbatim from the Mongo impl. The returned shape is a Mongo
+        // find filter (uses `$regex` / `$options`); consumers on the postgres
+        // backend treat the regex form as opaque metadata until a postgres-
+        // native query interpreter is wired up. Pure helper, no DB access.
+        const queryInputs: any = {};
+        if (query.name) {
+            (queryInputs as Record<string, unknown>).name = {
+                $regex: escapeRegex(query.name),
+                $options: "i",
+            };
+        }
+        queryInputs.isHidden = query?.isHidden || false;
+        queryInputs.isDeleted = false;
+        return queryInputs;
     }
     async combinedListAll(_query: any): Promise<ICombinedListResult> {
         throw new NotImplementedError("postgres", "combinedListAll");
