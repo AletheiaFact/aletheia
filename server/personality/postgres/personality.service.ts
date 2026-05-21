@@ -10,7 +10,7 @@ import type { LeanDocument } from "mongoose";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import slugify from "slugify";
 import { personality } from "./schema/personality.schema";
 import type { PersonalityInsert } from "./schema/personality.schema";
@@ -200,8 +200,12 @@ export class PostgresPersonalityService implements IPersonalityService {
                 and(eq(personality.id, id), eq(personality.isDeleted, false))
             );
     }
-    async count(_query?: any) {
-        throw new NotImplementedError("postgres", "count");
+    async count(_query?: any): Promise<number> {
+        const [{ c }] = await this.db
+            .select({ c: sql<number>`count(*)::int` })
+            .from(personality)
+            .where(eq(personality.isDeleted, false));
+        return c;
     }
     extractClaimWithTextSummary(_claims: any): any {
         throw new NotImplementedError(

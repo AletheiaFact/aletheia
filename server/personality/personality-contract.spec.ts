@@ -117,7 +117,17 @@ if (backends.length === 0) {
             });
             expect((a as any).id).toBe((b as any).id);
         });
-        it.todo("count reflects only non-deleted rows");
+        it("count reflects only non-deleted rows", async () => {
+            const a = await service.create({
+                name: "A",
+                slug: "a",
+                description: "x",
+            });
+            await service.create({ name: "B", slug: "b", description: "y" });
+            expect(await service.count()).toBe(2);
+            await service.delete((a as any).id);
+            expect(await service.count()).toBe(1);
+        });
         it("getDeletedPersonalityByWikidata returns soft-deleted rows", async () => {
             const c = await service.create({
                 name: "X",
