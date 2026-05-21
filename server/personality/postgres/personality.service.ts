@@ -147,11 +147,23 @@ export class PostgresPersonalityService implements IPersonalityService {
         return row as unknown as IPersonality;
     }
     async hideOrUnhidePersonality(
-        _id: string,
-        _isHidden: boolean,
+        id: string,
+        isHidden: boolean,
         _description: string
-    ): Promise<any> {
-        throw new NotImplementedError("postgres", "hideOrUnhidePersonality");
+    ) {
+        // History writes are deferred until HistoryService is ported (see
+        // docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md
+        // — added back in the phase that ports HistoryService).
+        const patch: Record<string, any> = { isHidden, updatedAt: new Date() };
+        const [row] = await this.db
+            .update(personality)
+            .set(patch)
+            .where(
+                and(eq(personality.id, id), eq(personality.isDeleted, false))
+            )
+            .returning();
+        if (!row) throw new Error(`Personality not found: ${id}`);
+        return row;
     }
     async delete(id: string): Promise<void> {
         const patch: Record<string, any> = {

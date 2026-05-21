@@ -95,7 +95,17 @@ if (backends.length === 0) {
                 /not found/i
             );
         });
-        it.todo("hideOrUnhidePersonality flips isHidden");
+        it("hideOrUnhidePersonality flips isHidden", async () => {
+            const c = await service.create({
+                name: "X",
+                slug: "x",
+                description: "x",
+            });
+            expect((c as any).isHidden).toBe(false);
+            await service.hideOrUnhidePersonality((c as any).id, true, "spam");
+            const after = await service.getById((c as any).id);
+            expect((after as any).isHidden).toBe(true);
+        });
         it.todo("findOrCreatePersonality is idempotent on wikidata");
         it.todo("count reflects only non-deleted rows");
         it("getDeletedPersonalityByWikidata returns soft-deleted rows", async () => {
