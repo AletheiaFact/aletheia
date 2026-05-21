@@ -7,7 +7,7 @@ import SearchApi from "../../../api/searchApi";
 import { ActionTypes } from "../../../store/types";
 import { useDispatch } from "react-redux";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
-import HomeHeaderSearchStyled from "./HomeHeaderSearch.style";
+import HomeHeaderSearchStyled from "./HomeHeroSearch.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { InputAdornment } from "@mui/material";

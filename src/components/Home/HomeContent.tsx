@@ -33,7 +33,16 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
                 <Grid item xs={11} sm={11} md={9}>
                     <HomeFeed searchResults={results} />
                 </Grid>
-                <Grid item xs={11} sm={11} md={9} style={{ marginBottom: 32 }}>
+                <Grid item
+                    xs={11}
+                    sm={11}
+                    md={9}
+                    id="latest-reviews"
+                    style={{
+                        marginBottom: 32,
+                        scrollMarginTop: 80
+                    }}
+                >
                     <ReviewsGrid
                         reviews={reviews}
                         title={t("home:latestReviewsTitle")}
