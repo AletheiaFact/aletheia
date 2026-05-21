@@ -49,3 +49,25 @@ To add a new capability to a resource interface:
 
 Do not add public methods anywhere else. Helpers are `private` or `protected`.
 The type test is the gate; it runs as part of `yarn build-ts`.
+
+## Phase 0 limitation
+
+Today the personality module is the only one with a Postgres impl. The
+controller and module-level wiring import sibling modules (`ClaimReviewModule`,
+`ClaimRevisionModule`, `HistoryModule`) which still call
+`MongooseModule.forFeature(...)`. As a result, the Aletheia server cannot
+actually boot under `DB_TYPE=postgres` until those modules are ported (see
+`docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md`).
+
+What works today under `DB_TYPE=postgres`:
+- The personality unit + contract test suites (against pglite, in-process).
+- The compile-time type-test gate (`yarn build-ts`).
+- The CI `vitest-postgres` job.
+
+What does NOT work today:
+- `DB_TYPE=postgres yarn dev` (NestJS bootstrap fails on Mongoose `forFeature`
+  registrations in sibling modules).
+- `DB_TYPE=postgres yarn test:e2e` (same reason).
+
+Phase 1 (verification-request) and the subsequent module ports remove these
+limitations incrementally.

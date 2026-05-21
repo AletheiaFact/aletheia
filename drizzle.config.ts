@@ -1,12 +1,15 @@
 import type { Config } from "drizzle-kit";
 
-const isCI = process.env.CI === "true" || process.env.NODE_ENV === "production";
+/**
+ * drizzle-kit configuration. Reads POSTGRES_URL from the environment (typically
+ * via `.env` loaded by env-cmd in the yarn scripts). Falls back to a local
+ * docker-compose-shaped default for convenience during dev. In production the
+ * env var is expected to be set explicitly — drizzle-kit migration commands
+ * will surface a clear connection error if it isn't.
+ */
 const url =
     process.env.POSTGRES_URL ??
-    (isCI ? null : "postgres://aletheia:aletheia@localhost:5432/aletheia");
-if (!url) {
-    throw new Error("POSTGRES_URL must be set in CI/production environments");
-}
+    "postgres://aletheia:aletheia@localhost:5432/aletheia";
 
 const config: Config = {
     dialect: "postgresql",

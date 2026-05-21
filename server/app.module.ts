@@ -68,6 +68,7 @@ import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
 import { PostgresModule } from "./database/postgres/postgres.module";
+import dbConfig from "./config/db.config";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -80,6 +81,13 @@ export class AppModule implements NestModule {
     }
 
     static register(options): DynamicModule {
+        if (options.db.type !== dbConfig.type) {
+            throw new Error(
+                `DB type mismatch: AppModule received options.db.type='${options.db.type}' but ` +
+                    `dbConfig.type (process.env.DB_TYPE ?? "mongodb") resolved to '${dbConfig.type}'. ` +
+                    `These must agree — set DB_TYPE env var to match config.yaml, or vice versa.`
+            );
+        }
         const imports = [];
         if (options.db.type === "mongodb") {
             imports.push(
