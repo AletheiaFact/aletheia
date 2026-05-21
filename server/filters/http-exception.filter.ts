@@ -84,7 +84,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         }
 
         this.logger.error(
-            `${request.method} ${request.url} | Status: ${status} | RequestId: ${requestId} | Error: ${errorMessage} | Context: ${JSON.stringify(diagnostics)}`,
+            `${request.method} ${
+                request.url
+            } | Status: ${status} | RequestId: ${requestId} | Error: ${errorMessage} | Context: ${JSON.stringify(
+                diagnostics
+            )}`,
             exception instanceof Error ? exception.stack : ""
         );
 
