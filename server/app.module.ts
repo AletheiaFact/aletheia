@@ -67,6 +67,7 @@ import { AiTaskModule } from "./ai-task/ai-task.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
+import { PostgresModule } from "./database/postgres/postgres.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -87,6 +88,8 @@ export class AppModule implements NestModule {
                     options.db.options
                 )
             );
+        } else if (options.db.type === "postgres") {
+            imports.push(PostgresModule.forRoot(options.db.postgres));
         } else {
             throw new Error("Invalid DB_TYPE in configuration");
         }
