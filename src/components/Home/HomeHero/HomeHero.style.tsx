@@ -6,47 +6,65 @@ import Grid from "@mui/material/Grid";
 const HomeHeroStyle = styled(Grid)`
     position: relative;
     display: flex;
-    background-color: ${colors.primary};
-    background-image:
-        radial-gradient(
-            ellipse 60% 45% at 50% 0%,
-            color-mix(in srgb, ${colors.lightSecondary} 14%, transparent) 0%,
-            color-mix(in srgb, ${colors.lightSecondary} 0%, transparent) 70%
-        ),
-        radial-gradient(
-            ellipse 60% 45% at 50% 100%,
-            color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 0%,
-            color-mix(in srgb, ${colors.lightSecondary} 0%, transparent) 70%
-        ),
-        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size:
-        100% 100%,
-        100% 100%,
-        56px 56px,
-        56px 56px;
-    background-position:
-        center top,
-        center bottom,
-        center center,
-        center center;
-    background-repeat:
-        no-repeat,
-        no-repeat,
-        repeat,
-        repeat;
-    align-items: center;
-    padding: 96px 24px;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
     overflow: hidden;
+
+    .home-header-dark-section {
+        position: relative;
+        display: flex;
+        background-color: ${colors.primary};
+        background-image:
+            radial-gradient(
+                ellipse 60% 45% at 50% 0%,
+                color-mix(in srgb, ${colors.lightSecondary} 14%, transparent)
+                    0%,
+                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent)
+                    70%
+            ),
+            radial-gradient(
+                ellipse 60% 45% at 50% 100%,
+                color-mix(in srgb, ${colors.lightSecondary} 10%, transparent)
+                    0%,
+                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent)
+                    70%
+            ),
+            linear-gradient(
+                rgba(255, 255, 255, 0.04) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.04) 1px,
+                transparent 1px
+            );
+        background-size:
+            100% 100%,
+            100% 100%,
+            56px 56px,
+            56px 56px;
+        background-position:
+            center top,
+            center bottom,
+            center center,
+            center center;
+        background-repeat:
+            no-repeat,
+            no-repeat,
+            repeat,
+            repeat;
+        align-items: center;
+        padding: clamp(48px, 8vw, 96px) clamp(16px, 3vw, 24px);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
     .home-header-content {
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 32px;
+        gap: clamp(24px, 3.5vw, 32px);
         margin: 0 auto;
     }
 
@@ -62,12 +80,12 @@ const HomeHeroStyle = styled(Grid)`
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 16px;
+        padding: clamp(5px, 0.8vw, 6px) clamp(12px, 2vw, 16px);
         border-radius: 999px;
         border: 1px solid ${colors.secondary};
         background-color: rgba(255, 255, 255, 0.04);
         color: ${colors.white};
-        font-size: 14px;
+        font-size: clamp(12px, 1.4vw, 14px);
         line-height: 1.2;
         backdrop-filter: blur(4px);
         white-space: nowrap;
@@ -169,7 +187,7 @@ const HomeHeroStyle = styled(Grid)`
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 48px;
+        gap: clamp(16px, 3vw, 48px);
         width: 100%;
         padding-top: 32px;
         margin-top: 16px;
@@ -181,7 +199,7 @@ const HomeHeroStyle = styled(Grid)`
         align-items: center;
         gap: 8px;
         color: rgba(255, 255, 255, 0.7);
-        font-size: 15px;
+        font-size: clamp(14px, 1.5vw, 15px);
     }
 
     .home-header-feature-icon {
@@ -195,19 +213,59 @@ const HomeHeroStyle = styled(Grid)`
         }
     }
 
-    @media ${queries.md} {
-        padding: 72px 24px;
+    .home-header-stats-section {
+        background-color: ${colors.white};
+        border-top: 1px solid ${colors.lightNeutralSecondary};
+        padding: clamp(24px, 4vw, 48px) clamp(8px, 2vw, 24px);
+        width: 100%;
+    }
 
-        .home-header-features {
-            gap: 24px;
-        }
+    .home-header-stats {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .home-header-stats-item {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+    }
+
+    .home-header-stats-value {
+        font-size: clamp(22px, 6vw, 72px);
+        font-weight: 700;
+        line-height: 1;
+        color: ${colors.lightPrimary};
+        letter-spacing: -0.02em;
+    }
+
+    .home-header-stats-label {
+        font-size: clamp(10px, 1.2vw, 14px);
+        font-weight: 500;
+        line-height: 1.2;
+        color: ${colors.secondary};
+        text-transform: uppercase;
+        letter-spacing: clamp(0.08em, 0.3vw, 0.18em);
+    }
+
+    .home-header-stats-divider {
+        align-self: stretch;
+        width: 1px;
+        background-color: ${colors.lightNeutralSecondary};
+        margin: 0 clamp(4px, 1.5vw, 24px);
+    }
+
+    .home-header-search-section {
+        background-color: ${colors.lightNeutral};
+        padding: clamp(40px, 6vw, 80px) clamp(16px, 2vw, 24px);
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     @media ${queries.sm} {
-        padding: 56px 20px;
-
         .home-header-content {
-            gap: 24px;
             width: 100%;
         }
 
@@ -230,31 +288,23 @@ const HomeHeroStyle = styled(Grid)`
         }
 
         .home-header-features {
-            gap: 16px;
             flex-direction: column;
             align-items: flex-start;
             padding-left: 16px;
         }
-
-        .home-header-feature {
-            font-size: 14px;
-        }
     }
 
     @media ${queries.xs} {
-        padding: 48px 16px;
-
-        .home-header-badge {
-            font-size: 12px;
-            padding: 5px 12px;
-        }
-
         .home-header-title h1 {
             font-size: clamp(24px, 8vw, 32px);
         }
 
         .home-header-features {
             padding-left: 8px;
+        }
+
+        .home-header-title-highlight {
+            padding-bottom: 0px;
         }
     }
 `;

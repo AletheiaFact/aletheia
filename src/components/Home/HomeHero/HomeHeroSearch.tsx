@@ -1,27 +1,21 @@
 import React, { useState } from "react";
-import InputSearch from "../../Form/InputSearch";
-import { SearchOutlined } from "@mui/icons-material";
+import { Box, InputBase, Stack, Typography } from "@mui/material";
+import { ArrowForward, SearchOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import { useAppSelector } from "../../../store/store";
 import SearchApi from "../../../api/searchApi";
 import { ActionTypes } from "../../../store/types";
 import { useDispatch } from "react-redux";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
-import HomeHeaderSearchStyled from "./HomeHeroSearch.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
-import { InputAdornment } from "@mui/material";
+import HomeHeroSearchStyled from "./HomeHeroSearch.style";
 
-const HomeHeaderSearch = () => {
+const HomeHeroSearch = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
     const [nameSpace] = useAtom(currentNameSpace);
-
-    const { vw } = useAppSelector((state) => ({
-        vw: state.vw,
-    }));
 
     const handleInputSearch = async () => {
         if (!isLoading && name.length > 3) {
@@ -42,41 +36,60 @@ const HomeHeaderSearch = () => {
     };
 
     return (
-        <HomeHeaderSearchStyled container item xl={6} lg={8} sm={9} xs={12}>
-            <h2 className="title">{t("home:homeHeaderSearchTitle")}</h2>
+        <HomeHeroSearchStyled
+            direction="column"
+            alignItems="center"
+            spacing={3}
+            className="home-header-search-content"
+        >
+            <Stack
+                direction="column"
+                alignItems="center"
+                spacing={1}
+                className="home-header-search-heading"
+            >
+                <Typography
+                    component="h2"
+                    className="home-header-search-title"
+                >
+                    {t("home:homeHeaderSearchTitle")}
+                </Typography>
+                <Typography
+                    component="p"
+                    className="home-header-search-description"
+                >
+                    {t("home:homeHeaderSearchDescription")}
+                </Typography>
+            </Stack>
 
-            <InputSearch
-                sx={{ width: "100%" }}
-                placeholder={t("header:search_placeholder")}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchOutlined />
-                        </InputAdornment>
-                    ),
-                }}
-                data-cy={"testInputSearchOverlay"}
-                onChange={({ target }) => setName(target.value)}
-                onKeyDown={({ key }) => {
-                    if (key === "Enter") {
-                        handleInputSearch();
-                    }
-                }}
-            />
-
-            {!vw?.xs && (
+            <Box className="home-header-search-box">
+                <Box component="span" className="home-header-search-icon">
+                    <SearchOutlined />
+                </Box>
+                <InputBase
+                    fullWidth
+                    value={name}
+                    placeholder={t("home:homeHeaderSearchPlaceholder")}
+                    className="home-header-search-input"
+                    onChange={({ target }) => setName(target.value)}
+                    onKeyDown={({ key }) => {
+                        if (key === "Enter") handleInputSearch();
+                    }}
+                    inputProps={{ "data-cy": "testInputSearchOverlay" }}
+                />
                 <AletheiaButton
                     type={ButtonType.lightBlue}
                     onClick={handleInputSearch}
-                    style={{ width: "180px" }}
                     disabled={name.length <= 3}
                     loading={isLoading}
+                    className="home-header-search-button"
                 >
                     {t("home:homeHeaderSearchButton")}
+                    <ArrowForward className="home-header-search-button-icon" />
                 </AletheiaButton>
-            )}
-        </HomeHeaderSearchStyled>
+            </Box>
+        </HomeHeroSearchStyled>
     );
 };
 
-export default HomeHeaderSearch;
+export default HomeHeroSearch;

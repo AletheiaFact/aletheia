@@ -9,7 +9,7 @@ const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableE
 
     return (
         <>
-            <HomeHero />
+            <HomeHero stats={stats} />
             <HomeContent
                 personalities={personalities}
                 debateClaims={claims}

@@ -11,6 +11,8 @@
     "statsFooter": "Contribute to an internet free of misinformation. We verify claims made by politicians, celebrities, and public figures with transparency and methodological rigor.",
     "createAccountButton": "Sign-up",
     "homeHeaderSearchTitle": "Search in our platform",
+    "homeHeaderSearchDescription": "Find fact-checks, personalities and verified claims",
+    "homeHeaderSearchPlaceholder": "Search by name, claim or topic...",
     "homeHeaderSearchButton": "Search",
     "donateButton": "Donate",
     "donateUrlButton": "https://donate.aletheiafact.org/",

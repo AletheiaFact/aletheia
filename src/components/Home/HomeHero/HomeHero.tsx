@@ -3,22 +3,40 @@ import React from "react";
 import HomeHeroTitle from "./HomeHeroTitle";
 import HomeHeroActions from "./HomeHeroActions";
 import HomeHeroFeatures from "./HomeHeroFeatures";
+import HomeHeroStats from "./HomeHeroStats";
+import HomeHeroSearch from "./HomeHeroSearch";
 import HomeHeroStyle from "./HomeHero.style";
+import { HomeHeroStatsProps } from "../../../types/Home";
 
-const HomeHero = () => {
+const HomeHero = ({ stats }: HomeHeroStatsProps) => {
     return (
         <HomeHeroStyle container>
-            <Grid item
-                xl={8}
-                lg={9}
-                md={10}
-                sm={11}
+            <Grid
+                item
                 xs={12}
-                className="home-header-content"
+                container
+                justifyContent="center"
+                className="home-header-dark-section"
             >
-                <HomeHeroTitle />
-                <HomeHeroActions />
-                <HomeHeroFeatures />
+                <Grid
+                    item
+                    xl={8}
+                    lg={9}
+                    md={10}
+                    sm={11}
+                    xs={12}
+                    className="home-header-content"
+                >
+                    <HomeHeroTitle />
+                    <HomeHeroActions />
+                    <HomeHeroFeatures />
+                </Grid>
+            </Grid>
+            <Grid item xs={12} className="home-header-stats-section">
+                <HomeHeroStats stats={stats} />
+            </Grid>
+            <Grid item xs={12} className="home-header-search-section">
+                <HomeHeroSearch />
             </Grid>
         </HomeHeroStyle>
     );

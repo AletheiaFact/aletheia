@@ -13,6 +13,8 @@
     "donateButton": "Doar",
     "donateUrlButton": "https://donate.aletheiafact.org/",
     "homeHeaderSearchTitle": "Busque em nossa plataforma",
+    "homeHeaderSearchDescription": "Encontre checagens de fatos, personalidades e discursos verificados",
+    "homeHeaderSearchPlaceholder": "Buscar por nome, afirmação ou tema...",
     "homeHeaderSearchButton": "Buscar",
     "homeFeedTitle": "Resultados",
     "seeMorePersonalitiesButton": "Veja mais personalidades",
