@@ -84,10 +84,31 @@ if (backends.length === 0) {
                 new Date((updated as any).updatedAt).getTime()
             ).toBeGreaterThan(new Date(before).getTime());
         });
-        it.todo("delete soft-deletes; getById then 404s");
+        it("delete soft-deletes; getById then throws", async () => {
+            const c = await service.create({
+                name: "X",
+                slug: "x",
+                description: "x",
+            });
+            await service.delete((c as any).id);
+            await expect(service.getById((c as any).id)).rejects.toThrow(
+                /not found/i
+            );
+        });
         it.todo("hideOrUnhidePersonality flips isHidden");
         it.todo("findOrCreatePersonality is idempotent on wikidata");
         it.todo("count reflects only non-deleted rows");
-        it.todo("getDeletedPersonalityByWikidata returns soft-deleted rows");
+        it("getDeletedPersonalityByWikidata returns soft-deleted rows", async () => {
+            const c = await service.create({
+                name: "X",
+                slug: "x",
+                description: "x",
+                wikidata: "Q1",
+            });
+            await service.delete((c as any).id);
+            const found = await service.getDeletedPersonalityByWikidata("Q1");
+            expect((found as any).id).toBe((c as any).id);
+            expect((found as any).isDeleted).toBe(true);
+        });
     });
 }

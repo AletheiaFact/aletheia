@@ -52,11 +52,18 @@ export class PostgresPersonalityService implements IPersonalityService {
             .returning();
         return row as unknown as IPersonality;
     }
-    async getDeletedPersonalityByWikidata(_wikidata: string) {
-        throw new NotImplementedError(
-            "postgres",
-            "getDeletedPersonalityByWikidata"
-        );
+    async getDeletedPersonalityByWikidata(wikidata: string) {
+        const [row] = await this.db
+            .select()
+            .from(personality)
+            .where(
+                and(
+                    eq(personality.wikidata, wikidata),
+                    eq(personality.isDeleted, true)
+                )
+            )
+            .limit(1);
+        return row ?? null;
     }
     async findOrCreatePersonality(_data: {
         name: string;
@@ -146,8 +153,18 @@ export class PostgresPersonalityService implements IPersonalityService {
     ): Promise<any> {
         throw new NotImplementedError("postgres", "hideOrUnhidePersonality");
     }
-    async delete(_id: string): Promise<void> {
-        throw new NotImplementedError("postgres", "delete");
+    async delete(id: string): Promise<void> {
+        const patch: Record<string, any> = {
+            isDeleted: true,
+            deletedAt: new Date(),
+            updatedAt: new Date(),
+        };
+        await this.db
+            .update(personality)
+            .set(patch)
+            .where(
+                and(eq(personality.id, id), eq(personality.isDeleted, false))
+            );
     }
     async count(_query?: any) {
         throw new NotImplementedError("postgres", "count");
