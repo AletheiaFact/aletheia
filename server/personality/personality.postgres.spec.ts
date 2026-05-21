@@ -1,5 +1,6 @@
 import { PostgresPersonalityService } from "./postgres/personality.service";
 import { getTestDrizzle, resetTestDrizzle } from "../tests/postgres-setup";
+import { NotImplementedError } from "../database/errors";
 
 describe.skipIf(process.env.DB_TYPE !== "postgres")(
     "personality postgres-only",
@@ -48,6 +49,47 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect(page0).toHaveLength(3);
             const page1 = await service.listAll(1, 3, "desc", {}, "en", false);
             expect(page1).toHaveLength(2);
+        });
+    }
+);
+
+describe.skipIf(process.env.DB_TYPE !== "postgres")(
+    "personality cross-collection deferrals",
+    () => {
+        let service: PostgresPersonalityService;
+        beforeEach(async () => {
+            await resetTestDrizzle();
+            const db = await getTestDrizzle();
+            const wikidataStub = {
+                queryWikibaseEntities: async () => [],
+            } as any;
+            service = new PostgresPersonalityService(db, wikidataStub);
+        });
+
+        it.each([
+            [
+                "getClaimsByPersonalitySlug",
+                () => service.getClaimsByPersonalitySlug({ slug: "x" }),
+            ],
+            [
+                "getReviewStats",
+                () =>
+                    service.getReviewStats(
+                        "00000000-0000-0000-0000-000000000000"
+                    ),
+            ],
+            ["combinedListAll", () => service.combinedListAll({})],
+            [
+                "extractClaimWithTextSummary",
+                () => service.extractClaimWithTextSummary([]),
+            ],
+        ])("%s throws NotImplementedError", async (_name, call) => {
+            // `call()` may throw synchronously (e.g. extractClaimWithTextSummary
+            // is non-async) or reject (async methods). Wrap in an async IIFE so
+            // both forms surface as a rejected promise.
+            await expect((async () => call())()).rejects.toBeInstanceOf(
+                NotImplementedError
+            );
         });
     }
 );
