@@ -10,7 +10,7 @@ import type { LeanDocument } from "mongoose";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, desc, asc } from "drizzle-orm";
 import slugify from "slugify";
 import { personality } from "./schema/personality.schema";
 import type { PersonalityInsert } from "./schema/personality.schema";
@@ -29,15 +29,29 @@ export class PostgresPersonalityService implements IPersonalityService {
         throw new NotImplementedError("postgres", "getWikidataList");
     }
     async listAll(
-        _page: number,
-        _pageSize: number,
-        _order: string,
+        page: number,
+        pageSize: number,
+        order: string,
         _query: any,
         _language: string,
         _withSuggestions: boolean,
         _filter?: any
     ): Promise<IPersonality[]> {
-        throw new NotImplementedError("postgres", "listAll");
+        // NOTE: the `query` object is currently ignored on the postgres backend.
+        // The Mongo impl interprets it as a Mongo find filter; porting that surface
+        // is tracked in the completion checklist as a Phase 0 follow-up.
+        const orderBy =
+            order === "asc"
+                ? asc(personality.createdAt)
+                : desc(personality.createdAt);
+        const rows = await this.db
+            .select()
+            .from(personality)
+            .where(eq(personality.isDeleted, false))
+            .orderBy(orderBy)
+            .limit(pageSize)
+            .offset(page * pageSize);
+        return rows as unknown as IPersonality[];
     }
     async create(data: any): Promise<IPersonality> {
         const values: PersonalityInsert = {
@@ -219,7 +233,42 @@ export class PostgresPersonalityService implements IPersonalityService {
     async combinedListAll(_query: any): Promise<ICombinedListResult> {
         throw new NotImplementedError("postgres", "combinedListAll");
     }
-    async findAll(_options: IFindAllOptions): Promise<IFindAllResult> {
-        throw new NotImplementedError("postgres", "findAll");
+    async findAll(opts: IFindAllOptions): Promise<IFindAllResult> {
+        const { searchText, pageSize, skippedDocuments } = opts;
+        const skip = skippedDocuments ?? 0;
+
+        // Set the trigram threshold once per session. pglite supports SET via
+        // session-scoped state; the threshold isn't load-bearing for correctness,
+        // only for ranking, so a session-level SET is fine here.
+        await this.db.execute(sql`SET pg_trgm.similarity_threshold = 0.3`);
+
+        const where = searchText
+            ? and(
+                  eq(personality.isDeleted, false),
+                  sql`${personality.name} % ${searchText}`
+              )
+            : eq(personality.isDeleted, false);
+
+        const order = searchText
+            ? sql`similarity(${personality.name}, ${searchText}) DESC`
+            : desc(personality.createdAt);
+
+        const rows = await this.db
+            .select()
+            .from(personality)
+            .where(where)
+            .orderBy(order)
+            .limit(pageSize)
+            .offset(skip);
+
+        const [{ c: totalRows }] = await this.db
+            .select({ c: sql<number>`count(*)::int` })
+            .from(personality)
+            .where(where);
+
+        return {
+            totalRows,
+            processedPersonalities: rows as unknown as IPersonality[],
+        };
     }
 }
