@@ -57,7 +57,16 @@ if (backends.length === 0) {
             expect(fetched.name).toBe("Ada Lovelace");
             expect(fetched.slug).toBe("ada-lovelace");
         });
-        it.todo("getPersonalityBySlug returns the right record");
+        it("getPersonalityBySlug returns the right record", async () => {
+            await service.create({ name: "A", slug: "a", description: "x" });
+            const created = await service.create({
+                name: "B",
+                slug: "b",
+                description: "y",
+            });
+            const fetched = await service.getPersonalityBySlug({ slug: "b" });
+            expect((fetched as any).id).toBe((created as any).id);
+        });
         it.todo("update modifies fields and bumps updatedAt");
         it.todo("delete soft-deletes; getById then 404s");
         it.todo("hideOrUnhidePersonality flips isHidden");

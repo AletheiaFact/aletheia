@@ -87,10 +87,24 @@ export class PostgresPersonalityService implements IPersonalityService {
         return row as unknown as IPersonality;
     }
     async getPersonalityBySlug(
-        _query: any,
+        query: any,
         _language?: string
     ): Promise<IPersonality> {
-        throw new NotImplementedError("postgres", "getPersonalityBySlug");
+        const slug = typeof query === "string" ? query : query.slug;
+        const [row] = await this.db
+            .select()
+            .from(personality)
+            .where(
+                and(
+                    eq(personality.slug, slug),
+                    eq(personality.isDeleted, false)
+                )
+            )
+            .limit(1);
+        if (!row) {
+            throw new Error(`Personality not found by slug: ${slug}`);
+        }
+        return row as unknown as IPersonality;
     }
     async getClaimsByPersonalitySlug(
         _query: any,
