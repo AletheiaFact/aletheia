@@ -9,7 +9,10 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         beforeEach(async () => {
             await resetTestDrizzle();
             const db = await getTestDrizzle();
-            service = new PostgresPersonalityService(db);
+            const wikidataStub = {
+                queryWikibaseEntities: async () => [],
+            } as any;
+            service = new PostgresPersonalityService(db, wikidataStub);
         });
 
         it("findAll fuzzy-matches a 1-edit typo on name", async () => {

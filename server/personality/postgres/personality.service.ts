@@ -15,19 +15,21 @@ import slugify from "slugify";
 import { personality } from "./schema/personality.schema";
 import type { PersonalityInsert } from "./schema/personality.schema";
 import { escapeRegex } from "../../util/regex.util";
+import { WikidataService } from "../../wikidata/wikidata.service";
 
 @Injectable()
 export class PostgresPersonalityService implements IPersonalityService {
-    constructor(@Inject(DRIZZLE) private readonly db: DrizzleClient) {}
+    constructor(
+        @Inject(DRIZZLE) private readonly db: DrizzleClient,
+        private readonly wikidata: WikidataService
+    ) {}
 
-    async getWikidataEntities(_regex: string, _language: string): Promise<any> {
-        throw new NotImplementedError("postgres", "getWikidataEntities");
+    async getWikidataEntities(regex: string, language: string): Promise<any> {
+        return this.wikidata.queryWikibaseEntities(regex, language, false);
     }
-    async getWikidataList(
-        _regex: string,
-        _language: string
-    ): Promise<string[]> {
-        throw new NotImplementedError("postgres", "getWikidataList");
+    async getWikidataList(regex: string, language: string): Promise<string[]> {
+        const entities = await this.getWikidataEntities(regex, language);
+        return entities.map((e: any) => e.wikidata);
     }
     async listAll(
         page: number,

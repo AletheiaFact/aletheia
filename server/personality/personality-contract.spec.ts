@@ -20,8 +20,12 @@ if ((process.env.DB_TYPE ?? "mongodb") === "postgres") {
         setup: async () => {
             await resetTestDrizzle();
             const db = await getTestDrizzle();
+            const wikidataStub = {
+                queryWikibaseEntities: async () => [],
+            } as any;
             return new PostgresPersonalityService(
-                db
+                db,
+                wikidataStub
             ) as unknown as IPersonalityService;
         },
     });
