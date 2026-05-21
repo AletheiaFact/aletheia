@@ -10,6 +10,9 @@ import type { LeanDocument } from "mongoose";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
+import { eq, and } from "drizzle-orm";
+import { personality } from "./schema/personality.schema";
+import type { PersonalityInsert } from "./schema/personality.schema";
 
 @Injectable()
 export class PostgresPersonalityService implements IPersonalityService {
@@ -35,8 +38,19 @@ export class PostgresPersonalityService implements IPersonalityService {
     ): Promise<IPersonality[]> {
         throw new NotImplementedError("postgres", "listAll");
     }
-    async create(_personality: any): Promise<IPersonality> {
-        throw new NotImplementedError("postgres", "create");
+    async create(data: any): Promise<IPersonality> {
+        const values: PersonalityInsert = {
+            name: data.name,
+            slug: data.slug,
+            description: data.description,
+            wikidata: data.wikidata ?? null,
+            isHidden: data.isHidden ?? false,
+        } as PersonalityInsert;
+        const [row] = await this.db
+            .insert(personality)
+            .values(values)
+            .returning();
+        return row as unknown as IPersonality;
     }
     async getDeletedPersonalityByWikidata(_wikidata: string) {
         throw new NotImplementedError(
@@ -55,10 +69,22 @@ export class PostgresPersonalityService implements IPersonalityService {
         throw new NotImplementedError("postgres", "findOrCreatePersonality");
     }
     async getById(
-        _id: string | LeanDocument<IPersonality>,
+        id: string | LeanDocument<IPersonality>,
         _options?: { language?: string; nameSpace?: string }
     ): Promise<IPersonality> {
-        throw new NotImplementedError("postgres", "getById");
+        const idStr =
+            typeof id === "string" ? id : (id as any)._id ?? (id as any).id;
+        const [row] = await this.db
+            .select()
+            .from(personality)
+            .where(
+                and(eq(personality.id, idStr), eq(personality.isDeleted, false))
+            )
+            .limit(1);
+        if (!row) {
+            throw new Error(`Personality not found: ${idStr}`);
+        }
+        return row as unknown as IPersonality;
     }
     async getPersonalityBySlug(
         _query: any,

@@ -44,7 +44,19 @@ if (backends.length === 0) {
         });
 
         // Tasks 11–18 add concrete `it()` blocks here.
-        it.todo("create / getById round-trip");
+        it("create / getById round-trip", async () => {
+            const created = await service.create({
+                name: "Ada Lovelace",
+                slug: "ada-lovelace",
+                description: "Mathematician",
+            });
+            expect(created.name).toBe("Ada Lovelace");
+            expect((created as any).id).toBeDefined();
+
+            const fetched = await service.getById((created as any).id);
+            expect(fetched.name).toBe("Ada Lovelace");
+            expect(fetched.slug).toBe("ada-lovelace");
+        });
         it.todo("getPersonalityBySlug returns the right record");
         it.todo("update modifies fields and bumps updatedAt");
         it.todo("delete soft-deletes; getById then 404s");
