@@ -33,7 +33,11 @@ export type Details = {
     before: any;
 };
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class History {
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -52,7 +56,13 @@ export class History {
         type: mongoose.Schema.Types.Mixed,
         required: false,
     })
-    user: User | M2M | string;
+    user:
+        | User
+        | M2M
+        | mongoose.Types.ObjectId
+        | mongoose.Types.ObjectId[]
+        | string
+        | null;
 
     @Prop({
         type: String,

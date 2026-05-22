@@ -2,7 +2,11 @@ import { MongoClient } from "mongodb";
 import { ClaimMock } from "./ClaimMock";
 import { getTestDbName } from "./getTestDbName";
 
-export const SeedTestClaim = async (uri, personalitiesId, claimRevisionId) => {
+export const SeedTestClaim = async (
+    uri: string,
+    personalitiesId: string[],
+    claimRevisionId: string
+) => {
     const client = await new MongoClient(uri);
     await client.connect();
 

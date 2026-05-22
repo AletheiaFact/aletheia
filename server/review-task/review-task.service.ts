@@ -5,6 +5,7 @@ import {
     NotFoundException,
     Scope,
     Logger,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
@@ -36,7 +37,6 @@ import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
 import { Source } from "../source/schemas/source.schema";
-import { Update } from "aws-sdk/clients/dynamodb";
 
 interface IListAllQuery {
     value: any;
@@ -69,7 +69,7 @@ export interface IReviewTask {
 @Injectable({ scope: Scope.REQUEST })
 export class ReviewTaskService {
     private readonly logger = new Logger(ReviewTaskService.name);
-    fieldMap: { assigned: string; crossChecked: string; reviewed: string };
+    fieldMap: Record<string, string>;
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ReviewTask.name)
@@ -90,7 +90,10 @@ export class ReviewTaskService {
         };
     }
 
-    getQueryObject(value, filterUser) {
+    getQueryObject(
+        value: string,
+        filterUser: Record<string, boolean | string>
+    ): Record<string, any> {
         const query = getQueryMatchForMachineValue(value);
 
         Object.keys(filterUser).forEach((key) => {
@@ -104,7 +107,11 @@ export class ReviewTaskService {
         return query;
     }
 
-    _verifyMachineValueAndAddMatchPipeline(pipeline, value, reviewTaskType) {
+    _verifyMachineValueAndAddMatchPipeline(
+        pipeline: any[],
+        value: string,
+        reviewTaskType: ReviewTaskTypeEnum
+    ): number {
         if (
             value === "published" &&
             reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
@@ -143,7 +150,7 @@ export class ReviewTaskService {
     }
 
     buildLookupPipeline(reviewTaskType: ReviewTaskTypeEnum) {
-        let pipeline: any = [
+        let pipeline: any[] = [
             {
                 $match: {
                     $expr: {
@@ -178,8 +185,8 @@ export class ReviewTaskService {
         filterUser,
         nameSpace,
         reviewTaskType,
-    }: IListAllQuery) {
-        const pipeline = [];
+    }: IListAllQuery): any[] {
+        const pipeline: any[] = [];
         const query = this.getQueryObject(value, filterUser);
 
         pipeline.push(
@@ -308,7 +315,7 @@ export class ReviewTaskService {
         ).exec();
 
         return Promise.all(
-            reviewTasks?.map((reviewTask) => this.postProcess(reviewTask))
+            reviewTasks?.map((reviewTask: any) => this.postProcess(reviewTask))
         );
     }
 
@@ -381,8 +388,11 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
-    async _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
-        let historyType;
+    async _createReviewTaskHistory(
+        newReviewTask: any,
+        previousReviewTask: any = null
+    ) {
+        let historyType: HistoryType | string | undefined;
 
         if (typeof newReviewTask.machine.value === "object") {
             historyType =
@@ -399,7 +409,7 @@ export class ReviewTaskService {
             newReviewTask._id,
             TargetModel.ReviewTask,
             user,
-            historyType || HistoryType.Published,
+            (historyType || HistoryType.Published) as HistoryType,
             {
                 ...newReviewTask.machine.context.reviewData,
                 ...newReviewTask.machine.context.review.target,
@@ -412,11 +422,11 @@ export class ReviewTaskService {
             }
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
     }
 
-    _createStateEvent(newReviewTask) {
-        let typeModel;
+    _createStateEvent(newReviewTask: any) {
+        let typeModel: string | undefined;
         let draft = false;
 
         if (typeof newReviewTask.machine.value === "object") {
@@ -431,22 +441,24 @@ export class ReviewTaskService {
         }
 
         const stateEvent = this.stateEventService.getStateEventParams(
-            new Types.ObjectId(newReviewTask.machine.context.review.target),
+            new Types.ObjectId(
+                newReviewTask.machine.context.review.target
+            ) as any,
             typeModel || TypeModel.Published,
             draft,
             newReviewTask._id
         );
 
-        this.stateEventService.createStateEvent(stateEvent);
+        this.stateEventService.createStateEvent(stateEvent as any);
     }
 
     async _createReportAndClaimReview(
-        data_hash,
-        machine,
-        reportModel,
-        nameSpace,
-        target,
-        targetModel
+        data_hash: string,
+        machine: Machine,
+        reportModel: string,
+        nameSpace: string,
+        target: any,
+        targetModel: string
     ) {
         const reviewData = machine.context.review;
 
@@ -470,9 +482,9 @@ export class ReviewTaskService {
         );
     }
 
-    _returnObjectId(data): any {
+    _returnObjectId(data: any): any {
         if (Array.isArray(data)) {
-            return data.map((item) =>
+            return data.map((item: any) =>
                 item._id
                     ? new Types.ObjectId(item._id) || ""
                     : new Types.ObjectId(item)
@@ -480,7 +492,11 @@ export class ReviewTaskService {
         }
     }
 
-    _createCrossCheckingComment(comment, text, targetId) {
+    _createCrossCheckingComment(
+        comment: string,
+        text: string,
+        targetId: Types.ObjectId
+    ) {
         const newCrossCheckingComment = {
             comment,
             text,
@@ -536,16 +552,21 @@ export class ReviewTaskService {
 
         if (createCrossCheckingComment) {
             const crossCheckingComment = await this._createCrossCheckingComment(
-                reviewDataBody.crossCheckingComment,
-                reviewDataBody.crossCheckingClassification,
-                reviewTask._id
+                reviewDataBody.crossCheckingComment!,
+                reviewDataBody.crossCheckingClassification!,
+                reviewTask!._id
             );
-            reviewTaskBody.machine.context.reviewData.crossCheckingComments.push(
+            reviewTaskBody.machine.context.reviewData.crossCheckingComments!.push(
                 crossCheckingComment._id
             );
         }
 
         if (reviewTask) {
+            this.logger.log(
+                `[ReviewTask] State transition for data_hash=${reviewTaskBody.data_hash} ` +
+                    `by user=${this.req.user?._id}: ` +
+                    `"${reviewTask.machine?.value}" → "${reviewTaskBody.machine?.value}"`
+            );
             return this.update(
                 reviewTaskBody.data_hash,
                 reviewTaskBody,
@@ -553,6 +574,12 @@ export class ReviewTaskService {
                 reviewTask.reportModel
             );
         } else {
+            this.logger.log(
+                `[ReviewTask] Creating new review task: data_hash=${reviewTaskBody.data_hash}, ` +
+                    `reportModel=${reviewTaskBody.reportModel}, ` +
+                    `initialState="${reviewTaskBody.machine?.value}", ` +
+                    `user=${this.req.user?._id}`
+            );
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
             newReviewTask.save();
             this._createReviewTaskHistory(newReviewTask);
@@ -570,6 +597,11 @@ export class ReviewTaskService {
     ): Promise<ReviewTaskDocument> {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        if (!reviewTask) {
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
+            );
+        }
 
         const newReviewTaskMachine = {
             ...reviewTask.machine,
@@ -584,7 +616,7 @@ export class ReviewTaskService {
         this._publishReviewTask(
             newReviewTask,
             nameSpace,
-            machine,
+            machine!,
             data_hash,
             reportModel
         );
@@ -594,9 +626,18 @@ export class ReviewTaskService {
             this._createStateEvent(newReviewTask);
         }
 
-        return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
-            $set: { machine: newReviewTaskMachine },
-        });
+        const updated = await this.ReviewTaskModel.findByIdAndUpdate(
+            reviewTask._id,
+            {
+                $set: { machine: newReviewTaskMachine },
+            }
+        );
+        if (!updated) {
+            throw new NotFoundException(
+                `ReviewTask not found: ${reviewTask._id}`
+            );
+        }
+        return updated;
     }
 
     private static readonly ALLOWED_DRAFT_REVIEW_DATA_FIELDS = [
@@ -620,6 +661,15 @@ export class ReviewTaskService {
     ];
 
     async saveDraft(data_hash: string, saveDraftBody: SaveDraftDTO) {
+        if (!this.req.user) {
+            this.logger.warn(
+                `Unauthenticated save-draft attempt for data_hash=${data_hash}`
+            );
+            throw new UnauthorizedException(
+                "Authentication required to save a draft"
+            );
+        }
+
         let reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
         // If review task doesn't exist yet (e.g. InformativeNews auto-assigns
@@ -646,6 +696,10 @@ export class ReviewTaskService {
                 },
             });
             await newReviewTask.save();
+            this.logger.log(
+                `[ReviewTask] Auto-created draft for data_hash=${data_hash}, ` +
+                    `reportModel=${saveDraftBody.reportModel}, user=${loggedInUserId}`
+            );
             reviewTask = newReviewTask;
         } else if (!reviewTask) {
             throw new NotFoundException("Review task not found");
@@ -656,13 +710,19 @@ export class ReviewTaskService {
         const assignees =
             reviewTask.machine?.context?.reviewData?.usersId || [];
         const isAssignee = assignees
-            .map((id) => id.toString())
+            .map((id: any) => id.toString())
             .includes(loggedInUser._id.toString());
-        const userRole = loggedInUser.role?.[reviewTask.nameSpace];
+        const userRole = (loggedInUser.role as Record<string, Roles>)?.[
+            reviewTask.nameSpace
+        ];
         const isAdminUser =
             userRole === Roles.Admin || userRole === Roles.SuperAdmin;
 
         if (!isAssignee && !isAdminUser) {
+            this.logger.warn(
+                `[ReviewTask] Draft save denied for data_hash=${data_hash}: ` +
+                    `user=${loggedInUser._id} is not assignee and role="${userRole}" is not admin`
+            );
             throw new ForbiddenException("Not authorized to save this draft");
         }
 
@@ -762,10 +822,10 @@ export class ReviewTaskService {
             });
 
         if (reviewTask) {
-            const preloadedAsignees = [];
-            const usersId = [];
-            reviewTask.machine.context.reviewData.usersId.forEach(
-                (assignee) => {
+            const preloadedAsignees: any[] = [];
+            const usersId: any[] = [];
+            reviewTask.machine.context.reviewData.usersId!.forEach(
+                (assignee: any) => {
                     preloadedAsignees.push({
                         value: assignee._id,
                         label: assignee.name,
@@ -813,15 +873,15 @@ export class ReviewTaskService {
     }
 
     async countReviewTasksNotDeleted(
-        value,
-        filterUser,
-        nameSpace,
-        reviewTaskType
-    ) {
+        value: string,
+        filterUser: Record<string, boolean | string>,
+        nameSpace: string,
+        reviewTaskType: ReviewTaskTypeEnum
+    ): Promise<number> {
         try {
             const query: any = this.getQueryObject(value, filterUser);
 
-            const pipeline = [
+            const pipeline: any[] = [
                 { $match: { ...query, nameSpace, reviewTaskType } },
                 {
                     $lookup: {
@@ -878,17 +938,26 @@ export class ReviewTaskService {
         }
     }
 
-    async getEditorContentObject(schema, reportModel, reviewTaskType) {
+    async getEditorContentObject(
+        schema: any,
+        reportModel: ReportModelEnum | string,
+        reviewTaskType: string
+    ) {
         const editorContent = await this.editorParseService.schema2editor(
             schema,
-            reportModel,
+            reportModel as ReportModelEnum,
             reviewTaskType
         );
         return this.editorParseService.removeTrailingParagraph(editorContent);
     }
 
-    async addComment(data_hash, comment) {
+    async addComment(data_hash: string, comment: any) {
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        if (!reviewTask) {
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
+            );
+        }
         const reviewData = reviewTask.machine.context.reviewData;
         const newComment = await this.commentService.create({
             ...comment,
@@ -901,36 +970,40 @@ export class ReviewTaskService {
 
         reviewData.reviewComments.push(newComment?._id as Types.ObjectId);
 
-        const { machine } = await this.ReviewTaskModel.findOneAndUpdate(
+        const updatedTask = await this.ReviewTaskModel.findOneAndUpdate(
             { _id: reviewTask._id },
             { "machine.context.reviewData": reviewData },
             { new: true }
         );
 
         return {
-            reviewData: machine.context.reviewData,
+            reviewData: updatedTask!.machine.context.reviewData,
             comment: newComment,
         };
     }
 
-    async deleteComment(data_hash, commentId) {
+    async deleteComment(data_hash: string, commentId: string) {
         const commentIdObject = new Types.ObjectId(commentId);
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
-        const reviewData = reviewTask.machine.context.reviewData;
-        reviewData.reviewComments = reviewData.reviewComments.filter(
-            (comment) => !comment._id.equals(commentIdObject)
-        );
-        reviewData.crossCheckingComments =
-            reviewData.crossCheckingComments.filter(
-                (comment) => !comment._id.equals(commentIdObject)
+        if (!reviewTask) {
+            throw new NotFoundException(
+                `Review task not found for data_hash: ${data_hash}`
             );
+        }
+        const reviewData = reviewTask.machine.context.reviewData;
+        reviewData.reviewComments = (reviewData.reviewComments ?? []).filter(
+            (comment: any) => !comment._id.equals(commentIdObject)
+        );
+        reviewData.crossCheckingComments = (
+            reviewData.crossCheckingComments ?? []
+        ).filter((comment: any) => !comment._id.equals(commentIdObject));
 
         return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
             "machine.context.reviewData": reviewData,
         });
     }
 
-    async getHtmlFromSchema(schema) {
+    async getHtmlFromSchema(schema: any) {
         const htmlContent = this.editorParseService.schema2html(schema);
         return {
             ...schema,
@@ -939,28 +1012,38 @@ export class ReviewTaskService {
     }
 
     private _publishReviewTask(
-        reviewTaskMachine,
-        nameSpace,
-        machine,
-        data_hash,
-        reportModel
+        reviewTaskMachine: any,
+        nameSpace: string,
+        machine: Machine,
+        data_hash: string,
+        reportModel: string
     ) {
         const loggedInUser = this.req.user;
+        const userRole = loggedInUser.role as Record<string, Roles>;
 
         if (
             reviewTaskMachine.machine.value === "published" &&
             reportModel !== ReportModelEnum.Request
         ) {
             if (
-                loggedInUser.role[nameSpace] !== Roles.Admin &&
-                loggedInUser.role[nameSpace] !== Roles.SuperAdmin &&
+                userRole[nameSpace] !== Roles.Admin &&
+                userRole[nameSpace] !== Roles.SuperAdmin &&
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {
+                this.logger.warn(
+                    `[ReviewTask] Publish denied for data_hash=${data_hash}: ` +
+                        `user=${loggedInUser._id} role="${userRole[nameSpace]}" ` +
+                        `is not reviewer (${machine.context.reviewData.reviewerId}) and not admin`
+                );
                 throw new ForbiddenException(
                     "This user does not have permission to publish the report"
                 );
             }
+            this.logger.log(
+                `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
+                    `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
+            );
             this._createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,

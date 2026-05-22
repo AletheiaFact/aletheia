@@ -8,7 +8,7 @@ import colors from "../../styles/colors";
 const SortByButton = ({ refreshListItems }) => {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("asc");
+    const [value, setValue] = useState("desc");
 
     return (
         <>
@@ -26,7 +26,7 @@ const SortByButton = ({ refreshListItems }) => {
                     border: "1px solid",
                     borderWidth: "2px",
                     borderColor: colors.blackSecondary,
-                    borderRadius:"20px",
+                    borderRadius: "20px",
                     height: "40px",
                     paddingLeft: 10,
                     paddingRight: 10,

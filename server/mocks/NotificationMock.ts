@@ -39,7 +39,6 @@ export const mockNotificationConfigService = (configured = true) => ({
         const config = {
             "novu.api_key": configured ? "mock-novu-api-key" : undefined,
         };
-        return config[key];
+        return config[key as keyof typeof config];
     }),
 });
-

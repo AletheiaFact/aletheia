@@ -4,6 +4,7 @@ import "../styles/app.css";
 import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
 import { GlobalMessage } from "../components/Messages";
+import { SessionExpiredModal } from "../components/SessionExpiredModal";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
 import * as umamiConfig from "../lib/umami";
@@ -86,6 +87,7 @@ function MyApp({ Component, pageProps }) {
             <Provider store={store}>
                 <ThemeProvider theme={namespaceTheme}>
                     <GlobalMessage />
+                    <SessionExpiredModal />
                     <CssBaseline />
                     <MainApp>
                         <DefaultSeo

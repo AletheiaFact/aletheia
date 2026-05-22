@@ -93,7 +93,11 @@ export class CopilotChatService {
                     )
                     .default(SearchType.online),
             }),
-            func: async (data) => {
+            func: async (data: {
+                claim: string;
+                context: any;
+                searchType: SearchType;
+            }) => {
                 try {
                     const { stream, json, executionId } =
                         await this.automatedFactCheckingService.getResponseFromAgents(
@@ -182,7 +186,7 @@ export class CopilotChatService {
 
     async agentChat(
         sessionAgentChatDto: SessionAgentChatDto,
-        language,
+        language: string,
         userId: string
     ) {
         try {
@@ -222,7 +226,7 @@ export class CopilotChatService {
             );
 
             // Use local ref objects instead of instance variables (fixes concurrency bug)
-            const editorReportRef = { value: null };
+            const editorReportRef: { value: any } = { value: null };
             const executionIdRef: { value: string | null } = { value: null };
             const tools = [
                 new DynamicStructuredTool(
@@ -333,7 +337,7 @@ Your primary goal is to gather all relevant information from the user about the 
         }
     }
 
-    transformMessage(message) {
+    transformMessage(message: { sender: string; content: string }) {
         this.logger.log(`${message.sender}: ${message.content}`);
         if (message.sender === SenderEnum.Assistant) {
             return new AIMessage({

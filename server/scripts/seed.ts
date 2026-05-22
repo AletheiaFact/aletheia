@@ -19,14 +19,17 @@ async function initApp() {
     const userService = await app.resolve(UsersService);
     const users = configService.get<any>("users");
 
-    const seedSingleUser = async (userData, password) => {
+    const seedSingleUser = async (
+        userData: Record<string, any>,
+        password: string
+    ): Promise<any> => {
         return userService
             .register({ ...userData, password })
             .then(async (user) => {
                 logger.log(`${userData.email} seeded`);
                 return user;
             })
-            .catch((e) => {
+            .catch((e: any): null => {
                 logger.error("error", e);
                 logger.log(`Error while seeding ${userData.email}`);
                 return null;
@@ -34,7 +37,7 @@ async function initApp() {
     };
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
-        users.map(async (userData) =>
+        users.map(async (userData: Record<string, any>) =>
             seedSingleUser(userData, userData.password)
         )
     );

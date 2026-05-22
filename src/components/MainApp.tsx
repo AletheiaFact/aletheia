@@ -7,9 +7,9 @@ import colors from "../styles/colors";
 import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
-import Header from "./Header/Header";
+import AletheiaHeader from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Header/Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 import DonationBanner from "./Home/DonationBanner";
 import localConfig from "../../config/localConfig";
@@ -40,22 +40,25 @@ const MainApp = ({ children }) => {
         <Box
             sx={{
                 width: "100%",
-                maxWidth: copilotDrawerCollapsed || vw?.md
-                    ? "100%"
-                    : `calc(100% - ${copilotDrawerWidth}px)`,
+                maxWidth:
+                    copilotDrawerCollapsed || vw?.md
+                        ? "100%"
+                        : `calc(100% - ${copilotDrawerWidth}px)`,
                 position: "relative",
                 overflowX: "hidden",
             }}
         >
+            <AletheiaHeader />
             <Sidebar />
-            <Box sx={{
-                display: "grid",
-                minHeight: "100dvh",
-                background: colors.white,
-                gridTemplateColumns: "minmax(0, 1fr)",
-            }}>
+            <Box
+                sx={{
+                    display: "grid",
+                    minHeight: "100dvh",
+                    background: colors.white,
+                    gridTemplateColumns: "minmax(0, 1fr)",
+                }}
+            >
                 <Box>
-                    <Header />
                     <DonationBanner />
                     {renderCTAButton()}
                     <ContentWrapper>{children}</ContentWrapper>

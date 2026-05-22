@@ -20,5 +20,8 @@
     "signupSuccessfulMessage": "Sign-up successful",
     "getUsersFailed": "Error while getting users",
     "refreshLoginMessage": "Please, confirm your login before changing your account settings",
-    "userAlreadyExists": "Email already registered"
+    "userAlreadyExists": "Email already registered",
+    "sessionExpiredTitle": "Session expired",
+    "sessionExpiredMessage": "Your session has expired. Please log in again to continue.",
+    "sessionExpiredButton": "Log in"
 }

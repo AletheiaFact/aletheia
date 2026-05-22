@@ -3,6 +3,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
 import ClassificationText from "../ClassificationText";
 import reviewColors from "../../constants/reviewColors";
 import colors from "../../styles/colors";
@@ -50,10 +51,13 @@ const SentenceReportComments = ({ context }) => {
                                 classification={crossCheckingComment.text}
                             />
                         </p>
-                        <p>
+                        <Typography
+                            variant="body2"
+                            style={{ whiteSpace: "pre-wrap" }}
+                        >
                             {t("claimReview:crossCheckingComments")}:{" "}
                             {crossCheckingComment.comment}
-                        </p>
+                        </Typography>
                     </AccordionDetails>
                 </Accordion>
             ))}

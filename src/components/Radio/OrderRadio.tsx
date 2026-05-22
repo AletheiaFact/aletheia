@@ -1,5 +1,5 @@
 import React from "react";
-import { Radio, RadioGroup, FormControlLabel, Stack } from "@mui/material"
+import { Radio, RadioGroup, FormControlLabel, Stack } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
@@ -13,7 +13,9 @@ const RadioInput = styled(Radio)`
     &.Mui-checked {
     border: 2px solid
         color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
+            namespace === NameSpaceEnum.Main
+                ? colors.primary
+                : colors.secondary};
     }
 
     &.MuiRadio-root {
@@ -25,7 +27,9 @@ const RadioInput = styled(Radio)`
 
     &.Mui-checked::after {
         background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
+            namespace === NameSpaceEnum.Main
+                ? colors.primary
+                : colors.secondary};
         position: relative;
         top: 3px;
         left: 3px;
@@ -53,26 +57,35 @@ const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
     };
 
     return (
-        <RadioGroup
-            onChange={onChangeRadio}
-            value={value}
-        >
+        <RadioGroup onChange={onChangeRadio} value={value}>
             <Stack sx={{ marginTop: "30px" }} spacing={2}>
-                <FormControlLabel
-                    value="asc"
-                    control={<RadioInput namespace={nameSpace} />}
-                    label={
-                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
-                            {t("orderModal:radioAsc")}
-                        </span>
-                    }
-                />
                 <FormControlLabel
                     value="desc"
                     control={<RadioInput namespace={nameSpace} />}
                     label={
-                        <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
+                        <span
+                            style={{
+                                fontSize: 18,
+                                color: colors.blackSecondary,
+                                padding: "0 10px",
+                            }}
+                        >
                             {t("orderModal:radioDesc")}
+                        </span>
+                    }
+                />
+                <FormControlLabel
+                    value="asc"
+                    control={<RadioInput namespace={nameSpace} />}
+                    label={
+                        <span
+                            style={{
+                                fontSize: 18,
+                                color: colors.blackSecondary,
+                                padding: "0 10px",
+                            }}
+                        >
+                            {t("orderModal:radioAsc")}
                         </span>
                     }
                 />

@@ -1,11 +1,25 @@
-import TextArea from "../../TextArea";
+import AletheiaTextArea from "../../AletheiaTextArea";
 import BaseClaimForm from "./BaseClaimForm";
 import { FormControl, FormHelperText } from "@mui/material";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
 
 const ClaimCreate = () => {
     const {
-        t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError
+        t,
+        handleSubmit,
+        content,
+        setContent,
+        title,
+        setTitle,
+        date,
+        setDate,
+        sources,
+        setSources,
+        recaptcha,
+        setRecaptcha,
+        isLoading,
+        errors,
+        clearError,
     } = useBaseClaimForm();
 
     return (
@@ -33,9 +47,11 @@ const ClaimCreate = () => {
                 >
                     <div className="root-label">
                         <span className="require-label">*</span>
-                        <p className="form-label">{t("claimForm:contentField")}</p>
+                        <p className="form-label">
+                            {t("claimForm:contentField")}
+                        </p>
                     </div>
-                    <TextArea
+                    <AletheiaTextArea
                         multiline
                         value={content || ""}
                         onChange={(e) => {
@@ -50,7 +66,9 @@ const ClaimCreate = () => {
                             {errors.content}
                         </FormHelperText>
                     )}
-                    <p className="extra-label">{t("claimForm:contentFieldHelp")}</p>
+                    <p className="extra-label">
+                        {t("claimForm:contentFieldHelp")}
+                    </p>
                 </FormControl>
             }
         />

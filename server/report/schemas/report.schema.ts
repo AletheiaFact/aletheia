@@ -6,7 +6,11 @@ import { ReportModelEnum } from "../../types/enums";
 
 export type ReportDocument = Report & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Report {
     @Prop({ required: true })
     data_hash: string;
@@ -15,11 +19,14 @@ export class Report {
         type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return Object.values(ReportModelEnum).includes(v);
+            validator: (v: string) => {
+                return Object.values(ReportModelEnum).includes(
+                    v as ReportModelEnum
+                );
             },
         },
-        message: (tag) => `${tag} is not a valid report type.`,
+        message: (tag: { value: string }) =>
+            `${tag} is not a valid report type.`,
     })
     reportModel: ReportModelEnum;
 

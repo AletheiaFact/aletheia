@@ -4,19 +4,24 @@ import { NameSpaceEnum } from "./auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class UtilService {
-    formatStats(reviews) {
-        const total = reviews.reduce((agg, review) => {
-            agg += review.count;
-            return agg;
-        }, 0);
-        const result = reviews.map((review) => {
-            const percentage = (review.count / total) * 100;
-            return {
-                _id: review._id[0],
-                percentage: percentage.toFixed(0),
-                count: review.count,
-            };
-        });
+    formatStats(reviews: { _id: string[]; count: number }[]) {
+        const total = reviews.reduce(
+            (agg: number, review: { count: number }) => {
+                agg += review.count;
+                return agg;
+            },
+            0
+        );
+        const result = reviews.map(
+            (review: { _id: string[]; count: number }) => {
+                const percentage = (review.count / total) * 100;
+                return {
+                    _id: review._id[0],
+                    percentage: percentage.toFixed(0),
+                    count: review.count,
+                };
+            }
+        );
         return { total, reviews: result };
     }
 
@@ -25,7 +30,7 @@ export class UtilService {
      * @param array
      * @param property
      */
-    mergeObjectsInUnique<T>(array: T[], property: any): T[] {
+    mergeObjectsInUnique<T>(array: T[], property: keyof T): T[] {
         const newArray = new Map();
 
         array.forEach((item: T) => {
@@ -41,7 +46,7 @@ export class UtilService {
         return Array.from(newArray.values());
     }
 
-    getParamsBasedOnUserRole(params, req) {
+    getParamsBasedOnUserRole(params: Record<string, any>, req: any) {
         const user = req.user;
         const namespace = req.params.namespace || NameSpaceEnum.Main;
         const isUserAdmin =
@@ -50,7 +55,7 @@ export class UtilService {
         return isUserAdmin ? params : { ...params, isHidden: false };
     }
 
-    canEditUser(user, request): boolean {
+    canEditUser(user: any, request: any): boolean {
         const editorId = request.user._id;
         const namespace = request.params.namespace || NameSpaceEnum.Main;
         const isSelectedSuperAdmin = user.role[namespace] === Roles.SuperAdmin;
@@ -59,7 +64,7 @@ export class UtilService {
         return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;
     }
 
-    getVisibilityMatch = (nameSpace) => ({
+    getVisibilityMatch = (nameSpace: string) => ({
         $match: {
             $or: [
                 {

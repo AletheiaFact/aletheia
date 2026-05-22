@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import { SpeechMock } from "./SpeechMock";
 import { getTestDbName } from "./getTestDbName";
 
-export const SeedTestSpeech = async (uri, paragraphId) => {
+export const SeedTestSpeech = async (uri: string, paragraphId: string) => {
     const client = await new MongoClient(uri);
     await client.connect();
 

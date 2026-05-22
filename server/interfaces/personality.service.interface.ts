@@ -19,7 +19,7 @@ export type IPersonalityService = {
         filter?: any
     ): Promise<IPersonality[]>;
     create(personality: any): Promise<IPersonality>;
-    getDeletedPersonalityByWikidata(wikidata: string);
+    getDeletedPersonalityByWikidata(wikidata: string): Promise<any>;
     findOrCreatePersonality(personalityData: {
         name: string;
         wikidata?: {
@@ -46,7 +46,7 @@ export type IPersonalityService = {
         description: string
     ): Promise<any>;
     delete(personalityId: string): Promise<void>;
-    count(query?: any);
+    count(query?: any): Promise<number> | number;
     extractClaimWithTextSummary(claims: any): any;
     verifyInputsQuery(query: any): any;
     combinedListAll(query: any): Promise<ICombinedListResult>;

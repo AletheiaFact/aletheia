@@ -20,10 +20,6 @@ const CommentCardStyle = styled.div`
 
     &:hover {
         box-shadow: 0px 3px 3px 1px ${colors.shadow};
-
-        .comment-card-actions-resolve-button {
-            display: block;
-        }
     }
 
     .comment-card-header {
@@ -56,15 +52,26 @@ const CommentCardStyle = styled.div`
         gap: 16px;
     }
 
+    .comment-card-content-reply-text {
+        padding: 0px 10px;
+        width: fit-content;
+        border-left: 2px solid black;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .comment-card-classification-text {
+        padding: 0 4px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
     .comment-card-form {
         display: flex;
         flex-direction: column;
         width: 100%;
         gap: 16px;
-    }
-
-    .comment-card-actions-resolve-button {
-        display: none;
     }
 `;
 

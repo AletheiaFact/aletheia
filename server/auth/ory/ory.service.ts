@@ -6,19 +6,20 @@ import { Roles } from "../../auth/ability/ability.factory";
 export default class OryService {
     private adminUrl: string;
     private url: string;
-    private app_affiliation: string;
+    private app_affiliation: string | undefined;
 
     constructor(private configService: ConfigService) {
         const { admin_url, admin_endpoint, url } =
             this.configService.get("ory");
         this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
-        this.app_affiliation = this.configService.get<string>("app_affiliation");
+        this.app_affiliation =
+            this.configService.get<string>("app_affiliation");
     }
 
     async updateIdentity(
-        user,
-        password,
+        user: any,
+        password: string,
         traits?: { role?: any }
     ): Promise<any> {
         const { access_token: token, schema_id } =
@@ -49,7 +50,7 @@ export default class OryService {
         });
     }
 
-    async updateUserState(user, state): Promise<any> {
+    async updateUserState(user: any, state: string): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
 
@@ -70,7 +71,10 @@ export default class OryService {
         });
     }
 
-    async updateUserRole(user, role): Promise<any> {
+    async updateUserRole(
+        user: any,
+        role: Record<string, string>
+    ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
         const app_affiliation =
@@ -95,7 +99,11 @@ export default class OryService {
         });
     }
 
-    async createIdentity(user, password, traits?: { role?: any }): Promise<any> {
+    async createIdentity(
+        user: any,
+        password: string,
+        traits?: { role?: any }
+    ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
 
@@ -128,7 +136,7 @@ export default class OryService {
         });
     }
 
-    deleteIdentity(identityId): Promise<any> {
+    deleteIdentity(identityId: string): Promise<any> {
         const { access_token: token } = this.configService.get("ory");
         return fetch(`${this.adminUrl}/identities/${identityId}`, {
             method: "delete",

@@ -1,7 +1,13 @@
-import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
+import {
+    Inject,
+    Injectable,
+    Logger,
+    Scope,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Status } from "../auth/ability/ability.factory";
-import { Model, Aggregate, Types } from "mongoose";
+import { Model, Aggregate, Types, isValidObjectId } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
@@ -32,6 +38,19 @@ export class UsersService {
             nameSpaceSlug = NameSpaceEnum.Main,
             canAssignUsers = true,
         } = userQuery;
+
+        if (!this.req.user) {
+            const safeSearchName = String(searchName || "")
+                .replace(/[\n\r]/g, "")
+                .slice(0, 100);
+            this.logger.warn(
+                `Unauthenticated user search attempt (searchName=${safeSearchName}, canAssignUsers=${canAssignUsers})`
+            );
+            throw new UnauthorizedException(
+                "Authentication required to search users"
+            );
+        }
+
         const { _id: userId } = this.req.user;
         const pipeline: Aggregate<any[]> = this.UserModel.aggregate();
 
@@ -91,7 +110,7 @@ export class UsersService {
         }
     }
 
-    async register(user) {
+    async register(user: any) {
         const newUser = new this.UserModel(user);
         this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
@@ -118,8 +137,15 @@ export class UsersService {
         return await newUser.save();
     }
 
-    async getById(userId) {
-        const user = await this.UserModel.findById(userId).populate("badges");
+    async getById(userId: string | Types.ObjectId) {
+        const user = await this.UserModel.findById(
+            typeof userId === "string" && isValidObjectId(userId)
+                ? new Types.ObjectId(userId)
+                : userId
+        ).populate("badges");
+        if (!user) {
+            throw new Error(`User not found: ${userId}`);
+        }
         this.logger.log(`Found user ${user._id}`);
         return user;
     }
@@ -129,11 +155,11 @@ export class UsersService {
         return user;
     }
 
-    getByOryId(oryId) {
+    getByOryId(oryId: string) {
         return this.UserModel.findOne({ oryId }, "email name oryId role");
     }
 
-    async registerPasswordChange(userId) {
+    async registerPasswordChange(userId: string | Types.ObjectId) {
         const user = await this.getById(userId);
         if (user.firstPasswordChanged === false) {
             user.firstPasswordChanged = true;
@@ -143,7 +169,7 @@ export class UsersService {
     }
 
     async updateUser(
-        userId,
+        userId: string | Types.ObjectId,
         updates: { role?: object; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
@@ -152,14 +178,21 @@ export class UsersService {
             await this.oryService.updateUserState(user, updates.state);
         }
         if (updates.role) {
-            await this.oryService.updateUserRole(user, updates.role);
+            await this.oryService.updateUserRole(user, updates.role as any);
         }
 
-        const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
-            new: true,
-        });
+        const safeUpdate: Record<string, any> = {};
+        if (updates.role !== undefined) safeUpdate.role = updates.role;
+        if (updates.badges !== undefined) safeUpdate.badges = updates.badges;
+        if (updates.state !== undefined) safeUpdate.state = updates.state;
 
-        this.logger.log(`Updated user ${userId._id}`);
+        const updatedUser = this.UserModel.findByIdAndUpdate(
+            userId,
+            { $set: safeUpdate },
+            { new: true }
+        );
+
+        this.logger.log(`Updated user ${(userId as any)._id}`);
         return updatedUser;
     }
 }

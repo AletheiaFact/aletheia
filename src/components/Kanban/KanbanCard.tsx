@@ -1,7 +1,7 @@
 import React from "react";
 import CardBase from "../CardBase";
 import UserTag from "./UserTag";
-import claimApi from "../../api/claim";
+import claimApi from "../../api/claimApi";
 import personalityApy from "../../api/personality";
 import { useTranslation } from "next-i18next";
 import actions from "../../store/actions";
@@ -86,6 +86,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                     borderRadius: 4,
                     marginBottom: 0,
                     boxShadow: `0px 1px 1px ${colors.shadow}`,
+                    cursor: "pointer",
                 }}
             >
                 <Grid container style={{ width: "100%", padding: "10px" }}>

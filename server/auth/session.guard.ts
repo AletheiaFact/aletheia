@@ -94,7 +94,7 @@ export class SessionGuard extends BaseGuard {
                     // Needed to enable feature flag for specific users
                     id: session?.identity?.traits?.user_id,
                     role: session?.identity?.traits?.role,
-                    status: session?.identity.state,
+                    status: session?.identity?.state,
                 };
 
                 const overridePublicRoutes =

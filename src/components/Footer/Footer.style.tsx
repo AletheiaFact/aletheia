@@ -3,26 +3,27 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 
 type FooterBoxProps = {
-    $mediumDevice?: boolean;
     $isMobile?: boolean;
     $namespacePrefix: string;
 };
 
-const FooterBox = styled(Box) <FooterBoxProps>`
+const FooterBox = styled(Box)<FooterBoxProps>`
     background: radial-gradient(
             circle at 78% 14%,
             color-mix(in srgb, ${colors.lightSecondary} 14%, transparent) 0%,
             color-mix(in srgb, ${colors.lightSecondary} 2%, transparent) 34%,
             transparent 55%
         ),
-        ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)};
+        ${({ $namespacePrefix }) =>
+            $namespacePrefix ? colors.primary : colors.secondary};
     color: ${colors.white};
-    padding: ${({ $isMobile }) => ($isMobile ? "36px 20px 18px" : "64px 48px 22px")};
+    padding: ${({ $isMobile }) =>
+        $isMobile ? "36px 20px 18px" : "64px 48px 22px"};
     align-self: flex-end;
     border-top: 1px solid color-mix(in srgb, ${colors.white} 8%, transparent);
 
     .footer-inner-container {
-        max-width: ${({ $mediumDevice }) => ($mediumDevice ? "100%" : "75%")};
+        max-width: min(95vw, 1580px);
         margin: 0 auto;
     }
 
@@ -33,7 +34,16 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         background: linear-gradient(
             90deg,
             color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 0%,
-            color-mix(in srgb, ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)} 2%, transparent) 56%,
+            color-mix(
+                    in srgb,
+                    ${({ $namespacePrefix }) =>
+                            $namespacePrefix
+                                ? colors.primary
+                                : colors.secondary}
+                        2%,
+                    transparent
+                )
+                56%,
             color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 100%
         );
     }
@@ -55,7 +65,8 @@ const FooterBox = styled(Box) <FooterBoxProps>`
     }
 
     .footer-cta-actions {
-        justify-content: ${({ $isMobile }) => ($isMobile ? "flex-start" : "flex-end")};
+        justify-content: ${({ $isMobile }) =>
+            $isMobile ? "flex-start" : "flex-end"};
         flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
         gap: 12px;
     }
@@ -66,8 +77,10 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         padding: 10px 16px;
         font-size: 14px;
         font-weight: 600;
-        color: ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)};
-        background-color: ${({ $namespacePrefix }) => ($namespacePrefix ? colors.lightSecondary : colors.white)};
+        color: ${({ $namespacePrefix }) =>
+            $namespacePrefix ? colors.primary : colors.secondary};
+        background-color: ${({ $namespacePrefix }) =>
+            $namespacePrefix ? colors.lightSecondary : colors.white};
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -93,7 +106,11 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         gap: 8px;
 
         &:hover {
-            background-color: color-mix(in srgb, ${colors.white} 6%, transparent);
+            background-color: color-mix(
+                in srgb,
+                ${colors.white} 6%,
+                transparent
+            );
         }
     }
 
@@ -189,7 +206,8 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         color: color-mix(in srgb, ${colors.white} 58%, transparent);
         flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
         gap: ${({ $isMobile }) => ($isMobile ? "9.6px" : "16px")};
-        border-top: 1px solid color-mix(in srgb, ${colors.white} 10%, transparent);
+        border-top: 1px solid
+            color-mix(in srgb, ${colors.white} 10%, transparent);
     }
 
     .footer-legal-text {

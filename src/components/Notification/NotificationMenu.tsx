@@ -13,9 +13,16 @@ import { NotificationsOff } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 
+export interface NotificationMenuProps {
+    hasSession: boolean;
+    userId: string | null;
+}
+
 const notificationStyles: INotificationCenterStyles = {
     popover: {
         dropdown: {
+            zIndex: "1501 !important" as any,
+
             "& > div": {
                 width: "100%",
                 maxWidth: "380px",
@@ -37,25 +44,25 @@ const notificationStyles: INotificationCenterStyles = {
     },
 };
 
-const NotificationMenu = ({ hasSession, user }) => {
+const NotificationMenu = ({ hasSession, userId }: NotificationMenuProps) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);
     const { t } = useTranslation();
 
     useEffect(() => {
-        NotificationsApi.getTokens(user?._id).then(
+        NotificationsApi.getTokens(userId).then(
             (data: { applicationIdentifier: string; hmacHash: string }) => {
                 setApplicationIdentifier(data?.applicationIdentifier);
                 setHmacHash(data?.hmacHash);
             }
         );
-    }, [user?._id]);
+    }, [userId]);
 
     if (hmacHash && applicationIdentifier && hasSession) {
         return (
             <NovuProvider
-                subscriberId={user?._id}
+                subscriberId={userId}
                 subscriberHash={hmacHash}
                 applicationIdentifier={applicationIdentifier}
                 initialFetchingStrategy={{
@@ -92,12 +99,15 @@ const NotificationMenu = ({ hasSession, user }) => {
                         >
                             <SvgIcon
                                 component={NotificationsOff}
-                                sx={{ fontSize: 50, color: colors.neutralSecondary }}
+                                sx={{
+                                    fontSize: 50,
+                                    color: colors.neutralSecondary,
+                                }}
                             />
                             <p
                                 style={{
                                     color: colors.neutralSecondary,
-                                    marginTop: "16px"
+                                    marginTop: "16px",
                                 }}
                             >
                                 {t("notification:noNotification")}

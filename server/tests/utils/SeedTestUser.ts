@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import { AdminUserMock } from "./AdminUserMock";
 import { getTestDbName } from "./getTestDbName";
 
-export const SeedTestUser = async (uri) => {
+export const SeedTestUser = async (uri: string) => {
     const client = await new MongoClient(uri);
     await client.connect();
 

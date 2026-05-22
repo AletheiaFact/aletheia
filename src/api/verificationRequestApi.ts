@@ -1,8 +1,7 @@
-import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
-import { NameSpaceEnum } from "../types/Namespace";
 import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
+import { createApiInstance } from "./apiFactory";
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -19,28 +18,15 @@ interface SearchOptions {
     impactArea?: any;
 }
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/verification-request`,
-});
+const request = createApiInstance("/api/verification-request");
 
-const createVerificationRequest = (
-    t,
-    router,
-    verificationRequest: any = {}
-) => {
-    const { nameSpace = NameSpaceEnum.Main } = verificationRequest;
+const createVerificationRequest = (t, verificationRequest: any = {}) => {
     return request
         .post("/", verificationRequest)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
                 t("verificationRequest:verificationRequestCreateSuccess")
-            );
-            router.push(
-                nameSpace === NameSpaceEnum.Main
-                    ? "/verification-request"
-                    : `/${nameSpace}/verification-request`
             );
             return response.data;
         })

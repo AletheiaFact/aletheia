@@ -39,8 +39,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.CREATE:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 return getVerificationRequestService().create(
                     context.verificationRequest,
@@ -50,8 +50,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.EMBED:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.TEXT_EMBEDDING,
@@ -71,8 +71,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.IDENTIFY_DATA:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 const taskDto: CreateAiTaskDto = {
                     type: AiTaskType.IDENTIFYING_DATA,
@@ -93,8 +93,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.DEFINE_TOPICS:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 // TODO: Add more context for be used to recover the topics
                 const taskDto: CreateAiTaskDto = {
@@ -116,8 +116,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.DEFINE_IMPACT_AREA:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 // TODO: Add more context for be used to recover the impact area
                 const taskDto: CreateAiTaskDto = {
@@ -139,8 +139,8 @@ const getStateInvokeSrc = (
         case VerificationRequestStateMachineEvents.DEFINE_SEVERITY:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 const impactArea = context.verificationRequest.impactArea
                     ? {
@@ -154,7 +154,7 @@ const getStateInvokeSrc = (
                     : null;
 
                 const topics =
-                    context.verificationRequest.topics?.map((t) => ({
+                    context.verificationRequest.topics?.map((t: any) => ({
                         name: t.name,
                         language: t.language,
                         wikidataId: t.wikidataId || null,
@@ -162,7 +162,7 @@ const getStateInvokeSrc = (
 
                 const personalities =
                     context.verificationRequest.identifiedData?.map(
-                        (personality) => ({
+                        (personality: any) => ({
                             name: personality.name,
                             wikidataId: personality.wikidata || null,
                         })
@@ -190,8 +190,8 @@ const getStateInvokeSrc = (
         default:
             return async (
                 context: VerificationRequestStateMachineContext,
-                event,
-                meta
+                event: AnyEventObject,
+                meta: any
             ) => {
                 return;
             };

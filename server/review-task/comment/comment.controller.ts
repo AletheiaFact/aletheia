@@ -4,6 +4,7 @@ import { CommentService } from "./comment.service";
 import { FactCheckerOnly } from "../../auth/decorators/auth.decorator";
 import {
     CreateCommentDTO,
+    CreateReplyCommentDTO,
     UpdateCommentDTO,
     DeleteReplyDTO,
 } from "./dto/create-comment.dto";
@@ -38,7 +39,7 @@ export class CommentController {
     @Put("api/comment/:id/create-reply")
     createReplyComment(
         @Param("id") id: string,
-        @Body() body: CreateCommentDTO
+        @Body() body: CreateReplyCommentDTO
     ) {
         return this.commentService.createReplyComment(id, body);
     }

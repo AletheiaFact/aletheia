@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    NotFoundException,
     Controller,
     Post,
     Body,
@@ -63,7 +64,7 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Public()
-    public async listAll(@Query() getVerificationRequest) {
+    public async listAll(@Query() getVerificationRequest: Record<string, any>) {
         const {
             pageSize,
             page,
@@ -135,7 +136,14 @@ export class VerificationRequestController {
         type: Number,
         description: "Number of results to return",
     })
-    public async getAll(@Query() getVerificationRequest) {
+    public async getAll(
+        @Query()
+        getVerificationRequest: {
+            sourceUrl?: string;
+            searchContent?: string;
+            pageSize?: number;
+        }
+    ) {
         if (getVerificationRequest.sourceUrl) {
             return this.verificationRequestService.findBySourceUrl(
                 getVerificationRequest.sourceUrl,
@@ -270,7 +278,7 @@ export class VerificationRequestController {
         if (!isM2MUser) {
             this.logger.log("Regular user request - validating CAPTCHA");
             const validateCaptcha = await this.captchaService.validate(
-                verificationRequestBody.recaptcha
+                verificationRequestBody.recaptcha ?? ""
             );
             if (!validateCaptcha) {
                 throw new BadRequestException("Error validating captcha");
@@ -324,7 +332,7 @@ export class VerificationRequestController {
     @Put("api/verification-request/:data_hash/topics")
     async updateVerificationRequestWithTopics(
         @Param("data_hash") data_hash: string,
-        @Body() topics
+        @Body() topics: Array<{ value?: string; wikidataId?: string }>
     ) {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,
@@ -383,6 +391,12 @@ export class VerificationRequestController {
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(dataHash);
 
+        if (!verificationRequest) {
+            throw new NotFoundException(
+                `Verification request not found for hash ${dataHash}`
+            );
+        }
+
         const reviewTask =
             await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
                 dataHash
@@ -427,6 +441,12 @@ export class VerificationRequestController {
 
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(data_hash);
+
+        if (!verificationRequest) {
+            throw new NotFoundException(
+                `Verification request not found for hash ${data_hash}`
+            );
+        }
 
         const view =
             viewType === "history" ? "/history-page" : "/tracking-page";

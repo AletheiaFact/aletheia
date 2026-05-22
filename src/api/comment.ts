@@ -1,10 +1,8 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
+import { createApiInstance } from "./apiFactory";
+import { Comment, NewCommentPayload } from "../types/Comment";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/comment`,
-});
+const request = createApiInstance("/api/comment");
 
 const createComment = (comment) => {
     return request
@@ -30,7 +28,10 @@ const updateComments = (comments) => {
         });
 };
 
-const updateComment = (commentId, comment) => {
+const updateComment = (
+    commentId: string,
+    comment: Partial<Comment>
+): Promise<Comment> => {
     return request
         .put(`/${commentId}`, comment)
         .then((response) => {
@@ -42,7 +43,10 @@ const updateComment = (commentId, comment) => {
         });
 };
 
-const createReplyComment = (commentId, newComment) => {
+const createReplyComment = (
+    commentId: string,
+    newComment: NewCommentPayload
+): Promise<Comment> => {
     return request
         .put(`/${commentId}/create-reply`, newComment)
         .then((response) => {
@@ -54,7 +58,10 @@ const createReplyComment = (commentId, newComment) => {
         });
 };
 
-const deleteReplyComment = (commentId, replyCommentId) => {
+const deleteReplyComment = (
+    commentId: string,
+    replyCommentId: string
+): Promise<Comment> => {
     return request
         .put(`/${commentId}/delete-reply`, { replyCommentId })
         .then((response) => {

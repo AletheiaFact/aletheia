@@ -51,8 +51,9 @@ const locators = {
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
         ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
-        ADD_VERIFICATION_REQUEST: "[data-cy=testFloatButtonAddVerificationRequest]",
-        ADD_EVENT: "[data-cy=testFloatButtonAddEvent]"
+        ADD_VERIFICATION_REQUEST:
+            "[data-cy=testFloatButtonAddVerificationRequest]",
+        ADD_EVENT: "[data-cy=testFloatButtonAddEvent]",
     },
 
     toggleButton: {
@@ -138,7 +139,8 @@ const locators = {
         SAVE_BUTTON: "[data-cy=testSaveButton]",
         CANCEL_BUTTON: "[data-cy=testCancelButton]",
 
-        VERIFICATION_REQUEST_CARD_CONTAINER: "[data-cy=testVerificationRequestCardContainer]"
+        VERIFICATION_REQUEST_CARD_CONTAINER:
+            "[data-cy=testVerificationRequestCardContainer]",
     },
 
     event: {
@@ -161,7 +163,8 @@ const locators = {
 
         EVENT_CARD: "[data-cy=event-card]",
         METRICS_REVIEWS: "[data-cy=testEventMetricsReviews]",
-        METRICS_VERIFICATION_REQUESTS: "[data-cy=testEventMetricsVerificationRequests]",
+        METRICS_VERIFICATION_REQUESTS:
+            "[data-cy=testEventMetricsVerificationRequests]",
         METRICS_CLAIMS: "[data-cy=testEventMetricsClaims]",
         SEE_FULL_EVENT: "[data-cy=testOpenEventButton]",
 
@@ -171,12 +174,33 @@ const locators = {
         SAVE_BUTTON: "[data-cy=testSaveButton]",
     },
 
-    menu: {
-        SIDE_MENU: "[data-cy=testOpenSideMenu]",
-        USER_ICON: "[data-cy=testUserIcon]",
-        LOGIN_MENU: "[data-cy=testLoginItem]",
-        MY_ACCOUNT_MENU: "[data-cy=testMyAccountItem]",
-        LOGOUT_MENU: "[data-cy=testLogout]",
+    header: {
+        SOURCE_ITEM: "[data-cy=testSourceNavLink]",
+        VERIFICATION_REQUEST_ITEM: "[data-cy=testVerificationRequestNavLink]",
+        EVENT_ITEM: "[data-cy=testEventNavLink]",
+
+        OPEN_REPOSITORY_MENU: "[data-cy=testRepositoryItem]",
+        PERSONALITY_ITEM: "[data-cy=testpersonalityItem]",
+        CLAIM_ITEM: "[data-cy=testclaimItem]",
+
+        OPEN_INSTITUTION_MENU: "[data-cy=testInstitutionalItem]",
+        ABOUT_ITEM: "[data-cy=testaboutUsItem]",
+        PRIVACY_POLICY_ITEM: "[data-cy=testprivacyPolicyItem]",
+        CODE_OF_CONDUCT_ITEM: "[data-cy=testcodeOfConductItem]",
+        SUPPORTIVE_MATERIALS_ITEM: "[data-cy=testsupportiveMaterialsItem]",
+
+        OPEN_USER_MENU: "[data-cy=testMyAccountItem]",
+
+        PROFILE_ITEM: "[data-cy=testProfileItem]",
+        LOGIN_ITEM: "[data-cy=testLoginItem]",
+
+        LOGOUT_ITEM: "[data-cy=testLogoutItem]",
+        REGISTER_ITEM: "[data-cy=testRegisterItem]",
+
+        KANBAN_ITEM: "[data-cy=testKanbanItem]",
+        ADMIN_ITEM: "[data-cy=testadminItem]",
+        BADGES_ITEM: "[data-cy=testbadgesItem]",
+        NAMESPACE_ITEM: "[data-cy=testnamespaceItem]",
     },
 
     footer: {
@@ -196,12 +220,13 @@ const locators = {
         INSTITUTIONAL_PARTNERS: "[data-cy=testFooterLinkInstitutionalPartners]",
         INSTITUTIONAL_AWARDS: "[data-cy=testFooterLinkInstitutionalAwards]",
 
-        COMMUNITY_COLLABORATION: "[data-cy=testFooterLinkCommunityCollaboration]",
+        COMMUNITY_COLLABORATION:
+            "[data-cy=testFooterLinkCommunityCollaboration]",
         COMMUNITY_UNIVERSITIES: "[data-cy=testFooterLinkCommunityUniversities]",
         COMMUNITY_VOLUNTEERING: "[data-cy=testFooterLinkCommunityVolunteering]",
 
         STATUTE: "[data-cy=testFooterStatuteLink]",
         CREATIVE_COMMONS: "[data-cy=testFooterCreativeCommonsLink]",
-    }
+    },
 };
 export default locators;

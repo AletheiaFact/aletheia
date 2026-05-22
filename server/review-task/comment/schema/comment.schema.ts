@@ -44,7 +44,11 @@ export class Comment {
     @Prop({ required: true, default: false })
     resolved: boolean;
 
-    @Prop({ required: true, default: [] })
+    @Prop({
+        type: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
+        required: true,
+        default: [],
+    })
     replies: mongoose.Types.ObjectId[];
 
     @Prop({ required: true, default: false })

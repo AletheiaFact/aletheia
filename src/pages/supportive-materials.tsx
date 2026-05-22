@@ -50,7 +50,8 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                         fontSize: "40px",
                         marginTop: "20px",
                         fontWeight: "bold",
-                    }}>
+                    }}
+                >
                     {t("materials:title")}
                 </Typography>
             </Grid>
@@ -77,7 +78,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                             href="/login"
                             style={{ marginRight: "10px" }}
                         >
-                            {t("menu:loginItem")}
+                            {t("header:loginItem")}
                         </Button>
                         <Button
                             variant="outlined"

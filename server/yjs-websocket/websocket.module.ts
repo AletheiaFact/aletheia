@@ -28,7 +28,7 @@ export class WebsocketModule implements NestModule {
             .forRoutes("*");
     }
 
-    static register(options): DynamicModule {
+    static register(options: any): DynamicModule {
         const imports = [
             ConfigModule.forRoot({
                 load: [() => options || {}],

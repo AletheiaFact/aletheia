@@ -10,7 +10,7 @@ export class BadgeService {
         private BadgeModel: Model<BadgeDocument>
     ) {}
 
-    async create(badge) {
+    async create(badge: any) {
         const newBadge = new this.BadgeModel({
             ...badge,
             image: new Types.ObjectId(badge.image._id),
@@ -18,18 +18,17 @@ export class BadgeService {
         return await newBadge.save();
     }
 
-    async update(badge) {
-        const { image, ...updatedFields } = badge;
+    async update(badge: any) {
+        const { image, _id, ...updatedFields } = badge;
         const controlledBadge = {
             ...updatedFields,
-            image: new Types.ObjectId(badge.image._id),
+            image: new Types.ObjectId(image._id),
         };
-        const updatedBadge = this.BadgeModel.findByIdAndUpdate(
-            badge._id,
-            controlledBadge,
+        return this.BadgeModel.findByIdAndUpdate(
+            new Types.ObjectId(_id),
+            { $set: controlledBadge },
             { new: true }
         );
-        return updatedBadge;
     }
 
     async listAll() {
@@ -68,7 +67,7 @@ export class BadgeService {
         return badge;
     }
 
-    async getById(badgeId) {
+    async getById(badgeId: string) {
         const badge = this.BadgeModel.findById(badgeId);
         return badge;
     }

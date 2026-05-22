@@ -30,9 +30,9 @@ export class ImageService {
         private ImageModel: Model<ImageDocument>,
         private historyService: HistoryService,
         private reportService: ReportService
-    ) { }
+    ) {}
 
-    async create(image, claimRevisionId = null) {
+    async create(image: Record<string, any>, claimRevisionId: any = null) {
         const imageSchema = {
             data_hash: image.DataHash,
             props: {
@@ -52,7 +52,7 @@ export class ImageService {
             HistoryType.Create,
             newImage
         );
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
         return newImage;
     }
 
@@ -80,19 +80,21 @@ export class ImageService {
         }
     }
 
-    async updateImageWithTopics(topics, data_hash): Promise<ImageDocument> {
+    async updateImageWithTopics(
+        topics: any[],
+        data_hash: string
+    ): Promise<ImageDocument | null> {
         if (!Array.isArray(topics)) {
             throw new BadRequestException("Invalid topics array.");
         }
 
         const image = await this.getByDataHash(data_hash);
 
-        const newImage = {
-            ...image.toObject,
-            topics,
-        };
-
-        return this.ImageModel.findByIdAndUpdate({ _id: image._id }, newImage);
+        return this.ImageModel.findByIdAndUpdate(
+            image._id,
+            { $set: { topics } },
+            { new: true }
+        );
     }
 
     /**
@@ -112,13 +114,15 @@ export class ImageService {
                 `Successfully retrieved ${images.length} image hashes for topic: ${topicId}`
             );
 
-            return images.map(image => image.data_hash);
-        } catch (error) {
+            return images.map((image) => image.data_hash);
+        } catch (error: any) {
             this.logger.error(
                 `Failed to fetch image hashes for topic: ${topicId}`,
                 error.stack
             );
-            throw new InternalServerErrorException(`An error occurred while retrieving images for the requested topic.`);
+            throw new InternalServerErrorException(
+                `An error occurred while retrieving images for the requested topic.`
+            );
         }
     }
 }

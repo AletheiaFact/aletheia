@@ -2,7 +2,7 @@ export const PersonalitiesMock = [
     {
         isHidden: false,
         isDeleted: false,
-        deletedAt: null,
+        deletedAt: null as Date | null,
         name: "Barack Obama",
         description: "presidente dos Estados Unidos entre 2009 e 2017",
         wikidata: "Q76",

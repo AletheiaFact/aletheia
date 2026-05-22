@@ -7,7 +7,11 @@ import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 export type ReviewTaskDocument = ReviewTask &
     mongoose.Document & { content: any };
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class ReviewTask {
     @Prop({ type: Object, required: true })
     machine: Machine;
@@ -19,11 +23,14 @@ export class ReviewTask {
         type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return Object.values(ReportModelEnum).includes(v);
+            validator: (v: string) => {
+                return Object.values(ReportModelEnum).includes(
+                    v as ReportModelEnum
+                );
             },
         },
-        message: (tag) => `${tag} is not a valid report type.`,
+        message: (tag: { value: string }) =>
+            `${tag} is not a valid report type.`,
     })
     reportModel: ReportModelEnum;
 
@@ -41,11 +48,14 @@ export class ReviewTask {
         type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return Object.values(ReviewTaskTypeEnum).includes(v);
+            validator: (v: string) => {
+                return Object.values(ReviewTaskTypeEnum).includes(
+                    v as ReviewTaskTypeEnum
+                );
             },
         },
-        message: (tag) => `${tag} is not a valid review task type.`,
+        message: (tag: { value: string }) =>
+            `${tag} is not a valid review task type.`,
     })
     reviewTaskType: ReviewTaskTypeEnum;
 }

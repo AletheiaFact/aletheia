@@ -1,20 +1,23 @@
 import { MessageManager } from "../components/Messages";
-import axios from "axios";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/daily-report`,
-});
+const request = createApiInstance("/api/daily-report");
 
 const sendDailyReportEmail = (topic, nameSpace, t) => {
     return request
         .post(`/topic/${topic}/send/${nameSpace}`)
         .then((response) => {
-            MessageManager.showMessage("success", t("notification:sendDailyReportSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("notification:sendDailyReportSuccess")
+            );
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error",t("notification:sendDailyReportError"));
+            MessageManager.showMessage(
+                "error",
+                t("notification:sendDailyReportError")
+            );
             throw err;
         });
 };

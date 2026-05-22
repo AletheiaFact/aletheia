@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 
-export const ParagraphMock = (sentenceId) => ({
+export const ParagraphMock = (sentenceId: string) => ({
     content: [new ObjectId(sentenceId)],
     type: "paragraph",
     data_hash: "cc07fdd8165c15ef17b183a69e393318",

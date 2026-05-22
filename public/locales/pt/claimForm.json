@@ -46,5 +46,6 @@
     "fileTypeError": "Voce só pode enviar arquivos nos formatos {{types}}",
     "fileSizeError": "O arquivo deve ter menos de {{size}}",
     "undefined": "Indefinido",
-    "noAnswer": "N/A"
+    "noAnswer": "N/A",
+    "errorDuplicateTitle": "já existe um discurso com esse título. Por favor, escolha um título diferente."
 }

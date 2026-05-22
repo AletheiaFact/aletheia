@@ -23,7 +23,7 @@ export const createNewMachine = ({ value, context }, reportModel) => {
 /**
  * Intercepts the event sent to the machine to save the context on the database
  */
-export const transitionHandler = (state) => {
+export const transitionHandler = (state, extraContext) => {
     const {
         data_hash,
         reportModel,
@@ -125,14 +125,24 @@ export const transitionHandler = (state) => {
         })
         .finally(() => resetIsLoading());
 
-    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
+    sendReviewNotifications(
+        data_hash,
+        event,
+        reviewData,
+        extraContext.claim,
+        extraContext.personality,
+        nameSpace,
+        currentUserId,
+        t
+    );
 };
 
 export const createNewMachineService = (
     machine: any,
-    reportModel: string = ReportModelEnum.FactChecking
+    reportModel: string = ReportModelEnum.FactChecking,
+    extraContext: any = {}
 ) => {
     return interpret(createNewMachine(machine, reportModel))
-        .onTransition(transitionHandler)
+        .onTransition((state) => transitionHandler(state, extraContext))
         .start();
 };

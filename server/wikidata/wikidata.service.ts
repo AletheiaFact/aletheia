@@ -9,7 +9,7 @@ import {
 
 const axios = require("axios");
 
-const languageVariantMap = {
+const languageVariantMap: Record<string, string> = {
     "pt-br": "pt",
 };
 
@@ -177,7 +177,7 @@ export class WikidataService {
         const siteLinkName = this.getSiteLinkName(language);
 
         if (wikidata?.sitelinks && wikidata?.sitelinks[siteLinkName]) {
-            const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
+            const wikiLang = siteLinkName.match(/^(.*)wiki$/)?.[1];
             const wikiTitle = wikidata.sitelinks[siteLinkName].title;
             if (wikiLang && wikiTitle) {
                 wikidataProps.wikipedia = `https://${wikiLang.replace(
@@ -195,8 +195,9 @@ export class WikidataService {
          * Q5 = Human
          * Q891723 = Public Companies
          * Q1153191 = Online newspaper
+         * Q7188 = Government
          */
-        const allowedInstances = ["Q5", "Q891723", "Q1153191"];
+        const allowedInstances = ["Q5", "Q891723", "Q1153191", "Q7188"];
         /**
          * Relation of type constraints
          * https://www.wikidata.org/wiki/Q21503252
@@ -204,7 +205,7 @@ export class WikidataService {
         const hasP31Claims =
             wikidata.claims?.P31 && wikidata.claims?.P31?.length > 0;
         if (hasP31Claims) {
-            const isAllowedProp = wikidata.claims?.P31?.some((claim) => {
+            const isAllowedProp = wikidata.claims?.P31?.some((claim: any) => {
                 const instance = claim.mainsnak.datavalue.value;
                 return allowedInstances.includes(instance.id);
             });
@@ -223,7 +224,7 @@ export class WikidataService {
         }
         // Extract Twitter accounts if they exist
         if (wikidata?.claims?.P2002) {
-            wikidata.claims.P2002.forEach((claim) => {
+            wikidata.claims.P2002.forEach((claim: any) => {
                 const twitterAccount = claim.mainsnak.datavalue.value;
                 wikidataProps.twitterAccounts.push(twitterAccount);
             });
@@ -290,7 +291,7 @@ export class WikidataService {
                 params,
                 headers: WIKIMEDIA_HEADERS,
             })
-            .then((response) => {
+            .then((response: any) => {
                 const { search }: { search: WikibaseSearchResult[] } =
                     response && response.data;
 

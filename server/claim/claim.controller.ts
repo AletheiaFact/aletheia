@@ -13,6 +13,7 @@ import {
     Res,
     Header,
     Inject,
+    NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -74,7 +75,7 @@ export class ClaimController {
         private groupService: GroupService
     ) {}
 
-    _verifyInputsQuery(query) {
+    _verifyInputsQuery(query: GetClaimsDTO) {
         const inputs: any = {
             isHidden: query.isHidden,
         };
@@ -147,7 +148,7 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim/image")
-    async createClaimImage(@Body() createClaimDTO) {
+    async createClaimImage(@Body() createClaimDTO: any) {
         const claim = await this._createClaim(createClaimDTO);
 
         const personality = claim.personalities[0]
@@ -173,7 +174,9 @@ export class ClaimController {
     ) {
         const claim = await this._createClaim(createClaimDTO);
 
-        const userRole = req.user?.role?.[claim.nameSpace];
+        const userRole = (
+            req.user?.role as Record<string, Roles> | undefined
+        )?.[claim.nameSpace];
         const path =
             userRole === Roles.Admin || userRole === Roles.SuperAdmin
                 ? `/claim/${claim._id}/debate/edit`
@@ -189,7 +192,7 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim/unattributed")
-    async createUnattributedClaim(@Body() createClaimDTO) {
+    async createUnattributedClaim(@Body() createClaimDTO: any) {
         const claim = await this._createClaim(createClaimDTO, true);
 
         return {
@@ -204,7 +207,7 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/debate/:debateId")
     async updateClaimDebate(
-        @Param("debateId") debateId,
+        @Param("debateId") debateId: string,
         @Body() updateClaimDebateDto: UpdateDebateDto
     ) {
         const { content, personality, isLive } = updateClaimDebateDto;
@@ -214,13 +217,16 @@ export class ClaimController {
             new Types.ObjectId(debateId)
         );
 
+        if (!claimRevision) {
+            throw new NotFoundException();
+        }
         const claimRevisionId = new Types.ObjectId(claimRevision._id);
 
         if (content && personality) {
             newSpeech = await this.parserService.parse(
                 updateClaimDebateDto.content,
                 claimRevisionId,
-                updateClaimDebateDto.personality
+                updateClaimDebateDto.personality as any
             );
 
             await this.debateService.addSpeechToDebate(debateId, newSpeech._id);
@@ -231,7 +237,7 @@ export class ClaimController {
     }
 
     private async _createClaim(
-        createClaimDTO,
+        createClaimDTO: CreateClaimDTO | CreateDebateClaimDTO,
         overrideCaptchaValidation = false
     ) {
         const validateCaptcha = await this.captchaService.validate(
@@ -247,13 +253,19 @@ export class ClaimController {
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
-    getById(@Param("id") claimId, @Query() query) {
+    getById(
+        @Param("id") claimId: string,
+        @Query() query: { nameSpace?: string }
+    ) {
         return this.claimService.getById(claimId, query.nameSpace);
     }
 
     @ApiTags("claim")
     @Put("api/claim/:id")
-    update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
+    update(
+        @Param("id") claimId: string,
+        @Body() updateClaimDTO: UpdateClaimDTO
+    ) {
         return this.claimService.update(claimId, updateClaimDTO);
     }
 
@@ -322,7 +334,7 @@ export class ClaimController {
         content: SentenceDocument | ImageDocument,
         personality: any = null
     ) {
-        const hideDescriptions = {};
+        const hideDescriptions: Record<string, any> = {};
 
         const reviewTask =
             await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
@@ -350,11 +362,13 @@ export class ClaimController {
                 TargetModel.Claim
             );
 
-        hideDescriptions[TargetModel.ClaimReview] =
-            await this.historyService.getDescriptionForHide(
-                claimReview,
-                TargetModel.ClaimReview
-            );
+        if (claimReview) {
+            hideDescriptions[TargetModel.ClaimReview] =
+                await this.historyService.getDescriptionForHide(
+                    claimReview,
+                    TargetModel.ClaimReview
+                );
+        }
 
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
@@ -811,7 +825,7 @@ export class ClaimController {
         });
 
         const queryObject = Object.assign(parsedUrl.query, {
-            targetId: report._id,
+            targetId: report?._id,
             nameSpace: req.params.namespace,
         });
 
@@ -908,6 +922,9 @@ export class ClaimController {
         const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
             data_hash
         );
+        if (!reviewTask) {
+            throw new NotFoundException();
+        }
 
         const queryObject = Object.assign(parsedUrl.query, {
             targetId: reviewTask._id,
@@ -945,10 +962,10 @@ export class ClaimController {
     }
 
     private redirectBasedOnPersonality(
-        res,
-        claim,
-        namespace,
-        data_hash = null
+        res: Response,
+        claim: any,
+        namespace: string,
+        data_hash: string | null = null
     ) {
         const { personalities, slug } = claim;
         if (personalities.length <= 0) {

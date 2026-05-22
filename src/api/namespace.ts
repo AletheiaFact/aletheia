@@ -1,16 +1,16 @@
-import axios from "axios";
 import { MessageManager } from "../components/Messages";
+import { createApiInstance } from "./apiFactory";
 
-const request = axios.create({
-    withCredentials: true,
-    baseURL: `/api/name-space`,
-});
+const request = createApiInstance("/api/name-space");
 
 const createNameSpace = (nameSpace, t) => {
     return request
         .post(`/`, { ...nameSpace })
         .then((response) => {
-            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
+            MessageManager.showMessage(
+                "success",
+                t("namespaces:nameSpaceSaved")
+            );
             return response.data;
         })
         .catch((err) => {
@@ -23,7 +23,10 @@ const updateNameSpace = (nameSpace, t) => {
     return request
         .put(`/${nameSpace._id}`, { ...nameSpace })
         .then((response) => {
-            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
+            MessageManager.showMessage(
+                "success",
+                t("namespaces:nameSpaceSaved")
+            );
             return response.data;
         })
         .catch((err) => {

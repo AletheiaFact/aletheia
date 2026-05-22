@@ -171,13 +171,16 @@ describe("resolvePermissions", () => {
     });
 
     describe("reported state", () => {
-        it("should allow assignee to edit", () => {
+        it("should not allow assignee to edit after finishing report", () => {
             const result = resolvePermissions(
                 buildInput({ state: ReviewTaskStates.reported })
             );
 
-            expect(result.canEditEditor).toBe(true);
-            expect(result.canSaveDraft).toBe(true);
+            expect(result.canEditEditor).toBe(false);
+            expect(result.canSaveDraft).toBe(false);
+            expect(result.editorReadonly).toBe(true);
+            expect(result.formType).toBe("selection");
+            expect(result.canSubmitActions.length).toBeGreaterThan(0);
         });
 
         it("should give non-assignee readonly view", () => {

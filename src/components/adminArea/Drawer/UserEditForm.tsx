@@ -25,7 +25,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
     const [badgesList] = useAtom(atomBadgesList);
     const [userId] = useAtom(currentUserId);
     const [options, setOptions] = useState<NameSpace[]>([]);
-    const [selectedNamespaces, setSelectedNamespaces] = useState<NameSpace[]>([]);
+    const [selectedNamespaces, setSelectedNamespaces] = useState<NameSpace[]>(
+        []
+    );
     const [nameSpace] = useAtom(currentNameSpace);
 
     const handleChangeBadges = (_event, newValue: Badge[]) => {
@@ -72,14 +74,19 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
         try {
             setIsLoading(true);
             const sendBadges = badges.map((badge) => badge._id);
-            const selectedSlugs = selectedNamespaces.map(ns => ns.slug);
+            const selectedSlugs = selectedNamespaces.map((ns) => ns.slug);
             const updatedRole = { ...role };
-            const currentNamespacesUser = await NameSpacesApi.getNameSpacesById(currentUser._id);
-            const currentIds = currentNamespacesUser.map(ns => ns._id);
-            const selectedIds = selectedNamespaces.map(ns => ns._id);
+            const currentNamespacesUser = await NameSpacesApi.getNameSpacesById(
+                currentUser._id
+            );
+            const currentIds = currentNamespacesUser.map((ns) => ns._id);
+            const selectedIds = selectedNamespaces.map((ns) => ns._id);
 
             Object.keys(updatedRole).forEach((role) => {
-                if (role !== NameSpaceEnum.Main && !selectedSlugs.includes(role)) {
+                if (
+                    role !== NameSpaceEnum.Main &&
+                    !selectedSlugs.includes(role)
+                ) {
                     delete updatedRole[role];
                 }
             });
@@ -89,7 +96,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             });
 
             for (const namespace of selectedNamespaces) {
-                const userAlreadyExist = namespace.users.some(user => user._id === currentUser._id);
+                const userAlreadyExist = namespace.users.some(
+                    (user) => user._id === currentUser._id
+                );
 
                 const updatedNamespaces = {
                     _id: namespace._id,
@@ -106,8 +115,14 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             for (const namespace of currentNamespacesUser) {
                 if (!selectedIds.includes(namespace._id)) {
                     const updatedUser = namespace.users
-                        .filter(user => String(user._id || user) !== String(currentUser._id))
-                        .map(user => (typeof user === 'string' ? { _id: user } : user));
+                        .filter(
+                            (user) =>
+                                String(user._id || user) !==
+                                String(currentUser._id)
+                        )
+                        .map((user) =>
+                            typeof user === "string" ? { _id: user } : user
+                        );
 
                     const updatedNamespaces = {
                         _id: namespace._id,
@@ -145,9 +160,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     shouldEdit={shouldEdit}
                 />
             </Grid>
-            {nameSpace === NameSpaceEnum.Main ?
+            {nameSpace === NameSpaceEnum.Main ? (
                 <Grid item xs={10} mt={2}>
-                    <Label>{t("menu:nameSpaceItem")}</Label>
+                    <Label>{t("header:nameSpaceItem")}</Label>
                     <Autocomplete
                         disabled={!shouldEdit}
                         multiple
@@ -158,7 +173,8 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                         onChange={handleChangeNameSpaces}
                         disableCloseOnSelect
                         renderInput={(params) => (
-                            <TextField {...params}
+                            <TextField
+                                {...params}
                                 placeholder={t("namespaces:selectNameSpaces")}
                             />
                         )}
@@ -169,10 +185,9 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                         )}
                     />
                 </Grid>
-                : null
-            }
+            ) : null}
             <Grid item xs={10} mt={2}>
-                <Label>{t("menu:badgesItem")}</Label>
+                <Label>{t("header:badgesItem")}</Label>
                 <Autocomplete
                     disabled={!shouldEdit}
                     multiple

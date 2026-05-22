@@ -7,7 +7,11 @@ import loadConfig from "../configLoader";
 import { WinstonLogger } from "../winstonLogger";
 import OryService from "../auth/ory/ory.service";
 
-async function updateUserAppAffiliation(userFromDB, app, logger) {
+async function updateUserAppAffiliation(
+    userFromDB: any,
+    app: NestExpressApplication,
+    logger: WinstonLogger
+) {
     const oryService = await app.resolve(OryService);
     const configService = app.get(ConfigService);
 
@@ -16,10 +20,14 @@ async function updateUserAppAffiliation(userFromDB, app, logger) {
         logger.log(
             `Updating user ${userFromDB.email} with app_affiliation: ${app_affiliation}`
         );
-        await oryService.updateIdentity(userFromDB, null, {
-            app_affiliation,
-            role: userFromDB.role,
-        });
+        await oryService.updateIdentity(
+            userFromDB,
+            null as any,
+            {
+                app_affiliation,
+                role: userFromDB.role,
+            } as any
+        );
     } else {
         throw new Error(`Can't update user ${userFromDB.email}`);
     }
