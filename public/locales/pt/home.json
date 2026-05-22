@@ -30,5 +30,16 @@
     "reviewsCardNoTopics": "Tópicos não adicionados",
     "forumButton": "Participe do nosso fórum",
     "redirectTitle": "Você será redirecionado para o nosso fórum em uma nova aba",
-    "descriptionAlert": "Para participar das discussões, use a mesma conta da Aletheia para fazer login por lá, clicando em entrar no canto superior da tela."
+    "descriptionAlert": "Para participar das discussões, use a mesma conta da Aletheia para fazer login por lá, clicando em entrar no canto superior da tela.",
+    "homeJoinBadge": "Beta aberto",
+    "homeJoinTitle": "Quer ser um revisor?",
+    "homeJoinDescription": "Aletheia está atualmente em teste beta e estamos aceitando jornalistas e profissionais de checagem de fatos para testar a plataforma. Junte-se a nós!",
+    "homeJoinPrimaryButton": "Inscreva-se agora",
+    "homeJoinSecondaryButton": "Saiba mais",
+    "homeJoinBenefitsTitle": "Benefícios de ser revisor",
+    "homeJoinBenefit1": "Acesso a metodologia de verificação",
+    "homeJoinBenefit2": "Participe de discussões com especialistas",
+    "homeJoinBenefit3": "Contribua para o combate à desinformação",
+    "homeJoinBenefit4": "Acompanhe checagens em tempo real",
+    "homeJoinShareTitle": "Compartilhe esta página"
 }

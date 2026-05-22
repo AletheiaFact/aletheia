@@ -2,6 +2,7 @@ import React from "react";
 
 import HomeContent from "./HomeContent";
 import HomeHero from "./HomeHero/HomeHero";
+import HomeJoinSection from "./HomeJoinSection/HomeJoinSection";
 
 const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableEventsFeature }) => {
     return (
@@ -13,8 +14,8 @@ const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableE
                 reviews={reviews}
                 eventsData={eventsData}
                 enableEventsFeature={enableEventsFeature}
-                href={href}
             />
+            <HomeJoinSection href={href} />
         </>
     );
 };
