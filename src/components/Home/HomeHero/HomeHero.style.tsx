@@ -261,7 +261,9 @@ const HomeHeroStyle = styled(Grid)`
         padding: clamp(40px, 6vw, 80px) clamp(16px, 2vw, 24px);
         width: 100%;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(24px, 3vw, 40px);
     }
 
     @media ${queries.sm} {

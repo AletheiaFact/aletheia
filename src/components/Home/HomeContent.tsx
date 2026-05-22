@@ -3,22 +3,12 @@ import CTAFolder from "./CTAFolder/CTAFolder";
 import { Grid } from "@mui/material"
 import SocialMediaShare from "../SocialMediaShare";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
-import { useAppSelector } from "../../store/store";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
-import HomeFeed from "./HomeFeed";
 import ReviewsGrid from "../ClaimReview/ReviewsGrid";
 import EventsGrid from "../Event/EventList/EventGrid";
 
 const HomeContent = ({ personalities, href, title, debateClaims, reviews, eventsData, enableEventsFeature }) => {
-    const { results } = useAppSelector((state) => ({
-        results: [
-            state?.search?.searchResults?.personalities || [],
-            state?.search?.searchResults?.claims || [],
-            state?.search?.searchResults?.sentences || [],
-        ],
-    }));
-
     const { t } = useTranslation();
 
     return (
@@ -30,9 +20,7 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
                     justifyContent: "center",
                 }}
             >
-                <Grid item xs={11} sm={11} md={9}>
-                    <HomeFeed searchResults={results} />
-                </Grid>
+
                 <Grid item
                     xs={11}
                     sm={11}
