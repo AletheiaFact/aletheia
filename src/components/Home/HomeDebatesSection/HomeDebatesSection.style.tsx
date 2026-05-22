@@ -3,14 +3,14 @@ import Grid from "@mui/material/Grid";
 import colors from "../../../styles/colors";
 import { queries } from "../../../styles/mediaQueries";
 
-const HomeReviewsSectionStyle = styled(Grid)`
+const HomeDebatesSectionStyle = styled(Grid)`
     width: 100%;
-    background: ${colors.lightTertiary};
+    background: ${colors.white};
     padding: 64px 0;
     display: flex;
     justify-content: center;
 
-    .reviews-inner {
+    .debates-inner {
         width: 100%;
         max-width: min(95vw, 1580px);
     }
@@ -24,4 +24,4 @@ const HomeReviewsSectionStyle = styled(Grid)`
     }
 `;
 
-export default HomeReviewsSectionStyle;
+export default HomeDebatesSectionStyle;

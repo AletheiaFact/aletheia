@@ -1,12 +1,9 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import HomeContent from "./HomeContent";
 import HomeHero from "./HomeHero/HomeHero";
 
 const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableEventsFeature }) => {
-    const { t } = useTranslation();
-
     return (
         <>
             <HomeHero stats={stats} />
@@ -17,7 +14,6 @@ const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableE
                 eventsData={eventsData}
                 enableEventsFeature={enableEventsFeature}
                 href={href}
-                title={t("home:sectionTitle1")}
             />
         </>
     );

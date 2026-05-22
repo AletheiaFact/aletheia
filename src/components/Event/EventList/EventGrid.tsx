@@ -1,6 +1,6 @@
 import React from "react";
 import EventCard from "./EventCard";
-import GridList from "../../GridList";
+import GridList, { SeeMorePosition } from "../../GridList";
 import { EventMetrics, EventPayload } from "../../../types/event";
 import { TFunction } from "react-i18next";
 import useEventsHook from "../hooks/useEventsHook";
@@ -11,7 +11,9 @@ type EventsGridProps = {
     t: TFunction;
     hasDivider?: boolean;
     disableSeeMoreButton?: boolean;
+    buttonPosition?: SeeMorePosition;
     title?: React.ReactNode;
+    subtitle?: React.ReactNode;
 };
 
 const EventsGrid = ({
@@ -20,18 +22,22 @@ const EventsGrid = ({
     t,
     hasDivider,
     disableSeeMoreButton,
+    buttonPosition,
     title,
+    subtitle,
 }: EventsGridProps) => {
     const { state } = useEventsHook();
 
     return (
         <GridList
             title={title}
+            subtitle={subtitle}
             dataSource={events}
-            loggedInMaxColumns={6}
+            itemSize={{ xs: 12, sm: 6 }}
             href={state.eventHref}
             disableSeeMoreButton={disableSeeMoreButton}
             seeMoreButtonLabel={t("events:seeMoreEventsButton")}
+            seeMoreButtonPosition={buttonPosition}
             dataCy="testSeeMoreEvents"
             hasDivider={hasDivider}
             renderItem={(event) => (
