@@ -21,7 +21,10 @@
     "sectionTitle1": "Personalities",
     "sectionTitle2": "Join the movement",
     "latestReviewsTitle": "Latest claim reviews",
+    "latestReviewsSubtitle": "Check out the most recent reviews from our team",
+    "latestReviewsSeeAll": "See all",
     "reviewsCarouselOpen": "Open",
+    "reviewsCardNoTopics": "No topics added",
     "forumButton": "Participate in our forum",
     "redirectTitle": "Your will be redirected to the forum in a new tab",
     "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen."

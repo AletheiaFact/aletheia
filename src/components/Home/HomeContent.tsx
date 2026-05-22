@@ -5,7 +5,7 @@ import SocialMediaShare from "../SocialMediaShare";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
-import ReviewsGrid from "../ClaimReview/ReviewsGrid";
+import HomeReviewsSection from "./HomeReviewsSection/HomeReviewsSection";
 import EventsGrid from "../Event/EventList/EventGrid";
 
 const HomeContent = ({ personalities, href, title, debateClaims, reviews, eventsData, enableEventsFeature }) => {
@@ -13,29 +13,18 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
 
     return (
         <>
-            <Grid container
-                style={{
-                    width: "100%",
-                    paddingTop: "32px",
-                    justifyContent: "center",
-                }}
-            >
+            <Grid container>
+                <Grid item xs={12} id="latest-reviews">
+                    <HomeReviewsSection reviews={reviews} />
+                </Grid>
 
-                <Grid item
-                    xs={11}
-                    sm={11}
-                    md={9}
-                    id="latest-reviews"
-                    style={{
-                        marginBottom: 32,
-                        scrollMarginTop: 80
-                    }}
-                >
-                    <ReviewsGrid
-                        reviews={reviews}
-                        title={t("home:latestReviewsTitle")}
+                <Grid item xs={12}>
+                    <PersonalitiesGrid
+                        personalities={personalities}
+                        title={title}
                     />
                 </Grid>
+
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
                     <Grid item
                         order={1}
@@ -45,18 +34,12 @@ const HomeContent = ({ personalities, href, title, debateClaims, reviews, events
                         style={{
                             width: "100%",
                             paddingBottom: "32px",
-                            justifyContent: "center",
+                            justifyItems: "center",
                         }}
                     >
                         <DebateGrid debates={debateClaims} />
                     </Grid>
                 )}
-                <Grid item xs={11} sm={11} md={9}>
-                    <PersonalitiesGrid
-                        personalities={personalities}
-                        title={title}
-                    />
-                </Grid>
 
                 {enableEventsFeature && eventsData && (
                     <Grid item xs={11} sm={11} md={9}>
