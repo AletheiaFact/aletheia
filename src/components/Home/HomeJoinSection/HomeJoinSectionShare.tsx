@@ -38,7 +38,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                 component="h3"
                 className="home-join-share-title"
             >
-                {t("home:homeJoinShareTitle")}
+                {t("share:title")}
             </Typography>
             <Box component="ul" className="home-join-share-list">
                 <Box component="li">

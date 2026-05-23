@@ -30,16 +30,5 @@
     "reviewsCardNoTopics": "No topics added",
     "forumButton": "Participate in our forum",
     "redirectTitle": "Your will be redirected to the forum in a new tab",
-    "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen.",
-    "homeJoinBadge": "Open beta",
-    "homeJoinTitle": "Want to be a reviewer?",
-    "homeJoinDescription": "Aletheia is currently in beta testing and we are welcoming journalists and fact-checking professionals to test the platform. Join us!",
-    "homeJoinPrimaryButton": "Sign up now",
-    "homeJoinSecondaryButton": "Learn more",
-    "homeJoinBenefitsTitle": "Benefits of being a reviewer",
-    "homeJoinBenefit1": "Access to verification methodology",
-    "homeJoinBenefit2": "Join discussions with experts",
-    "homeJoinBenefit3": "Contribute to combating disinformation",
-    "homeJoinBenefit4": "Track fact-checks in real time",
-    "homeJoinShareTitle": "Share this page"
+    "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen."
 }

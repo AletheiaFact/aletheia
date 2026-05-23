@@ -30,7 +30,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         align-items: center;
     }
 
-    .home-join-content {
+    .ctaMainColumn {
         display: flex;
         flex-direction: column;
         gap: 24px;
@@ -50,7 +50,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         white-space: nowrap;
     }
 
-    .home-join-title {
+    .ctaTitle {
         font-size: clamp(32px, 4vw, 52px);
         line-height: 1.1;
         font-weight: 800;
@@ -59,7 +59,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         font-family: inherit;
     }
 
-    .home-join-description {
+    .ctaBody {
         font-size: clamp(15px, 1.4vw, 18px);
         line-height: 1.6;
         color: ${colors.secondary};
@@ -67,14 +67,14 @@ const HomeJoinSectionStyle = styled(Grid)`
         max-width: 540px;
     }
 
-    .home-join-actions {
+    .ctaButtonWrapper {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
         margin-top: 8px;
     }
 
-    .home-join-action-button {
+    .ctaActionButtons {
         height: 52px !important;
         padding: 0 28px !important;
         border-radius: 10px !important;
@@ -84,7 +84,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         gap: 8px;
     }
 
-    .home-join-action-primary {
+    .ctaSignUpButton {
         background-color: ${colors.primary} !important;
         border: 1px solid ${colors.primary} !important;
         color: ${colors.white} !important;
@@ -98,7 +98,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         }
     }
 
-    .home-join-action-secondary {
+    .ctaAboutUsButton {
         background-color: transparent !important;
         border: 1px solid ${colors.primary} !important;
         color: ${colors.primary} !important;
@@ -112,7 +112,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         font-size: 18px !important;
     }
 
-    .home-join-benefits {
+    .ctaAchievementsColumn {
         background-color: ${colors.white};
         border-radius: 16px;
         padding: clamp(24px, 3vw, 40px);
@@ -122,7 +122,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         gap: 20px;
     }
 
-    .home-join-benefits-title {
+    .ctaAchievementsTitle {
         font-size: clamp(18px, 1.6vw, 20px);
         font-weight: 700;
         color: ${colors.primary};
@@ -130,7 +130,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         font-family: inherit;
     }
 
-    .home-join-benefits-list {
+    .ctaAchievementsList {
         list-style: none;
         margin: 0;
         padding: 0;
@@ -138,7 +138,7 @@ const HomeJoinSectionStyle = styled(Grid)`
         gap: 16px;
     }
 
-    .home-join-benefit-item {
+    .ctaAchievementsItem {
         display: grid;
         grid-template-columns: 24px minmax(0, 1fr);
         gap: 12px;
@@ -146,12 +146,12 @@ const HomeJoinSectionStyle = styled(Grid)`
         padding: 0;
     }
 
-    .home-join-benefit-icon {
+    .ctaAchievementsIcon {
         color: ${colors.lightPrimary};
         font-size: 22px !important;
     }
 
-    .home-join-benefit-text {
+    .ctaAchievementsText {
         font-size: clamp(14px, 1.3vw, 16px);
         line-height: 1.5;
         color: ${colors.blackSecondary};

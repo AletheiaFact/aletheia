@@ -29,7 +29,7 @@ const CTAFolderMainColumn = ({ isLoggedIn }: CTAFolderMainColumnProps) => {
             {!isLoggedIn && (
                 <Typography
                     variant="body1"
-                    className="ctaFooter"
+                    className="ctaBody"
                 >
                     {t("CTAFolder:signUpFooter")}
                 </Typography>
