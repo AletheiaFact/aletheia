@@ -1590,4 +1590,17 @@ export class VerificationRequestService {
 
         return updatedVr;
     }
+
+    async cascadeUpdateDataHash(
+        oldHash: string,
+        newHash: string,
+        session: import("mongoose").ClientSession
+    ): Promise<number> {
+        const result = await this.VerificationRequestModel.updateMany(
+            { data_hash: oldHash },
+            { $set: { data_hash: newHash } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
+    }
 }

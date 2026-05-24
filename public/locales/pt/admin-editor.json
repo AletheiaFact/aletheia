@@ -1,0 +1,42 @@
+{
+    "page": {
+        "title": "Editar conteúdo"
+    },
+    "metadata": {
+        "section": "Metadados",
+        "title": "Título",
+        "date": "Data",
+        "personalitiesReadOnly": "Personalidades atribuídas (somente leitura)"
+    },
+    "actions": {
+        "submit": "Salvar alterações",
+        "discard": "Descartar",
+        "editClaim": "Editar metadados"
+    },
+    "load": {
+        "error": "Falha ao carregar o conteúdo"
+    },
+    "commit": {
+        "success": "Conteúdo atualizado",
+        "error": "Falha ao salvar"
+    },
+    "conflict": {
+        "title": "Conteúdo modificado",
+        "body": "Outro administrador modificou este conteúdo enquanto você editava. Atualize para ver a versão mais recente e reaplique suas alterações.",
+        "refresh": "Atualizar",
+        "discard": "Descartar minhas alterações"
+    },
+    "discard": {
+        "title": "Descartar alterações?",
+        "body": "Suas edições serão perdidas. Esta ação não pode ser desfeita.",
+        "confirm": "Descartar",
+        "cancel": "Cancelar"
+    },
+    "sentences": {
+        "section": "Sentenças",
+        "empty": "Este conteúdo não possui sentenças editáveis.",
+        "editTooltip": "Editar esta sentença",
+        "revertTooltip": "Reverter para o texto original",
+        "editedBadge": "Editada"
+    }
+}
