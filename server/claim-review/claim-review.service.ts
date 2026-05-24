@@ -664,4 +664,17 @@ export class ClaimReviewService {
             throw error;
         }
     }
+
+    async cascadeUpdateDataHash(
+        oldHash: string,
+        newHash: string,
+        session: mongoose.ClientSession
+    ): Promise<number> {
+        const result = await this.ClaimReviewModel.updateMany(
+            { data_hash: oldHash },
+            { $set: { data_hash: newHash } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
+    }
 }

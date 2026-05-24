@@ -40,15 +40,14 @@ export class CommentService {
         );
     }
 
-    async update(
-        id: string,
-        UpdateCommentDto: UpdateCommentDTO
-    ) {
+    async update(id: string, UpdateCommentDto: UpdateCommentDTO) {
         try {
             this.logger.debug(`Updating comment ${id}`, { UpdateCommentDto });
 
             if (!isValidObjectId(id)) {
-                throw new BadRequestException(`Invalid comment ID format: ${id}`);
+                throw new BadRequestException(
+                    `Invalid comment ID format: ${id}`
+                );
             }
 
             const { user, ...otherFields } = UpdateCommentDto;
@@ -65,8 +64,7 @@ export class CommentService {
                 id,
                 { $set: updateData },
                 { new: true, runValidators: true }
-            )
-                .populate("user", "name");
+            ).populate("user", "name");
 
             if (!updatedComment) {
                 throw new NotFoundException(`Comment not found: ${id}`);
@@ -128,5 +126,18 @@ export class CommentService {
         );
 
         return { ...comment.toObject(), replies };
+    }
+
+    async cascadeUpdateSentenceTarget(
+        oldSentenceId: Types.ObjectId | string,
+        newSentenceId: Types.ObjectId | string,
+        session: import("mongoose").ClientSession
+    ): Promise<number> {
+        const result = await this.CommentModel.updateMany(
+            { targetId: oldSentenceId },
+            { $set: { targetId: newSentenceId } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }
