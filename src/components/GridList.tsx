@@ -90,7 +90,7 @@ const GridList = <T,>({
             seeMoreButtonPosition === "both");
 
     return (
-        <GridListStyle container>
+        <GridListStyle container $hasSubtitle={!!subtitle}>
             <Box className="grid-list-header">
                 {subtitle ? (
                     <Box className="grid-list-header-text">

@@ -3,10 +3,14 @@ import Grid from "@mui/material/Grid";
 import colors from "../styles/colors";
 import { queries } from "../styles/mediaQueries";
 
-const GridListStyle = styled(Grid)`
+type GridListStyleProps = {
+    $hasSubtitle?: boolean;
+};
+
+const GridListStyle = styled(Grid) <GridListStyleProps>`
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: ${({ $hasSubtitle }) => ($hasSubtitle ? "40px" : "14px")};
     width: 100%;
 
     .grid-list-header {
