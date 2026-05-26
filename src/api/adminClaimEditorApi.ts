@@ -2,21 +2,12 @@ import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/claim");
 
-export type SentenceOpIntent =
-    | "noop"
-    | "edit"
-    | "split"
-    | "merge"
-    | "insert"
-    | "delete";
+export type SentenceOpIntent = "noop" | "edit";
 
 export interface SentenceOp {
     intent: SentenceOpIntent;
-    sourceSentenceId?: string;
-    sourceSentenceIds?: string[];
+    sourceSentenceId: string;
     newText?: string;
-    newTexts?: string[];
-    afterSentenceId?: string | null;
 }
 
 export interface AdminClaimEditMetadata {
@@ -27,6 +18,9 @@ export interface AdminClaimEditMetadata {
 
 export interface AdminClaimEditableView {
     claimId: string;
+    claimSlug: string;
+    nameSpace: string;
+    personalitySlug?: string;
     baseRevisionId: string;
     metadata: {
         title: string;
@@ -42,28 +36,15 @@ export interface AdminClaimEditableView {
     }>;
 }
 
-export interface AdminClaimEditPreviewRequest {
+export interface AdminClaimEditCommitRequest {
     baseRevisionId: string;
     metadata?: AdminClaimEditMetadata;
     sentenceOps: SentenceOp[];
 }
 
-export interface AdminClaimEditPreviewResponse {
-    status: "ready" | "needs-resolution";
-    classifiedDiff: {
-        metadataChanges: Array<{ field: string; from: unknown; to: unknown }>;
-        sentenceChanges: unknown[];
-    };
-    ambiguities: unknown[];
-}
-
-export interface AdminClaimEditCommitRequest
-    extends AdminClaimEditPreviewRequest {
-    resolutions?: unknown[];
-}
-
 export interface AdminClaimEditCommitResponse {
     newRevisionId: string;
+    newSlug: string;
     historyEntryId: string;
     sentenceHashMap: { oldDataHash: string; newDataHash: string }[];
     cascadeSummary: Record<string, number>;
@@ -82,17 +63,6 @@ async function getEditableView(
     return data;
 }
 
-async function previewEdit(
-    claimId: string,
-    payload: AdminClaimEditPreviewRequest
-): Promise<AdminClaimEditPreviewResponse> {
-    const { data } = await request.post(
-        `/${claimId}/admin-edit/preview`,
-        payload
-    );
-    return data;
-}
-
 async function commitEdit(
     claimId: string,
     payload: AdminClaimEditCommitRequest
@@ -106,6 +76,5 @@ async function commitEdit(
 
 export default {
     getEditableView,
-    previewEdit,
     commitEdit,
 };

@@ -4,10 +4,6 @@ import { AdminOnly } from "../../auth/decorators/auth.decorator";
 import { ZodValidationPipe } from "../../ai-task/pipes/zod-validation.pipe";
 import { AdminEditorService } from "./admin-editor.service";
 import {
-    ClaimEditPreviewRequestDto,
-    ClaimEditPreviewRequestSchema,
-} from "./dto/claim-edit-preview-request.dto";
-import {
     ClaimEditCommitRequestDto,
     ClaimEditCommitRequestSchema,
 } from "./dto/claim-edit-commit-request.dto";
@@ -29,23 +25,6 @@ export class AdminEditorController {
     @ApiResponse({ status: 404, description: "Claim not found" })
     view(@Param("id") id: string) {
         return this.service.view(id);
-    }
-
-    @AdminOnly()
-    @Post("preview")
-    @ApiOperation({
-        summary: "Validate a proposed edit and classify changes",
-    })
-    @ApiBody({ description: "ClaimEditPreviewRequest" })
-    @ApiResponse({ status: 200, description: "Preview result" })
-    @ApiResponse({ status: 400, description: "Validation failure" })
-    @ApiResponse({ status: 409, description: "Concurrency conflict" })
-    preview(
-        @Param("id") id: string,
-        @Body(new ZodValidationPipe(ClaimEditPreviewRequestSchema))
-        payload: ClaimEditPreviewRequestDto
-    ) {
-        return this.service.preview(id, payload);
     }
 
     @AdminOnly()

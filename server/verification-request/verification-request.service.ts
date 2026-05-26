@@ -1,4 +1,5 @@
 import {
+    ClientSession,
     isValidObjectId,
     Model,
     SortOrder,
@@ -1598,7 +1599,7 @@ export class VerificationRequestService {
     async cascadeUpdateDataHash(
         oldHash: string,
         newHash: string,
-        session: import("mongoose").ClientSession
+        session: ClientSession
     ): Promise<number> {
         const result = await this.VerificationRequestModel.updateMany(
             { data_hash: oldHash },

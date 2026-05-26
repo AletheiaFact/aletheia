@@ -63,6 +63,15 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [claimId]);
 
+    const buildClaimUrl = (v: AdminClaimEditableView): string => {
+        const nsPrefix =
+            v.nameSpace && v.nameSpace !== "main" ? `/${v.nameSpace}` : "";
+        const path = v.personalitySlug
+            ? `/personality/${v.personalitySlug}/claim/${v.claimSlug}`
+            : `/claim/${v.claimSlug}`;
+        return `${nsPrefix}${path}`;
+    };
+
     const buildSentenceOps = (): SentenceOp[] =>
         sentenceDrafts
             .filter(
@@ -78,7 +87,6 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
 
     const submit = async () => {
         if (!view) return;
-        send({ type: "PREVIEW" });
         const sentenceOps = buildSentenceOps();
         const payload = {
             baseRevisionId: view.baseRevisionId,
@@ -86,13 +94,17 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
             sentenceOps,
         };
         try {
-            await adminClaimEditorApi.previewEdit(claimId, payload);
-            send({ type: "PREVIEW_OK" });
             send({ type: "COMMIT" });
-            await adminClaimEditorApi.commitEdit(claimId, payload);
+            const result = await adminClaimEditorApi.commitEdit(
+                claimId,
+                payload
+            );
             send({ type: "COMMIT_OK" });
             MessageManager.showMessage("success", t("commit.success"));
-            router.push(`/claim/${view.claimId}`);
+            window.location.href = buildClaimUrl({
+                ...view,
+                claimSlug: result.newSlug,
+            });
         } catch (e: any) {
             if (e?.response?.status === 409) {
                 send({
@@ -149,10 +161,7 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
                 <Button
                     variant="contained"
                     onClick={submit}
-                    disabled={
-                        state.matches("committing") ||
-                        state.matches("previewing")
-                    }
+                    disabled={state.matches("committing")}
                 >
                     {t("actions.submit")}
                 </Button>
@@ -166,12 +175,16 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
                     send({ type: "REFRESH" });
                     void load();
                 }}
-                onDiscard={() => router.push(`/claim/${claimId}`)}
+                onDiscard={() => {
+                    if (view) window.location.href = buildClaimUrl(view);
+                }}
             />
             <DiscardConfirmDialog
                 open={showDiscard}
                 onCancel={() => setShowDiscard(false)}
-                onConfirm={() => router.push(`/claim/${claimId}`)}
+                onConfirm={() => {
+                    if (view) window.location.href = buildClaimUrl(view);
+                }}
             />
         </Box>
     );

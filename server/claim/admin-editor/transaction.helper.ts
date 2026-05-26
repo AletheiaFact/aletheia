@@ -22,7 +22,9 @@ export class TransactionHelper {
             return result;
         } catch (err: any) {
             this.logger.error(
-                `Transaction failed: ${err?.message ?? "unknown"}`,
+                `Transaction failed [${err?.name ?? "Error"}:${
+                    err?.code ?? "n/a"
+                }]: ${err?.message ?? "unknown"}`,
                 err?.stack
             );
             throw err;

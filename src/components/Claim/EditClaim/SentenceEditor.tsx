@@ -70,6 +70,9 @@ const SentenceEditor: React.FC<Props> = ({
                                 <Tooltip title={t("sentences.revertTooltip")}>
                                     <IconButton
                                         size="small"
+                                        aria-label={t(
+                                            "sentences.revertTooltip"
+                                        )}
                                         onClick={() => {
                                             onTextChange(
                                                 s.sentenceId,
@@ -88,6 +91,7 @@ const SentenceEditor: React.FC<Props> = ({
                                 <Tooltip title={t("sentences.editTooltip")}>
                                     <IconButton
                                         size="small"
+                                        aria-label={t("sentences.editTooltip")}
                                         onClick={() =>
                                             onIntentChange(s.sentenceId, "edit")
                                         }

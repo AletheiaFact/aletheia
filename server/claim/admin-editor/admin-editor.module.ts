@@ -11,7 +11,6 @@ import {
     ClaimRevision,
     ClaimRevisionSchema,
 } from "../claim-revision/schema/claim-revision.schema";
-import { History, HistorySchema } from "../../history/schema/history.schema";
 import {
     Sentence,
     SentenceSchema,
@@ -35,7 +34,6 @@ import { TransactionHelper } from "./transaction.helper";
         MongooseModule.forFeature([
             { name: Claim.name, schema: ClaimSchema },
             { name: ClaimRevision.name, schema: ClaimRevisionSchema },
-            { name: History.name, schema: HistorySchema },
             { name: Sentence.name, schema: SentenceSchema },
             { name: Paragraph.name, schema: ParagraphSchema },
             { name: Speech.name, schema: SpeechSchema },
