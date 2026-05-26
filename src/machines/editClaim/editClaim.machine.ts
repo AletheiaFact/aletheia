@@ -12,9 +12,6 @@ export interface EditClaimContext {
 export type EditClaimEvent =
     | { type: "SET_TITLE"; value: string }
     | { type: "SET_DATE"; value: string }
-    | { type: "PREVIEW" }
-    | { type: "PREVIEW_OK" }
-    | { type: "PREVIEW_FAIL"; error: string }
     | { type: "COMMIT" }
     | { type: "COMMIT_OK" }
     | { type: "COMMIT_CONFLICT"; currentRevisionId: string }
@@ -33,17 +30,8 @@ export const editClaimMachine = createMachine<EditClaimContext, EditClaimEvent>(
                         actions: assign({ title: (_, e) => e.value }),
                     },
                     SET_DATE: { actions: assign({ date: (_, e) => e.value }) },
-                    PREVIEW: "previewing",
+                    COMMIT: "committing",
                     DISCARD: "abandoned",
-                },
-            },
-            previewing: {
-                on: {
-                    PREVIEW_OK: "committing",
-                    PREVIEW_FAIL: {
-                        target: "editing",
-                        actions: assign({ error: (_, e) => e.error }),
-                    },
                 },
             },
             committing: {

@@ -10,7 +10,6 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientSession, Model, Types } from "mongoose";
 import { REQUEST } from "@nestjs/core";
-import slugify from "slugify";
 import { TransactionHelper } from "./transaction.helper";
 import {
     DiffValidatorService,
@@ -37,22 +36,15 @@ import {
 } from "../types/paragraph/schemas/paragraph.schema";
 import { Speech, SpeechDocument } from "../types/speech/schemas/speech.schema";
 import { HistoryService } from "../../history/history.service";
-import {
-    History,
-    HistoryDocument,
-    HistoryType,
-    TargetModel,
-} from "../../history/schema/history.schema";
+import { HistoryType, TargetModel } from "../../history/schema/history.schema";
 import type { BaseRequest } from "../../types";
 import { ContentModelEnum } from "../../types/enums";
-import { ClaimEditPreviewRequestDto } from "./dto/claim-edit-preview-request.dto";
+import slugify from "slugify";
 import { ClaimEditCommitRequestDto } from "./dto/claim-edit-commit-request.dto";
 import {
     ClaimEditableViewDto,
     ClaimEditCommitResponseDto,
-    ClaimEditPreviewResponseDto,
     MetadataChangeEntry,
-    SentenceChangeEntry,
     SentenceViewDto,
 } from "./dto/claim-edit-response.dto";
 
@@ -74,8 +66,6 @@ export class AdminEditorService {
         private readonly ClaimModel: Model<ClaimDocument>,
         @InjectModel(ClaimRevision.name)
         private readonly ClaimRevisionModel: Model<ClaimRevisionDocument>,
-        @InjectModel(History.name)
-        private readonly HistoryModel: Model<HistoryDocument>,
         @InjectModel(Sentence.name)
         private readonly SentenceModel: Model<SentenceDocument>,
         @InjectModel(Paragraph.name)
@@ -91,8 +81,15 @@ export class AdminEditorService {
 
     async view(claimId: string): Promise<ClaimEditableViewDto> {
         const loaded = await this.loadStructure(claimId);
+        const personalities = (loaded.claim.personalities ?? []) as Array<{
+            slug?: string;
+        }>;
+        const firstPersonalitySlug = personalities[0]?.slug;
         return {
             claimId: loaded.claim._id.toString(),
+            claimSlug: loaded.claim.slug,
+            nameSpace: loaded.claim.nameSpace,
+            personalitySlug: firstPersonalitySlug,
             baseRevisionId: loaded.revision._id.toString(),
             metadata: {
                 title: loaded.revision.title,
@@ -114,44 +111,6 @@ export class AdminEditorService {
                 text: s.text,
                 position: s.position,
             })),
-        };
-    }
-
-    async preview(
-        claimId: string,
-        payload: ClaimEditPreviewRequestDto
-    ): Promise<ClaimEditPreviewResponseDto> {
-        this.guardPersonalityNotEdited(payload);
-
-        const loaded = await this.loadStructure(claimId);
-        this.assertBaseRevision(loaded.claim, payload.baseRevisionId);
-
-        const metadataChanges = this.diffMetadata(loaded.revision, payload);
-        const classified = this.diffValidator.classifyForEditOnly(
-            loaded.sentences,
-            payload.sentenceOps ?? []
-        );
-        const sentenceChanges = classified
-            .filter((c) => c.intent !== "noop")
-            .map<SentenceChangeEntry>((c) => ({
-                op: c.intent as SentenceChangeEntry["op"],
-                oldDataHashes: c.sourceDataHashes,
-                newDataHashes: [],
-                affectedRefs: {
-                    reviewTasks: [],
-                    claimReviews: [],
-                    verificationRequests: [],
-                    comments: 0,
-                },
-            }));
-
-        return {
-            status: "ready",
-            classifiedDiff: {
-                metadataChanges,
-                sentenceChanges,
-            },
-            ambiguities: [],
         };
     }
 
@@ -243,20 +202,15 @@ export class AdminEditorService {
 
                 const response = {
                     newRevisionId: newRevision._id.toString(),
+                    newSlug: newRevision.slug,
                     historyEntryId: historyEntry._id.toString(),
                     sentenceHashMap: hashRemaps,
                     cascadeSummary: {
                         reviewTasksUpdated: cascadeCounts.reviewTasksUpdated,
-                        reviewTasksArchived: 0,
-                        reviewTasksDuplicated: 0,
                         claimReviewsUpdated: cascadeCounts.claimReviewsUpdated,
-                        claimReviewsArchived: 0,
                         verificationRequestsUpdated:
                             cascadeCounts.verificationRequestsUpdated,
-                        verificationRequestsArchived: 0,
                         commentsUpdated: cascadeCounts.commentsUpdated,
-                        afcJobsCancelled: 0,
-                        afcJobsReenqueued: 0,
                     },
                 };
 
@@ -290,7 +244,9 @@ export class AdminEditorService {
         if (!Types.ObjectId.isValid(claimId)) {
             throw new BadRequestException("Invalid claim id");
         }
-        const q = this.ClaimModel.findById(claimId).populate("latestRevision");
+        const q = this.ClaimModel.findById(claimId)
+            .populate("latestRevision")
+            .populate("personalities", "slug");
         if (session) q.session(session);
         const claim = await q.exec();
         if (!claim) {
@@ -520,9 +476,7 @@ export class AdminEditorService {
         }
     }
 
-    private guardPersonalityNotEdited(
-        payload: ClaimEditPreviewRequestDto | ClaimEditCommitRequestDto
-    ) {
+    private guardPersonalityNotEdited(payload: ClaimEditCommitRequestDto) {
         if (
             payload.metadata &&
             "personalities" in (payload.metadata as any) &&
@@ -538,7 +492,7 @@ export class AdminEditorService {
 
     private diffMetadata(
         previous: ClaimRevisionDocument,
-        payload: ClaimEditPreviewRequestDto | ClaimEditCommitRequestDto
+        payload: ClaimEditCommitRequestDto
     ): MetadataChangeEntry[] {
         const changes: MetadataChangeEntry[] = [];
         const md = payload.metadata;
@@ -581,7 +535,13 @@ export class AdminEditorService {
         const newDate = payload.metadata?.date
             ? new Date(payload.metadata.date)
             : prevObj.date;
-        const newSlug = slugify(newTitle, { lower: true, strict: true });
+
+        const titleChanged =
+            payload.metadata?.title?.trim() !== undefined &&
+            payload.metadata.title.trim() !== prevObj.title;
+        const newSlug = titleChanged
+            ? slugify(newTitle, { lower: true, strict: true })
+            : prevObj.slug;
 
         const next = new this.ClaimRevisionModel({
             _id: newRevisionId,
@@ -616,15 +576,12 @@ export class AdminEditorService {
                 title: next.title,
                 metadataDiff: metadataChanges,
                 sentenceDiff,
-                resolutions: [],
                 previousRevisionId: previous._id.toString(),
                 newRevisionId: next._id.toString(),
             } as any,
             { revisionId: previous._id.toString() } as any
         );
 
-        const doc = new this.HistoryModel(params);
-        await doc.save({ session });
-        return doc;
+        return this.historyService.createHistory(params, session);
     }
 }

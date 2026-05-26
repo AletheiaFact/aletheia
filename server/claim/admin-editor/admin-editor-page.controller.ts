@@ -21,7 +21,7 @@ export class AdminEditorPageController {
 
     @AdminOnly()
     @Get("claim-edit")
-    async page(@Req() req: Request, @Res() res: Response) {
+    async page(@Req() req: Request, @Res() res: Response): Promise<void> {
         const parsedUrl = parse(req.url, true);
         const query = parsedUrl.query ?? {};
         await this.viewService.render(req, res, "/admin-claim-edit", query);
