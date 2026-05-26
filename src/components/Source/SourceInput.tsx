@@ -1,7 +1,7 @@
 import React from "react";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { FormControl, FormHelperText, Grid } from "@mui/material";
-import { URL_PATTERN } from "../../utils/ValidateFloatingLink";
+import { validateUrl } from "../../utils/ValidateUrl";
 import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
 import Button from "../Button";
@@ -30,16 +30,11 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                                 value={source || ""}
                                 onChange={(event) => {
                                     onChange(event, index)
-                                    if (URL_PATTERN.test(event.target.value)) {
+                                    const errorMessage = validateUrl(event.target.value, t);
+
+                                    if (!errorMessage) {
                                         clearError("sources");
                                     }
-                                }}
-                                onBlur={(event) => {
-                                    const trimmedEvent = {
-                                        ...event,
-                                        target: { ...event.target, value: event.target.value.trim() }
-                                    };
-                                    onChange(trimmedEvent, index);
                                 }}
                                 placeholder={placeholder}
                                 data-cy={'testSource1'}

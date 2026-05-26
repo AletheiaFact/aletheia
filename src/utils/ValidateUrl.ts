@@ -4,19 +4,14 @@ export const URL_PATTERN =
 /**
  * Validates if a string follows a proper URL format for external links.
  */
-export const validateFloatingLink = (
-    href?: string,
-    t?: (key: string) => string
-) => {
-    if (!href) return;
+export const validateUrl = (url?: string, t?: (key: string) => string) => {
+    if (!url) return t("common:requiredFieldError");
 
-    if (href?.endsWith(".")) {
-        throw new Error(t("sourceForm:errorMessageTrailingDot"));
-    }
+    if (url?.endsWith('.')) return t("sourceForm:errorMessageTrailingDot");
+    if (url?.endsWith(" ")) return t("sourceForm:errorMessageTrailingSpace");
+    if (!URL_PATTERN.test(url)) return t("sourceForm:errorMessageValidURL");
 
-    if (!URL_PATTERN.test(href)) {
-        throw new Error(t("sourceForm:errorMessageValidURL"));
-    }
+    return "";
 };
 
 /**

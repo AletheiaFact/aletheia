@@ -4,7 +4,7 @@ import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
 import { ReviewTaskMachineContextReviewData } from "../../../server/review-task/dto/create-review-task.dto";
 import { Roles } from "../../types/enums";
-import { URL_PATTERN } from "../../utils/ValidateFloatingLink";
+import { URL_PATTERN } from "../../utils/ValidateUrl";
 
 export type FormField = {
     fieldName: string;
