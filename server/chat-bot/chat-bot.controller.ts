@@ -2,6 +2,7 @@ import { Controller, Post, Req, Res, Logger } from "@nestjs/common";
 import { ChatbotService } from "./chat-bot.service";
 import type { Request, Response } from "express";
 import { AdminOnly } from "../auth/decorators/auth.decorator";
+import { toError } from "../util/error-handling";
 
 @Controller()
 export class ChatbotController {
@@ -21,9 +22,10 @@ export class ChatbotController {
             );
             res.status(200).json({ message: "ok" });
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Webhook processing failed [channel=${channel}, from=${from}]: ${error.message}`,
-                error.stack
+                `Webhook processing failed [channel=${channel}, from=${from}]: ${err.message}`,
+                err.stack
             );
             res.status(500).json({ error: "Failed to process webhook" });
         }

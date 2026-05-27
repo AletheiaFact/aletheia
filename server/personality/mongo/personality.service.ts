@@ -25,6 +25,7 @@ import {
     IFindAllResult,
 } from "../../interfaces/personality.interface";
 import { escapeRegex } from "../../util/regex.util";
+import { toError } from "../../util/error-handling";
 import { CreatePersonalityDTO } from "../dto/create-personality.dto";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -169,9 +170,10 @@ export class MongoPersonalityService {
 
                 return newPersonality.save();
             }
-        } catch (err: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(`Error creating personality: ${err.message}`);
-            throw err;
+            throw error;
         }
     }
 
@@ -288,10 +290,11 @@ export class MongoPersonalityService {
                 personality.toObject(),
                 query.language
             );
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
                 `Post-processing failed for personality ${personalityId}`,
-                error.stack
+                err.stack
             );
             throw new InternalServerErrorException(
                 "Failed to process personality data."
@@ -422,10 +425,11 @@ export class MongoPersonalityService {
                 wikidataId: personality.wikidata,
                 language,
             });
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
                 `Wikidata fetch failed for personality ${personality._id} ` +
-                    `(wikidataId: ${personality.wikidata}): ${error.message}`
+                    `(wikidataId: ${personality.wikidata}): ${err.message}`
             );
             throw error;
         }
@@ -583,9 +587,10 @@ export class MongoPersonalityService {
             );
 
             return result;
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Error during soft delete for personalityId: ${personalityId}. Details: ${error.message}`
+                `Error during soft delete for personalityId: ${personalityId}. Details: ${err.message}`
             );
             throw error;
         }

@@ -9,6 +9,7 @@ import { VerificationRequestStateMachineService } from "../verification-request/
 import { Roles } from "../auth/ability/ability.factory";
 import { M2M } from "../entities/m2m.entity";
 import * as crypto from "crypto";
+import { toError } from "../util/error-handling";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP: Record<string, string> = {
@@ -220,8 +221,9 @@ export class ChatbotService {
                 `Response sent to Zenvia [channel=${channel}, from=${from}]`
             );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to send response to Zenvia [channel=${channel}, from=${from}]: ${error.message}`
+                `Failed to send response to Zenvia [channel=${channel}, from=${from}]: ${err.message}`
             );
             throw error;
         }

@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
 import { z } from "zod";
+import { toError } from "../util/error-handling";
 
 const CallbackParamsSchema = z.object({
     targetId: z.string().min(1),
@@ -56,9 +57,10 @@ export class CallbackDispatcherService {
                 throw new BadRequestException("Invalid callback parameters");
             }
 
+            const error = toError(err);
             this.logger.error(
                 `Error dispatching callback for key: ${routeKey}`,
-                err.message
+                error.message
             );
             throw err;
         }
