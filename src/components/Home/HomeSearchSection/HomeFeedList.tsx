@@ -1,38 +1,14 @@
 import React from "react";
 import { Grid, List } from "@mui/material";
-import PersonalityCard from "../Personality/PersonalityCard";
-import ClaimCard from "../Claim/ClaimCard";
-import styled from "styled-components";
-import ReviewCard from "../ClaimReview/ReviewCard";
-import { queries } from "../../styles/mediaQueries";
-
-const HomeFeedListStyled = styled(List)`
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-        width: 100%;
-
-    .item {
-        display: flex;
-        flex-direction: column;
-        width: calc(33% - 6px);
-
-        @media ${queries.md} {
-            width: calc(50% - 6px);
-        }
-
-        @media ${queries.sm} {
-            width: 100%;
-        }
-    }
-`;
+import PersonalityCard from "../../Personality/PersonalityCard";
+import ClaimCard from "../../Claim/ClaimCard";
+import ReviewCard from "../../ClaimReview/ReviewCard";
 
 const HomeFeedList = ({ results }) => {
     return (
-        <HomeFeedListStyled>
+        <List className="home-feed-list">
             {results?.map((item) => (
-                <Grid item className="item" key={item._id}>
+                <Grid item className="home-feed-item" key={item._id}>
                     {item && item.type === "personality" && (
                         <PersonalityCard
                             personality={item}
@@ -65,7 +41,7 @@ const HomeFeedList = ({ results }) => {
                 </Grid>
             ))
             }
-        </HomeFeedListStyled>
+        </List>
     );
 };
 

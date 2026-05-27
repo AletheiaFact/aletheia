@@ -8,9 +8,8 @@ import { useDispatch } from "react-redux";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
-import HomeHeroSearchStyled from "./HomeHeroSearch.style";
 
-const HomeHeroSearch = () => {
+const HomeSearch = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
@@ -36,18 +35,8 @@ const HomeHeroSearch = () => {
     };
 
     return (
-        <HomeHeroSearchStyled
-            direction="column"
-            alignItems="center"
-            spacing={3}
-            className="home-header-search-content"
-        >
-            <Stack
-                direction="column"
-                alignItems="center"
-                spacing={1}
-                className="home-header-search-heading"
-            >
+        <Stack spacing={3} className="home-header-search-content">
+            <Stack spacing={1} className="home-header-search-heading">
                 <Typography
                     component="h2"
                     className="home-header-search-title"
@@ -88,8 +77,8 @@ const HomeHeroSearch = () => {
                     <ArrowForward className="home-header-search-button-icon" />
                 </AletheiaButton>
             </Box>
-        </HomeHeroSearchStyled>
+        </Stack>
     );
 };
 
-export default HomeHeroSearch;
+export default HomeSearch;

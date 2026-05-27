@@ -7,9 +7,10 @@ import { currentNameSpace } from "../../../atoms/namespace";
 import { NameSpaceEnum } from "../../../types/Namespace";
 import PersonalityCard from "../../Personality/PersonalityCard";
 import GridList from "../../GridList";
+import { Personality } from "../../../types/Personality";
 
 interface HomePersonalitiesSectionProps {
-    personalities: any[];
+    personalities: Personality[];
 }
 
 const HomePersonalitiesSection = ({
@@ -39,6 +40,7 @@ const HomePersonalitiesSection = ({
                     seeMoreButtonLabel={t("home:personalitiesSectionSeeAll")}
                     seeMoreButtonPosition="top"
                     itemSize={{ xs: 12, md: 6, lg: 4 }}
+                    getKey={(personality) => personality.id}
                     renderItem={(personality) => (
                         <PersonalityCard
                             personality={personality}

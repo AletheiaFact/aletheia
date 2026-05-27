@@ -1,4 +1,5 @@
 export interface Review {
+    id: string;
     personality: string;
     usersId: string[];
     isPartialReview: boolean;

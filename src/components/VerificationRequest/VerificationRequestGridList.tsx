@@ -15,6 +15,7 @@ const VerificationRequestGridList = ({ verificationRequest, title, }: Verificati
             dataSource={verificationRequest}
             itemSize={{ xs: 12, md: 6 }}
             disableSeeMoreButton={true}
+            getKey={(verificationRequest) => verificationRequest._id}
             renderItem={(verificationRequest) => <VerificationRequestMinimumCard verificationRequest={verificationRequest} />}
         />
     );

@@ -35,6 +35,7 @@ const HomeReviewsSection = ({ reviews }: HomeReviewsSectionProps) => {
                     seeMoreButtonLabel={t("home:latestReviewsSeeAll")}
                     seeMoreButtonPosition="top"
                     itemSize={{ xs: 12, md: 6, lg: 4 }}
+                    getKey={(review) => review.id}
                     renderItem={(review) => <ReviewCard review={review} />}
                 />
             </Box>

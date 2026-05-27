@@ -11,9 +11,10 @@ import { NameSpaceEnum } from "../../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import HomeDebatesSectionStyle from "./HomeDebatesSection.style";
+import { Debate } from "../../../types/Debates";
 
 interface HomeDebatesSectionProps {
-    debates: any[];
+    debates: Debate[];
 }
 
 const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
@@ -22,6 +23,9 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
 
     const seeAllHref =
         nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}/claim` : "/claim";
+
+
+    if (!Array.isArray(debates) || debates.length === 0) return null;
 
     return (
         <HomeDebatesSectionStyle>
@@ -35,6 +39,7 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
                     seeMoreButtonLabel={t("debates:seeAll")}
                     seeMoreButtonPosition="top"
                     dataCy="testSeeMoreDebates"
+                    getKey={(debate) => debate.claimId}
                     renderItem={(debateClaim) => {
                         return (
                             <CardBase

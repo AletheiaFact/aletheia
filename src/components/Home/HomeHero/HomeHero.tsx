@@ -4,21 +4,10 @@ import HomeHeroTitle from "./HomeHeroTitle";
 import HomeHeroActions from "./HomeHeroActions";
 import HomeHeroFeatures from "./HomeHeroFeatures";
 import HomeHeroStats from "./HomeHeroStats";
-import HomeHeroSearch from "./HomeHeroSearch";
 import HomeHeroStyle from "./HomeHero.style";
 import { HomeHeroStatsProps } from "../../../types/Home";
-import HomeFeed from "../HomeFeed";
-import { useAppSelector } from "../../../store/store";
 
 const HomeHero = ({ stats }: HomeHeroStatsProps) => {
-    const { results } = useAppSelector((state) => ({
-        results: [
-            state?.search?.searchResults?.personalities || [],
-            state?.search?.searchResults?.claims || [],
-            state?.search?.searchResults?.sentences || [],
-        ],
-    }));
-
     return (
         <HomeHeroStyle container>
             <Grid
@@ -44,10 +33,6 @@ const HomeHero = ({ stats }: HomeHeroStatsProps) => {
             </Grid>
             <Grid item xs={12} className="home-header-stats-section">
                 <HomeHeroStats stats={stats} />
-            </Grid>
-            <Grid item xs={12} className="home-header-search-section">
-                <HomeHeroSearch />
-                <HomeFeed searchResults={results} />
             </Grid>
         </HomeHeroStyle>
     );

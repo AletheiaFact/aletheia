@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { HomeHeroStatsProps } from "../../../types/Home";
 
-const HomeHeroStats = ({ stats }: HomeHeroStatsProps) => {
+const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: HomeHeroStatsProps) => {
     const { t, i18n } = useTranslation();
 
     const items = [

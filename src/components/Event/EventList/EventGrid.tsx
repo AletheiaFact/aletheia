@@ -40,6 +40,7 @@ const EventsGrid = ({
             seeMoreButtonPosition={buttonPosition}
             dataCy="testSeeMoreEvents"
             hasDivider={hasDivider}
+            getKey={(event) => event.id}
             renderItem={(event) => (
                 <EventCard
                     event={event}

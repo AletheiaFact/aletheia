@@ -15,11 +15,11 @@ type ItemSize = {
 
 export type SeeMorePosition = "top" | "bottom" | "both";
 
-interface GridListProps<T = any> {
+interface GridListProps<ItemType> {
     title: React.ReactNode;
     subtitle?: React.ReactNode;
-    dataSource: T[];
-    renderItem: (item: T) => React.ReactNode;
+    dataSource: ItemType[];
+    renderItem: (item: ItemType) => React.ReactNode;
     href?: string;
     dataCy?: string;
     seeMoreButtonLabel?: string;
@@ -27,6 +27,7 @@ interface GridListProps<T = any> {
     seeMoreButtonPosition?: SeeMorePosition;
     itemSize?: ItemSize;
     hasDivider?: boolean;
+    getKey?: (item: ItemType, index: number) => string | number;
 }
 
 const DEFAULT_ITEM_SIZE: ItemSize = { xs: 12, md: 6 };
@@ -65,7 +66,7 @@ const TopActionButton = ({
     </MuiButton>
 );
 
-const GridList = <T,>({
+const GridList = <ItemType,>({
     title,
     subtitle,
     dataSource,
@@ -77,7 +78,8 @@ const GridList = <T,>({
     seeMoreButtonPosition = "bottom",
     itemSize = DEFAULT_ITEM_SIZE,
     hasDivider = false,
-}: GridListProps<T>) => {
+    getKey,
+}: GridListProps<ItemType>) => {
 
     const showTop =
         !disableSeeMoreButton &&
@@ -119,11 +121,15 @@ const GridList = <T,>({
             </Box>
             {hasDivider && <Divider variant="fullWidth" />}
             <Grid container spacing={2}>
-                {dataSource.map((item) => (
-                    <Grid container item {...itemSize} key={(item as any)?._id}>
-                        {renderItem(item)}
-                    </Grid>
-                ))}
+                {dataSource.map((item, index) => {
+                    const itemKey = getKey ? getKey(item, index) : index;
+
+                    return (
+                        <Grid container item {...itemSize} key={itemKey}>
+                            {renderItem(item)}
+                        </Grid>
+                    );
+                })}
             </Grid>
             {showBottom && (
                 <Box className="grid-list-bottom-action">

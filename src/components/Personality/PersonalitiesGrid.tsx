@@ -6,8 +6,14 @@ import PersonalityCard from "./PersonalityCard";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { Personality } from "../../types/Personality";
 
-const PersonalitiesGrid = ({ personalities, title }) => {
+interface PersonalitiesGridProps {
+    personalities: Personality[];
+    title: string;
+}
+
+const PersonalitiesGrid = ({ personalities, title }: PersonalitiesGridProps) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const href =
@@ -23,8 +29,9 @@ const PersonalitiesGrid = ({ personalities, title }) => {
             href={href}
             dataCy="testSeeMorePersonality"
             seeMoreButtonLabel={t("home:seeMorePersonalitiesButton")}
-            renderItem={(p) => (
-                <PersonalityCard personality={p} summarized={true} />
+            getKey={(personality) => personality.id}
+            renderItem={(personality) => (
+                <PersonalityCard personality={personality} summarized={true} />
             )}
         />
     );

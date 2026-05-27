@@ -256,16 +256,6 @@ const HomeHeroStyle = styled(Grid)`
         margin: 0 clamp(4px, 1.5vw, 24px);
     }
 
-    .home-header-search-section {
-        background-color: ${colors.lightNeutral};
-        padding: clamp(40px, 6vw, 80px) clamp(16px, 2vw, 24px);
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: clamp(24px, 3vw, 40px);
-    }
-
     @media ${queries.sm} {
         .home-header-content {
             width: 100%;
