@@ -1,14 +1,25 @@
 export const URL_PATTERN =
-    /^(?!.*https?:\/\/.*https?:\/\/)(?!.*\.$)(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/i;
+    /^(?!.*https?:\/\/.*https?:\/\/)(?!.*\.$)(ftp|https?):\/\/[^ "]+\.[a-z]{2,}([\/?#]|$)/i;
 
 /**
- * Validates if a string follows a proper URL format for external links.
+ * Validates if a string or an array of strings follows a proper URL format.
  */
-export const validateUrl = (url?: string, t?: (key: string) => string) => {
-    if (!url || !url.trim()) return t("common:requiredFieldError");
+export const validateUrl = (url: string | string[], t: (key: string) => string): string => {
+    if (!url || (Array.isArray(url) && url.length === 0)) {
+        return t("common:requiredFieldError");
+    }
 
-    if (url?.endsWith('.')) return t("sourceForm:errorMessageTrailingDot");
-    if (url?.endsWith(" ")) return t("sourceForm:errorMessageTrailingSpace");
+    if (Array.isArray(url)) {
+        for (const singleUrl of url) {
+            const error = validateUrl(singleUrl, t);
+            if (error) return error;
+        }
+        return "";
+    }
+
+    if (!url.trim()) return t("common:requiredFieldError");
+    if (url.endsWith('.')) return t("sourceForm:errorMessageTrailingDot");
+    if (url.endsWith(" ")) return t("sourceForm:errorMessageTrailingSpace");
     if (!URL_PATTERN.test(url)) return t("sourceForm:errorMessageValidURL");
 
     return "";
