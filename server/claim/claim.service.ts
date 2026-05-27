@@ -30,11 +30,11 @@ import { toError } from "../util/error-handling";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-        personalities: string;
-        slug: string;
-        isHidden?: boolean;
-        nameSpace?: string;
-    }
+          personalities: string;
+          slug: string;
+          isHidden?: boolean;
+          nameSpace?: string;
+      }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -109,8 +109,11 @@ export class ClaimService {
         const userId = this.req.user?._id;
 
         this.logger.debug(
-            `Creating claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
-            } personalities=${claim.personalities?.length ?? 0} hasGroup=${!!claim.group} user=${userId || "anonymous"}`
+            `Creating claim — contentModel=${claim.contentModel} nameSpace=${
+                safeNameSpace ?? "main"
+            } personalities=${
+                claim.personalities?.length ?? 0
+            } hasGroup=${!!claim.group} user=${userId || "anonymous"}`
         );
 
         try {
@@ -127,7 +130,8 @@ export class ClaimService {
 
             if (existingClaim) {
                 this.logger.warn(
-                    `Duplicate claim title — slug=${generatedSlug} nameSpace=${safeNameSpace ?? "main"
+                    `Duplicate claim title — slug=${generatedSlug} nameSpace=${
+                        safeNameSpace ?? "main"
                     } existingId=${existingClaim._id}`
                 );
                 throw new ConflictException(
@@ -193,10 +197,12 @@ export class ClaimService {
             if (error instanceof ConflictException) {
                 throw error;
             }
+            const err = error as Error;
             this.logger.error(
-                `Failed to create claim — contentModel=${claim.contentModel} nameSpace=${safeNameSpace ?? "main"
-                }: ${error.message}`,
-                error.stack
+                `Failed to create claim — contentModel=${
+                    claim.contentModel
+                } nameSpace=${safeNameSpace ?? "main"}: ${err.message}`,
+                err.stack
             );
             throw error;
         }
@@ -253,7 +259,8 @@ export class ClaimService {
     async delete(claimId: string) {
         const user = this.req.user?._id;
         this.logger.log(
-            `Initiating soft delete for claimId: ${claimId} by user: ${user || "system"
+            `Initiating soft delete for claimId: ${claimId} by user: ${
+                user || "system"
             }`
         );
         try {

@@ -85,9 +85,10 @@ export class ClaimRevisionService {
             );
             return claimRevisionSaved;
         } catch (error) {
+            const err = error as Error;
             this.logger.error(
-                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${error.message}`,
-                error.stack
+                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${err.message}`,
+                err.stack
             );
             throw error;
         }
