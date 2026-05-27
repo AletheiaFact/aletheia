@@ -197,7 +197,7 @@ export class ClaimService {
             if (error instanceof ConflictException) {
                 throw error;
             }
-            const err = toError(error);
+            const err = error as Error;
             this.logger.error(
                 `Failed to create claim — contentModel=${
                     claim.contentModel
