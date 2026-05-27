@@ -65,7 +65,8 @@ export interface AdminClaimEditConflictError {
 async function getEditableView(
     claimId: string
 ): Promise<AdminClaimEditableView> {
-    const { data } = await request.get(`/${claimId}/admin-edit/view`);
+    const safeId = encodeURIComponent(claimId);
+    const { data } = await request.get(`/${safeId}/admin-edit/view`);
     return data;
 }
 
@@ -73,8 +74,9 @@ async function commitEdit(
     claimId: string,
     payload: AdminClaimEditCommitRequest
 ): Promise<AdminClaimEditCommitResponse> {
+    const safeId = encodeURIComponent(claimId);
     const { data } = await request.post(
-        `/${claimId}/admin-edit/commit`,
+        `/${safeId}/admin-edit/commit`,
         payload
     );
     return data;
