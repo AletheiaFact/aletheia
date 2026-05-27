@@ -16,7 +16,7 @@ describe("URL Validation Tests", () => {
         "https://example.us",
         "https://example.uk",
         "ftp://example.com",
-        "http://example.co",
+        "https://example.co",
         "https://subdomain.example.org"
     ];
 
