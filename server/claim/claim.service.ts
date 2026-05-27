@@ -25,6 +25,7 @@ import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { GroupService } from "../group/group.service";
 import slugify from "slugify";
+import { toError } from "../util/error-handling";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -286,9 +287,10 @@ export class ClaimService {
             );
 
             return result;
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Error during soft delete for claimId: ${claimId}. Details: ${error.message}`
+                `Error during soft delete for claimId: ${claimId}. Details: ${err.message}`
             );
             throw error;
         }
@@ -389,10 +391,11 @@ s    */
                 `Found ${result.length} claims for personality ${personalityId}`
             );
             return result;
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
                 `Failed to fetch claims for personality ${personalityId}`,
-                error.stack
+                err.stack
             );
             throw new InternalServerErrorException(
                 "Error while fetching claims by personality."

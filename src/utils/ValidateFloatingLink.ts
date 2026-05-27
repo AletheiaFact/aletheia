@@ -1,13 +1,16 @@
 export const URL_PATTERN =
-    /^(?!.*\.$)(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/i;
+    /^(?!.*https?:\/\/.*https?:\/\/)(?!.*\.$)(ftp|http|https):\/\/[^ "]+\.[a-zA-Z]{2,}(\/|\?|#|$)/i;
 
 /**
  * Validates if a string follows a proper URL format for external links.
  */
-export const validateFloatingLink = (href?: string, t?: (key: string) => string) => {
+export const validateFloatingLink = (
+    href?: string,
+    t?: (key: string) => string
+) => {
     if (!href) return;
 
-    if (href?.endsWith('.')) {
+    if (href?.endsWith(".")) {
         throw new Error(t("sourceForm:errorMessageTrailingDot"));
     }
 
@@ -28,7 +31,11 @@ export const sanitizeUrl = (url: string | undefined): string => {
     try {
         const parsed = new URL(trimmedUrl);
         const protocol = parsed.protocol.toLowerCase();
-        if (protocol === "http:" || protocol === "https:" || protocol === "blob:") {
+        if (
+            protocol === "http:" ||
+            protocol === "https:" ||
+            protocol === "blob:"
+        ) {
             return parsed.toString();
         }
 

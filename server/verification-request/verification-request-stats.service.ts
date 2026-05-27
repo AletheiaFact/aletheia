@@ -11,6 +11,7 @@ import {
     VerificationRequest,
     VerificationRequestDocument,
 } from "./schemas/verification-request.schema";
+import { toError } from "../util/error-handling";
 
 @Injectable({ scope: Scope.REQUEST })
 export class VerificationRequestStatsService {
@@ -46,9 +47,10 @@ export class VerificationRequestStatsService {
                 statsRecentActivity,
             };
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to get dashboard stats: ${error.message}`,
-                error.stack
+                `Failed to get dashboard stats: ${err.message}`,
+                err.stack
             );
 
             return {

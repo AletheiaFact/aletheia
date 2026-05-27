@@ -8,6 +8,7 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TrackingResponseDTO } from "./types/tracking.interfaces";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { toError } from "../util/error-handling";
 
 @Injectable()
 export class TrackingService {
@@ -77,9 +78,10 @@ export class TrackingService {
                 );
                 throw error;
             }
+            const err = toError(error);
             this.logger.error(
                 `Failed to fetch tracking for ID: ${verificationRequestId}`,
-                error.stack
+                err.stack
             );
             throw new InternalServerErrorException(
                 "Internal server error while fetching tracking status."

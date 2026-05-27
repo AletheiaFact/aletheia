@@ -10,7 +10,7 @@ import {
     Post,
     Query,
     Req,
-    Res
+    Res,
 } from "@nestjs/common";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { ApiTags } from "@nestjs/swagger";
@@ -23,6 +23,7 @@ import { ObjectIdValidationPipe } from "../ai-task/pipes/objectid-validation.pip
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
+import { toError } from "../util/error-handling";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
@@ -42,8 +43,8 @@ export class EventsController {
         private configService: ConfigService,
         private readonly eventsService: EventsService,
         private viewService: ViewService,
-        private featureFlagService: FeatureFlagService,
-    ) { }
+        private featureFlagService: FeatureFlagService
+    ) {}
 
     @FactCheckerOnly()
     @ApiTags("event")
@@ -82,12 +83,11 @@ export class EventsController {
     @ApiTags("pages")
     @Get("event")
     @Header("Cache-Control", "max-age=60")
-    public async eventPage(
-        @Req() req: BaseRequest,
-        @Res() res: Response
-    ) {
+    public async eventPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
@@ -98,12 +98,7 @@ export class EventsController {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
         });
 
-        await this.viewService.render(
-            req,
-            res,
-            "/event-page",
-            queryObject
-        );
+        await this.viewService.render(req, res, "/event-page", queryObject);
     }
 
     @FactCheckerOnly()
@@ -114,7 +109,9 @@ export class EventsController {
         @Res() res: Response
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
@@ -124,24 +121,18 @@ export class EventsController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService.render(
-            req,
-            res,
-            "/event-create",
-            queryObject
-        );
+        await this.viewService.render(req, res, "/event-create", queryObject);
     }
 
     @Public()
     @ApiTags("pages")
     @Get("event/:data_hash/:event_slug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async eventViewPage(
-        @Req() req: BaseRequest,
-        @Res() res: Response,
-    ) {
+    public async eventViewPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
@@ -169,7 +160,11 @@ export class EventsController {
             );
         } catch (error) {
             if (!(error instanceof NotFoundException)) {
-                this.logger.error(`Error rendering event page: ${error.message}`, error.stack);
+                const err = toError(error);
+                this.logger.error(
+                    `Error rendering event page: ${err.message}`,
+                    err.stack
+                );
             }
             throw error;
         }

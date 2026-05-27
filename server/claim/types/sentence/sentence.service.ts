@@ -10,6 +10,8 @@ import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
+import { toError } from "../../../util/error-handling";
+
 interface FindAllOptionsFilters {
     searchText: string;
     pageSize: number;
@@ -217,10 +219,11 @@ export class SentenceService {
             );
 
             return sentences.map((sentence) => sentence.data_hash);
-        } catch (error: any) {
+        } catch (error) {
+            const err = toError(error);
             this.logger.error(
                 `Failed to fetch sentence hashes for topic: ${topicId}`,
-                error.stack
+                err.stack
             );
             throw new InternalServerErrorException(
                 `An error occurred while retrieving sentences for the requested topic.`

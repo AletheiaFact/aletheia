@@ -332,8 +332,8 @@ Your primary goal is to gather all relevant information from the user about the 
                 editorReport: editorReportRef.value,
                 executionId: executionIdRef.value,
             });
-        } catch (e: unknown) {
-            this.exceptionHandling(e);
+        } catch (error) {
+            this.exceptionHandling(error);
         }
     }
 
