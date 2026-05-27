@@ -1,12 +1,20 @@
 {
     "page": {
-        "title": "Edit claim"
+        "title": "Edit claim",
+        "subtitle": "Edit metadata and sentences of this claim"
+    },
+    "status": {
+        "unsaved": "Unsaved changes",
+        "unsavedLong": "You have unsaved changes",
+        "saved": "All changes saved"
     },
     "metadata": {
         "section": "Metadata",
+        "description": "Basic claim information",
         "title": "Title",
         "date": "Date",
-        "personalitiesReadOnly": "Attributed personalities (read-only)"
+        "personalitiesReadOnly": "Attributed personalities",
+        "personalitiesReadOnlyTooltip": "This field is read-only"
     },
     "actions": {
         "submit": "Save changes",
@@ -34,9 +42,14 @@
     },
     "sentences": {
         "section": "Sentences",
+        "description_one": "{{count}} sentence in this claim",
+        "description_other": "{{count}} sentences in this claim",
         "empty": "This claim has no editable sentences.",
         "editTooltip": "Edit this sentence",
         "revertTooltip": "Revert to original text",
-        "editedBadge": "Edited"
+        "editedBadge": "Edited",
+        "editingLabel": "Editing...",
+        "saveEdit": "Save",
+        "cancelEdit": "Cancel"
     }
 }

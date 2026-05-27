@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Stack,
-    Typography,
-} from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { Box, Chip, CircularProgress, Stack, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { useMachine } from "@xstate/react";
 import { useRouter } from "next/router";
@@ -19,6 +13,8 @@ import adminClaimEditorApi, {
     SentenceOp,
 } from "../../../api/adminClaimEditorApi";
 import { MessageManager } from "../../Messages";
+import AletheiaButton, { ButtonType } from "../../Button";
+import colors from "../../../styles/colors";
 
 interface Props {
     claimId: string;
@@ -85,6 +81,16 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
                 newText: d.text.trim(),
             }));
 
+    const hasChanges = useMemo(() => {
+        if (!view) return false;
+        if (state.context.title !== view.metadata.title) return true;
+        if (state.context.date !== view.metadata.date) return true;
+        return sentenceDrafts.some(
+            (d) =>
+                d.intent === "edit" && d.text.trim() !== d.originalText.trim()
+        );
+    }, [view, state.context.title, state.context.date, sentenceDrafts]);
+
     const submit = async () => {
         if (!view) return;
         const sentenceOps = buildSentenceOps();
@@ -128,47 +134,122 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
     }
     if (!view) return null;
 
+    const committing = state.matches("committing");
+
     return (
-        <Box>
-            <Typography variant="h5" sx={{ p: 2 }}>
-                {t("page.title")}
-            </Typography>
-            <MetadataPanel
-                title={state.context.title}
-                date={state.context.date}
-                personalities={view.metadata.personalities}
-                onTitleChange={(v) => send({ type: "SET_TITLE", value: v })}
-                onDateChange={(v) => send({ type: "SET_DATE", value: v })}
-            />
-            <SentenceEditor
-                sentences={sentenceDrafts}
-                onTextChange={(id, text) =>
-                    setSentenceDrafts((prev) =>
-                        prev.map((s) =>
-                            s.sentenceId === id ? { ...s, text } : s
-                        )
-                    )
-                }
-                onIntentChange={(id, intent) =>
-                    setSentenceDrafts((prev) =>
-                        prev.map((s) =>
-                            s.sentenceId === id ? { ...s, intent } : s
-                        )
-                    )
-                }
-            />
-            <Stack direction="row" spacing={2} sx={{ p: 2 }}>
-                <Button
-                    variant="contained"
-                    onClick={submit}
-                    disabled={state.matches("committing")}
+        <Box sx={{ pb: 10 }}>
+            <Box sx={{ px: { xs: 2, md: 3 }, pt: 3, pb: 2 }}>
+                <Stack
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="center"
+                    sx={{ mb: 0.5 }}
                 >
-                    {t("actions.submit")}
-                </Button>
-                <Button onClick={() => setShowDiscard(true)}>
-                    {t("actions.discard")}
-                </Button>
-            </Stack>
+                    <Typography
+                        component="h1"
+                        sx={{
+                            fontFamily: '"Noticia Text", serif',
+                            fontSize: { xs: 24, md: 28 },
+                            fontWeight: 500,
+                            lineHeight: 1.2,
+                            color: colors.blackTertiary,
+                        }}
+                    >
+                        {t("page.title")}
+                    </Typography>
+                    {hasChanges && (
+                        <Chip
+                            label={t("status.unsaved")}
+                            size="small"
+                            sx={{
+                                background: colors.lightTertiary,
+                                color: colors.primary,
+                                fontWeight: 500,
+                            }}
+                        />
+                    )}
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
+                    {t("page.subtitle")}
+                </Typography>
+            </Box>
+
+            <Box sx={{ px: { xs: 2, md: 3 } }}>
+                <MetadataPanel
+                    title={state.context.title}
+                    date={state.context.date}
+                    personalities={view.metadata.personalities}
+                    onTitleChange={(v) => send({ type: "SET_TITLE", value: v })}
+                    onDateChange={(v) => send({ type: "SET_DATE", value: v })}
+                />
+                <SentenceEditor
+                    sentences={sentenceDrafts}
+                    onTextChange={(id, text) =>
+                        setSentenceDrafts((prev) =>
+                            prev.map((s) =>
+                                s.sentenceId === id ? { ...s, text } : s
+                            )
+                        )
+                    }
+                    onIntentChange={(id, intent) =>
+                        setSentenceDrafts((prev) =>
+                            prev.map((s) =>
+                                s.sentenceId === id ? { ...s, intent } : s
+                            )
+                        )
+                    }
+                />
+            </Box>
+
+            <Box
+                sx={{
+                    position: "sticky",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    borderTop: `1px solid ${colors.lightNeutralSecondary}`,
+                    background: "rgba(255, 255, 255, 0.85)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    px: { xs: 2, md: 3 },
+                    py: 2,
+                    zIndex: 10,
+                }}
+            >
+                <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={2}
+                    alignItems={{ xs: "stretch", sm: "center" }}
+                    justifyContent="space-between"
+                >
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ display: { xs: "none", sm: "block" } }}
+                    >
+                        {hasChanges
+                            ? t("status.unsavedLong")
+                            : t("status.saved")}
+                    </Typography>
+                    <Stack direction="row" spacing={1.5}>
+                        <AletheiaButton
+                            type={ButtonType.whiteBlack}
+                            onClick={() => setShowDiscard(true)}
+                            disabled={!hasChanges || committing}
+                        >
+                            {t("actions.discard")}
+                        </AletheiaButton>
+                        <AletheiaButton
+                            type={ButtonType.blue}
+                            onClick={submit}
+                            disabled={!hasChanges || committing}
+                        >
+                            {t("actions.submit")}
+                        </AletheiaButton>
+                    </Stack>
+                </Stack>
+            </Box>
+
             <ConflictDialog
                 open={state.matches("conflict")}
                 onRefresh={() => {

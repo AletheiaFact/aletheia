@@ -81,7 +81,10 @@ export class AdminEditorService {
 
     async view(claimId: string): Promise<ClaimEditableViewDto> {
         const loaded = await this.loadStructure(claimId);
-        const personalities = (loaded.claim.personalities ?? []) as Array<{
+        const personalities = (loaded.claim.personalities ??
+            []) as unknown as Array<{
+            _id: any;
+            name?: string;
             slug?: string;
         }>;
         const firstPersonalitySlug = personalities[0]?.slug;
@@ -98,12 +101,11 @@ export class AdminEditorService {
                         ? loaded.revision.date.toISOString()
                         : String(loaded.revision.date),
                 sources: [],
-                personalities: (loaded.revision.personalities ?? []).map(
-                    (p: any) =>
-                        typeof p === "object" && p?._id
-                            ? p._id.toString()
-                            : String(p)
-                ),
+                personalities: personalities.map((p) => ({
+                    _id: p._id?.toString?.() ?? String(p._id),
+                    name: p.name ?? "",
+                    slug: p.slug,
+                })),
             },
             sentences: loaded.sentences.map<SentenceViewDto>((s) => ({
                 sentenceId: s.sentenceId,
@@ -246,7 +248,7 @@ export class AdminEditorService {
         }
         const q = this.ClaimModel.findById(claimId)
             .populate("latestRevision")
-            .populate("personalities", "slug");
+            .populate("personalities", "name slug");
         if (session) q.session(session);
         const claim = await q.exec();
         if (!claim) {
