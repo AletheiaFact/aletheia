@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { toError } from "../../util/error-handling";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { ParserService } from "../parser/parser.service";
@@ -85,9 +86,10 @@ export class ClaimRevisionService {
             );
             return claimRevisionSaved;
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${error.message}`,
-                error.stack
+                `Failed to create claim revision — claimId=${claimId} contentModel=${claim.contentModel}: ${err.message}`,
+                err.stack
             );
             throw error;
         }

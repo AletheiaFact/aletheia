@@ -197,11 +197,12 @@ export class ClaimService {
             if (error instanceof ConflictException) {
                 throw error;
             }
+            const err = toError(error);
             this.logger.error(
                 `Failed to create claim — contentModel=${
                     claim.contentModel
-                } nameSpace=${safeNameSpace ?? "main"}: ${error.message}`,
-                error.stack
+                } nameSpace=${safeNameSpace ?? "main"}: ${err.message}`,
+                err.stack
             );
             throw error;
         }
