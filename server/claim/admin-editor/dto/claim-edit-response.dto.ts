@@ -1,3 +1,9 @@
+export interface PersonalityRefDto {
+    _id: string;
+    name: string;
+    slug?: string;
+}
+
 export interface SentenceViewDto {
     sentenceId: string;
     dataHash: string;
@@ -15,7 +21,7 @@ export interface ClaimEditableViewDto {
         title: string;
         date: string;
         sources: { url: string; description?: string }[];
-        personalities: string[];
+        personalities: PersonalityRefDto[];
     };
     sentences: SentenceViewDto[];
 }

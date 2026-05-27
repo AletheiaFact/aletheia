@@ -16,6 +16,12 @@ export interface AdminClaimEditMetadata {
     sources?: { url: string; description?: string }[];
 }
 
+export interface PersonalityRef {
+    _id: string;
+    name: string;
+    slug?: string;
+}
+
 export interface AdminClaimEditableView {
     claimId: string;
     claimSlug: string;
@@ -26,7 +32,7 @@ export interface AdminClaimEditableView {
         title: string;
         date: string;
         sources: { url: string; description?: string }[];
-        personalities: string[];
+        personalities: PersonalityRef[];
     };
     sentences: Array<{
         sentenceId: string;
