@@ -1,5 +1,5 @@
 export const URL_PATTERN =
-    /^(?!.*https?:\/\/.*https?:\/\/)(?!.*\.$)(ftp|https?):\/\/[^ "]+\.[a-z]{2,}([\/?#]|$)/i;
+    /^(?!.*https?:\/\/.*https?:\/\/)(?:ftp|https?):\/\/[^ "]+\.[a-z]{2,}(?:[/?#]|$)/i;
 
 /**
  * Validates if a string or an array of strings follows a proper URL format.
