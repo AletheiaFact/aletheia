@@ -5,7 +5,7 @@ export const URL_PATTERN =
  * Validates if a string follows a proper URL format for external links.
  */
 export const validateUrl = (url?: string, t?: (key: string) => string) => {
-    if (!url) return t("common:requiredFieldError");
+    if (!url || !url.trim()) return t("common:requiredFieldError");
 
     if (url?.endsWith('.')) return t("sourceForm:errorMessageTrailingDot");
     if (url?.endsWith(" ")) return t("sourceForm:errorMessageTrailingSpace");
