@@ -12,7 +12,7 @@ import { useTranslation } from "next-i18next";
 import AletheiaButton from "./Button";
 import { MessageManager } from "../components/Messages";
 import { UnifiedDefaultValue } from "./Form/DynamicInput";
-import { sanitizeUrl } from "../utils/ValidateFloatingLink";
+import { sanitizeUrl } from "../utils/ValidateUrl";
 
 export interface UploadFile {
     uid: string;

@@ -1,7 +1,7 @@
 import React from "react";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { FormControl, FormHelperText, Grid } from "@mui/material";
-import { URL_PATTERN } from "../../utils/ValidateFloatingLink";
+import { validateUrl } from "../../utils/ValidateUrl";
 import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
 import Button from "../Button";
@@ -28,9 +28,11 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                             <Input
                                 key={index}
                                 value={source || ""}
-                                onChange={(e) => {
-                                    onChange(e, index)
-                                    if (URL_PATTERN.test(e.target.value)) {
+                                onChange={(event) => {
+                                    onChange(event, index)
+                                    const errorMessage = validateUrl(event.target.value, t);
+
+                                    if (!errorMessage) {
                                         clearError("sources");
                                     }
                                 }}
@@ -70,9 +72,9 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                 <a
                     onClick={addSource}
                     style={{
-                        display:"flex",
-                        justifyContent:"end",
-                        alignContent:"center",
+                        display: "flex",
+                        justifyContent: "end",
+                        alignContent: "center",
                         textDecoration: "underline"
                     }}
                 >
@@ -83,4 +85,4 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
     );
 }
 
-export default SourceInput; 
+export default SourceInput;

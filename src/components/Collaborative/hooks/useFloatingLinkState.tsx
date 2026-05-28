@@ -17,7 +17,7 @@ import {
 import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
-import { validateFloatingLink } from "../../../utils/ValidateFloatingLink";
+import { validateUrl } from "../../../utils/ValidateUrl";
 import { useTranslation } from "react-i18next";
 
 function useFloatingLinkState() {
@@ -69,43 +69,47 @@ function useFloatingLinkState() {
     const submitHref = useCallback(() => {
         setIsLoading(true);
 
-        try {
-            const id = uniqueId();
-            const field = ($to as { path?: { type?: { name?: string } }[] })
-                ?.path?.[3]?.type?.name;
-            const targetText = $to.doc.textBetween(from, to);
-            const newSource = {
-                href,
-                props: {
-                    field,
-                    targetText,
-                    id,
-                    textRange: [from, to],
-                },
-            };
+        const errorMessage = validateUrl(href, t);
 
-            validateFloatingLink(href, t);
-            setEditorSources((sources) => {
-                if (!sources) {
-                    return [newSource];
-                }
-                return [...sources, newSource];
-            });
-            updateFloatingLink(id);
-            setIsEditing(false);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setHref("https://");
+        if (errorMessage) {
+            setError(errorMessage);
             setIsLoading(false);
+            return;
         }
+
+        const id = uniqueId();
+        const field = ($to as { path?: { type?: { name?: string } }[] })
+            ?.path?.[3]?.type?.name;
+        const targetText = $to.doc.textBetween(from, to);
+        const newSource = {
+            href,
+            props: {
+                field,
+                targetText,
+                id,
+                textRange: [from, to],
+            },
+        };
+
+        setEditorSources((sources) => {
+            if (!sources) {
+                return [newSource];
+            }
+            return [...sources, newSource];
+        });
+        updateFloatingLink(id);
+        setIsEditing(false);
+
+        setHref("https://");
+        setIsLoading(false);
+
     }, [
         setIsLoading,
         ranges,
         from,
         to,
         href,
-        validateFloatingLink,
+        validateUrl,
         setEditorSources,
         updateFloatingLink,
         setIsEditing,
