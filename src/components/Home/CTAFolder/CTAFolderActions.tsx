@@ -6,22 +6,29 @@ import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 
 type CTAFolderActionsProps = {
     isLoggedIn: boolean;
-    isHomeFolder: boolean;
+    isHomeFolder?: boolean;
 };
 
-const CTAFolderActions = ({ isLoggedIn, isHomeFolder }: CTAFolderActionsProps & { isHomeFolder?: boolean }) => {
+const getAboutButtonType = (isLoggedIn: boolean, isHomeFolder: boolean): ButtonType => {
+    if (isLoggedIn) return ButtonType.primary;
+    return isHomeFolder ? ButtonType.whiteOutline : ButtonType.outline;
+};
+
+const getSignUpButtonType = (isHomeFolder: boolean): ButtonType => {
+    return isHomeFolder ? ButtonType.primary : ButtonType.white;
+};
+
+const CTAFolderActions = ({ isLoggedIn, isHomeFolder = false }: CTAFolderActionsProps) => {
     const { t } = useTranslation();
-    const buttonType = isLoggedIn
-        ? ButtonType.primary
-        : isHomeFolder
-            ? ButtonType.whiteOutline
-            : ButtonType.outline;
+
+    const aboutButtonType = getAboutButtonType(isLoggedIn, isHomeFolder);
+    const signUpButtonType = getSignUpButtonType(isHomeFolder);
 
     return (
         <Grid className="ctaButtonWrapper">
             {!isLoggedIn && (
                 <AletheiaButton
-                    type={isHomeFolder ? ButtonType.primary : ButtonType.white}
+                    type={signUpButtonType}
                     onClick={() => trackUmamiEvent("cta-banner-sign-up-button", "bannerSignUp")}
                     href="/sign-up"
                     data-cy="testCtaSignUpButton"
@@ -29,8 +36,9 @@ const CTAFolderActions = ({ isLoggedIn, isHomeFolder }: CTAFolderActionsProps & 
                     {t("CTAFolder:signUpButton")}
                 </AletheiaButton>
             )}
+
             <AletheiaButton
-                type={buttonType}
+                type={aboutButtonType}
                 onClick={() => trackUmamiEvent("cta-banner-about-us-button", "bannerAboutUs")}
                 href="/about"
                 data-cy="testCtaAboutUsButton"
