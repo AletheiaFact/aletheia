@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import AletheiaButton, { ButtonType } from "../../../Button";
+import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";

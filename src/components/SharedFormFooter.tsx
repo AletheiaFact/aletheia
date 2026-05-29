@@ -5,7 +5,7 @@ import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import AletheiaCaptcha from "./AletheiaCaptcha";
-import AletheiaButton, { ButtonType } from "./Button";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 
 interface ISharedFormFooter {
     isLoading: boolean;
@@ -49,7 +49,7 @@ const SharedFormFooter = ({
 
                 <AletheiaButton
                     loading={isLoading}
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     htmlType="submit"
                     disabled={!hasCaptcha || isLoading}
                     data-cy={"testSaveButton"}

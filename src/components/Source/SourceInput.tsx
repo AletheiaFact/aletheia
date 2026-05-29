@@ -4,7 +4,7 @@ import { FormControl, FormHelperText, Grid } from "@mui/material";
 import { validateUrl } from "../../utils/ValidateUrl";
 import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
-import Button from "../Button";
+import AletheiaButton from "../AletheiaButton";
 
 const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, sources, errors, clearError }) => {
     const { t } = useTranslation();
@@ -50,12 +50,15 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                         </Grid>
                         <Grid item xs={2}>
                             {index > 0 &&
-                                <Button
-                                    style={{ width: "100%", height: "40px" }}
+                                <AletheiaButton
+                                    style={{
+                                        width: "100%",
+                                        height: "40px"
+                                    }}
                                     onClick={() => removeSource(index)}
                                 >
                                     <DeleteOutlined fontSize="small" />
-                                </Button>
+                                </AletheiaButton>
                             }
                         </Grid>
                     </Grid>

@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import {
     ReviewTaskEvents,
     ReviewTaskStates,
@@ -100,8 +100,8 @@ const ActionToolbar = ({
                         onClick={() => onButtonClick(goBackEvent)}
                         event={goBackEvent}
                         data-cy={`testClaimReview${goBackEvent}`}
-                        icon={<ArrowBackIcon style={{ fontSize: 16 }} />}
-                        style={{ textTransform: "none", fontWeight: 500 }}
+                        startIcon={<ArrowBackIcon style={{ fontSize: 16 }} />}
+                        fontWeight={500}
                     >
                         {t(`reviewTask:${goBackEvent}`)}
                     </AletheiaButton>
@@ -126,8 +126,8 @@ const ActionToolbar = ({
                         onClick={() => onButtonClick(ReviewTaskEvents.draft)}
                         event={ReviewTaskEvents.draft}
                         data-cy={`testClaimReview${ReviewTaskEvents.draft}`}
-                        icon={<SaveOutlinedIcon style={{ fontSize: 16 }} />}
-                        style={{ textTransform: "none", fontWeight: 500 }}
+                        startIcon={<SaveOutlinedIcon style={{ fontSize: 16 }} />}
+                        fontWeight={500}
                     >
                         {t(`reviewTask:${ReviewTaskEvents.draft}`)}
                     </AletheiaButton>
@@ -142,7 +142,7 @@ const ActionToolbar = ({
                         onClick={() => onButtonClick(event)}
                         event={event}
                         data-cy={`testClaimReview${event}`}
-                        style={{ textTransform: "none", fontWeight: 500 }}
+                        fontWeight={500}
                     >
                         {t(`reviewTask:${event}`)}
                     </AletheiaButton>
@@ -151,18 +151,13 @@ const ActionToolbar = ({
                 {primaryActionEvent && (
                     <AletheiaButton
                         loading={isLoading[primaryActionEvent]}
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType={defineButtonHtmlType(primaryActionEvent)}
                         onClick={() => onButtonClick(primaryActionEvent)}
                         event={primaryActionEvent}
                         data-cy={`testClaimReview${primaryActionEvent}`}
-                        style={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            minWidth: 140,
-                            height: 44,
-                            fontSize: "13px",
-                        }}
+                        fontWeight={600}
+                        sx={{ minWidth: 140, height: 44, fontSize: "13px" }}
                     >
                         {t(`reviewTask:${primaryActionEvent}`)}
                     </AletheiaButton>

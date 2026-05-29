@@ -3,7 +3,7 @@ import CopilotConversationCard from "./CopilotConversationCard";
 import CopilotConversationLoading from "./CopilotConversationLoading";
 import { SenderEnum } from "../../types/enums";
 import CopilotConversationSuggestions from "./CopilotConversationSuggestions";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import CopilotFeedback from "./CopilotFeedback";
 
@@ -74,7 +74,7 @@ const CopilotConversation = ({
                     }}
                 >
                     <AletheiaButton onClick={handleAddReportClick}>
-                        {t("copilotChatBot:addFactCheckingReportButton")}
+                        {t("copilotChatBot:addFactCheckingReportButton").toUpperCase()}
                     </AletheiaButton>
                 </div>
             )}

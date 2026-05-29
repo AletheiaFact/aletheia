@@ -5,7 +5,7 @@ import React, {
     useContext,
     useState,
 } from "react";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaTextArea from "../../AletheiaTextArea";
 import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
@@ -158,19 +158,19 @@ const CommentCardForm = ({
             )}
 
             <Box className="comment-card-form-actions">
-                <Button
+                <AletheiaButton
                     onClick={handleOnSubmit}
                     loading={isLoading}
                 >
                     {t("common:submit")}
-                </Button>
-                <Button
+                </AletheiaButton>
+                <AletheiaButton
                     type={ButtonType.whiteBlack}
                     onClick={handleCancel}
                     loading={isLoading}
                 >
                     {t("common:cancel")}
-                </Button>
+                </AletheiaButton>
             </Box>
         </Box>
     );

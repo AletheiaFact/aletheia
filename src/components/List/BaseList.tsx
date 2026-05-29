@@ -1,9 +1,10 @@
-import { CircularProgress, Button, Grid, List, ListItem } from "@mui/material";
+import { CircularProgress, Grid, List, ListItem } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
 import Loading from "../Loading";
 import SkeletonList from "../Skeleton/SkeletonList";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 import SortByButton from "./SortByButton";
 import { NameSpaceEnum } from "../../types/Namespace";
@@ -102,16 +103,12 @@ const BaseList = ({
 
     const loadMoreButton =
         totalPages > query.page ? (
-            <Button
-                variant="outlined"
+            <AletheiaButton
+                type={ButtonType.outline}
                 onClick={loadMoreData}
-                style={{
-                    color: colors.primary,
-                    fontSize: 14
-                }}
             >
                 {t("list:loadMoreButton")}
-            </Button>
+            </AletheiaButton>
         ) : null;
 
     if (items && Array.isArray(items) && (items.length > 0 || !emptyFallback)) {

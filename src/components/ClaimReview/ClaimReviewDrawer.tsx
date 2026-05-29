@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { ReviewTaskMachineProvider } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";

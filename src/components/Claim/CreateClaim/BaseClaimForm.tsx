@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { FormControl, FormLabel, Checkbox, Grid, FormHelperText } from "@mui/material";
-import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import Input from "../../AletheiaInput";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
 
@@ -179,19 +178,22 @@ const BaseClaimForm = ({
                     marginBottom: "20px",
                 }}
             >
-                <Button type={ButtonType.white} onClick={() => router.back()}>
+                <AletheiaButton
+                    type={ButtonType.white}
+                    onClick={() => router.back()}
+                >
                     {t("claimForm:cancelButton")}
-                </Button>
-                <Button
+                </AletheiaButton>
+                <AletheiaButton
                     onClick={onFinish}
                     loading={isLoading}
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     htmlType="submit"
                     disabled={disableSubmit || isLoading}
                     data-cy={"testSaveButton"}
                 >
                     {t("claimForm:saveButton")}
-                </Button>
+                </AletheiaButton>
             </Grid>
         </FormControl>
     );
