@@ -66,7 +66,8 @@ const actions = {
         enableCopilotChatBot,
         autoSave,
         enableReviewersUpdateReport,
-        enableViewReportPreview
+        enableViewReportPreview,
+        enableInformativeNews
     ) => {
         return {
             type: ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT,
@@ -76,6 +77,7 @@ const actions = {
             autoSave,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableInformativeNews,
         };
     },
 };
