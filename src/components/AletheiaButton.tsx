@@ -56,8 +56,8 @@ const getVariantStyle = (
     switch (type) {
         case ButtonType.primary:
             return {
-                background: colors.primary,
-                borderColor: colors.primary,
+                background: namespaceColor,
+                borderColor: namespaceColor,
                 color: colors.white,
                 hoverBackground: colors.primaryHover,
                 hoverBorderColor: colors.primaryHover,
