@@ -6,12 +6,12 @@ import {
 import AletheiaAlert from "../AletheiaAlert";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState, } from "react";
+import React, { useEffect, useState } from "react";
 
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import userApi from "../../api/userApi";
 import { getUiNode } from "../../lib/orysdk/utils";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import InputPassword from "../InputPassword";
 import Label from "../Label";
 import Loading from "../Loading";
@@ -122,50 +122,60 @@ const OryProfileView = ({ user }) => {
                 >
                     <Grid container>
                         <Grid item xs={12} sm={3} md={2} lg={1.5} xl={1.25}>
-                            <Label required children={t("profile:newPasswordLabel") + ":"} />
+                            <Label
+                                required
+                                children={t("profile:newPasswordLabel") + ":"}
+                            />
                         </Grid>
                         <Grid item xs={12} sm={9} md={10} lg={10.5} xl={10.75}>
                             <InputPassword
                                 data-cy="newPasswordInput"
                                 {...register("newPassword", {
-                                    required: true
+                                    required: true,
                                 })}
                             />
                             <TextError
                                 stateError={errors.newPassword}
                                 children={t("common:requiredFieldError")}
+                                data-cy="testNewPasswordError"
                             />
                         </Grid>
                         <Grid item xs={12} sm={4.5} md={3.25} lg={2.5} xl={2}>
-                            <Label required children={t("profile:repeatedNewPasswordLabel") + ":"} />
+                            <Label
+                                required
+                                children={
+                                    t("profile:repeatedNewPasswordLabel") + ":"
+                                }
+                            />
                         </Grid>
                         <Grid item xs={12} sm={7.5} md={8.75} lg={9.5} xl={10}>
                             <InputPassword
                                 data-cy="repeatedNewPasswordInput"
                                 {...register("repeatedNewPassword", {
                                     required: true,
-                                    validate: (value) =>
-                                        value === senha
+                                    validate: (value) => value === senha,
                                 })}
                             />
                             <TextError
                                 stateError={errors.repeatedNewPassword}
                                 children={
-                                    errors.repeatedNewPassword?.type === "required"
+                                    errors.repeatedNewPassword?.type ===
+                                    "required"
                                         ? t("common:requiredFieldError")
                                         : t("profile:passwordMatchErrorMessage")
                                 }
+                                data-cy="testRepeatedNewPasswordError"
                             />
                         </Grid>
                     </Grid>
-                    <Button
+                    <AletheiaButton
                         loading={isLoading}
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType="submit"
                         data-cy="submitChangePasswordButton"
                     >
                         {t("login:submitButton")}
-                    </Button>
+                    </AletheiaButton>
                 </form>
                 <Totp flow={flow} setFlow={setFlow} />
             </Grid>

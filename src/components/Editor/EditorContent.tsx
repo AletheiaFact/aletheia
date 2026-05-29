@@ -5,8 +5,8 @@ import { useTranslation } from "next-i18next";
 
 import EditorApi from "../../api/editor";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
-import Button from "../Button";
-import { Grid } from "@mui/material"
+import AletheiaButton from "../AletheiaButton";
+import { Grid } from "@mui/material";
 
 export const EditorContent = ({ reference, isLive }) => {
     const { t } = useTranslation();
@@ -23,12 +23,12 @@ export const EditorContent = ({ reference, isLive }) => {
             <EditorComponent />
             <Grid container style={{ marginTop: 16 }}>
                 {isLive && (
-                    <Button
+                    <AletheiaButton
                         onMouseDown={(event) => event.preventDefault()}
                         onClick={handleClickSave}
                     >
                         {t("debates:saveButtonLabel")}
-                    </Button>
+                    </AletheiaButton>
                 )}
             </Grid>
         </>

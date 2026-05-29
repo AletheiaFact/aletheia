@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Grid, Link, Typography } from "@mui/material";
 import TagsList from "../../topics/TagsList";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaAvatar from "../../AletheiaAvatar";
 import { Topic } from "../../../types/Topic";
 import { PersonalityWithWikidata } from "../../../types/PersonalityWithWikidata";
@@ -19,18 +19,22 @@ const VerificationRequestMinimumCardActions = ({
     dataHash,
     topics,
     personalities,
-    t
+    t,
 }: VerificationRequestMinimumCardActionsProps) => {
-    const tags = topics?.map((topic) => ({
-        name: topic.aliases?.[0] || topic.name
-    })) || [];
+    const tags =
+        topics?.map((topic) => ({
+            name: topic.aliases?.[0] || topic.name,
+        })) || [];
 
     return (
         <Grid item className="verification-actions">
             <TagsList key={verificationRequestId} tags={tags} />
             <Box className="verification-actions-row">
                 <Box>
-                    <Typography variant="caption" className="verification-actions-caption">
+                    <Typography
+                        variant="caption"
+                        className="verification-actions-caption"
+                    >
                         {t("verificationRequest:identifiedPersonalities")}
                     </Typography>
 
@@ -46,12 +50,15 @@ const VerificationRequestMinimumCardActions = ({
                         ))}
                     </Box>
                 </Box>
-                <AletheiaButton type={ButtonType.blue} href={`/verification-request/${dataHash}`}>
+                <AletheiaButton
+                    type={ButtonType.primary}
+                    href={`/verification-request/${dataHash}`}
+                >
                     {t("verificationRequest:openVerificationRequest")}
                 </AletheiaButton>
             </Box>
         </Grid>
-    )
-}
+    );
+};
 
 export default VerificationRequestMinimumCardActions;

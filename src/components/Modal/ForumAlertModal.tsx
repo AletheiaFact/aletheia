@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 import { useTranslation } from "react-i18next";
@@ -23,8 +23,9 @@ function ForumAlertModal({ open, onCancel }: ForumAlertModalProps) {
                         fontSize: 14,
                         textAlign: "center",
                         textTransform: "uppercase",
-                        padding: "0 34px"
-                    }}>
+                        padding: "0 34px",
+                    }}
+                >
                     {t("home:redirectTitle")}
                 </h2>
             }
@@ -49,7 +50,7 @@ function ForumAlertModal({ open, onCancel }: ForumAlertModalProps) {
                 }}
             >
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     onClick={onCancel}
                     href={"https://forum.aletheiafact.org/"}
                     target="_blank"

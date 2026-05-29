@@ -1,10 +1,10 @@
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ClaimCardHeader from "./ClaimCardHeader";
 import colors from "../../styles/colors";
 import ClaimSummaryContent from "./ClaimSummaryContent";
@@ -98,23 +98,23 @@ const ClaimCard = ({
                         />
                     ) : (
                         <ClaimSpeechBody
-                            handleSentenceClick={
-                                dispatchPersonalityAndClaim
-                            }
+                            handleSentenceClick={dispatchPersonalityAndClaim}
                             paragraphs={paragraphs}
-                            showHighlights={true}
+                            showHighlights="left"
                         />
                     )}
                 </ClaimSummary>
             </Grid>
-            <Grid container
+            <Grid
+                container
                 style={{
-                    justifyContent:"space-between",
+                    justifyContent: "space-between",
                     padding: "4px 15px 0 0",
                     width: "100%",
                 }}
             >
-                <Grid item
+                <Grid
+                    item
                     xs={8}
                     style={{
                         display: "flex",
@@ -152,7 +152,8 @@ const ClaimCard = ({
                                 <span
                                     style={{
                                         color:
-                                            ReviewColors[review?._id] || colors.black,
+                                            ReviewColors[review?._id] ||
+                                            colors.black,
                                         fontWeight: 900,
                                         textTransform: "uppercase",
                                         margin: "0px 3px",
@@ -167,8 +168,8 @@ const ClaimCard = ({
                 </Grid>
                 <Grid item>
                     {!isInsideDebate && (
-                        <Button
-                            type={ButtonType.blue}
+                        <AletheiaButton
+                            type={ButtonType.primary}
                             href={href}
                             data-cy={personality?.name}
                         >
@@ -184,7 +185,7 @@ const ClaimCard = ({
                             >
                                 {t("claim:cardReviewButton")}
                             </span>
-                        </Button>
+                        </AletheiaButton>
                     )}
                 </Grid>
             </Grid>

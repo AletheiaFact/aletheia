@@ -30,7 +30,7 @@ import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import LargeDrawer from "../LargeDrawer";
 import Loading from "../Loading";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import TopicDisplay from "../topics/TopicDisplay";
 import { MetaChip } from "./MetaChip";
 import { VerificationRequestContent } from "./VerificationRequestContent";
@@ -168,13 +168,13 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                         // TODO: Track errors with Sentry
                     });
                 // .finally(() => resetIsLoading());
-                sendReviewNotifications(
-                    verificationRequest.data_hash,
-                    ReviewTaskEvents.publish,
-                    reviewTask,
-                    userId,
-                    t
-                );
+                sendReviewNotifications({
+                    data_hash: verificationRequest.data_hash,
+                    event: ReviewTaskEvents.publish,
+                    reviewData: reviewTask,
+                    currentUserId: userId,
+                    t,
+                });
             } catch (error) {
                 console.error("Erro ao auto atribuir:", error);
             }
@@ -190,53 +190,56 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
         const metaChipData = currentRequest
             ? [
-                {
-                    icon: <Filter style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|reportType`,
-                    label: t("verificationRequest:tagReportType"),
-                    label_value: t(
-                        `claimForm:${currentRequest.reportType || "undefined"
-                        }`
-                    ),
-                    style: {
-                        backgroundColor: colors.secondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Share style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|receptionChannel`,
-                    label: t("verificationRequest:tagSourceChannel"),
-                    label_value: t(
-                        `verificationRequest:${currentRequest.sourceChannel}`,
-                        { defaultValue: currentRequest.sourceChannel },
-                    ),
-                    style: {
-                        backgroundColor: colors.primary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Public style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|impactArea`,
-                    label: t("verificationRequest:tagImpactArea"),
-                    label_value: currentRequest.impactArea?.name,
-                    style: {
-                        backgroundColor: colors.neutralSecondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <WarningAmber style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|severity`,
-                    label: t("verificationRequest:tagSeverity"),
-                    label_value: getSeverityLabel(currentRequest.severity, t),
-                    style: {
-                        backgroundColor: getSeverityColor(currentRequest.severity),
-                        color: colors.white,
-                    },
-                },
-            ]
+                  {
+                      icon: <Filter style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|reportType`,
+                      label: t("verificationRequest:tagReportType"),
+                      label_value: t(
+                          `claimForm:${
+                              currentRequest.reportType || "undefined"
+                          }`
+                      ),
+                      style: {
+                          backgroundColor: colors.secondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Share style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|receptionChannel`,
+                      label: t("verificationRequest:tagSourceChannel"),
+                      label_value: t(
+                          `verificationRequest:${currentRequest.sourceChannel}`,
+                          { defaultValue: currentRequest.sourceChannel }
+                      ),
+                      style: {
+                          backgroundColor: colors.primary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Public style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|impactArea`,
+                      label: t("verificationRequest:tagImpactArea"),
+                      label_value: currentRequest.impactArea?.name,
+                      style: {
+                          backgroundColor: colors.neutralSecondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <WarningAmber style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|severity`,
+                      label: t("verificationRequest:tagSeverity"),
+                      label_value: getSeverityLabel(currentRequest.severity, t),
+                      style: {
+                          backgroundColor: getSeverityColor(
+                              currentRequest.severity
+                          ),
+                          color: colors.white,
+                      },
+                  },
+              ]
             : [];
 
         return (
@@ -267,10 +270,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                 <Grid item style={{ display: "flex", gap: 32 }}>
                                     <AletheiaButton
                                         startIcon={
-                                            <ArrowBackOutlined
-                                                style={{ marginRight: "10px" }}
-                                                fontSize="small"
-                                            />
+                                            <ArrowBackOutlined fontSize="small" />
                                         }
                                         onClick={() => onClose()}
                                         type={ButtonType.gray}
@@ -283,10 +283,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                             href={`/verification-request/${currentRequest.data_hash}`}
                                             target="_blank"
                                             type={ButtonType.gray}
-                                            style={{
-                                                textDecoration: "underline",
-                                                fontWeight: "bold",
-                                            }}
+                                            fontWeight="bold"
+                                            sx={{ textDecoration: "underline" }}
                                         >
                                             {t(
                                                 "verificationRequest:viewFullPage"
@@ -467,7 +465,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
                                     {currentRequest?.identifiedData &&
                                         currentRequest.identifiedData.length >
-                                        0 && (
+                                            0 && (
                                             <PersonalitiesSection
                                                 personalities={personalities}
                                                 isLoading={loadingPersonalities}
@@ -517,7 +515,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                 }}
                                             >
                                                 <AletheiaButton
-                                                    type={ButtonType.blue}
+                                                    type={ButtonType.primary}
                                                     onClick={handleApprove}
                                                     disabled={
                                                         isUpdating ||
@@ -527,21 +525,12 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                     {t("common:approve")}
                                                 </AletheiaButton>
                                                 <AletheiaButton
-                                                    type={ButtonType.blue}
+                                                    type={ButtonType.error}
                                                     onClick={handleDecline}
                                                     disabled={
                                                         isUpdating ||
                                                         !hasCaptcha
                                                     }
-                                                    style={{
-                                                        backgroundColor:
-                                                            colors.error ||
-                                                            "#d32f2f",
-                                                        color: colors.white,
-                                                        borderColor:
-                                                            colors.error ||
-                                                            "#d32f2f",
-                                                    }}
                                                 >
                                                     {t("common:reject")}
                                                 </AletheiaButton>

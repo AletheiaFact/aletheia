@@ -2,7 +2,7 @@ import React from "react";
 import { ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 
@@ -42,7 +42,8 @@ const WarningModal = ({
                 </Grid>
             }
         >
-            <Grid item
+            <Grid
+                item
                 style={{
                     marginTop: 16,
                     display: "flex",
@@ -60,7 +61,7 @@ const WarningModal = ({
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton onClick={handleOk} type={ButtonType.blue}>
+                <AletheiaButton onClick={handleOk} type={ButtonType.primary}>
                     {t("warningModal:okButton")}
                 </AletheiaButton>
             </Grid>

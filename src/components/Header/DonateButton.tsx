@@ -1,5 +1,5 @@
 import React from "react";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";

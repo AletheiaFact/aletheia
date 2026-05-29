@@ -8,7 +8,7 @@ import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import ReviewedImage from "../ReviewedImage";
 import { ClassificationEnum } from "../../types/enums";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 
 interface ClaimImageBodyProps {
     imageUrl: string;
@@ -76,11 +76,8 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
                 <AletheiaButton
                     data-cy="testReviewClaimImage"
                     onClick={handleClickOnButton}
-                    style={{
-                        textTransform: "none",
-                        fontWeight: 600,
-                        padding: "10px 24px",
-                    }}
+                    fontWeight={600}
+                    size="large"
                 >
                     {getButtonText()}
                 </AletheiaButton>

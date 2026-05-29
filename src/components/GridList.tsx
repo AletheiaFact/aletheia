@@ -1,7 +1,7 @@
 import SectionTitle from "./SectionTitle";
 import { Grid } from "@mui/material";
 import React from "react";
-import Button, { ButtonType } from "./Button";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 import { ArrowForwardOutlined } from "@mui/icons-material";
 
 const GridList = ({
@@ -17,14 +17,12 @@ const GridList = ({
 }) => {
     return (
         <>
-            <SectionTitle
-                children={title}
-                hasDivider={hasDivider}
-            />
+            <SectionTitle children={title} hasDivider={hasDivider} />
 
             <Grid container columnSpacing={1}>
                 {dataSource.map((item) => (
-                    <Grid container
+                    <Grid
+                        container
                         item
                         xs={12}
                         md={loggedInMaxColumns}
@@ -37,16 +35,22 @@ const GridList = ({
             </Grid>
 
             {!disableSeeMoreButton && (
-                <Grid item
+                <Grid
+                    item
                     style={{
                         display: "flex",
                         justifyContent: "center",
                         margin: "48px 0 64px 0",
                     }}
                 >
-                    <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
-                        {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small" />
-                    </Button>
+                    <AletheiaButton
+                        href={href}
+                        type={ButtonType.primary}
+                        data-cy={dataCy}
+                        endIcon={<ArrowForwardOutlined fontSize="small" />}
+                    >
+                        {seeMoreButtonLabel}
+                    </AletheiaButton>
                 </Grid>
             )}
         </>

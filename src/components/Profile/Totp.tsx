@@ -4,14 +4,14 @@ import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
 import { useForm } from "react-hook-form";
 import Label from "../Label";
 import { MessageManager } from "../Messages";
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
 import InputPassword from "../InputPassword";
 import { getUiNode } from "../../lib/orysdk/utils";
 import { useRouter } from "next/router";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
 import TextError from "../TextErrorForm";
@@ -75,7 +75,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpIncorectCodeMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -91,7 +94,10 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
+                MessageManager.showMessage(
+                    "error",
+                    `${t("profile:totpUnLinkErrorMessage")}`
+                );
                 setIsLoading(false);
             });
     };
@@ -185,49 +191,40 @@ export const Totp = ({ flow, setFlow }) => {
                         </code>
                     </Grid>
                     <Grid item style={{ marginBottom: "20px" }}>
-                        <Label required>
-                            {t("profile:totpInputTittle")}
-                        </Label>
+                        <Label required>{t("profile:totpInputTittle")}</Label>
                         <Grid item xs={7} sm={5} md={4} lg={3}>
                             <InputPassword
                                 {...register("totp", {
-                                    required: true
+                                    required: true,
                                 })}
                             />
                             <TextError
                                 stateError={errors.totp}
                                 children={t("common:requiredFieldError")}
+                                data-cy="testTotpInputPasswordError"
                             />
                         </Grid>
                     </Grid>
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType="submit"
                         loading={isLoading}
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
-                </form >
+                </form>
             )}
             {!showForm && (
-                <form
-                    onSubmit={handleSubmit(onFinishUnlink)}
-                >
+                <form onSubmit={handleSubmit(onFinishUnlink)}>
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"
+                        type={ButtonType.primary}
+                        fullWidth
                         style={{
-                            width: "100%",
                             marginTop: "21px",
                             marginBottom: "21px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: "8px 15px",
-                            height: "max-content",
-                            whiteSpace: "normal",
                         }}
-                        type={ButtonType.blue}
                     >
                         <Typography
                             variant="h4"

@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import AletheiaInput from "./AletheiaInput";
-import Button from "./Button";
+import AletheiaButton from "./AletheiaButton";
 import { trackUmamiEvent } from "../lib/umami";
 
 type FormValues = {
@@ -59,7 +59,8 @@ export default function InputTextList({
         <div>
             {controlledFields.map((_field, index) => {
                 return (
-                    <Grid container
+                    <Grid
+                        container
                         key={`fieldArray.${index}.content`}
                         style={{
                             marginBottom: 20,
@@ -79,8 +80,7 @@ export default function InputTextList({
                         </Grid>
                         {index > 0 && (
                             <Grid item xs={1.5}>
-                                <Button
-                                    style={{ height: "40px", margin: "0 auto" }}
+                                <AletheiaButton
                                     onClick={() => {
                                         remove(index);
                                         trackUmamiEvent(
@@ -91,7 +91,7 @@ export default function InputTextList({
                                     data-cy={`${dataCy}Remove${index}`}
                                 >
                                     <DeleteOutlined fontSize="small" />
-                                </Button>
+                                </AletheiaButton>
                             </Grid>
                         )}
                     </Grid>

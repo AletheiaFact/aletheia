@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { Grid, Typography } from "@mui/material";
 
 import React from "react";
@@ -24,16 +24,9 @@ const ClaimSourceList = ({
     return (
         <ClaimSourceListStyle>
             {sources && (
-                <Grid container style={{ width: '100%' }}>
+                <Grid container style={{ width: "100%" }}>
                     {dataSource.map((source, index) => (
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={6}
-                            lg={4}
-                            key={source}
-                        >
+                        <Grid item xs={12} sm={6} md={6} lg={4} key={source}>
                             <ClaimSourceListItem
                                 source={source}
                                 index={index + 1}
@@ -44,7 +37,7 @@ const ClaimSourceList = ({
             )}
             {!showAllSources && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     href={seeMoreHref}
                     className="all-sources-link-button"
                 >

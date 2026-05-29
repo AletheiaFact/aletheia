@@ -8,7 +8,7 @@ import { stateSelector } from "../../../machines/createClaim/selectors";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
-import AletheiaButton from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 import PersonalityMinimalCard from "../../Personality/PersonalityMinimalCard";
 
@@ -34,7 +34,10 @@ const ClaimSelectPersonality = () => {
 
     const addPersonality = (personality) => {
         if (claimData.personalities.some((p) => p._id === personality._id)) {
-            MessageManager.showMessage("info", t("claimForm:personalityAlreadyAdded"));
+            MessageManager.showMessage(
+                "info",
+                t("claimForm:personalityAlreadyAdded")
+            );
             return;
         }
         send({
@@ -50,7 +53,11 @@ const ClaimSelectPersonality = () => {
     const continueWithPersonality = () => {
         if (claimData.personalities.length !== 0) {
             send(CreateClaimEvents.savePersonality);
-        } else MessageManager.showMessage("warning", t("claimForm:selectPersonalityText"));
+        } else
+            MessageManager.showMessage(
+                "warning",
+                t("claimForm:selectPersonalityText")
+            );
     };
 
     const continueWithoutPersonality = () => {
@@ -136,7 +143,8 @@ const ClaimSelectPersonality = () => {
                         </Grid>
                     ))}
             </Grid>
-            <Grid item
+            <Grid
+                item
                 style={{
                     margin: "24px 0",
                     display: "flex",

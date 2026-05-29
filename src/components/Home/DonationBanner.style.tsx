@@ -3,10 +3,9 @@ import colors from "../../styles/colors";
 import { Grid } from "@mui/material";
 import { queries } from "../../styles/mediaQueries";
 
-
 const DonationBannerStyle = styled(Grid)`
-        background-color: ${colors.inactive};
-        position: relative;
+    background-color: ${colors.inactive};
+    position: relative;
 
     .close-banner {
         color: ${colors.primary};
@@ -48,10 +47,6 @@ const DonationBannerStyle = styled(Grid)`
         text-align: center;
     }
 
-    .banner-button {
-        font-weight: 700;
-    }
-
     @media ${queries.md} {
         .banner-content {
             max-width: 80%;
@@ -69,7 +64,7 @@ const DonationBannerStyle = styled(Grid)`
 
         .close-banner {
             align-self: flex-start;
-            top: 10px;    
+            top: 10px;
         }
     }
 `;

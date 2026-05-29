@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useState } from "react";
 import ForumAlertModal from "../Modal/ForumAlertModal";
 
@@ -29,16 +29,18 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
     const handleClick = () => {
         if (isLoggedIn) {
-            const eventName = location === "header"
-                ? "cta-header-forum-button"
-                : "cta-folder-forum-button";
+            const eventName =
+                location === "header"
+                    ? "cta-header-forum-button"
+                    : "cta-folder-forum-button";
 
             setIsModalVisible(true);
             trackUmamiEvent(eventName, "forum");
         } else {
-            const eventName = location === "header"
-                ? "cta-header-registration-button"
-                : "cta-registration-button";
+            const eventName =
+                location === "header"
+                    ? "cta-header-registration-button"
+                    : "cta-registration-button";
 
             trackUmamiEvent(eventName, "registration");
         }
@@ -46,7 +48,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
     return (
         <>
-            <Button
+            <AletheiaButton
                 onClick={handleClick}
                 type={type || ButtonType.white}
                 href={!isLoggedIn ? "/sign-up" : undefined}
@@ -64,15 +66,19 @@ const CTAButton: React.FC<CTAButtonProps> = ({
                     fontSize: mediumDevice ? "12px" : "14px",
                 }}
             >
-                {!isLoggedIn ? textWhenLoggedOut || t("home:createAccountButton") : t("home:forumButton")}
-            </Button>
+                {!isLoggedIn
+                    ? textWhenLoggedOut || t("home:createAccountButton")
+                    : t("home:forumButton")}
+            </AletheiaButton>
 
             {isModalVisible && (
-                <ForumAlertModal open={isModalVisible} onCancel={handleHideModal} />
-            )
-            }
+                <ForumAlertModal
+                    open={isModalVisible}
+                    onCancel={handleHideModal}
+                />
+            )}
         </>
-    )
-}
+    );
+};
 
 export default CTAButton;

@@ -5,7 +5,7 @@ import DynamicForm from "../Form/DynamicForm";
 import SharedFormFooter from "../SharedFormFooter";
 import { useState } from "react";
 import { Grid } from "@mui/material";
-import Button from "../Button";
+import AletheiaButton from "../AletheiaButton";
 import DailyReportApi from "../../api/dailyReport";
 
 const DynamicNameSpaceForm = ({
@@ -56,19 +56,21 @@ const DynamicNameSpaceForm = ({
                     hasCaptcha={hasCaptcha}
                     isDrawerOpen={isDrawerOpen}
                     onClose={onClose}
-                    extraButton={nameSpace?._id && (
-                        <Button
-                            onClick={handleDailyReviews}
-                            loading={isLoading}
-                            htmlType="button"
-                        >
-                            {t("notification:dailyReportButton") as string}
-                        </Button>
-                    )}
+                    extraButton={
+                        nameSpace?._id && (
+                            <AletheiaButton
+                                onClick={handleDailyReviews}
+                                loading={isLoading}
+                                htmlType="button"
+                            >
+                                {t("notification:dailyReportButton") as string}
+                            </AletheiaButton>
+                        )
+                    }
                 />
-            </form >
-        </Grid >
-    )
-}
+            </form>
+        </Grid>
+    );
+};
 
-export default DynamicNameSpaceForm
+export default DynamicNameSpaceForm;

@@ -1,11 +1,11 @@
 // File: src/components/SharedFormFooter.js
 
 import React, { Dispatch, SetStateAction, useRef } from "react";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import AletheiaCaptcha from "./AletheiaCaptcha";
-import AletheiaButton, { ButtonType } from "./Button";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 
 interface ISharedFormFooter {
     isLoading: boolean;
@@ -22,7 +22,7 @@ const SharedFormFooter = ({
     hasCaptcha,
     isDrawerOpen,
     onClose,
-    extraButton
+    extraButton,
 }: ISharedFormFooter) => {
     const recaptchaRef = useRef(null);
     const { t } = useTranslation();
@@ -31,7 +31,8 @@ const SharedFormFooter = ({
     return (
         <>
             <AletheiaCaptcha onChange={setRecaptchaString} ref={recaptchaRef} />
-            <Grid container
+            <Grid
+                container
                 style={{
                     padding: "32px 0 0",
                     justifyContent: "space-evenly",
@@ -39,7 +40,7 @@ const SharedFormFooter = ({
             >
                 <AletheiaButton
                     type={ButtonType.gray}
-                    onClick={() => isDrawerOpen ? onClose() : router.back()}
+                    onClick={() => (isDrawerOpen ? onClose() : router.back())}
                     data-cy="testCancelButton"
                 >
                     {t("claimForm:cancelButton")}
@@ -49,7 +50,7 @@ const SharedFormFooter = ({
 
                 <AletheiaButton
                     loading={isLoading}
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     htmlType="submit"
                     disabled={!hasCaptcha || isLoading}
                     data-cy={"testSaveButton"}

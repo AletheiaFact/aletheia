@@ -1,17 +1,18 @@
 import React from "react";
 import colors from "../../styles/colors";
-import { Badge, Button } from "@mui/material";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import { Badge } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
     return (
-        <Button className="navLink" data-cy="testNotificationIcon">
+        <AletheiaButton type={ButtonType.text} data-cy="testNotificationIcon">
             <Badge color="error" overlap="circular" badgeContent={unseenCount}>
-                <NotificationsNoneIcon
+                <NotificationsIcon
                     style={{ color: colors.white, cursor: "pointer" }}
                 />
             </Badge>
-        </Button>
+        </AletheiaButton>
     );
 };
 

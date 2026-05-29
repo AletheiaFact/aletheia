@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import AletheiaButton from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import AffixButtonV2 from "./AffixButtonV2";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";

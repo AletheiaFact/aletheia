@@ -1,8 +1,22 @@
+import { TFunction } from "next-i18next";
 import NotificationsApi from "../api/notificationsApi";
 import { ReviewTaskEvents as Events } from "../machines/reviewTask/enums";
+import { Claim } from "../types/Claim";
 import { generateSentenceContentPath } from "../utils/GetSentenceContentHref";
+import { Personality } from "../types/Personality";
 
-const sendReviewNotifications = (
+type SendReviewNotificationsFn = {
+    data_hash: string;
+    event: string;
+    reviewData: any;
+    claim?: Claim;
+    personality?: Personality;
+    nameSpace?: string;
+    currentUserId: string | number;
+    t: TFunction;
+};
+
+const sendReviewNotifications = ({
     data_hash,
     event,
     reviewData,
@@ -10,8 +24,8 @@ const sendReviewNotifications = (
     personality,
     nameSpace,
     currentUserId,
-    t
-) => {
+    t,
+}: SendReviewNotificationsFn) => {
     const currentPath = generateSentenceContentPath(
         nameSpace,
         personality,

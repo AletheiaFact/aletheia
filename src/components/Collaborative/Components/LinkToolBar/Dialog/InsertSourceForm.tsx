@@ -1,6 +1,6 @@
 import React from "react";
 import AletheiaInput from "../../../../AletheiaInput";
-import AletheiaButton from "../../../../Button";
+import AletheiaButton from "../../../../AletheiaButton";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import colors from "../../../../../styles/colors";
 
@@ -35,31 +35,31 @@ const InsertSourceForm = ({
                 <AletheiaButton
                     onClick={handleClickButton}
                     loading={isLoading}
-                    style={{
-                        fontWeight: "bold",
-                        height: "auto",
+                    fontWeight="bold"
+                    sx={{
+                        height: "30px",
                         borderRadius: activeLink ? "0px" : "0 4px 4px 0",
                         boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.4)",
-                        marginRight: 2,
+                        marginRight: "2px",
                     }}
                     data-cy="testClaimReviewSourcesButton"
                 >
-                    <AddOutlined fontSize="small"/>
+                    <AddOutlined fontSize="small" />
                 </AletheiaButton>
                 {activeLink && (
                     <AletheiaButton
                         onClick={onRemoveLink}
                         loading={isLoading}
-                        style={{
-                            fontWeight: "bold",
-                            height: "auto",
+                        fontWeight="bold"
+                        sx={{
+                            height: "30px",
                             borderLeftWidth: "2px",
                             borderLeftStyle: "solid",
                             borderRadius: "0 4px 4px 0",
                             boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.4)",
                         }}
                     >
-                        <DeleteOutlined fontSize="small"/>
+                        <DeleteOutlined fontSize="small" />
                     </AletheiaButton>
                 )}
             </div>

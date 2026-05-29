@@ -11,7 +11,7 @@ const SourceDialog = ({
     onCloseModal,
     isLoading,
     activeLink = null,
-    onRemoveLink = () => { },
+    onRemoveLink = () => {},
     ...rest
 }) => {
     const inputRef = useRef<HTMLInputElement>();
@@ -37,6 +37,8 @@ const SourceDialog = ({
                 padding: "10px",
                 borderRadius: "8px",
                 boxShadow: `0px 0px 15px ${colors.shadow}`,
+                width: "300px",
+                maxWidth: "100%",
             }}
         >
             <SourceDialogHeader onCloseModal={onCloseModal} />

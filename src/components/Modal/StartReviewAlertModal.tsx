@@ -1,4 +1,4 @@
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
@@ -34,7 +34,13 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                 </Typography>
             }
         >
-            <Box style={{ padding: "20px 0", justifyItems: "center", textAlign: "center" }}>
+            <Box
+                style={{
+                    padding: "20px 0",
+                    justifyItems: "center",
+                    textAlign: "center",
+                }}
+            >
                 <Typography
                     variant="body1"
                     style={{
@@ -48,7 +54,7 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                 </Typography>
 
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
                     onClick={onCancel}
                     style={{ minWidth: "120px" }}
                 >

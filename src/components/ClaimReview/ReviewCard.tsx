@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { ContentModelEnum } from "../../types/enums";
 import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 import { useAtom } from "jotai";
@@ -59,16 +59,19 @@ const ReviewCard = ({ review, summarized = false }) => {
     const href = reviewHref
         ? reviewHref
         : generateSentenceContentPath(
-            nameSpace,
-            personalityItem,
-            claimItem,
-            claimItem?.contentModel,
-            content?.data_hash
-        );
+              nameSpace,
+              personalityItem,
+              claimItem,
+              claimItem?.contentModel,
+              content?.data_hash
+          );
 
     return (
         <CardBase>
-            <ReviewCardStyled $hasPersonality={hasPersonality} data-cy="testReviewCardContainer">
+            <ReviewCardStyled
+                $hasPersonality={hasPersonality}
+                data-cy="testReviewCardContainer"
+            >
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
                         <PersonalityMinimalCard
@@ -95,7 +98,9 @@ const ReviewCard = ({ review, summarized = false }) => {
                             <ReviewClassification
                                 label={t("claimReview:titleClaimReview")}
                                 classification={content.props.classification}
-                                classificationTextStyle={{ fontSize: vw?.xs ? 12 : 16 }}
+                                classificationTextStyle={{
+                                    fontSize: vw?.xs ? 12 : 16,
+                                }}
                             />
                         )}
                     </Grid>
@@ -106,7 +111,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                     borderRadius: 50,
                                     background:
                                         reviewColors[
-                                        content.props.classification
+                                            content.props.classification
                                         ],
                                     width: 10,
                                 }}
@@ -125,7 +130,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                     <Grid className="review-actions">
                         <TagsList key={0} tags={content.topics || []} />
                         <AletheiaButton
-                            type={ButtonType.blue}
+                            type={ButtonType.primary}
                             href={href}
                             target="_blank"
                             style={{ width: "fit-content" }}

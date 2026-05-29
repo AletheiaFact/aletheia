@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import Input from "../AletheiaInput";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import InputPassword from "../InputPassword";
 import ForgotPasswordLink from "./ForgotPasswordLink";
 import { Grid } from "@mui/material";
@@ -28,9 +28,7 @@ const OryLoginForm = ({
     return (
         <>
             {flow.refresh && (
-                <Grid container
-                    style={{ paddingBottom: "10px" }}
-                >
+                <Grid container style={{ paddingBottom: "10px" }}>
                     <AletheiaAlert
                         style={{ padding: "0 15px", margin: "0px" }}
                         message={t("login:refreshLoginMessage")}
@@ -39,20 +37,13 @@ const OryLoginForm = ({
                 </Grid>
             )}
             {flow?.requested_aal !== "aal2" && (
-                <Grid container
-                    direction="column"
-                >
-                    <h2>
-                        {t("login:formHeader")}
-                    </h2>
-                    <form
-                        onSubmit={handleSubmit(onFinish, onFinishFailed)}
-                    >
-                        <Grid container
-                            marginBottom={2}
-                        >
+                <Grid container direction="column">
+                    <h2>{t("login:formHeader")}</h2>
+                    <form onSubmit={handleSubmit(onFinish, onFinishFailed)}>
+                        <Grid container marginBottom={2}>
                             <Grid item xs={12} sm={3} lg={2}>
-                                <Label required
+                                <Label
+                                    required
                                     children={t("login:emailLabel") + " :"}
                                 />
                             </Grid>
@@ -60,58 +51,56 @@ const OryLoginForm = ({
                                 <Input
                                     data-cy="emailFormLogin"
                                     {...register("email", {
-                                        required: true
+                                        required: true,
                                     })}
                                 />
                                 <TextError
                                     stateError={errors.email}
                                     children={t("login:emailErrorMessage")}
+                                    data-cy="testEmailErrorMessage"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} lg={2}>
-                                <Label required
+                                <Label
+                                    required
                                     children={t("login:passwordLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={9} lg={10} >
+                            <Grid item xs={12} sm={9} lg={10}>
                                 <InputPassword
                                     data-cy="passwordFormLogin"
                                     {...register("password", {
-                                        required: true
+                                        required: true,
                                     })}
                                 />
                                 <ForgotPasswordLink t={t} />
                                 <TextError
                                     stateError={errors.password}
                                     children={t("login:passwordErrorMessage")}
+                                    data-cy="testPasswordErrorMessage"
                                 />
                             </Grid>
-                            <Button
+                            <AletheiaButton
                                 loading={isLoading}
-                                type={ButtonType.blue}
+                                type={ButtonType.primary}
                                 htmlType="submit"
                                 data-cy={"loginButton"}
                             >
                                 {t("login:submitButton")}
-                            </Button>
+                            </AletheiaButton>
                         </Grid>
                     </form>
                 </Grid>
             )}
             {flow?.requested_aal === "aal2" && (
                 <Grid container direction="column">
-                    <h2>
-                        {t("totp:formHeader")}
-                    </h2>
-                    <p>
-                        {t("totp:totpMessage")}
-                    </p>
-                    <form
-                        onSubmit={handleSubmit(onFinishTotp)}
-                    >
+                    <h2>{t("totp:formHeader")}</h2>
+                    <p>{t("totp:totpMessage")}</p>
+                    <form onSubmit={handleSubmit(onFinishTotp)}>
                         <Grid container display="flex">
                             <Grid item xs={12} md={5} lg={3}>
-                                <Label required
+                                <Label
+                                    required
                                     children={t("totp:inputLabel") + " :"}
                                 />
                             </Grid>
@@ -125,18 +114,19 @@ const OryLoginForm = ({
                                 <TextError
                                     stateError={errors.totp}
                                     children={t("totp:totpErrorMessage")}
+                                    data-cy="testTotpErrorMessage"
                                 />
                             </Grid>
                         </Grid>
                         <Grid container>
-                            <Button
+                            <AletheiaButton
                                 loading={isLoading}
-                                type={ButtonType.blue}
+                                type={ButtonType.primary}
                                 htmlType="submit"
                                 data-cy="totpSubmitButton"
                             >
                                 {t("totp:submitButton")}
-                            </Button>
+                            </AletheiaButton>
                         </Grid>
                     </form>
                 </Grid>

@@ -3,7 +3,7 @@ import { ActionTypes } from "../../store/types";
 import { Grid } from "@mui/material";
 import FilterToggleButtons from "../FilterToggleButtons";
 import FilterBar from "./FilterBar";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import FilterPopover from "./FilterPopover";
 import { ViewList, ViewModule } from "@mui/icons-material";
 
@@ -29,7 +29,7 @@ const FilterManager = ({ state, actions }) => {
         setEndDate,
     } = actions;
 
-    const isBoard = viewMode === "left"
+    const isBoard = viewMode === "left";
 
     const handleResetFilters = () => {
         setFilterValue([]);
@@ -49,10 +49,7 @@ const FilterManager = ({ state, actions }) => {
     };
 
     return (
-        <Grid
-            item
-            className="filterActions"
-        >
+        <Grid item className="filterActions">
             <Grid className="filterToggleContainer">
                 <FilterToggleButtons
                     viewMode={viewMode}
@@ -64,12 +61,7 @@ const FilterManager = ({ state, actions }) => {
             </Grid>
 
             <Grid className="filterBarContainer">
-                {isBoard && (
-                    <FilterBar
-                        state={state}
-                        actions={actions}
-                    />
-                )}
+                {isBoard && <FilterBar state={state} actions={actions} />}
 
                 {isBoard &&
                     (topicFilterUsed.length > 0 ||
@@ -80,12 +72,13 @@ const FilterManager = ({ state, actions }) => {
                         endDate) && (
                         <AletheiaButton
                             type={ButtonType.whiteBlack}
-                            onClick={handleResetFilters}>
+                            onClick={handleResetFilters}
+                        >
                             {t("verificationRequest:resetFiltersButton")}
                         </AletheiaButton>
                     )}
             </Grid>
-        </Grid >
+        </Grid>
     );
 };
 export default FilterManager;
