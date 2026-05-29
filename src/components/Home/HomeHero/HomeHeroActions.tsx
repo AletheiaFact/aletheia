@@ -25,13 +25,13 @@ const HomeHeroActions = () => {
             <AletheiaButton
                 endIcon={<ArrowForwardIcon className="home-header-action-icon" />}
                 type={ButtonType.darkBlue}
-                href={!isLoggedIn ? "/sign-up" : "/committee-invitation"}
+                href={isLoggedIn ? "/committee-invitation" : "/sign-up"}
                 onClick={handleClick}
                 data-cy="testHomeHeaderSignUpButton"
             >
-                {!isLoggedIn
-                    ? t("home:createAccountButton")
-                    : t("home:forumButton")
+                {isLoggedIn
+                    ? t("home:forumButton")
+                    : t("home:createAccountButton")
                 }
             </AletheiaButton>
             <AletheiaButton

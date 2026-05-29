@@ -11,6 +11,11 @@ type CTAFolderActionsProps = {
 
 const CTAFolderActions = ({ isLoggedIn, isHomeFolder }: CTAFolderActionsProps & { isHomeFolder?: boolean }) => {
     const { t } = useTranslation();
+    const buttonType = isLoggedIn
+        ? ButtonType.primary
+        : isHomeFolder
+            ? ButtonType.whiteOutline
+            : ButtonType.outline;
 
     return (
         <Grid className="ctaButtonWrapper">
@@ -25,13 +30,7 @@ const CTAFolderActions = ({ isLoggedIn, isHomeFolder }: CTAFolderActionsProps & 
                 </AletheiaButton>
             )}
             <AletheiaButton
-                type={
-                    isLoggedIn ?
-                        ButtonType.primary :
-                        isHomeFolder ?
-                            ButtonType.whiteOutline :
-                            ButtonType.outline
-                }
+                type={buttonType}
                 onClick={() => trackUmamiEvent("cta-banner-about-us-button", "bannerAboutUs")}
                 href="/about"
                 data-cy="testCtaAboutUsButton"

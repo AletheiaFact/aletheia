@@ -22,7 +22,7 @@ const HomeReviewsSection = ({ reviews }: HomeReviewsSectionProps) => {
     }
 
     const seeAllHref =
-        nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}/claim` : "/claim";
+        nameSpace === NameSpaceEnum.Main ? "/claim" : `/${nameSpace}/claim`;
 
     return (
         <HomeReviewsSectionStyle container>

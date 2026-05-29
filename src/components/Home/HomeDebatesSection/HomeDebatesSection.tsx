@@ -22,7 +22,7 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     const seeAllHref =
-        nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}/claim` : "/claim";
+        nameSpace === NameSpaceEnum.Main ? "/claim" : `/${nameSpace}/claim`;
 
 
     if (!Array.isArray(debates) || debates.length === 0) return null;
@@ -94,9 +94,9 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
                                             <AletheiaButton
                                                 type={ButtonType.primary}
                                                 href={
-                                                    nameSpace !== NameSpaceEnum.Main
-                                                        ? `/${nameSpace}/claim/${debateClaim.claimId}/debate`
-                                                        : `/claim/${debateClaim.claimId}/debate`
+                                                    nameSpace === NameSpaceEnum.Main
+                                                        ? `/claim/${debateClaim.claimId}/debate`
+                                                        : `/${nameSpace}/claim/${debateClaim.claimId}/debate`
                                                 }
                                             >
                                                 {t("debates:seeDebate")}

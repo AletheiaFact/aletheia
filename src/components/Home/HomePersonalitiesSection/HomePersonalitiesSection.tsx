@@ -24,9 +24,9 @@ const HomePersonalitiesSection = ({
     }
 
     const seeAllHref =
-        nameSpace !== NameSpaceEnum.Main
-            ? `/${nameSpace}/personality`
-            : "/personality";
+        nameSpace === NameSpaceEnum.Main
+            ? "/personality"
+            : `/${nameSpace}/personality`;
 
     return (
         <HomePersonalitiesSectionStyle container>

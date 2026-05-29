@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import colors from "../../../styles/colors";
 import { queries } from "../../../styles/mediaQueries";
 import { Box } from "@mui/material";
