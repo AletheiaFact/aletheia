@@ -36,16 +36,14 @@ type ExactlyImplements<C, I> = [
           extra: Exclude<keyof PublicSurface<C>, keyof I>;
       };
 
-// These constants must be `true` — TypeScript will complain otherwise.
-const _mongoExact: ExactlyImplements<
+// These constants must be `true` — TypeScript will complain otherwise. They
+// are exported (rather than `void`-discarded) to satisfy lint without using
+// the `void` operator.
+export const _mongoExact: ExactlyImplements<
     MongoPersonalityService,
     IPersonalityService
 > = true;
-const _pgExact: ExactlyImplements<
+export const _pgExact: ExactlyImplements<
     PostgresPersonalityService,
     IPersonalityService
 > = true;
-
-// Suppress unused-variable lint complaints — the assertions ARE the test.
-void _mongoExact;
-void _pgExact;

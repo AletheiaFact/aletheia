@@ -14,7 +14,7 @@ export const personalityServiceProvider: Provider = {
             return mongoService as unknown as IPersonalityService;
         }
         if (dbConfig.type === "postgres" && pgService) {
-            return pgService as unknown as IPersonalityService;
+            return pgService;
         }
         throw new Error("Invalid DB_TYPE in configuration");
     },

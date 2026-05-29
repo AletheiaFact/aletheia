@@ -27,16 +27,16 @@ export const personality = pgTable(
             .notNull()
             .defaultNow(),
     },
-    (t) => ({
-        wikidataUq: uniqueIndex("personality_wikidata_uq")
+    (t) => [
+        uniqueIndex("personality_wikidata_uq")
             .on(t.wikidata)
             .where(sql`${t.wikidata} IS NOT NULL`),
-        slugIdx: index("personality_slug_idx").on(t.slug),
-        nameTrgmIdx: index("personality_name_trgm_idx").using(
+        index("personality_slug_idx").on(t.slug),
+        index("personality_name_trgm_idx").using(
             "gin",
             sql`${t.name} gin_trgm_ops`
         ),
-    })
+    ]
 );
 
 export type PersonalityRow = typeof personality.$inferSelect;

@@ -54,7 +54,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             .orderBy(orderBy)
             .limit(pageSize)
             .offset(page * pageSize);
-        return rows as unknown as IPersonality[];
+        return rows as IPersonality[];
     }
     async create(data: any): Promise<IPersonality> {
         const values: PersonalityInsert = {
@@ -68,7 +68,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             .insert(personality)
             .values(values)
             .returning();
-        return row as unknown as IPersonality;
+        return row as IPersonality;
     }
     async getDeletedPersonalityByWikidata(wikidata: string) {
         const [row] = await this.db
@@ -99,7 +99,7 @@ export class PostgresPersonalityService implements IPersonalityService {
                     )
                 )
                 .limit(1);
-            if (existing) return existing as unknown as IPersonality;
+            if (existing) return existing as IPersonality;
         }
         const slug = slugify(data.name, { lower: true, strict: true });
         const values: PersonalityInsert = {
@@ -112,7 +112,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             .insert(personality)
             .values(values)
             .returning();
-        return created as unknown as IPersonality;
+        return created as IPersonality;
     }
     async getById(
         id: string | LeanDocument<IPersonality>,
@@ -130,7 +130,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         if (!row) {
             throw new Error(`Personality not found: ${idStr}`);
         }
-        return row as unknown as IPersonality;
+        return row as IPersonality;
     }
     async getPersonalityBySlug(
         query: any,
@@ -150,7 +150,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         if (!row) {
             throw new Error(`Personality not found by slug: ${slug}`);
         }
-        return row as unknown as IPersonality;
+        return row as IPersonality;
     }
     async getClaimsByPersonalitySlug(
         _query: any,
@@ -188,7 +188,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             )
             .returning();
         if (!row) throw new Error(`Personality not found: ${id}`);
-        return row as unknown as IPersonality;
+        return row as IPersonality;
     }
     async hideOrUnhidePersonality(
         id: string,
@@ -289,7 +289,7 @@ export class PostgresPersonalityService implements IPersonalityService {
 
         return {
             totalRows,
-            processedPersonalities: rows as unknown as IPersonality[],
+            processedPersonalities: rows as IPersonality[],
         };
     }
 }
