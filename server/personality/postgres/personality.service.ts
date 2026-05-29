@@ -63,7 +63,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             description: data.description,
             wikidata: data.wikidata ?? null,
             isHidden: data.isHidden ?? false,
-        } as PersonalityInsert;
+        };
         const [row] = await this.db
             .insert(personality)
             .values(values)
@@ -107,7 +107,7 @@ export class PostgresPersonalityService implements IPersonalityService {
             slug,
             description: data.wikidata?.description ?? "",
             wikidata: wikidataId,
-        } as PersonalityInsert;
+        };
         const [created] = await this.db
             .insert(personality)
             .values(values)
