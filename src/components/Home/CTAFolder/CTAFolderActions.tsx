@@ -1,35 +1,43 @@
 import React from "react";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../../lib/umami";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 
 type CTAFolderActionsProps = {
     isLoggedIn: boolean;
+    isHomeFolder: boolean;
 };
 
-const CTAFolderActions = ({ isLoggedIn }: CTAFolderActionsProps) => {
+const CTAFolderActions = ({ isLoggedIn, isHomeFolder }: CTAFolderActionsProps & { isHomeFolder?: boolean }) => {
     const { t } = useTranslation();
 
     return (
         <Grid className="ctaButtonWrapper">
             {!isLoggedIn && (
-                <Button
+                <AletheiaButton
+                    type={isHomeFolder ? ButtonType.primary : ButtonType.white}
                     onClick={() => trackUmamiEvent("cta-banner-sign-up-button", "bannerSignUp")}
                     href="/sign-up"
-                    className="ctaActionButtons ctaSignUpButton"
                     data-cy="testCtaSignUpButton"
                 >
                     {t("CTAFolder:signUpButton")}
-                </Button>
+                </AletheiaButton>
             )}
-            <Button
+            <AletheiaButton
+                type={
+                    isLoggedIn ?
+                        ButtonType.primary :
+                        isHomeFolder ?
+                            ButtonType.whiteOutline :
+                            ButtonType.outline
+                }
                 onClick={() => trackUmamiEvent("cta-banner-about-us-button", "bannerAboutUs")}
                 href="/about"
-                className="ctaActionButtons ctaAboutUsButton"
                 data-cy="testCtaAboutUsButton"
             >
                 {t("CTAFolder:aboutUsButton")}
-            </Button>
+            </AletheiaButton>
         </Grid>
     );
 };

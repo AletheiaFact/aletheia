@@ -1,13 +1,9 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Grid from "@mui/material/Grid";
 import colors from "../../../styles/colors";
 import { queries } from "../../../styles/mediaQueries";
 
-type HomeJoinSectionProps = {
-    $isLoggedIn: boolean;
-};
-
-const HomeJoinSectionStyle = styled(Grid) <HomeJoinSectionProps>`
+const HomeJoinSectionStyle = styled(Grid)`
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -76,62 +72,6 @@ const HomeJoinSectionStyle = styled(Grid) <HomeJoinSectionProps>`
         flex-wrap: wrap;
         gap: 12px;
         margin-top: 8px;
-    }
-
-    .ctaActionButtons {
-        height: 52px;
-        padding: 0 28px;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 600;
-        text-transform: none;
-        gap: 8px;
-    }
-
-    .ctaSignUpButton {
-        background-color: ${colors.primary};
-        border: 1px solid ${colors.primary};
-        color: ${colors.white};
-
-        &:hover {
-            background-color: color-mix(
-                in srgb,
-                ${colors.primary} 88%,
-                ${colors.white}
-            );
-        }
-    }
-
-    .ctaAboutUsButton {
-        ${({ $isLoggedIn }) =>
-        $isLoggedIn
-            ? css`
-                    color: ${colors.white};
-                    background-color: ${colors.primary};
-                    border: 1px solid ${colors.primary};
-
-                    &:hover {
-                      background-color: color-mix(in srgb,
-                        ${colors.primary} 88%,
-                        ${colors.white}
-                    );
-                      border: 1px solid ${colors.whiteHigh};
-                    }
-                  `
-            : css`
-                    color: ${colors.primary};
-                    background-color: transparent;
-                    border: 1px solid ${colors.secondary};
-
-                    &:hover {
-                      background-color: ${colors.whiteLow};
-                      border: 1px solid ${colors.secondary};
-                    }
-                  `}
-    }
-
-    .home-join-action-icon {
-        font-size: 18px;
     }
 
     .ctaAchievementsColumn {
@@ -228,6 +168,16 @@ const HomeJoinSectionStyle = styled(Grid) <HomeJoinSectionProps>`
         }
 
         .home-join-action-button {
+            width: 100%;
+        }
+    }
+
+    @media ${queries.xs} {
+        .ctaButtonWrapper  {
+            flex-direction: column;
+        }
+
+        .ctaButtonWrapper a {
             width: 100%;
         }
     }

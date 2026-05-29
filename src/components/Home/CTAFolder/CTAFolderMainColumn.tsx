@@ -5,9 +5,10 @@ import CTAFolderActions from "./CTAFolderActions";
 
 type CTAFolderMainColumnProps = {
     isLoggedIn: boolean;
+    isHomeFolder?: boolean;
 };
 
-const CTAFolderMainColumn = ({ isLoggedIn }: CTAFolderMainColumnProps) => {
+const CTAFolderMainColumn = ({ isLoggedIn, isHomeFolder = true }: CTAFolderMainColumnProps) => {
     const { t } = useTranslation();
     const title = isLoggedIn ? t("CTAFolder:aboutUsTitle") : t("CTAFolder:signUpTitle");
     const body = isLoggedIn ? t("CTAFolder:aboutUsBody") : t("CTAFolder:signUpBody");
@@ -34,7 +35,7 @@ const CTAFolderMainColumn = ({ isLoggedIn }: CTAFolderMainColumnProps) => {
                     {t("CTAFolder:signUpFooter")}
                 </Typography>
             )}
-            <CTAFolderActions isLoggedIn={isLoggedIn} />
+            <CTAFolderActions isLoggedIn={isLoggedIn} isHomeFolder={isHomeFolder} />
         </Grid>
     );
 };

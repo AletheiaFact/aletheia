@@ -104,7 +104,7 @@ const BaseList = ({
     const loadMoreButton =
         totalPages > query.page ? (
             <AletheiaButton
-                type={ButtonType.outline}
+                type={ButtonType.whiteOutline}
                 onClick={loadMoreData}
             >
                 {t("list:loadMoreButton")}

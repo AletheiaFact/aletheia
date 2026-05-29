@@ -148,27 +148,12 @@ const HomeHeroStyle = styled(Grid)`
 
     .home-header-actions {
         display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
         gap: 16px;
         width: 100%;
-    }
-
-    .home-header-action-button {
-        height: 48px !important;
-        padding: 0 24px !important;
-        border-radius: 8px !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
-        text-transform: none !important;
-        gap: 8px;
-    }
-
-    .home-header-action-primary {
-        background-color: ${colors.lightSecondary} !important;
-        border-color: ${colors.lightSecondary} !important;
-        color: ${colors.primary} !important;
     }
 
     .home-header-action-secondary {
@@ -269,13 +254,7 @@ const HomeHeroStyle = styled(Grid)`
             display: inline;
         }
 
-        .home-header-actions {
-            flex-direction: column;
-            width: 100%;
-            gap: 12px;
-        }
-
-        .home-header-action-button {
+        .home-header-actions a {
             width: 100%;
         }
 

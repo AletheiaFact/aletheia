@@ -1,8 +1,7 @@
 import React from "react";
 import AletheiaButton, { ButtonType } from "./AletheiaButton";
-import { Box, Button as MuiButton, Divider, Grid, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { ArrowForwardOutlined } from "@mui/icons-material";
-import colors from "../styles/colors";
 import GridListStyle from "./GridList.style";
 
 type ItemSize = {
@@ -31,40 +30,6 @@ interface GridListProps<ItemType> {
 }
 
 const DEFAULT_ITEM_SIZE: ItemSize = { xs: 12, md: 6 };
-
-const TopActionButton = ({
-    href,
-    dataCy,
-    label,
-}: {
-    href: string;
-    dataCy: string;
-    label: string;
-}) => (
-    <MuiButton
-        href={href}
-        variant="outlined"
-        endIcon={<ArrowForwardOutlined fontSize="small" />}
-        className="grid-list-top-action"
-        data-cy={dataCy}
-        sx={{
-            borderColor: colors.primary,
-            color: colors.primary,
-            textTransform: "none",
-            fontWeight: 600,
-            fontSize: 14,
-            padding: "8px 18px",
-            borderRadius: "6px",
-            background: colors.white,
-            "&:hover": {
-                borderColor: colors.primary,
-                background: colors.lightNeutral,
-            },
-        }}
-    >
-        {label}
-    </MuiButton>
-);
 
 const GridList = <ItemType,>({
     title,
@@ -112,11 +77,14 @@ const GridList = <ItemType,>({
                     </>
                 )}
                 {showTop && (
-                    <TopActionButton
+                    <AletheiaButton
+                        type={ButtonType.whiteOutline}
                         href={href}
-                        dataCy={dataCy}
-                        label={seeMoreButtonLabel}
-                    />
+                        endIcon={<ArrowForwardOutlined fontSize="small" />}
+                        data-cy={dataCy}
+                    >
+                        {seeMoreButtonLabel}
+                    </AletheiaButton>
                 )}
             </Box>
             {hasDivider && <Divider variant="fullWidth" />}

@@ -16,7 +16,7 @@ const HomeJoinSection = ({ href }: HomeJoinSectionProps) => {
 
     return (
         <Grid item xs={12}>
-            <HomeJoinSectionStyle container $isLoggedIn={isLoggedIn}>
+            <HomeJoinSectionStyle container>
                 <Box className="home-join-band">
                     <Box className="home-join-inner">
                         <CTAFolderMainColumn isLoggedIn={isLoggedIn} />

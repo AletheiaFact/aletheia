@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import colors from "../../../styles/colors";
-import Button from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import CardBase from "../../CardBase";
 import GridList from "../../GridList";
 import PersonalityMinimalCard from "../../Personality/PersonalityMinimalCard";
@@ -91,17 +91,16 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
                                         }}
                                     >
                                         <Grid item>
-                                            <Button
+                                            <AletheiaButton
+                                                type={ButtonType.primary}
                                                 href={
                                                     nameSpace !== NameSpaceEnum.Main
                                                         ? `/${nameSpace}/claim/${debateClaim.claimId}/debate`
                                                         : `/claim/${debateClaim.claimId}/debate`
                                                 }
                                             >
-                                                <span style={{ marginTop: 4 }}>
-                                                    {t("debates:seeDebate")}
-                                                </span>
-                                            </Button>
+                                                {t("debates:seeDebate")}
+                                            </AletheiaButton>
                                         </Grid>
                                     </Grid>
                                 </div>
