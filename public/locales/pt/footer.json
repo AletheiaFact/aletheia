@@ -15,8 +15,7 @@
     "title": "A Aletheia agora tem um fórum!",
     "description": "Participe da nossa comunidade e compartilhe suas dúvidas, descobertas e experiências com outros usuários.",
     "primaryButton": "Conheça Nossa Missão",
-    "secondaryButton": "Participe do nosso fórum",
-    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
+    "secondaryButton": "Participe do nosso fórum"
   },
   "sections": {
     "platform": {

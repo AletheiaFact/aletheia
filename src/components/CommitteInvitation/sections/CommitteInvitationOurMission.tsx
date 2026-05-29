@@ -20,9 +20,9 @@ const CommitteInvitationOurMission = () => {
     const { t } = useTranslation("committeeInvitation");
 
     return (
-        <Box className="section-wrapper" id="mission">
+        <Box className="section-wrapper">
             <Box className="container-section">
-                <Stack spacing={2} alignItems="center" sx={{ mb: 6 }}>
+                <Stack spacing={2} alignItems="center" sx={{ mb: 6 }} id="mission">
                     <Typography variant="overline" className="section-eyebrow">
                         {t("mission.eyebrow")}
                     </Typography>
