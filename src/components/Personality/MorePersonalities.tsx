@@ -1,5 +1,5 @@
 import React from "react";
-import Grid from "@mui/material/Grid"
+import Grid from "@mui/material/Grid";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
@@ -15,39 +15,37 @@ const MorePersonalities = ({ personalities, href, title }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
-        <Grid container
+        <Grid
+            container
             style={{
                 width: "100%",
                 paddingTop: "32px",
                 justifyContent: "center",
             }}
         >
-            <Grid item
-                xs={11}
-                lg={9}
-                xl={5}
-            >
+            <Grid item xs={11} lg={9} xl={5}>
                 <PersonalitiesGrid
                     personalities={personalities}
                     title={title}
                 />
             </Grid>
 
-            <Grid item
+            <Grid
+                item
                 xs={11}
                 lg={9}
                 xl={4}
-                style={{ paddingLeft: vw?.lg ? 0 : 20 }}
+                style={{
+                    paddingLeft: vw?.lg ? 0 : 20,
+                    marginTop: vw?.md ? 40 : 0,
+                }}
             >
-
-                {(!isLoggedIn && !vw?.md) && (
-                    <SectionTitle>
-                        {t("home:sectionTitle2")}
-                    </SectionTitle>
+                {!isLoggedIn && !vw?.md && (
+                    <SectionTitle>{t("home:sectionTitle2")}</SectionTitle>
                 )}
 
                 <Grid container id="create_account">
-                    <CTAFolder isSplit={true}/>
+                    <CTAFolder isSplit={true} />
                 </Grid>
 
                 <SocialMediaShare href={href} />

@@ -6,16 +6,17 @@ import { Review } from "../../types/Review";
 type ReviewsGridProps = {
     reviews: Review[];
     title: React.ReactNode;
-}
+};
 
-const ReviewsGrid = ({ reviews, title, }: ReviewsGridProps) => {
+const ReviewsGrid = ({ reviews, title }: ReviewsGridProps) => {
     return (
         <GridList
             title={title}
             dataSource={reviews}
-            loggedInMaxColumns={12}
+            itemSize={{ xs: 12, md: 6 }}
             disableSeeMoreButton={true}
             renderItem={(review) => <ReviewCard review={review} />}
+            getKey={(review) => review.id}
         />
     );
 };

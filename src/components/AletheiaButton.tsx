@@ -9,11 +9,13 @@ export enum ButtonType {
     primary = "primary",
     secondary = "secondary",
     outline = "outline",
+    whiteOutline = "whiteOutline",
     white = "white",
     gray = "gray",
     whiteBlue = "whiteBlue",
     whiteBlack = "whiteBlack",
     lightBlue = "lightBlue",
+    darkBlue = "darkBlue",
     error = "error",
     text = "text",
 }
@@ -39,8 +41,8 @@ const SIZE_STYLES: Record<
     { height: number; fontSize: string; padding: string }
 > = {
     small: { height: 32, fontSize: "12px", padding: "4px 12px" },
-    medium: { height: 40, fontSize: "12px", padding: "6px 16px" },
-    large: { height: 48, fontSize: "14px", padding: "8px 24px" },
+    medium: { height: 40, fontSize: "14px", padding: "6px 16px" },
+    large: { height: 48, fontSize: "16px", padding: "8px 24px" },
 };
 
 type VariantStyle = {
@@ -76,10 +78,18 @@ const getVariantStyle = (
         case ButtonType.outline:
             return {
                 background: "transparent",
-                borderColor: colors.neutralTertiary,
-                color: colors.blackSecondary,
-                hoverBackground: colors.lightNeutral,
-                hoverBorderColor: colors.neutralSecondary,
+                borderColor: colors.lightNeutral,
+                color: colors.white,
+                hoverBackground: `color-mix(in srgb, ${colors.white} 10%, transparent)`,
+                hoverBorderColor: colors.lightNeutral,
+            };
+        case ButtonType.whiteOutline:
+            return {
+                background: colors.white,
+                borderColor: colors.primary,
+                color: colors.primary,
+                hoverBackground: colors.lightNeutralSecondary,
+                hoverBorderColor: colors.primary,
             };
         case ButtonType.white:
             return {
@@ -121,6 +131,14 @@ const getVariantStyle = (
                 color: colors.white,
                 hoverBackground: colors.lightSecondary,
                 hoverBorderColor: colors.lightSecondary,
+            };
+        case ButtonType.darkBlue:
+            return {
+                background: colors.lightSecondary,
+                borderColor: colors.lightSecondary,
+                color: colors.primary,
+                hoverBackground: `color-mix(in srgb, ${colors.lightSecondary} 60%, ${colors.white})`,
+                hoverBorderColor: `color-mix(in srgb, ${colors.lightSecondary} 60%, ${colors.white})`,
             };
         case ButtonType.error:
             return {
@@ -180,7 +198,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     const sizeStyle = SIZE_STYLES[size];
 
     const buttonSx: SxProps<Theme> = {
-        borderWidth: "2px",
+        borderWidth: "1px",
         borderStyle: "solid",
         display: "flex",
         justifyContent: "center",
@@ -199,7 +217,7 @@ const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
         borderColor: variant.borderColor,
         color: variant.color,
         "&:hover": {
-            borderWidth: "2px",
+            borderWidth: "1px",
             background: variant.hoverBackground,
             borderColor: variant.hoverBorderColor,
             color: variant.hoverColor ?? variant.color,

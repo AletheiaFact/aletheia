@@ -69,7 +69,7 @@ const ReviewCard = ({ review, summarized = false }) => {
     return (
         <CardBase>
             <ReviewCardStyled
-                $hasPersonality={hasPersonality}
+                $hasPersonality={!summarized && hasPersonality}
                 data-cy="testReviewCardContainer"
             >
                 {!summarized && personalityItem && (

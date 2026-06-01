@@ -1,35 +1,66 @@
 import React from "react";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../../lib/umami";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 
 type CTAFolderActionsProps = {
     isLoggedIn: boolean;
+    isHomeFolder?: boolean;
 };
 
-const CTAFolderActions = ({ isLoggedIn }: CTAFolderActionsProps) => {
+const getAboutButtonType = (
+    isLoggedIn: boolean,
+    isHomeFolder: boolean
+): ButtonType => {
+    if (isLoggedIn) return ButtonType.primary;
+    return isHomeFolder ? ButtonType.whiteOutline : ButtonType.outline;
+};
+
+const getSignUpButtonType = (isHomeFolder: boolean): ButtonType => {
+    return isHomeFolder ? ButtonType.primary : ButtonType.white;
+};
+
+const CTAFolderActions = ({
+    isLoggedIn,
+    isHomeFolder = false,
+}: CTAFolderActionsProps) => {
     const { t } = useTranslation();
+
+    const aboutButtonType = getAboutButtonType(isLoggedIn, isHomeFolder);
+    const signUpButtonType = getSignUpButtonType(isHomeFolder);
 
     return (
         <Grid className="ctaButtonWrapper">
             {!isLoggedIn && (
-                <Button
-                    onClick={() => trackUmamiEvent("cta-banner-sign-up-button", "bannerSignUp")}
+                <AletheiaButton
+                    type={signUpButtonType}
+                    onClick={() =>
+                        trackUmamiEvent(
+                            "cta-banner-sign-up-button",
+                            "bannerSignUp"
+                        )
+                    }
                     href="/sign-up"
-                    className="ctaActionButtons ctaSignUpButton"
                     data-cy="testCtaSignUpButton"
                 >
                     {t("CTAFolder:signUpButton")}
-                </Button>
+                </AletheiaButton>
             )}
-            <Button
-                onClick={() => trackUmamiEvent("cta-banner-about-us-button", "bannerAboutUs")}
+
+            <AletheiaButton
+                type={aboutButtonType}
+                onClick={() =>
+                    trackUmamiEvent(
+                        "cta-banner-about-us-button",
+                        "bannerAboutUs"
+                    )
+                }
                 href="/about"
-                className="ctaActionButtons ctaAboutUsButton"
                 data-cy="testCtaAboutUsButton"
             >
                 {t("CTAFolder:aboutUsButton")}
-            </Button>
+            </AletheiaButton>
         </Grid>
     );
 };

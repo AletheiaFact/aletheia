@@ -1,20 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import claimRevisionApi from "../../api/claimRevision";
-import Loading from "../Loading";
+import { useAppSelector } from "../../../store/store";
+import claimRevisionApi from "../../../api/claimRevision";
+import Loading from "../../Loading";
 import HomeFeedList from "./HomeFeedList";
 
-const HomeFeed = ({ searchResults }) => {
+const HomeFeed = () => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
-    const [results, setResults] = useState(searchResults);
+    const [results, setResults] = useState([]);
+
+    const searchResultsData = useAppSelector(
+        (state) => state?.search?.searchResults
+    );
 
     useEffect(() => {
         const fetchFeedData = async () => {
+            if (!searchResultsData) {
+                setIsLoading(false);
+                return;
+            }
+
             setIsLoading(true);
 
-            const promises = searchResults.map((result, i) => {
+            const searchResultsArray = [
+                searchResultsData.personalities || [],
+                searchResultsData.claims || [],
+                searchResultsData.sentences || [],
+            ];
+
+            const promises = searchResultsArray.map((result, i) => {
                 const type = ["personality", "claim", "sentence"][i];
                 if (type === "claim") {
                     return Promise.all(
@@ -41,7 +57,7 @@ const HomeFeed = ({ searchResults }) => {
         };
 
         fetchFeedData();
-    }, [searchResults]);
+    }, [searchResultsData]);
 
     if (isLoading) {
         return <Loading />;
@@ -50,12 +66,24 @@ const HomeFeed = ({ searchResults }) => {
     return (
         <>
             {results.length > 0 && (
-                <Grid container>
-                    <h2>{t("home:homeFeedTitle")}</h2>
+                <Grid
+                    container
+                    style={{
+                        flexDirection: "column",
+                        width: "100%",
+                        maxWidth: "min(95vw, 1580px)",
+                        margin: "0 auto",
+                    }}
+                >
+                    <Typography
+                        variant="h2"
+                        fontSize={24}
+                        style={{ marginBottom: 16, width: "100%" }}
+                    >
+                        {t("home:homeFeedTitle")}
+                    </Typography>
 
-                    <Grid item>
-                        <HomeFeedList results={results} />
-                    </Grid>
+                    <HomeFeedList results={results} />
                 </Grid>
             )}
         </>

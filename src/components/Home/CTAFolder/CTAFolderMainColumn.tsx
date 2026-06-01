@@ -5,36 +5,38 @@ import CTAFolderActions from "./CTAFolderActions";
 
 type CTAFolderMainColumnProps = {
     isLoggedIn: boolean;
+    isHomeFolder?: boolean;
 };
 
-const CTAFolderMainColumn = ({ isLoggedIn }: CTAFolderMainColumnProps) => {
+const CTAFolderMainColumn = ({
+    isLoggedIn,
+    isHomeFolder = true,
+}: CTAFolderMainColumnProps) => {
     const { t } = useTranslation();
-    const title = isLoggedIn ? t("CTAFolder:aboutUsTitle") : t("CTAFolder:signUpTitle");
-    const body = isLoggedIn ? t("CTAFolder:aboutUsBody") : t("CTAFolder:signUpBody");
+    const title = isLoggedIn
+        ? t("CTAFolder:aboutUsTitle")
+        : t("CTAFolder:signUpTitle");
+    const body = isLoggedIn
+        ? t("CTAFolder:aboutUsBody")
+        : t("CTAFolder:signUpBody");
 
     return (
         <Grid item className="ctaMainColumn">
-            <Typography
-                variant="h2"
-                className="ctaTitle"
-            >
+            <Typography variant="h2" className="ctaTitle">
                 {title}
             </Typography>
-            <Typography
-                variant="body1"
-                className="ctaBody"
-            >
+            <Typography variant="body1" className="ctaBody">
                 {body}
             </Typography>
             {!isLoggedIn && (
-                <Typography
-                    variant="body1"
-                    className="ctaFooter"
-                >
+                <Typography variant="body1" className="ctaBody">
                     {t("CTAFolder:signUpFooter")}
                 </Typography>
             )}
-            <CTAFolderActions isLoggedIn={isLoggedIn} />
+            <CTAFolderActions
+                isLoggedIn={isLoggedIn}
+                isHomeFolder={isHomeFolder}
+            />
         </Grid>
     );
 };

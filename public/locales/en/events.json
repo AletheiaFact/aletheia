@@ -29,6 +29,7 @@
     "mainTopicLabelTooltip": "Reference topic used to link the fact-checks and verification requests that will appear on the event page.",
     "latestRelatedClaims": "Latest related fact-checks",
     "latestEvents": "Latest events",
+    "latestEventsSubtitle": "Conferences, Checkathons, and Verified Public Moments",
     "seeMoreEventsButton": "See more Events",
     "reviewStats": "Reviews",
     "verificationRequestsStats": "Verification requests",

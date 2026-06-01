@@ -1,10 +1,11 @@
 import React from "react";
-import { Trans } from "next-i18next";
-import CTAButton from "../../components/Home/CTAButton";
-import { ButtonType } from "../AletheiaButton";
+import { Trans, useTranslation } from "next-i18next";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
+import { trackUmamiEvent } from "../../lib/umami";
 import { Box } from "@mui/material";
 
 const RegistrationInvite = () => {
+    const { t } = useTranslation();
     return (
         <Box
             style={{
@@ -27,7 +28,19 @@ const RegistrationInvite = () => {
                     fontWeight: 700,
                 }}
             >
-                <CTAButton type={ButtonType.primary} />
+                <AletheiaButton
+                    onClick={() =>
+                        trackUmamiEvent(
+                            "cta-registration-button",
+                            "registration"
+                        )
+                    }
+                    type={ButtonType.primary}
+                    href="/sign-up"
+                    data-cy="testCTAButton"
+                >
+                    {t("home:createAccountButton")}
+                </AletheiaButton>
             </Box>
         </Box>
     );
