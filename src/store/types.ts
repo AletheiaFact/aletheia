@@ -76,6 +76,7 @@ export interface RootState {
     enableEditorAnnotations: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
+    enableInformativeNews: boolean;
     websocketUrl: string;
     claimType: string;
     claimPersonality: Personality;

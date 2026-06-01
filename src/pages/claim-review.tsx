@@ -31,6 +31,7 @@ export interface ClaimReviewPageProps {
     enableEditorAnnotations: boolean;
     enableReviewersUpdateReport: boolean;
     enableViewReportPreview: boolean;
+    enableInformativeNews: boolean;
     websocketUrl: string;
     nameSpace: string;
 }
@@ -51,6 +52,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         enableEditorAnnotations,
         enableReviewersUpdateReport,
         enableViewReportPreview,
+        enableInformativeNews,
         hideDescriptions,
     } = props;
 
@@ -64,7 +66,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             enableCopilotChatBot,
             false,
             enableReviewersUpdateReport,
-            enableViewReportPreview
+            enableViewReportPreview,
+            enableInformativeNews,
         )
     );
     dispatch(actions.setSelectPersonality(personality));
@@ -166,6 +169,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             enableViewReportPreview: query?.enableViewReportPreview,
+            enableInformativeNews: query?.enableInformativeNews,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

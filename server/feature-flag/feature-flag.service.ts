@@ -52,4 +52,12 @@ export class FeatureFlagService {
             ? this.unleash.isEnabled("enable_view_report_preview")
             : false;
     }
+
+    isEnableInformativeNews() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_informative_news")
+            : false;
+    }
 }
