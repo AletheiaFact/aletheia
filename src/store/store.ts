@@ -188,6 +188,7 @@ const reducer = (state, action) => {
                 autoSave: action.autoSave,
                 enableReviewersUpdateReport: action.enableReviewersUpdateReport,
                 enableViewReportPreview: action.enableViewReportPreview,
+                enableInformativeNews: action.enableInformativeNews,
             };
         case ActionTypes.SET_USER_ROLE:
             return {

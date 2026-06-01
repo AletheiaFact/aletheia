@@ -11,10 +11,14 @@ import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "next-i18next";
+import { useAppSelector } from "../../store/store";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
+    const enableInformativeNews = useAppSelector(
+        (state) => state?.enableInformativeNews
+    );
     const { recreateMachine, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -51,19 +55,21 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                     <>
                         {isClaim && (
                             <>
-                                <AletheiaButton
-                                    type={ButtonType.primary}
-                                    onClick={toggleFormCollapse}
-                                    data-cy={
-                                        "testAddInformativeNewsReviewButton"
-                                    }
-                                    id={ReportModelEnum.InformativeNews}
-                                    startIcon={<AddIcon />}
-                                >
-                                    {t(
-                                        "claimReviewForm:addInformativeNewsButton"
-                                    )}
-                                </AletheiaButton>
+                                {enableInformativeNews && (
+                                    <AletheiaButton
+                                        type={ButtonType.primary}
+                                        onClick={toggleFormCollapse}
+                                        data-cy={
+                                            "testAddInformativeNewsReviewButton"
+                                        }
+                                        id={ReportModelEnum.InformativeNews}
+                                        startIcon={<AddIcon />}
+                                    >
+                                        {t(
+                                            "claimReviewForm:addInformativeNewsButton"
+                                        )}
+                                    </AletheiaButton>
+                                )}
                                 <AletheiaButton
                                     type={ButtonType.primary}
                                     onClick={toggleFormCollapse}
