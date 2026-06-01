@@ -3,7 +3,8 @@ import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
-import { FavoriteBorderOutlined } from "@mui/icons-material";
+import { Favorite } from "@mui/icons-material";
+import colors from "../../styles/colors";
 
 const DonateButton = ({ header = false, style = {} }) => {
     const { t } = useTranslation();
@@ -18,7 +19,7 @@ const DonateButton = ({ header = false, style = {} }) => {
             onClick={() => {
                 trackUmamiEvent("header-cta-donate-button", "Donate");
             }}
-            icon={<FavoriteBorderOutlined fontSize="inherit" />}
+            startIcon={<Favorite style={{ fontSize: "12px", color: colors.error }} />}
             style={{
                 fontWeight: 600,
                 height: header ? 32 : 40,

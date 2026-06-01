@@ -10,6 +10,7 @@ const CardBase = ({ children, style = {} }) => {
             boxShadow: `0px 3px 3px ${colors.shadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
+
             ...style
         }}>
             {children}

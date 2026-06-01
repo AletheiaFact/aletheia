@@ -16,11 +16,11 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { vw } = useAppSelector((state) => state);
     const maxWidthMap = {
         xs: "15.6rem",
-        sm: "23.7rem",
-        md: "30rem",
-        lg: "28.7rem",
+        sm: "26.7rem",
+        md: "36rem",
+        lg: "20.7rem",
         xl: "9.3rem",
-        xxl: "18.7rem"
+        xxl: "14.7rem"
     };
     const currentBreakpoint = Object.keys(maxWidthMap).find(key => vw?.[key]);
     const maxWidth = maxWidthMap[currentBreakpoint];

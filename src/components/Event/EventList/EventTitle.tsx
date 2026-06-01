@@ -4,7 +4,7 @@ import styled from "styled-components";
 import FilterToggleButtons, { ViewMode } from "../../FilterToggleButtons";
 import { FormatQuoteOutlined, ReportProblemOutlined } from "@mui/icons-material";
 
-const TypographyBox = styled(Grid)`
+const TypographyGrid = styled(Grid)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,9 +28,17 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
 
     if (hasToggle) {
         return (
-            <TypographyBox container>
+            <TypographyGrid container>
                 <TotalCountText total={total} t={t} data-cy="testEventGridCount" />
-                <Box style={{ display: "flex", backgroundColor: `${colors.lightNeutral}`, padding: "4px", boxShadow: `0px 2px 10px ${colors.shadow} `, borderRadius: "4px" }}>
+                <Box
+                    style={{
+                        display: "flex",
+                        backgroundColor: `${colors.lightNeutral}`,
+                        padding: "4px",
+                        boxShadow: `0px 2px 10px ${colors.shadow} `,
+                        borderRadius: "4px"
+                    }}
+                >
                     <FilterToggleButtons
                         viewMode={viewMode}
                         setViewMode={setViewMode}
@@ -50,17 +58,17 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
                         }
                     />
                 </Box>
-            </TypographyBox>
+            </TypographyGrid>
         );
     }
 
     return (
-        <TypographyBox container>
+        <TypographyGrid container>
             <Typography variant="h2" fontSize={24}>
                 {t("events:eventsList")}
             </Typography>
             <TotalCountText total={total} t={t} data-cy="testEventGridCount" />
-        </TypographyBox>
+        </TypographyGrid>
     );
 };
 

@@ -12,7 +12,7 @@ type CTAFolderProps = {
     isSplit?: Boolean;
 }
 
-const CTAFolder = ({isSplit}: CTAFolderProps) => {
+const CTAFolder = ({ isSplit }: CTAFolderProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
@@ -20,12 +20,12 @@ const CTAFolder = ({isSplit}: CTAFolderProps) => {
         localConfig.home.folderRedirectForum && (
             <CTAFolderStyle
                 $nameSpace={nameSpace}
-                $isLoggedIn={isLoggedIn}
                 $isSplit={isSplit}
             >
                 <Grid container className="ctaFolderContent">
                     <CTAFolderMainColumn
                         isLoggedIn={isLoggedIn}
+                        isHomeFolder={false}
                     />
                     <CTAFolderAchievementsColumn />
                 </Grid>
