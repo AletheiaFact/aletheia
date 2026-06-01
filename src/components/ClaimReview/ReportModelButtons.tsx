@@ -11,10 +11,14 @@ import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "next-i18next";
+import { useAppSelector } from "../../store/store";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
+    const enableInformativeNews = useAppSelector(
+        (state) => state?.enableInformativeNews
+    );
     const { recreateMachine, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -51,19 +55,21 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                     <>
                         {isClaim && (
                             <>
-                                <Button
-                                    type={ButtonType.blue}
-                                    onClick={toggleFormCollapse}
-                                    data-cy={
-                                        "testAddInformativeNewsReviewButton"
-                                    }
-                                    id={ReportModelEnum.InformativeNews}
-                                    icon={<AddIcon />}
-                                >
-                                    {t(
-                                        "claimReviewForm:addInformativeNewsButton"
-                                    )}
-                                </Button>
+                                {enableInformativeNews && (
+                                    <Button
+                                        type={ButtonType.blue}
+                                        onClick={toggleFormCollapse}
+                                        data-cy={
+                                            "testAddInformativeNewsReviewButton"
+                                        }
+                                        id={ReportModelEnum.InformativeNews}
+                                        icon={<AddIcon />}
+                                    >
+                                        {t(
+                                            "claimReviewForm:addInformativeNewsButton"
+                                        )}
+                                    </Button>
+                                )}
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}

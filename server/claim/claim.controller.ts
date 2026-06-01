@@ -343,6 +343,8 @@ export class ClaimController {
             this.featureFlagService.isEnableReviewersUpdateReport();
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
+        const enableInformativeNews =
+            this.featureFlagService.isEnableInformativeNews();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -370,6 +372,7 @@ export class ClaimController {
             enableCopilotChatBot,
             enableReviewersUpdateReport,
             enableViewReportPreview,
+            enableInformativeNews,
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,
         });
