@@ -21,7 +21,6 @@ const ReviewCard = ({ review, summarized = false }) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
-    const hasPersonality = !!personality;
     const claimItem =
         Array.isArray(claim) && claim.length > 0 ? claim[0] : claim;
     const personalityItem =
