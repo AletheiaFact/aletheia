@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DonationBannerContent from "./DonationBanner/DonationBannerContent";
+import DonationBannerContent from "./DonationBannerContent";
 import DonationBannerStyle from "./DonationBanner.style";
 import { Grid } from "@mui/material";
 import Cookies from "js-cookie";
