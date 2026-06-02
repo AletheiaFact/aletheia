@@ -1,12 +1,17 @@
 import React from "react";
 import ClassificationText from "../ClassificationText";
 
+interface ReviewClassificationProps {
+    label?: string;
+    classification: string;
+    classificationTextStyle?: React.CSSProperties;
+}
+
 const ReviewClassification = ({
     label,
     classification,
     classificationTextStyle = {},
-    style = {},
-}) => {
+}: ReviewClassificationProps) => {
     return (
         <span>
             {label}

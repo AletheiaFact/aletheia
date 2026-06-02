@@ -8,6 +8,7 @@ const defaultColors = {
     lightPrimary: "rgb(79, 141, 180)", //#4F8DB4
     lightSecondary: "rgb(103, 190, 242)", //#67bef2
     lightTertiary: "rgb(218, 232, 234)", //#dae8ea
+    lightQuartiary: "rgb(241, 246, 247)", //#f1f6f7
     black: "rgb(17, 17, 17)", //#111111
     blackSecondary: "rgb(81, 81, 81)", //#515151
     blackTertiary: "rgb(32, 34, 34)", // #202222

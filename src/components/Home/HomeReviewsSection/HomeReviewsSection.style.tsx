@@ -5,7 +5,7 @@ import { queries } from "../../../styles/mediaQueries";
 
 const HomeReviewsSectionStyle = styled(Grid)`
     width: 100%;
-    background: ${colors.lightTertiary};
+    background: ${colors.lightQuartiary};
     padding: 64px 0;
     display: flex;
     justify-content: center;

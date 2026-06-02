@@ -68,12 +68,13 @@ const ReviewCard = ({ review, summarized = false }) => {
 
     return (
         <CardBase>
-            <ReviewCardStyled $hasPersonality={!summarized && hasPersonality} data-cy="testReviewCardContainer">
+            <ReviewCardStyled data-cy="testReviewCardContainer">
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
                         <PersonalityMinimalCard
                             personality={personalityItem}
-                            avatarSize={vw?.xs ? 78 : 88}
+                            avatarSize={vw?.xs ? 64 : 48}
+                            isInline={true}
                         />
                     </Grid>
                 )}
@@ -93,9 +94,13 @@ const ReviewCard = ({ review, summarized = false }) => {
                         />
                         {content?.props?.classification && (
                             <ReviewClassification
-                                label={t("claimReview:titleClaimReview")}
                                 classification={content.props.classification}
-                                classificationTextStyle={{ fontSize: vw?.xs ? 12 : 16 }}
+                                classificationTextStyle={{
+                                    fontSize: 12,
+                                    padding: "4px 14px",
+                                    border: `1px solid ${reviewColors[content.props.classification]}`,
+                                    borderRadius: 12,
+                                }}
                             />
                         )}
                     </Grid>
