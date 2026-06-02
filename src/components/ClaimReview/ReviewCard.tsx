@@ -1,7 +1,7 @@
 import React from "react";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import CardBase from "../CardBase";
-import { Grid } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
@@ -66,7 +66,7 @@ const ReviewCard = ({ review, summarized = false }) => {
         );
 
     return (
-        <CardBase>
+        <CardBase style={{ height: "100%" }}>
             <ReviewCardStyled data-cy="testReviewCardContainer">
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
@@ -127,15 +127,18 @@ const ReviewCard = ({ review, summarized = false }) => {
                     </Grid>
 
                     <Grid className="review-actions">
-                        <TagsList key={0} tags={content.topics || []} />
-                        <AletheiaButton
-                            type={ButtonType.primary}
-                            href={href}
-                            target="_blank"
-                            style={{ width: "fit-content" }}
-                        >
-                            {t("home:reviewsCarouselOpen")}
-                        </AletheiaButton>
+                        <Divider sx={{ width: "100%" }} />
+                        <Grid className="review-actions-content">
+                            <TagsList key={0} tags={content.topics || []} />
+                            <AletheiaButton
+                                type={ButtonType.primary}
+                                href={href}
+                                target="_blank"
+                                style={{ width: "fit-content" }}
+                            >
+                                {t("home:reviewsCarouselOpen")}
+                            </AletheiaButton>
+                        </Grid>
                     </Grid>
                 </Grid>
             </ReviewCardStyled>
