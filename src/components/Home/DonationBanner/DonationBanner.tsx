@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DonationBannerContent from "./DonationBanner/DonationBannerContent";
+import DonationBannerContent from "./DonationBannerContent";
 import DonationBannerStyle from "./DonationBanner.style";
 import { Grid } from "@mui/material";
 import Cookies from "js-cookie";
@@ -27,19 +27,25 @@ const DonationBanner = () => {
         return null;
     }
 
-  return showDonationBanner && (
-    <DonationBannerStyle>
-      <Grid container className="banner-container">
-        <CloseOutlined
-          className="close-banner"
-          onClick={() => closeBanner(() => setDonationBanner(false))}
-        />
-        <DonationBannerContent
-          closeClick={() => closeBanner(() => setDonationBanner(false))}
-        />
-      </Grid>
-    </DonationBannerStyle>
-  )
+    return (
+        showDonationBanner && (
+            <DonationBannerStyle>
+                <Grid container className="banner-container">
+                    <CloseOutlined
+                        className="close-banner"
+                        onClick={() =>
+                            closeBanner(() => setDonationBanner(false))
+                        }
+                    />
+                    <DonationBannerContent
+                        closeClick={() =>
+                            closeBanner(() => setDonationBanner(false))
+                        }
+                    />
+                </Grid>
+            </DonationBannerStyle>
+        )
+    );
 };
 
 export default DonationBanner;

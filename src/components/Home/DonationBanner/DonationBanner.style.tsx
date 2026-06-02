@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import colors from "../../styles/colors";
+import colors from "../../../styles/colors";
 import { Grid } from "@mui/material";
-import { queries } from "../../styles/mediaQueries";
+import { queries } from "../../../styles/mediaQueries";
 
 const DonationBannerStyle = styled(Grid)`
     background-color: ${colors.inactive};
