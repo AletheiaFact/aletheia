@@ -5,7 +5,7 @@ import { HomeHeroStatsProps } from "../../../types/Home";
 import CountUp from "react-countup"
 
 const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: HomeHeroStatsProps) => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const items = [
         {
