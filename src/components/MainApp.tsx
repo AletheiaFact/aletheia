@@ -11,7 +11,7 @@ import AletheiaHeader from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Header/Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
-import DonationBanner from "./Home/DonationBanner";
+import DonationBanner from "./Home/DonationBanner/DonationBanner";
 import localConfig from "../../config/localConfig";
 
 const copilotDrawerWidth = 350;
