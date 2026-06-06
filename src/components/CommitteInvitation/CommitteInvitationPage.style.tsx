@@ -65,9 +65,6 @@ export const CommitteInvitationBoxStyle = styled(Box)`
         color: ${colors.lightPrimary};
         font-size: clamp(12px, 1.4vw, 14px);
         backdrop-filter: blur(4px);
-        white-space: nowrap;
-        flex-shrink: 0;
-        margin-bottom: clamp(16px, 2.5vw, 24px);
     }
 
     .badge-dot {
@@ -395,5 +392,17 @@ export const CommitteInvitationBoxStyle = styled(Box)`
 
     .cta-contact-link {
         color: ${colors.secondary};
+    }
+
+    @media ${queries.xs} {
+        .hero-chip {
+            font-size: 12px;
+            padding: 6px 6px;
+            height: auto;
+        }
+
+        .hero-chip span{
+            white-space: normal;
+        }
     }
 `;

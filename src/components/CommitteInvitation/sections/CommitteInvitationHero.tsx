@@ -19,16 +19,18 @@ const CommitteInvitationHero = () => {
     return (
         <Box className="hero-wrapper">
             <Box className="container-section">
-                <Grid container spacing={8} alignItems="center">
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12}>
+                        <Chip
+                            icon={<Box component="span" className="badge-dot" />}
+                            label={t("hero.chip")}
+                            size="small"
+                            className="hero-chip"
+                        />
+                    </Grid>
                     <Grid item xs={12} md={6}>
                         <Stack spacing={3}>
                             <Box>
-                                <Chip
-                                    icon={<Box component="span" className="badge-dot" />}
-                                    label={t("hero.chip")}
-                                    size="small"
-                                    className="hero-chip"
-                                />
                                 <Typography variant="h1" className="hero-title">
                                     <Trans
                                         i18nKey="hero.title"
