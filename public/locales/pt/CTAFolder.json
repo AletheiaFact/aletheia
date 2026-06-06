@@ -1,9 +1,9 @@
 {
     "signUpTitle": "Quer ser um revisor?",
-    "signUpBody": "Aletheia está atualmente em teste beta e estamos aceitando todos os jornalistas e profissionais de checagem de fatos para testar a plataforma!",
-    "signUpFooter": "Nosso objetivo é estar aberto para que todos os usuários adicionem e revisem alegações assim que os testes forem concluídos. Acompanhe-nos nas redes sociais!",
-    "aboutUsTitle": "Saiba mais sobre o projeto Aletheia",
-    "aboutUsBody": "A Aletheia é um movimento e uma plataforma open source que oferece ferramentas gratuitas para que qualquer cidadão possa combater a desinformação e fortalecer a democracia.",
+    "signUpBody": "A plataforma AletheiaFact.org está atualmente em fase beta. Convidamos jornalistas e checadores de fatos para testarem nossas ferramentas!",
+    "signUpFooter": "Nosso objetivo é, após essa etapa, abrir o sistema para que qualquer usuário possa adicionar e revisar checagens. Acompanhe nossas redes sociais e faça parte desse movimento!",
+    "aboutUsTitle": "Saiba mais sobre a organização AletheiaFact",
+    "aboutUsBody": "A Aletheia é um movimento e uma plataforma de código aberto que oferece ferramentas gratuitas para capacitar qualquer cidadão no combate à desinformação e no fortalecimento da democracia.",
     "button": "Inscreva-se para ser parte do movimento",
     "signUpButton": "Inscreva-se agora",
     "aboutUsButton": "Quero conhecer a Aletheia!",

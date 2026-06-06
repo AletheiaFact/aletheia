@@ -8,7 +8,7 @@
     "statsPersonalities": "personalities",
     "statsClaims": "claims",
     "statsClaimReviews": "reviews",
-    "statsFooter": "Contribute to an internet free of misinformation. We verify claims made by politicians, celebrities, and public figures with transparency and methodological rigor.",
+    "statsFooter": "Contribute to an internet free of misinformation. We verify claims made by politicians and public figures with transparency and methodological rigor.",
     "createAccountButton": "Sign-up",
     "homeHeaderSearchTitle": "Search in our platform",
     "homeHeaderSearchDescription": "Find fact-checks, personalities and verified claims",
@@ -28,7 +28,7 @@
     "latestReviewsSeeAll": "See all",
     "reviewsCarouselOpen": "Open",
     "reviewsCardNoTopics": "No topics added",
-    "forumButton": "Participate in our forum",
+    "forumButton": "Join our Committee",
     "redirectTitle": "Your will be redirected to the forum in a new tab",
     "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen."
 }
