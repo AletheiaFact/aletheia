@@ -2,7 +2,7 @@
     "title": "Committee Invitation",
     "intro": "Join the movement that is transforming how Brazil combats misinformation. Be part of a collaborative network of educators, researchers, and institutions committed to democracy.",
     "hero": {
-        "chip": "Committee for forum membership",
+        "chip": "Join the National Committee for the Democratization of Fact-Checking",
         "title": "Truth is a right.<br/>Fact-checking,<br/>a tool.",
         "description": "Join the movement that is transforming how Brazil combats misinformation. Be part of a collaborative network of educators, researchers, and institutions committed to democracy.",
         "ctaPrimary": "I want to participate",
@@ -53,7 +53,7 @@
             },
             "materials": {
                 "title": "Exclusive Materials",
-                "description": "Access to templates, practical guides, and educational resources for direct application in the classroom."
+                "description": "Access templates, practical guides, and educational resources for direct application in the classroom."
             },
             "research": {
                 "title": "Research Support",
@@ -61,26 +61,26 @@
             },
             "support": {
                 "title": "Specialized Support",
-                "description": "Consulting for the implementation of fact-checking centers at your institution."
+                "description": "Count on consulting for the implementation of fact-checking centers at your institution."
             },
             "visibility": {
                 "title": "National Visibility",
-                "description": "Public recognition as a partner institution in the fight against misinformation."
+                "description": "Gain public recognition as a partner institution in the fight against misinformation."
             },
             "reports": {
                 "title": "Impact Reports",
-                "description": "Documentation of results for accountability and fundraising."
+                "description": "Follow the documentation of results for accountability and fundraising."
             }
         },
         "pact": {
             "title": "Our Collaboration Pact",
-            "description": "The success of the Committee depends on everyone's active engagement. We share intellectual property results among members to accelerate the democratization of fact-checking, creating an environment of mutual sharing for the advancement of knowledge."
+            "description": "The success of the Committee depends on everyone's active engagement. We share the intellectual property of the results among members to accelerate the democratization of fact-checking, creating an environment of mutual sharing for the evolution of knowledge."
         }
     },
     "cta": {
         "eyebrow": "BE PART OF THIS TRANSFORMATION",
         "title": "Join the National Committee",
-        "description": "We invite all those who share the commitment to truth, critical education, and the strengthening of democracy.",
+        "description": "We invite all those who share the commitment to truth, critical education, and strengthening democracy.",
         "whoCanJoin": {
             "title": "Who can participate?"
         },
@@ -96,9 +96,9 @@
             "certification": "Certification",
             "support": "Continuous support"
         },
-        "badge": "Open spots for 2025",
+        "badge": "Open spots",
         "formTitle": "Express your interest",
-        "formDescription": "Fill out the form and our team will get in touch with the next steps.",
+        "formDescription": "Fill out the form and our team will contact you to present the next steps.",
         "formButton": "Access form",
         "orContact": "or"
     }

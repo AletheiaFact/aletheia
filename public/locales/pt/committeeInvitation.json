@@ -2,7 +2,7 @@
     "title": "Convite para o Comitê",
     "intro": "Junte-se ao movimento que está transformando a forma como o Brasil combate a desinformação. Seja parte de uma rede colaborativa de docentes, pesquisadores e instituições comprometidos com a democracia.",
     "hero": {
-        "chip": "Comitê para adesão ao fórum",
+        "chip": "Faça parte do Comitê Nacional de Democratização da Checagem de Fatos",
         "title": "A verdade é um<br/>direito. A checagem,<br/>uma ferramenta.",
         "description": "Junte-se ao movimento que está transformando a forma como o Brasil combate a desinformação. Seja parte de uma rede colaborativa de docentes, pesquisadores e instituições comprometidos com a democracia.",
         "ctaPrimary": "Quero participar",
@@ -53,7 +53,7 @@
             },
             "materials": {
                 "title": "Materiais Exclusivos",
-                "description": "Acesso a templates, guias práticos e recursos didáticos para aplicação direta em sala de aula."
+                "description": "Acesse templates, guias práticos e recursos didáticos para aplicação direta em sala de aula."
             },
             "research": {
                 "title": "Apoio à Pesquisa",
@@ -61,26 +61,26 @@
             },
             "support": {
                 "title": "Suporte Especializado",
-                "description": "Consultoria para implementação de núcleos de checagem de fatos em sua instituição."
+                "description": "Conte com consultoria para a implementação de núcleos de checagem de fatos em sua instituição."
             },
             "visibility": {
                 "title": "Visibilidade Nacional",
-                "description": "Reconhecimento público como instituição parceira na luta contra a desinformação."
+                "description": "Ganhe reconhecimento público como instituição parceira na luta contra a desinformação."
             },
             "reports": {
                 "title": "Relatórios de Impacto",
-                "description": "Documentação dos resultados para prestação de contas e captação de recursos."
+                "description": "Acompanhe a documentação dos resultados para prestação de contas e captação de recursos."
             }
         },
         "pact": {
             "title": "Nosso Pacto de Colaboração",
-            "description": "O sucesso do Comitê depende do engajamento ativo de todos. Compartilhamos resultados de propriedade intelectual entre os membros para acelerar a democratização da checagem de fatos, criando um ambiente de compartilhamento mútuo em prol da evolução do conhecimento."
+            "description": "O sucesso do Comitê depende do engajamento ativo de todos. Compartilhamos a propriedade intelectual dos resultados entre os membros para acelerar a democratização da checagem de fatos, criando um ambiente de partilha mútuo em prol da evolução do conhecimento."
         }
     },
     "cta": {
         "eyebrow": "FAÇA PARTE DESTA TRANSFORMAÇÃO",
         "title": "Junte-se ao Comitê Nacional",
-        "description": "Convidamos todos aqueles que compartilham do compromisso com a verdade, a educação crítica e o fortalecimento da democracia.",
+        "description": "Convidamos todos aqueles que compartilham do compromisso com a verdade, com a educação crítica e com o fortalecimento da democracia.",
         "whoCanJoin": {
             "title": "Quem pode participar?"
         },
@@ -96,9 +96,9 @@
             "certification": "Certificação",
             "support": "Suporte contínuo"
         },
-        "badge": "Vagas abertas para 2025",
+        "badge": "Vagas abertas",
         "formTitle": "Manifeste seu interesse",
-        "formDescription": "Preencha o formulário e nossa equipe entrará em contato com as próximas etapas.",
+        "formDescription": "Preencha o formulário e nossa equipe entrará em contato para apresentar as próximas etapas.",
         "formButton": "Acessar formulário",
         "orContact": "ou"
     }
