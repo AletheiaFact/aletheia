@@ -120,8 +120,6 @@ export class AdminEditorService {
         claimId: string,
         payload: ClaimEditCommitRequestDto
     ): Promise<ClaimEditCommitResponseDto> {
-        this.guardPersonalityNotEdited(payload);
-
         const userId = this.req.user?._id ?? "anonymous";
         this.logger.log(
             `Commit start — claimId=${claimId} user=${userId} ` +
@@ -190,6 +188,7 @@ export class AdminEditorService {
                 const cascadeCounts = await this.cascade.applyOneToOneRemaps(
                     hashRemaps,
                     sentenceTargetRemaps,
+                    loaded.claim._id as Types.ObjectId,
                     session
                 );
 
@@ -386,8 +385,15 @@ export class AdminEditorService {
         }
 
         const newParagraphIds: Types.ObjectId[] = [];
+        const sentenceDocsToInsert: any[] = [];
+        const paragraphDocsToInsert: any[] = [];
 
-        for (const oldParagraph of loaded.paragraphs) {
+        for (
+            let paragraphPosition = 0;
+            paragraphPosition < loaded.paragraphs.length;
+            paragraphPosition++
+        ) {
+            const oldParagraph = loaded.paragraphs[paragraphPosition];
             const oldSentenceRefs = (oldParagraph.content as any[]).map((s) =>
                 (s?._id ?? s).toString()
             );
@@ -411,44 +417,64 @@ export class AdminEditorService {
                             errorCode: "intent-mismatch",
                         });
                     }
-                    const newSentence = new this.SentenceModel({
+                    const newSentenceId = new Types.ObjectId();
+                    sentenceDocsToInsert.push({
+                        _id: newSentenceId,
                         type: "sentence",
                         data_hash: newHash,
                         props: { id: snapshot.sentenceSequence },
                         content: edit.newText,
                         claimRevisionId: newRevisionId,
                     });
-                    await newSentence.save({ session });
-                    newSentenceIds.push(newSentence._id);
+                    newSentenceIds.push(newSentenceId);
                     hashRemaps.push({
                         oldDataHash: edit.oldDataHash,
                         newDataHash: newHash,
                     });
                     sentenceTargetRemaps.push({
                         oldSentenceId,
-                        newSentenceId: newSentence._id,
+                        newSentenceId,
                     });
+                    // Redacted diff: hash transition + position + length
+                    // delta only. No plaintext (full or partial) retained,
+                    // per spec 2208 US6 / data-minimization policy.
                     sentenceDiff.push({
                         op: "edit",
-                        oldDataHash: edit.oldDataHash,
-                        newDataHash: newHash,
-                        oldText: snapshot.text,
-                        newText: edit.newText,
+                        paragraphPosition,
+                        oldHash: edit.oldDataHash,
+                        newHash,
+                        oldLength: snapshot.text.length,
+                        newLength: edit.newText.length,
                     });
                 } else {
                     newSentenceIds.push(new Types.ObjectId(oldSentenceId));
                 }
             }
 
-            const newParagraph = new this.ParagraphModel({
+            const newParagraphId = new Types.ObjectId();
+            paragraphDocsToInsert.push({
+                _id: newParagraphId,
                 type: "paragraph",
                 data_hash: oldParagraph.data_hash,
                 props: oldParagraph.props,
                 content: newSentenceIds,
                 claimRevisionId: newRevisionId,
             });
-            await newParagraph.save({ session });
-            newParagraphIds.push(newParagraph._id);
+            newParagraphIds.push(newParagraphId);
+        }
+
+        // Bulk-insert all new sentences + paragraphs in two round-trips
+        // (O(1) per collection regardless of edit count) inside the
+        // existing transaction session. Speech doc stays a single save.
+        if (sentenceDocsToInsert.length > 0) {
+            await this.SentenceModel.insertMany(sentenceDocsToInsert, {
+                session,
+            });
+        }
+        if (paragraphDocsToInsert.length > 0) {
+            await this.ParagraphModel.insertMany(paragraphDocsToInsert, {
+                session,
+            });
         }
 
         const newSpeech = new this.SpeechModel({
@@ -474,20 +500,6 @@ export class AdminEditorService {
                 statusCode: 409,
                 message: "Claim has been modified by another user",
                 currentRevisionId: currentId,
-            });
-        }
-    }
-
-    private guardPersonalityNotEdited(payload: ClaimEditCommitRequestDto) {
-        if (
-            payload.metadata &&
-            "personalities" in (payload.metadata as any) &&
-            (payload.metadata as any).personalities !== undefined
-        ) {
-            throw new BadRequestException({
-                statusCode: 400,
-                message: "Personality edits are not supported by this editor",
-                errorCode: "personality-edit-rejected",
             });
         }
     }

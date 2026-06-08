@@ -121,9 +121,14 @@ const AdminToolBar = ({
                                         const ns =
                                             nameSpace &&
                                             nameSpace !== NameSpaceEnum.Main
-                                                ? `&namespace=${nameSpace}`
+                                                ? `&namespace=${encodeURIComponent(
+                                                      nameSpace
+                                                  )}`
                                                 : "";
-                                        window.location.href = `/admin/claim-edit?claimId=${content?._id}${ns}`;
+                                        const safeId = encodeURIComponent(
+                                            content?._id ?? ""
+                                        );
+                                        window.location.href = `/admin/claim-edit?claimId=${safeId}${ns}`;
                                     }}
                                     title={t("admin-editor:actions.editClaim")}
                                 >

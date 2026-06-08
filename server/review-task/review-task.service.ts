@@ -1058,10 +1058,11 @@ export class ReviewTaskService {
     async cascadeUpdateDataHash(
         oldHash: string,
         newHash: string,
+        claimId: Types.ObjectId | string,
         session: ClientSession
     ): Promise<number> {
         const result = await this.ReviewTaskModel.updateMany(
-            { data_hash: oldHash },
+            { data_hash: oldHash, target: claimId, onModel: "Claim" },
             { $set: { data_hash: newHash } },
             { session }
         );

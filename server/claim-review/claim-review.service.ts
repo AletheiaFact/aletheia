@@ -668,10 +668,11 @@ export class ClaimReviewService {
     async cascadeUpdateDataHash(
         oldHash: string,
         newHash: string,
+        claimId: mongoose.Types.ObjectId | string,
         session: mongoose.ClientSession
     ): Promise<number> {
         const result = await this.ClaimReviewModel.updateMany(
-            { data_hash: oldHash },
+            { data_hash: oldHash, target: claimId, targetModel: "Claim" },
             { $set: { data_hash: newHash } },
             { session }
         );
