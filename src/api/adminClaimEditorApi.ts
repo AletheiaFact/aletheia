@@ -1,6 +1,6 @@
 import { createApiInstance } from "./apiFactory";
 
-const request = createApiInstance("/api/claim");
+const request = createApiInstance("");
 
 export type SentenceOpIntent = "noop" | "edit";
 
@@ -62,25 +62,38 @@ export interface AdminClaimEditConflictError {
     currentRevisionId: string;
 }
 
+function buildBasePath(nameSpace?: string): string {
+    if (nameSpace && nameSpace !== "main") {
+        return `/${encodeURIComponent(nameSpace)}/api/claim`;
+    }
+    return "/api/claim";
+}
+
 async function getEditableView(
-    claimId: string
+    claimId: string,
+    nameSpace?: string
 ): Promise<AdminClaimEditableView> {
+    const base = buildBasePath(nameSpace);
     const safeId = encodeURIComponent(claimId);
-    const { data } = await request.get(`/${safeId}/admin-edit/view`);
+    const { data } = await request.get(`${base}/${safeId}/admin-edit/view`);
     return data;
 }
 
 async function commitEdit(
     claimId: string,
-    payload: AdminClaimEditCommitRequest
+    payload: AdminClaimEditCommitRequest,
+    nameSpace?: string
 ): Promise<AdminClaimEditCommitResponse> {
+    const base = buildBasePath(nameSpace);
     const safeId = encodeURIComponent(claimId);
     const { data } = await request.post(
-        `/${safeId}/admin-edit/commit`,
+        `${base}/${safeId}/admin-edit/commit`,
         payload
     );
     return data;
 }
+
+export const __internal = { buildBasePath };
 
 export default {
     getEditableView,

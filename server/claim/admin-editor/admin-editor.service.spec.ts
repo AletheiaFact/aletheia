@@ -179,16 +179,20 @@ describe("AdminEditorService (Unit)", () => {
     });
 
     describe("commit — guards", () => {
-        it("rejects payload with personalities edit", async () => {
-            await expect(
-                service.commit(validClaimId, {
-                    baseRevisionId: revisionId.toString(),
-                    metadata: { personalities: ["x"] } as any,
-                    sentenceOps: [],
-                })
-            ).rejects.toMatchObject({
-                response: { errorCode: "personality-edit-rejected" },
+        it("rejects payload with personalities edit at the Zod boundary", async () => {
+            const { ClaimEditCommitRequestSchema } = await import(
+                "./dto/claim-edit-commit-request.dto"
+            );
+            const result = ClaimEditCommitRequestSchema.safeParse({
+                baseRevisionId: revisionId.toString(),
+                metadata: { personalities: ["x"] },
+                sentenceOps: [],
             });
+            expect(result.success).toBe(false);
+            if (!result.success) {
+                const paths = result.error.issues.map((i) => i.path.join("."));
+                expect(paths.some((p) => p.startsWith("metadata"))).toBe(true);
+            }
         });
 
         it("throws Conflict when baseRevisionId is stale", async () => {
@@ -233,8 +237,11 @@ describe("AdminEditorService (Unit)", () => {
             expect(cascade.applyOneToOneRemaps).toHaveBeenCalledWith(
                 [],
                 [],
-                expect.anything()
+                expect.anything(), // claimId (ObjectId)
+                expect.anything() // session
             );
+            const claimIdArg = cascade.applyOneToOneRemaps.mock.calls[0][2];
+            expect(claimIdArg.toString()).toBe(validClaimId);
             expect(historyService.createHistory).toHaveBeenCalled();
             expect(result.newSlug).toBe("brand-new-title");
             expect(result.sentenceHashMap).toEqual([]);

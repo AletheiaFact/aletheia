@@ -18,9 +18,10 @@ import colors from "../../../styles/colors";
 
 interface Props {
     claimId: string;
+    nameSpace?: string;
 }
 
-const EditClaimView: React.FC<Props> = ({ claimId }) => {
+const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
     const { t } = useTranslation("admin-editor");
     const router = useRouter();
     const [view, setView] = useState<AdminClaimEditableView | null>(null);
@@ -34,7 +35,10 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
     const load = async () => {
         setLoading(true);
         try {
-            const v = await adminClaimEditorApi.getEditableView(claimId);
+            const v = await adminClaimEditorApi.getEditableView(
+                claimId,
+                nameSpace
+            );
             setView(v);
             send({ type: "SET_TITLE", value: v.metadata.title });
             send({ type: "SET_DATE", value: v.metadata.date });
@@ -81,10 +85,22 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
                 newText: d.text.trim(),
             }));
 
+    const normalizeToMinute = (iso: string | undefined): string => {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return iso;
+        return d.toISOString().slice(0, 16);
+    };
+
     const hasChanges = useMemo(() => {
         if (!view) return false;
         if (state.context.title !== view.metadata.title) return true;
-        if (state.context.date !== view.metadata.date) return true;
+        if (
+            normalizeToMinute(state.context.date) !==
+            normalizeToMinute(view.metadata.date)
+        ) {
+            return true;
+        }
         return sentenceDrafts.some(
             (d) =>
                 d.intent === "edit" && d.text.trim() !== d.originalText.trim()
@@ -103,7 +119,8 @@ const EditClaimView: React.FC<Props> = ({ claimId }) => {
             send({ type: "COMMIT" });
             const result = await adminClaimEditorApi.commitEdit(
                 claimId,
-                payload
+                payload,
+                nameSpace
             );
             send({ type: "COMMIT_OK" });
             MessageManager.showMessage("success", t("commit.success"));

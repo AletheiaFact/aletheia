@@ -2,7 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ClientSession, Types } from "mongoose";
 import { ReviewTaskService } from "../../review-task/review-task.service";
 import { ClaimReviewService } from "../../claim-review/claim-review.service";
-import { VerificationRequestService } from "../../verification-request/verification-request.service";
 import { CommentService } from "../../review-task/comment/comment.service";
 
 export interface SentenceHashRemap {
@@ -31,13 +30,20 @@ export class CascadeService {
     constructor(
         private readonly reviewTaskService: ReviewTaskService,
         private readonly claimReviewService: ClaimReviewService,
-        private readonly verificationRequestService: VerificationRequestService,
         private readonly commentService: CommentService
     ) {}
+
+    // VerificationRequest is intentionally excluded from the scoped cascade.
+    // Its `data_hash` is `unique` and the schema carries no claim
+    // back-reference. A pre-existing VR row matching the edited claim's hash
+    // may have been ingested for a different content origin; rewriting it
+    // would corrupt that VR's relation to the source it was actually about.
+    // Stale-hash VR is preferable to silent cross-origin rewrite.
 
     async applyOneToOneRemaps(
         hashRemaps: SentenceHashRemap[],
         sentenceTargetRemaps: SentenceTargetRemap[],
+        claimId: Types.ObjectId | string,
         session: ClientSession
     ): Promise<CascadeCounts> {
         const counts: CascadeCounts = {
@@ -54,18 +60,14 @@ export class CascadeService {
                 await this.reviewTaskService.cascadeUpdateDataHash(
                     remap.oldDataHash,
                     remap.newDataHash,
+                    claimId,
                     session
                 );
             counts.claimReviewsUpdated +=
                 await this.claimReviewService.cascadeUpdateDataHash(
                     remap.oldDataHash,
                     remap.newDataHash,
-                    session
-                );
-            counts.verificationRequestsUpdated +=
-                await this.verificationRequestService.cascadeUpdateDataHash(
-                    remap.oldDataHash,
-                    remap.newDataHash,
+                    claimId,
                     session
                 );
         }
@@ -80,9 +82,10 @@ export class CascadeService {
         }
 
         this.logger.log(
-            `Cascade complete — reviewTasks=${counts.reviewTasksUpdated} ` +
+            `Cascade complete — claimId=${claimId} ` +
+                `reviewTasks=${counts.reviewTasksUpdated} ` +
                 `claimReviews=${counts.claimReviewsUpdated} ` +
-                `verificationRequests=${counts.verificationRequestsUpdated} ` +
+                `verificationRequests=0 (skipped: no scope) ` +
                 `comments=${counts.commentsUpdated}`
         );
         return counts;

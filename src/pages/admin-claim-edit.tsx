@@ -6,11 +6,12 @@ import EditClaimView from "../components/Claim/EditClaim/EditClaimView";
 
 interface Props {
     claimId: string;
+    nameSpace?: string;
 }
 
-const AdminClaimEditPage: NextPage<Props> = ({ claimId }) => {
+const AdminClaimEditPage: NextPage<Props> = ({ claimId, nameSpace }) => {
     if (!claimId) return null;
-    return <EditClaimView claimId={claimId} />;
+    return <EditClaimView claimId={claimId} nameSpace={nameSpace} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -19,11 +20,16 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     const claimId =
         (typeof query?.claimId === "string" ? query.claimId : "") ||
         (typeof parsed.claimId === "string" ? parsed.claimId : "");
+    const nameSpace =
+        (typeof query?.namespace === "string" ? query.namespace : "") ||
+        (typeof parsed.namespace === "string" ? parsed.namespace : "") ||
+        null;
 
     return {
         props: {
             ...(await serverSideTranslations(resolvedLocale)),
             claimId,
+            nameSpace,
         },
     };
 }
