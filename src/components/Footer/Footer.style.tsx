@@ -16,7 +16,7 @@ const FooterBox = styled(Box) <FooterBoxProps>`
         ),
         ${({ $namespacePrefix }) => ($namespacePrefix ? colors.primary : colors.secondary)};
     color: ${colors.white};
-    padding: ${({ $isMobile }) => ($isMobile ? "36px 20px 18px" : "64px 48px 22px")};
+    padding: ${({ $isMobile }) => ($isMobile ? "36px 20px 18px" : "48px 22px")};
     align-self: flex-end;
     border-top: 1px solid color-mix(in srgb, ${colors.white} 8%, transparent);
 
@@ -28,7 +28,7 @@ const FooterBox = styled(Box) <FooterBoxProps>`
     .footer-cta-card {
         border: 1px solid color-mix(in srgb, ${colors.white} 12%, transparent);
         border-radius: 16px;
-        padding: ${({ $isMobile }) => ($isMobile ? "24px 18px" : "40px 38px")};
+        padding: ${({ $isMobile }) => ($isMobile ? "24px 18px" : "34px 38px")};
         background: linear-gradient(
             90deg,
             color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 0%,

@@ -3,7 +3,6 @@ import { Grid } from "@mui/material";
 import CTAFolderStyle from "./CTAFolder.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
-import { isUserLoggedIn } from "../../../atoms/currentUser";
 import localConfig from "../../../../config/localConfig";
 import CTAFolderMainColumn from "./CTAFolderMainColumn";
 import CTAFolderAchievementsColumn from "./CTAFolderAchievementsColumn";
@@ -14,7 +13,6 @@ type CTAFolderProps = {
 
 const CTAFolder = ({ isSplit }: CTAFolderProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
         localConfig.home.folderRedirectForum && (
@@ -23,10 +21,7 @@ const CTAFolder = ({ isSplit }: CTAFolderProps) => {
                 $isSplit={isSplit}
             >
                 <Grid container className="ctaFolderContent">
-                    <CTAFolderMainColumn
-                        isLoggedIn={isLoggedIn}
-                        isHomeFolder={false}
-                    />
+                    <CTAFolderMainColumn isHomeFolder={true} />
                     <CTAFolderAchievementsColumn />
                 </Grid>
             </CTAFolderStyle>

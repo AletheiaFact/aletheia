@@ -1,14 +1,14 @@
 {
-    "homeHeaderBadge": "Transparent fact-checking",
-    "homeHeaderTitle": "<line1>Checking claims from</line1> <line2>your <highlight>favorite personalities</highlight></line2>",
+    "homeHeaderBadge": "Fact-checking done transparently.",
+    "homeHeaderTitle": "<line1>Fact-checking of speeches by</line1> <line2><highlight>the most relevant personalities</highlight></line2> <line3>in Brazil and worldwide</line3>",
     "homeHeaderViewReviewsButton": "View recent reviews",
     "homeHeaderFeatureMethodology": "Transparent methodology",
-    "homeHeaderFeatureReviewers": "Certified reviewers",
+    "homeHeaderFeatureReviewers": "Certified fact-checkers",
     "homeHeaderFeatureSources": "Verified sources",
     "statsPersonalities": "personalities",
     "statsClaims": "claims",
     "statsClaimReviews": "reviews",
-    "statsFooter": "Contribute to an internet free of misinformation. We verify claims made by politicians and public figures with transparency and methodological rigor.",
+    "statsFooter": "We verify claims made by public figures with a methodology accessible to all citizens",
     "createAccountButton": "Sign-up",
     "homeHeaderSearchTitle": "Search in our platform",
     "homeHeaderSearchDescription": "Find fact-checks, personalities and verified claims",
@@ -28,7 +28,7 @@
     "latestReviewsSeeAll": "See all",
     "reviewsCarouselOpen": "Open",
     "reviewsCardNoTopics": "No topics added",
-    "forumButton": "Join our Committee",
+    "committeeButton": "Join our Committee",
     "redirectTitle": "Your will be redirected to the forum in a new tab",
     "descriptionAlert": "To participate in the discussions, use the same account of Aletheia to log in at the top of the screen."
 }

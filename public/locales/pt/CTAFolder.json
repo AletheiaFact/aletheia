@@ -1,15 +1,11 @@
 {
-    "signUpTitle": "Quer ser um revisor?",
-    "signUpBody": "A plataforma AletheiaFact.org está atualmente em fase beta. Convidamos jornalistas e checadores de fatos para testarem nossas ferramentas!",
-    "signUpFooter": "Nosso objetivo é, após essa etapa, abrir o sistema para que qualquer usuário possa adicionar e revisar checagens. Acompanhe nossas redes sociais e faça parte desse movimento!",
-    "aboutUsTitle": "Saiba mais sobre a organização AletheiaFact",
+    "aboutUsTitle": "Saiba mais sobre a organização AletheiaFact.org",
     "aboutUsBody": "A Aletheia é um movimento e uma plataforma de código aberto que oferece ferramentas gratuitas para capacitar qualquer cidadão no combate à desinformação e no fortalecimento da democracia.",
     "button": "Inscreva-se para ser parte do movimento",
-    "signUpButton": "Inscreva-se agora",
     "aboutUsButton": "Quero conhecer a Aletheia!",
     "aletheiaMoviment": "Movimento Aletheia Fact",
-    "achievements1": "Finalista do WSIS 2025 (ONU)",
-    "achievements2": "20+ Universidades Parceiras",
+    "achievements1": "Finalista do WSIS 2025 e 2026 (ONU)",
+    "achievements2": "50+ Universidades Parceiras",
     "achievements3": "100% Código Aberto",
     "achievements4": "Metodologia replicável"
 }

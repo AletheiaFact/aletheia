@@ -11,7 +11,7 @@ const CommitteeInvitationPage: NextPage = () => {
     const { t } = useTranslation();
     return (
         <>
-            <Seo title={t("committeeInvitation:title")} description={t("committeeInvitation:intro")} />
+            <Seo title={t("committeeInvitation:title")} description={t("committeeInvitation:hero.description")} />
             <CommitteInvitationPage />
         </>
     );

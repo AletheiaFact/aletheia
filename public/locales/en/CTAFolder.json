@@ -1,15 +1,11 @@
 {
-    "signUpTitle": "Want to be a reviewer?",
-    "signUpBody": "The AletheiaFact.org platform is currently in beta. We invite journalists and fact-checkers to test our tools!",
-    "signUpFooter": "Our goal is, after this stage, to open the system so that any user can add and review fact-checks. Follow us on social media and be part of this movement!",
-    "aboutUsTitle": "Learn more about the AletheiaFact organization.",
+    "aboutUsTitle": "Learn more about the AletheiaFact.org organization",
     "aboutUsBody": "Aletheia is a movement and an open-source platform that offers free tools to empower any citizen in combating misinformation and strengthening democracy.",
     "button": "Sign-up to be part of the movement",
-    "signUpButton": "Sign up now",
     "aboutUsButton": "I want to learn about Aletheia",
     "aletheiaMoviment": "Aletheia Fact Movement",
-    "achievements1": "WSIS 2025 Finalist (UN)",
-    "achievements2": "20+ Partner Universities",
+    "achievements1": "WSIS 2025 and 2026 Finalist (UN)",
+    "achievements2": "50+ Partner Universities",
     "achievements3": "100% Open Source Code",
     "achievements4": "Replicable methodology"
 }
