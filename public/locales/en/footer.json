@@ -15,9 +15,8 @@
     "title": "Aletheia now has a committee!",
     "description": "Join our community and share your questions, findings, and experiences with other users.",
     "primaryButton": "Learn About Our Mission",
-    "secondaryButton": "Join the Committee",
-    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
-  },
+    "secondaryButton": "Join the Committee"
+},
   "sections": {
     "platform": {
       "title": "PLATFORM",
