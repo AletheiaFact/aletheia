@@ -15,9 +15,8 @@
     "title": "Aletheia now has a forum!",
     "description": "Join our community and share your questions, findings, and experiences with other users.",
     "primaryButton": "Learn About Our Mission",
-    "secondaryButton": "Join Our Forum",
-    "callToActionRedirect": "https://forms.gle/AnTuCzXtPTrsXHGVA"
-  },
+    "secondaryButton": "Join Our Forum"
+},
   "sections": {
     "platform": {
       "title": "PLATFORM",

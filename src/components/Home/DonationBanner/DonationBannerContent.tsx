@@ -3,7 +3,7 @@ import DonationBannerButton from "./DonationBannerButton";
 import { ButtonType } from "../../AletheiaButton";
 import { Grid } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
-import DonationBannerStyle from "../DonationBanner.style";
+import DonationBannerStyle from "./DonationBanner.style";
 
 function DonationBannerContent({ closeClick }) {
     const { t } = useTranslation();
