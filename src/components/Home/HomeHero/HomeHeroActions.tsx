@@ -5,6 +5,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 import { trackUmamiEvent } from "../../../lib/umami";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
+import smoothScrollTo from "../../../utils/smoothScrollTo";
 
 const HomeHeroActions = () => {
     const { t } = useTranslation();
@@ -23,7 +24,7 @@ const HomeHeroActions = () => {
             <AletheiaButton
                 endIcon={<ArrowForwardIcon className="home-header-action-icon" />}
                 type={ButtonType.outline}
-                href="#latest-reviews"
+                onClick={smoothScrollTo("latest-reviews")}
                 data-cy="testHomeHeaderReviewsButton"
             >
                 {t("home:homeHeaderViewReviewsButton")}
