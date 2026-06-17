@@ -12164,7 +12164,7 @@ __metadata:
     cypress: 13.17.0
     dayjs: ^1.11.13
     domino: ^2.1.6
-    dompurify: 3.3.3
+    dompurify: 3.4.9
     dotenv: ^16.4.5
     env-cmd: ^10.1.0
     eslint: ^9.39.2
@@ -15545,15 +15545,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.3.3":
-  version: 3.3.3
-  resolution: "dompurify@npm:3.3.3"
+"dompurify@npm:3.4.9":
+  version: 3.4.9
+  resolution: "dompurify@npm:3.4.9"
   dependencies:
     "@types/trusted-types": ^2.0.7
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 2ba5b40129259836f1e6c98e99d16608d34c7f4ad6ba457ac8c932f0e2c8e0e7c27561d25fcabf97e695eec57fd5eef1c065b324a542e5125631d4f768af2736
+  checksum: d3c4c64aad2775c3f59ff199bc1782e8dbd24f86912ef1a6c4e29398b9c336afd8e480364c48197c44dbf9594431a5a8b538ae5aebc668908e3218568e714b42
   languageName: node
   linkType: hard
 
