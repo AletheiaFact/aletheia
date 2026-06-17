@@ -6,7 +6,16 @@ import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
 import AletheiaButton from "../AletheiaButton";
 
-const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, sources, errors, clearError }) => {
+const SourceInput = ({
+    onChange,
+    addSource,
+    removeSource,
+    placeholder,
+    label,
+    sources,
+    errors,
+    clearError,
+}) => {
     const { t } = useTranslation();
     return (
         <>
@@ -69,7 +78,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                 style={{
                     width: "100%",
                     textAlign: "right",
-                    paddingBottom: "15px"
+                    paddingBottom: "15px",
                 }}
             >
                 <a
@@ -81,11 +90,12 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                         textDecoration: "underline"
                     }}
                 >
-                    <AddOutlined fontSize="small" /> {t("sourceForm:addNewSourceButton")}
+                    <AddOutlined fontSize="small" />{" "}
+                    {t("sourceForm:addNewSourceButton")}
                 </a>
             </div>
         </>
     );
-}
+};
 
 export default SourceInput;
