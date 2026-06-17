@@ -13,7 +13,7 @@ import adminClaimEditorApi, {
     SentenceOp,
 } from "../../../api/adminClaimEditorApi";
 import { MessageManager } from "../../Messages";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import colors from "../../../styles/colors";
 
 interface Props {
