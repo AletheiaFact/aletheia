@@ -5,7 +5,13 @@ import {
     Logger,
     NotFoundException,
 } from "@nestjs/common";
-import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
+import {
+    ClientSession,
+    isValidObjectId,
+    Model,
+    Types,
+    UpdateQuery,
+} from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
 import { UsersService } from "../../users/users.service";
@@ -126,5 +132,18 @@ export class CommentService {
         );
 
         return { ...comment.toObject(), replies };
+    }
+
+    async cascadeUpdateSentenceTarget(
+        oldSentenceId: Types.ObjectId | string,
+        newSentenceId: Types.ObjectId | string,
+        session: ClientSession
+    ): Promise<number> {
+        const result = await this.CommentModel.updateMany(
+            { targetId: oldSentenceId },
+            { $set: { targetId: newSentenceId } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }

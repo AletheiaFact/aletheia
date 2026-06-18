@@ -1,4 +1,5 @@
 import {
+    ClientSession,
     isValidObjectId,
     Model,
     SortOrder,
@@ -1596,5 +1597,18 @@ export class VerificationRequestService {
         await this.revalidateAndRunMissingStates(updatedVr);
 
         return updatedVr;
+    }
+
+    async cascadeUpdateDataHash(
+        oldHash: string,
+        newHash: string,
+        session: ClientSession
+    ): Promise<number> {
+        const result = await this.VerificationRequestModel.updateMany(
+            { data_hash: oldHash },
+            { $set: { data_hash: newHash } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }

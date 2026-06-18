@@ -4,6 +4,7 @@ import { SpeechModule } from "../types/speech/speech.module";
 import { ParagraphModule } from "../types/paragraph/paragraph.module";
 import { SentenceModule } from "../types/sentence/sentence.module";
 import { UnattributedModule } from "../types/unattributed/unattributed.module";
+import { SentenceHashService } from "../admin-editor/sentence-hash.service";
 
 @Module({
     imports: [
@@ -13,6 +14,6 @@ import { UnattributedModule } from "../types/unattributed/unattributed.module";
         UnattributedModule,
     ],
     exports: [ParserService],
-    providers: [ParserService],
+    providers: [ParserService, SentenceHashService],
 })
 export class ParserModule {}

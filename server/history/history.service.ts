@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types, isValidObjectId } from "mongoose";
+import { ClientSession, Model, Types, isValidObjectId } from "mongoose";
 import {
     History,
     HistoryDocument,
@@ -88,10 +88,11 @@ export class HistoryService {
      * @returns Returns a new history document to database
      */
     async createHistory(
-        data: Partial<HistoryDocument>
+        data: Partial<HistoryDocument>,
+        session?: ClientSession
     ): Promise<HistoryDocument> {
         const newHistory = new this.HistoryModel(data);
-        return newHistory.save();
+        return newHistory.save(session ? { session } : undefined);
     }
 
     async getHistoryForTarget(

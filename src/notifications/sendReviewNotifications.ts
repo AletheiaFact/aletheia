@@ -34,9 +34,14 @@ const sendReviewNotifications = ({
         data_hash
     );
 
+    const redirectUrl =
+        typeof window !== "undefined" && window.location?.origin
+            ? `${window.location.origin}${currentPath}`
+            : currentPath;
+
     const payload = {
         messageIdentifier: "",
-        redirectUrl: currentPath,
+        redirectUrl,
     };
 
     if (event === Events.assignUser) {

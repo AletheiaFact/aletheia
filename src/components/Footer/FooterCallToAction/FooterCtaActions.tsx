@@ -6,14 +6,9 @@ import { trackUmamiEvent } from "../../../lib/umami";
 
 const FooterCtaActions = () => {
     const { t } = useFooterData();
-    const callToActionRedirect = t("footer:cta.callToActionRedirect")
 
     return (
-        <Stack
-            direction="row"
-            spacing={1.5}
-            className="footer-cta-actions"
-        >
+        <Stack direction="row" spacing={1.5} className="footer-cta-actions">
             <Link
                 href="/about"
                 underline="none"
@@ -23,15 +18,16 @@ const FooterCtaActions = () => {
                 {t("footer:cta.primaryButton")}
             </Link>
             <Link
-                onClick={() => trackUmamiEvent("cta-footer-forum-form-button", "forumForm")}
-                href={callToActionRedirect}
+                onClick={() =>
+                    trackUmamiEvent("cta-footer-forum-form-button", "forumForm")
+                }
+                href="/committee-invitation"
                 underline="none"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="footer-secondary-cta-link"
                 data-cy="testFooterCtaSecondaryLink"
             >
-                {t("footer:cta.secondaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
+                {t("footer:cta.secondaryButton")}{" "}
+                <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
         </Stack>
     );

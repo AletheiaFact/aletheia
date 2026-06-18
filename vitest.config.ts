@@ -23,7 +23,7 @@ export default defineConfig({
                 extends: true,
                 test: {
                     name: "unit",
-                    include: ["server/**/*.spec.ts"],
+                    include: ["server/**/*.spec.ts", "src/**/*.spec.ts"],
                     exclude: [
                         "server/tests/**/*.e2e.spec.ts",
                         "server/**/dist/**",
