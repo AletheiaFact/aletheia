@@ -6,14 +6,14 @@ import { generateSentenceContentPath } from "../utils/GetSentenceContentHref";
 import { Personality } from "../types/Personality";
 
 type SendReviewNotificationsFn = {
-  data_hash: string,
-  event: string,
-  reviewData: any,
-  claim?: Claim,
-  personality?: Personality,
-  nameSpace?: string,
-  currentUserId: string | number,
-  t: TFunction
+    data_hash: string;
+    event: string;
+    reviewData: any;
+    claim?: Claim;
+    personality?: Personality;
+    nameSpace?: string;
+    currentUserId: string | number;
+    t: TFunction;
 };
 
 const sendReviewNotifications = ({
@@ -24,9 +24,8 @@ const sendReviewNotifications = ({
     personality,
     nameSpace,
     currentUserId,
-    t
+    t,
 }: SendReviewNotificationsFn) => {
-
     const currentPath = generateSentenceContentPath(
         nameSpace,
         personality,
@@ -35,9 +34,14 @@ const sendReviewNotifications = ({
         data_hash
     );
 
+    const redirectUrl =
+        typeof window !== "undefined" && window.location?.origin
+            ? `${window.location.origin}${currentPath}`
+            : currentPath;
+
     const payload = {
         messageIdentifier: "",
-        redirectUrl: currentPath
+        redirectUrl,
     };
 
     if (event === Events.assignUser) {
