@@ -20,8 +20,8 @@ const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
                 overflow: "hidden",
                 marginTop: "16px",
                 marginBottom: "16px",
-                minHeight: "120px",
-                maxHeight: "200px",
+                minHeight: { xs: "120px", sm: "150px", md: "200px" },
+                maxHeight: { xs: "180px", sm: "250px", md: "320px" },
             }}
         >
             <img
