@@ -36,6 +36,7 @@ import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
@@ -58,7 +59,7 @@ export class ClaimController {
     constructor(
         private claimReviewService: ClaimReviewService,
         private reviewTaskService: ReviewTaskService,
-        @Inject("PersonalityService")
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private sentenceService: SentenceService,
@@ -134,8 +135,8 @@ export class ClaimController {
             claim.personalities[0]
         );
         const path = claim.slug
-            ? `/personality/${personality.slug}/claim/${claim.slug}`
-            : `/personality/${personality.slug}`;
+            ? `/personality/${personality?.slug}/claim/${claim.slug}`
+            : `/personality/${personality?.slug}`;
         return {
             _id: claim._id,
             title: claim.title,

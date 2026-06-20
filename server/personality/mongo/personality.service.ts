@@ -15,18 +15,27 @@ import { UtilService } from "../../util";
 import { ClaimReviewService } from "../../claim-review/claim-review.service";
 import { HistoryService } from "../../history/history.service";
 import { HistoryType, TargetModel } from "../../history/schema/history.schema";
-import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
+import {
+    ISoftDeletedDocument,
+    ISoftDeletedModel,
+} from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../../types";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
-import {
-    ICombinedListResult,
+import type {
     IFindAllOptions,
-    IFindAllResult,
+    IPersonality,
+    IPersonalityCreateInput,
+    IPersonalityFindAllResult,
+    IPersonalityFindOrCreateInput,
+    IPersonalityGetByIdOptions,
+    IPersonalityListQuery,
+    IPersonalityListResult,
+    IPersonalityUpdateInput,
 } from "../../interfaces/personality.interface";
+import type { IPersonalityService } from "../../interfaces/personality.service.interface";
 import { escapeRegex } from "../../util/regex.util";
 import { toError } from "../../util/error-handling";
-import { CreatePersonalityDTO } from "../dto/create-personality.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoPersonalityService {
@@ -47,63 +56,69 @@ export class MongoPersonalityService {
         private readonly util: UtilService
     ) {}
 
-    async getWikidataEntities(regex: string, language: string) {
+    private async getWikidataEntities(regex: string, language: string) {
         return await this.wikidata.queryWikibaseEntities(
             regex,
             language,
             false
         );
     }
-    async getWikidataList(regex: string, language: string) {
+
+    private async getWikidataList(regex: string, language: string) {
         const wbentities = await this.getWikidataEntities(regex, language);
         return wbentities.map((entity) => entity.wikidata);
     }
 
-    async listAll(
-        page: number,
-        pageSize: number,
-        order: string,
-        query: any,
-        filter: any,
-        language: string,
-        withSuggestions = false
-    ) {
-        let personalities;
+    async listAll(query: IPersonalityListQuery): Promise<IPersonality[]> {
+        const {
+            page = 0,
+            pageSize = 10,
+            order = "asc",
+            language = "en",
+            withSuggestions = false,
+            filter,
+        } = query;
+        const mongoQuery = this.verifyInputsQuery(query);
+
+        let personalities: any[];
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
                 {
                     $match: {
-                        $and: [query, { _id: { $ne: filter } }],
+                        $and: [mongoQuery, { _id: { $ne: filter } }],
                     },
                 },
                 { $sample: { size: pageSize } },
             ]);
-        } else if (Object.keys(query).length > 0 && query?.name) {
+        } else if (mongoQuery?.name) {
             const wikidataList = await this.getWikidataList(
-                query?.name.$regex,
+                mongoQuery.name.$regex,
                 language
             );
             personalities = await this.PersonalityModel.find({
-                $or: [{ wikidata: { $in: wikidataList } }, { query }],
+                $or: [
+                    { wikidata: { $in: wikidataList } },
+                    { query: mongoQuery },
+                ],
             })
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order as any })
                 .lean();
         } else {
-            personalities = await this.PersonalityModel.find(query)
+            personalities = await this.PersonalityModel.find(mongoQuery)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order as any })
                 .lean();
         }
 
-        if (withSuggestions) {
+        if (withSuggestions && mongoQuery?.name) {
             personalities = this.util.mergeObjectsInUnique(
                 [
                     ...(await this.getWikidataEntities(
-                        query?.name.$regex,
+                        mongoQuery.name.$regex,
                         language
                     )),
                     ...personalities,
@@ -131,25 +146,24 @@ export class MongoPersonalityService {
         );
     }
 
-    /**
-     * This function will create a new personality and save it to the dataBase.
-     * Also creates a History Module that tracks creation of personalities.
-     * @param personality PersonalityBody received of the client.
-     * @returns Return a new personality.
-     */
-    async create(personality: CreatePersonalityDTO & { slug?: string }) {
+    async create(input: IPersonalityCreateInput): Promise<IPersonality> {
+        const personality: IPersonalityCreateInput & { slug?: string } = {
+            ...input,
+            description: input.description ?? "",
+        };
         try {
-            const personalityExists =
-                await this.getDeletedPersonalityByWikidata(
-                    personality.wikidata
-                );
+            const personalityExists = personality.wikidata
+                ? await this.getDeletedPersonalityByWikidata(
+                      personality.wikidata
+                  )
+                : null;
 
             if (personalityExists) {
-                return personalityExists.restore();
+                return (await personalityExists.restore()) as unknown as IPersonality;
             } else {
                 personality.slug = slugify(personality.name, {
-                    lower: true, // convert to lower case, defaults to `false`
-                    strict: true, // strip special characters except replacement, defaults to `false`
+                    lower: true,
+                    strict: true,
                 });
                 const newPersonality = new this.PersonalityModel(personality);
                 this.logger.log(
@@ -177,26 +191,20 @@ export class MongoPersonalityService {
         }
     }
 
-    getDeletedPersonalityByWikidata(wikidata: string) {
+    private getDeletedPersonalityByWikidata(
+        wikidata: string
+    ): Promise<(PersonalityDocument & ISoftDeletedDocument) | null> {
         return this.PersonalityModel.findOne({
             isDeleted: true,
             wikidata,
-        });
+        }).exec() as Promise<
+            (PersonalityDocument & ISoftDeletedDocument) | null
+        >;
     }
 
-    /**
-     * Find or create a personality based on AI task result
-     * @param personalityData - Data from AI task processor with name, wikidata info, etc.
-     * @returns The found or created personality document
-     */
-    async findOrCreatePersonality(personalityData: {
-        name: string;
-        wikidata?: {
-            id?: string;
-            label?: string;
-            description?: string;
-        };
-    }): Promise<PersonalityDocument> {
+    async findOrCreatePersonality(
+        personalityData: IPersonalityFindOrCreateInput
+    ): Promise<IPersonality> {
         const wikidataId = personalityData.wikidata?.id || null;
 
         if (wikidataId) {
@@ -252,7 +260,7 @@ export class MongoPersonalityService {
 
     async getById(
         personalityId: string,
-        query: { language?: string; nameSpace?: string } = {
+        options: IPersonalityGetByIdOptions = {
             language: "en",
             nameSpace: NameSpaceEnum.Main,
         }
@@ -270,7 +278,7 @@ export class MongoPersonalityService {
                 match: {
                     isHidden: false,
                     isDeleted: false,
-                    nameSpace: query.nameSpace,
+                    nameSpace: options.nameSpace,
                 },
                 select: "_id title content",
             })
@@ -288,7 +296,7 @@ export class MongoPersonalityService {
         try {
             processed = await this.postProcess(
                 personality.toObject(),
-                query.language
+                options.language
             );
         } catch (error) {
             const err = toError(error);
@@ -311,7 +319,10 @@ export class MongoPersonalityService {
         return processed;
     }
 
-    async getPersonalityBySlug(query: Record<string, any>, language = "pt") {
+    async getPersonalityBySlug(
+        query: { slug: string; isHidden?: boolean; isDeleted?: boolean },
+        language = "pt"
+    ) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             query,
             this.req
@@ -342,7 +353,7 @@ export class MongoPersonalityService {
     }
 
     async getClaimsByPersonalitySlug(
-        query: Record<string, any>,
+        query: { slug: string; isDeleted?: boolean },
         language = "pt"
     ) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
@@ -414,7 +425,7 @@ export class MongoPersonalityService {
         return processed;
     }
 
-    async postProcess(personality: any, language: string = "en") {
+    private async postProcess(personality: any, language: string = "en") {
         if (!personality) {
             return personality;
         }
@@ -471,25 +482,22 @@ export class MongoPersonalityService {
         return this.util.formatStats(reviews);
     }
 
-    /**
-     * This function overwrites personality data with the new data,
-     * keeping data that has not changed.
-     * Also creates a History Module that tracks updation of personalities.
-     * @param personalityId Personality id which wants updated.
-     * @param newPersonalityBody PersonalityBody received of the client.
-     * @returns Return changed personality.
-     */
-    async update(personalityId: string, newPersonalityBody: any) {
-        // eslint-disable-next-line no-useless-catch
-        if (newPersonalityBody.name) {
-            newPersonalityBody.slug = slugify(newPersonalityBody.name, {
+    async update(
+        personalityId: string,
+        newPersonalityBody: IPersonalityUpdateInput
+    ): Promise<IPersonality | null> {
+        const body: IPersonalityUpdateInput & { slug?: string } = {
+            ...newPersonalityBody,
+        };
+        if (body.name) {
+            body.slug = slugify(body.name, {
                 lower: true,
                 strict: true,
             });
         }
         const personality = await this.getById(personalityId);
         const previousPersonality = { ...personality };
-        const newPersonality = Object.assign(personality, newPersonalityBody);
+        const newPersonality = Object.assign(personality ?? {}, body);
         const personalityUpdate = await this.PersonalityModel.findByIdAndUpdate(
             personalityId,
             newPersonality,
@@ -516,7 +524,7 @@ export class MongoPersonalityService {
         personalityId: string,
         isHidden: boolean,
         description: string
-    ): Promise<PersonalityDocument> {
+    ): Promise<IPersonality> {
         const personality = await this.getById(personalityId);
 
         const newPersonality = {
@@ -542,18 +550,14 @@ export class MongoPersonalityService {
             newPersonality
         ).exec();
         if (!updated) {
-            throw new NotFoundException(`Personality not found: ${personality._id}`);
+            throw new NotFoundException(
+                `Personality not found: ${personality._id}`
+            );
         }
         return updated;
     }
 
-    /**
-     * Executes a soft delete on a specific personality record.
-     * Records the action in the history module for auditing.
-     * * @param {string} personalityId - The ID of the personality to mark as deleted.
-     * @returns {Promise<Personality>} The personality document with isDeleted set to true, or null if not found.
-     */
-    async delete(personalityId: string) {
+    async delete(personalityId: string): Promise<unknown> {
         const user = this.req.user?._id;
         this.logger.log(
             `Initiating soft delete for personalityId: ${personalityId} by user: ${user}`
@@ -596,18 +600,20 @@ export class MongoPersonalityService {
         }
     }
 
-    /**
-     * Don't count hide personalities because of cache
-     */
-    count(query: any = {}) {
-        return this.PersonalityModel.countDocuments().where({
-            ...query,
-            isDeleted: false,
-            isHidden: query.isHidden || false,
-        });
+    // Exclude hidden personalities so the count stays cacheable.
+    count(
+        query: Partial<IPersonality> & { isDeleted?: boolean } = {}
+    ): Promise<number> {
+        return this.PersonalityModel.countDocuments()
+            .where({
+                ...query,
+                isDeleted: false,
+                isHidden: query.isHidden || false,
+            })
+            .exec();
     }
 
-    extractClaimWithTextSummary(claims: any) {
+    private extractClaimWithTextSummary(claims: any) {
         claims = Array.isArray(claims) ? claims : [claims];
         return claims.map((claim: any) => {
             if (!claim.content) {
@@ -617,7 +623,7 @@ export class MongoPersonalityService {
         });
     }
 
-    verifyInputsQuery(query: Record<string, any>) {
+    private verifyInputsQuery(query: Record<string, any>) {
         const queryInputs: any = {};
         if (query.name) {
             (queryInputs as Record<string, unknown>).name = {
@@ -630,26 +636,15 @@ export class MongoPersonalityService {
         return queryInputs;
     }
 
-    combinedListAll(query: Record<string, any>): Promise<ICombinedListResult> {
-        const { page = 0, pageSize = 10, order = "asc" } = query;
+    combinedListAll(
+        query: IPersonalityListQuery
+    ): Promise<IPersonalityListResult> {
+        const { page = 0, pageSize = 10 } = query;
         const queryInputs = this.verifyInputsQuery(query);
 
-        return Promise.all([
-            this.listAll(
-                page,
-                parseInt(pageSize, 10),
-                order,
-                queryInputs,
-                query.filter,
-                query.language,
-                query.withSuggestions
-            ),
-            this.count(queryInputs),
-        ])
+        return Promise.all([this.listAll(query), this.count(queryInputs)])
             .then(([personalities, totalPersonalities]) => {
-                const totalPages = Math.ceil(
-                    totalPersonalities / parseInt(pageSize, 10)
-                );
+                const totalPages = Math.ceil(totalPersonalities / pageSize);
 
                 this.logger.log(
                     `Found ${totalPersonalities} personalities. Page ${page} of ${totalPages}`
@@ -674,7 +669,7 @@ export class MongoPersonalityService {
         pageSize,
         language,
         skippedDocuments,
-    }: IFindAllOptions): Promise<IFindAllResult> {
+    }: IFindAllOptions): Promise<IPersonalityFindAllResult> {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {
@@ -738,3 +733,8 @@ export class MongoPersonalityService {
         };
     }
 }
+
+// Port conformance: fails build if MongoPersonalityService drifts from IPersonalityService.
+const _assertImplementsPort: IPersonalityService =
+    {} as MongoPersonalityService;
+void _assertImplementsPort;

@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { toError } from "../util/error-handling";
 const axios = require("axios");
@@ -9,7 +10,7 @@ const axios = require("axios");
 @Injectable()
 export class SitemapService {
     constructor(
-        @Inject("PersonalityService")
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private claimReviewService: ClaimReviewService
@@ -27,14 +28,13 @@ export class SitemapService {
             { url: "/personality" },
         ];
 
-        const personalities: any[] = await this.personalityService.listAll(
-            0,
-            0,
-            "asc",
-            {},
-            "pt",
-            false
-        );
+        const personalities: any[] = await this.personalityService.listAll({
+            page: 0,
+            pageSize: 0,
+            order: "asc",
+            language: "pt",
+            withSuggestions: false,
+        });
 
         for (const personality of personalities) {
             if (!personality) {
@@ -82,7 +82,8 @@ export class SitemapService {
         } catch (error) {
             const err = toError(error);
             const message =
-                "Error while submitting sitemap to search engine: " + err.message;
+                "Error while submitting sitemap to search engine: " +
+                err.message;
             this.logger.error(message);
             return message;
         }

@@ -1,54 +1,57 @@
-import { LeanDocument } from "mongoose";
-import {
-    ICombinedListResult,
+import type {
     IFindAllOptions,
-    IFindAllResult,
     IPersonality,
+    IPersonalityCreateInput,
+    IPersonalityFindAllResult,
+    IPersonalityFindOrCreateInput,
+    IPersonalityGetByIdOptions,
+    IPersonalityListQuery,
+    IPersonalityListResult,
+    IPersonalityUpdateInput,
 } from "./personality.interface";
 
+export const PERSONALITY_SERVICE = "PersonalityService" as const;
+
 export type IPersonalityService = {
-    getWikidataEntities(regex: string, language: string): Promise<any>;
-    getWikidataList(regex: string, language: string): Promise<string[]>;
-    listAll(
-        page: number,
-        pageSize: number,
-        order: string,
-        query: any,
-        language: string,
-        withSuggestions: boolean,
-        filter?: any
-    ): Promise<IPersonality[]>;
-    create(personality: any): Promise<IPersonality>;
-    getDeletedPersonalityByWikidata(wikidata: string): Promise<any>;
-    findOrCreatePersonality(personalityData: {
-        name: string;
-        wikidata?: {
-            id?: string;
-            label?: string;
-            description?: string;
-        };
-    }): Promise<IPersonality>;
+    listAll(query: IPersonalityListQuery): Promise<IPersonality[]>;
+    combinedListAll(
+        query: IPersonalityListQuery
+    ): Promise<IPersonalityListResult>;
+    findAll(query: IFindAllOptions): Promise<IPersonalityFindAllResult>;
+
     getById(
-        personalityId: string | LeanDocument<IPersonality>,
-        options?: { language?: string; nameSpace?: string }
+        personalityId: string,
+        options?: IPersonalityGetByIdOptions
+    ): Promise<IPersonality | null>;
+
+    getPersonalityBySlug(
+        query: { slug: string; isHidden?: boolean; isDeleted?: boolean },
+        language?: string
     ): Promise<IPersonality>;
-    getPersonalityBySlug(query: any, language?: string): Promise<IPersonality>;
-    getClaimsByPersonalitySlug(query: any, language?: string): Promise<any>;
-    postProcess(personality: any, language?: string): Promise<any>;
-    getReviewStats(_id: string): Promise<any>;
+
+    getClaimsByPersonalitySlug(
+        query: { slug: string; isDeleted?: boolean },
+        language?: string
+    ): Promise<IPersonality & { claims: unknown[] }>;
+
+    create(input: IPersonalityCreateInput): Promise<IPersonality>;
     update(
         personalityId: string,
-        newPersonalityBody: any
+        input: IPersonalityUpdateInput
+    ): Promise<IPersonality | null>;
+    findOrCreatePersonality(
+        input: IPersonalityFindOrCreateInput
     ): Promise<IPersonality>;
     hideOrUnhidePersonality(
         personalityId: string,
         isHidden: boolean,
         description: string
-    ): Promise<any>;
-    delete(personalityId: string): Promise<void>;
-    count(query?: any): Promise<number> | number;
-    extractClaimWithTextSummary(claims: any): any;
-    verifyInputsQuery(query: any): any;
-    combinedListAll(query: any): Promise<ICombinedListResult>;
-    findAll(options: IFindAllOptions): Promise<IFindAllResult>;
+    ): Promise<IPersonality>;
+    delete(personalityId: string): Promise<unknown>;
+
+    count(
+        query?: Partial<IPersonality> & { isDeleted?: boolean }
+    ): Promise<number>;
+    // Review stats payload is owned by ClaimReviewService.
+    getReviewStats(personalityId: string): Promise<unknown>;
 };

@@ -43,6 +43,7 @@ import {
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
 import { toError } from "../util/error-handling";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 const md5 = require("md5");
@@ -62,7 +63,7 @@ export class VerificationRequestService {
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
         private readonly topicService: TopicService,
-        @Inject("PersonalityService")
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService
     ) {}
 
@@ -254,7 +255,10 @@ export class VerificationRequestService {
             return vr;
         } catch (error) {
             const err = toError(error);
-            this.logger.error("Failed to create verification request", err.stack);
+            this.logger.error(
+                "Failed to create verification request",
+                err.stack
+            );
 
             if (err.name === "ValidationError" && err.errors) {
                 const fields = Object.keys(err.errors).join(", ");

@@ -18,6 +18,7 @@ import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.ser
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { EventsService } from "../events/event.service";
 import { EventsStatus } from "../types/enums";
@@ -28,7 +29,7 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 export class HomeController {
     constructor(
         private viewService: ViewService,
-        @Inject("PersonalityService")
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
@@ -101,7 +102,7 @@ export class HomeController {
                     debateRevision.personalities.map((personality) => {
                         if (personality) {
                             return this.personalityService.getById(
-                                personality,
+                                String(personality),
                                 {
                                     language: req.language,
                                     nameSpace:
