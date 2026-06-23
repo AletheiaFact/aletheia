@@ -4,39 +4,23 @@ import { useTranslation } from "next-i18next";
 import CTAFolderActions from "./CTAFolderActions";
 
 type CTAFolderMainColumnProps = {
-    isLoggedIn: boolean;
     isHomeFolder?: boolean;
 };
 
 const CTAFolderMainColumn = ({
-    isLoggedIn,
-    isHomeFolder = true,
+    isHomeFolder = false,
 }: CTAFolderMainColumnProps) => {
     const { t } = useTranslation();
-    const title = isLoggedIn
-        ? t("CTAFolder:aboutUsTitle")
-        : t("CTAFolder:signUpTitle");
-    const body = isLoggedIn
-        ? t("CTAFolder:aboutUsBody")
-        : t("CTAFolder:signUpBody");
 
     return (
         <Grid item className="ctaMainColumn">
             <Typography variant="h2" className="ctaTitle">
-                {title}
+                {t("CTAFolder:aboutUsTitle")}
             </Typography>
             <Typography variant="body1" className="ctaBody">
-                {body}
+                {t("CTAFolder:aboutUsBody")}
             </Typography>
-            {!isLoggedIn && (
-                <Typography variant="body1" className="ctaBody">
-                    {t("CTAFolder:signUpFooter")}
-                </Typography>
-            )}
-            <CTAFolderActions
-                isLoggedIn={isLoggedIn}
-                isHomeFolder={isHomeFolder}
-            />
+            <CTAFolderActions isHomeFolder={isHomeFolder} />
         </Grid>
     );
 };

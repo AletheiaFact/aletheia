@@ -116,7 +116,6 @@ const HomeHeroStyle = styled(Grid)`
         background-repeat: no-repeat;
         background-size: 100% 2px;
         background-position: 0 100%;
-        padding-bottom: 8px;
     }
 
     .home-header-description {
@@ -124,7 +123,6 @@ const HomeHeroStyle = styled(Grid)`
         line-height: 1.6;
         color: rgba(255, 255, 255, 0.75);
         margin: 0;
-        max-width: 680px;
     }
 
     .home-header-actions {

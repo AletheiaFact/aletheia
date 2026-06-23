@@ -13,7 +13,7 @@ const CommitteeInvitationPage: NextPage = () => {
         <>
             <Seo
                 title={t("committeeInvitation:title")}
-                description={t("committeeInvitation:intro")}
+                description={t("committeeInvitation:hero.description")}
             />
             <CommitteInvitationPage />
         </>

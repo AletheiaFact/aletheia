@@ -1,15 +1,14 @@
 {
     "title": "Committee Invitation",
-    "intro": "Join the movement that is transforming how Brazil combats misinformation. Be part of a collaborative network of educators, researchers, and institutions committed to democracy.",
     "hero": {
-        "chip": "Join the National Committee for the Democratization of Fact-Checking",
-        "title": "Truth is a right.<br/>Fact-checking,<br/>a tool.",
-        "description": "Join the movement that is transforming how Brazil combats misinformation. Be part of a collaborative network of educators, researchers, and institutions committed to democracy.",
+        "chip": "National Committee for the Democratization of Fact-Checking",
+        "title": "Access to reliable information is a right. Fact-checking, the tool to claim it.",
+        "description": "Join the first Committee created to democratize fact-checking practices in Brazil. A network that already brings together representatives from the five regions of the country and Portugal. The Committee is made up of educators, researchers, students, institutions, and professionals committed to democracy, who actively work to combat misinformation.",
         "ctaPrimary": "I want to participate",
         "ctaSecondary": "Learn about the initiative",
         "stat1Value": "27",
         "stat1Label": "States",
-        "stat2Value": "100+",
+        "stat2Value": "50+",
         "stat2Label": "Universities",
         "stat3Value": "5",
         "stat3Label": "Meetings/year",
@@ -19,7 +18,7 @@
     },
     "mission": {
         "eyebrow": "OUR MISSION",
-        "title": "Building a society where the search for truth is valued",
+        "title": "Building a society where reliable information is accessible to all",
         "description": "AletheiaFact.org is a non-profit organization focused on combating misinformation and democratizing access to fact-checking. We believe that a well-informed society strengthens the pillars of democracy.",
         "items": {
             "combat": {
@@ -28,7 +27,7 @@
             },
             "network": {
                 "title": "Collaborative Network",
-                "description": "We connect educators, researchers, and institutions in a national network committed to truth and critical education."
+                "description": "We connect educators, researchers, and institutions in a national network committed to the integrity of information and critical education."
             },
             "training": {
                 "title": "Continuous Training",
@@ -45,7 +44,7 @@
     "benefits": {
         "eyebrow": "WHY PARTICIPATE?",
         "title": "Benefits for you and your institution",
-        "description": "By joining the National Committee for the Democratization of Fact-Checking, you and your university will have access to exclusive resources and unique collaboration opportunities.",
+        "description": "By being part of the National Committee for the Democratization of Fact-Checking, you and your university will have access to exclusive resources and unique collaboration opportunities.",
         "items": {
             "certification": {
                 "title": "Recognized Certification",
@@ -74,13 +73,13 @@
         },
         "pact": {
             "title": "Our Collaboration Pact",
-            "description": "The success of the Committee depends on everyone's active engagement. We share the intellectual property of the results among members to accelerate the democratization of fact-checking, creating an environment of mutual sharing for the evolution of knowledge."
+            "description": "The Committee operates in open source. Methods, data, and results are shared among members, so each institution's progress accelerates the work of all. This is how fact-checking is democratized, adding, never competing."
         }
     },
     "cta": {
         "eyebrow": "BE PART OF THIS TRANSFORMATION",
         "title": "Join the National Committee",
-        "description": "We invite all those who share the commitment to truth, critical education, and strengthening democracy.",
+        "description": "We invite all those who share the commitment to access reliable information, critical education, and strengthening democracy.",
         "whoCanJoin": {
             "title": "Who can participate?"
         },
