@@ -9,9 +9,10 @@ import {
     Typography,
 } from "@mui/material";
 import { ArrowForward, FormatQuoteOutlined } from "@mui/icons-material";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
 import AletheiaAvatar from "../../AletheiaAvatar";
+import smoothScrollTo from "../../../utils/smoothScrollTo";
 
 const CommitteInvitationHero = () => {
     const { t } = useTranslation("committeeInvitation");
@@ -32,11 +33,7 @@ const CommitteInvitationHero = () => {
                         <Stack spacing={3}>
                             <Box>
                                 <Typography variant="h1" className="hero-title">
-                                    <Trans
-                                        i18nKey="hero.title"
-                                        ns="committeeInvitation"
-                                        components={{ br: <br /> }}
-                                    />
+                                    {t("hero.title")}
                                 </Typography>
                                 <Typography variant="body1" className="hero-description">
                                     {t("hero.description")}
@@ -61,7 +58,7 @@ const CommitteInvitationHero = () => {
                                         borderRadius: "6px",
                                         "&:hover": { bgcolor: colors.lightSecondary },
                                     }}
-                                    href="#join"
+                                    onClick={smoothScrollTo("join")}
                                     component="a"
                                 >
                                     {t("hero.ctaPrimary")}
@@ -82,7 +79,7 @@ const CommitteInvitationHero = () => {
                                             bgcolor: colors.lightTertiary,
                                         },
                                     }}
-                                    href="#mission"
+                                    onClick={smoothScrollTo("mission")}
                                     component="a"
                                 >
                                     {t("hero.ctaSecondary")}

@@ -36,6 +36,12 @@ const HomeHeroTitle = () => {
                                 className="home-header-title-line"
                             />
                         ),
+                        line3: (
+                            <Box
+                                component="span"
+                                className="home-header-title-line"
+                            />
+                        ),
                         highlight: (
                             <Box
                                 component="span"
