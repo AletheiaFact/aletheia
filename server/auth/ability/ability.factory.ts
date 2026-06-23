@@ -37,22 +37,23 @@ export type AppAbility = Ability<[Action, Subjects]>;
 
 @Injectable()
 export class AbilityFactory {
-    defineAbility(subject: User | M2M, nameSpace: string) {
+    defineAbility(subject: User | M2M, nameSpace: string): AppAbility {
         const { can, cannot, build } = new AbilityBuilder(
             Ability as AbilityClass<AppAbility>
         );
 
-        if (subject.isM2M && subject.role[nameSpace] === Roles.Integration) {
+        const role = subject.role as Record<string, string>;
+        if (subject.isM2M && role[nameSpace] === Roles.Integration) {
             can(Action.Create, "all");
         } else {
             if (
-                subject.role[nameSpace] === Roles.Admin ||
-                subject.role[nameSpace] === Roles.SuperAdmin
+                role[nameSpace] === Roles.Admin ||
+                role[nameSpace] === Roles.SuperAdmin
             ) {
                 can(Action.Manage, "all");
             } else if (
-                subject.role[nameSpace] === Roles.FactChecker ||
-                subject.role[nameSpace] === Roles.Reviewer
+                role[nameSpace] === Roles.FactChecker ||
+                role[nameSpace] === Roles.Reviewer
             ) {
                 can(Action.Read, "all");
                 can(Action.Update, "all");
@@ -66,7 +67,7 @@ export class AbilityFactory {
         }
 
         return build({
-            detectSubjectType: (item) =>
+            detectSubjectType: (item: Record<string, any>) =>
                 item.constructor as ExtractSubjectType<Subjects>,
         });
     }

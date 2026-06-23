@@ -7,7 +7,7 @@ import { Types } from "mongoose";
 import { UnattributedService } from "../types/unattributed/unattributed.service";
 import { UnattributedDocument } from "../types/unattributed/schemas/unattributed.schema";
 import { ContentModelEnum } from "../../types/enums";
-const md5 = require("md5");
+import { SentenceHashService } from "../admin-editor/sentence-hash.service";
 const nlp = require("compromise");
 nlp.extend(require("compromise-sentences"));
 nlp.extend(require("compromise-paragraphs"));
@@ -18,7 +18,8 @@ export class ParserService {
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
         private sentenceService: SentenceService,
-        private unattributedService: UnattributedService
+        private unattributedService: UnattributedService,
+        private hashService: SentenceHashService
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
@@ -27,22 +28,24 @@ export class ParserService {
     async parse(
         content: string,
         claimRevisionId: object,
-        personality = null,
+        personality: string | null = null,
         contentModel = ContentModelEnum.Speech
     ): Promise<SpeechDocument | UnattributedDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
-        const result = [];
+        const result: Promise<any>[] = [];
         const nlpContent = nlp(content);
         const paragraphs = nlpContent.paragraphs();
         const text = nlpContent.text(this.nlpOptions);
 
-        paragraphs.forEach((paragraph) => {
+        paragraphs.forEach((paragraph: any) => {
             const paragraphId = this.createParagraphId();
             const sentences = this.postProcessSentences(paragraph.sentences());
 
-            const paragraphDataHash = md5(
-                `${this.paragraphSequence}${text}${paragraph}`
+            const paragraphDataHash = this.hashService.computeParagraphHash(
+                this.paragraphSequence,
+                text,
+                paragraph
             );
 
             if (sentences && sentences.length) {
@@ -66,11 +69,11 @@ export class ParserService {
         });
 
         if (personality) {
-            personality = new Types.ObjectId(personality);
+            personality = new Types.ObjectId(personality) as any;
         }
 
         return await Promise.all(result).then(
-            (object): Promise<SpeechDocument | UnattributedDocument> => {
+            (object: any[]): Promise<SpeechDocument | UnattributedDocument> => {
                 if (contentModel === ContentModelEnum.Unattributed) {
                     return this.unattributedService.create({
                         content: object,
@@ -86,15 +89,15 @@ export class ParserService {
         );
     }
 
-    postProcessSentences(sentences) {
-        let newSentences = [];
-        sentences.forEach((sentence) => {
+    postProcessSentences(sentences: any) {
+        let newSentences: string[] = [];
+        sentences.forEach((sentence: any) => {
             const sentenceText = sentence.text(this.nlpOptions);
             // Extract semicolon sentences
             let semicolonSentences = sentenceText.split(";");
             if (sentenceText.includes(";")) {
                 semicolonSentences = semicolonSentences.map(
-                    (semicolonSentence, index) => {
+                    (semicolonSentence: string, index: number) => {
                         return index !== semicolonSentences.length - 1
                             ? `${semicolonSentence};`.trim()
                             : semicolonSentence.trim();
@@ -106,10 +109,16 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent, paragraphDataHash, claimRevisionId) {
+    parseSentence(
+        sentenceContent: string,
+        paragraphDataHash: string,
+        claimRevisionId: object
+    ) {
         const sentenceId = this.createSentenceId();
-        const sentenceDataHash = md5(
-            `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
+        const sentenceDataHash = this.hashService.computeSentenceHash(
+            paragraphDataHash,
+            this.sentenceSequence,
+            sentenceContent
         );
 
         return this.sentenceService.create({

@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
+import { useRouter } from "next/router";
 import FooterCta from "./FooterCallToAction/FooterCta";
 import FooterMainContent from "./FooterMainContent/FooterMainContent";
 import FooterLegal from "./FooterLegal";
@@ -8,17 +9,20 @@ import { useFooterData } from "./hooks/useFooterData";
 import localConfig from "../../../config/localConfig";
 
 const Footer = () => {
-    const { mediumDevice, isMobile, isMainNamespace } = useFooterData();
+    const { isMobile, isMainNamespace } = useFooterData();
+    const router = useRouter();
+    const showFooterCta =
+        localConfig.footer.showCallToAction &&
+        router.pathname !== "/committee-invitation-page";
 
     return (
         <FooterBox
             component="footer"
             $isMobile={isMobile}
             $namespacePrefix={isMainNamespace}
-            $mediumDevice={mediumDevice}
         >
             <Box className="footer-inner-container">
-                {localConfig.footer.showCallToAction ? <FooterCta /> : null}
+                {showFooterCta ? <FooterCta /> : null}
 
                 <FooterMainContent />
 

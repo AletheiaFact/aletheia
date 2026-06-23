@@ -1,8 +1,9 @@
+import { vi } from "vitest";
 import { TrackingResponseDTO } from "../tracking/types/tracking.interfaces";
 import { VerificationRequestStatus } from "../verification-request/dto/types";
 
 export const mockTrackingService = {
-  getTrackingStatus: jest.fn(),
+  getTrackingStatus: vi.fn(),
 };
 
 export const mockResponse: TrackingResponseDTO = {

@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -16,7 +16,6 @@ import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 
-jest.setTimeout(10000);
 
 /**
  * PersonalityController E2E Test Suite

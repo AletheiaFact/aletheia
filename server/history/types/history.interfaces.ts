@@ -30,9 +30,9 @@ interface HistoryItem {
     date?: Date | string;
 }
 
-type PerformedBy = Types.ObjectId[] | M2M | string | null;
+type PerformedBy = Types.ObjectId | Types.ObjectId[] | M2M | string | null;
 interface HistoryDetails {
-    after: AfterAndBeforeType;
+    after: AfterAndBeforeType | null;
     before?: AfterAndBeforeType | null;
 }
 type AfterAndBeforeType = Record<string, any>;

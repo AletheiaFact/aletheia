@@ -1,21 +1,23 @@
+import { vi } from "vitest";
+
 export const mockEventModel = {
-    create: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    find: jest.fn(),
-    countDocuments: jest.fn(),
-    findOne: jest.fn(),
+    create: vi.fn(),
+    findByIdAndUpdate: vi.fn(),
+    find: vi.fn(),
+    countDocuments: vi.fn(),
+    findOne: vi.fn(),
 };
 
 export const mockTopicModel = {
-    aggregate: jest.fn(),
+    aggregate: vi.fn(),
 };
 
 export const mockClaimReviewService = {
-    getBatchCountsByTopics: jest.fn(),
+    getBatchCountsByTopics: vi.fn(),
 };
 
 export const mockTopicService = {
-    findOrCreateTopic: jest.fn(),
+    findOrCreateTopic: vi.fn(),
 };
 
 export const mockCreateEventDto = {
@@ -29,18 +31,18 @@ export const mockCreateEventDto = {
 };
 
 export const mockEventsService = {
-    create: jest.fn(),
-    update: jest.fn(),
-    findAll: jest.fn(),
-    findByHash: jest.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    findAll: vi.fn(),
+    findByHash: vi.fn(),
 };
 
 export const mockConfigService = {
-    get: jest.fn().mockReturnValue("test-site-key"),
+    get: vi.fn().mockReturnValue("test-site-key"),
 };
 
 export const mockViewService = {
-    render: jest.fn(),
+    render: vi.fn(),
 };
 
 export const mockRequest = {
@@ -50,5 +52,5 @@ export const mockRequest = {
 };
 
 export const mockFeatureFlagService = {
-    isEnableEventsFeature: jest.fn(),
+    isEnableEventsFeature: vi.fn(),
 };

@@ -1,23 +1,24 @@
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
 
-const PersonalityMinimalCardStyle = styled(Grid)`
-    text-align: center;
+const PersonalityMinimalCardStyle = styled(Box) <{ $isInline?: boolean }>`
     display: flex;
-    justify-content: center;
-    gap: 8px;
+    text-align: ${({ $isInline }) => ($isInline ? "left" : "center")};
+    flex-direction: ${({ $isInline }) => ($isInline ? "row" : "column")};
+    justify-content: ${({ $isInline }) => $isInline ? "flex-start" : "center"};
+    align-items: center;
+    gap: 14px;
 
-    .personality {
-        text-align: center;
-        width: 150px;
+    .personality-info {
+         ${({ $isInline }) => $isInline && "text-align: left"}
     }
+
     .personality-name {
         font-size: 16px;
-        margin-top: 8px;
         color: ${colors.primary};
-        font-weight: 400;
+        font-weight: 600;
     }
 
     .personality-description-content {
@@ -31,7 +32,7 @@ const PersonalityMinimalCardStyle = styled(Grid)`
     }
 
     .personality-profile {
-        color: ${colors.blackSecondary};
+        color: ${colors.lightPrimary};
         text-decoration: underline;
         font-weight: 700;
     }
@@ -40,32 +41,6 @@ const PersonalityMinimalCardStyle = styled(Grid)`
         max-width: 100%;
         align-items: center;
         padding-bottom: 10px;
-
-        .personality {
-            gap: 32px;
-            justify-content: flex-start;
-        }
-
-        .personality {
-            width: 100%;
-        }
-
-        .personality-name {
-            margin-top: 0;
-        }
-
-        .personality-description-content {
-            text-align: center;
-            flex-wrap: wrap;
-            width: 100%;
-            margin-top: 8px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .personality-description {
-            display: inline;
-        }
     }
 
     @media ${queries.xs} {

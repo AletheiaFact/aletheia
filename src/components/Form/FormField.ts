@@ -4,7 +4,7 @@ import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
 import { ReviewTaskMachineContextReviewData } from "../../../server/review-task/dto/create-review-task.dto";
 import { Roles } from "../../types/enums";
-import { URL_PATTERN } from "../../utils/ValidateFloatingLink";
+import { validateUrl } from "../../utils/ValidateUrl";
 
 export type FormField = {
     fieldName: string;
@@ -82,8 +82,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
                     isURLField && {
                     validURL: (v) =>
                         !v ||
-                        URL_PATTERN.test(v) ||
-                        "sourceForm:errorMessageValidURL",
+                        validateUrl(v, (key) => key) || true,
                 }),
                 ...(!disabled && mustBeAfterField && {
                     afterDate: (value, formValues) => {
@@ -118,8 +117,9 @@ const validateSchema = (
         if (!Array.isArray(value) && !value.trim()) {
             return `common:${key}RequiredFieldError`;
         }
-        if (key === "source" && !URL_PATTERN.test(schema[key])) {
-            return `sourceForm:errorMessageValidURL`;
+        if (key === "source") {
+            const urlError = validateUrl(schema[key], (key) => key);
+            if (urlError) return urlError;
         }
     }
     return true;

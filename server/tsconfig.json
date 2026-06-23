@@ -11,8 +11,12 @@
         "sourceMap": true,
         "outDir": "../dist/",
         "rootDir": "../",
-        "baseUrl": "./",
-        "incremental": true
+        "incremental": true,
+        "strictNullChecks": true,
+        "useUnknownInCatchVariables": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        //
     },
     "include": ["./**/*"],
     "exclude": [

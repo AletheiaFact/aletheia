@@ -1,5 +1,7 @@
+import { vi } from "vitest";
+
 export const HistoryServiceMock = {
-    getHistoryParams: jest.fn((dataId, targetModel, user, type, latestChange, previousChange = null) => {
+    getHistoryParams: vi.fn((dataId, targetModel, user, type, latestChange, previousChange = null) => {
         return {
             targetId: dataId,
             targetModel,
@@ -12,7 +14,7 @@ export const HistoryServiceMock = {
             date: new Date(),
         };
     }),
-    createHistory: jest.fn().mockResolvedValue({}),
-    getByTargetIdModelAndType: jest.fn().mockResolvedValue([]),
-    getDescriptionForHide: jest.fn().mockResolvedValue(""),
+    createHistory: vi.fn().mockResolvedValue({}),
+    getByTargetIdModelAndType: vi.fn().mockResolvedValue([]),
+    getDescriptionForHide: vi.fn().mockResolvedValue(""),
 };

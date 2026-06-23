@@ -22,6 +22,7 @@ export class StateEvent {
     claimId: Claim;
 
     @Prop({
+        type: String,
         required: true,
     })
     type: TypeModel;

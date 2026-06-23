@@ -3,7 +3,7 @@ import EventEmitter from "events";
 import { useTranslation } from "next-i18next";
 import { ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material";
-import AletheiaButton, { ButtonType } from "./Button";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 import colors from "../styles/colors";
 
@@ -72,7 +72,10 @@ export const SessionExpiredModal: React.FC = () => {
                     justifyContent: "center",
                 }}
             >
-                <AletheiaButton onClick={handleOk} type={ButtonType.blue}>
+                <AletheiaButton
+                    onClick={handleOk}
+                    type={ButtonType.primary}
+                >
                     {t("login:sessionExpiredButton")}
                 </AletheiaButton>
             </Grid>

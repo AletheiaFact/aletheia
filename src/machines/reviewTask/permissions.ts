@@ -252,14 +252,14 @@ function resolveReportedPermissions(
         return {
             canAccessState: true,
             canViewEditor: true,
-            canEditEditor: true,
-            canSaveDraft: true,
+            canEditEditor: false,
+            canSaveDraft: false,
             canSubmitActions: availableEvents,
             canSelectUsers: false,
-            editorReadonly: false,
+            editorReadonly: true,
             showForm: true,
-            showSaveDraftButton: true,
-            formType: "editor",
+            showSaveDraftButton: false,
+            formType: "selection",
         };
     }
 
@@ -449,6 +449,7 @@ function applyAdminOverride(
     // But respect some restrictions (e.g., not editing during selection)
     const restrictedEditStates = [
         ReviewTaskStates.unassigned,
+        ReviewTaskStates.reported,
         ReviewTaskStates.selectReviewer,
         ReviewTaskStates.selectCrossChecker,
         ReviewTaskStates.published,

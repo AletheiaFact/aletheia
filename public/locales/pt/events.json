@@ -29,6 +29,7 @@
     "mainTopicLabelTooltip": "Tópico de referência usado para vincular as checagens e as denúncias que serão exibidos na página do evento.",
     "latestRelatedClaims": "Últimas checagens relacionadas",
     "latestEvents": "Últimos eventos",
+    "latestEventsSubtitle": "Conferências, mutirões e momentos públicos verificados",
     "seeMoreEventsButton": "Veja mais eventos",
     "reviewStats": "Checagens",
     "verificationRequestsStats": "Denúncias",

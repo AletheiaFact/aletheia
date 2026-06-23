@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import { TEST_DB_NAME } from "./TestConstants";
+import { getTestDbName } from "./getTestDbName";
 
 /**
  * Cleanup utility to clear database collections between test suites
@@ -10,9 +10,10 @@ import { TEST_DB_NAME } from "./TestConstants";
  */
 export async function CleanupDatabase(mongoUri: string): Promise<void> {
     const client = await MongoClient.connect(mongoUri);
+    const dbName = getTestDbName(mongoUri);
 
     try {
-        const db = client.db(TEST_DB_NAME);
+        const db = client.db(dbName);
         const collections = await db.listCollections().toArray();
 
         // Delete all documents from all collections to ensure clean state
@@ -21,7 +22,7 @@ export async function CleanupDatabase(mongoUri: string): Promise<void> {
         }
     } catch (error) {
         throw new Error(
-            `Database cleanup failed for ${TEST_DB_NAME}: ${
+            `Database cleanup failed for ${dbName}: ${
                 error instanceof Error ? error.message : String(error)
             }`
         );

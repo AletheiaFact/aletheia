@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { EventStatus } from "../../../types/event";
 
 interface EventFiltersProps {
@@ -27,7 +27,7 @@ const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) 
                         data-cy={`testFiltersEvents${status}`}
                         type={selectedStatus === status ? ButtonType.whiteBlue : ButtonType.gray}
                         onClick={() => onStatusChange(status)}
-                        rounded={"true"}
+                        rounded
                         style={{ padding: "clamp(10px, 2vw, 16px)", fontWeight: 600 }}
                     >
                         {label}

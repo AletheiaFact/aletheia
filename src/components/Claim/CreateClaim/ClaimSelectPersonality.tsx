@@ -8,7 +8,7 @@ import { stateSelector } from "../../../machines/createClaim/selectors";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
-import AletheiaButton from "../../Button";
+import AletheiaButton from "../../AletheiaButton";
 import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 import PersonalityMinimalCard from "../../Personality/PersonalityMinimalCard";
 

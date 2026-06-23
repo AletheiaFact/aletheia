@@ -8,7 +8,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Box, Tooltip } from "@mui/material";
 import { useAtom } from "jotai";
-import Button, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import CommentApi from "../../../api/comment";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
@@ -96,12 +96,12 @@ const CommentCardActions = ({
             <Box className="comment-card-actions" onClick={stopPropagation}>
                 <Tooltip title={t("common:delete")}>
                     <span>
-                        <Button
+                        <AletheiaButton
                             type={ButtonType.white}
                             onClick={handleDeleteReply}
                         >
                             <DeleteOutlineIcon style={{ fontSize: "16px" }} />
-                        </Button>
+                        </AletheiaButton>
                     </span>
                 </Tooltip>
             </Box>
@@ -114,12 +114,12 @@ const CommentCardActions = ({
         <Box className="comment-card-actions" onClick={stopPropagation}>
             <Tooltip title={t("common:resolve")}>
                 <span>
-                    <Button
+                    <AletheiaButton
                         type={ButtonType.white}
                         onClick={handleResolveThread}
                     >
                         <CheckIcon style={{ fontSize: "16px" }} />
-                    </Button>
+                    </AletheiaButton>
                 </span>
             </Tooltip>
         </Box>

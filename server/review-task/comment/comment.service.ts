@@ -5,7 +5,13 @@ import {
     Logger,
     NotFoundException,
 } from "@nestjs/common";
-import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
+import {
+    ClientSession,
+    isValidObjectId,
+    Model,
+    Types,
+    UpdateQuery,
+} from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
 import { UsersService } from "../../users/users.service";
@@ -21,7 +27,7 @@ export class CommentService {
         private usersService: UsersService
     ) {}
 
-    async create(comment) {
+    async create(comment: any) {
         comment.user = new Types.ObjectId(comment.user);
         const [user, newComment] = await Promise.all([
             this.usersService.getById(comment.user),
@@ -34,21 +40,20 @@ export class CommentService {
         };
     }
 
-    async updateManyComments(comments) {
+    async updateManyComments(comments: any[]) {
         await Promise.all(
             comments.map((comment) => this.update(comment?._id, comment))
         );
     }
 
-    async update(
-        id: string,
-        UpdateCommentDto: UpdateCommentDTO
-    ) {
+    async update(id: string, UpdateCommentDto: UpdateCommentDTO) {
         try {
             this.logger.debug(`Updating comment ${id}`, { UpdateCommentDto });
 
             if (!isValidObjectId(id)) {
-                throw new BadRequestException(`Invalid comment ID format: ${id}`);
+                throw new BadRequestException(
+                    `Invalid comment ID format: ${id}`
+                );
             }
 
             const { user, ...otherFields } = UpdateCommentDto;
@@ -65,8 +70,7 @@ export class CommentService {
                 id,
                 { $set: updateData },
                 { new: true, runValidators: true }
-            )
-                .populate("user", "name");
+            ).populate("user", "name");
 
             if (!updatedComment) {
                 throw new NotFoundException(`Comment not found: ${id}`);
@@ -95,8 +99,11 @@ export class CommentService {
         }
     }
 
-    async createReplyComment(id, commentBody) {
+    async createReplyComment(id: string, commentBody: any) {
         const existingComment = await this.CommentModel.findById(id);
+        if (!existingComment) {
+            throw new NotFoundException(`Comment not found: ${id}`);
+        }
         const newComment = await this.create({
             ...commentBody,
             targetId: existingComment._id,
@@ -109,10 +116,13 @@ export class CommentService {
         return newComment;
     }
 
-    async deleteReplyComment(id, replyId) {
+    async deleteReplyComment(id: string, replyId: string) {
         const comment = await this.CommentModel.findById(id);
+        if (!comment) {
+            throw new NotFoundException(`Comment not found: ${id}`);
+        }
 
-        const replies = comment.replies.filter((reply) => {
+        const replies = comment.replies.filter((reply: any) => {
             return !new Types.ObjectId(reply?._id).equals(replyId);
         });
 
@@ -122,5 +132,18 @@ export class CommentService {
         );
 
         return { ...comment.toObject(), replies };
+    }
+
+    async cascadeUpdateSentenceTarget(
+        oldSentenceId: Types.ObjectId | string,
+        newSentenceId: Types.ObjectId | string,
+        session: ClientSession
+    ): Promise<number> {
+        const result = await this.CommentModel.updateMany(
+            { targetId: oldSentenceId },
+            { $set: { targetId: newSentenceId } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }

@@ -10,7 +10,7 @@ import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { EditOutlined } from "@mui/icons-material";
 import { isAdmin } from "../../utils/GetUserPermission";
 
@@ -81,14 +81,15 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             </div>
             {isAdmin(userRole) && claim?.claimId ? (
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    type={ButtonType.primary}
+                    endIcon={<EditOutlined fontSize="small" />}
                     href={href}
                     style={{
                         margin: 20,
                         marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
                     }}
                 >
-                    {t("debates:openEditDebateMode")} <EditOutlined fontSize="small" style={{ margin: "0 0 5 5" }} />
+                    {t("debates:openEditDebateMode")}
                 </AletheiaButton>
             ) : null}
             <Grid container

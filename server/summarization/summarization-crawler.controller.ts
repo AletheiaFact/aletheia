@@ -13,7 +13,7 @@ export class SummarizationCrawlerController {
     @FactCheckerOnly()
     @ApiTags("source")
     @Get("api/summarization")
-    create(@Req() req: BaseRequest, @Query() query) {
+    create(@Req() req: BaseRequest, @Query() query: { source: string }) {
         return this.summarizationCrawlerService.summarizePage(
             query.source,
             req.language

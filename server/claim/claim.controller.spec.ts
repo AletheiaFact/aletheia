@@ -124,7 +124,7 @@ describe("ClaimController (Unit)", () => {
             },
         } as any);
 
-        jest.spyOn(
+        vi.spyOn(
             controller as any,
             "returnClaimReviewPage"
         ).mockResolvedValue(undefined);

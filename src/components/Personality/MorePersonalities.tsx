@@ -37,7 +37,10 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 xs={11}
                 lg={9}
                 xl={4}
-                style={{ paddingLeft: vw?.lg ? 0 : 20 }}
+                style={{
+                    paddingLeft: vw?.lg ? 0 : 20,
+                    marginTop: vw?.md ? 40 : 0
+                }}
             >
 
                 {(!isLoggedIn && !vw?.md) && (
@@ -47,7 +50,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 )}
 
                 <Grid container id="create_account">
-                    <CTAFolder isSplit={true}/>
+                    <CTAFolder isSplit={true} />
                 </Grid>
 
                 <SocialMediaShare href={href} />

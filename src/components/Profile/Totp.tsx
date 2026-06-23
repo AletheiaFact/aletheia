@@ -11,7 +11,7 @@ import { orySubmitTotp } from "../../api/ory";
 import InputPassword from "../InputPassword";
 import { getUiNode } from "../../lib/orysdk/utils";
 import { useRouter } from "next/router";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
 import TextError from "../TextErrorForm";
@@ -197,11 +197,12 @@ export const Totp = ({ flow, setFlow }) => {
                             <TextError
                                 stateError={errors.totp}
                                 children={t("common:requiredFieldError")}
+                                data-cy="testTotpInputPasswordError"
                             />
                         </Grid>
                     </Grid>
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         htmlType="submit"
                         loading={isLoading}
                     >
@@ -216,18 +217,12 @@ export const Totp = ({ flow, setFlow }) => {
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"
+                        type={ButtonType.primary}
+                        fullWidth
                         style={{
-                            width: "100%",
                             marginTop: "21px",
                             marginBottom: "21px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: "8px 15px",
-                            height: "max-content",
-                            whiteSpace: "normal",
                         }}
-                        type={ButtonType.blue}
                     >
                         <Typography
                             variant="h4"

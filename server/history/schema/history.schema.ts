@@ -43,6 +43,7 @@ export class History {
     targetId: mongoose.Types.ObjectId;
 
     @Prop({
+        type: String,
         required: true,
     })
     targetModel: TargetModel;
@@ -51,9 +52,10 @@ export class History {
         type: mongoose.Schema.Types.Mixed,
         required: false,
     })
-    user: User | M2M | string;
+    user: User | M2M | mongoose.Types.ObjectId | mongoose.Types.ObjectId[] | string | null;
 
     @Prop({
+        type: String,
         required: true,
     })
     type: HistoryType; //TODO: Validate if details field(after, before) it's optional or required based on type

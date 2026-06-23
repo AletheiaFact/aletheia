@@ -18,7 +18,7 @@ export class UpdateVerificationRequestDTO extends PartialType(
     @IsArray()
     @IsOptional()
     @ApiProperty()
-    group: Group;
+    group: Group | null;
 
     @IsOptional()
     @ApiProperty()

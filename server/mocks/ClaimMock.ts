@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { vi } from "vitest";
 import type { ClaimDocument } from "../claim/schemas/claim.schema";
 import type { ImageDocument } from "../claim/types/image/schemas/image.schema";
 import type { PersonalityDocument } from "../personality/mongo/schemas/personality.schema";
@@ -8,22 +8,22 @@ import type { PersonalityDocument } from "../personality/mongo/schemas/personali
  */
 export const mockClaimService = () => ({
     getByPersonalityIdAndClaimSlug:
-        jest.fn<() => Promise<Partial<ClaimDocument>>>(),
-    getById: jest.fn<() => Promise<Partial<ClaimDocument>>>(),
-    create: jest.fn<() => Promise<Partial<ClaimDocument>>>(),
-    update: jest.fn<() => Promise<Partial<ClaimDocument>>>(),
-    delete: jest.fn<() => Promise<void>>(),
-    listAll: jest.fn<() => Promise<Partial<ClaimDocument>[]>>(),
-    count: jest.fn<() => Promise<number>>(),
+        vi.fn<() => Promise<Partial<ClaimDocument>>>(),
+    getById: vi.fn<() => Promise<Partial<ClaimDocument>>>(),
+    create: vi.fn<() => Promise<Partial<ClaimDocument>>>(),
+    update: vi.fn<() => Promise<Partial<ClaimDocument>>>(),
+    delete: vi.fn<() => Promise<void>>(),
+    listAll: vi.fn<() => Promise<Partial<ClaimDocument>[]>>(),
+    count: vi.fn<() => Promise<number>>(),
 });
 
 /**
  * Mock factory for ImageService matching actual service interface
  */
 export const mockImageService = () => ({
-    getByDataHash: jest.fn<() => Promise<Partial<ImageDocument>>>(),
-    create: jest.fn<() => Promise<Partial<ImageDocument>>>(),
-    updateImageWithTopics: jest.fn<() => Promise<Partial<ImageDocument>>>(),
+    getByDataHash: vi.fn<() => Promise<Partial<ImageDocument>>>(),
+    create: vi.fn<() => Promise<Partial<ImageDocument>>>(),
+    updateImageWithTopics: vi.fn<() => Promise<Partial<ImageDocument>>>(),
 });
 
 /**
@@ -31,10 +31,10 @@ export const mockImageService = () => ({
  */
 export const mockPersonalityService = () => ({
     getPersonalityBySlug:
-        jest.fn<() => Promise<Partial<PersonalityDocument>>>(),
-    listAll: jest.fn<() => Promise<Partial<PersonalityDocument>[]>>(),
-    getById: jest.fn<() => Promise<Partial<PersonalityDocument>>>(),
-    create: jest.fn<() => Promise<Partial<PersonalityDocument>>>(),
-    update: jest.fn<() => Promise<Partial<PersonalityDocument>>>(),
-    delete: jest.fn<() => Promise<void>>(),
+        vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
+    listAll: vi.fn<() => Promise<Partial<PersonalityDocument>[]>>(),
+    getById: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
+    create: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
+    update: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
+    delete: vi.fn<() => Promise<void>>(),
 });

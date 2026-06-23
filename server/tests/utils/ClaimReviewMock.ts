@@ -2,11 +2,16 @@ import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 const { ObjectId } = require("mongodb");
 
-export const ReviewMock = (claimId, personalitiesId, reportId, userId) => ({
+export const ReviewMock = (
+    claimId: string,
+    personalitiesId: string[],
+    reportId: string,
+    userId: string
+) => ({
     isPartialReview: false,
     isHidden: false,
     isDeleted: false,
-    deletedAt: null,
+    deletedAt: null as Date | null,
     personality: new ObjectId(personalitiesId[0]),
     target: new ObjectId(claimId),
     targetModel: "Claim",

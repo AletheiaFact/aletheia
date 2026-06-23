@@ -13,9 +13,9 @@ export interface ChatBotContext {
 
 export const createChatBotMachine = (
     verificationRequestStateMachineService: VerificationRequestStateMachineService,
-    value?,
-    context?,
-    M2MUser?,
+    value?: string,
+    context?: ChatBotContext,
+    M2MUser?: any
 ) => {
     const chatBotMachine = createMachine<ChatBotContext>(
         {

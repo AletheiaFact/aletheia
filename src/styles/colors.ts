@@ -1,6 +1,6 @@
 import localConfig from "../../config/localConfig";
 
-const colors = {
+const defaultColors = {
     primary: "rgb(17, 39, 58)", //#11273a
     secondary: "rgb(101, 126, 142)", //#657e8e
     tertiary: "rgb(156, 189, 210)", //#9bbcd1
@@ -8,6 +8,8 @@ const colors = {
     lightPrimary: "rgb(79, 141, 180)", //#4F8DB4
     lightSecondary: "rgb(103, 190, 242)", //#67bef2
     lightTertiary: "rgb(218, 232, 234)", //#dae8ea
+    lightQuartiary: "rgb(241, 246, 247)", //#f1f6f7
+    lightQuintary: "rgb(229, 234, 237)", //#e5eaea
     black: "rgb(17, 17, 17)", //#111111
     blackSecondary: "rgb(81, 81, 81)", //#515151
     blackTertiary: "rgb(32, 34, 34)", // #202222
@@ -23,6 +25,7 @@ const colors = {
     activeTranslucent: "rgba(73, 222, 128, 0.1)",
     whiteLow: "rgba(255, 255, 255, 0.05)",
     whiteHigh: "rgba(255, 255, 255, 0.87)",
+    primaryHover: "rgb(40, 68, 92)",
     logo: "#E8E8E8",
     error: "#ff4d4f",
     active: "#49DE80",
@@ -31,6 +34,10 @@ const colors = {
     high: "#f57c00",
     medium: "#fbc02d",
     low: "#388e3c",
+};
+
+const colors = {
+    ...defaultColors,
     ...(localConfig?.theme?.colors || {}),
 };
 export default colors;

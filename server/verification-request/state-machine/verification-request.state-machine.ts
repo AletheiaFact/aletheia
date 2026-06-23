@@ -96,8 +96,9 @@ export class VerificationRequestStateMachine extends StateMachineBase<Verificati
         };
 
         return (
-            statusMap[verificationRequest?.status] ||
-            CommonStateMachineStates.REHYDRATE
+            statusMap[
+                verificationRequest?.status as VerificationRequestStatus
+            ] || CommonStateMachineStates.REHYDRATE
         );
     }
 }

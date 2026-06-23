@@ -1,5 +1,5 @@
 import React from "react";
-import AletheiaButton, { ButtonType } from "../../Button";
+import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 
 interface EventCardActionProps {
     label: string;
@@ -10,7 +10,7 @@ const EventCardAction = ({ label, href }: EventCardActionProps) => {
     return (
         <AletheiaButton
             data-cy={"testOpenEventButton"}
-            type={ButtonType.blue}
+            type={ButtonType.primary}
             href={href}
             target="_blank"
         >

@@ -27,8 +27,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
             exception instanceof HttpException
                 ? exception.getResponse()
                 : exception instanceof Error
-                    ? exception.message
-                    : "Internal server error";
+                ? exception.message
+                : "Internal server error";
 
         const requestId =
             (request as any).requestId ||
@@ -84,7 +84,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         }
 
         this.logger.error(
-            `${request.method} ${request.url} | Status: ${status} | RequestId: ${requestId} | Error: ${errorMessage} | Context: ${JSON.stringify(diagnostics)}`,
+            `${request.method} ${
+                request.url
+            } | Status: ${status} | RequestId: ${requestId} | Error: ${errorMessage} | Context: ${JSON.stringify(
+                diagnostics
+            )}`,
             exception instanceof Error ? exception.stack : ""
         );
 

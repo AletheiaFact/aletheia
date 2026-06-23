@@ -54,7 +54,7 @@ export class Comment {
     @Prop({ required: true, default: false })
     isReply: boolean;
 
-    @Prop({ required: true, default: CommentEnum.review })
+    @Prop({ type: String, required: true, default: CommentEnum.review })
     type: CommentEnum;
 }
 

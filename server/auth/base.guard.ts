@@ -32,7 +32,12 @@ export abstract class BaseGuard implements CanActivate {
     /**
      * You can implement a shared redirect or fallback logic here.
      */
-    protected checkAndRedirect(request, response, isPublic, redirectPath) {
+    protected checkAndRedirect(
+        request: any,
+        response: any,
+        isPublic: boolean,
+        redirectPath: string
+    ) {
         const isAllowedPublicUrl = [
             "/login",
             "/unauthorized",

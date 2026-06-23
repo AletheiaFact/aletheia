@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import Input from "../AletheiaInput";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import InputPassword from "../InputPassword";
 import ForgotPasswordLink from "./ForgotPasswordLink";
 import { Grid } from "@mui/material";
@@ -66,6 +66,7 @@ const OryLoginForm = ({
                                 <TextError
                                     stateError={errors.email}
                                     children={t("login:emailErrorMessage")}
+                                    data-cy="testEmailErrorMessage"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} lg={2}>
@@ -84,16 +85,17 @@ const OryLoginForm = ({
                                 <TextError
                                     stateError={errors.password}
                                     children={t("login:passwordErrorMessage")}
+                                    data-cy="testPasswordErrorMessage"
                                 />
                             </Grid>
-                            <Button
+                            <AletheiaButton
                                 loading={isLoading}
-                                type={ButtonType.blue}
+                                type={ButtonType.primary}
                                 htmlType="submit"
                                 data-cy={"loginButton"}
                             >
                                 {t("login:submitButton")}
-                            </Button>
+                            </AletheiaButton>
                         </Grid>
                     </form>
                 </Grid>
@@ -125,18 +127,19 @@ const OryLoginForm = ({
                                 <TextError
                                     stateError={errors.totp}
                                     children={t("totp:totpErrorMessage")}
+                                    data-cy="testTotpErrorMessage"
                                 />
                             </Grid>
                         </Grid>
                         <Grid container>
-                            <Button
+                            <AletheiaButton
                                 loading={isLoading}
-                                type={ButtonType.blue}
+                                type={ButtonType.primary}
                                 htmlType="submit"
                                 data-cy="totpSubmitButton"
                             >
                                 {t("totp:submitButton")}
-                            </Button>
+                            </AletheiaButton>
                         </Grid>
                     </form>
                 </Grid>

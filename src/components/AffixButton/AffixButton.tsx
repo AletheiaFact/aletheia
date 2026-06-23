@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 import colors from "../../styles/colors";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import PulseAnimation from "../PulseAnimation";
 import Fab from "./Fab";
@@ -33,11 +33,12 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButtonProps) => {
-    const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed } =
+    const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed, menuCollapsed } =
         useAppSelector((state) => ({
             vw: state?.vw,
             copilotDrawerCollapsed: state?.copilotDrawerCollapsed ?? true,
             reviewDrawerCollapsed: state?.reviewDrawerCollapsed ?? true,
+            menuCollapsed: state?.menuCollapsed ?? true,
         }));
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userRole] = useAtom(currentUserRole);
@@ -128,7 +129,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
         toggleFloatingdrawer();
     };
 
-    if (!isLoggedIn || !reviewDrawerCollapsed) {
+    if (!isLoggedIn || !reviewDrawerCollapsed || !menuCollapsed) {
         return null;
     }
 
@@ -239,7 +240,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                     }}
                 >
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        type={ButtonType.primary}
                         onClick={handleHideModal}
                         data-cy={"testButtonTutorialOk"}
                     >

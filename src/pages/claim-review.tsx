@@ -67,7 +67,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             false,
             enableReviewersUpdateReport,
             enableViewReportPreview,
-            enableInformativeNews
+            enableInformativeNews,
         )
     );
     dispatch(actions.setSelectPersonality(personality));

@@ -35,7 +35,7 @@ describe("EventsController (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(true);
     });
 
@@ -98,7 +98,7 @@ describe("EventsController (Unit)", () => {
         it("should redirect to safe namespace when flag is disabled", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
             const req = { params: { namespace: "tech" } };
-            const res = { redirect: jest.fn() };
+            const res = { redirect: vi.fn() };
 
             await controller.eventPage(req as any, res as any);
 
@@ -128,7 +128,7 @@ describe("EventsController (Unit)", () => {
         it("should redirect to root when flag is disabled and no namespace", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
             const req = { params: {} };
-            const res = { redirect: jest.fn() };
+            const res = { redirect: vi.fn() };
 
             await controller.createEventPage(req as any, res as any);
 
@@ -157,7 +157,7 @@ describe("EventsController (Unit)", () => {
         it("should redirect when flag is disabled", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
             const req = { params: { namespace: "test" } };
-            const res = { redirect: jest.fn() };
+            const res = { redirect: vi.fn() };
 
             await controller.eventViewPage(req as any, res as any);
 
@@ -197,7 +197,7 @@ describe("EventsController (Unit)", () => {
         it("should return root for malicious namespace input", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
             const req = { params: { namespace: "google.com" } };
-            const res = { redirect: jest.fn() };
+            const res = { redirect: vi.fn() };
 
             await controller.eventPage(req as any, res as any);
 

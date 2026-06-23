@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    NotFoundException,
     Param,
     Post,
     Put,
@@ -43,7 +44,7 @@ export class NameSpaceController {
             strict: true,
         });
 
-        namespace.users = await this.updateNameSpaceUsers(
+        (namespace as any).users = await this.updateNameSpaceUsers(
             namespace.users,
             namespace.slug
         );
@@ -54,20 +55,26 @@ export class NameSpaceController {
     @AdminOnly()
     @ApiTags("name-space")
     @Put("api/name-space/:id")
-    async update(@Param("id") id, @Body() namespaceBody: UpdateNameSpaceDTO) {
+    async update(
+        @Param("id") id: string,
+        @Body() namespaceBody: UpdateNameSpaceDTO
+    ) {
         const nameSpace = await this.nameSpaceService.getById(id);
+        if (!nameSpace) {
+            throw new NotFoundException("Namespace not found");
+        }
         const newNameSpace = {
             ...nameSpace.toObject(),
             ...namespaceBody,
         };
 
-        newNameSpace.slug = slugify(newNameSpace.name, {
+        newNameSpace.slug = slugify(newNameSpace.name ?? "", {
             lower: true,
             strict: true,
         });
 
-        newNameSpace.users = await this.updateNameSpaceUsers(
-            newNameSpace.users,
+        (newNameSpace as any).users = await this.updateNameSpaceUsers(
+            newNameSpace.users ?? [],
             newNameSpace.slug,
             nameSpace.slug
         );
@@ -75,8 +82,8 @@ export class NameSpaceController {
         await this.findNameSpaceUsersAndDelete(
             id,
             nameSpace.slug,
-            newNameSpace.users,
-            nameSpace.users
+            newNameSpace.users ?? [],
+            nameSpace.users ?? []
         );
 
         return await this.nameSpaceService.update(id, newNameSpace);
@@ -110,12 +117,16 @@ export class NameSpaceController {
         await this.viewService.render(req, res, "/admin-namespaces", query);
     }
 
-    private async updateNameSpaceUsers(users, newKey, oldKey = null) {
-        const promises = users.map(async (user) => {
+    private async updateNameSpaceUsers(
+        users: any[],
+        newKey: string,
+        oldKey: string | null = null
+    ) {
+        const promises = users.map(async (user: any) => {
             const userId = new Types.ObjectId(user._id);
             const existingUser = await this.usersService.getById(userId);
 
-            let updatedRoles = { ...existingUser.role };
+            let updatedRoles: Record<string, any> = { ...existingUser.role };
 
             if (oldKey && oldKey !== newKey) {
                 delete updatedRoles[oldKey];
@@ -134,14 +145,14 @@ export class NameSpaceController {
     }
 
     private async findNameSpaceUsersAndDelete(
-        id,
-        nameSpaceSlug,
-        users,
-        previousUsersId
+        id: string,
+        nameSpaceSlug: string,
+        users: any[],
+        previousUsersId: any[]
     ) {
-        const usersIdSet = new Set(users.map((user) => user.toString()));
+        const usersIdSet = new Set(users.map((user: any) => user.toString()));
         const nameSpaceUsersTodelete = previousUsersId.filter(
-            (previousUserId) => !usersIdSet.has(previousUserId.toString())
+            (previousUserId: any) => !usersIdSet.has(previousUserId.toString())
         );
 
         if (nameSpaceUsersTodelete.length > 0) {
@@ -156,11 +167,11 @@ export class NameSpaceController {
         }
     }
 
-    private async deleteUsersNameSpace(usersId, key) {
-        const updatePromises = usersId.map(async (userId) => {
+    private async deleteUsersNameSpace(usersId: any[], key: string) {
+        const updatePromises = usersId.map(async (userId: any) => {
             const id = new Types.ObjectId(userId);
             const user = await this.usersService.getById(id);
-            delete user.role[key];
+            delete (user.role as Record<string, any>)[key];
             return this.usersService.updateUser(user._id, { role: user.role });
         });
 

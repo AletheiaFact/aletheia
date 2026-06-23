@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { trackUmamiEvent } from "../../lib/umami";
 
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import BannerStyle from "./Banner.style";
 import AletheiaVideo from "../AletheiaVideo";
 
@@ -16,7 +16,7 @@ function Banner() {
                 <AletheiaVideo />
             </Grid>
             <Grid item xs={10}>
-                <Button
+                <AletheiaButton
                     onClick={() => {
                         trackUmamiEvent(
                             "banner-cta-registration-button",
@@ -26,13 +26,10 @@ function Banner() {
                     type={ButtonType.whiteBlack}
                     href={"/sign-up"}
                     className="cta-registration-button"
-                    style={{
-                        height: "fit-content",
-                        borderRadius: "10px",
-                    }}
+                    size="large"
                 >
-                    <span>{t("login:signup")}</span>
-                </Button>
+                    {t("login:signup")}
+                </AletheiaButton>
             </Grid>
         </BannerStyle>
     );

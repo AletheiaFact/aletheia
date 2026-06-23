@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import { getModelToken } from "@nestjs/mongoose";
 import { HistoryService } from "./history.service";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -29,15 +30,15 @@ describe("HistoryService (Unit)", () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("HistoryService.createHistory", () => {
     it("should create a new history document and call save", async () => {
       const result = await service.createHistory(mockHistoryItem);
 
-      const instance = (mockHistoryModel as jest.Mock).mock.instances[0];
+      const instance = (mockHistoryModel as Mock).mock.instances[0];
 
       expect(instance.save).toHaveBeenCalled();
       expect(result._id).toBe("abc");
@@ -46,9 +47,9 @@ describe("HistoryService (Unit)", () => {
     it("should throw if save fails", async () => {
       const error = new Error("Database error");
 
-      (mockHistoryModel as jest.Mock).mockImplementationOnce(function () {
+      (mockHistoryModel as Mock).mockImplementationOnce(function () {
         return {
-          save: jest.fn().mockRejectedValue(error),
+          save: vi.fn().mockRejectedValue(error),
         };
       });
 
@@ -106,7 +107,7 @@ describe("HistoryService (Unit)", () => {
     });
 
     it("should return description from history when hidden", async () => {
-      jest
+      vi
         .spyOn(service, "getHistoryForTarget")
         .mockResolvedValue(mockHistoryResponse);
 
@@ -140,7 +141,7 @@ describe("HistoryService (Unit)", () => {
     });
 
     it("should handle empty aggregate result", async () => {
-      (mockHistoryModel.aggregate as jest.Mock).mockResolvedValue(
+      (mockHistoryModel.aggregate as Mock).mockResolvedValue(
         [{ data: [], totalCount: [] }]
       );
 

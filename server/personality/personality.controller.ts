@@ -26,6 +26,7 @@ import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
 export class PersonalityController {
@@ -53,14 +54,15 @@ export class PersonalityController {
         try {
             return await this.personalityService.create(createPersonality);
         } catch (error) {
+            const err = toError(error);
             if (
-                error.name === "MongoError" &&
-                error.keyPattern &&
-                error.keyPattern.wikidata
+                err.name === "MongoError" &&
+                err.keyPattern &&
+                err.keyPattern.wikidata
             ) {
-                error.message = `Personality with wikidata id ${error.keyValue.wikidata} already exists`;
+                err.message = `Personality with wikidata id ${err.keyValue?.wikidata} already exists`;
             }
-            this.logger.error(error);
+            this.logger.error(err.message, err.stack);
         }
     }
 
@@ -68,7 +70,10 @@ export class PersonalityController {
     @ApiTags("personality")
     @Get("api/personality/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async get(@Param("id") personalityId, @Query() query) {
+    async get(
+        @Param("id") personalityId: string,
+        @Query() query: { language?: string; nameSpace?: string }
+    ) {
         return this.personalityService
             .getById(personalityId, query) // TODO: get language from request object in the future
             .catch((err) => {
@@ -78,14 +83,21 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Put("api/personality/:id")
-    async update(@Param("id") personalityId, @Body() body) {
+    async update(
+        @Param("id") personalityId: string,
+        @Body() body: Partial<CreatePersonalityDTO>
+    ) {
         return this.personalityService.update(personalityId, body);
     }
 
     @AdminOnly()
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
-    async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
+    async updateHiddenStatus(
+        @Param("id") personalityId: string,
+        @Body()
+        body: { recaptcha: string; isHidden: boolean; description: string }
+    ) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -104,7 +116,7 @@ export class PersonalityController {
     @ApiTags("personality")
     @Get("api/personality/:id/reviews")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    getReviewStats(@Param("id") personalityId) {
+    getReviewStats(@Param("id") personalityId: string) {
         return this.personalityService
             .getReviewStats(personalityId)
             .catch((err) => {
@@ -152,19 +164,19 @@ export class PersonalityController {
                 req.language
             );
 
-        let personalities = [];
+        let personalities: any[] = [];
         try {
-            ({ personalities } =
-                await this.personalityService.combinedListAll({
-                    language: req.language,
-                    order: "random",
-                    pageSize: 6,
-                    fetchOnly: true,
-                    filter: personality._id,
-                }));
+            ({ personalities } = await this.personalityService.combinedListAll({
+                language: req.language,
+                order: "random",
+                pageSize: 6,
+                fetchOnly: true,
+                filter: personality._id,
+            }));
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to fetch related personalities for "${slug}": ${error.message}`
+                `Failed to fetch related personalities for "${slug}": ${err.message}`
             );
         }
 
@@ -175,8 +187,9 @@ export class PersonalityController {
                     TargetModel.Personality
                 );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to fetch hide descriptions for "${slug}": ${error.message}`
+                `Failed to fetch hide descriptions for "${slug}": ${err.message}`
             );
         }
 

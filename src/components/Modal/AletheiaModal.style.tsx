@@ -49,12 +49,6 @@ const DefaultModal = styled(Dialog)`
     padding: 0;
   }
 
-  .MuiButtonBase-root {
-    color: ${({ namespace }) =>
-    namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
-    font-size: 14px;
- }
-
   .hide-modal {
     color: ${colors.warning};
   }

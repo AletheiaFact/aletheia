@@ -35,10 +35,10 @@ describe("Login tests", () => {
     it("Should logout successfully", () => {
         cy.login();
         cy.intercept("/api/.ory/sessions/whoami").as("confirmLogout");
-        cy.get(locators.menu.USER_ICON).click();
-        cy.get(locators.menu.LOGOUT_MENU).click();
+        cy.get(locators.header.OPEN_USER_MENU).click();
+        cy.get(locators.header.LOGOUT_ITEM).click();
         cy.wait("@confirmLogout", { timeout: 30000 });
-        cy.get(locators.menu.USER_ICON).click();
-        cy.get(locators.menu.LOGIN_MENU).should("be.visible");
+        cy.get(locators.header.OPEN_USER_MENU).click();
+        cy.get(locators.header.LOGIN_ITEM).should("be.visible");
     });
 });
