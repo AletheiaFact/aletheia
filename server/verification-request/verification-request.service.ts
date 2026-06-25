@@ -1,4 +1,11 @@
-import { isValidObjectId, Model, Types, UpdateQuery } from "mongoose";
+import {
+    ClientSession,
+    isValidObjectId,
+    Model,
+    SortOrder,
+    Types,
+    UpdateQuery,
+} from "mongoose";
 import { escapeRegex } from "../util/regex.util";
 import { SourceService } from "../source/source.service";
 import {
@@ -35,6 +42,7 @@ import {
 } from "./dto/types";
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
+import { toError } from "../util/error-handling";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 const md5 = require("md5");
@@ -63,6 +71,18 @@ export class VerificationRequestService {
         pageSize,
         order,
         ...filters
+    }: {
+        page: number;
+        pageSize: string;
+        order: SortOrder;
+        contentFilters?: string[];
+        topics?: string[];
+        severity?: string;
+        sourceChannel?: string;
+        status?: string[];
+        impactArea?: string[];
+        startDate?: string;
+        endDate?: string;
     }): Promise<VerificationRequest[]> {
         const query = await this.buildVerificationRequestQuery(filters);
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -81,7 +101,7 @@ export class VerificationRequestService {
      * @returns an array of verification request documents
      */
     async findAll(verifiedRequestQuery: {
-        searchContent: string;
+        searchContent?: string;
     }): Promise<VerificationRequest[]> {
         return this.VerificationRequestModel.find(
             {
@@ -127,7 +147,9 @@ export class VerificationRequestService {
      * @param verificationRequestId verification request ID string
      * @returns the verification request document
      */
-    async getById(verificationRequestId: string): Promise<VerificationRequest> {
+    async getById(
+        verificationRequestId: string
+    ): Promise<VerificationRequest | null> {
         return this.VerificationRequestModel.findById(verificationRequestId, {
             embedding: 0,
         }).populate("group");
@@ -142,7 +164,7 @@ export class VerificationRequestService {
     async getByIdWithPopulatedFields(
         verificationRequestId: string,
         fieldsToPopulate: string[] = []
-    ): Promise<VerificationRequest> {
+    ): Promise<VerificationRequest | null> {
         let query = this.VerificationRequestModel.findById(
             verificationRequestId,
             { embedding: 0 }
@@ -224,24 +246,25 @@ export class VerificationRequestService {
                 vr
             );
 
-            await this.historyService.createHistory(history);
+            await this.historyService.createHistory(history as any);
 
             this.logger.log(
                 `Verification request created successfully: ${vr._id}`
             );
             return vr;
-        } catch (e) {
-            this.logger.error("Failed to create verification request", e.stack);
+        } catch (error) {
+            const err = toError(error);
+            this.logger.error("Failed to create verification request", err.stack);
 
-            if (e.name === "ValidationError") {
-                const fields = Object.keys(e.errors).join(", ");
+            if (err.name === "ValidationError" && err.errors) {
+                const fields = Object.keys(err.errors).join(", ");
                 throw new BadRequestException(
                     `Validation failed: ${fields} are invalid or missing`
                 );
             }
 
-            if (e.code === 11000) {
-                const field = Object.keys(e.keyPattern)[0];
+            if (err.code === 11000 && err.keyPattern) {
+                const field = Object.keys(err.keyPattern)[0];
                 throw new BadRequestException(
                     `Duplicate value for field: ${field}`
                 );
@@ -359,7 +382,10 @@ export class VerificationRequestService {
                     ) {
                         const personalityIds = await Promise.all(
                             result.personalities.map(
-                                async (personalityData) => {
+                                async (personalityData: {
+                                    name: string;
+                                    wikidata?: any;
+                                }) => {
                                     const personality =
                                         await this.personalityService.findOrCreatePersonality(
                                             {
@@ -399,7 +425,7 @@ export class VerificationRequestService {
                     }
 
                     const topicIds = await Promise.all(
-                        result.map(async (topicData) => {
+                        result.map(async (topicData: any) => {
                             const topic =
                                 await this.topicService.findOrCreateTopic(
                                     topicData
@@ -453,7 +479,7 @@ export class VerificationRequestService {
                 await this.handleInvalidResult(
                     targetId,
                     field,
-                    validation.error
+                    validation.error ?? ""
                 );
                 throw new BadRequestException(
                     `Invalid ${field} result: ${validation.error}`
@@ -495,6 +521,12 @@ export class VerificationRequestService {
                 `Cleared pending AI task for ${field} on VR ${targetId}`
             );
 
+            if (!updated) {
+                throw new BadRequestException(
+                    `Verification request ${targetId} not found after update`
+                );
+            }
+
             // Track state transition
             const duration = Date.now() - startTime;
             const fromState =
@@ -512,7 +544,8 @@ export class VerificationRequestService {
 
             return updated;
         } catch (error) {
-            await this.handleStateError(targetId, field, error.message);
+            const err = toError(error);
+            await this.handleStateError(targetId, field, err.message);
             throw error;
         }
     }
@@ -596,7 +629,7 @@ export class VerificationRequestService {
         );
 
         // Map field names to state machine events
-        const stateToEventMap = {
+        const stateToEventMap: Record<string, string> = {
             embedding: "embed",
             identifiedData: "identifyData",
             topics: "defineTopics",
@@ -614,13 +647,14 @@ export class VerificationRequestService {
 
         try {
             // Trigger the state machine with the appropriate event
-            await this.verificationRequestStateService[event](
+            await (this.verificationRequestStateService as any)[event](
                 verificationRequest.id
             );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to trigger state machine for ${missingState}: ${error.message}`,
-                error.stack
+                `Failed to trigger state machine for ${missingState}: ${err.message}`,
+                err.stack
             );
         }
     }
@@ -633,7 +667,7 @@ export class VerificationRequestService {
     async findByDataHash(
         data_hash: string,
         populate = true
-    ): Promise<VerificationRequestDocument> {
+    ): Promise<VerificationRequestDocument | null> {
         if (populate) {
             return this.VerificationRequestModel.findOne({
                 data_hash,
@@ -654,7 +688,10 @@ export class VerificationRequestService {
      * @param updated updated object
      * @returns the removed ids
      */
-    findRemovedIds(initial, updated): string[] {
+    findRemovedIds(
+        initial: { content: any[] },
+        updated: { content: string[] }
+    ): string[] {
         return initial.content.filter(
             (id) => !updated.content.includes(id.toString())
         );
@@ -675,6 +712,12 @@ export class VerificationRequestService {
                 await this.VerificationRequestModel.findById(
                     verificationRequestId
                 );
+
+            if (!verificationRequest) {
+                throw new BadRequestException(
+                    `Verification request ${verificationRequestId} not found`
+                );
+            }
 
             await this.groupService.removeContent(
                 groupId,
@@ -766,7 +809,7 @@ export class VerificationRequestService {
                 latestVerificationRequest
             );
 
-            await this.historyService.createHistory(history);
+            await this.historyService.createHistory(history as any);
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
@@ -789,8 +832,8 @@ export class VerificationRequestService {
      * @returns the group id
      */
     private async handleGroupPostProcessing(
-        originalVerificationRequest,
-        updatedVerificationRequest
+        originalVerificationRequest: VerificationRequestDocument,
+        updatedVerificationRequest: Record<string, any>
     ) {
         if (originalVerificationRequest?.group) {
             await this.delete(
@@ -811,8 +854,8 @@ export class VerificationRequestService {
      * @param updatedVerificationRequest verification request updated object
      */
     private async delete(
-        originalVerificationRequest,
-        updatedVerificationRequest
+        originalVerificationRequest: VerificationRequestDocument,
+        updatedVerificationRequest: Record<string, any>
     ) {
         const removedRequestIds = await Promise.all(
             this.findRemovedIds(originalVerificationRequest?.group, {
@@ -841,12 +884,12 @@ export class VerificationRequestService {
      * @returns the group id
      */
     private async createGroupAndUpdateVerificationRequests(
-        originalVerificationRequest,
-        updatedVerificationRequest
+        originalVerificationRequest: VerificationRequestDocument,
+        updatedVerificationRequest: Record<string, any>
     ) {
         const contentIds =
             updatedVerificationRequest?.group?.map(
-                (item) => new Types.ObjectId(item?._id || item)
+                (item: any) => new Types.ObjectId(item?._id || item)
             ) || [];
 
         const groupId = (
@@ -857,7 +900,7 @@ export class VerificationRequestService {
 
         if (contentIds.length) {
             await Promise.all(
-                contentIds.map((itemId) =>
+                contentIds.map((itemId: any) =>
                     this.update(itemId, { group: groupId }, false)
                 )
             );
@@ -866,7 +909,16 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    async count(filters): Promise<number> {
+    async count(filters: {
+        contentFilters?: string[];
+        topics?: string[];
+        severity?: string;
+        sourceChannel?: string;
+        status?: string[];
+        impactArea?: string[];
+        startDate?: string;
+        endDate?: string;
+    }): Promise<number> {
         const query = await this.buildVerificationRequestQuery(filters);
         return this.VerificationRequestModel.countDocuments(query);
     }
@@ -891,14 +943,15 @@ export class VerificationRequestService {
      */
     async findSimilarRequests(
         queryEmbedding: number[],
-        filter,
-        pageSize
+        filter: string[],
+        pageSize: number | string
     ): Promise<VerificationRequest[]> {
         if (!queryEmbedding || queryEmbedding.length === 0) {
             return [];
         }
         const filterIds = filter.map(
-            (verificationRequestId) => new Types.ObjectId(verificationRequestId)
+            (verificationRequestId: string) =>
+                new Types.ObjectId(verificationRequestId)
         );
 
         return await this.VerificationRequestModel.aggregate([
@@ -950,20 +1003,26 @@ export class VerificationRequestService {
                 $sort: { similarity: -1 },
             },
             {
-                $limit: parseInt(pageSize),
+                $limit: parseInt(String(pageSize)),
             },
         ]);
     }
 
     async updateVerificationRequestWithTopics(
-        topics,
-        data_hash
-    ): Promise<VerificationRequestDocument> {
+        topics: Array<{ value?: string; wikidataId?: string }>,
+        data_hash: string
+    ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
+        if (!verificationRequest) {
+            return null;
+        }
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map((topic) => topic.value || topic.wikidataId)
+            topics.map(
+                (topic: { value?: string; wikidataId?: string }) =>
+                    (topic.value || topic.wikidataId)!
+            )
         );
-        const topicIds = foundTopics.map((topic) => topic._id);
+        const topicIds = foundTopics.map((topic: any) => topic._id);
 
         const latestVerificationRequest = verificationRequest.toObject();
 
@@ -983,7 +1042,7 @@ export class VerificationRequestService {
             latestVerificationRequest
         );
 
-        await this.historyService.createHistory(history);
+        await this.historyService.createHistory(history as any);
 
         return this.VerificationRequestModel.findByIdAndUpdate(
             { _id: verificationRequest._id },
@@ -1020,9 +1079,9 @@ export class VerificationRequestService {
             impactArea?.length ? this.topicService.findByNames(impactArea) : [],
         ]);
 
-        const topicIds = topicsObj.map((topics) => topics._id);
+        const topicIds = topicsObj.map((topics: any) => topics._id);
         const impactAreaIds = impactAreasObj.map(
-            (impactArea) => new Types.ObjectId(impactArea._id)
+            (impactArea: any) => new Types.ObjectId(impactArea._id)
         );
 
         if (topicIds.length) orConditions.push({ topics: { $in: topicIds } });
@@ -1031,7 +1090,7 @@ export class VerificationRequestService {
             orConditions.push({ impactArea: { $in: impactAreaIds } });
 
         if (contentFilters?.length) {
-            const contentConditions = contentFilters.map((filter) => ({
+            const contentConditions = contentFilters.map((filter: string) => ({
                 content: { $regex: escapeRegex(filter), $options: "i" },
             }));
             orConditions.push(...contentConditions);
@@ -1077,7 +1136,7 @@ export class VerificationRequestService {
                         error: "Embedding must be a non-empty array",
                     };
                 }
-                if (result.some((v) => typeof v !== "number")) {
+                if (result.some((v: any) => typeof v !== "number")) {
                     return {
                         valid: false,
                         error: "Embedding must contain only numbers",
@@ -1091,7 +1150,9 @@ export class VerificationRequestService {
                         error: "Topics must be a non-empty array",
                     };
                 }
-                const allValidIds = result.every((id) => isValidObjectId(id));
+                const allValidIds = result.every((id: any) =>
+                    isValidObjectId(id)
+                );
                 if (!allValidIds) {
                     return {
                         valid: false,
@@ -1110,7 +1171,7 @@ export class VerificationRequestService {
                 }
 
                 if (Array.isArray(result)) {
-                    const allValidIds = result.every((id) =>
+                    const allValidIds = result.every((id: any) =>
                         isValidObjectId(id)
                     );
                     if (allValidIds) {
@@ -1184,6 +1245,9 @@ export class VerificationRequestService {
         state: string
     ): Promise<number> {
         const vr = await this.VerificationRequestModel.findById(vrId);
+        if (!vr) {
+            return 0;
+        }
         const retries = (vr.stateRetries?.get(state) || 0) + 1;
 
         const stateRetries = new Map(Object.entries(vr.stateRetries || {}));
@@ -1300,7 +1364,7 @@ export class VerificationRequestService {
         if (!transitions || transitions.length === 0) return 0;
 
         const total = transitions.reduce(
-            (sum, t) => sum + (t.duration || 0),
+            (sum: number, t: { duration?: number }) => sum + (t.duration || 0),
             0
         );
         return total / transitions.length;
@@ -1462,7 +1526,7 @@ export class VerificationRequestService {
         }
 
         if (tasksToClean.length > 0) {
-            const unsetObj = {};
+            const unsetObj: Record<string, string> = {};
             tasksToClean.forEach((field) => {
                 unsetObj[`pendingAiTasks.${field}`] = "";
             });
@@ -1520,9 +1584,28 @@ export class VerificationRequestService {
             { new: true }
         );
 
+        if (!updatedVr) {
+            throw new BadRequestException(
+                `VerificationRequest ${vrId} not found after update`
+            );
+        }
+
         // Continue with next steps
         await this.revalidateAndRunMissingStates(updatedVr);
 
         return updatedVr;
+    }
+
+    async cascadeUpdateDataHash(
+        oldHash: string,
+        newHash: string,
+        session: ClientSession
+    ): Promise<number> {
+        const result = await this.VerificationRequestModel.updateMany(
+            { data_hash: oldHash },
+            { $set: { data_hash: newHash } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }

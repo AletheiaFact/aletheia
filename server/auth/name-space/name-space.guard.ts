@@ -36,7 +36,7 @@ export class NameSpaceGuard implements CanActivate {
                 oryConfig
             ).toSession({ cookie });
 
-            const user_id = session.identity.traits.user_id;
+            const user_id = session.identity?.traits?.user_id;
             const namespace = await this.nameSpaceService.findOne({
                 slug: namespaceSlug,
             });

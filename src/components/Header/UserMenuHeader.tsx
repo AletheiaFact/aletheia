@@ -1,68 +1,89 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
-import { Avatar, Box } from "@mui/material";
-import { currentNameSpace } from "../../atoms/namespace";
-import { useAtom } from "jotai";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import NameSpaceMenu from "./NameSpaceMenu";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
+import { BoxMenuHeader } from "./Header.style";
+import { User } from "../../types/User";
+import { TFunction } from "next-i18next";
+import Loading from "../Loading";
 
-const UserMenuHeader = ({ isLoading, user }) => {
-    const { t } = useTranslation();
-    const [nameSpace] = useAtom(currentNameSpace);
-    const nameSpaceName =
-        nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
+export interface UserMenuHeaderProps {
+    isLoadingUser: boolean;
+    isWhiteLoading?: boolean;
+    user: User | null;
+    hasSession: boolean;
+    nameSpace: string | null;
+    t: TFunction;
+    isSidebar?: boolean;
+}
+
+const UserMenuHeader = ({
+    isLoadingUser,
+    isWhiteLoading,
+    user,
+    hasSession,
+    nameSpace,
+    t,
+    isSidebar
+}: UserMenuHeaderProps) => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
     const UserMenuHeaderRef = useRef();
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-        null
-    );
 
     const showNameSpaces = () => {
         setAnchorEl(UserMenuHeaderRef.current);
     };
 
+    if (!hasSession) {
+        return
+    }
+
+    if (isLoadingUser) {
+        return <Loading isWhiteLoading={isWhiteLoading} style={{ height: "20vh" }} />;
+    }
+
     return (
-        <>
+        <BoxMenuHeader $isSidebar={isSidebar}>
             <Box ref={UserMenuHeaderRef} className="menu-header">
-                <Avatar style={{ margin: 0 }} className="menu-header-avatar">
+                <Avatar className="menu-header-avatar" sx={{ m: 0 }}>
                     {user?.name?.slice(0, 1).toUpperCase()}
                 </Avatar>
+
                 <Box sx={{ width: "100%" }}>
-                    <p className="menu-header-info name">{user?.name}</p>
-                    <p className="menu-header-info email">{user?.email}</p>
-                    <Box
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            fontSize: 12,
-                            marginTop: 4,
-                        }}
-                    >
-                        <strong style={{ color: colors.primary }}>
+                    <Typography variant="subtitle2" className="menu-header-info name">
+                        {user?.name}
+                    </Typography>
+
+                    <Typography variant="body2" className="menu-header-info email">
+                        {user?.email}
+                    </Typography>
+
+                    <Stack className="menu-header-info namespace">
+                        <Typography variant="caption" className="menu-header-info name title-namespace">
                             {nameSpaceName.replace("-", " ")}
-                        </strong>
-                        <span
-                            style={{
-                                marginLeft: 4,
-                                color: "#0473f2",
-                                cursor: "pointer",
-                            }}
+                        </Typography>
+
+                        <Typography
+                            variant="caption"
                             onClick={showNameSpaces}
+                            className="select-namespace"
                         >
-                            {t("common:change")}
-                        </span>
-                    </Box>
+                            {t<string>("common:change")}
+                        </Typography>
+                    </Stack>
                 </Box>
             </Box>
 
             <NameSpaceMenu
-                isLoading={isLoading}
+                isLoading={isLoadingUser}
                 userRole={user?.role}
                 anchorEl={anchorEl}
                 setAnchorEl={setAnchorEl}
+                nameSpace={nameSpace}
             />
-        </>
+        </BoxMenuHeader>
     );
 };
 

@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 
-export const ReportMock = (userId) => ({
+export const ReportMock = (userId: string) => ({
     sources: ["https://https://www.lipsum.com/"],
     questions: ["Lorem Ipsum is simply dummy"],
     usersId: [new ObjectId(userId)],

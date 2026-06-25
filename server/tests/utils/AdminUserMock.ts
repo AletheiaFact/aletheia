@@ -4,8 +4,8 @@ export const AdminUserMock = {
     _id: new ObjectId("62585756d665dc7bf4b14aa3"),
     email: "test-e2e@aletheiafact.org",
     firstPasswordChanged: true,
-    hash: null,
+    hash: null as string | null,
     name: "Test User",
-    oryId: null,
-    salt: null,
+    oryId: null as string | null,
+    salt: null as string | null,
 };

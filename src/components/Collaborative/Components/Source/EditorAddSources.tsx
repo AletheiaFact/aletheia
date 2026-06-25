@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
-import AletheiaButton, { ButtonType } from "../../../Button";
+import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
 import AddIcon from "@mui/icons-material/Add";
-import { URL_PATTERN } from "../../../../utils/ValidateFloatingLink";
+import { validateUrl } from "../../../../utils/ValidateUrl";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
 import { Node } from "@remirror/pm/model";
@@ -30,12 +30,6 @@ const EditorAddSources = ({
         return null;
     }
 
-    const validateFloatingLink = () => {
-        if (!URL_PATTERN.test(href)) {
-            throw new Error(t("sourceForm:errorMessageValidURL"));
-        }
-    };
-
     const getNodeObject = (id, href) => ({
         type: "text",
         marks: [
@@ -53,39 +47,48 @@ const EditorAddSources = ({
     });
 
     const submitHref = () => {
-        try {
-            setIsLoading(true);
-            const id = uniqueId();
-            const newSource = {
-                href,
-                props: {
-                    field: null,
-                    targetText: null,
-                    id: id,
-                    textRange: [0, 0],
-                },
-            };
+        setIsLoading(true);
 
-            validateFloatingLink();
-            setEditorSources((sources) => [...sources, newSource]);
-            setShowDialog(false);
-            command.insertNode(nodeFromJSON(getNodeObject(id, href)), {
-                selection: doc.content.size,
-                replaceEmptyParentBlock: true,
-            });
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setHref("https://");
+        const errorMessage = validateUrl(href, t);
+
+        if (errorMessage) {
+            setError(errorMessage);
             setIsLoading(false);
+            return;
         }
+
+        const id = uniqueId();
+        const newSource = {
+            href,
+            props: {
+                field: null,
+                targetText: null,
+                id: id,
+                textRange: [0, 0],
+            },
+        };
+
+        setEditorSources((sources) => [...sources, newSource]);
+        setShowDialog(false);
+        command.insertNode(nodeFromJSON(getNodeObject(id, href)), {
+            selection: doc.content.size,
+            replaceEmptyParentBlock: true,
+        });
+        setError(null);
+        setIsLoading(false);
     };
 
     const handleInputChange = ({ target: { value } }) => {
-        // Prevent href with double http protocol
         const href = value.replace(HTTP_PROTOCOL_REGEX, "$1");
         setHref(href);
+
+        const errorMessage = validateUrl(href, t);
+
+        if (errorMessage) {
+            setError(errorMessage);
+        } else {
+            setError(null);
+        }
     };
 
     return (

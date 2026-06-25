@@ -1,119 +1,114 @@
 /// <reference types="cypress" />
 
-import user from "../../fixtures/user";
 import locators from "../../support/locators";
 
-describe("Test the header menus", () => {
+describe("Header - Navigation and Menus", () => {
     beforeEach(() => {
-        cy.visit("http://localhost:3000");
+        cy.visit("/");
         cy.title().should("contain", "AletheiaFact.org");
     });
 
-    describe("Test the side drawer routes", () => {
-        it("Open side bar and click personality", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testPersonalitytItem]").click();
-            cy.url().should("contains", "personality");
+    describe("Public Navigation (Direct Links)", () => {
+        it("Should navigate to Verification Request page", () => {
+            cy.get(locators.header.VERIFICATION_REQUEST_ITEM).click();
+            cy.url().should("contain", "/verification-request");
         });
 
-        it("Open side bar and click claim", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testClaimtItem]").click();
-            cy.url().should("contains", "claim");
+        it("Should navigate to Event page", () => {
+            cy.get(locators.header.EVENT_ITEM).click();
+            cy.url().should("contain", "/event");
         });
 
         //functionality temporarily removed
-        it.skip("Open side bar and click source", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testSourcetItem]").click();
-            cy.url().should("contains", "source");
-        });
-
-        it("Open side bar and click verification request", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testVerificationRequestItem]").click();
-            cy.url().should("contains", "verification-request");
-        });
-
-        it("Open side bar and click event", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testEventItem]").click();
-            cy.url().should("contains", "event");
-        });
-
-        it("Open side bar and click about", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testAboutItem]").click();
-            cy.url().should("contains", "about");
-        });
-
-        it("Open side bar and click privacy policy", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testPrivacyPolicyItem]").click();
-            cy.url().should("contains", "privacy-policy");
-        });
-
-        it("Open side bar and click code of conduct", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testCodeOfConductItem]").click();
-            cy.url().should("contains", "code-of-conduct");
-        });
-
-        it("Open side bar and click supportive materials", () => {
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testSupportiveMaterialsItem]").click();
-            cy.url().should("contains", "supportive-materials");
+        it.skip("Should navigate to Source page", () => {
+            cy.get(locators.header.SOURCE_ITEM).click();
+            cy.url().should("contain", "/source");
         });
     });
 
-    describe("Test the side drawer routes that requires user permission", () => {
-        it("Should be able to access Kanban page when logged in", () => {
-            cy.login();
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testKanbantItem]").click();
-            cy.url().should("contains", "kanban");
+    describe("Repository Menu (Dropdown)", () => {
+        beforeEach(() => {
+            cy.get(locators.header.OPEN_REPOSITORY_MENU).click();
         });
 
-        it("Should be able to access Admin page when logged in", () => {
-            cy.login();
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testadminItem]").click();
-            cy.url().should("contains", "admin");
+        it("Should navigate to Personality page via repository Menu", () => {
+            cy.get(locators.header.PERSONALITY_ITEM).click();
+            cy.url().should("contain", "/personality");
         });
 
-        it("Should be able to access Badges page when logged in", () => {
-            cy.login();
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testadminBadgeItem]").click();
-            cy.url().should("contains", "admin/badges");
-        });
-
-        it("Should be able to access Namespaces page when logged in", () => {
-            cy.login();
-            cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testadminNameSpaceItem]").click();
-            cy.url().should("contains", "admin/name-spaces");
+        it("Should navigate to Claim page via repository Menu", () => {
+            cy.get(locators.header.CLAIM_ITEM).click();
+            cy.url().should("contain", "/claim");
         });
     });
 
-    describe("Test the user icon menu actions", () => {
-        it("Should not show log out when not logged in", () => {
-            cy.get(locators.menu.USER_ICON).click();
-            cy.get(locators.menu.LOGOUT_MENU).should("not.exist");
+    describe("Institutional Menu (Dropdown)", () => {
+        beforeEach(() => {
+            cy.get(locators.header.OPEN_INSTITUTION_MENU).click();
         });
 
-        it("Should be able to access My Account page when logged in", () => {
-            cy.login();
-            cy.get(locators.menu.USER_ICON).click();
-            cy.get(locators.menu.MY_ACCOUNT_MENU).should("exist").click();
-            cy.url().should("contains", "profile");
+        it("Should navigate to About page via Institutional Menu", () => {
+            cy.get(locators.header.ABOUT_ITEM).click();
+            cy.url().should("contain", "/about");
         });
 
-        it("Should be able to log out when logged in", () => {
+        it("Should navigate to Privacy Policy page", () => {
+            cy.get(locators.header.PRIVACY_POLICY_ITEM).click();
+            cy.url().should("contain", "/privacy-policy");
+        });
+
+        it("Should navigate to Code of Conduct page", () => {
+            cy.get(locators.header.CODE_OF_CONDUCT_ITEM).click();
+            cy.url().should("contain", "/code-of-conduct");
+        });
+
+        it("Should navigate to Supportive Materials page", () => {
+            cy.get(locators.header.SUPPORTIVE_MATERIALS_ITEM).click();
+            cy.url().should("contain", "/supportive-materials");
+        });
+    });
+
+    describe("User Menu - Anonymous Access", () => {
+        it("Should not display Logout option when user is not authenticated", () => {
+            cy.get(locators.header.OPEN_USER_MENU).click();
+            cy.get(locators.header.LOGOUT_ITEM).should("not.exist");
+        });
+    });
+
+    describe("User Menu - Authenticated Access", () => {
+        beforeEach(() => {
             cy.login();
-            cy.get(locators.menu.USER_ICON).click();
-            cy.get(locators.menu.LOGOUT_MENU).should("exist").click();
-            cy.title().should("contains", "Home");
+            cy.get(locators.header.OPEN_USER_MENU).click();
+        });
+
+        it("Should navigate to Profile page", () => {
+            cy.get(locators.header.PROFILE_ITEM).click();
+            cy.url().should("contain", "/profile");
+        });
+
+        it("Should navigate to Kanban board", () => {
+            cy.get(locators.header.KANBAN_ITEM).click();
+            cy.url().should("contain", "/kanban");
+        });
+
+        it("Should navigate to Admin dashboard", () => {
+            cy.get(locators.header.ADMIN_ITEM).click();
+            cy.url().should("contain", "/admin");
+        });
+
+        it("Should navigate to Badges management", () => {
+            cy.get(locators.header.BADGES_ITEM).click();
+            cy.url().should("contain", "/admin/badges");
+        });
+
+        it("Should navigate to Namespace management", () => {
+            cy.get(locators.header.NAMESPACE_ITEM).click();
+            cy.url().should("contain", "/admin/name-spaces");
+        });
+
+        it("Should perform logout successfully", () => {
+            cy.get(locators.header.LOGOUT_ITEM).should("exist").click();
+            cy.title().should("contain", "Home");
         });
     });
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import SearchApi from "../../api/searchApi";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useAppSelector } from "../../store/store";
 import { Divider, Grid, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
@@ -183,6 +183,8 @@ function SearchPageView({ searchText }) {
                         <div
                             style={{
                                 display: "flex",
+                                alignItems: "center",
+                                gap: "4px",
                                 marginBottom: "10px",
                                 marginTop: "10px",
                             }}
@@ -196,9 +198,12 @@ function SearchPageView({ searchText }) {
                                 onSearch={handleInputSearch}
                                 t={t}
                             />
-                            <Button type={ButtonType.blue} htmlType="submit">
+                            <AletheiaButton
+                                type={ButtonType.primary}
+                                htmlType="submit"
+                            >
                                 <SearchIcon />
-                            </Button>
+                            </AletheiaButton>
                         </div>
                         <AdvancedSearch
                             defaultValue={filtersUsed}

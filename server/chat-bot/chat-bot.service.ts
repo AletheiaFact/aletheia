@@ -2,30 +2,22 @@ import { Injectable, Scope, Logger } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { catchError } from "rxjs/operators";
 import { lastValueFrom, throwError } from "rxjs";
-import { createChatBotMachine } from "./chat-bot.machine";
+import { createChatBotMachine, ChatBotContext } from "./chat-bot.machine";
 import { ConfigService } from "@nestjs/config";
 import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { M2M } from "../entities/m2m.entity";
 import * as crypto from "crypto";
+import { toError } from "../util/error-handling";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
-const MESSAGE_MAP = {
+const MESSAGE_MAP: Record<string, string> = {
     sim: "RECEIVE_YES",
     nao: "RECEIVE_PAUSE_MACHINE",
 };
 
-interface ChatBotContext {
-    verificationRequest?: string;
-    responseMessage?: string;
-    additionalInfo?: string;
-    email?: string;
-    sourceChannel?: string;
-    dataHash?: string;
-}
-
-function M2MUser(clientId): M2M {
+function M2MUser(clientId: string): M2M {
     return {
         isM2M: true,
         clientId,
@@ -77,7 +69,7 @@ export class ChatbotService {
         );
     }
 
-    private rehydrateChatBotState(chatbotState) {
+    private rehydrateChatBotState(chatbotState: any) {
         const rehydratedMachine = createChatBotMachine(
             this.verificationRequestStateMachineService,
             chatbotState.machine.value,
@@ -90,7 +82,7 @@ export class ChatbotService {
         return chatbotState;
     }
 
-    private async updateChatBotState(chatbotState) {
+    private async updateChatBotState(chatbotState: any) {
         const snapshot = {
             value: chatbotState.machine.value,
             context: chatbotState.machine.context,
@@ -101,7 +93,7 @@ export class ChatbotService {
         );
     }
 
-    public async sendMessage(message): Promise<void> {
+    public async sendMessage(message: any): Promise<void> {
         const { from, to, channel, contents } = message;
         this.logger.log(
             `Received message [channel=${channel}, from=${from}, state=processing]`
@@ -116,6 +108,9 @@ export class ChatbotService {
 
         const { api_url, api_token } = this.configService.get("zenvia");
         const hashSecretKey = this.configService.get<string>("hashSecretKey");
+        if (!hashSecretKey) {
+            throw new Error("hashSecretKey is not configured");
+        }
 
         const data_hash = crypto
             .createHmac("sha256", hashSecretKey)
@@ -125,6 +120,12 @@ export class ChatbotService {
         const channel_api_url = `${api_url}/${channel}/messages`;
 
         const chatbotState = await this.getOrCreateChatBotMachine(data_hash);
+        if (!chatbotState) {
+            this.logger.warn(
+                `Failed to get or create chatbot state [dataHash=${data_hash}]`
+            );
+            return;
+        }
         this.logger.log(
             `Machine state [dataHash=${data_hash}, currentState=${chatbotState.machine.value}]`
         );
@@ -135,7 +136,7 @@ export class ChatbotService {
             {
                 ...chatbotState.machine.context,
                 sourceChannel: channel,
-            },
+            } as ChatBotContext,
             M2MUser(chatbotState._id)
         );
 
@@ -173,14 +174,18 @@ export class ChatbotService {
         );
     }
 
-    private shouldPauseMachine(chatbotState, snapshot) {
+    private shouldPauseMachine(chatbotState: any, snapshot: any) {
         return (
             chatbotState.machine.value === "pausedMachine" &&
             snapshot.value === "pausedMachine"
         );
     }
 
-    private createResponseBody(to, from, responseMessage) {
+    private createResponseBody(
+        to: string,
+        from: string,
+        responseMessage: string
+    ) {
         return {
             from: to,
             to: from,
@@ -216,8 +221,9 @@ export class ChatbotService {
                 `Response sent to Zenvia [channel=${channel}, from=${from}]`
             );
         } catch (error) {
+            const err = toError(error);
             this.logger.error(
-                `Failed to send response to Zenvia [channel=${channel}, from=${from}]: ${error.message}`
+                `Failed to send response to Zenvia [channel=${channel}, from=${from}]: ${err.message}`
             );
             throw error;
         }
@@ -225,8 +231,8 @@ export class ChatbotService {
 
     private handleUserMessage(
         message: string,
-        messageType,
-        chatBotMachineService
+        messageType: string,
+        chatBotMachineService: any
     ) {
         const currentState = chatBotMachineService.getSnapshot().value;
 
@@ -279,7 +285,7 @@ export class ChatbotService {
         }
     }
 
-    private isNonTextMessage(messageType, currentState) {
+    private isNonTextMessage(messageType: string, currentState: string) {
         return messageType !== "text" && currentState !== "pausedMachine";
     }
 
@@ -292,7 +298,7 @@ export class ChatbotService {
 
     private handleMachineEventSend(
         parsedMessage: string,
-        chatBotMachineService
+        chatBotMachineService: any
     ): void {
         chatBotMachineService.send(
             MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
@@ -301,7 +307,7 @@ export class ChatbotService {
 
     private handlePausedMachineState(
         parsedMessage: string,
-        chatBotMachineService
+        chatBotMachineService: any
     ): void {
         if (parsedMessage === "denuncia") {
             chatBotMachineService.send("RETURN_TO_CHAT");
@@ -310,7 +316,7 @@ export class ChatbotService {
 
     private handleMachineFinishEventSend(
         parsedMessage: string,
-        chatBotMachineService
+        chatBotMachineService: any
     ): void {
         let event = "ANY_TEXT_MESSAGE";
 
@@ -327,9 +333,12 @@ export class ChatbotService {
         parsedMessage: string,
         currentState: string,
         message: string,
-        chatBotMachineService
+        chatBotMachineService: any
     ): void {
-        const stateMapping = {
+        const stateMapping: Record<
+            string,
+            { receive: string; empty: string; field: string }
+        > = {
             askingForAdditionalInfo: {
                 receive: "RECEIVE_ADDITIONAL_INFO",
                 empty: "RECEIVE_NO",

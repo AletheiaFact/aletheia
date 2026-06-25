@@ -3,7 +3,7 @@ import { ActionTypes } from "../../store/types";
 import { Grid } from "@mui/material";
 import FilterToggleButtons from "../FilterToggleButtons";
 import FilterBar from "./FilterBar";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import FilterPopover from "./FilterPopover";
 import { ViewList, ViewModule } from "@mui/icons-material";
 

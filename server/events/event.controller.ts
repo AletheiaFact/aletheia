@@ -23,6 +23,7 @@ import { ObjectIdValidationPipe } from "../ai-task/pipes/objectid-validation.pip
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
+import { toError } from "../util/error-handling";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
@@ -169,7 +170,8 @@ export class EventsController {
             );
         } catch (error) {
             if (!(error instanceof NotFoundException)) {
-                this.logger.error(`Error rendering event page: ${error.message}`, error.stack);
+                const err = toError(error);
+                this.logger.error(`Error rendering event page: ${err.message}`, err.stack);
             }
             throw error;
         }

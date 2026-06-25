@@ -32,7 +32,7 @@ describe("Footer Navigation", () => {
     it("validates CTA links", () => {
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_PRIMARY).length > 0) {
-                expectInternalNavigation(locators.footer.CTA_PRIMARY, "/about");
+                expectExternalLink(locators.footer.CTA_PRIMARY, "https://forms.gle/AnTuCzXtPTrsXHGVA");
             }
         });
 
@@ -41,7 +41,7 @@ describe("Footer Navigation", () => {
 
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_SECONDARY).length > 0) {
-                expectExternalLink(locators.footer.CTA_SECONDARY, "https://forms.gle/AnTuCzXtPTrsXHGVA");
+                expectInternalNavigation(locators.footer.CTA_SECONDARY, "/committee-invitation");
             }
         });
     });

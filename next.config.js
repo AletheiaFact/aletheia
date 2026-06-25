@@ -13,4 +13,10 @@ module.exports = {
             'upload.wikimedia.org'
         ]
     },
+    compiler: {
+        styledComponents: {
+            ssr: true,
+            displayName: true,
+        },
+    },
 };

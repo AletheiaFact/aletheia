@@ -77,7 +77,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                             href="/login"
                             style={{ marginRight: "10px" }}
                         >
-                            {t("menu:loginItem")}
+                            {t("header:loginItem")}
                         </Button>
                         <Button
                             variant="outlined"

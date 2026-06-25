@@ -7,6 +7,7 @@ import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
 import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
+import { Typography } from "@mui/material";
 
 const PersonalityView = ({ personality, href, personalities }) => {
     const { t } = useTranslation();
@@ -43,7 +44,11 @@ const PersonalityView = ({ personality, href, personalities }) => {
             <MorePersonalities
                 personalities={personalities}
                 href={href}
-                title={t("personality:otherPersonalitiesTitle")}
+                title={
+                    <Typography variant="h2" fontSize={24}>
+                        {t("personality:otherPersonalitiesTitle")}
+                    </Typography>
+                }
             />
         </>
     );

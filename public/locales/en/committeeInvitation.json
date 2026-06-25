@@ -1,0 +1,104 @@
+{
+    "title": "Committee Invitation",
+    "hero": {
+        "chip": "National Committee for the Democratization of Fact-Checking",
+        "title": "Access to reliable information is a right. Fact-checking, the tool to claim it.",
+        "description": "Join the first Committee created to democratize fact-checking practices in Brazil. A network that already brings together representatives from the five regions of the country and Portugal. The Committee is made up of educators, researchers, students, institutions, and professionals committed to democracy, who actively work to combat misinformation.",
+        "ctaPrimary": "I want to participate",
+        "ctaSecondary": "Learn about the initiative",
+        "stat1Value": "27",
+        "stat1Label": "States",
+        "stat2Value": "50+",
+        "stat2Label": "Universities",
+        "stat3Value": "5",
+        "stat3Label": "Meetings/year",
+        "quote": "”Misinformation is an existential threat to democracy. Fighting it requires unity, method, and collective commitment.”",
+        "quoteAuthor": "National Committee",
+        "quoteSource": "AletheiaFact.org"
+    },
+    "mission": {
+        "eyebrow": "OUR MISSION",
+        "title": "Building a society where reliable information is accessible to all",
+        "description": "AletheiaFact.org is a non-profit organization focused on combating misinformation and democratizing access to fact-checking. We believe that a well-informed society strengthens the pillars of democracy.",
+        "items": {
+            "combat": {
+                "title": "Fighting Misinformation",
+                "description": "We develop methodologies and tools to identify and combat fake news in a collaborative and transparent way."
+            },
+            "network": {
+                "title": "Collaborative Network",
+                "description": "We connect educators, researchers, and institutions in a national network committed to the integrity of information and critical education."
+            },
+            "training": {
+                "title": "Continuous Training",
+                "description": "We offer workshops, webinars, and educational materials to train multipliers across all regions of Brazil."
+            },
+            "openSource": {
+                "title": "Open Source & Open Data",
+                "description": "All our work is open and accessible, contributing to a sustainable fact-checking ecosystem."
+            }
+        },
+        "closingQuote": "Together, we can build a more informed and resilient society against misinformation. This is our commitment to education, innovation, and the strengthening of democracy.",
+        "closingQuoteAuthor": "— AletheiaFact.org Team"
+    },
+    "benefits": {
+        "eyebrow": "WHY PARTICIPATE?",
+        "title": "Benefits for you and your institution",
+        "description": "By being part of the National Committee for the Democratization of Fact-Checking, you and your university will have access to exclusive resources and unique collaboration opportunities.",
+        "items": {
+            "certification": {
+                "title": "Recognized Certification",
+                "description": "Receive certificates that can be used as complementary hours at your institution."
+            },
+            "materials": {
+                "title": "Exclusive Materials",
+                "description": "Access templates, practical guides, and educational resources for direct application in the classroom."
+            },
+            "research": {
+                "title": "Research Support",
+                "description": "Facilitate studies and projects in partnership with AletheiaFact.org, integrating theory and practice."
+            },
+            "support": {
+                "title": "Specialized Support",
+                "description": "Count on consulting for the implementation of fact-checking centers at your institution."
+            },
+            "visibility": {
+                "title": "National Visibility",
+                "description": "Gain public recognition as a partner institution in the fight against misinformation."
+            },
+            "reports": {
+                "title": "Impact Reports",
+                "description": "Follow the documentation of results for accountability and fundraising."
+            }
+        },
+        "pact": {
+            "title": "Our Collaboration Pact",
+            "description": "The Committee operates in open source. Methods, data, and results are shared among members, so each institution's progress accelerates the work of all. This is how fact-checking is democratized, adding, never competing."
+        }
+    },
+    "cta": {
+        "eyebrow": "BE PART OF THIS TRANSFORMATION",
+        "title": "Join the National Committee",
+        "description": "We invite all those who share the commitment to access reliable information, critical education, and strengthening democracy.",
+        "whoCanJoin": {
+            "title": "Who can participate?"
+        },
+        "checklist": {
+            "item1": "Educators from federal and state universities",
+            "item2": "Researchers in communication and education",
+            "item3": "Independent organizations fighting misinformation",
+            "item4": "Professionals committed to democracy"
+        },
+        "iconLabels": {
+            "network": "Collaborative network",
+            "materials": "Exclusive materials",
+            "certification": "Certification",
+            "support": "Continuous support"
+        },
+        "badge": "Open spots",
+        "formTitle": "Express your interest",
+        "formDescription": "Fill out the form and our team will contact you to present the next steps.",
+        "formButton": "Access form",
+        "orContact": "or"
+    }
+}

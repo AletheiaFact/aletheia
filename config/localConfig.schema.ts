@@ -29,7 +29,7 @@ const LocalConfigSchema = z.object({
             error: hexPattern,
             active: hexPattern,
             inactive: hexPattern,
-        }),
+        }).partial().optional(),
     }),
     Logo: z.boolean(),
     footer: z.object({

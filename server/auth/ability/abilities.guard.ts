@@ -3,6 +3,7 @@ import {
     CanActivate,
     ExecutionContext,
     Injectable,
+    Logger,
     UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
@@ -11,9 +12,12 @@ import { AbilityFactory } from "./ability.factory";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { User } from "../../entities/user.entity";
 import { M2M } from "../../entities/m2m.entity";
+import { toError } from "../../util/error-handling";
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {
+    protected readonly logger = new Logger(AbilitiesGuard.name);
+
     constructor(
         private reflector: Reflector,
         private caslAbilityFactor: AbilityFactory
@@ -51,7 +55,11 @@ export class AbilitiesGuard implements CanActivate {
             if (error instanceof ForbiddenError) {
                 throw new UnauthorizedException(error.message);
             }
-            throw error;
+
+            const err = toError(error);
+            this.logger.error(`Unexpected error: ${err.message}`, err.stack);
+
+            throw err;
         }
     }
 }

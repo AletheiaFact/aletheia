@@ -10,7 +10,7 @@ export class TopicController {
     @Public()
     @ApiTags("topics")
     @Get("api/topics")
-    public async getAll(@Query() getTopics) {
+    public async getAll(@Query() getTopics: { topicName: string }) {
         return this.topicService.findAll(getTopics);
     }
 
@@ -26,7 +26,11 @@ export class TopicController {
 
     @ApiTags("topics")
     @Post("api/topics")
-    create(@Body() topicBody, @Req() req) {
+    create(
+        @Body()
+        topicBody: { contentModel?: any; topics: any[]; data_hash?: string },
+        @Req() req: any
+    ) {
         return this.topicService.create(
             topicBody,
             req.cookies.default_language

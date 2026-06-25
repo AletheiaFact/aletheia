@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import React, { useContext } from "react";
-import Button, { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import {
     ReportModelEnum,
     ReviewTaskTypeEnum,
@@ -56,58 +56,58 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         {isClaim && (
                             <>
                                 {enableInformativeNews && (
-                                    <Button
-                                        type={ButtonType.blue}
+                                    <AletheiaButton
+                                        type={ButtonType.primary}
                                         onClick={toggleFormCollapse}
                                         data-cy={
                                             "testAddInformativeNewsReviewButton"
                                         }
                                         id={ReportModelEnum.InformativeNews}
-                                        icon={<AddIcon />}
+                                        startIcon={<AddIcon />}
                                     >
                                         {t(
                                             "claimReviewForm:addInformativeNewsButton"
                                         )}
-                                    </Button>
+                                    </AletheiaButton>
                                 )}
-                                <Button
-                                    type={ButtonType.blue}
+                                <AletheiaButton
+                                    type={ButtonType.primary}
                                     onClick={toggleFormCollapse}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
-                                    icon={<AddIcon />}
+                                    startIcon={<AddIcon />}
                                 >
                                     {t(
                                         "claimReviewForm:addFactCheckingReviewButton"
                                     )}
-                                </Button>
+                                </AletheiaButton>
                             </>
                         )}
                         {isSource && (
-                            <Button
-                                type={ButtonType.blue}
+                            <AletheiaButton
+                                type={ButtonType.primary}
                                 onClick={toggleFormCollapse}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
-                                icon={<AddIcon />}
+                                startIcon={<AddIcon />}
                             >
                                 {t("claimReviewForm:addSourceReviewButton")}
-                            </Button>
+                            </AletheiaButton>
                         )}
                         {isVerificationRequest && (
-                            <Button
-                                type={ButtonType.blue}
+                            <AletheiaButton
+                                type={ButtonType.primary}
                                 onClick={toggleFormCollapse}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }
                                 id={ReportModelEnum.Request}
-                                icon={<AddIcon />}
+                                startIcon={<AddIcon />}
                             >
                                 {t(
                                     "claimReviewForm:addVerificationRequestButton"
                                 )}
-                            </Button>
+                            </AletheiaButton>
                         )}
                     </>
                 )}

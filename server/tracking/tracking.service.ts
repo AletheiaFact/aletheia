@@ -3,6 +3,7 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TrackingResponseDTO } from "./types/tracking.interfaces";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { toError } from "../util/error-handling";
 
 @Injectable()
 export class TrackingService {
@@ -39,11 +40,11 @@ export class TrackingService {
       .filter((history) => history.details?.after?.status && history.details?.before?.status !== history.details?.after?.status)
       .map((history) => ({
         id: history._id,
-        status: history.details.after.status,
-        date: new Date(history.date),
+        status: history.details?.after?.status,
+        date: new Date(history.date as string | Date),
       }));
 
-    const latestStatus = verificationRequest.status
+    const latestStatus = verificationRequest?.status ?? "unknown"
 
     return {
       currentStatus: latestStatus,
@@ -54,9 +55,10 @@ export class TrackingService {
         this.logger.warn(`Tracking not found for ID: ${verificationRequestId}`);
         throw error;
       }
+      const err = toError(error);
       this.logger.error(
         `Failed to fetch tracking for ID: ${verificationRequestId}`,
-        error.stack,
+        err.stack,
       );
       throw new InternalServerErrorException("Internal server error while fetching tracking status.");
     }

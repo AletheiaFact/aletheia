@@ -31,14 +31,12 @@ COPY ./package.json ./yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Copy configuration files
-COPY ./.babelrc ./
 COPY config.$ENVIRONMENT.yaml ./config.yaml
 COPY config.websocket.$ENVIRONMENT.yaml ./config.websocket.yaml
 COPY config.seed.example.yaml ./config.seed.yaml
 COPY migrate-mongo-config-example.ts ./migrate-mongo-config.ts
 COPY ./migrations ./migrations
 COPY ./eslint.config.mjs ./
-COPY server/jest.config.json ./jest.config.json
 COPY ./next.config.js ./
 COPY ./tsconfig.json ./
 COPY ./next-i18next.config.js ./

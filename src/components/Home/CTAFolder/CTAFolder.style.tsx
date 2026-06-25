@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import colors from "../../../styles/colors";
 import { queries } from "../../../styles/mediaQueries";
 import { Box } from "@mui/material";
@@ -6,7 +6,6 @@ import { NameSpaceEnum } from "../../../types/Namespace";
 
 type CTAFolderProps = {
     $nameSpace: string;
-    $isLoggedIn: boolean;
     $isSplit: boolean;
 };
 
@@ -61,56 +60,6 @@ const CTAFolderStyle = styled(Box) <CTAFolderProps>`
     width: 100%;
     gap: 12px;
     margin-top: 28px;
-  }
-
-  .ctaActionButtons {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    padding: 10px 16px;
-    font-size: 14px;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    border: 1px solid ${colors.primary};
-  }
-
-  .ctaSignUpButton {
-    font-weight: 700;
-    color: ${colors.primary};
-    background-color: ${colors.white};
-
-    &:hover {
-      background-color: ${colors.whiteHigh};
-      border: 1px solid ${colors.whiteHigh};
-    }
-  }
-
-  .ctaAboutUsButton {
-    font-weight: 600;
-
-    ${({ $isLoggedIn }) =>
-        $isLoggedIn
-            ? css`
-            color: ${colors.primary};
-            background-color: ${colors.white};
-            border: 1px solid ${colors.primary};
-
-            &:hover {
-              background-color: ${colors.whiteHigh};
-              border: 1px solid ${colors.whiteHigh};
-            }
-          `
-            : css`
-            color: ${colors.white};
-            background-color: transparent;
-            border: 1px solid ${colors.secondary};
-
-            &:hover {
-              background-color: ${colors.whiteLow};
-              border: 1px solid ${colors.secondary};
-            }
-          `}
   }
 
   .ctaAchievementsColumn {

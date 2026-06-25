@@ -10,6 +10,8 @@ import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 import { UtilService } from "../../../util";
+import { toError } from "../../../util/error-handling";
+
 interface FindAllOptionsFilters {
     searchText: string;
     pageSize: number;
@@ -30,7 +32,7 @@ export class SentenceService {
         private util: UtilService
     ) {}
 
-    async create(sentenceBody) {
+    async create(sentenceBody: Record<string, any>) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
         return newSentence._id;
     }
@@ -57,9 +59,9 @@ export class SentenceService {
     }
 
     async updateSentenceWithTopics(
-        topics,
-        data_hash
-    ): Promise<SentenceDocument> {
+        topics: any[],
+        data_hash: string
+    ): Promise<SentenceDocument | null> {
         const sentence = await this.getByDataHash(data_hash);
 
         if (!Array.isArray(topics)) {
@@ -141,7 +143,7 @@ export class SentenceService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(nameSpace),
+            this.util.getVisibilityMatch(nameSpace ?? ""),
             {
                 $project: {
                     content: 1,
@@ -186,7 +188,7 @@ export class SentenceService {
         return {
             totalRows: sentences[0].totalRows,
             processedSentences: await Promise.all(
-                sentences[0].rows.map(async (sentence) => {
+                sentences[0].rows.map(async (sentence: any) => {
                     const sentenceWithProps = await this.getByDataHash(
                         sentence.data_hash
                     );
@@ -212,11 +214,14 @@ export class SentenceService {
                 { data_hash: 1 }
             ).lean();
 
-            this.logger.debug(`Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicId}`);
+            this.logger.debug(
+                `Successfully retrieved ${sentences.length} sentence hashes for topic: ${topicId}`
+            );
 
             return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, error.stack);
+            const err = toError(error);
+            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, err.stack);
             throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
         }
     }

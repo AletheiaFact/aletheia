@@ -6,7 +6,7 @@ import {
     IsOptional,
     IsString,
 } from "class-validator";
-import type { UserDocument } from "../../../users/schemas/user.schema";
+import { UserDocument } from "../../../users/schemas/user.schema";
 import { CommentEnum } from "../schema/comment.schema";
 
 export class CreateCommentDTO {

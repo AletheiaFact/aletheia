@@ -5,8 +5,13 @@ import { UsersService } from "../users/users.service";
 import { NotificationService } from "../notifications/notifications.service";
 import { WinstonLogger } from "../winstonLogger";
 import loadConfig from "../configLoader";
+import { toError } from "../util/error-handling";
 
-async function createNovuSubscriber(userFromDB, novuService, logger) {
+async function createNovuSubscriber(
+    userFromDB: any,
+    novuService: NotificationService,
+    logger: WinstonLogger
+) {
     if (!userFromDB || !userFromDB.id) {
         throw new Error(`Invalid user data: ${JSON.stringify(userFromDB)}`);
     }
@@ -19,8 +24,9 @@ async function createNovuSubscriber(userFromDB, novuService, logger) {
         });
         logger.log(`Subscriber created for user ${userFromDB.email}`);
     } catch (error) {
+        const err = toError(error);
         throw new Error(
-            `Failed to create Novu subscriber for user ${userFromDB.email}: ${error.message}`
+            `Failed to create Novu subscriber for user ${userFromDB.email}: ${err.message}`
         );
     }
 }
@@ -47,9 +53,10 @@ async function initApp() {
 
         logger.log("All users have been processed for Novu subscription.");
     } catch (error) {
+        const err = toError(error);
         logger.error(
             "An error occurred while creating Novu subscribers:",
-            error
+            err
         );
     } finally {
         await app.close();

@@ -22,7 +22,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }
@@ -101,6 +101,23 @@ export class ViewController {
 
     @Public()
     @ApiTags("pages")
+    @Get("committee-invitation")
+    @Header("Cache-Control", "max-age=86400")
+    public async committeeInvitationPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        await this.viewService.render(
+            req,
+            res,
+            "/committee-invitation-page",
+            parsedUrl.query
+        );
+    }
+
+    @Public()
+    @ApiTags("pages")
     @Get("code-of-conduct")
     @Header("Cache-Control", "max-age=86400")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
@@ -121,7 +138,7 @@ export class ViewController {
         await this.viewService.render(
             req,
             res,
-            parsedUrl.pathname,
+            parsedUrl.pathname ?? "/",
             parsedUrl.query
         );
     }
@@ -157,7 +174,7 @@ export class ViewController {
     public async acessDeniedPage(
         @Req() req: Request,
         @Res() res: Response,
-        @Query() query: { originalUrl }
+        @Query() query: { originalUrl: string }
     ) {
         const parsedUrl = parse(req.url, true);
         const originalUrl = query.originalUrl;

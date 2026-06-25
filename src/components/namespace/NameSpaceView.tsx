@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAtom } from "jotai";
 import {
@@ -84,13 +85,12 @@ const NameSpaceView = () => {
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">
-                <Button
-                    variant="contained"
-                    color="primary"
+                <AletheiaButton
+                    type={ButtonType.primary}
                     onClick={handleAddButtonClick}
                 >
                     {t("namespaces:addNameSpace")}
-                </Button>
+                </AletheiaButton>
             </Grid>
         </Grid>
     );

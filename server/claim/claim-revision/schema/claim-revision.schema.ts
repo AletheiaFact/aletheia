@@ -6,7 +6,11 @@ import { ContentModelEnum } from "../../../types/enums";
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class ClaimRevision {
     @Prop({ required: true })
     title: string;
@@ -22,13 +26,16 @@ export class ClaimRevision {
     contentId: mongoose.Types.ObjectId;
 
     @Prop({
+        type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return Object.values(ContentModelEnum).includes(v);
+            validator: (v: string) => {
+                return Object.values(ContentModelEnum).includes(
+                    v as ContentModelEnum
+                );
             },
         },
-        message: (tag) => `${tag} is not a valid claim type.`,
+        message: (tag: any) => `${tag} is not a valid claim type.`,
     })
     contentModel: ContentModelEnum;
 

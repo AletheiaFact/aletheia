@@ -10,7 +10,7 @@ export class SpeechService {
         private SpeechModel: Model<SpeechDocument>
     ) {}
 
-    create(speechBody) {
+    create(speechBody: Record<string, any>) {
         return new this.SpeechModel(speechBody).save();
     }
 

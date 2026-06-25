@@ -110,13 +110,20 @@ const PersonalityCard = ({
             boxShadow: `0px 3px 3px ${colors.shadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
+
+            transition: "box-shadow 0.2s ease, transform 0.2s ease",
+            "&:hover": {
+                border: `1px solid ${colors.neutralTertiary}`,
+                boxShadow: `0px 4px 10px ${colors.shadow}`,
+                transform: "translateY(-1px)",
+            },
         };
     }
 
     if (personality) {
         return (
             <Grid container
-                style={{
+                sx={{
                     width: "100%",
                     ...cardStyle,
                     ...style,

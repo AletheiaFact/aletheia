@@ -2,7 +2,13 @@ import { UseGuards, applyDecorators, SetMetadata } from "@nestjs/common";
 import { SessionOrM2MGuard } from "../m2m-or-session.guard";
 import { AbilitiesGuard } from "../ability/abilities.guard";
 import { M2MOrAbilitiesGuard } from "./m2m-or-abilities.decorator";
-import { RequiredRule, CHECK_ABILITY } from "../ability/ability.decorator";
+import {
+    RequiredRule,
+    CHECK_ABILITY,
+    AdminUserAbility,
+    FactCheckerUserAbility,
+    RegularUserAbility,
+} from "../ability/ability.decorator";
 
 /**
  * Authentication and Authorization decorator options
@@ -121,8 +127,6 @@ export const Public = () => Auth({ public: true });
  * @AdminOnly({ allowM2M: true })
  */
 export const AdminOnly = (options: { allowM2M?: boolean } = {}) => {
-    // Import at usage to avoid circular deps
-    const { AdminUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new AdminUserAbility()],
         allowM2M: options.allowM2M,
@@ -134,8 +138,6 @@ export const AdminOnly = (options: { allowM2M?: boolean } = {}) => {
  * @example @FactCheckerOnly()
  */
 export const FactCheckerOnly = () => {
-    // Import at usage to avoid circular deps
-    const { FactCheckerUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new FactCheckerUserAbility()],
     });
@@ -146,8 +148,6 @@ export const FactCheckerOnly = () => {
  * @example @RegularUserOnly()
  */
 export const RegularUserOnly = () => {
-    // Import at usage to avoid circular deps
-    const { RegularUserAbility } = require("../ability/ability.decorator");
     return Auth({
         abilities: [new RegularUserAbility()],
     });

@@ -91,6 +91,9 @@
     "IN_TRIAGE": "In Triage",
     "POSTED": "Published",
     "DECLINED": "Declined",
+    "PreTriageDescription": "Received Verification Requests, awaiting automated analysis for classification and prioritization.",
+    "InTriageDescription": "Verification Requests being analyzed by a verifier for approval or rejection.",
+    "PostedDescription": "Verification Requests that have been approved and are already published in the system.",
     "activity": {
         "Posted": "Verification request #{{hash}} verified and forwarded",
         "In Triage": "Verification request #{{hash}} in the verification process",

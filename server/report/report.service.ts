@@ -13,7 +13,7 @@ export class ReportService {
         private sourceService: SourceService
     ) {}
 
-    create(report) {
+    create(report: any) {
         if (
             !Object.values(ClassificationEnum).includes(report.classification)
         ) {
@@ -33,7 +33,10 @@ export class ReportService {
         return newReport;
     }
 
-    createReportSources(sources, targetId) {
+    createReportSources(
+        sources: Array<{ href: string; props?: any }>,
+        targetId: string
+    ) {
         for (const source of sources) {
             this.sourceService.create({
                 href: source.href,
@@ -43,7 +46,14 @@ export class ReportService {
         }
     }
 
-    updateReportSource({ classification, summary, data_hash }, targetId) {
+    updateReportSource(
+        {
+            classification,
+            summary,
+            data_hash,
+        }: { classification: string; summary: string; data_hash: string },
+        targetId: string
+    ) {
         const newSourceBody = {
             props: {
                 classification: classification,
@@ -53,7 +63,7 @@ export class ReportService {
             targetId,
         };
 
-        return this.sourceService.update(data_hash, newSourceBody);
+        return this.sourceService.update(data_hash, newSourceBody as any);
     }
 
     findByDataHash(data_hash: string) {

@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../app.module";
@@ -21,7 +21,6 @@ import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 
-jest.setTimeout(10000);
 
 /**
  * ClaimController E2E Test Suite
@@ -57,11 +56,11 @@ jest.setTimeout(10000);
  */
 
 const captchaService = {
-    validate: jest.fn().mockResolvedValue(true),
+    validate: vi.fn().mockResolvedValue(true),
 };
 
 const personalityService = {
-    getById: jest.fn().mockImplementation((id) => {
+    getById: vi.fn().mockImplementation((id) => {
         if (!id) return Promise.resolve(null);
         return Promise.resolve({
             _id: id,
@@ -73,8 +72,8 @@ const personalityService = {
             isDeleted: false,
         });
     }),
-    getPersonalityBySlug: jest.fn(),
-    getClaimsByPersonalitySlug: jest.fn(),
+    getPersonalityBySlug: vi.fn(),
+    getClaimsByPersonalitySlug: vi.fn(),
 };
 
 describe("ClaimController (e2e)", () => {

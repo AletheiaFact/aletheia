@@ -6,6 +6,7 @@ import { BaseGuard } from "./base.guard";
 import { Reflector } from "@nestjs/core";
 import { UsersService } from "../../server/users/users.service";
 import { ConfigService } from "@nestjs/config";
+import { toError } from "../util/error-handling";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
@@ -28,8 +29,9 @@ export class SessionGuard extends BaseGuard {
                 cookie: request.header("Cookie"),
                 token: data.logout_token,
             });
-        } catch (e) {
-            this.logger.error("Error during logout flow", e);
+        } catch (error) {
+            const err = toError(error);
+            this.logger.error(`Error during logout flow: ${err.message}`, err.stack);
         }
     }
 
@@ -59,9 +61,12 @@ export class SessionGuard extends BaseGuard {
                 const mongoUserId = session?.identity?.traits?.user_id;
                 try {
                     await this.usersService.getById(mongoUserId);
-                } catch (e) {
+                } catch (error) {
+                    const err = toError(error);
+
                     this.logger.error(`User not found for ID: ${mongoUserId}`);
-                    this.logger.error(e);
+                    this.logger.error(err.message, err.stack);
+
                     await this.logoutUser(ory, request);
                     return this.checkAndRedirect(
                         request,
@@ -94,7 +99,7 @@ export class SessionGuard extends BaseGuard {
                     // Needed to enable feature flag for specific users
                     id: session?.identity?.traits?.user_id,
                     role: session?.identity?.traits?.role,
-                    status: session?.identity.state,
+                    status: session?.identity?.state,
                 };
 
                 const overridePublicRoutes =
@@ -114,7 +119,11 @@ export class SessionGuard extends BaseGuard {
             }
 
             return this.checkAndRedirect(request, response, isPublic, "/login");
-        } catch (e) {
+        } catch (error) {
+            const err = toError(error);
+
+            this.logger.error(`Critical failure in AuthGuard: ${err.message}`, err.stack);
+
             return this.checkAndRedirect(request, response, isPublic, "/login");
         }
     }

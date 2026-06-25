@@ -18,8 +18,8 @@ import Loading from "../Loading";
 
 import OryLoginForm from "./OryLoginForm";
 import SignUpForm from "./SignUpForm";
-import CTAButton from "../Home/CTAButton";
-import { ButtonType } from "../Button";
+import AletheiaButton, { ButtonType } from "../AletheiaButton";
+import { trackUmamiEvent } from "../../lib/umami";
 
 const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
     const [flow, setFlow] = useState<LoginFlow>();
@@ -182,10 +182,14 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                         <Grid container className="typo-grey typo-center">
                             <h2>{t("login:signUpHeader")}</h2>
                         </Grid>
-                        <CTAButton
-                            type={ButtonType.blue}
-                            textWhenLoggedOut={t("CTAFolder:button")}
-                        />
+                        <AletheiaButton
+                            onClick={() => trackUmamiEvent("cta-registration-button", "registration")}
+                            type={ButtonType.primary}
+                            href="/sign-up"
+                            data-cy="testCTAButton"
+                        >
+                            {t("CTAFolder:button")}
+                        </AletheiaButton>
                     </>
                 )}
             </Grid>

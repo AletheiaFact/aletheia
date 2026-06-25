@@ -1,18 +1,20 @@
+import { vi } from "vitest";
+
 export const personalityServiceMock = {
-    delete: jest.fn(),
+    delete: vi.fn(),
 };
 
 export const claimServiceMock = {
-    getByPersonalityId: jest.fn(),
-    delete: jest.fn(),
+    getByPersonalityId: vi.fn(),
+    delete: vi.fn(),
 };
 
 export const claimReviewServiceMock = {
-    findAllReviewsForCascadeDelete: jest.fn(),
-    delete: jest.fn(),
+    findAllReviewsForCascadeDelete: vi.fn(),
+    delete: vi.fn(),
 };
 
 export const mockManagementService = {
-    deletePersonalityHierarchy: jest.fn(),
-    deleteClaimHierarchy: jest.fn(),
+    deletePersonalityHierarchy: vi.fn(),
+    deleteClaimHierarchy: vi.fn(),
 };

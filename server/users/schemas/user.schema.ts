@@ -38,7 +38,14 @@ export class User {
     })
     badges: BadgeDocument[];
 
-    @Prop({ required: true, default: Status.Active })
+    // NOTE(vitest-migration): The explicit `type: String` is required because
+    // SWC's `decoratorMetadata` emits the enum object (not `String`) as the
+    // design:type for enum-typed properties. Without it, Mongoose's
+    // SchemaFactory.createForClass() interprets the enum keys as schema types
+    // and throws. The same fix was applied to ~14 @Prop decorators across 9
+    // schema files in this PR. This pattern is also a Mongoose best practice
+    // (explicit > implicit) so the change is preserved post-Phase 2.
+    @Prop({ type: String, required: true, default: Status.Active })
     state: Status;
 }
 

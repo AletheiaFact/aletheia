@@ -1,7 +1,10 @@
 export interface Review {
+    id: string;
     personality: string;
-    usersId: string;
+    usersId: string[];
     isPartialReview: boolean;
+    crossCheckerId: string;
+    reviewerId: string
 }
 
 export interface SourceProps {

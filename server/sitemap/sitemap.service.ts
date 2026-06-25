@@ -3,6 +3,7 @@ import { SitemapStream, streamToPromise } from "sitemap";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { toError } from "../util/error-handling";
 const axios = require("axios");
 
 @Injectable()
@@ -15,7 +16,7 @@ export class SitemapService {
     ) {}
     private readonly logger = new Logger("SitemapService");
 
-    async getSitemap(hostname) {
+    async getSitemap(hostname: string) {
         const sites: any[] = [
             { url: "/" },
             { url: "/about" },
@@ -72,15 +73,16 @@ export class SitemapService {
         return streamToPromise(sitemapStream);
     }
 
-    async submitSitemap(hostname) {
+    async submitSitemap(hostname: string) {
         try {
             await axios.get(
                 `https://google.com/ping?sitemap=${hostname}/sitemap.xml`
             );
             return "Sitemap submitted";
-        } catch (e) {
+        } catch (error) {
+            const err = toError(error);
             const message =
-                "Error while submitting sitemap to search engine: " + e.message;
+                "Error while submitting sitemap to search engine: " + err.message;
             this.logger.error(message);
             return message;
         }

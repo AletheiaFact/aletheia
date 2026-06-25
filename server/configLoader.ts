@@ -2,20 +2,23 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 
 // Function extracted from service-runner codebase
-function _replaceEnvVars(config) {
+function _replaceEnvVars(config: string | Buffer) {
     const envRegex = /{\s*env\(([^,\s)]+),?\s*([^)]+)?\)\s*}/g;
     if (Buffer.isBuffer(config)) {
         config = config.toString();
     }
-    return config.replace(envRegex, (match, envName, defValue) => {
-        if (process.env[envName] !== undefined) {
-            return process.env[envName];
+    return config.replace(
+        envRegex,
+        (match: string, envName: string, defValue: string) => {
+            if (process.env[envName] !== undefined) {
+                return process.env[envName];
+            }
+            if (defValue !== undefined) {
+                return defValue;
+            }
+            return "";
         }
-        if (defValue !== undefined) {
-            return defValue;
-        }
-        return "";
-    });
+    );
 }
 function loadConfig() {
     const defaultConfigFilePath = "config.yaml";

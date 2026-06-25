@@ -1,0 +1,55 @@
+{
+    "page": {
+        "title": "Editar discurso",
+        "subtitle": "Edite os metadados e sentenças deste discurso"
+    },
+    "status": {
+        "unsaved": "Alterações não salvas",
+        "unsavedLong": "Você tem alterações não salvas",
+        "saved": "Todas as alterações foram salvas"
+    },
+    "metadata": {
+        "section": "Metadados",
+        "description": "Informações básicas do discurso",
+        "title": "Título",
+        "date": "Data",
+        "personalitiesReadOnly": "Personalidades atribuídas",
+        "personalitiesReadOnlyTooltip": "Este campo é somente leitura"
+    },
+    "actions": {
+        "submit": "Salvar alterações",
+        "discard": "Descartar",
+        "editClaim": "Editar metadados"
+    },
+    "load": {
+        "error": "Falha ao carregar o discurso"
+    },
+    "commit": {
+        "success": "Discurso atualizado",
+        "error": "Falha ao salvar"
+    },
+    "conflict": {
+        "title": "Discurso modificado",
+        "body": "Outro administrador modificou este discurso enquanto você editava. Atualize para ver a versão mais recente e reaplique suas alterações.",
+        "refresh": "Atualizar",
+        "discard": "Descartar minhas alterações"
+    },
+    "discard": {
+        "title": "Descartar alterações?",
+        "body": "Suas edições serão perdidas. Esta ação não pode ser desfeita.",
+        "confirm": "Descartar",
+        "cancel": "Cancelar"
+    },
+    "sentences": {
+        "section": "Sentenças",
+        "description_one": "{{count}} sentença neste discurso",
+        "description_other": "{{count}} sentenças neste discurso",
+        "empty": "Este discurso não possui sentenças editáveis.",
+        "editTooltip": "Editar esta sentença",
+        "revertTooltip": "Reverter para o texto original",
+        "editedBadge": "Editada",
+        "editingLabel": "Editando...",
+        "saveEdit": "Salvar",
+        "cancelEdit": "Cancelar"
+    }
+}

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Grid, Typography } from "@mui/material";
 import CardBase from "../CardBase";
-import AletheiaButton from "../Button";
+import AletheiaButton from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import SourceListItemStyled from "./SourceListItem.style";
 import ReviewClassification from "../ClaimReview/ReviewClassification";

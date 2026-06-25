@@ -90,6 +90,9 @@
     "IN_TRIAGE": "Em Triagem",
     "POSTED": "Publicado",
     "DECLINED": "Recusado",
+    "PreTriageDescription": "Denúncias recebidas, aguardando análise automatizada para classificação e priorização.",
+    "InTriageDescription": "Denúncias sendo analisadas por um verificador para aprovação ou rejeição.",
+    "PostedDescription": "Denúncias aprovadas e já publicadas no sistema.",
     "activity": {
         "Posted": "Denúncia #{{hash}} verificada e encaminhada",
         "In Triage": "Denúncia #{{hash}} em processo de verificação",

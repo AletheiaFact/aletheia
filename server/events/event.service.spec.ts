@@ -58,7 +58,7 @@ describe("EventsService (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("create", () => {
@@ -226,19 +226,19 @@ describe("EventsService (Unit)", () => {
                 }
             ];
 
-            const exec = jest.fn().mockResolvedValue(eventsResult);
-            const populate = jest.fn().mockReturnValue({ exec });
-            const lean = jest.fn().mockReturnValue({ populate });
-            const sort = jest.fn().mockReturnValue({ lean });
-            const limit = jest.fn().mockReturnValue({ sort });
-            const skip = jest.fn().mockReturnValue({ limit });
+            const exec = vi.fn().mockResolvedValue(eventsResult);
+            const populate = vi.fn().mockReturnValue({ exec });
+            const lean = vi.fn().mockReturnValue({ populate });
+            const sort = vi.fn().mockReturnValue({ lean });
+            const limit = vi.fn().mockReturnValue({ sort });
+            const skip = vi.fn().mockReturnValue({ limit });
 
             mockEventModel.find.mockReturnValue({ skip });
 
-            const countExec = jest.fn().mockResolvedValue(eventsResult.length);
-            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+            const countExec = vi.fn().mockResolvedValue(eventsResult.length);
+            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: countExec });
 
-            mockTopicModel.aggregate = jest.fn().mockResolvedValue([{
+            mockTopicModel.aggregate = vi.fn().mockResolvedValue([{
                 verificationStats: [
                     { _id: new Types.ObjectId(topicId1), count: 5 },
                     { _id: new Types.ObjectId(topicId2), count: 2 }
@@ -269,7 +269,7 @@ describe("EventsService (Unit)", () => {
                 ]
             }]);
 
-            mockClaimReviewService.getBatchCountsByTopics = jest.fn().mockResolvedValue({
+            mockClaimReviewService.getBatchCountsByTopics = vi.fn().mockResolvedValue({
                 [topicId1]: 15,
                 [topicId2]: 0
             });
@@ -327,17 +327,17 @@ describe("EventsService (Unit)", () => {
                 }
             ];
 
-            const exec = jest.fn().mockResolvedValue(eventsResult);
-            const populate = jest.fn().mockReturnValue({ exec });
-            const lean = jest.fn().mockReturnValue({ populate });
-            const sort = jest.fn().mockReturnValue({ lean });
-            const limit = jest.fn().mockReturnValue({ sort });
-            const skip = jest.fn().mockReturnValue({ limit });
+            const exec = vi.fn().mockResolvedValue(eventsResult);
+            const populate = vi.fn().mockReturnValue({ exec });
+            const lean = vi.fn().mockReturnValue({ populate });
+            const sort = vi.fn().mockReturnValue({ lean });
+            const limit = vi.fn().mockReturnValue({ sort });
+            const skip = vi.fn().mockReturnValue({ limit });
             mockEventModel.find.mockReturnValue({ skip });
 
-            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(1) });
+            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: vi.fn().mockResolvedValue(1) });
 
-            mockTopicModel.aggregate = jest.fn().mockRejectedValue(new Error("DB Timeout"));
+            mockTopicModel.aggregate = vi.fn().mockRejectedValue(new Error("DB Timeout"));
 
             const result = await service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.ALL });
 
@@ -347,19 +347,19 @@ describe("EventsService (Unit)", () => {
         });
 
         it("should throw InternalServerErrorException when primary event querying fails", async () => {
-            const exec = jest.fn().mockRejectedValue(new Error("db fail"));
-            const populate = jest.fn().mockReturnValue({ exec });
-            const lean = jest.fn().mockReturnValue({ populate });
-            const sort = jest.fn().mockReturnValue({ lean });
-            const limit = jest.fn().mockReturnValue({ sort });
-            const skip = jest.fn().mockReturnValue({ limit });
+            const exec = vi.fn().mockRejectedValue(new Error("db fail"));
+            const populate = vi.fn().mockReturnValue({ exec });
+            const lean = vi.fn().mockReturnValue({ populate });
+            const sort = vi.fn().mockReturnValue({ lean });
+            const limit = vi.fn().mockReturnValue({ sort });
+            const skip = vi.fn().mockReturnValue({ limit });
 
             mockEventModel.find.mockReturnValue({ skip });
 
-            const countExec = jest.fn().mockResolvedValue(0);
-            mockEventModel.countDocuments = jest.fn().mockReturnValue({ exec: countExec });
+            const countExec = vi.fn().mockResolvedValue(0);
+            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: countExec });
 
-            jest.restoreAllMocks();
+            vi.restoreAllMocks();
 
             await expect(
                 service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING })
@@ -370,9 +370,9 @@ describe("EventsService (Unit)", () => {
     describe("findByHash", () => {
         it("should return event when hash exists", async () => {
             const event = { _id: "e1", data_hash: "hash123" };
-            const exec = jest.fn().mockResolvedValue(event);
-            const populateFilterTopics = jest.fn().mockReturnValue({ exec });
-            const populateMainTopic = jest
+            const exec = vi.fn().mockResolvedValue(event);
+            const populateFilterTopics = vi.fn().mockReturnValue({ exec });
+            const populateMainTopic = vi
                 .fn()
                 .mockReturnValue({ populate: populateFilterTopics });
 
@@ -385,9 +385,9 @@ describe("EventsService (Unit)", () => {
         });
 
         it("should throw NotFoundException when hash does not exist", async () => {
-            const exec = jest.fn().mockResolvedValue(null);
-            const populateFilterTopics = jest.fn().mockReturnValue({ exec });
-            const populateMainTopic = jest
+            const exec = vi.fn().mockResolvedValue(null);
+            const populateFilterTopics = vi.fn().mockReturnValue({ exec });
+            const populateMainTopic = vi
                 .fn()
                 .mockReturnValue({ populate: populateFilterTopics });
 

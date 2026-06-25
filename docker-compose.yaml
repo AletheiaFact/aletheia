@@ -9,11 +9,24 @@ services:
     container_name: mongodb
     image: mongo:6.0.17
     restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     volumes:
       - ${DATA_PATH}/mongodb:/data:delegated
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
       - "${MONGODB_PORT:-27017}:27017"
+    healthcheck:
+      test: |
+        mongosh --quiet --eval "
+          try { rs.status().ok }
+          catch (e) {
+            rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }).ok
+          }
+        "
+      interval: 10s
+      start_period: 30s
+      timeout: 5s
+      retries: 5
   postgres-documentdb:
     container_name: postgres-documentdb
     image: ghcr.io/ferretdb/postgres-documentdb:17-0.102.0-ferretdb-2.1.0

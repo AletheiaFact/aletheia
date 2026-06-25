@@ -25,7 +25,7 @@ describe("ManagementController (Unit)", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("deletePersonality", () => {
