@@ -160,13 +160,17 @@ export const useHeaderData = (): UseHeaderDataReturn => {
 
     const myAccountSections = buildMyAccountSections();
 
+    const canViewVerificationRequest = hasSession && isStaff(role);
+
     const navigationConfig = useMemo(() => ({
         main: [
-            {
-                key: "verificationRequest",
-                path: `${baseHref}/verification-request`,
-                dataCy: "testVerificationRequestNavLink",
-            },
+            ...(canViewVerificationRequest
+                ? [{
+                    key: "verificationRequest",
+                    path: `${baseHref}/verification-request`,
+                    dataCy: "testVerificationRequestNavLink",
+                }]
+                : []),
             {
                 key: "event",
                 path: `${baseHref}/event`,
@@ -192,7 +196,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
                 ]
             }
         ]
-    }), [baseHref]);
+    }), [baseHref, canViewVerificationRequest]);
 
     const menuInstitutionSections = [
         {

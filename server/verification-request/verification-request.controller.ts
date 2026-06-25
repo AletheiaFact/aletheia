@@ -31,6 +31,7 @@ import {
     Public,
     AdminOnly,
     RegularUserOnly,
+    FactCheckerOnly,
 } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
@@ -52,7 +53,7 @@ export class VerificationRequestController {
         private captchaService: CaptchaService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private readonly wikidataService: WikidataService
-    ) {}
+    ) { }
 
     @ApiTags("verification-request")
     @Get("api/verification-request/stats")
@@ -297,6 +298,7 @@ export class VerificationRequestController {
 
     @ApiTags("pages")
     @Get("verification-request/create")
+    @FactCheckerOnly()
     public async VerificationRequestCreatePage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -357,7 +359,7 @@ export class VerificationRequestController {
     @ApiTags("pages")
     @Get("verification-request")
     @Header("Cache-Control", "no-cache")
-    @Public()
+    @FactCheckerOnly()
     public async verificationRequestPage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -376,10 +378,10 @@ export class VerificationRequestController {
         );
     }
 
-    @Public()
     @ApiTags("pages")
     @Get("verification-request/:dataHash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @FactCheckerOnly()
     public async verificationRequestReviewPage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -457,12 +459,12 @@ export class VerificationRequestController {
             parsedUrl.query,
             viewType === "history"
                 ? {
-                      targetId: verificationRequest._id,
-                      targetModel: TargetModel.VerificationRequest,
-                  }
+                    targetId: verificationRequest._id,
+                    targetModel: TargetModel.VerificationRequest,
+                }
                 : {
-                      verificationRequestId: verificationRequest._id,
-                  }
+                    verificationRequestId: verificationRequest._id,
+                }
         );
 
         await this.viewService.render(req, res, view, queryObject);
