@@ -18,24 +18,24 @@
     },
     "mission": {
         "eyebrow": "NOSSA MISSÃO",
-        "title": "Construindo uma sociedade onde a informação confiável seja acessível a todos",
-        "description": "A AletheiaFact.org é uma organização sem fins lucrativos focada no combate à desinformação e na democratização do acesso à checagem de fatos. Acreditamos que uma sociedade bem informada fortalece os pilares da democracia.",
+        "title": "Promovendo a autonomia informacional e o fortalecimento do debate público",
+        "description": "O Comitê Nacional de Democratização da Checagem de Fatos, coordenado pela AletheiaFact.org, consolida uma infraestrutura sócio-técnica-cultural permanente e distribuída por todo o país. Conectamos o conhecimento e a infraestrutura de universidades e organizações parceiras para reduzir os desertos de notícias e descentralizar o ecossistema de verificação.",
         "items": {
             "combat": {
-                "title": "Combate à Desinformação",
-                "description": "Desenvolvemos metodologias e ferramentas para identificar e combater fake news de forma colaborativa e transparente."
+                "title": "Combate à desinformação",
+                "description": "Recusamos a lógica reativa de atuar apenas em crises passageiras. Nossa metodologia e tecnologia analisam todas as etapas do ciclo informacional."
             },
-            "network": {
-                "title": "Rede Colaborativa",
-                "description": "Conectamos docentes, pesquisadores e instituições em uma rede nacional comprometida com a integridade da informação e a educação crítica."
+            "territorial": {
+                "title": "Capilaridade territorial",
+                "description": "Conectamos pesquisadores e instituições em todas as macro-regiões brasileiras. Essa organização descentralizada garante uma resposta ágil e sensível às diversidades culturais, sociais e midiáticas de cada território."
             },
-            "training": {
-                "title": "Capacitação Contínua",
-                "description": "Oferecemos workshops, webinars e materiais didáticos para formar multiplicadores em todas as regiões do Brasil."
+            "multiplicators": {
+                "title": "Docentes multiplicadores",
+                "description": "Levamos metodologias baseadas na educomunicação para dentro do ensino superior. Ao oferecer materiais didáticos acessíveis e ferramentas estruturadas para professores, transformamos a graduação em um celeiro contínuo de formação profissional crítica."
             },
-            "openSource": {
-                "title": "Open Source & Open Data",
-                "description": "Todo nosso trabalho é aberto e acessível, contribuindo para um ecossistema sustentável de checagem de fatos."
+            "infrastructure": {
+                "title": "Infraestrutura aberta e auditável",
+                "description": "Todo o fluxo do Comitê está ancorado no ecossistema de código aberto. Disponibilizamos sistemas de revisão em múltiplos estágios e um repositório público transparente que serve como base de dados para pesquisas e políticas públicas."
             }
         },
         "closingQuote": "Unidos, podemos construir uma sociedade mais informada e resistente à desinformação. Este é nosso pacto com a educação, a inovação e o fortalecimento da democracia.",
