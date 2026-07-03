@@ -6,12 +6,12 @@
         "description": "Join the first Committee created to democratize fact-checking practices in Brazil. A network that already brings together representatives from the five regions of the country and Portugal. The Committee is made up of educators, researchers, students, institutions, and professionals committed to democracy, who actively work to combat misinformation.",
         "ctaPrimary": "I want to participate",
         "ctaSecondary": "Learn about the initiative",
-        "stat1Value": "27",
-        "stat1Label": "States",
+        "stat1Value": "100+",
+        "stat1Label": "Active Members",
         "stat2Value": "50+",
         "stat2Label": "Universities",
-        "stat3Value": "5",
-        "stat3Label": "Meetings/year",
+        "stat3Value": "10+",
+        "stat3Label": "National Meetings",
         "quote": "”Misinformation is an existential threat to democracy. Fighting it requires unity, method, and collective commitment.”",
         "quoteAuthor": "National Committee",
         "quoteSource": "AletheiaFact.org"
@@ -22,20 +22,20 @@
         "description": "AletheiaFact.org is a non-profit organization focused on combating misinformation and democratizing access to fact-checking. We believe that a well-informed society strengthens the pillars of democracy.",
         "items": {
             "combat": {
-                "title": "Fighting Misinformation",
-                "description": "We develop methodologies and tools to identify and combat fake news in a collaborative and transparent way."
+                "title": "Fighting disinformation",
+                "description": "We reject the reactive logic of acting only during fleeting crises. Our methodology and technology analyze every stage of the information cycle."
             },
-            "network": {
-                "title": "Collaborative Network",
-                "description": "We connect educators, researchers, and institutions in a national network committed to the integrity of information and critical education."
+            "territorial": {
+                "title": "Territorial reach",
+                "description": "We connect researchers and institutions across all Brazilian macro-regions. This decentralized organization ensures an agile response that is sensitive to the cultural, social, and media diversity of each territory."
             },
-            "training": {
-                "title": "Continuous Training",
-                "description": "We offer workshops, webinars, and educational materials to train multipliers across all regions of Brazil."
+            "multiplicators": {
+                "title": "Multiplier educators",
+                "description": "We bring educommunication-based methodologies into higher education. By offering accessible teaching materials and structured tools for professors, we turn undergraduate programs into a continuous breeding ground for critical professional development."
             },
-            "openSource": {
-                "title": "Open Source & Open Data",
-                "description": "All our work is open and accessible, contributing to a sustainable fact-checking ecosystem."
+            "infrastructure": {
+                "title": "Open and auditable infrastructure",
+                "description": "The entire Committee workflow is anchored in the open-source ecosystem. We provide multi-stage review systems and a transparent public repository that serves as a database for research and public policy."
             }
         },
         "closingQuote": "Together, we can build a more informed and resilient society against misinformation. This is our commitment to education, innovation, and the strengthening of democracy.",
