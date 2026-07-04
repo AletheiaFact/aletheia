@@ -31,11 +31,11 @@ import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { ConfigService } from "@nestjs/config";
 import { CopilotSessionService } from "./copilot-session.service";
 import { CopilotSourceService } from "./copilot-source.service";
-
-enum SearchType {
-    online = "online",
-    gazettes = "gazettes",
-}
+import {
+    SearchType,
+    SearchOutcome,
+    applyFailureDisclosure,
+} from "./copilot-disclosure.util";
 
 @Injectable()
 export class CopilotChatService {
@@ -51,6 +51,7 @@ export class CopilotChatService {
     private createFactCheckingReportTool(
         editorReportRef: { value: any },
         executionIdRef: { value: string | null },
+        searchOutcomesRef: { value: SearchOutcome[] },
         userId: string,
         sessionId: string
     ) {
@@ -148,10 +149,21 @@ export class CopilotChatService {
                             );
                     }
 
+                    searchOutcomesRef.value.push({
+                        searchType: data.searchType,
+                        status: "ok",
+                    });
                     return stream;
                 } catch (error) {
                     this.logger.error(error);
-                    return String(error);
+                    searchOutcomesRef.value.push({
+                        searchType: data.searchType,
+                        status: "failed",
+                    });
+                    // Return a concise, user-safe observation instead of the raw
+                    // error, so the LLM cannot echo a traceback. Deterministic
+                    // failure disclosure is applied after the agent run.
+                    return `A busca ${data.searchType} falhou e não retornou resultados.`;
                 }
             },
         };
@@ -228,11 +240,15 @@ export class CopilotChatService {
             // Use local ref objects instead of instance variables (fixes concurrency bug)
             const editorReportRef: { value: any } = { value: null };
             const executionIdRef: { value: string | null } = { value: null };
+            const searchOutcomesRef: { value: SearchOutcome[] } = {
+                value: [],
+            };
             const tools = [
                 new DynamicStructuredTool(
                     this.createFactCheckingReportTool(
                         editorReportRef,
                         executionIdRef,
+                        searchOutcomesRef,
                         userId,
                         sessionId
                     ) as any
@@ -273,7 +289,8 @@ Your primary goal is to gather all relevant information from the user about the 
 - Always pose your questions one at a time and in the specified order.
 - Persist in asking all necessary questions. Do not use the tool until you have thoroughly completed all preceding steps.
 - Maintain the use of formal language in your responses, ensuring that all communication is conducted in {language}.
-- Only after all questions have been addressed and all relevant information has been gathered from the user you should proceed to use the get-fact-checking-report tool.`,
+- Only after all questions have been addressed and all relevant information has been gathered from the user you should proceed to use the get-fact-checking-report tool.
+- If a search returns a failure observation, summarize only the searches that succeeded and never include raw error text; the system discloses failed searches to the user automatically.`,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
                 ["user", "{input}"],
@@ -309,10 +326,19 @@ Your primary goal is to gather all relevant information from the user about the 
                 chat_history: messagesHistory,
             });
 
+            // Deterministically disclose any failed search leg, independent of
+            // how the LLM phrased its answer. Used for BOTH the persisted
+            // transcript and the returned payload so the record is faithful.
+            const finalContent = applyFailureDisclosure(
+                response.output,
+                searchOutcomesRef.value,
+                language
+            );
+
             // Persist the assistant response (include editorReport and executionId if produced)
             const assistantMessage: any = {
                 sender: SenderEnum.Assistant,
-                content: response.output,
+                content: finalContent,
                 type: "info",
             };
             if (editorReportRef.value) {
@@ -328,7 +354,7 @@ Your primary goal is to gather all relevant information from the user about the 
 
             return customMessage(HttpStatus.OK, MESSAGES.SUCCESS, {
                 sender: SenderEnum.Assistant,
-                content: response.output,
+                content: finalContent,
                 editorReport: editorReportRef.value,
                 executionId: executionIdRef.value,
             });
