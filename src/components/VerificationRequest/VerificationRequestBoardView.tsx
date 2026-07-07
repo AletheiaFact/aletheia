@@ -240,6 +240,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                           <AletheiaButton
                             href={`/verification-request/${request.data_hash}`}
                             target="_blank"
+                            onClick={(event) => event.stopPropagation()}
                           >
                             {t("verificationRequest:openVerificationRequest")}
                           </AletheiaButton>
