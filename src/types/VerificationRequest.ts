@@ -65,6 +65,7 @@ interface FiltersState {
   impactAreaFilterUsed: string[];
   applyFilters: boolean;
   viewMode: ViewMode;
+  canViewBoard: boolean;
   startDate: Date | null;
   endDate: Date | null;
 }

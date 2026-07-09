@@ -31,6 +31,7 @@ import {
     Public,
     AdminOnly,
     RegularUserOnly,
+    FactCheckerOnly,
 } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
@@ -297,6 +298,7 @@ export class VerificationRequestController {
 
     @ApiTags("pages")
     @Get("verification-request/create")
+    @FactCheckerOnly()
     public async VerificationRequestCreatePage(
         @Req() req: BaseRequest,
         @Res() res: Response

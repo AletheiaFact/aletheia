@@ -34,7 +34,7 @@ const VerificationRequestActivity = ({
             return (
               <Box className="item" key={activity.id}>
                 <Typography className="badge" variant="body2" bgcolor={color}>
-                  {t(`verificationRequest:${label}`)}
+                  {t(`${label}`)}
                 </Typography>
                 <Typography className="legend-label">{message}</Typography>
                 <Typography className="legend-percentage">
