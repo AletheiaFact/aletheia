@@ -5,48 +5,60 @@ import { formatTimeAgo } from "../../../helpers/formatTimeAgo";
 import { getStatusStyles } from "../../../helpers/verificationRequestCardHelper";
 
 const VerificationRequestActivity = ({
-  statsRecentActivity,
+    statsRecentActivity,
 }: StatsRecentActivityProps) => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
 
-  return (
-    <Card className="card">
-      <CardContent className="card-content">
-        <Typography className="title">
-          {t("verificationRequest:dashboard.activityTitle")}
-        </Typography>
-        <Typography className="subtitle">
-          {t("verificationRequest:dashboard.activitySubtitle")}
-        </Typography>
-
-        <Box mt={2}>
-          {statsRecentActivity.map((activity) => {
-            const { color, label } = getStatusStyles(activity.status, t);
-
-            const message = t(`verificationRequest:activity.${activity.status}`, {
-              hash: activity.data_hash,
-              source: t(
-                `verificationRequest:${activity.sourceChannel}`,
-                activity.sourceChannel
-              ).toLowerCase(),
-            });
-
-            return (
-              <Box className="item" key={activity.id}>
-                <Typography className="badge" variant="body2" bgcolor={color}>
-                  {t(`verificationRequest:${label}`)}
+    return (
+        <Card className="card">
+            <CardContent className="card-content">
+                <Typography className="title">
+                    {t("verificationRequest:dashboard.activityTitle")}
                 </Typography>
-                <Typography className="legend-label">{message}</Typography>
-                <Typography className="legend-percentage">
-                  {formatTimeAgo(activity.timestamp, t)}
+                <Typography className="subtitle">
+                    {t("verificationRequest:dashboard.activitySubtitle")}
                 </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-      </CardContent>
-    </Card>
-  );
+
+                <Box mt={2}>
+                    {statsRecentActivity.map((activity) => {
+                        const { color, label } = getStatusStyles(
+                            activity.status,
+                            t
+                        );
+
+                        const message = t(
+                            `verificationRequest:activity.${activity.status}`,
+                            {
+                                hash: activity.data_hash,
+                                source: t(
+                                    `verificationRequest:${activity.sourceChannel}`,
+                                    activity.sourceChannel
+                                ).toLowerCase(),
+                            }
+                        );
+
+                        return (
+                            <Box className="item" key={activity.id}>
+                                <Typography
+                                    className="badge"
+                                    variant="body2"
+                                    bgcolor={color}
+                                >
+                                    {t(`${label}`)}
+                                </Typography>
+                                <Typography className="legend-label">
+                                    {message}
+                                </Typography>
+                                <Typography className="legend-percentage">
+                                    {formatTimeAgo(activity.timestamp, t)}
+                                </Typography>
+                            </Box>
+                        );
+                    })}
+                </Box>
+            </CardContent>
+        </Card>
+    );
 };
 
 export default VerificationRequestActivity;

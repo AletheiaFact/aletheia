@@ -11,9 +11,9 @@ import { useTranslation } from "next-i18next";
 
 const missionItems = [
     { key: "combat", icon: <SecurityOutlined /> },
-    { key: "network", icon: <HubOutlined /> },
-    { key: "training", icon: <SchoolOutlined /> },
-    { key: "openSource", icon: <OpenInNewOutlined /> },
+    { key: "territorial", icon: <HubOutlined /> },
+    { key: "multiplicators", icon: <SchoolOutlined /> },
+    { key: "infrastructure", icon: <OpenInNewOutlined /> },
 ];
 
 const CommitteInvitationOurMission = () => {
@@ -41,7 +41,7 @@ const CommitteInvitationOurMission = () => {
 
                 <Grid container spacing={3}>
                     {missionItems.map(({ key, icon }) => (
-                        <Grid item xs={12} sm={6} md={3} key={key}>
+                        <Grid item xs={12} sm={6} lg={3} key={key}>
                             <Stack className="mission-card" spacing={2}>
                                 <Box className="benefit-icon-wrapper">
                                     {icon}
