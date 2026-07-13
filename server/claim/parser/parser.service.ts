@@ -7,7 +7,7 @@ import { Types } from "mongoose";
 import { UnattributedService } from "../types/unattributed/unattributed.service";
 import { UnattributedDocument } from "../types/unattributed/schemas/unattributed.schema";
 import { ContentModelEnum } from "../../types/enums";
-const md5 = require("md5");
+import { SentenceHashService } from "../admin-editor/sentence-hash.service";
 const nlp = require("compromise");
 nlp.extend(require("compromise-sentences"));
 nlp.extend(require("compromise-paragraphs"));
@@ -18,7 +18,8 @@ export class ParserService {
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
         private sentenceService: SentenceService,
-        private unattributedService: UnattributedService
+        private unattributedService: UnattributedService,
+        private hashService: SentenceHashService
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
@@ -41,8 +42,10 @@ export class ParserService {
             const paragraphId = this.createParagraphId();
             const sentences = this.postProcessSentences(paragraph.sentences());
 
-            const paragraphDataHash = md5(
-                `${this.paragraphSequence}${text}${paragraph}`
+            const paragraphDataHash = this.hashService.computeParagraphHash(
+                this.paragraphSequence,
+                text,
+                paragraph
             );
 
             if (sentences && sentences.length) {
@@ -112,8 +115,10 @@ export class ParserService {
         claimRevisionId: object
     ) {
         const sentenceId = this.createSentenceId();
-        const sentenceDataHash = md5(
-            `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
+        const sentenceDataHash = this.hashService.computeSentenceHash(
+            paragraphDataHash,
+            this.sentenceSequence,
+            sentenceContent
         );
 
         return this.sentenceService.create({

@@ -21,6 +21,7 @@ import { AbilityModule } from "../auth/ability/ability.module";
 import { UtilService } from "../util";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { GroupModule } from "../group/group.module";
+import { AdminEditorModule } from "./admin-editor/admin-editor.module";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -49,6 +50,7 @@ const ClaimModel = MongooseModule.forFeature([
         AbilityModule,
         FeatureFlagModule,
         GroupModule,
+        AdminEditorModule,
     ],
     exports: [ClaimService],
     providers: [UtilService, ClaimService],

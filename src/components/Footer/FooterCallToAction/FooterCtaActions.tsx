@@ -14,15 +14,18 @@ const FooterCtaActions = () => {
             className="footer-cta-actions"
         >
             <Link
-                href="/about"
+                onClick={() => trackUmamiEvent("cta-footer-committee-invitation-button", "committee-invitation")}
+                href="https://forms.gle/AnTuCzXtPTrsXHGVA"
+                target="_blank"
+                rel="noopener noreferrer"
                 underline="none"
                 className="footer-primary-cta-link"
                 data-cy="testFooterCtaPrimaryLink"
             >
-                {tFooter("cta.primaryButton")}
+                {tFooter("cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
             <Link
-                onClick={() => trackUmamiEvent("cta-footer-forum-form-button", "forumForm")}
+                onClick={() => trackUmamiEvent("cta-footer-committee-button", "committee-invitation")}
                 href="/committee-invitation"
                 underline="none"
                 className="footer-secondary-cta-link"

@@ -15,6 +15,7 @@ const FilterManager = ({ state, actions }) => {
         topicFilterUsed,
         impactAreaFilterUsed,
         viewMode,
+        canViewBoard,
         startDate,
         endDate,
     } = state;
@@ -55,12 +56,14 @@ const FilterManager = ({ state, actions }) => {
             className="filterActions"
         >
             <Grid className="filterToggleContainer">
-                <FilterToggleButtons
-                    viewMode={viewMode}
-                    setViewMode={setViewMode}
-                    leftOption={<ViewModule />}
-                    rightOption={<ViewList />}
-                />
+                {canViewBoard && (
+                    <FilterToggleButtons
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        leftOption={<ViewModule />}
+                        rightOption={<ViewList />}
+                    />
+                )}
                 {isBoard && <FilterPopover state={state} actions={actions} />}
             </Grid>
 

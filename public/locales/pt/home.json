@@ -1,14 +1,14 @@
 {
-    "homeHeaderBadge": "Verificação de fatos transparente",
-    "homeHeaderTitle": "<line1>Checagem de afirmações das</line1> <line2>suas <highlight>personalidades favoritas</highlight></line2>",
+    "homeHeaderBadge": "Fact-checking feito com transparência",
+    "homeHeaderTitle": "<line1>Checagem de discursos de</line1> <line2><highlight>personalidades mais relevantes</highlight></line2> <line3>do Brasil e do mundo</line3>",
     "homeHeaderViewReviewsButton": "Ver checagens recentes",
     "homeHeaderFeatureMethodology": "Metodologia transparente",
-    "homeHeaderFeatureReviewers": "Revisores certificados",
+    "homeHeaderFeatureReviewers": "Fact-checkers certificados",
     "homeHeaderFeatureSources": "Fontes verificadas",
     "statsPersonalities": "personalidades",
     "statsClaims": "discursos",
     "statsClaimReviews": "checagens",
-    "statsFooter": "Contribua para uma internet livre de desinformação. Verificamos afirmações de políticos, personalidades e figuras públicas com transparência e rigor metodológico.",
+    "statsFooter": "Verificamos afirmações de figuras públicas com metodologia acessível a todos os cidadãos",
     "createAccountButton": "Cadastre-se",
     "donateButton": "Doar",
     "donateUrlButton": "https://donate.aletheiafact.org/",
@@ -28,7 +28,7 @@
     "latestReviewsSeeAll": "Ver todas",
     "reviewsCarouselOpen": "Abrir",
     "reviewsCardNoTopics": "Tópicos não adicionados",
-    "forumButton": "Participe do nosso fórum",
+    "committeeButton": "Faça parte do Comitê",
     "redirectTitle": "Você será redirecionado para o nosso fórum em uma nova aba",
     "descriptionAlert": "Para participar das discussões, use a mesma conta da Aletheia para fazer login por lá, clicando em entrar no canto superior da tela."
 }

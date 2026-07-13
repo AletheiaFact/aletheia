@@ -7,7 +7,7 @@ import {
     Logger,
     UnauthorizedException,
 } from "@nestjs/common";
-import { Model, Types, UpdateWriteOpResult } from "mongoose";
+import { ClientSession, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
@@ -1053,5 +1053,19 @@ export class ReviewTaskService {
                 reviewTaskMachine.reviewTaskType
             );
         }
+    }
+
+    async cascadeUpdateDataHash(
+        oldHash: string,
+        newHash: string,
+        claimId: Types.ObjectId | string,
+        session: ClientSession
+    ): Promise<number> {
+        const result = await this.ReviewTaskModel.updateMany(
+            { data_hash: oldHash, target: claimId, onModel: "Claim" },
+            { $set: { data_hash: newHash } },
+            { session }
+        );
+        return result.modifiedCount ?? 0;
     }
 }

@@ -52,7 +52,7 @@ const TrackingCard = ({ verificationRequestId, isMinimal }: TrackingCardProps) =
         padding: "24px",
         height: isMinimal ? "100%" : "auto",
         margin: isMinimal ? 0 : "24px 0",
-        gap: 12
+        gap: 4
       }}
     >
       <Typography

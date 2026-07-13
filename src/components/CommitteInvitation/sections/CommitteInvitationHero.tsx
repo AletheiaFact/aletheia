@@ -12,6 +12,7 @@ import { ArrowForward, FormatQuoteOutlined } from "@mui/icons-material";
 import colors from "../../../styles/colors";
 import AletheiaAvatar from "../../AletheiaAvatar";
 import { useTranslations } from "next-intl";
+import smoothScrollTo from "../../../utils/smoothScrollTo";
 
 const CommitteInvitationHero = () => {
     const tCommitteeInvitation = useTranslations("committeeInvitation");
@@ -59,7 +60,7 @@ const CommitteInvitationHero = () => {
                                         borderRadius: "6px",
                                         "&:hover": { bgcolor: colors.lightSecondary },
                                     }}
-                                    href="#join"
+                                    onClick={smoothScrollTo("join")}
                                     component="a"
                                 >
                                     {tCommitteeInvitation("hero.ctaPrimary")}
@@ -80,7 +81,7 @@ const CommitteInvitationHero = () => {
                                             bgcolor: colors.lightTertiary,
                                         },
                                     }}
-                                    href="#mission"
+                                    onClick={smoothScrollTo("mission")}
                                     component="a"
                                 >
                                     {tCommitteeInvitation("hero.ctaSecondary")}

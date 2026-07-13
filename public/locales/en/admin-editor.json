@@ -1,0 +1,55 @@
+{
+    "page": {
+        "title": "Edit claim",
+        "subtitle": "Edit metadata and sentences of this claim"
+    },
+    "status": {
+        "unsaved": "Unsaved changes",
+        "unsavedLong": "You have unsaved changes",
+        "saved": "All changes saved"
+    },
+    "metadata": {
+        "section": "Metadata",
+        "description": "Basic claim information",
+        "title": "Title",
+        "date": "Date",
+        "personalitiesReadOnly": "Attributed personalities",
+        "personalitiesReadOnlyTooltip": "This field is read-only"
+    },
+    "actions": {
+        "submit": "Save changes",
+        "discard": "Discard",
+        "editClaim": "Edit claim metadata"
+    },
+    "load": {
+        "error": "Failed to load claim"
+    },
+    "commit": {
+        "success": "Claim updated",
+        "error": "Failed to save claim"
+    },
+    "conflict": {
+        "title": "Claim changed",
+        "body": "Another administrator modified this claim while you were editing. Refresh to see the latest version, then re-apply your changes.",
+        "refresh": "Refresh",
+        "discard": "Discard my changes"
+    },
+    "discard": {
+        "title": "Discard changes?",
+        "body": "Your edits will be lost. This action cannot be undone.",
+        "confirm": "Discard",
+        "cancel": "Cancel"
+    },
+    "sentences": {
+        "section": "Sentences",
+        "description_one": "{{count}} sentence in this claim",
+        "description_other": "{{count}} sentences in this claim",
+        "empty": "This claim has no editable sentences.",
+        "editTooltip": "Edit this sentence",
+        "revertTooltip": "Revert to original text",
+        "editedBadge": "Edited",
+        "editingLabel": "Editing...",
+        "saveEdit": "Save",
+        "cancelEdit": "Cancel"
+    }
+}

@@ -1,42 +1,41 @@
 {
     "title": "Convite para o Comitê",
-    "intro": "Junte-se ao movimento que está transformando a forma como o Brasil combate a desinformação. Seja parte de uma rede colaborativa de docentes, pesquisadores e instituições comprometidos com a democracia.",
     "hero": {
-        "chip": "Faça parte do Comitê Nacional de Democratização da Checagem de Fatos",
-        "title": "A verdade é um<br/>direito. A checagem,<br/>uma ferramenta.",
-        "description": "Junte-se ao movimento que está transformando a forma como o Brasil combate a desinformação. Seja parte de uma rede colaborativa de docentes, pesquisadores e instituições comprometidos com a democracia.",
+        "chip": "Comitê Nacional de Democratização da Checagem de Fatos",
+        "title": "O acesso a informações confiáveis é um direito. A checagem, a ferramenta para reivindicá-lo. ",
+        "description": "Faça parte do primeiro Comitê criado para democratizar as práticas de checagem de fatos no Brasil. Uma rede que já reúne representantes das cinco regiões do país e de Portugal. O Comitê é formado por docentes, pesquisadores, alunos, instituições e profissionais comprometidos com a democracia, que atuam ativamente no combate à desinformação.",
         "ctaPrimary": "Quero participar",
         "ctaSecondary": "Conhecer a iniciativa",
-        "stat1Value": "27",
-        "stat1Label": "Estados",
-        "stat2Value": "100+",
+        "stat1Value": "100+",
+        "stat1Label": "Membros ativos",
+        "stat2Value": "50+",
         "stat2Label": "Universidades",
-        "stat3Value": "5",
-        "stat3Label": "Encontros/ano",
+        "stat3Value": "10+",
+        "stat3Label": "Encontros nacionais",
         "quote": "”A desinformação é uma ameaça existencial à democracia. Combatê-la exige união, método e compromisso coletivo.”",
         "quoteAuthor": "Comitê Nacional",
         "quoteSource": "AletheiaFact.org"
     },
     "mission": {
         "eyebrow": "NOSSA MISSÃO",
-        "title": "Construindo uma sociedade onde a busca pela verdade seja valorizada",
-        "description": "A AletheiaFact.org é uma organização sem fins lucrativos focada no combate à desinformação e na democratização do acesso à checagem de fatos. Acreditamos que uma sociedade bem informada fortalece os pilares da democracia.",
+        "title": "Promovendo a autonomia informacional e o fortalecimento do debate público",
+        "description": "O Comitê Nacional de Democratização da Checagem de Fatos, coordenado pela AletheiaFact.org, consolida uma infraestrutura sócio-técnica-cultural permanente e distribuída por todo o país. Conectamos o conhecimento e a infraestrutura de universidades e organizações parceiras para reduzir os desertos de notícias e descentralizar o ecossistema de verificação.",
         "items": {
             "combat": {
-                "title": "Combate à Desinformação",
-                "description": "Desenvolvemos metodologias e ferramentas para identificar e combater fake news de forma colaborativa e transparente."
+                "title": "Combate à desinformação",
+                "description": "Recusamos a lógica reativa de atuar apenas em crises passageiras. Nossa metodologia e tecnologia analisam todas as etapas do ciclo informacional."
             },
-            "network": {
-                "title": "Rede Colaborativa",
-                "description": "Conectamos docentes, pesquisadores e instituições em uma rede nacional comprometida com a verdade e a educação crítica."
+            "territorial": {
+                "title": "Capilaridade territorial",
+                "description": "Conectamos pesquisadores e instituições em todas as macro-regiões brasileiras. Essa organização descentralizada garante uma resposta ágil e sensível às diversidades culturais, sociais e midiáticas de cada território."
             },
-            "training": {
-                "title": "Capacitação Contínua",
-                "description": "Oferecemos workshops, webinars e materiais didáticos para formar multiplicadores em todas as regiões do Brasil."
+            "multiplicators": {
+                "title": "Docentes multiplicadores",
+                "description": "Levamos metodologias baseadas na educomunicação para dentro do ensino superior. Ao oferecer materiais didáticos acessíveis e ferramentas estruturadas para professores, transformamos a graduação em um celeiro contínuo de formação profissional crítica."
             },
-            "openSource": {
-                "title": "Open Source & Open Data",
-                "description": "Todo nosso trabalho é aberto e acessível, contribuindo para um ecossistema sustentável de checagem de fatos."
+            "infrastructure": {
+                "title": "Infraestrutura aberta e auditável",
+                "description": "Todo o fluxo do Comitê está ancorado no ecossistema de código aberto. Disponibilizamos sistemas de revisão em múltiplos estágios e um repositório público transparente que serve como base de dados para pesquisas e políticas públicas."
             }
         },
         "closingQuote": "Unidos, podemos construir uma sociedade mais informada e resistente à desinformação. Este é nosso pacto com a educação, a inovação e o fortalecimento da democracia.",
@@ -45,7 +44,7 @@
     "benefits": {
         "eyebrow": "POR QUE PARTICIPAR?",
         "title": "Benefícios para você e sua instituição",
-        "description": "Ao se juntar ao Comitê Nacional de Democratização da Checagem de Fatos, você e sua universidade terão acesso a recursos exclusivos e oportunidades únicas de colaboração.",
+        "description": "Ao fazer parte do Comitê Nacional de Democratização da Checagem de Fatos, você e sua universidade terão acesso a recursos exclusivos e oportunidades únicas de colaboração.",
         "items": {
             "certification": {
                 "title": "Certificação Reconhecida",
@@ -74,13 +73,13 @@
         },
         "pact": {
             "title": "Nosso Pacto de Colaboração",
-            "description": "O sucesso do Comitê depende do engajamento ativo de todos. Compartilhamos a propriedade intelectual dos resultados entre os membros para acelerar a democratização da checagem de fatos, criando um ambiente de partilha mútuo em prol da evolução do conhecimento."
+            "description": "O Comitê funciona em código aberto. Métodos, dados e resultados são compartilhados entre os membros, portanto, cada avanço de uma instituição acelera o trabalho de todas. É assim que a checagem de fatos se democratiza, somando, nunca competindo."
         }
     },
     "cta": {
         "eyebrow": "FAÇA PARTE DESTA TRANSFORMAÇÃO",
-        "title": "Junte-se ao Comitê Nacional",
-        "description": "Convidamos todos aqueles que compartilham do compromisso com a verdade, com a educação crítica e com o fortalecimento da democracia.",
+        "title": "Integre o Comitê Nacional",
+        "description": "Convidamos todos aqueles que compartilham do compromisso com o acesso a informações confiáveis, com a educação crítica e com o fortalecimento da democracia.",
         "whoCanJoin": {
             "title": "Quem pode participar?"
         },

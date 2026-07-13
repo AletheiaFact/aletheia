@@ -24,6 +24,7 @@ export const CommitteInvitationBoxStyle = styled(Box)`
         font-weight: 700;
         font-size: clamp(1.5rem, 3.5vw, 2.25rem);
         text-align: center;
+        max-width: 800px;
     }
 
     .section-description {
@@ -77,7 +78,7 @@ export const CommitteInvitationBoxStyle = styled(Box)`
 
     .hero-title {
         color: ${colors.primary};
-        font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+        font-size: clamp(1.6rem, 3.2vw, 2.4rem);
         font-weight: 700;
         line-height: 1.15;
         margin-bottom: clamp(16px, 2.5vw, 24px);
@@ -86,7 +87,8 @@ export const CommitteInvitationBoxStyle = styled(Box)`
     .hero-description {
         color: ${colors.secondary};
         line-height: 1.7;
-        max-width: 480px;
+        max-width: 670px;
+        font-size: 1rem;
     }
 
     .stat-item {

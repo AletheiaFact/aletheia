@@ -22,13 +22,13 @@ const VerificationRequestActivity = ({
 
         <Box mt={2}>
           {statsRecentActivity.map((activity) => {
-            const { color, label } = getStatusStyles(activity.status, t);
+            const { color, label } = getStatusStyles(activity.status);
 
             const message = tVerificationRequest(`activity.${activity.status}`, {
               hash: activity.data_hash,
               source: tVerificationRequest(
                 `${activity.sourceChannel}`,
-                activity.sourceChannel
+                // activity.sourceChannel
               ).toLowerCase(),
             });
 

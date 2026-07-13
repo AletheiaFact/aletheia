@@ -1,7 +1,7 @@
 import React from "react";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import CardBase from "../CardBase";
-import { Grid } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
@@ -23,7 +23,6 @@ const ReviewCard = ({ review, summarized = false }) => {
     const tHome = useTranslations("home");
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
-    const hasPersonality = !!personality;
     const claimItem =
         Array.isArray(claim) && claim.length > 0 ? claim[0] : claim;
     const personalityItem =
@@ -69,13 +68,14 @@ const ReviewCard = ({ review, summarized = false }) => {
         );
 
     return (
-        <CardBase>
-            <ReviewCardStyled $hasPersonality={!summarized && hasPersonality} data-cy="testReviewCardContainer">
+        <CardBase style={{ height: "100%" }}>
+            <ReviewCardStyled data-cy="testReviewCardContainer">
                 {!summarized && personalityItem && (
                     <Grid className="personality-card">
                         <PersonalityMinimalCard
                             personality={personalityItem}
-                            avatarSize={vw?.xs ? 78 : 88}
+                            avatarSize={vw?.xs ? 64 : 48}
+                            isInline={true}
                         />
                     </Grid>
                 )}
@@ -97,7 +97,12 @@ const ReviewCard = ({ review, summarized = false }) => {
                             <ReviewClassification
                                 label={tClaimReview("titleClaimReview")}
                                 classification={content.props.classification}
-                                classificationTextStyle={{ fontSize: vw?.xs ? 12 : 16 }}
+                                classificationTextStyle={{
+                                    fontSize: 12,
+                                    padding: "4px 14px",
+                                    border: `1px solid ${reviewColors[content.props.classification]}`,
+                                    borderRadius: 12,
+                                }}
                             />
                         )}
                     </Grid>
@@ -125,15 +130,18 @@ const ReviewCard = ({ review, summarized = false }) => {
                     </Grid>
 
                     <Grid className="review-actions">
-                        <TagsList key={0} tags={content.topics || []} />
-                        <AletheiaButton
-                            type={ButtonType.primary}
-                            href={href}
-                            target="_blank"
-                            style={{ width: "fit-content" }}
-                        >
-                            {tHome("reviewsCarouselOpen")}
-                        </AletheiaButton>
+                        <Divider sx={{ width: "100%" }} />
+                        <Grid className="review-actions-content">
+                            <TagsList key={0} tags={content.topics || []} />
+                            <AletheiaButton
+                                type={ButtonType.primary}
+                                href={href}
+                                target="_blank"
+                                style={{ width: "fit-content" }}
+                            >
+                                {tHome("reviewsCarouselOpen")}
+                            </AletheiaButton>
+                        </Grid>
                     </Grid>
                 </Grid>
             </ReviewCardStyled>

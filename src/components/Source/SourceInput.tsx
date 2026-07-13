@@ -6,9 +6,19 @@ import Input from "../AletheiaInput";
 import AletheiaButton from "../AletheiaButton";
 import { useTranslations } from "next-intl";
 
-const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, sources, errors, clearError }) => {
+const SourceInput = ({
+    onChange,
+    addSource,
+    removeSource,
+    placeholder,
+    label,
+    sources,
+    errors,
+    clearError,
+}) => {
     const t = useTranslations();
     const tSourceForm = useTranslations("sourceForm");
+
     return (
         <>
             {sources && sources.map((source, index) => (
@@ -70,7 +80,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
                 style={{
                     width: "100%",
                     textAlign: "right",
-                    paddingBottom: "15px"
+                    paddingBottom: "15px",
                 }}
             >
                 <a
@@ -87,6 +97,6 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, label, so
             </div>
         </>
     );
-}
+};
 
 export default SourceInput;

@@ -1,4 +1,4 @@
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { Button, Grid, Toolbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import HideContentButton from "../HideContentButton";
@@ -114,6 +114,28 @@ const AdminToolBar = ({
                                 <Delete fontSize="small" />
                             </Button>
                         </div>
+                        {target === TargetModel.Claim && (
+                            <div className="toolbar-item">
+                                <Button
+                                    onClick={() => {
+                                        const ns =
+                                            nameSpace &&
+                                            nameSpace !== NameSpaceEnum.Main
+                                                ? `&namespace=${encodeURIComponent(
+                                                      nameSpace
+                                                  )}`
+                                                : "";
+                                        const safeId = encodeURIComponent(
+                                            content?._id ?? ""
+                                        );
+                                        window.location.href = `/admin/claim-edit?claimId=${safeId}${ns}`;
+                                    }}
+                                    title={t("admin-editor:actions.editClaim")}
+                                >
+                                    <Edit fontSize="small" />
+                                </Button>
+                            </div>
+                        )}
                     </Toolbar>
                 </AdminToolBarStyle>
 
