@@ -28,7 +28,6 @@ const VerificationRequestActivity = ({
               hash: activity.data_hash,
               source: tVerificationRequest(
                 `${activity.sourceChannel}`,
-                // activity.sourceChannel
               ).toLowerCase(),
             });
 
