@@ -1,25 +1,25 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { useTranslations } from "next-intl";
 
 const HomeHeroFeatures = () => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
 
     const features = [
         {
             icon: <VerifiedUserOutlinedIcon />,
-            label: t("home:homeHeaderFeatureMethodology"),
+            label: tHome("homeHeaderFeatureMethodology"),
         },
         {
             icon: <PersonAddAlt1OutlinedIcon />,
-            label: t("home:homeHeaderFeatureReviewers"),
+            label: tHome("homeHeaderFeatureReviewers"),
         },
         {
             icon: <SearchOutlinedIcon />,
-            label: t("home:homeHeaderFeatureSources"),
+            label: tHome("homeHeaderFeatureSources"),
         },
     ];
 

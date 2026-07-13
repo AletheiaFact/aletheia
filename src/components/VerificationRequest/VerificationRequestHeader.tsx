@@ -1,15 +1,15 @@
 import { Grid, Typography } from "@mui/material"
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestHeader = () => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     return (
         <Grid item xs={11} md={5} className="verificationRequestHeader">
             <Typography variant="h1" className="headerTitle">
-                {t("verificationRequest:verificationRequestListHeader")}
+                {tVerificationRequest("verificationRequestListHeader")}
             </Typography>
             <Typography variant="body1" className="headerDescription">
-                {t("verificationRequest:verificationRequestDescription")}
+                {tVerificationRequest("verificationRequestDescription")}
             </Typography>
         </Grid>
     )

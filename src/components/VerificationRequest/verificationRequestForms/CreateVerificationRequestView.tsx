@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import colors from "../../../styles/colors";
 import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import verificationRequestApi from "../../../api/verificationRequestApi";
 import { NameSpaceEnum } from "../../../types/Namespace";
+import { useTranslations } from "next-intl";
 
 const CreateVerificationRequestView = () => {
     const router = useRouter();
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [nameSpace] = useAtom(currentNameSpace);
     const [isLoading, setIsLoading] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");

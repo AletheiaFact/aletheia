@@ -1,6 +1,5 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { useDispatch } from "react-redux";
 
 import ImageApi from "../../api/image";
@@ -9,6 +8,7 @@ import { useAppSelector } from "../../store/store";
 import ReviewedImage from "../ReviewedImage";
 import { ClassificationEnum } from "../../types/enums";
 import AletheiaButton from "../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 interface ClaimImageBodyProps {
     imageUrl: string;
@@ -24,7 +24,7 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
     dataHash,
 }) => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const { selectedContent } = useAppSelector((state) => state);
 
     const handleClickOnButton = (): void => {
@@ -42,9 +42,9 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
 
     const getButtonText = (): string => {
         if (classification) {
-            return t("claim:openReportButton");
+            return tClaim("openReportButton");
         }
-        return t("claim:reviewImageButton");
+        return tClaim("reviewImageButton");
     };
 
     return (

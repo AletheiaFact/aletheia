@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Typography, Paper } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const FactCheckingInfo = () => {
-    const { t } = useTranslation();
+    const tClaimReview = useTranslations("claimReview");
 
     return (
         <Paper
@@ -40,7 +40,7 @@ const FactCheckingInfo = () => {
                             marginBottom: "4px",
                         }}
                     >
-                        {t("claimReview:factCheckingInProgress")}
+                        {tClaimReview("factCheckingInProgress")}
                     </Typography>
                     <Typography
                         variant="body2"
@@ -49,7 +49,7 @@ const FactCheckingInfo = () => {
                             lineHeight: 1.5,
                         }}
                     >
-                        {t("claimReview:factCheckingInfoMessage")}
+                        {tClaimReview("factCheckingInfoMessage")}
                     </Typography>
                 </div>
             </Box>

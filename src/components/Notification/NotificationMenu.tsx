@@ -10,8 +10,8 @@ import NotificationIcon from "./NotificationIcon";
 import NotificationsApi from "../../api/notificationsApi";
 import { SvgIcon } from "@mui/material";
 import { NotificationsOff } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 export interface NotificationMenuProps {
     hasSession: boolean;
@@ -48,7 +48,7 @@ const NotificationMenu = ({ hasSession, userId }: NotificationMenuProps) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);
-    const { t } = useTranslation();
+    const tNotification = useTranslations("notification");
 
     useEffect(() => {
         NotificationsApi.getTokens(userId).then(
@@ -107,7 +107,7 @@ const NotificationMenu = ({ hasSession, userId }: NotificationMenuProps) => {
                                     marginTop: "16px"
                                 }}
                             >
-                                {t("notification:noNotification")}
+                                {tNotification("noNotification")}
                             </p>
                         </div>
                     }

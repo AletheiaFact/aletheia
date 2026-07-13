@@ -1,11 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { Bar } from "./VerificationRequestDashboard.style";
 import colors from "../../../styles/colors";
-import { useTranslation } from "next-i18next";
 import { StatsCount } from "../../../types/VerificationRequest";
+import { useTranslations } from "next-intl";
 
 const StatusDistribution = ({ verified, inAnalysis, pending }: StatsCount) => {
-  const { t } = useTranslation("verificationRequest");
+  const tVerificationRequest = useTranslations("verificationRequest");
 
   const data = [
     {
@@ -29,9 +29,9 @@ const StatusDistribution = ({ verified, inAnalysis, pending }: StatsCount) => {
 
   return (
     <>
-      <Typography className="title">{t("dashboard.statusTitle")}</Typography>
+      <Typography className="title">{tVerificationRequest("dashboard.statusTitle")}</Typography>
       <Typography className="subtitle">
-        {t("dashboard.statusSubtitle")}
+        {tVerificationRequest("dashboard.statusSubtitle")}
       </Typography>
 
       <Box className="BarChart-container">
@@ -42,7 +42,7 @@ const StatusDistribution = ({ verified, inAnalysis, pending }: StatsCount) => {
             <Bar height={(value / maxStatusValue) * 100} color={color} />
 
             <Typography className="subtitle">
-              {t(`dashboard.${key}`)}
+              {tVerificationRequest(`dashboard.${key}`)}
             </Typography>
           </Box>
         ))}

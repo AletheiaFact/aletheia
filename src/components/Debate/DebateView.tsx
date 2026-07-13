@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Grid } from "@mui/material";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claimApi";
 import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
 import DebateHeader from "./DebateHeader";
@@ -10,10 +9,11 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserRole } from "../../atoms/currentUser";
+import { useTranslations } from "next-intl";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
-    const { t } = useTranslation();
+    const t = useTranslations();
     const speeches = debate.content;
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);

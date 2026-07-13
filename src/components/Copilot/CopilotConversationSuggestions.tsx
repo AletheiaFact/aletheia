@@ -1,26 +1,26 @@
 import React from "react";
 import CopilotConversationSuggestionStyled from "./CopilotConversationSuggestion.style";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const CopilotConversationSuggestions = ({ handleClick }) => {
-    const { t } = useTranslation();
-    const suggestions = [{ content: t("copilotChatBot:suggestion1") }];
+    const tCopilotChatBot = useTranslations("copilotChatBot");
+    const suggestions = [{ content: tCopilotChatBot("suggestion1") }];
 
     return (
         <CopilotConversationSuggestionStyled>
             <p className="suggestions-header">
-                {t("copilotChatBot:suggestionHeader")}
+                {tCopilotChatBot("suggestionHeader")}
             </p>
             {suggestions
                 ? suggestions.map(({ content }) => (
-                      <button
-                          key={content}
-                          className="suggestion-card"
-                          onClick={handleClick}
-                      >
-                          {content}
-                      </button>
-                  ))
+                    <button
+                        key={content}
+                        className="suggestion-card"
+                        onClick={handleClick}
+                    >
+                        {content}
+                    </button>
+                ))
                 : {}}
         </CopilotConversationSuggestionStyled>
     );

@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React, { useEffect, useCallback, useState, useRef } from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
@@ -7,6 +6,7 @@ import { Roles } from "../../types/enums";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserRole } from "../../atoms/currentUser";
+import { useTranslations } from "next-intl";
 
 const StyledSelect = styled(Autocomplete)`
     .MuiOutlinedInput-root {
@@ -36,7 +36,7 @@ function SelectOptions({
     const [role] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
 
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 

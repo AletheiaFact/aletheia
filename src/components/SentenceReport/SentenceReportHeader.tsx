@@ -1,9 +1,9 @@
 import { Box, Chip, Tooltip } from "@mui/material";
 import React, { useMemo, useState, useEffect } from "react";
-import { useTranslation } from "next-i18next";
 import userApi from "../../api/userApi";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import WorkflowProgress from "./WorkflowProgress";
+import { useTranslations } from "next-intl";
 
 interface SentenceReportHeaderProps {
     context: any;
@@ -18,7 +18,10 @@ const SentenceReportHeader = ({
     editorReadonly,
     reportModel,
 }: SentenceReportHeaderProps) => {
-    const { t } = useTranslation(["reviewTask", "claimReviewForm", "common"]);
+    const t = useTranslations();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
+    const tReviewTask = useTranslations("reviewTask");
+    const tCommon = useTranslations("common");
 
     const [userNames, setUserNames] = useState({});
 
@@ -26,19 +29,19 @@ const SentenceReportHeader = ({
         if (context.reviewerId) {
             return {
                 id: context.reviewerId,
-                type: t("claimReviewForm:reviewerChipLabel"),
+                type: tClaimReviewForm("reviewerChipLabel"),
             };
         }
         if (context.crossCheckerId) {
             return {
                 id: context.crossCheckerId,
-                type: t("claimReviewForm:crossCheckerChipLabel"),
+                type: tClaimReviewForm("crossCheckerChipLabel"),
             };
         }
         if (context.usersId && context.usersId.length > 0) {
             return {
                 id: context.usersId[0],
-                type: t("claimReviewForm:assigneeChipLabel"),
+                type: tClaimReviewForm("assigneeChipLabel"),
             };
         }
         return null;
@@ -123,7 +126,7 @@ const SentenceReportHeader = ({
         >
             {/* State chip */}
             <Chip
-                label={t(`reviewTask:${currentState}`) || currentState}
+                label={tReviewTask(`${currentState}`) || currentState}
                 color={getStateColor(currentState)}
                 variant="filled"
                 size="medium"
@@ -137,7 +140,7 @@ const SentenceReportHeader = ({
             {context?.rejectionComment &&
                 currentState !== ReviewTaskStates.rejected && (
                     <Chip
-                        label={t("reviewTask:rejected")}
+                        label={tReviewTask("rejected")}
                         color="error"
                         variant="filled"
                         size="medium"
@@ -151,9 +154,8 @@ const SentenceReportHeader = ({
             {/* Assigned fact-checker chip — only render after name is resolved */}
             {assignedFactChecker && userNames[assignedFactChecker.id] && (
                 <Chip
-                    label={`${assignedFactChecker.type}: ${
-                        userNames[assignedFactChecker.id]
-                    }`}
+                    label={`${assignedFactChecker.type}: ${userNames[assignedFactChecker.id]
+                        }`}
                     color="primary"
                     variant="outlined"
                     size="medium"
@@ -168,14 +170,14 @@ const SentenceReportHeader = ({
             {editorReadonly && (
                 <Tooltip
                     title={
-                        t("claimReviewForm:viewOnlyMode") ||
+                        tClaimReviewForm("viewOnlyMode") ||
                         "You are viewing this report in read-only mode. The content is visible but cannot be edited."
                     }
                     arrow
                     placement="top"
                 >
                     <Chip
-                        label={t("common:viewOnly") || "View Only"}
+                        label={tCommon("viewOnly") || "View Only"}
                         color="warning"
                         variant="outlined"
                         size="medium"

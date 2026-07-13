@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
 
 import personalityApi from "../../api/personality";
 import ClaimCard from "../Claim/ClaimCard";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const DebateClaimCardWrapper = ({ personalityId, speech }) => {
     const [personality, setPersonality] = useState();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { t } = useTranslation();
+    const t = useTranslations() as any;
     useEffect(() => {
         if (personalityId) {
             personalityApi

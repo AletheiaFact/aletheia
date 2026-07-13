@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import claimApi from "../../api/claimApi";
@@ -8,16 +7,19 @@ import ClaimCard from "./ClaimCard";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import ClaimListEmptyFallBack from "./ClaimListEmptyFallBack";
+import { useTranslations, useLocale } from "next-intl";
 
 const ClaimList = ({ personality, columns = 6 }) => {
-    const { i18n, t } = useTranslation();
+    const locale = useLocale();
+    const tClaim = useTranslations("claim");
     const [nameSpace] = useAtom(currentNameSpace);
-
+    console.log("ClaimList personality", personality._id, "locale", locale, "nameSpace", nameSpace);
+    console.log("Claimapi.get", claimApi.get);
     return (
         <BaseList
             apiCall={claimApi.get}
-            filter={{ personality: personality._id, i18n, nameSpace }}
-            title={t("claim:claimListHeader")}
+            filter={{ personality: personality._id, locale, nameSpace }}
+            title={tClaim("claimListHeader")}
             showDividers={false}
             bluePrimary={true}
             grid={{

@@ -1,11 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import React, { useMemo } from "react";
-import { useTranslation } from "next-i18next";
 import {
     ReviewTaskStates,
     ReportModelEnum,
 } from "../../machines/reviewTask/enums";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 interface StageConfig {
     labelKey: string;
@@ -85,7 +85,7 @@ const WorkflowProgress = ({
     reportModel,
     hasRejection,
 }: WorkflowProgressProps) => {
-    const { t } = useTranslation("reviewTask");
+    const t = useTranslations("reviewTask");
 
     const stages = WORKFLOW_STAGES[reportModel];
 
@@ -134,21 +134,19 @@ const WorkflowProgress = ({
                                     backgroundColor: isCompleted
                                         ? colors.primary
                                         : isActive
-                                        ? dotColor
-                                        : "transparent",
-                                    border: `2px solid ${
-                                        isCompleted
-                                            ? colors.primary
-                                            : isActive
+                                            ? dotColor
+                                            : "transparent",
+                                    border: `2px solid ${isCompleted
+                                        ? colors.primary
+                                        : isActive
                                             ? dotColor
                                             : colors.neutralTertiary
-                                    }`,
+                                        }`,
                                     boxShadow: isActive
-                                        ? `0 0 0 3px ${
-                                              isRejected
-                                                  ? "rgba(211, 47, 47, 0.2)"
-                                                  : "rgba(17, 39, 58, 0.2)"
-                                          }`
+                                        ? `0 0 0 3px ${isRejected
+                                            ? "rgba(211, 47, 47, 0.2)"
+                                            : "rgba(17, 39, 58, 0.2)"
+                                        }`
                                         : "none",
                                     transition: "all 0.2s ease",
                                     flexShrink: 0,
@@ -164,8 +162,8 @@ const WorkflowProgress = ({
                                             ? colors.error
                                             : colors.primary
                                         : isCompleted
-                                        ? colors.secondary
-                                        : colors.neutralSecondary,
+                                            ? colors.secondary
+                                            : colors.neutralSecondary,
                                     fontWeight: isActive ? 600 : 400,
                                     fontSize: "0.7rem",
                                     textAlign: "center",

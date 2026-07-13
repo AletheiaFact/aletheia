@@ -5,7 +5,6 @@ import InputTextList from "../InputTextList";
 import Loading from "../Loading";
 import AletheiaTextArea from "../AletheiaTextArea";
 import FetchInput from "./FetchInput";
-import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import DatePickerInput from "./DatePickerInput";
@@ -17,6 +16,7 @@ import InputExtraSourcesList from "../VerificationRequest/verificationRequestFor
 import { Topic } from "../../types/Topic";
 import { SourceType } from "../../types/Source";
 import ImageUpload, { UploadFile } from "../ImageUpload";
+import { useTranslations } from "next-intl";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -39,8 +39,8 @@ interface DynamicInputProps {
 
 const DynamicInput = (props: DynamicInputProps) => {
     const { isFetchingEditor } = useContext(VisualEditorContext);
-
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     switch (props.type) {
         case "textArea":
             return (
@@ -156,7 +156,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                             checked={!!props.value}
                         />
                     }
-                    label={t(`claimReviewForm:${props.fieldName}`)}
+                    label={tClaimReviewForm(`${props.fieldName}`)}
                 />
             );
         case "visualEditor":

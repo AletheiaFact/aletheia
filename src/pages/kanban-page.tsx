@@ -5,7 +5,6 @@ import { NextPage } from "next";
 import React, { useEffect } from "react";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -15,6 +14,7 @@ import KanbanTabNavigator from "../components/Kanban/KanbanTabNavigator";
 import TabPanel from "../components/TabPanel";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import Cookies from "js-cookie";
+import { getMessages } from "../lib/getMessages";
 
 const KanbanPage: NextPage<{
     sitekey;
@@ -75,7 +75,8 @@ export async function getServerSideProps({ locale, locales, req, query }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,

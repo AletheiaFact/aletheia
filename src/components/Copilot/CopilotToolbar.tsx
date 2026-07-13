@@ -6,7 +6,7 @@ import { Button, Tooltip } from "@mui/material";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import RestoreIcon from "@mui/icons-material/Restore";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const CopilotToolbarStyled = styled.div`
     display: flex;
@@ -43,7 +43,7 @@ const CopilotToolbarStyled = styled.div`
 
 const CopilotToolbar = ({ handleClearConversation }) => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
 
     const handleCloseSidebarClick = () => {
         dispatch(actions.closeCopilotDrawer());
@@ -52,12 +52,12 @@ const CopilotToolbar = ({ handleClearConversation }) => {
     return (
         <CopilotToolbarStyled>
             <span className="toolbar-title">
-                {t("copilotChatBot:copilotTitle")}
+                {tCopilotChatBot("copilotTitle")}
             </span>
             <div className="toolbar-actions">
                 <Tooltip
                     placement="top"
-                    title={t("copilotChatBot:copilotClearHistoryTooltip")}
+                    title={tCopilotChatBot("copilotClearHistoryTooltip")}
                 >
                     <Button
                         className="toolbar-item"
@@ -70,7 +70,7 @@ const CopilotToolbar = ({ handleClearConversation }) => {
 
                 <Tooltip
                     placement="top"
-                    title={t("copilotChatBot:copilotCloseSidebarTooltip")}
+                    title={tCopilotChatBot("copilotCloseSidebarTooltip")}
                 >
                     <Button
                         className="toolbar-item"

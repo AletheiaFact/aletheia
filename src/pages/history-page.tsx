@@ -1,10 +1,10 @@
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HistoryView from "../components/history/HistoryView";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { getMessages } from "../lib/getMessages";
 
 const HistoryPage: NextPage<{
     targetId: string;
@@ -21,7 +21,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             targetId: JSON.parse(JSON.stringify(query.targetId)),

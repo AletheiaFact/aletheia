@@ -10,11 +10,11 @@ import { isStaff } from "../../utils/GetUserPermission";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import AddIcon from "@mui/icons-material/Add";
-import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const [role] = useAtom(currentUserRole);
     const enableInformativeNews = useAppSelector(
         (state) => state?.enableInformativeNews
@@ -65,8 +65,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                         id={ReportModelEnum.InformativeNews}
                                         startIcon={<AddIcon />}
                                     >
-                                        {t(
-                                            "claimReviewForm:addInformativeNewsButton"
+                                        {tClaimReviewForm(
+                                            "addInformativeNewsButton"
                                         )}
                                     </AletheiaButton>
                                 )}
@@ -77,8 +77,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                     id={ReportModelEnum.FactChecking}
                                     startIcon={<AddIcon />}
                                 >
-                                    {t(
-                                        "claimReviewForm:addFactCheckingReviewButton"
+                                    {tClaimReviewForm(
+                                        "addFactCheckingReviewButton"
                                     )}
                                 </AletheiaButton>
                             </>
@@ -91,7 +91,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 id={ReportModelEnum.FactChecking}
                                 startIcon={<AddIcon />}
                             >
-                                {t("claimReviewForm:addSourceReviewButton")}
+                                {tClaimReviewForm("addSourceReviewButton")}
                             </AletheiaButton>
                         )}
                         {isVerificationRequest && (
@@ -104,8 +104,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 id={ReportModelEnum.Request}
                                 startIcon={<AddIcon />}
                             >
-                                {t(
-                                    "claimReviewForm:addVerificationRequestButton"
+                                {tClaimReviewForm(
+                                    "addVerificationRequestButton"
                                 )}
                             </AletheiaButton>
                         )}

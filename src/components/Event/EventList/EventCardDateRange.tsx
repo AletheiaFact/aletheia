@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Typography } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import colors from "../../../styles/colors";
-import { i18n } from "next-i18next";
+import { useLocale } from "next-intl";
 
 interface EventCardDateRangeProps {
     startDate: Date;
@@ -10,7 +10,7 @@ interface EventCardDateRangeProps {
 }
 
 const EventCardDateRange = ({ startDate, endDate, }: EventCardDateRangeProps) => {
-    const locale = i18n.language || "pt";
+    const locale = useLocale();
     return (
         <Grid item xs={12} display="flex" gap={1}>
             <CalendarMonthIcon fontSize="small" style={{ color: colors.secondary }} />

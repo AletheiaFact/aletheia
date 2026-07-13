@@ -1,7 +1,7 @@
 {
     "eventCreateSuccess": "Evento criado com sucesso",
     "eventUpdatedSuccess": "Evento atualizado com sucesso",
-    "totalItems": "{{total}} no total",
+    "totalItems": "{total} no total",
     "openEvent": "Veja evento",
     "fetchError": "Erro ao carregar eventos. Por favor, tente novamente mais tarde.",
     "loadMoreButton": "Carregar mais",

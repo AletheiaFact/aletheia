@@ -3,16 +3,16 @@ import { CloseOutlined, HelpOutlineOutlined } from "@mui/icons-material";
 import Fab from "../AffixButton/Fab";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import Banner from "../SentenceReport/Banner";
-import { useTranslation } from "next-i18next";
 import Cookies from "js-cookie";
 import CtaAnimation from "../CtaAnimation";
 import InfoTooltip from "../Claim/InfoTooltip";
 import colors from "../../styles/colors";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 const CloseIcon = () => {
-    const { t } = useTranslation();
+    const tAffix = useTranslations("affix");
     return (
         <InfoTooltip
             children={
@@ -20,7 +20,7 @@ const CloseIcon = () => {
             }
             content={
                 <span style={{ color: colors.black, fontSize: 15 }}>
-                    {t("affix:AffixCloseTooltip")}
+                    {tAffix("AffixCloseTooltip")}
                 </span>
             }
         />
@@ -28,7 +28,8 @@ const CloseIcon = () => {
 };
 
 const AffixCTAButton = ({ copilotDrawerWidth }) => {
-    const { t } = useTranslation();
+    const tAffix = useTranslations("affix");
+    const tNewCTAFolder = useTranslations("NewCTAFolder");
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
         copilotDrawerCollapsed:
@@ -74,7 +75,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                 >
                     <CtaAnimation pulse={!CTABannerShow}>
                         <Fab
-                            tooltipText={t("affix:affixCallToActionButton")}
+                            tooltipText={tAffix("affixCallToActionButton")}
                             size="60px"
                             onClick={handleCTAClick}
                             data-cy={"testCTAFloatButton"}
@@ -108,7 +109,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                                 padding: "0 30px",
                             }}
                         >
-                            {t("NewCTAFolder:body")}
+                            {tNewCTAFolder("body")}
                         </h2>
                     </div>
                 }

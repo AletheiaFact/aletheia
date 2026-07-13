@@ -2,29 +2,33 @@ import React from "react";
 import DonationBannerButton from "./DonationBannerButton";
 import { ButtonType } from "../../AletheiaButton";
 import { Grid } from "@mui/material";
-import { Trans, useTranslation } from "next-i18next";
 import DonationBannerStyle from "./DonationBanner.style";
+import { useTranslations } from "next-intl";
 
 function DonationBannerContent({ closeClick }) {
-    const { t } = useTranslation();
+    const tDonationBanner = useTranslations("donationBanner");
+    const tHome = useTranslations("home");
+
     return (
         <DonationBannerStyle>
             <Grid item className="banner-content">
-                <h1>{t("donationBanner:title")}</h1>
+                <h1>{tDonationBanner("title")}</h1>
                 <p>
-                    <Trans i18nKey="donationBanner:paragraph" />
+                    {tDonationBanner.rich("paragraph", {
+                        b: () => <b></b>
+                    })}
                 </p>
                 <div className="banner-buttons">
                     <DonationBannerButton
                         type={ButtonType.white}
-                        text={t("donationBanner:noDonateButton")}
+                        text={tDonationBanner("noDonateButton")}
                         closeClick={closeClick}
                         trackEvent={"banner-donate-button-no"}
                     />
                     <DonationBannerButton
                         type={ButtonType.primary}
-                        href={t("home:donateUrlButton")}
-                        text={t("donationBanner:yesDonateButton")}
+                        href={tHome("donateUrlButton")}
+                        text={tDonationBanner("yesDonateButton")}
                         closeClick={closeClick}
                         trackEvent={"banner-donate-button-yes"}
                     />

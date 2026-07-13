@@ -1,4 +1,4 @@
 {
     "loadMoreButton": "Load more",
-    "totalItems": "{{total}} total"
+    "totalItems": "{total} total"
 }

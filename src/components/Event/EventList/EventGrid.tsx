@@ -2,13 +2,12 @@ import React from "react";
 import EventCard from "./EventCard";
 import GridList, { SeeMorePosition } from "../../GridList";
 import { EventMetrics, EventPayload } from "../../../types/event";
-import { TFunction } from "react-i18next";
 import useEventsHook from "../hooks/useEventsHook";
+import { useTranslations } from "next-intl";
 
 type EventsGridProps = {
     events: EventPayload[];
     eventMetrics: EventMetrics;
-    t: TFunction;
     hasDivider?: boolean;
     disableSeeMoreButton?: boolean;
     buttonPosition?: SeeMorePosition;
@@ -19,7 +18,6 @@ type EventsGridProps = {
 const EventsGrid = ({
     events,
     eventMetrics,
-    t,
     hasDivider,
     disableSeeMoreButton,
     buttonPosition,
@@ -27,6 +25,7 @@ const EventsGrid = ({
     subtitle,
 }: EventsGridProps) => {
     const { state } = useEventsHook();
+    const tEvents = useTranslations("events");
 
     return (
         <GridList
@@ -36,7 +35,7 @@ const EventsGrid = ({
             itemSize={{ xs: 12, sm: 6 }}
             href={state.eventHref}
             disableSeeMoreButton={disableSeeMoreButton}
-            seeMoreButtonLabel={t("events:seeMoreEventsButton")}
+            seeMoreButtonLabel={tEvents("seeMoreEventsButton")}
             seeMoreButtonPosition={buttonPosition}
             dataCy="testSeeMoreEvents"
             hasDivider={hasDivider}
@@ -45,7 +44,7 @@ const EventsGrid = ({
                 <EventCard
                     event={event}
                     eventMetrics={eventMetrics}
-                    openEventLabel={t("events:openEvent")}
+                    openEventLabel={tEvents("openEvent")}
                 />
             )}
         />

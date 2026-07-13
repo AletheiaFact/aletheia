@@ -8,22 +8,22 @@ import FooterContactColumn from "./FooterContactColumn";
 import { useFooterData } from "../hooks/useFooterData";
 
 const FooterMainContent = () => {
-    const { t, isMobile, namespacePrefix, statuteUrl } = useFooterData();
+    const { tFooter, isMobile, namespacePrefix, statuteUrl } = useFooterData();
 
 
     const platformLinks: FooterLink[] = [
         {
-            label: t("footer:sections.platform.links.access"),
+            label: tFooter("sections.platform.links.access"),
             href: `${namespacePrefix}`,
             dataCy: "testFooterLinkPlatformAccess"
         },
         {
-            label: t("footer:sections.platform.links.manual"),
-            href: t("footer:sections.platform.links.manualUrl"), external: true,
+            label: tFooter("sections.platform.links.manual"),
+            href: tFooter("sections.platform.links.manualUrl"), external: true,
             dataCy: "testFooterLinkPlatformManual"
         },
         {
-            label: t("footer:sections.platform.links.docs"),
+            label: tFooter("sections.platform.links.docs"),
             href: "https://docs.aletheiafact.org", external: true,
             dataCy: "testFooterLinkPlatformDocs"
         }
@@ -31,17 +31,17 @@ const FooterMainContent = () => {
 
     const institutionalLinks: FooterLink[] = [
         {
-            label: t("footer:sections.institutional.links.about"),
+            label: tFooter("sections.institutional.links.about"),
             href: "/about",
             dataCy: "testFooterLinkInstitutionalAbout"
         },
         {
-            label: t("footer:sections.institutional.links.partners"),
+            label: tFooter("sections.institutional.links.partners"),
             href: "/about#partners-section",
             dataCy: "testFooterLinkInstitutionalPartners"
         },
         {
-            label: t("footer:sections.institutional.links.awards"),
+            label: tFooter("sections.institutional.links.awards"),
             href: "/about#awards-section",
             dataCy: "testFooterLinkInstitutionalAwards"
         },
@@ -49,35 +49,35 @@ const FooterMainContent = () => {
 
     const communityLinks: FooterLink[] = [
         {
-            label: t("footer:sections.community.links.collaboration"),
-            href: t("footer:sections.community.links.sendEmailCollaborationButton"),
+            label: tFooter("sections.community.links.collaboration"),
+            href: tFooter("sections.community.links.sendEmailCollaborationButton"),
             dataCy: "testFooterLinkCommunityCollaboration",
         },
         {
-            label: t("footer:sections.community.links.universities"),
+            label: tFooter("sections.community.links.universities"),
             href: "/about#partners-section",
             dataCy: "testFooterLinkCommunityUniversities",
         },
         {
-            label: t("footer:sections.community.links.volunteering"),
-            href: t("footer:sections.community.links.volunteerForm"),
+            label: tFooter("sections.community.links.volunteering"),
+            href: tFooter("sections.community.links.volunteerForm"),
             dataCy: "testFooterLinkCommunityVolunteering",
         },
     ];
 
     const socialLinks: FooterSocialLink[] = [
         {
-            href: t("footer:instagram"),
+            href: tFooter("instagram"),
             Icon: Instagram, label: "Instagram",
             dataCy: "testFooterSocialInstagram"
         },
         {
-            href: t("footer:facebook"),
+            href: tFooter("facebook"),
             Icon: FacebookOutlined, label: "Facebook",
             dataCy: "testFooterSocialFacebook"
         },
         {
-            href: t("footer:linkedin"),
+            href: tFooter("linkedin"),
             Icon: LinkedIn, label: "LinkedIn",
             dataCy: "testFooterSocialLinkedIn"
         },
@@ -97,9 +97,9 @@ const FooterMainContent = () => {
             <FooterBrandColumn socialLinks={socialLinks} />
 
             {[
-                { title: t("footer:sections.platform.title"), links: platformLinks },
-                { title: t("footer:sections.institutional.title"), links: institutionalLinks },
-                { title: t("footer:sections.community.title"), links: communityLinks },
+                { title: tFooter("sections.platform.title"), links: platformLinks },
+                { title: tFooter("sections.institutional.title"), links: institutionalLinks },
+                { title: tFooter("sections.community.title"), links: communityLinks },
             ].map((section) => (
                 <FooterLinksColumn
                     key={section.title}

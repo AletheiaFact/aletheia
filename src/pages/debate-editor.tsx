@@ -1,5 +1,4 @@
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
 import dynamic from "next/dynamic";
@@ -7,6 +6,7 @@ import { IEditorProps } from "../components/Editor/Editor";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { getMessages } from "../lib/getMessages";
 
 const Editor = dynamic<IEditorProps>(
     () => import("../components/Editor/Editor"),
@@ -28,7 +28,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

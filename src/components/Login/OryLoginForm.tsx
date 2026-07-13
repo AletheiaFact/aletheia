@@ -1,5 +1,4 @@
 import AletheiaAlert from "../AletheiaAlert";
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import Input from "../AletheiaInput";
@@ -10,6 +9,7 @@ import { Grid } from "@mui/material";
 import Label from "../Label";
 import { useForm } from "react-hook-form";
 import TextError from "../TextErrorForm";
+import { useTranslations } from "next-intl";
 
 const OryLoginForm = ({
     flow,
@@ -18,7 +18,9 @@ const OryLoginForm = ({
     isLoading,
     onFinishTotp,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tLogin = useTranslations("login");
+    const tTotp = useTranslations("totp");
     const {
         register,
         handleSubmit,
@@ -33,7 +35,7 @@ const OryLoginForm = ({
                 >
                     <AletheiaAlert
                         style={{ padding: "0 15px", margin: "0px" }}
-                        message={t("login:refreshLoginMessage")}
+                        message={tLogin("refreshLoginMessage")}
                         type="warning"
                     />
                 </Grid>
@@ -43,7 +45,7 @@ const OryLoginForm = ({
                     direction="column"
                 >
                     <h2>
-                        {t("login:formHeader")}
+                        {tLogin("formHeader")}
                     </h2>
                     <form
                         onSubmit={handleSubmit(onFinish, onFinishFailed)}
@@ -53,7 +55,7 @@ const OryLoginForm = ({
                         >
                             <Grid item xs={12} sm={3} lg={2}>
                                 <Label required
-                                    children={t("login:emailLabel") + " :"}
+                                    children={tLogin("emailLabel") + " :"}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={9} lg={10}>
@@ -65,13 +67,13 @@ const OryLoginForm = ({
                                 />
                                 <TextError
                                     stateError={errors.email}
-                                    children={t("login:emailErrorMessage")}
+                                    children={tLogin("emailErrorMessage")}
                                     data-cy="testEmailErrorMessage"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} lg={2}>
                                 <Label required
-                                    children={t("login:passwordLabel") + " :"}
+                                    children={tLogin("passwordLabel") + " :"}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={9} lg={10} >
@@ -81,10 +83,10 @@ const OryLoginForm = ({
                                         required: true
                                     })}
                                 />
-                                <ForgotPasswordLink t={t} />
+                                <ForgotPasswordLink />
                                 <TextError
                                     stateError={errors.password}
-                                    children={t("login:passwordErrorMessage")}
+                                    children={tLogin("passwordErrorMessage")}
                                     data-cy="testPasswordErrorMessage"
                                 />
                             </Grid>
@@ -94,7 +96,7 @@ const OryLoginForm = ({
                                 htmlType="submit"
                                 data-cy={"loginButton"}
                             >
-                                {t("login:submitButton")}
+                                {tLogin("submitButton")}
                             </AletheiaButton>
                         </Grid>
                     </form>
@@ -103,10 +105,10 @@ const OryLoginForm = ({
             {flow?.requested_aal === "aal2" && (
                 <Grid container direction="column">
                     <h2>
-                        {t("totp:formHeader")}
+                        {tTotp("formHeader")}
                     </h2>
                     <p>
-                        {t("totp:totpMessage")}
+                        {tTotp("totpMessage")}
                     </p>
                     <form
                         onSubmit={handleSubmit(onFinishTotp)}
@@ -114,7 +116,7 @@ const OryLoginForm = ({
                         <Grid container display="flex">
                             <Grid item xs={12} md={5} lg={3}>
                                 <Label required
-                                    children={t("totp:inputLabel") + " :"}
+                                    children={tTotp("inputLabel") + " :"}
                                 />
                             </Grid>
                             <Grid item xs={8} md={5} lg={3}>
@@ -126,7 +128,7 @@ const OryLoginForm = ({
                                 />
                                 <TextError
                                     stateError={errors.totp}
-                                    children={t("totp:totpErrorMessage")}
+                                    children={tTotp("totpErrorMessage")}
                                     data-cy="testTotpErrorMessage"
                                 />
                             </Grid>
@@ -138,7 +140,7 @@ const OryLoginForm = ({
                                 htmlType="submit"
                                 data-cy="totpSubmitButton"
                             >
-                                {t("totp:submitButton")}
+                                {tTotp("submitButton")}
                             </AletheiaButton>
                         </Grid>
                     </form>

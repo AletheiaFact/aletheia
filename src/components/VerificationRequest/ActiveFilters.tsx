@@ -6,11 +6,13 @@ import {
     FiltersContext,
     FilterType,
 } from "../../types/VerificationRequest";
+import { useTranslations } from "next-intl";
 
 const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     const { topicFilterUsed, impactAreaFilterUsed, autoCompleteTopicsResults, viewMode } =
         state;
-    const { dispatch, t, setPaginationModel, setApplyFilters } = actions;
+    const { dispatch, setPaginationModel, setApplyFilters } = actions;
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     const getTopicDisplayLabel = (topicName: string): string => {
         const topicWithAlias = autoCompleteTopicsResults?.find(
@@ -47,10 +49,10 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
     const ChipComponent = (type: FilterType, value: string): JSX.Element => {
         const label =
             type === FilterType.TOPIC
-                ? `${t(
-                    "verificationRequest:topicFilterLabel"
+                ? `${tVerificationRequest(
+                    "topicFilterLabel"
                 )} ${getTopicDisplayLabel(value)}`
-                : `${t("verificationRequest:impactAreaFilterLabel")} ${value}`;
+                : `${tVerificationRequest("impactAreaFilterLabel")} ${value}`;
 
         const deleteObject: FilterItem = {
             label:
@@ -76,7 +78,7 @@ const ActiveFilters: React.FC<FiltersContext> = ({ state, actions }) => {
         (topicFilterUsed.length > 0 || impactAreaFilterUsed.length > 0) && (
             <Grid item marginTop={1}>
                 <Typography variant="subtitle1" gutterBottom>
-                    {t("verificationRequest:activeFiltersLabel")}
+                    {tVerificationRequest("activeFiltersLabel")}
                 </Typography>
                 <Grid container spacing={1}>
                     {topicFilterUsed?.map((topic) =>

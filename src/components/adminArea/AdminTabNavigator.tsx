@@ -3,11 +3,11 @@ import Tab from "@mui/material/Tab";
 import { Grid } from "@mui/material";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
-import { useTranslation } from "next-i18next";
 import TabsNavigatorStyle from "./TabsNavigator.style";
+import { useTranslations } from "next-intl";
 
 const AdminTabNavigator = ({ value, handleChange }) => {
-    const { t } = useTranslation();
+    const tAdmin = useTranslations("admin");
 
     function tabProps(index: number) {
         return {
@@ -27,7 +27,7 @@ const AdminTabNavigator = ({ value, handleChange }) => {
                     label={
                         <div className="tab-label">
                             <ManageAccountsOutlinedIcon />
-                            <span>{t("admin:tabUsersTitle")}</span>
+                            <span>{tAdmin("tabUsersTitle")}</span>
                         </div>
                     }
                     {...tabProps(0)}
@@ -36,7 +36,7 @@ const AdminTabNavigator = ({ value, handleChange }) => {
                     label={
                         <div className="tab-label">
                             <DashboardOutlinedIcon />
-                            <span>{t("admin:tabDashboardTitle")}</span>
+                            <span>{tAdmin("tabDashboardTitle")}</span>
                         </div>
                     }
                     {...tabProps(1)}

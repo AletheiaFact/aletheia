@@ -1,6 +1,5 @@
 import React from "react";
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import NameSpaceView from "../components/namespace/NameSpaceView";
 import { useSetAtom } from "jotai";
@@ -9,6 +8,7 @@ import { atomNameSpacesList } from "../atoms/namespace";
 import NameSpacesFormDrawer from "../components/namespace/NameSpaceFormDrawer";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
+import { getMessages } from "../lib/getMessages";
 
 const AdminNameSpacesPage: NextPage<{ data: string }> = ({
     sitekey,
@@ -35,7 +35,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             nameSpaces: JSON.parse(JSON.stringify(query.nameSpaces)),
             sitekey: query.sitekey,
             users: JSON.parse(JSON.stringify(query.users)),

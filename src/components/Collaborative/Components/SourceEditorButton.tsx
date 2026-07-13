@@ -2,11 +2,11 @@ import React, { useCallback, useContext, useState } from "react";
 import AletheiaButton from "../../AletheiaButton";
 import { Grid } from "@mui/material";
 import SummarizationApi from "../../../api/summarizationApi";
-import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../VisualEditorProvider";
+import { useTranslations } from "next-intl";
 
 const SourceEditorButton = ({ manager, state, readonly }) => {
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
     const [isLoading, setIsLoading] = useState(false);
     const { source } = useContext(VisualEditorContext);
 
@@ -43,7 +43,7 @@ const SourceEditorButton = ({ manager, state, readonly }) => {
 
     return (
         <Grid
-        container
+            container
             xs={12}
             style={{
                 display: "flex",
@@ -60,7 +60,7 @@ const SourceEditorButton = ({ manager, state, readonly }) => {
                 loading={isLoading}
                 disabled={readonly}
             >
-                {t("sourceForm:summarizeSouce")}
+                {tSourceForm("summarizeSouce")}
             </AletheiaButton>
         </Grid>
     );

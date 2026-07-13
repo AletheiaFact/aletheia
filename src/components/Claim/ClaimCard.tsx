@@ -1,6 +1,5 @@
 import { Grid, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
@@ -16,6 +15,7 @@ import { useAppSelector } from "../../store/store";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { useTranslations } from "next-intl";
 
 const ClaimCard = ({
     personality,
@@ -23,7 +23,8 @@ const ClaimCard = ({
     collapsed = true,
     content = null,
 }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const dispatch = useDispatch();
     const { selectedTarget } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
@@ -109,7 +110,7 @@ const ClaimCard = ({
             </Grid>
             <Grid container
                 style={{
-                    justifyContent:"space-between",
+                    justifyContent: "space-between",
                     padding: "4px 15px 0 0",
                     width: "100%",
                 }}
@@ -131,7 +132,7 @@ const ClaimCard = ({
                                 margin: 0,
                             }}
                         >
-                            {t("claim:metricsHeaderInfo", {
+                            {tClaim("metricsHeaderInfo", {
                                 totalReviews: claim?.stats?.total,
                             })}
                         </p>
@@ -148,7 +149,7 @@ const ClaimCard = ({
                     >
                         {review && (
                             <span style={{ margin: 0 }}>
-                                {t("claim:cardOverallReviewPrefix")}
+                                {tClaim("cardOverallReviewPrefix")}
                                 <span
                                     style={{
                                         color:
@@ -158,7 +159,7 @@ const ClaimCard = ({
                                         margin: "0px 3px",
                                     }}
                                 >
-                                    {t(`claimReviewForm:${review?._id}`)}
+                                    {tClaimReviewForm(`${review?._id}`)}
                                 </span>
                                 ({review?.count})
                             </span>
@@ -182,7 +183,7 @@ const ClaimCard = ({
                                     lineHeight: "24px",
                                 }}
                             >
-                                {t("claim:cardReviewButton")}
+                                {tClaim("cardReviewButton")}
                             </span>
                         </AletheiaButton>
                     )}

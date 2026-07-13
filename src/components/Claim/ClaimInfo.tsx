@@ -1,8 +1,8 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { useTranslation } from "next-i18next";
 import LocalizedDate from "../LocalizedDate";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const ClaimInfo = ({
     isImage,
@@ -10,7 +10,7 @@ const ClaimInfo = ({
     speechTypeTranslation = "claim:typeSpeech",
     style = {},
 }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const textstyle = {
         marginTop: 20,
         color: colors.blackSecondary,
@@ -26,18 +26,18 @@ const ClaimInfo = ({
                     variant="body1"
                     style={textstyle}
                 >
-                    {t("claim:cardHeader1")}&nbsp;
+                    {tClaim("cardHeader1")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                     &nbsp;
-                    {t("claim:cardHeader2")}&nbsp;
-                    <strong>{t(speechTypeTranslation)}</strong>
+                    {tClaim("cardHeader2")}&nbsp;
+                    <strong>{tClaim(speechTypeTranslation)}</strong>
                 </Typography>
             ) : (
                 <Typography
                     variant="body1"
                     style={textstyle}
-                    >
-                    {t("claim:cardHeader3")}&nbsp;
+                >
+                    {tClaim("cardHeader3")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                 </Typography>
             )}

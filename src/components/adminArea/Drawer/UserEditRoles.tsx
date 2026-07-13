@@ -12,10 +12,10 @@ import { currentUserRole } from "../../../atoms/currentUser";
 import { NameSpaceEnum } from "../../../types/Namespace";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
-    const { t } = useTranslation();
+    const tAdmin = useTranslations("admin");
     const [userRole] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -64,7 +64,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                             <legend style={{ width: "fit-content" }}>
                                 {key}
                             </legend>
-                            <Label>{t("admin:columnRole")}</Label>
+                            <Label>{tAdmin("columnRole")}</Label>
                             <RadioGroup
                                 row
                                 name="roles"
@@ -91,7 +91,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                                                     color: getComponentColor(),
                                                 }}
                                             />}
-                                            label={t(`admin:role-${role}`)}
+                                            label={tAdmin(`role-${role}`)}
                                         />
                                     ))}
                             </RadioGroup>

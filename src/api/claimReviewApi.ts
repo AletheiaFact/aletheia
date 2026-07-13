@@ -1,8 +1,9 @@
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { Review } from "../types/Review";
-import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import type { PaginatedResponse } from "../types/ApiResponse";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/review");
 
@@ -55,14 +56,14 @@ const updateClaimReviewHiddenStatus = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+                t(`claimReview.${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
             MessageManager.showMessage(
                 "error",
-                t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
+                t(`claimReview.${isHidden ? "hideError" : "unhideError"}`)
             );
             throw err;
         });
@@ -72,11 +73,11 @@ const deleteClaimReview = (id: string, t: TranslationFn): Promise<void> => {
     return request
         .delete(`/${id}`)
         .then(() => {
-            MessageManager.showMessage("success", t("claim:deleteSuccess"));
+            MessageManager.showMessage("success", t("claim.deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error", t("claim:deleteError"));
+            MessageManager.showMessage("error", t("claim.deleteError"));
         });
 };
 

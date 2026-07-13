@@ -1,8 +1,8 @@
-import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
 
 function BackButton({
     style,
@@ -13,7 +13,7 @@ function BackButton({
     callback?: () => void;
     isVisible?: boolean;
 }) {
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
     const router = useRouter();
     const pathname = router?.pathname || "";
 
@@ -38,7 +38,7 @@ function BackButton({
                     }
                 }}
             >
-                <ArrowBackOutlined fontSize="small" /> {t("common:back_button")}
+                <ArrowBackOutlined fontSize="small" /> {tCommon("back_button")}
             </a>
         );
     } else {

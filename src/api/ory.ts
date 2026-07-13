@@ -61,13 +61,13 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
         .then(() => {
             MessageManager.showMessage(
                 "success",
-                `${t("login:loginSuccessfulMessage")}`
+                `${t("login.loginSuccessfulMessage")}`
             );
             if (flow?.return_to) {
                 window.location.href = flow?.return_to;
                 MessageManager.showMessage(
                     "success",
-                    t("profile:changesSaved")
+                    t("profile.changesSaved")
                 );
                 return;
             }
@@ -81,7 +81,7 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
         .catch(() => {
             MessageManager.showMessage(
                 "error",
-                `${t("login:loginFailedMessage")}`
+                `${t("login.loginFailedMessage")}`
             );
         });
 };
@@ -105,7 +105,7 @@ const orySubmitSettings = ({ router, flow, setFlow, t, values }) => {
             router.push("/");
             MessageManager.showMessage(
                 "success",
-                `${t("profile:changesSaved")}`
+                `${t("profile.changesSaved")}`
             );
         })
         .catch(handleFlowError(router, "settings", setFlow, t));
@@ -121,7 +121,7 @@ const orySubmitTotp = ({ router, flow, setFlow, t, values }) => {
             setFlow(data);
             MessageManager.showMessage(
                 "success",
-                `${t("profile:changesSaved")}`
+                `${t("profile.changesSaved")}`
             );
         })
         .catch(handleFlowError(router, "settings", setFlow, t));

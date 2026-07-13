@@ -2,7 +2,6 @@ import { useAtom } from "jotai";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import { useEffect, useMemo, useState } from "react";
 import { currentNameSpace } from "../../atoms/namespace";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { CreateLogoutHandler } from "../Login/LogoutAction";
@@ -27,9 +26,9 @@ import { Cookies } from "react-cookie-consent";
 import ReactCountryFlag from "react-country-flag";
 import { UseHeaderDataReturn } from "../../types/header";
 import userApi from "../../api/userApi";
+import { useTranslations } from "next-intl";
 
 export const useHeaderData = (): UseHeaderDataReturn => {
-    const { t } = useTranslation();
     const router = useRouter();
 
     const [nameSpace] = useAtom(currentNameSpace);
@@ -271,7 +270,6 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             isLoadingUser
         },
         actions: {
-            t,
             handleClose,
             setAnchorEl,
             onLogout,

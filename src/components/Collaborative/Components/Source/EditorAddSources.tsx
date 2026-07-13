@@ -3,12 +3,12 @@ import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
-import { useTranslation } from "next-i18next";
 import AddIcon from "@mui/icons-material/Add";
 import { validateUrl } from "../../../../utils/ValidateUrl";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
 import { Node } from "@remirror/pm/model";
+import { useTranslations } from "next-intl";
 
 const EditorAddSources = ({
     nodeFromJSON,
@@ -18,7 +18,8 @@ const EditorAddSources = ({
     doc: Node;
 }) => {
     const command = useCommands();
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
+    const t = useTranslations();
     const [href, setHref] = useState("https://");
     const [showDialog, setShowDialog] = useState(false);
     const [error, setError] = useState(null);
@@ -96,7 +97,7 @@ const EditorAddSources = ({
             {!showDialog ? (
                 <>
                     <p className="empty-text">
-                        {t("sourceForm:editorEmptySourcesWithButton")}
+                        {tSourceForm("editorEmptySourcesWithButton")}
                     </p>
                     <AletheiaButton
                         type={ButtonType.gray}
@@ -109,7 +110,7 @@ const EditorAddSources = ({
             ) : (
                 <SourceDialog
                     autoFocus
-                    placeholder={t("sourceForm:placeholder")}
+                    placeholder={tSourceForm("placeholder")}
                     value={href}
                     onChange={handleInputChange}
                     onKeyDown={(event) => {

@@ -7,7 +7,6 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import ClaimSourceList from "../Source/ClaimSourceList";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "next-i18next";
 import ClaimInfo from "./ClaimInfo";
 import ClaimContentDisplay from "./ClaimContentDisplay";
 import SocialMediaShare from "../SocialMediaShare";
@@ -19,10 +18,11 @@ import AffixButtonV2 from "../Collaborative/Components/AffixButtonV2";
 import { isAdmin } from "../../utils/GetUserPermission";
 import FilterToggleButtons from "../FilterToggleButtons";
 import { ViewMode } from "../FilterToggleButtons";
+import { useTranslations } from "next-intl";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const [role] = useAtom(currentUserRole);
     const { title, stats, content: claimContent } = claim;
 
@@ -42,7 +42,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
         if (isImage) {
             dispatch(actions.setSelectContent(claimContent));
         }
-    }, [claim, claimContent, dispatch, isImage, personality, t]);
+    }, [claim, claimContent, dispatch, isImage, personality, tClaim]);
 
     return (
         <>
@@ -103,8 +103,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                             <FilterToggleButtons
                                                 viewMode={showHighlights}
                                                 setViewMode={setShowHighlights}
-                                                leftOption={t("claim:showHighlightsButton")}
-                                                rightOption={t("claim:hideHighlightsButton")}
+                                                leftOption={tClaim("showHighlightsButton")}
+                                                rightOption={tClaim("hideHighlightsButton")}
                                                 isRounded={true}
                                             />
                                         }
@@ -121,7 +121,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {t("claim:sourceSectionTitle")}
+                                        {tClaim("sourceSectionTitle")}
                                     </Typography>
                                     <ClaimSourceList
                                         sources={sources}

@@ -1,16 +1,16 @@
 import React from "react";
 import CheckIcon from "@mui/icons-material/Check";
-import { Grid, List, ListItem, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
+import { Grid, List, ListItem, Typography } from "@mui/material"
+import { useTranslations } from "next-intl";
 
 const CTAFolderAchievementsColumn = () => {
-    const { t } = useTranslation();
+    const tCTAFolder = useTranslations("CTAFolder");
 
     const achievements = [
-        t("CTAFolder:achievements1"),
-        t("CTAFolder:achievements2"),
-        t("CTAFolder:achievements3"),
-        t("CTAFolder:achievements4"),
+        tCTAFolder("achievements1"),
+        tCTAFolder("achievements2"),
+        tCTAFolder("achievements3"),
+        tCTAFolder("achievements4"),
     ];
 
     return (
@@ -19,7 +19,7 @@ const CTAFolderAchievementsColumn = () => {
                 variant="h3"
                 className="ctaAchievementsTitle"
             >
-                {t("CTAFolder:aletheiaMoviment")}
+                {tCTAFolder("aletheiaMoviment")}
             </Typography>
             <List className="ctaAchievementsList">
                 {achievements.map((achievement) => (

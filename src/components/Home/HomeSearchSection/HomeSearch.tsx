@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Box, InputBase, Stack, Typography } from "@mui/material";
 import { ArrowForward, SearchOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import SearchApi from "../../../api/searchApi";
 import { ActionTypes } from "../../../store/types";
 import { useDispatch } from "react-redux";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const HomeSearch = () => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
@@ -41,13 +41,13 @@ const HomeSearch = () => {
                     component="h2"
                     className="home-header-search-title"
                 >
-                    {t("home:homeHeaderSearchTitle")}
+                    {tHome("homeHeaderSearchTitle")}
                 </Typography>
                 <Typography
                     component="p"
                     className="home-header-search-description"
                 >
-                    {t("home:homeHeaderSearchDescription")}
+                    {tHome("homeHeaderSearchDescription")}
                 </Typography>
             </Stack>
 
@@ -58,7 +58,7 @@ const HomeSearch = () => {
                 <InputBase
                     fullWidth
                     value={name}
-                    placeholder={t("home:homeHeaderSearchPlaceholder")}
+                    placeholder={tHome("homeHeaderSearchPlaceholder")}
                     className="home-header-search-input"
                     onChange={({ target }) => setName(target.value)}
                     onKeyDown={({ key }) => {
@@ -73,7 +73,7 @@ const HomeSearch = () => {
                     loading={isLoading}
                     className="home-header-search-button"
                 >
-                    {t("home:homeHeaderSearchButton")}
+                    {tHome("homeHeaderSearchButton")}
                     <ArrowForward className="home-header-search-button-icon" />
                 </AletheiaButton>
             </Box>

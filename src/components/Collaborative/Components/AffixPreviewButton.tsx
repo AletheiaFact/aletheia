@@ -3,10 +3,10 @@ import AletheiaButton from "../../AletheiaButton";
 import AffixButtonV2 from "./AffixButtonV2";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const AffixPreviewButton = ({ doc }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const { machineService, viewPreview, handleClickViewPreview } = useContext(
         ReviewTaskMachineContext
     );
@@ -37,8 +37,8 @@ const AffixPreviewButton = ({ doc }) => {
                         onClick={handleOnClick}
                     >
                         {viewPreview
-                            ? t("claimReviewForm:hidePreview")
-                            : t("claimReviewForm:viewPreview")}
+                            ? tClaimReviewForm("hidePreview")
+                            : tClaimReviewForm("viewPreview")}
                     </AletheiaButton>
                 }
             />

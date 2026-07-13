@@ -5,12 +5,12 @@ import JsonLd from "../components/JsonLd";
 import { NextPage } from "next";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "next-i18next";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 export interface ClaimPageProps {
     personality: any;
@@ -39,7 +39,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         enableViewReportPreview,
     } = props;
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
     const dispatch = useDispatch();
     setCurrentNameSpace(props.nameSpace);
 
@@ -74,7 +74,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         <>
             <Seo
                 title={claim.title}
-                description={t("seo:claimDescription", {
+                description={tSeo("claimDescription", {
                     title: claim.title,
                     name: personality?.name || "",
                 })}
@@ -91,7 +91,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: query.personality

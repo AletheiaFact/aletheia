@@ -1,20 +1,22 @@
 import React from "react";
 import { useHeaderData } from "./useHeaderData";
 import HeaderMenu from "./HeaderMenu";
+import { useTranslations } from "next-intl";
 
 const HeaderInstitutionMenu = () => {
     const { state, actions } = useHeaderData();
     const { anchorEl, menuInstitutionSections } = state;
-    const { t, setAnchorEl } = actions;
+    const { setAnchorEl } = actions;
+    const tHeader = useTranslations("header");
 
     return (
         <HeaderMenu
-            buttonLabel={t("header:institutionalItem")}
+            buttonLabel={tHeader("institutionalItem")}
             buttonDataCy="testInstitutionalItem"
             sections={menuInstitutionSections}
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
-            t={t}
+        // t={t}
         />
     );
 };

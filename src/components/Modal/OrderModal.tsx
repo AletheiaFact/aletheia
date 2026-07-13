@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
@@ -6,10 +5,11 @@ import OrderRadio from "../Radio/OrderRadio";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
     const [nameSpace] = useAtom(currentNameSpace);
-    const { t } = useTranslation();
+    const tOrderModal = useTranslations("orderModal");
 
     return (
         <AletheiaModal
@@ -27,7 +27,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                         textTransform: "uppercase",
                     }}
                 >
-                    {t("orderModal:title")}
+                    {tOrderModal("title")}
                 </h2>
             }
         >
@@ -46,7 +46,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                             textDecorationLine: "underline",
                         }}
                     >
-                        {t("orderModal:cancelButton")}
+                        {tOrderModal("cancelButton")}
                     </span>
                 </ModalCancelButton>
 
@@ -54,7 +54,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                     type={ButtonType.primary}
                     onClick={handleOk}
                 >
-                    {t("orderModal:okButton")}
+                    {tOrderModal("okButton")}
                 </AletheiaButton>
             </div>
         </AletheiaModal>

@@ -9,11 +9,11 @@ import {
 import styled from "styled-components";
 import ReviewColors from "../../constants/reviewColors";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const ReviewProgress = ({ reviews, statsProps }) => {
-    const { t } = useTranslation();
-    
+    const tClaimReviewForm = useTranslations("claimReviewForm");
+
     return reviews.map((review) => {
         const BorderLinearProgress = styled(LinearProgress)(() => ({
             [`& .${linearProgressClasses.bar}`]: {
@@ -53,7 +53,7 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                     }}
                 >
                     {statsProps.countInTitle && `${review.count} `}
-                    {t(`claimReviewForm:${review._id}`)}
+                    {tClaimReviewForm(`${review._id}`)}
                 </span>
                 {statsProps.type === "circle" ?
                     <Grid container position="relative" display="inline-flex" justifyContent="center"

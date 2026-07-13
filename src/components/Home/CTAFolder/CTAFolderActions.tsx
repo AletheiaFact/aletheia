@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../../lib/umami";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 type CTAFolderActionsProps = {
     isLoggedIn: boolean;
@@ -19,7 +19,7 @@ const getSignUpButtonType = (isHomeFolder: boolean): ButtonType => {
 };
 
 const CTAFolderActions = ({ isLoggedIn, isHomeFolder = false }: CTAFolderActionsProps) => {
-    const { t } = useTranslation();
+    const tCTAFolder = useTranslations("CTAFolder");
 
     const aboutButtonType = getAboutButtonType(isLoggedIn, isHomeFolder);
     const signUpButtonType = getSignUpButtonType(isHomeFolder);
@@ -33,7 +33,7 @@ const CTAFolderActions = ({ isLoggedIn, isHomeFolder = false }: CTAFolderActions
                     href="/sign-up"
                     data-cy="testCtaSignUpButton"
                 >
-                    {t("CTAFolder:signUpButton")}
+                    {tCTAFolder("signUpButton")}
                 </AletheiaButton>
             )}
 
@@ -43,7 +43,7 @@ const CTAFolderActions = ({ isLoggedIn, isHomeFolder = false }: CTAFolderActions
                 href="/about"
                 data-cy="testCtaAboutUsButton"
             >
-                {t("CTAFolder:aboutUsButton")}
+                {tCTAFolder("aboutUsButton")}
             </AletheiaButton>
         </Grid>
     );

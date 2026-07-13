@@ -4,13 +4,13 @@ import BaseList from "../List/BaseList";
 import SourceSkeleton from "../Skeleton/SourceSkeleton";
 import SourceListItem from "./SourceListItem";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import SourceCreateCTA from "./SourceCreateCTA";
+import { useTranslations } from "next-intl";
 
 const SourceList = ({ footer = false }) => {
-    const { t } = useTranslation();
+    const tSources = useTranslations("sources");
     const [nameSpace] = useAtom(currentNameSpace);
 
     return (
@@ -18,7 +18,7 @@ const SourceList = ({ footer = false }) => {
             <BaseList
                 apiCall={SourceApi.get}
                 filter={{ nameSpace }}
-                title={t("sources:sourceListHeader")}
+                title={tSources("sourceListHeader")}
                 renderItem={(source, index) =>
                     source && <SourceListItem key={index} source={source} />
                 }

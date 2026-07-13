@@ -1,5 +1,4 @@
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { uniqueId } from "remirror";
 
@@ -15,6 +14,7 @@ import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
 import { useDispatch } from "react-redux";
 import actions from "../../../store/actions";
+import { useTranslations } from "next-intl";
 
 const EditorClaimCardContent = ({ children }) => {
     return (
@@ -41,7 +41,8 @@ export const EditorClaimCard = ({
 }) => {
     const dispatch = useDispatch();
     const [speech, setSpeech] = useState(undefined);
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
+    const t = useTranslations();
     const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
     const [claim] = useAtom(debateAtom);
@@ -138,7 +139,7 @@ export const EditorClaimCard = ({
                             disabled={isLoading}
                             data-cy={"testSaveButton"}
                         >
-                            {t("debates:saveButtonLabel")}
+                            {tDebates("saveButtonLabel")}
                         </AletheiaButton>
                     </>
                 ) : (

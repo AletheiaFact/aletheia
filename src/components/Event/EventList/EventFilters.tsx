@@ -2,20 +2,20 @@ import React from "react";
 import { Box, Grid } from "@mui/material";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { EventStatus } from "../../../types/event";
+import { useTranslations } from "next-intl";
 
 interface EventFiltersProps {
     selectedStatus: EventStatus;
     onStatusChange: (status: EventStatus) => void;
-    t: (key: string) => string;
 }
 
-const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) => {
-
+const EventFilters = ({ selectedStatus, onStatusChange }: EventFiltersProps) => {
+    const tEvents = useTranslations("events");
     const filterOptions = [
-        { status: "all" as const, label: t("events:filterAll") },
-        { status: "happening" as const, label: t("events:filterHappening") },
-        { status: "upcoming" as const, label: t("events:filterUpcoming") },
-        { status: "finalized" as const, label: t("events:filterFinished") },
+        { status: "all" as const, label: tEvents("filterAll") },
+        { status: "happening" as const, label: tEvents("filterHappening") },
+        { status: "upcoming" as const, label: tEvents("filterUpcoming") },
+        { status: "finalized" as const, label: tEvents("filterFinished") },
     ];
 
     return (

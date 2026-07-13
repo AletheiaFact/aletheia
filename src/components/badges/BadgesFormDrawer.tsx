@@ -1,6 +1,5 @@
 import { Divider, Grid } from "@mui/material";
 import { useAtom, useSetAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
 import BadgesApi from "../../api/badgesApi";
 import ImageApi from "../../api/image";
@@ -19,9 +18,10 @@ import colors from "../../styles/colors";
 import LargeDrawer from "../LargeDrawer";
 import DynamicBadgesForm from "./DynamicBadgesForm";
 import { IBadgeData, IBadgeProps } from "../../types/Badge";
+import { useTranslations } from "next-intl";
 
 const BadgesFormDrawer = () => {
-    const { t } = useTranslation();
+    const tBadges = useTranslations("badges");
     const [badgeEdited] = useAtom(badgeBeeingEdited);
     const [userList] = useAtom(atomUserList);
 
@@ -62,7 +62,7 @@ const BadgesFormDrawer = () => {
                 formData.append("files", file);
             });
             try {
-                const imagesUploaded = await ImageApi.uploadImage(formData, t);
+                const imagesUploaded = await ImageApi.uploadImage(formData, tBadges);
                 const newImage = imagesUploaded[0];
                 handleBadgeSave({ name, description, image: newImage, users: usersAsObjects });
             } catch (err) {
@@ -78,7 +78,7 @@ const BadgesFormDrawer = () => {
         const { name, description, image, users } = props;
         if (isEdit && badgeEdited) {
             const newItem = { _id: badgeEdited._id, name, description, image };
-            BadgesApi.updateBadge(newItem, users, t).then(() => {
+            BadgesApi.updateBadge(newItem, users, tBadges).then(() => {
                 finishEditing({
                     newItem: { ...newItem, users },
                     listAtom: atomBadgesList,
@@ -92,7 +92,7 @@ const BadgesFormDrawer = () => {
                 description,
                 image,
             };
-            BadgesApi.createBadge(newBadge, users, t)
+            BadgesApi.createBadge(newBadge, users, tBadges)
                 .then((createdBadge) => {
                     addBadge(createdBadge);
                     setOpen(false);
@@ -117,7 +117,7 @@ const BadgesFormDrawer = () => {
             <Grid container justifyContent="center">
                 <Grid item xs={10}>
                     <h2>
-                        {t(isEdit ? "badges:editBadge" : "badges:addBadge")}
+                        {tBadges(isEdit ? "editBadge" : "addBadge")}
                     </h2>
                     <Divider />
                 </Grid>

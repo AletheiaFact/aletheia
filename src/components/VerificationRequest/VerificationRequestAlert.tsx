@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { Grid } from "@mui/material";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
 import AletheiaAlert from "../AletheiaAlert";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
@@ -9,9 +8,12 @@ import { useSelector } from "@xstate/react";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { Roles } from "../../types/enums";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
+    const tSeo = useTranslations("seo");
+    const t = useTranslations();
     const [role] = useAtom(currentUserRole);
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
@@ -29,8 +31,8 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
             return {
                 type: "warning",
                 showIcon: true,
-                message: t(
-                    "verificationRequest:createClaimFromVerificationRequest"
+                message: tVerificationRequest(
+                    "createClaimFromVerificationRequest"
                 ),
                 description: (
                     <AletheiaButton
@@ -38,7 +40,7 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
                         className="container-alert"
                         type={ButtonType.primary}
                     >
-                        {t("seo:claimCreateTitle")}
+                        {tSeo("claimCreateTitle")}
                     </AletheiaButton>
                 ),
             };
@@ -47,15 +49,15 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
             return {
                 type: "success",
                 showIcon: false,
-                message: t("verificationRequest:openVerificationRequestClaimLabel"),
+                message: tVerificationRequest("openVerificationRequestClaimLabel"),
                 description: (
                     <AletheiaButton
                         href={`/claim/${targetId?.slug}`}
                         className="container-alert"
                         type={ButtonType.primary}
                     >
-                        {t(
-                            "verificationRequest:openVerificationRequestClaimButton"
+                        {tVerificationRequest(
+                            "openVerificationRequestClaimButton"
                         )}
                     </AletheiaButton>
                 ),

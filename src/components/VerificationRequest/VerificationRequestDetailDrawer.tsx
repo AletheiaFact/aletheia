@@ -16,7 +16,6 @@ import {
     Share,
     ArrowBackOutlined,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import {
@@ -48,6 +47,7 @@ import {
     getSeverityLabel,
 } from "../../helpers/verificationRequestCardHelper";
 import { isStaff } from "../../utils/GetUserPermission";
+import { useLocale, useTranslations } from "next-intl";
 
 interface VerificationRequestDetailDrawerProps {
     verificationRequest: any;
@@ -58,7 +58,11 @@ interface VerificationRequestDetailDrawerProps {
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
     ({ verificationRequest, open, onClose, onUpdate }) => {
-        const { t, i18n } = useTranslation();
+        const tVerificationRequest = useTranslations("verificationRequest");
+        const tClaimForm = useTranslations("claimForm");
+        const tCommon = useTranslations("common");
+        const t = useTranslations();
+        const locale = useLocale();
         const { vw } = useAppSelector((state) => state);
 
         const [role] = useAtom(currentUserRole);
@@ -81,7 +85,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
             hasIdentifiedData:
                 currentRequest?.identifiedData &&
                 currentRequest.identifiedData.length > 0,
-            language: i18n.language || "en",
+            language: locale,
         });
 
         const canApprove = isStaff(role);
@@ -122,7 +126,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 }
             } catch (error) {
                 console.error(
-                    t("verificationRequest:errorUpdatingStatus"),
+                    tVerificationRequest("errorUpdatingStatus"),
                     error
                 );
             } finally {
@@ -193,9 +197,9 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 {
                     icon: <Filter style={{ fontSize: 18 }} />,
                     key: `${currentRequest._id}|reportType`,
-                    label: t("verificationRequest:tagReportType"),
-                    label_value: t(
-                        `claimForm:${currentRequest.reportType || "undefined"
+                    label: tVerificationRequest("tagReportType"),
+                    label_value: tClaimForm(
+                        `${currentRequest.reportType || "undefined"
                         }`
                     ),
                     style: {
@@ -206,9 +210,9 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 {
                     icon: <Share style={{ fontSize: 18 }} />,
                     key: `${currentRequest._id}|receptionChannel`,
-                    label: t("verificationRequest:tagSourceChannel"),
-                    label_value: t(
-                        `verificationRequest:${currentRequest.sourceChannel}`,
+                    label: tVerificationRequest("tagSourceChannel"),
+                    label_value: tVerificationRequest(
+                        `${currentRequest.sourceChannel}`,
                         { defaultValue: currentRequest.sourceChannel },
                     ),
                     style: {
@@ -219,7 +223,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 {
                     icon: <Public style={{ fontSize: 18 }} />,
                     key: `${currentRequest._id}|impactArea`,
-                    label: t("verificationRequest:tagImpactArea"),
+                    label: tVerificationRequest("tagImpactArea"),
                     label_value: currentRequest.impactArea?.name,
                     style: {
                         backgroundColor: colors.neutralSecondary,
@@ -229,8 +233,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                 {
                     icon: <WarningAmber style={{ fontSize: 18 }} />,
                     key: `${currentRequest._id}|severity`,
-                    label: t("verificationRequest:tagSeverity"),
-                    label_value: getSeverityLabel(currentRequest.severity, t),
+                    label: tVerificationRequest("tagSeverity"),
+                    label_value: getSeverityLabel(currentRequest.severity),
                     style: {
                         backgroundColor: getSeverityColor(currentRequest.severity),
                         color: colors.white,
@@ -272,7 +276,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                         onClick={() => onClose()}
                                         type={ButtonType.gray}
                                     >
-                                        {t("common:back_button")}
+                                        {tCommon("back_button")}
                                     </AletheiaButton>
                                     <Grid item xs={vw?.xs ? 4 : 7}>
                                         <AletheiaButton
@@ -283,8 +287,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                             fontWeight="bold"
                                             sx={{ textDecoration: "underline" }}
                                         >
-                                            {t(
-                                                "verificationRequest:viewFullPage"
+                                            {tVerificationRequest(
+                                                "viewFullPage"
                                             )}
                                         </AletheiaButton>
                                     </Grid>
@@ -307,8 +311,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                     marginBottom: "8px",
                                                 }}
                                             >
-                                                {t(
-                                                    "verificationRequest:tagReportedContent"
+                                                {tVerificationRequest(
+                                                    "tagReportedContent"
                                                 )}
                                             </Typography>
                                             <AlertTitle>
@@ -343,8 +347,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                             }}
                                                         />
                                                     }
-                                                    label={t(
-                                                        "verificationRequest:tagDate"
+                                                    label={tVerificationRequest(
+                                                        "tagDate"
                                                     )}
                                                     value={currentRequest.date}
                                                 />
@@ -359,8 +363,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                             }}
                                                         />
                                                     }
-                                                    label={t(
-                                                        "verificationRequest:tagPublicationDate"
+                                                    label={tVerificationRequest(
+                                                        "tagPublicationDate"
                                                     )}
                                                     value={
                                                         currentRequest.publicationDate
@@ -392,8 +396,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                         >
                                             {currentRequest.heardFrom && (
                                                 <VerificationRequestContent
-                                                    label={t(
-                                                        "verificationRequest:tagHeardFrom"
+                                                    label={tVerificationRequest(
+                                                        "tagHeardFrom"
                                                     )}
                                                     value={
                                                         currentRequest.heardFrom
@@ -403,8 +407,8 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
                                             {currentRequest.additionalInfo && (
                                                 <VerificationRequestContent
-                                                    label={t(
-                                                        "verificationRequest:tagAdditionalInfo"
+                                                    label={tVerificationRequest(
+                                                        "tagAdditionalInfo"
                                                     )}
                                                     value={
                                                         currentRequest.additionalInfo
@@ -519,7 +523,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                         !hasCaptcha
                                                     }
                                                 >
-                                                    {t("common:approve")}
+                                                    {tCommon("approve")}
                                                 </AletheiaButton>
                                                 <AletheiaButton
                                                     type={ButtonType.error}
@@ -529,7 +533,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                         !hasCaptcha
                                                     }
                                                 >
-                                                    {t("common:reject")}
+                                                    {tCommon("reject")}
                                                 </AletheiaButton>
                                             </Box>
                                         </Grid>

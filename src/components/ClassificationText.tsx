@@ -1,13 +1,13 @@
 import ReviewColors from "../constants/reviewColors";
 import React from "react";
-import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
 
 const ClassificationText = (props: {
     classification: string;
     style?: object;
 }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
 
     return (
         <span
@@ -19,7 +19,7 @@ const ClassificationText = (props: {
             }}
             data-cy={props.classification}
         >
-            {t(`claimReviewForm:${props.classification}`)}{" "}
+            {tClaimReviewForm(`${props.classification}`)}{" "}
         </span>
     );
 };

@@ -2,8 +2,9 @@ import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { Personality } from "../types/Personality";
-import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import type { PaginatedResponse } from "../types/ApiResponse";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/personality");
 
@@ -66,7 +67,7 @@ const getPersonalities = (
 const getPersonality = (
     id: string,
     params: Record<string, unknown>,
-    t: TranslationFn
+    t: (key: string) => string
 ): Promise<Personality | void> => {
     return request
         .get(`/${id}`, {
@@ -78,14 +79,14 @@ const getPersonality = (
         .catch(() => {
             MessageManager.showMessage(
                 "error",
-                t("personality:errorWhileFetching")
+                t("personality.errorWhileFetching")
             );
         });
 };
 
 const createPersonality = (
     personality: Record<string, unknown>,
-    t: TranslationFn
+    t: (key: string) => string
 ): Promise<Personality | void> => {
     return request
         .post(`/`, personality)
@@ -93,7 +94,7 @@ const createPersonality = (
             const { name } = response.data;
             MessageManager.showMessage(
                 "success",
-                `"${name}" ${t("personalityCreateForm:successMessage")}`
+                `"${name}" ${t("personalityCreateForm.successMessage")}`
             );
             return response.data;
         })
@@ -109,7 +110,7 @@ const createPersonality = (
                 "error",
                 data && data.message
                     ? data.message
-                    : t("personalityCreateForm:errorMessage")
+                    : t("personalityCreateForm.errorMessage")
             );
         });
 };
@@ -120,12 +121,12 @@ const deletePersonality = (id: string, t: TranslationFn): Promise<void> => {
         .then(() => {
             MessageManager.showMessage(
                 "success",
-                t("personality:deleteSuccess")
+                t("personality.deleteSuccess")
             );
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error", t("personality:deleteError"));
+            MessageManager.showMessage("error", t("personality.deleteError"));
         });
 };
 
@@ -145,14 +146,14 @@ const updatePersonalityHiddenStatus = (
         .then(() => {
             MessageManager.showMessage(
                 "success",
-                t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+                t(`personality.${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
             MessageManager.showMessage(
                 "error",
-                t(`personality:${isHidden ? "hideError" : "unhideError"}`)
+                t(`personality.${isHidden ? "hideError" : "unhideError"}`)
             );
         });
 };

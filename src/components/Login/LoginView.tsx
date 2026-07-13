@@ -6,7 +6,6 @@ import {
 import Grid from "@mui/material/Grid";
 import { MessageManager } from "../Messages";
 import { AxiosError } from "axios";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { oryGetLoginFlow, orySubmitLogin } from "../../api/ory";
@@ -20,11 +19,15 @@ import OryLoginForm from "./OryLoginForm";
 import SignUpForm from "./SignUpForm";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
     const [flow, setFlow] = useState<LoginFlow>();
     const [isLoading, setIsLoading] = useState(false);
-    const { t } = useTranslation();
+    const tProfile = useTranslations("profile");
+    const tLogin = useTranslations("login");
+    const tCTAFolder = useTranslations("CTAFolder");
+    const t = useTranslations()
     const router = useRouter();
 
     useEffect(() => {
@@ -76,7 +79,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                     setFlow(err.response?.data);
                     return MessageManager.showMessage(
                         "error",
-                        `${t("profile:totpIncorectCodeMessage")}`
+                        `${tProfile("totpIncorectCodeMessage")}`
                     );
                 }
 
@@ -151,7 +154,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
         } else {
             MessageManager.showMessage(
                 "error",
-                `${t("login:loginFailedMessage")}`
+                `${tLogin("loginFailedMessage")}`
             );
         }
         setIsLoading(false);
@@ -180,7 +183,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                             onFinishTotp={onFinishTotp}
                         />
                         <Grid container className="typo-grey typo-center">
-                            <h2>{t("login:signUpHeader")}</h2>
+                            <h2>{tLogin("signUpHeader")}</h2>
                         </Grid>
                         <AletheiaButton
                             onClick={() => trackUmamiEvent("cta-registration-button", "registration")}
@@ -188,7 +191,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                             href="/sign-up"
                             data-cy="testCTAButton"
                         >
-                            {t("CTAFolder:button")}
+                            {tCTAFolder("button")}
                         </AletheiaButton>
                     </>
                 )}

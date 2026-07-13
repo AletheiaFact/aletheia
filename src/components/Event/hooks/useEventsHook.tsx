@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../../types/Namespace";
 import { EventsActions, EventsState, IData, IReviewData, IVerificationRequestData, ListEventsOptions } from "../../../types/event";
 import { ViewMode } from "../../FilterToggleButtons";
+import { useTranslations } from "next-intl";
 interface UseEventsHookReturn {
     state: EventsState;
     actions: EventsActions;
@@ -13,7 +13,7 @@ interface UseEventsHookReturn {
 
 const useEventsHook = (): UseEventsHookReturn => {
     const router = useRouter();
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [nameSpace] = useAtom(currentNameSpace);
 
     const [isLoading, setIsLoading] = useState(false);

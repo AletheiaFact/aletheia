@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import user from "../fixtures/user";
 import locators from "./locators";
 import { mount } from "cypress/react18";
+import TestProviders from "./TestProviders";
 
 Cypress.Commands.add("goToLoginPage", () => {
     cy.visit("http://localhost:3000");
@@ -115,7 +116,9 @@ Cypress.Commands.add(
 
         cy.stub(require("next/router"), "useRouter").returns(router); // After update to App Router, useRouter is imported from next/navigation
 
-        return mount(component).then(() => router);
+        return mount(React.createElement(TestProviders, null, component)).then(
+            () => router
+        );
     }
 );
 

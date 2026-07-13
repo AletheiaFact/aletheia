@@ -1,9 +1,10 @@
 import { MessageManager } from "../../components/Messages";
 import { AxiosError } from "axios";
-import { TFunction } from "i18next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { Status } from "../../types/enums";
+
+type Translate = (key: string) => string;
 
 // A small function to help us deal with errors coming from fetching a flow.
 export function handleGetFlowError<S>(
@@ -15,7 +16,7 @@ export function handleGetFlowError<S>(
         | "recovery"
         | "verification",
     resetFlow: Dispatch<SetStateAction<S | undefined>>,
-    t: TFunction
+    tOryErrors: Translate
 ) {
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
@@ -29,15 +30,21 @@ export function handleGetFlowError<S>(
                 await router.push("/");
                 return;
             case "self_service_flow_return_to_forbidden":
-                MessageManager.showMessage("error", t("oryErrors:returnAddressForbidden"));
+                MessageManager.showMessage(
+                    "error",
+                    tOryErrors("returnAddressForbidden")
+                );
                 await requestNewFlow();
                 return;
             case "self_service_flow_expired":
-                MessageManager.showMessage("error", t("oryErrors:flowExpired"));
+                MessageManager.showMessage("error", tOryErrors("flowExpired"));
                 await requestNewFlow();
                 return;
             case "security_csrf_violation":
-                MessageManager.showMessage("error", t("oryErrors:csrfViolation"));
+                MessageManager.showMessage(
+                    "error",
+                    tOryErrors("csrfViolation")
+                );
                 await requestNewFlow();
 
                 return;

@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
 
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -14,6 +13,7 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { PersonalityInfo } from "./PersonalityInfo";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 interface PersonalityCardProps {
     personality: any;
@@ -81,7 +81,7 @@ const PersonalityCard = ({
         (item) => item._id === personality._id
     );
     const hasReview = personality?.stats?.reviews?.length > 0;
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
     const componentStyle = {
         titleSpan: !fullWidth ? 7 : 12,
         avatarSpan: !fullWidth ? 4 : 12,
@@ -126,7 +126,7 @@ const PersonalityCard = ({
                     <AletheiaAvatar
                         size={componentStyle.avatarSize}
                         src={personality.avatar}
-                        alt={t("seo:personalityImageAlt", {
+                        alt={tSeo("personalityImageAlt", {
                             name: personality.name,
                         })}
                     />

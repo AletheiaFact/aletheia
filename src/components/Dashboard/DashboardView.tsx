@@ -1,7 +1,6 @@
 import React from "react";
 import BaseList from "../List/BaseList";
 import personalitiesApi from "../../api/personality";
-import { useTranslation } from "next-i18next";
 import PersonalityCard from "../Personality/PersonalityCard";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import { Grid } from "@mui/material";
@@ -13,19 +12,21 @@ import DashboardViewStyle from "./DashboardView.style";
 import ReviewCard from "../ClaimReview/ReviewCard";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useLocale, useTranslations } from "next-intl";
 
 const DashboardView = () => {
-    const { t, i18n } = useTranslation();
+    const locale = useLocale();
+    const tAdmin = useTranslations("admin");
     const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         <DashboardViewStyle container>
             <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
-                    title={t("admin:dashboardHiddenPersonalities")}
+                    title={tAdmin("dashboardHiddenPersonalities")}
                     apiCall={personalitiesApi.getPersonalities}
                     filter={{
-                        i18n,
+                        locale,
                         isHidden: true,
                     }}
                     showDividers={false}
@@ -45,10 +46,10 @@ const DashboardView = () => {
 
             <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
-                    title={t("admin:dashboardHiddenClaims")}
+                    title={tAdmin("dashboardHiddenClaims")}
                     apiCall={claimApi.get}
                     filter={{
-                        i18n,
+                        locale,
                         isHidden: true,
                         nameSpace,
                     }}
@@ -69,7 +70,7 @@ const DashboardView = () => {
 
             <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
-                    title={t("admin:dashboardHiddenReviews")}
+                    title={tAdmin("dashboardHiddenReviews")}
                     apiCall={claimReviewApi.get}
                     filter={{
                         isHidden: true,

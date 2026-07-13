@@ -3,9 +3,9 @@ import TextField from "@mui/material/TextField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { ptBR } from "date-fns/locale";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
 
 interface DateRangePickerProps {
     startDate: Date | null;
@@ -22,14 +22,14 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 }) => {
     const [openStart, setOpenStart] = useState(false);
     const [openEnd, setOpenEnd] = useState(false);
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const today = new Date();
 
     return (
         <Box sx={{ display: "flex", gap: "8px" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
                 <DatePicker
-                    label={t("verificationRequest:startDate")}
+                    label={tVerificationRequest("startDate")}
                     value={startDate}
                     maxDate={today}
                     open={openStart}
@@ -45,7 +45,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                     )}
                 />
                 <DatePicker
-                    label={t("verificationRequest:endDate")}
+                    label={tVerificationRequest("endDate")}
                     value={endDate}
                     minDate={startDate ?? undefined}
                     maxDate={today}

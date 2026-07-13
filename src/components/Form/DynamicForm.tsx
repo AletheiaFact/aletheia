@@ -3,9 +3,9 @@ import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
 import React from "react";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
 import InfoTooltip from "../Claim/InfoTooltip";
 import { InfoOutlined } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 
 const DynamicForm = ({
     currentForm,
@@ -15,7 +15,7 @@ const DynamicForm = ({
     disabledFuture = true,
     submitErrors = [],
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     return (
         <div>
             {currentForm.map((fieldItem, index) => {

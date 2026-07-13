@@ -2,10 +2,10 @@
 
 import React, { Dispatch, SetStateAction, useRef } from "react";
 import { Grid } from "@mui/material"
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import AletheiaCaptcha from "./AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "./AletheiaButton";
+import { useTranslations } from "next-intl";
 
 interface ISharedFormFooter {
     isLoading: boolean;
@@ -25,7 +25,7 @@ const SharedFormFooter = ({
     extraButton
 }: ISharedFormFooter) => {
     const recaptchaRef = useRef(null);
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
     const router = useRouter();
 
     return (
@@ -42,7 +42,7 @@ const SharedFormFooter = ({
                     onClick={() => isDrawerOpen ? onClose() : router.back()}
                     data-cy="testCancelButton"
                 >
-                    {t("claimForm:cancelButton")}
+                    {tClaimForm("cancelButton")}
                 </AletheiaButton>
 
                 {extraButton}
@@ -54,7 +54,7 @@ const SharedFormFooter = ({
                     disabled={!hasCaptcha || isLoading}
                     data-cy={"testSaveButton"}
                 >
-                    {t("claimForm:saveButton")}
+                    {tClaimForm("saveButton")}
                 </AletheiaButton>
             </Grid>
         </>

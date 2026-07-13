@@ -4,8 +4,8 @@ import CopilotConversationLoading from "./CopilotConversationLoading";
 import { SenderEnum } from "../../types/enums";
 import CopilotConversationSuggestions from "./CopilotConversationSuggestions";
 import AletheiaButton from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
 import CopilotFeedback from "./CopilotFeedback";
+import { useTranslations } from "next-intl";
 
 const CopilotConversation = ({
     manager,
@@ -14,7 +14,7 @@ const CopilotConversation = ({
     messages,
     editorReport,
 }) => {
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
     const CopilotConversationRef = useRef(null);
     const [showButtons, setShowButtons] = useState({
         ADD_REPORT: true,
@@ -74,7 +74,7 @@ const CopilotConversation = ({
                     }}
                 >
                     <AletheiaButton onClick={handleAddReportClick}>
-                        {t("copilotChatBot:addFactCheckingReportButton").toUpperCase()}
+                        {tCopilotChatBot("addFactCheckingReportButton").toUpperCase()}
                     </AletheiaButton>
                 </div>
             )}

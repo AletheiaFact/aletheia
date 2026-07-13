@@ -2,10 +2,10 @@ import React from "react";
 import { Radio, RadioGroup, FormControlLabel, Stack } from "@mui/material"
 import styled from "styled-components";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const RadioInput = styled(Radio)`
     margin: 10px 0 0 0;
@@ -45,7 +45,7 @@ interface OrderRadioProps {
 }
 
 const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
-    const { t } = useTranslation();
+    const tOrderModal = useTranslations("orderModal");
     const [nameSpace] = useAtom(currentNameSpace);
 
     const onChangeRadio = (e) => {
@@ -63,7 +63,7 @@ const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
                     control={<RadioInput namespace={nameSpace} />}
                     label={
                         <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
-                            {t("orderModal:radioDesc")}
+                            {tOrderModal("radioDesc")}
                         </span>
                     }
                 />
@@ -72,7 +72,7 @@ const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
                     control={<RadioInput namespace={nameSpace} />}
                     label={
                         <span style={{ fontSize: 18, color: colors.blackSecondary, padding: "0 10px" }}>
-                            {t("orderModal:radioAsc")}
+                            {tOrderModal("radioAsc")}
                         </span>
                     }
                 />

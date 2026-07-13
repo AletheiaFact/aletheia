@@ -19,13 +19,13 @@ import ClaimUploadImage from "./ClaimUploadImage";
 import { CreateClaimHeader } from "./CreateClaimHeader";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import verificationRequestApi from "../../../api/verificationRequestApi";
-import { useTranslation } from "next-i18next";
 import VerificationRequestDrawer from "../../VerificationRequest/VerificationRequestDrawer";
 import ManageVerificationRequestGroup from "../../VerificationRequest/ManageVerificationRequestGroup";
 import ClaimCreateStyle from "./ClaimCreate.style";
+import { useTranslations } from "next-intl";
 
 const CreateClaimView = () => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const [state, send] = useAtom(createClaimMachineAtom);
     const setupImage = stateSelector(state, "setupImage");
     const notStarted = stateSelector(state, "notStarted");
@@ -37,7 +37,7 @@ const CreateClaimView = () => {
     const addUnattributed = addUnattributedSelector(state);
 
     const showPersonality = addSpeech || addImage || addDebate;
-    const { claimData } = state.context;
+    const { claimData } = (state as any).context;
     const isLoading = !(
         notStarted ||
         setupSpeech ||
@@ -65,7 +65,7 @@ const CreateClaimView = () => {
                 {
                     group: claimData.group._id,
                 },
-                t
+                tVerificationRequest
             )
             .then(() => {
                 send({
@@ -84,8 +84,8 @@ const CreateClaimView = () => {
                     claimData?.group &&
                     claimData?.group?.content?.length > 0 && (
                         <ManageVerificationRequestGroup
-                            label={t(
-                                "verificationRequest:manageVerificationRequests"
+                            label={tVerificationRequest(
+                                "manageVerificationRequests"
                             )}
                             openDrawer={() => setOpen(true)}
                         />

@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const HomeHeroTitle = () => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     return (
         <Grid item className="home-header-title">
             <Stack
@@ -17,36 +17,41 @@ const HomeHeroTitle = () => {
                     component="span"
                     className="home-header-badge-text"
                 >
-                    {t("home:homeHeaderBadge")}
+                    {tHome("homeHeaderBadge")}
                 </Typography>
             </Stack>
             <Typography variant="h1">
-                <Trans
-                    i18nKey="home:homeHeaderTitle"
-                    components={{
-                        line1: (
+                {
+                    tHome.rich("homeHeaderTitle", {
+                        line1: (chunks) => (
                             <Box
                                 component="span"
                                 className="home-header-title-line"
-                            />
+                            >
+                                {chunks}
+                            </Box>
                         ),
-                        line2: (
+                        line2: (chunks) => (
                             <Box
                                 component="span"
                                 className="home-header-title-line"
-                            />
+                            >
+                                {chunks}
+                            </Box>
                         ),
-                        highlight: (
+                        highlight: (chunks) => (
                             <Box
                                 component="span"
                                 className="home-header-title-highlight"
-                            />
+                            >
+                                {chunks}
+                            </Box>
                         ),
-                    }}
-                />
+                    })
+                }
             </Typography>
             <Typography component="p" className="home-header-description">
-                {t("home:statsFooter")}
+                {tHome("statsFooter")}
             </Typography>
         </Grid>
     );

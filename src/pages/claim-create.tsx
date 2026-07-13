@@ -1,7 +1,5 @@
 import { Provider as CreateClaimMachineProvider, useSetAtom } from "jotai";
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 
 import AffixButton from "../components/AffixButton/AffixButton";
@@ -15,6 +13,8 @@ import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
@@ -22,7 +22,7 @@ const ClaimCreatePage: NextPage<any> = ({
     nameSpace,
     verificationRequestGroup,
 }) => {
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
@@ -30,8 +30,8 @@ const ClaimCreatePage: NextPage<any> = ({
     return (
         <>
             <Seo
-                title={t("seo:claimCreateTitle")}
-                description={t("seo:claimCreateDescription", {
+                title={tSeo("claimCreateTitle")}
+                description={tSeo("claimCreateDescription", {
                     name: personality.name,
                 })}
             />
@@ -56,7 +56,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             sitekey: query.sitekey,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993

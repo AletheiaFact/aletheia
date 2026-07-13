@@ -1,14 +1,14 @@
 import React from "react";
 import SourceApi from "../../api/sourceApi";
 import BaseList from "../List/BaseList";
-import { useTranslation } from "next-i18next";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import Link from "next/link";
 import SourceSkeleton from "../Skeleton/SourceSkeleton";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const ClaimSourceList = ({ claimId }) => {
-    const { i18n } = useTranslation();
+    const i18n = useTranslations();
     return (
         <BaseList
             apiCall={SourceApi.getByTargetId}

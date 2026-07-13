@@ -1,11 +1,11 @@
 import React from "react";
 import { Grid, Tab } from "@mui/material";
 import { NoteAdd, Report, Source } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import TabsNavigatorStyle from "../adminArea/TabsNavigator.style";
+import { useTranslations } from "next-intl";
 
 const KanbanTabNavigator = ({ value, handleChange }) => {
-    const { t } = useTranslation();
+    const tKanban = useTranslations("kanban");
 
     function tabProps(index: number) {
         return {
@@ -25,7 +25,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                     label={
                         <div className="tab-label">
                             <NoteAdd />
-                            <span>{t("kanban:tabClaimTitle")}</span>
+                            <span>{tKanban("tabClaimTitle")}</span>
                         </div>
                     }
                     {...tabProps(0)}
@@ -34,7 +34,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                     label={
                         <div className="tab-label">
                             <Source />
-                            <span>{t("kanban:tabSourceTitle")}</span>
+                            <span>{tKanban("tabSourceTitle")}</span>
                         </div>
                     }
                     {...tabProps(1)}
@@ -44,7 +44,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                         <div className="tab-label">
                             <Report />
                             <span>
-                                {t("kanban:tabVerificationRequestTitle")}
+                                {tKanban("tabVerificationRequestTitle")}
                             </span>
                         </div>
                     }

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import EventEmitter from "events";
-import { useTranslation } from "next-i18next";
 import { ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import AletheiaButton, { ButtonType } from "./AletheiaButton";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
 
 class SessionExpiredEmitter extends EventEmitter {
     trigger(returnTo: string) {
@@ -17,7 +17,7 @@ export const sessionExpiredManager = new SessionExpiredEmitter();
 
 export const SessionExpiredModal: React.FC = () => {
     const [returnTo, setReturnTo] = useState<string | null>(null);
-    const { t } = useTranslation();
+    const tLogin = useTranslations("login");
 
     useEffect(() => {
         const handleSessionExpired = (url: string) => {
@@ -54,14 +54,14 @@ export const SessionExpiredModal: React.FC = () => {
                             lineHeight: "18px",
                         }}
                     >
-                        {t("login:sessionExpiredTitle")}
+                        {tLogin("sessionExpiredTitle")}
                     </span>
                 </Grid>
             }
         >
             <Grid item style={{ marginTop: 12 }}>
                 <p style={{ fontSize: 14, lineHeight: "20px", margin: 0 }}>
-                    {t("login:sessionExpiredMessage")}
+                    {tLogin("sessionExpiredMessage")}
                 </p>
             </Grid>
             <Grid
@@ -76,7 +76,7 @@ export const SessionExpiredModal: React.FC = () => {
                     onClick={handleOk}
                     type={ButtonType.primary}
                 >
-                    {t("login:sessionExpiredButton")}
+                    {tLogin("sessionExpiredButton")}
                 </AletheiaButton>
             </Grid>
         </AletheiaModal>

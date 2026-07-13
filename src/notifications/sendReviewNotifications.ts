@@ -1,4 +1,3 @@
-import { TFunction } from "next-i18next";
 import NotificationsApi from "../api/notificationsApi";
 import { ReviewTaskEvents as Events } from "../machines/reviewTask/enums";
 import { Claim } from "../types/Claim";
@@ -6,14 +5,14 @@ import { generateSentenceContentPath } from "../utils/GetSentenceContentHref";
 import { Personality } from "../types/Personality";
 
 type SendReviewNotificationsFn = {
-  data_hash: string,
-  event: string,
-  reviewData: any,
-  claim?: Claim,
-  personality?: Personality,
-  nameSpace?: string,
-  currentUserId: string | number,
-  t: TFunction
+    data_hash: string;
+    event: string;
+    reviewData: any;
+    claim?: Claim;
+    personality?: Personality;
+    nameSpace?: string;
+    currentUserId: string | number;
+    t: (key: string) => string;
 };
 
 const sendReviewNotifications = ({
@@ -24,9 +23,8 @@ const sendReviewNotifications = ({
     personality,
     nameSpace,
     currentUserId,
-    t
+    t,
 }: SendReviewNotificationsFn) => {
-
     const currentPath = generateSentenceContentPath(
         nameSpace,
         personality,
@@ -37,25 +35,25 @@ const sendReviewNotifications = ({
 
     const payload = {
         messageIdentifier: "",
-        redirectUrl: currentPath
+        redirectUrl: currentPath,
     };
 
     if (event === Events.assignUser) {
-        payload.messageIdentifier = t("notification:assignedUser");
+        payload.messageIdentifier = t("notification.assignedUser");
         for (const user of reviewData.usersId) {
             NotificationsApi.sendNotification(user, payload);
         }
     }
 
     if (event === Events.reAssignUser) {
-        payload.messageIdentifier = t("notification:reAssignedUser");
+        payload.messageIdentifier = t("notification.reAssignedUser");
         for (const user of reviewData.usersId) {
             NotificationsApi.sendNotification(user, payload);
         }
     }
 
     if (event === Events.finishReport) {
-        payload.messageIdentifier = t("notification:reviewProgress");
+        payload.messageIdentifier = t("notification.reviewProgress");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -66,7 +64,7 @@ const sendReviewNotifications = ({
     }
 
     if (event === Events.sendToCrossChecking) {
-        payload.messageIdentifier = t("notification:crossCheckingSubmit");
+        payload.messageIdentifier = t("notification.crossCheckingSubmit");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -76,7 +74,7 @@ const sendReviewNotifications = ({
         }
 
         if (reviewData.crossCheckerId) {
-            payload.messageIdentifier = t("notification:crossChecker");
+            payload.messageIdentifier = t("notification.crossChecker");
             NotificationsApi.sendNotification(
                 reviewData.crossCheckerId,
                 payload
@@ -85,7 +83,7 @@ const sendReviewNotifications = ({
     }
 
     if (event === Events.submitCrossChecking) {
-        payload.messageIdentifier = t("notification:crossCheckingFinished");
+        payload.messageIdentifier = t("notification.crossCheckingFinished");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -96,7 +94,7 @@ const sendReviewNotifications = ({
     }
 
     if (event === Events.sendToReview) {
-        payload.messageIdentifier = t("notification:reviewSubmit");
+        payload.messageIdentifier = t("notification.reviewSubmit");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -106,13 +104,13 @@ const sendReviewNotifications = ({
         }
 
         if (reviewData.reviewerId) {
-            payload.messageIdentifier = t("notification:reviewer");
+            payload.messageIdentifier = t("notification.reviewer");
             NotificationsApi.sendNotification(reviewData.reviewerId, payload);
         }
     }
 
     if (event === Events.submitComment) {
-        payload.messageIdentifier = t("notification:newComment");
+        payload.messageIdentifier = t("notification.newComment");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -123,7 +121,7 @@ const sendReviewNotifications = ({
     }
 
     if (event === Events.reject) {
-        payload.messageIdentifier = t("notification:reviewRejectRequested");
+        payload.messageIdentifier = t("notification.reviewRejectRequested");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
         );
@@ -134,14 +132,14 @@ const sendReviewNotifications = ({
     }
 
     if (event === Events.confirmRejection) {
-        payload.messageIdentifier = t("notification:reviewRejected");
+        payload.messageIdentifier = t("notification.reviewRejected");
         for (const user of reviewData.usersId) {
             NotificationsApi.sendNotification(user, payload);
         }
     }
 
     if (event === Events.publish) {
-        payload.messageIdentifier = t("notification:reviewPublished");
+        payload.messageIdentifier = t("notification.reviewPublished");
         for (const user of reviewData.usersId) {
             NotificationsApi.sendNotification(user, payload);
         }

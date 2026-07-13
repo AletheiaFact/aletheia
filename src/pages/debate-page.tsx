@@ -1,5 +1,4 @@
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
 import DebateView from "../components/Debate/DebateView";
@@ -10,6 +9,7 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { getMessages } from "../lib/getMessages";
 
 const DebatePage: NextPage<any> = ({
     claim,
@@ -49,7 +49,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

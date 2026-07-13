@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import { Divider, Grid } from "@mui/material";
 import { currentUserId } from "../../../atoms/currentUser";
 import { atomUserList } from "../../../atoms/userEdit";
@@ -10,9 +9,10 @@ import userApi from "../../../api/userApi";
 import HeaderUserStatus from "./HeaderUserStatus";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { canEdit } from "../../../utils/GetUserPermission";
+import { useTranslations } from "next-intl";
 
 const DrawerHeader = ({ currentUser, setIsLoading }) => {
-    const { t } = useTranslation();
+    const tAdmin = useTranslations("admin");
 
     const [, finishEditing] = useAtom(finishEditingItem);
     const [status, setStatus] = useState(currentUser?.state || Status.Active);
@@ -28,7 +28,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
             const response = await userApi.update(
                 currentUser?._id,
                 { state: sendStatus },
-                t
+                tAdmin
             );
 
             if (response.success) {
@@ -48,7 +48,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
 
     return (
         <Grid item xs={10}>
-            <h2>{t("admin:editDrawerTitle")}</h2>
+            <h2>{tAdmin("editDrawerTitle")}</h2>
             <div
                 style={{
                     display: "flex",
@@ -78,7 +78,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                         type={ButtonType.whiteBlue}
                         onClick={handleClickChangeStatus}
                     >
-                        {t(`admin:user-status-${status}-button`)}
+                        {tAdmin(`user-status-${status}-button`)}
                     </AletheiaButton>
                 )}
             </div>

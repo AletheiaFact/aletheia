@@ -4,7 +4,7 @@ import React from "react";
 import { useFooterData } from "./hooks/useFooterData";
 
 const FooterLegal = () => {
-    const { t } = useFooterData();
+    const { tFooter } = useFooterData();
 
     return (
         <Stack
@@ -20,11 +20,11 @@ const FooterLegal = () => {
                 alignItems="center"
             >
                 <Typography className="footer-legal-text">
-                    {t("footer:copyright", { date: new Date().getFullYear() })}
+                    {tFooter("copyright", { date: new Date().getFullYear() })}
                 </Typography>
                 <Typography>|</Typography>
                 <Typography className="footer-legal-text">
-                    {t("footer:award")}
+                    {tFooter("award")}
                 </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -37,7 +37,7 @@ const FooterLegal = () => {
                     <OpenInNewRounded className="footer-icon" />
                 </Link>
                 <Typography className="footer-legal-text">
-                    {t("footer:creativeCommonsLabel")}
+                    {tFooter("creativeCommonsLabel")}
                 </Typography>
             </Stack>
         </Stack>

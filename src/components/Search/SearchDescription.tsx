@@ -1,18 +1,19 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 import { Typography } from "@mui/material";
 import LocalizedDate from "../LocalizedDate";
 import ReviewClassification from "../ClaimReview/ReviewClassification";
+import { useTranslations } from "next-intl";
 
 const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
+    const tClaimReview = useTranslations("claimReview");
 
     return (
         <Typography variant="body1">
             <span>{personalityName}</span>
             &nbsp;
             <span style={{ textTransform: "lowercase" }}>
-                {t("claim:cardHeader1")}
+                {tClaim("cardHeader1")}
             </span>
             &nbsp;
             <LocalizedDate date={claimDate} />
@@ -20,7 +21,7 @@ const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
                 <>
                     {", "}
                     <ReviewClassification
-                        label={t("claimReview:titleClaimReview")}
+                        label={tClaimReview("titleClaimReview")}
                         classification={sentence?.props?.classification}
                     />
                 </>

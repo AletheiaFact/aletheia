@@ -1,8 +1,8 @@
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 const NotificationCardTime = ({ createdAt }) => {
-    const { t } = useTranslation();
+    const tNotification = useTranslations("notification");
 
     const getNotificationTime = () => {
         const createdAtDate = new Date(createdAt);
@@ -13,7 +13,7 @@ const NotificationCardTime = ({ createdAt }) => {
 
         if (hoursDifference === 0) {
             if (minutesDifference === 0) {
-                return t("notification:timeNow");
+                return tNotification("timeNow");
             }
 
             return `${minutesDifference}m`;

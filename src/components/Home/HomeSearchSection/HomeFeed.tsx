@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
 import claimRevisionApi from "../../../api/claimRevision";
 import Loading from "../../Loading";
 import HomeFeedList from "./HomeFeedList";
+import { useTranslations } from "next-intl";
 
 const HomeFeed = () => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     const [isLoading, setIsLoading] = useState(true);
     const [results, setResults] = useState([]);
 
@@ -77,7 +77,7 @@ const HomeFeed = () => {
                         fontSize={24}
                         style={{ marginBottom: 16, width: "100%" }}
                     >
-                        {t("home:homeFeedTitle")}
+                        {tHome("homeFeedTitle")}
                     </Typography>
 
                     <HomeFeedList results={results} />

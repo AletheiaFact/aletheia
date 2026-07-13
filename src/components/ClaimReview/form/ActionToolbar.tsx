@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { Box } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
@@ -9,6 +8,7 @@ import {
     ReviewTaskStates,
 } from "../../../machines/reviewTask/enums";
 import { PermissionContext } from "../../../machines/reviewTask/permissions";
+import { useTranslations } from "next-intl";
 
 export const CAPTCHA_EXEMPT_EVENTS = [
     ReviewTaskEvents.draft,
@@ -46,7 +46,7 @@ const ActionToolbar = ({
     onButtonClick,
     defineButtonHtmlType,
 }: ActionToolbarProps) => {
-    const { t } = useTranslation();
+    const tReviewTask = useTranslations("reviewTask");
 
     const primaryEvent = PRIMARY_ACTIONS[currentState as ReviewTaskStates];
 
@@ -103,7 +103,7 @@ const ActionToolbar = ({
                         startIcon={<ArrowBackIcon style={{ fontSize: 16 }} />}
                         fontWeight={500}
                     >
-                        {t(`reviewTask:${goBackEvent}`)}
+                        {tReviewTask(`${goBackEvent}`)}
                     </AletheiaButton>
                 )}
             </Box>
@@ -129,7 +129,7 @@ const ActionToolbar = ({
                         startIcon={<SaveOutlinedIcon style={{ fontSize: 16 }} />}
                         fontWeight={500}
                     >
-                        {t(`reviewTask:${ReviewTaskEvents.draft}`)}
+                        {tReviewTask(`${ReviewTaskEvents.draft}`)}
                     </AletheiaButton>
                 )}
 
@@ -144,7 +144,7 @@ const ActionToolbar = ({
                         data-cy={`testClaimReview${event}`}
                         fontWeight={500}
                     >
-                        {t(`reviewTask:${event}`)}
+                        {tReviewTask(`${event}`)}
                     </AletheiaButton>
                 ))}
 
@@ -159,7 +159,7 @@ const ActionToolbar = ({
                         fontWeight={600}
                         sx={{ minWidth: 140, height: 44, fontSize: "13px" }}
                     >
-                        {t(`reviewTask:${primaryActionEvent}`)}
+                        {tReviewTask(`${primaryActionEvent}`)}
                     </AletheiaButton>
                 )}
             </Box>

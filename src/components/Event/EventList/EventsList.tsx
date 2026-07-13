@@ -10,11 +10,13 @@ import EventTitle from "./EventTitle";
 import useEventsHook from "../hooks/useEventsHook";
 import EventListHeader from "./EventListHeader";
 import EventListGrid from "./EventList.style";
+import { useTranslations } from "next-intl";
 
 const EventsList = () => {
     const { state, actions } = useEventsHook()
     const { eventsQuery, error, isLoading, eventsData } = state
-    const { setIsLoading, setError, setEventsData, t, setEventsQuery } = actions
+    const { setIsLoading, setError, setEventsData, setEventsQuery } = actions
+    const tEvents = useTranslations("events");
 
     const handleFetch = async () => {
         setIsLoading(true);
@@ -53,20 +55,19 @@ const EventsList = () => {
     }
 
     if (error) {
-        return <ErrorState message={t("events:fetchError")} />;
+        return <ErrorState message={tEvents("fetchError")} />;
     }
 
     return (
         <main>
             <EventListGrid container>
-                <EventListHeader t={t} />
+                <EventListHeader />
 
                 <EventFilters
                     selectedStatus={eventsQuery.status}
                     onStatusChange={(status) =>
                         setEventsQuery((prev) => ({ ...prev, status, page: 1 }))
                     }
-                    t={t}
                 />
 
                 <Grid item xs={11} md={9} lg={8}>
@@ -74,13 +75,11 @@ const EventsList = () => {
                         title={
                             <EventTitle
                                 total={eventsData.total}
-                                t={t}
                             />
                         }
                         events={eventsData.events}
                         eventMetrics={eventsData.eventMetrics}
                         disableSeeMoreButton={true}
-                        t={t}
                         hasDivider={true}
                     />
                 </Grid>
@@ -90,7 +89,7 @@ const EventsList = () => {
                     onLoadMore={() =>
                         setEventsQuery((prev) => ({ ...prev, page: prev.page + 1 }))
                     }
-                    label={t("events:loadMoreButton")}
+                    label={tEvents("loadMoreButton")}
                 />
             </EventListGrid>
         </main>

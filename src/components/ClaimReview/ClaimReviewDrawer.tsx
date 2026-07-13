@@ -1,6 +1,5 @@
 import { ArrowBackOutlined, ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material"
-import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { ReviewTaskMachineProvider } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -17,12 +16,15 @@ import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import { useTranslations } from "next-intl";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [nameSpace] = useAtom(currentNameSpace);
     const dispatch = useDispatch();
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
+    const tReviewTask = useTranslations("reviewTask");
+    const tCopilotChatBot = useTranslations("copilotChatBot");
     const {
         reviewDrawerCollapsed,
         vw,
@@ -81,7 +83,7 @@ const ClaimReviewDrawer = () => {
                                     type={ButtonType.gray}
                                     data-cy="testCloseReviewDrawer"
                                 >
-                                    {t("common:back_button")}
+                                    {tCommon("back_button")}
                                 </AletheiaButton>
                                 <Grid item xs={vw?.xs ? 4 : 7}>
                                     <AletheiaButton
@@ -101,7 +103,7 @@ const ClaimReviewDrawer = () => {
                                         }}
                                         data-cy="testSeeFullReview"
                                     >
-                                        {t("reviewTask:seeFullPage")}
+                                        {tReviewTask("seeFullPage")}
                                     </AletheiaButton>
                                 </Grid>
                             </Grid>
@@ -128,7 +130,7 @@ const ClaimReviewDrawer = () => {
                                             lineHeight: "16px",
                                         }}
                                     >
-                                        {t("copilotChatBot:copilotWarning")}
+                                        {tCopilotChatBot("copilotWarning")}
                                     </span>
                                 </Grid>
                             )}

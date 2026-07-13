@@ -16,23 +16,23 @@ import {
   School,
   Language,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 export default function ResourcesSection() {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box id="resources" sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Chip label={t("about:resourcesChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
-            {t("about:resourcesTitle")}
+          <Chip label={tAbout("resourcesChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold" }}>
+            {tAbout("resourcesTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
-            {t("about:resourcesDescription")}
+            {tAbout("resourcesDescription")}
           </Typography>
         </Box>
 
@@ -49,20 +49,20 @@ export default function ResourcesSection() {
           {[
             {
               icon: <Description sx={{ fontSize: { xs: 32, md: 40 }, color: theme.palette.primary.main }} />,
-              title: t("about:methodologyGuideTitle"),
-              description: t("about:methodologyGuideDescription"),
+              title: tAbout("methodologyGuideTitle"),
+              description: tAbout("methodologyGuideDescription"),
               color: "primary",
             },
             {
               icon: <School sx={{ fontSize: { xs: 32, md: 40 }, color: theme.palette.success.main }} />,
-              title: t("about:educationalToolkitTitle"),
-              description: t("about:educationalToolkitDescription"),
+              title: tAbout("educationalToolkitTitle"),
+              description: tAbout("educationalToolkitDescription"),
               color: "success",
             },
             {
               icon: <Language sx={{ fontSize: { xs: 32, md: 40 }, color: theme.palette.secondary.main }} />,
-              title: t("about:platformDocumentationTitle"),
-              description: t("about:platformDocumentationDescription"),
+              title: tAbout("platformDocumentationTitle"),
+              description: tAbout("platformDocumentationDescription"),
               color: "secondary",
             },
           ].map((resource, index) => (
@@ -102,7 +102,7 @@ export default function ResourcesSection() {
                     trackUmamiEvent(eventNames[index], eventGroups[index]);
                   }}
                 >
-                  {index === 0 ? t("about:downloadPDF") : index === 1 ? t("about:downloadKit") : t("about:accessDocs")}
+                  {index === 0 ? tAbout("downloadPDF") : index === 1 ? tAbout("downloadKit") : tAbout("accessDocs")}
                 </Button>
               </CardContent>
             </Card>

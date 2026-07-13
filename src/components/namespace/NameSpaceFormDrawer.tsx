@@ -1,6 +1,5 @@
 import { Divider, Grid } from "@mui/material";
 import { useAtom, useSetAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
 import {
     finishEditingItem,
@@ -17,9 +16,11 @@ import {
 import NameSpacesApi from "../../api/namespace";
 import DynamicNameSpaceForm from "./DynamicNameSpaceForm";
 import { atomUserList } from "../../atoms/userEdit";
+import { useTranslations } from "next-intl";
 
 const NameSpacesFormDrawer = () => {
-    const { t } = useTranslation();
+    const tNamespaces = useTranslations("namespaces");
+    const t = useTranslations() as any;
     const [nameSpace] = useAtom(nameSpaceBeeingEdited);
     const [userList] = useAtom(atomUserList);
 
@@ -103,10 +104,10 @@ const NameSpacesFormDrawer = () => {
             <Grid container justifyContent="center">
                 <Grid item xs={10}>
                     <h2>
-                        {t(
+                        {tNamespaces(
                             isEdit
-                                ? "namespaces:editNameSpace"
-                                : "namespaces:addNameSpace"
+                                ? "editNameSpace"
+                                : "addNameSpace"
                         )}
                     </h2>
                     <Divider />

@@ -5,20 +5,27 @@ import { currentNameSpace } from "../atoms/namespace";
 
 export const GetUserRole = () => {
     const [nameSpace] = useAtom(currentNameSpace);
-    return ory.frontend
-        .toSession()
-        .then((session) => {
+
+    return async () => {
+        try {
+            const { data } = await ory.frontend.toSession();
+
             return {
                 role:
-                    (session.data.identity.traits.role[nameSpace] as Roles) ||
+                    (data.identity.traits.role?.[nameSpace] as Roles) ??
                     Roles.Regular,
                 isLoggedIn: true,
-                aal: session.data.authenticator_assurance_level,
-                id: session.data.identity.traits.user_id,
-                status: session?.data.identity.state,
+                aal: data.authenticator_assurance_level,
+                id: data.identity.traits.user_id,
+                status: data.identity.state,
             };
-        })
-        .catch(() => {
-            return { role: Roles.Regular, isLoggedIn: false, id: "", aal: "" };
-        });
+        } catch {
+            return {
+                role: Roles.Regular,
+                isLoggedIn: false,
+                id: "",
+                aal: "",
+            };
+        }
+    };
 };

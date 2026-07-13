@@ -1,7 +1,6 @@
 import colors from "../../styles/colors";
 import UserMenuHeader from "./UserMenuHeader";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { TFunction } from "next-i18next";
 import { User } from "../../types/User";
 
 export interface UserMenuHeaderSidebarProps {
@@ -9,7 +8,6 @@ export interface UserMenuHeaderSidebarProps {
     user: User | null;
     hasSession: boolean;
     nameSpace: NameSpaceEnum;
-    t: TFunction;
 }
 
 const UserMenuHeaderSidebar = ({
@@ -17,7 +15,6 @@ const UserMenuHeaderSidebar = ({
     user,
     hasSession,
     nameSpace,
-    t,
 }: UserMenuHeaderSidebarProps) => {
     return (
         <div
@@ -34,7 +31,6 @@ const UserMenuHeaderSidebar = ({
                 user={user}
                 hasSession={hasSession}
                 nameSpace={nameSpace}
-                t={t}
                 isSidebar={true}
             />
         </div>

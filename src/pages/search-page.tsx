@@ -1,11 +1,11 @@
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 
 import { GetLocale } from "../utils/GetLocale";
 import SearchPageView from "../components/Search/SearchPageView";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
+import { getMessages } from "../lib/getMessages";
 
 const SearchPage: NextPage<any> = ({
     searchResults,
@@ -65,7 +65,8 @@ export async function getServerSideProps({ locale, locales, req, query }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             searchResults: query.searchResults
                 ? JSON.parse(JSON.stringify(query.searchResults))
                 : null,

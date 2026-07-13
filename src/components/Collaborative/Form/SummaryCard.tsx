@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
-import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReportModelEnum } from "../../../machines/reviewTask/enums";
 import EditorCard from "./EditorCard";
+import { useTranslations } from "next-intl";
 
 const SummaryCard = ({ forwardRef }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const { reportModel } = useContext(ReviewTaskMachineContext);
     const label =
         reportModel === ReportModelEnum.InformativeNews
-            ? t("claimReviewForm:informativeNewsLabel")
-            : t("claimReviewForm:summaryLabel");
+            ? tClaimReviewForm("informativeNewsLabel")
+            : tClaimReviewForm("summaryLabel");
 
     return (
         <EditorCard

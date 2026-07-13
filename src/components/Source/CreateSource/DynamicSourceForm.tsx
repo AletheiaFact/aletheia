@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
@@ -9,6 +8,7 @@ import SourceApi from "../../../api/sourceApi";
 import DynamicForm from "../../Form/DynamicForm";
 import createSourceForm from "./fieldLists/createSourceForm";
 import SharedFormFooter from "../../SharedFormFooter";
+import { useTranslations } from "next-intl";
 
 const DynamicSourceForm = () => {
     const {
@@ -17,7 +17,7 @@ const DynamicSourceForm = () => {
         formState: { errors },
     } = useForm();
     const router = useRouter();
-    const { t } = useTranslation();
+    const t = useTranslations() as any;
     const [nameSpace] = useAtom(currentNameSpace);
     const [userId] = useAtom(currentUserId);
     const [isLoading, setIsLoading] = useState(false);

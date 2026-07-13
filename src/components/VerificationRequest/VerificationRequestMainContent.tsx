@@ -1,6 +1,5 @@
 import { Box, Typography, IconButton, Grid } from "@mui/material";
 import React, { useState } from "react";
-import { useTranslation } from "next-i18next";
 import VerificationRequestCard from "./VerificationRequestCard";
 import { useAppSelector } from "../../store/store";
 import ManageVerificationRequestGroup from "./ManageVerificationRequestGroup";
@@ -10,13 +9,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import EditVerificationRequestDrawer from "./verificationRequestForms/EditVerificationRequestDrawer";
 import TrackingCard from "../Tracking/TrackingCard";
 import { isAdmin, isStaff } from "../../utils/GetUserPermission";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestMainContent = ({
     verificationRequestGroup,
     content,
     openDrawer,
 }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const [role] = useAtom(currentUserRole);
     const { vw } = useAppSelector((state) => state);
     const [openEditDrawer, setOpenEditDrawer] = useState(false);
@@ -32,7 +32,7 @@ const VerificationRequestMainContent = ({
         <main className="container">
             <Box className="box-title">
                 <Typography className="title" variant="h1">
-                    {t("verificationRequest:verificationRequestTitle")}
+                    {tVerificationRequest("verificationRequestTitle")}
                 </Typography>
 
                 {isAdmin(role) && (
@@ -55,7 +55,7 @@ const VerificationRequestMainContent = ({
             </Box>
             <Grid container spacing={2} alignItems="stretch">
                 <Grid item xs={12} lg={7} xl={8}>
-                    <VerificationRequestCard verificationRequest={currentRequest} t={t} style={{ height: "100%" }} />
+                    <VerificationRequestCard verificationRequest={currentRequest} t={tVerificationRequest} style={{ height: "100%" }} />
                 </Grid>
                 <Grid item xs={12} lg={5} xl={4}>
                     <TrackingCard
@@ -68,8 +68,8 @@ const VerificationRequestMainContent = ({
                 isStaff(role) &&
                 verificationRequestGroup?.length > 0 && (
                     <ManageVerificationRequestGroup
-                        label={t(
-                            "verificationRequest:manageVerificationRequestsGroup"
+                        label={tVerificationRequest(
+                            "manageVerificationRequestsGroup"
                         )}
                         suffix={`: ${verificationRequestGroup.length}`}
                         openDrawer={openDrawer}

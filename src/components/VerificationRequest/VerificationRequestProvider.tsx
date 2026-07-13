@@ -2,7 +2,7 @@ import { createContext, useMemo, useState } from "react";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { VerificationRequest } from "../../types/VerificationRequest";
 import { Group } from "../../types/Group";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 interface IVerificationRequestContext {
     recommendations?: VerificationRequest[];
@@ -26,7 +26,7 @@ export const VerificationRequestProvider = ({
     baseRecommendations,
     children,
 }: IVerificationRequestProvider) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [recommendations, setRecommendations] =
         useState<VerificationRequest[]>(baseRecommendations);
     const [group, setGroup] = useState<Group>(verificationRequest.group);

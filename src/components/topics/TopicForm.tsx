@@ -3,11 +3,11 @@ import { Controller, useForm } from "react-hook-form";
 import { Grid } from "@mui/material";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
-import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import MultiSelectAutocomplete from "./TopicOrImpactSelect";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { ITopicForm } from "../../types/Topic";
+import { useTranslations } from "next-intl";
 
 const TopicForm = ({
     contentModel,
@@ -25,7 +25,8 @@ const TopicForm = ({
         reset,
     } = useForm();
     const [isLoading, setIsLoading] = useState(false);
-    const { t } = useTranslation();
+    const tTopics = useTranslations("topics");
+    const t = useTranslations();
 
     const handleOnSubmit = async () => {
         try {
@@ -55,11 +56,11 @@ const TopicForm = ({
             currentInputValue.some((wikidataId) => wikidataId === value)
         );
 
-    const validateDuplication = (value): boolean => {
+    const validateDuplication = (value): boolean | string => {
         const duplicated = getDuplicatedTopics(value, topicsArray);
         return (
             duplicated.length <= 0 ||
-            t("topics:duplicatedTopicError", {
+            tTopics("duplicatedTopicError", {
                 duplicatedTopics: duplicated
                     .map((topic) => topic.label)
                     .join(", "),
@@ -78,7 +79,7 @@ const TopicForm = ({
                     }}
                     render={({ field: { onChange, value } }) => (
                         <MultiSelectAutocomplete
-                            placeholder={t("topics:placeholder")}
+                            placeholder={tTopics("placeholder")}
                             onChange={onChange}
                             setIsLoading={setIsLoading}
                             isLoading={isLoading}
@@ -94,7 +95,7 @@ const TopicForm = ({
                     style={{ marginLeft: 5 }}
                     type={ButtonType.primary}
                 >
-                    {t("topics:addTopicsButton")}
+                    {tTopics("addTopicsButton")}
                 </AletheiaButton>
             </Grid>
 

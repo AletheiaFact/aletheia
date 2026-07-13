@@ -7,8 +7,8 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import TopicsApi from "../../api/topicsApi";
-import { useTranslation } from "react-i18next";
 import { IMultiSelectAutocomplete, ManualTopic } from "../../types/Topic";
+import { useTranslations } from "next-intl";
 
 const MultiSelectAutocomplete = ({
     defaultValue,
@@ -21,7 +21,7 @@ const MultiSelectAutocomplete = ({
     isDisabled,
     dataCy,
 }: IMultiSelectAutocomplete) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [options, setOptions] = useState([]);
     const dispatch = useDispatch();
     let timeout: NodeJS.Timeout;

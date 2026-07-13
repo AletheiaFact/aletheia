@@ -8,11 +8,11 @@ import {
     IconButton,
 } from "@mui/material";
 import { FileUploadOutlined, DeleteOutline } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import AletheiaButton from "./AletheiaButton";
 import { MessageManager } from "../components/Messages";
 import { UnifiedDefaultValue } from "./Form/DynamicInput";
 import { sanitizeUrl } from "../utils/ValidateUrl";
+import { useTranslations } from "next-intl";
 
 export interface UploadFile {
     uid: string;
@@ -34,7 +34,8 @@ const ImageUpload = ({
     error = false,
     defaultFileList,
 }: ImageUploadProps) => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const tCommon = useTranslations("common");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [fileList, setFileList] = useState<UploadFile[]>(() => {
@@ -76,7 +77,7 @@ const ImageUpload = ({
         if (!isAllowedFormat) {
             MessageManager.showMessage(
                 "error",
-                t("claimForm:fileTypeError", {
+                tClaimForm("fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
             );
@@ -85,7 +86,7 @@ const ImageUpload = ({
         if (!isAllowedSize) {
             MessageManager.showMessage(
                 "error",
-                t("claimForm:fileSizeError", {
+                tClaimForm("fileSizeError", {
                     size: `${ALLOWED_MB}MB`,
                 })
             );
@@ -142,7 +143,7 @@ const ImageUpload = ({
             }
             onClick={() => fileInputRef.current?.click()}
         >
-            {t("claimForm:fileInputButton")}
+            {tClaimForm("fileInputButton")}
         </AletheiaButton>
     );
 
@@ -201,7 +202,7 @@ const ImageUpload = ({
                 />
                 {error && (
                     <Typography variant="body2" color="error" mt={1}>
-                        {t("common:requiredFieldError")}
+                        {tCommon("requiredFieldError")}
                     </Typography>
                 )}
             </Box>

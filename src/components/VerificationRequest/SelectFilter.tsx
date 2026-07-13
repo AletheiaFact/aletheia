@@ -6,10 +6,10 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { VerificationRequestSourceChannel } from "../../../server/verification-request/dto/types";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 interface SelectOption {
   value: string;
@@ -62,12 +62,12 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
   currentValue,
   onValueChange,
 }) => {
-  const { t } = useTranslation();
+  const tVerificationRequest = useTranslations("verificationRequest");
   const filterItem = getOptionsByFilterType(filterType);
   const { vw } = useAppSelector((state) => state);
 
   const labelId = `${filterType}-label`;
-  const label = t(`verificationRequest:${filterType}`);
+  const label = tVerificationRequest(`${filterType}`);
 
   return (
     <FormControl sx={{ minWidth: vw?.xs ? "100%" : "200px", backgroundColor: colors.white }} size="small">
@@ -82,7 +82,7 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
       >
         {filterItem.map((item) => (
           <MenuItem key={item.value} value={item.value}>
-            {t(`verificationRequest:${item.labelKey}`, item.fallbackLabel)}
+            {tVerificationRequest(item.labelKey) || item.fallbackLabel}
           </MenuItem>
         ))}
       </Select>

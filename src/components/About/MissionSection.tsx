@@ -14,21 +14,21 @@ import {
   School,
   Instagram,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export default function MissionSection() {
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box id="mission" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Chip label={t("about:missionChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold", maxWidth: 800, mx: "auto" }}>
-            {t("about:missionSectionTitle")}
+          <Chip label={tAbout("missionChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold", maxWidth: 800, mx: "auto" }}>
+            {tAbout("missionSectionTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
-            {t("about:missionSectionDescription")}
+            {tAbout("missionSectionDescription")}
           </Typography>
         </Box>
 
@@ -36,23 +36,23 @@ export default function MissionSection() {
           {[
             {
               icon: <Language sx={{ fontSize: 24 }} />,
-              title: t("about:openSourcePlatformTitle"),
-              description: t("about:openSourcePlatformDescription"),
+              title: tAbout("openSourcePlatformTitle"),
+              description: tAbout("openSourcePlatformDescription"),
             },
             {
               icon: <People sx={{ fontSize: 24 }} />,
-              title: t("about:collaborativeVerificationTitle"),
-              description: t("about:collaborativeVerificationDescription"),
+              title: tAbout("collaborativeVerificationTitle"),
+              description: tAbout("collaborativeVerificationDescription"),
             },
             {
               icon: <School sx={{ fontSize: 24 }} />,
-              title: t("about:educationTrainingTitle"),
-              description: t("about:educationTrainingDescription"),
+              title: tAbout("educationTrainingTitle"),
+              description: tAbout("educationTrainingDescription"),
             },
             {
               icon: <Instagram sx={{ fontSize: 24 }} />,
-              title: t("about:aiPoweredDetectionTitle"),
-              description: t("about:aiPoweredDetectionDescription"),
+              title: tAbout("aiPoweredDetectionTitle"),
+              description: tAbout("aiPoweredDetectionDescription"),
             },
           ].map((item, index) => (
             <Grid item xs={12} sm={6} md={6} lg={3} key={index}>

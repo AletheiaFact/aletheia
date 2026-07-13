@@ -4,9 +4,9 @@ import { Grid, Typography } from "@mui/material"
 import colors from "../../styles/colors";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import  { DeleteOutlined }  from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { DeleteOutlined } from "@mui/icons-material";
 import WarningModal from "../Modal/WarningModal";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestDrawer = ({
     groupContent,
@@ -15,7 +15,8 @@ const VerificationRequestDrawer = ({
     isLoading,
     onRemove,
 }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
+    const tWarningModal = useTranslations("warningModal");
     const [removeWarningModal, setRemoveWarningModal] = useState(false);
 
     return (
@@ -26,7 +27,7 @@ const VerificationRequestDrawer = ({
         >
             <Grid item style={{ margin: "32px 64px" }}>
                 <Typography fontWeight={700} variant="h5">
-                    {t("verificationRequest:verificationRequestTitle")}s
+                    {tVerificationRequest("verificationRequestTitle")}s
                 </Typography>
                 {groupContent?.length > 0 ? (
                     groupContent?.map((item) => (
@@ -34,7 +35,7 @@ const VerificationRequestDrawer = ({
                             <VerificationRequestCard
                                 key={item._id}
                                 verificationRequest={item}
-                                t={t}
+                                t={tVerificationRequest}
                                 actions={[
                                     <AletheiaButton
                                         key="remove"
@@ -50,9 +51,9 @@ const VerificationRequestDrawer = ({
                             />
                             <WarningModal
                                 open={removeWarningModal}
-                                title={t("warningModal:title", {
-                                    warning: t(
-                                        "warningModal:removeVerificationRequest"
+                                title={tWarningModal("title", {
+                                    warning: tWarningModal(
+                                        "removeVerificationRequest"
                                     ),
                                 })}
                                 width={400}
@@ -68,7 +69,7 @@ const VerificationRequestDrawer = ({
                     ))
                 ) : (
                     <span>
-                        {t("verificationRequest:noVerificationRequestsMessage")}
+                        {tVerificationRequest("noVerificationRequestsMessage")}
                     </span>
                 )}
             </Grid>

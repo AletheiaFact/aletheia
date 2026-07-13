@@ -3,7 +3,7 @@ import { FloatingWrapper, useActive } from "@remirror/react";
 import React from "react";
 
 import SourceDialog from "./Dialog/SourceDialog";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export const HTTP_PROTOCOL_REGEX = /(https?:\/\/)(https?:\/\/)+/;
 
@@ -17,7 +17,7 @@ const FloatingLinkToolbar = ({
     error,
     isLoading,
 }) => {
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
     const active = useActive();
     const activeLink = active.link();
 
@@ -56,7 +56,7 @@ const FloatingLinkToolbar = ({
         >
             <SourceDialog
                 autoFocus
-                placeholder={t("sourceForm:placeholder")}
+                placeholder={tSourceForm("placeholder")}
                 value={href}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}

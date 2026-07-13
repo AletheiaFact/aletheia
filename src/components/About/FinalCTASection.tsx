@@ -7,11 +7,11 @@ import {
   Stack,
 } from "@mui/material";
 import { ArrowUpward as ArrowForward } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 export default function FinalCTASection() {
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box
@@ -23,11 +23,11 @@ export default function FinalCTASection() {
       }}
     >
       <Container maxWidth="md">
-        <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
-          {t("about:finalCTATitle")}
+        <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold" }}>
+          {tAbout("finalCTATitle")}
         </Typography>
         <Typography variant="h6" sx={{ mb: 4, opacity: 0.9, fontWeight: 400 }}>
-          {t("about:finalCTADescription")}
+          {tAbout("finalCTADescription")}
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center" sx={{ mb: 4 }}>
           <Button
@@ -39,7 +39,7 @@ export default function FinalCTASection() {
             component="a"
             onClick={() => trackUmamiEvent("about-final-cta-access-platform", "navigation")}
           >
-            {t("about:accessPlatform")}
+            {tAbout("accessPlatform")}
           </Button>
           <Button
             variant="outlined"
@@ -49,11 +49,11 @@ export default function FinalCTASection() {
             component="a"
             onClick={() => trackUmamiEvent("about-final-cta-get-training", "contact")}
           >
-            {t("about:getTraining")}
+            {tAbout("getTraining")}
           </Button>
         </Stack>
         <Typography variant="body2" sx={{ opacity: 0.75 }}>
-          {t("about:openSource")}
+          {tAbout("openSource")}
         </Typography>
       </Container>
     </Box>

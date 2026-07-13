@@ -17,9 +17,9 @@ import {
     ErrorOutline,
     Refresh,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import type { PersonalityWithWikidata } from "../../types/PersonalityWithWikidata";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 interface PersonalitiesSectionProps {
     personalities: PersonalityWithWikidata[];
@@ -34,7 +34,7 @@ interface PersonalityCardProps {
 }
 
 const PersonalityCard: React.FC<PersonalityCardProps> = ({ personality }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const personalityUrl = `/personality/${personality.slug}`;
 
     const cardContent = (
@@ -129,7 +129,7 @@ const PersonalityCard: React.FC<PersonalityCardProps> = ({ personality }) => {
         <Link
             href={personalityUrl}
             style={{ textDecoration: "none" }}
-            aria-label={t("verificationRequest:viewPersonalityPage", {
+            aria-label={tVerificationRequest("viewPersonalityPage", {
                 name: personality.name,
             })}
         >
@@ -145,7 +145,7 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     expectedCount,
     onRetry,
 }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     const renderContent = () => {
         if (error) {
@@ -159,15 +159,15 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
                             size="small"
                             startIcon={<Refresh />}
                             onClick={onRetry}
-                            aria-label={t(
-                                "verificationRequest:retryLoadingPersonalities"
+                            aria-label={tVerificationRequest(
+                                "retryLoadingPersonalities"
                             )}
                         >
-                            {t("verificationRequest:retryLoadingPersonalities")}
+                            {tVerificationRequest("retryLoadingPersonalities")}
                         </Button>
                     }
                 >
-                    {t("verificationRequest:errorLoadingPersonalities")}
+                    {tVerificationRequest("errorLoadingPersonalities")}
                 </Alert>
             );
         }
@@ -224,7 +224,7 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         if (personalities.length === 0) {
             return (
                 <Alert severity="info">
-                    {t("verificationRequest:noPersonalitiesFound")}
+                    {tVerificationRequest("noPersonalitiesFound")}
                 </Alert>
             );
         }
@@ -276,7 +276,7 @@ const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
                     }}
                     id="personalities-heading"
                 >
-                    {t("verificationRequest:identifiedPersonalities")}
+                    {tVerificationRequest("identifiedPersonalities")}
                 </Typography>
                 {!isLoading && !error && personalities.length > 0 && (
                     <Chip

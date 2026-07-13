@@ -9,33 +9,33 @@ type FooterContactColumnProps = {
 };
 
 const FooterContactColumn = ({ statuteUrl }: FooterContactColumnProps) => {
-    const { t } = useFooterData();
+    const { tFooter } = useFooterData();
 
     return (
         <Grid item xs={12} md={2} lg={2}>
             <Typography className="footer-column-title">
-                {t("footer:sections.contact.title")}
+                {tFooter("sections.contact.title")}
             </Typography>
 
             <Stack spacing={1.7}>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <EmailOutlined className="footer-icon" />
                     <Typography className="footer-contact-text">
-                        {t("footer:contactEmail")}
+                        {tFooter("contactEmail")}
                     </Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="flex-start">
                     <LocationOnOutlined className="footer-icon" />
                     <Box>
                         <Typography className="footer-contact-text">
-                            {t("footer:adressStreet")}
+                            {tFooter("adressStreet")}
                         </Typography>
                     </Box>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Business className="footer-icon" />
                     <Typography className="footer-contact-text">
-                        {t("footer:legalRegistration")}
+                        {tFooter("legalRegistration")}
                     </Typography>
                 </Stack>
                 {localConfig.footer.showStatuteButton.show ?
@@ -47,7 +47,7 @@ const FooterContactColumn = ({ statuteUrl }: FooterContactColumnProps) => {
                         className="footer-statute-link"
                         data-cy="testFooterStatuteLink"
                     >
-                        {t("footer:sections.contact.statuteCta")} <ArrowOutwardRounded className="footer-statute-arrow" />
+                        {tFooter("sections.contact.statuteCta")} <ArrowOutwardRounded className="footer-statute-arrow" />
                     </Link>
                     : null}
             </Stack>

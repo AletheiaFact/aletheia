@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { ArrowDownwardOutlined, ArrowUpwardOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ReviewProgress from "./ReviewProgress";
 import AletheiaTitle from "../AletheiaTitle";
+import { useTranslations } from "next-intl";
 
 const ReviewStats = (props) => {
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
     const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
     const { reviews } = props?.stats || {};
     const firstThreeReviews = reviews?.slice(0, 3);
@@ -41,10 +41,10 @@ const ReviewStats = (props) => {
                         onClick={() => setShowAllReviews(!showAllReviews)}
                     >
                         <AletheiaTitle variant="h4">
-                            {t(
+                            {tPersonality(
                                 showAllReviews
-                                    ? `personality:seeLessMetricsOverviews`
-                                    : `personality:seeAllMetricsOverviews`
+                                    ? `seeLessMetricsOverviews`
+                                    : `seeAllMetricsOverviews`
                             )}
                         </AletheiaTitle>
                     </AletheiaButton>

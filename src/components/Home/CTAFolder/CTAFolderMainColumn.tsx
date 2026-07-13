@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import CTAFolderActions from "./CTAFolderActions";
+import { useTranslations } from "next-intl";
 
 type CTAFolderMainColumnProps = {
     isLoggedIn: boolean;
@@ -9,9 +9,9 @@ type CTAFolderMainColumnProps = {
 };
 
 const CTAFolderMainColumn = ({ isLoggedIn, isHomeFolder = true }: CTAFolderMainColumnProps) => {
-    const { t } = useTranslation();
-    const title = isLoggedIn ? t("CTAFolder:aboutUsTitle") : t("CTAFolder:signUpTitle");
-    const body = isLoggedIn ? t("CTAFolder:aboutUsBody") : t("CTAFolder:signUpBody");
+    const tCTAFolder = useTranslations("CTAFolder");
+    const title = isLoggedIn ? tCTAFolder("aboutUsTitle") : tCTAFolder("signUpTitle");
+    const body = isLoggedIn ? tCTAFolder("aboutUsBody") : tCTAFolder("signUpBody");
 
     return (
         <Grid item className="ctaMainColumn">
@@ -32,7 +32,7 @@ const CTAFolderMainColumn = ({ isLoggedIn, isHomeFolder = true }: CTAFolderMainC
                     variant="body1"
                     className="ctaBody"
                 >
-                    {t("CTAFolder:signUpFooter")}
+                    {tCTAFolder("signUpFooter")}
                 </Typography>
             )}
             <CTAFolderActions isLoggedIn={isLoggedIn} isHomeFolder={isHomeFolder} />

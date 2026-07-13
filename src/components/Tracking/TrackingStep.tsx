@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Grid, Typography } from "@mui/material";
 import LocalizedDate from "../LocalizedDate";
-import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { TrackingStepProps } from "../../types/Tracking";
 import { StepLabelStyled } from "./StepLabel.style";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useTranslations } from "next-intl";
 
 const STEP_STATES = {
   declined: {
@@ -34,7 +34,8 @@ const TrackingStep = ({
   isDeclined,
   isMinimal
 }: TrackingStepProps) => {
-  const { t } = useTranslation();
+  const tVerificationRequest = useTranslations("verificationRequest");
+  const tTracking = useTranslations("tracking");
 
   const currentState = isDeclined ? "declined" : isCompleted ? "completed" : "pending";
   const { bg, color, Icon } = STEP_STATES[currentState];
@@ -51,22 +52,22 @@ const TrackingStep = ({
     >
       <Grid container className="stepItem">
         <Typography variant="subtitle2" className="stepLabel">
-          {t(`verificationRequest:${translationKey}`)}
+          {tVerificationRequest(`${translationKey}`)}
         </Typography>
 
         {stepDate ? (
-            <Typography variant="caption" className="dateLabel">
-               {stepDate === "noData" ? (
-                    t("tracking:noDateFound")
-               ) : (
-                    <LocalizedDate date={stepDate} showTime />
-               )}
-            </Typography>
-          ) : null}
+          <Typography variant="caption" className="dateLabel">
+            {stepDate === "noData" ? (
+              tTracking("noDateFound")
+            ) : (
+              <LocalizedDate date={stepDate} showTime />
+            )}
+          </Typography>
+        ) : null}
       </Grid>
 
       <Typography variant="body2" className="description">
-        {t(`tracking:description_${translationKey}`)}
+        {tTracking(`description_${translationKey}`)}
       </Typography>
     </StepLabelStyled>
   );

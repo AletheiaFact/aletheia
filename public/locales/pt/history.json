@@ -9,5 +9,5 @@
     "unhide": "exibiu",
     "personality": "o perfil de",
     "claim": "a afirmação",
-    "historyItem": "{{username}} {{type}} {{targetModel}} {{title}}"
+    "historyItem": "{username} {type} {targetModel} {title}"
 }

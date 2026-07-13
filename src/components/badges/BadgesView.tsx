@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 import { Avatar, Grid } from "@mui/material";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,9 +12,12 @@ import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomBadgesList } from "../../atoms/badges";
 import { Badge } from "../../types/Badge";
 import PaginatedDataGrid from "../PaginetedDataGrid";
+import { useTranslations } from "next-intl";
 
 const BadgesView = () => {
-    const { t } = useTranslation();
+    const tBadges = useTranslations("badges");
+    const tAdmin = useTranslations("admin");
+    const t = useTranslations();
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [badges] = useAtom(atomBadgesList);
     const [, setBadgeToEdit] = useAtom(startEditingItem);
@@ -36,7 +38,7 @@ const BadgesView = () => {
         () => [
             {
                 field: "image",
-                headerName: t("badges:imageFieldLabel"),
+                headerName: tBadges("imageFieldLabel"),
                 flex: 1,
                 renderCell: (params) => (
                     <Avatar
@@ -47,19 +49,19 @@ const BadgesView = () => {
             },
             {
                 field: "name",
-                headerName: t("badges:nameLabel"),
+                headerName: tBadges("nameLabel"),
                 flex: 2,
             },
             {
                 field: "description",
-                headerName: t("badges:descriptionLabel"),
+                headerName: tBadges("descriptionLabel"),
                 flex: 4,
             },
             {
                 field: "actions",
                 type: "actions",
                 width: 100,
-                headerName: t("admin:columnEdit"),
+                headerName: tAdmin("columnEdit"),
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
                         key={params.id}
@@ -82,7 +84,7 @@ const BadgesView = () => {
             my={2} // vertical margin
         >
             <Grid item xs={10}>
-                <h2>{t("badges:title")}</h2>
+                <h2>{tBadges("title")}</h2>
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {badges && (
@@ -102,7 +104,7 @@ const BadgesView = () => {
                     type={ButtonType.primary}
                     onClick={handleAddButtonClick}
                 >
-                    {t("badges:addBadge")}
+                    {tBadges("addBadge")}
                 </AletheiaButton>
             </Grid>
         </Grid>

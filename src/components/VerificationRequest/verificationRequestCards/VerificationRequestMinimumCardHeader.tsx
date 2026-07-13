@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import { Trans, useTranslation } from "next-i18next";
 import { getStatusStyles } from "../../../helpers/verificationRequestCardHelper";
+import { useTranslations } from "next-intl";
 
 interface VerificationRequestMinimumCardHeaderProps {
     sourceChannel: string;
@@ -14,7 +14,8 @@ const VerificationRequestMinimumCardHeader = ({
     createdAt,
     currentstatus,
 }: VerificationRequestMinimumCardHeaderProps) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
+    const t = useTranslations();
     //this could be a util too
     const formattedDate = new Date(createdAt).toLocaleDateString("pt-BR", {
         day: "2-digit",
@@ -22,27 +23,26 @@ const VerificationRequestMinimumCardHeader = ({
         year: "numeric",
     });
 
-    const { color, label } = getStatusStyles(currentstatus, t);
+    const { color, label } = getStatusStyles(currentstatus);
 
     return (
         <Grid item className="verification-info">
             <Typography variant="body2" className="verification-info-text">
-                <Trans
-                    i18nKey="verificationRequest:submittedAt"
-                    values={{
-                        date: formattedDate,
-                        channel: sourceChannel,
-                    }}
-                    components={{
-                        bold: <strong style={{ fontWeight: 700 }} />
-                    }}
-                />
+                {tVerificationRequest.rich("submittedAt", {
+                    date: formattedDate,
+                    channel: sourceChannel,
+                    bold: (chunks) => (
+                        <strong style={{ fontWeight: 700 }}>
+                            {chunks}
+                        </strong>
+                    ),
+                })}
             </Typography>
             <Grid item className="verification-info-status-row">
                 <Typography variant="body2" className="verification-info-status-label">
-                    {t("verificationRequest:requestStatus")}
+                    {tVerificationRequest("requestStatus")}
                 </Typography>
-                <Typography variant="body1" className="verification-info-status-value" style={{color: color}}>
+                <Typography variant="body1" className="verification-info-status-value" style={{ color: color }}>
                     {label}
                 </Typography>
             </Grid>

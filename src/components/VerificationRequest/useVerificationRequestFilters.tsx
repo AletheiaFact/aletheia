@@ -1,15 +1,15 @@
 import { useState, useCallback, useEffect } from "react";
 import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import debounce from "lodash.debounce";
 import { FiltersContext } from "../../types/VerificationRequest";
 import { ViewMode } from "../FilterToggleButtons";
+import { useTranslations } from "next-intl";
 
 export const useVerificationRequestFilters = (): FiltersContext => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const dispatch = useDispatch();
 
   const [viewMode, setViewMode] = useState<ViewMode>("left");

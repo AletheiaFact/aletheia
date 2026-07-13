@@ -1,14 +1,14 @@
 import React, { useLayoutEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, timelineItemClasses } from "@mui/lab";
 import DebateClaimCardWrapper from "./DebateClaimCardWrapper";
 import { useAtom } from "jotai";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
+import { useTranslations } from "next-intl";
 
 const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(speeches);
     const [state] = useAtom(callbackTimerAtom);
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
 
     useLayoutEffect(() => {
         const claim = state?.context?.callbackResult;
@@ -36,7 +36,7 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                         <TimelineSeparator>
                             <TimelineDot variant="outlined" color="secondary" />
                         </TimelineSeparator>
-                        <TimelineContent>{t("debates:liveLabel")}</TimelineContent>
+                        <TimelineContent>{tDebates("liveLabel")}</TimelineContent>
                     </TimelineItem>
                 ) : (
                     <TimelineItem>
@@ -44,7 +44,7 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                             <TimelineDot variant="outlined" color="error" />
                         </TimelineSeparator>
                         <TimelineContent>
-                            {t("debates:isEnded")}
+                            {tDebates("isEnded")}
                         </TimelineContent>
                     </TimelineItem>
                 )}

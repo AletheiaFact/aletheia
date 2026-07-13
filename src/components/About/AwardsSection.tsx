@@ -10,22 +10,22 @@ import {
   Stack,
 } from "@mui/material";
 import { Star, ArrowUpward as ArrowForward } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 export default function AwardsSection() {
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box id="awards-section" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Chip label={t("about:awardsChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
-            {t("about:awardsTitle")}
+          <Chip label={tAbout("awardsChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold" }}>
+            {tAbout("awardsTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
-            {t("about:awardsDescription")}
+            {tAbout("awardsDescription")}
           </Typography>
         </Box>
 
@@ -43,12 +43,12 @@ export default function AwardsSection() {
           <Avatar sx={{ width: 64, height: 64, bgcolor: "primary.main", mx: "auto", mb: 3 }}>
             <Star sx={{ fontSize: 32 }} />
           </Avatar>
-          <Chip label={t("about:wsisNomination")} sx={{ mb: 2, bgcolor: "primary.main", color: "white" }} />
+          <Chip label={tAbout("wsisNomination")} sx={{ mb: 2, bgcolor: "primary.main", color: "white" }} />
           <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
-            {t("about:wsisTitle")}
+            {tAbout("wsisTitle")}
           </Typography>
           <Typography variant="body1" sx={{ mb: 4, color: "text.secondary", lineHeight: 1.7 }}>
-            {t("about:wsisDescription")}
+            {tAbout("wsisDescription")}
           </Typography>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
             <Button
@@ -60,7 +60,7 @@ export default function AwardsSection() {
               rel="noopener noreferrer"
               onClick={() => trackUmamiEvent("about-awards-learn-wsis", "external_link")}
             >
-              {t("about:learnAboutWSIS")}
+              {tAbout("learnAboutWSIS")}
             </Button>
             <Button
               variant="outlined"
@@ -70,7 +70,7 @@ export default function AwardsSection() {
               rel="noopener noreferrer"
               onClick={() => trackUmamiEvent("about-awards-view-nomination", "external_link")}
             >
-              {t("about:viewNomination")}
+              {tAbout("viewNomination")}
             </Button>
           </Stack>
         </Paper>

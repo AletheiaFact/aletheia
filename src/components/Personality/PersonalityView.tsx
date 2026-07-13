@@ -1,5 +1,4 @@
 import Grid from "@mui/material/Grid"
-import { useTranslation } from "next-i18next";
 
 import ClaimList from "../Claim/ClaimList";
 import Loading from "../Loading";
@@ -8,9 +7,12 @@ import Seo from "../Seo";
 import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
 import { Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 const PersonalityView = ({ personality, href, personalities }) => {
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
+    const tSeo = useTranslations("seo");
+
     if (!personality) {
         return <Loading />;
     }
@@ -19,7 +21,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
         <>
             <Seo
                 title={personality.name}
-                description={t("seo:personalityDescription", {
+                description={tSeo("personalityDescription", {
                     name: personality.name,
                 })}
                 openGraph={{
@@ -46,7 +48,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 href={href}
                 title={
                     <Typography variant="h2" fontSize={24}>
-                        {t("personality:otherPersonalitiesTitle")}
+                        {tPersonality("otherPersonalitiesTitle")}
                     </Typography>
                 }
             />

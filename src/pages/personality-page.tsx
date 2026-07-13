@@ -1,6 +1,5 @@
 import { NextPage } from "next";
 import PersonalityView from "../components/Personality/PersonalityView";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { GetLocale } from "../utils/GetLocale";
 import AffixButton from "../components/AffixButton/AffixButton";
@@ -15,6 +14,7 @@ import { useEffect } from "react";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 import { isAdmin } from "../utils/GetUserPermission";
+import { getMessages } from "../lib/getMessages";
 
 const PersonalityPage: NextPage<{
     personality: any;
@@ -31,52 +31,53 @@ const PersonalityPage: NextPage<{
     hideDescriptions,
     nameSpace,
 }) => {
-    const [role] = useAtom(currentUserRole);
-    const dispatch = useDispatch();
-    const setCurrentNameSpace = useSetAtom(currentNameSpace);
-    setCurrentNameSpace(nameSpace);
+        const [role] = useAtom(currentUserRole);
+        const dispatch = useDispatch();
+        const setCurrentNameSpace = useSetAtom(currentNameSpace);
+        setCurrentNameSpace(nameSpace);
 
-    useEffect(() => {
-        dispatch(actions.setSitekey(sitekey));
-    }, [dispatch, sitekey]);
+        useEffect(() => {
+            dispatch(actions.setSitekey(sitekey));
+        }, [dispatch, sitekey]);
 
-    const jsonldContent = {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        name: personality.name,
-        jobTitle: personality.description,
-        image: personality.image,
-    };
-    return (
-        <>
-            <JsonLd {...jsonldContent} />
-            {isAdmin(role) && (
-                <AdminToolBar
-                    content={personality}
-                    deleteApiFunction={personalitiesApi.deletePersonality}
-                    changeHideStatusFunction={
-                        personalitiesApi.updatePersonalityHiddenStatus
-                    }
-                    target={TargetModel.Personality}
-                    hideDescriptions={hideDescriptions}
+        const jsonldContent = {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: personality.name,
+            jobTitle: personality.description,
+            image: personality.image,
+        };
+        return (
+            <>
+                <JsonLd {...jsonldContent} />
+                {isAdmin(role) && (
+                    <AdminToolBar
+                        content={personality}
+                        deleteApiFunction={personalitiesApi.deletePersonality}
+                        changeHideStatusFunction={
+                            personalitiesApi.updatePersonalityHiddenStatus
+                        }
+                        target={TargetModel.Personality}
+                        hideDescriptions={hideDescriptions}
+                    />
+                )}
+                <PersonalityView
+                    personality={personality}
+                    href={href}
+                    personalities={personalities}
                 />
-            )}
-            <PersonalityView
-                personality={personality}
-                href={href}
-                personalities={personalities}
-            />
-            <AffixButton personalitySlug={personality.slug} />
-        </>
-    );
-};
+                <AffixButton personalitySlug={personality.slug} />
+            </>
+        );
+    };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),

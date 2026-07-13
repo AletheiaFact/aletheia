@@ -10,7 +10,6 @@ import {
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
-import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
@@ -22,6 +21,7 @@ import Fab from "./Fab";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 interface AffixButtonProps {
     personalitySlug?: string;
@@ -45,13 +45,14 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
     const [nameSpace] = useAtom(currentNameSpace);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
-    const { t } = useTranslation();
+    const tAffix = useTranslations("affix");
+    const tTutorial = useTranslations("tutorial");
     const bottomValue = bottom ?? "3%";
 
     const actions = [
         {
             icon: <PersonAddAlt1Outlined />,
-            tooltip: t("affix:affixButtonCreatePersonality"),
+            tooltip: tAffix("affixButtonCreatePersonality"),
             href:
                 nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/personality/search`
@@ -68,7 +69,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
         actions.push(
             {
                 icon: <NoteAdd />,
-                tooltip: t("affix:affixButtonCreateClaim"),
+                tooltip: tAffix("affixButtonCreateClaim"),
                 href: nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
                     : `/claim/create${hrefPersonalitySlug}`,
@@ -88,7 +89,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
 
             {
                 icon: <Report />,
-                tooltip: t("affix:affixButtonCreateVerificationRequest"),
+                tooltip: tAffix("affixButtonCreateVerificationRequest"),
                 href: nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/verification-request/create`
                     : `/verification-request/create`,
@@ -99,7 +100,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
         if (enableEventsFeature) {
             actions.push({
                 icon: <Event />,
-                tooltip: t("affix:affixButtonCreateEvent"),
+                tooltip: tAffix("affixButtonCreateEvent"),
                 href: nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/event/create`
                     : `/event/create`,
@@ -167,10 +168,10 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                     }}
                 >
                     <Fab
-                        tooltipText={t(
+                        tooltipText={tAffix(
                             userRole !== "regular"
-                                ? "affix:affixButtonTitle"
-                                : "affix:affixButtonCreatePersonality"
+                                ? "affixButtonTitle"
+                                : "affixButtonCreatePersonality"
                         )}
                         size="70px"
                         onClick={handleClick}
@@ -205,7 +206,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                             padding: "0 34px",
                         }}
                     >
-                        {t("tutorial:modalTitle")}
+                        {tTutorial("modalTitle")}
                     </h2>
                 }
             >
@@ -217,18 +218,17 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                         color: colors.blackSecondary,
                     }}
                 >
-                    <Trans
-                        i18nKey={"tutorial:modalContent"}
-                        components={[
+                    {tTutorial.rich("modalContent", {
+                        icon: () => (
                             <AddCircle
                                 style={{
                                     marginBottom: "-5px",
                                     fontSize: "18px",
                                 }}
                                 key={"icon"}
-                            />,
-                        ]}
-                    />
+                            />
+                        )
+                    })}
                 </p>
 
                 <div
@@ -244,7 +244,7 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
                         onClick={handleHideModal}
                         data-cy={"testButtonTutorialOk"}
                     >
-                        {t("tutorial:okButton")}
+                        {tTutorial("okButton")}
                     </AletheiaButton>
                 </div>
             </AletheiaModal>

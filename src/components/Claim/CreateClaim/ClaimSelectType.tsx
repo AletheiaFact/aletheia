@@ -5,24 +5,24 @@ import {
 } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
 import AletheiaButton from "../../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 const ClaimSelectType = () => {
     const [, send] = useAtom(createClaimMachineAtom);
-    const { t } = useTranslation();
-    const Sizeicon = { fontSize:"22px", margin:"0 5 5 0"};
+    const tClaimForm = useTranslations("claimForm");
+    const Sizeicon = { fontSize: "22px", margin: "0 5 5 0" };
 
     const icons = {
-        [ContentModelEnum.Image]: <PhotoSizeSelectActualOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Speech]: <InsertDriveFileOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Debate]: <VideocamOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Unattributed]: <InsertDriveFileOutlined style={Sizeicon}/>,
+        [ContentModelEnum.Image]: <PhotoSizeSelectActualOutlined style={Sizeicon} />,
+        [ContentModelEnum.Speech]: <InsertDriveFileOutlined style={Sizeicon} />,
+        [ContentModelEnum.Debate]: <VideocamOutlined style={Sizeicon} />,
+        [ContentModelEnum.Unattributed]: <InsertDriveFileOutlined style={Sizeicon} />,
     };
 
     const handleClickStart = (event) => {
@@ -40,7 +40,7 @@ const ClaimSelectType = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    {t("claimForm:contentModelTitle")}
+                    {tClaimForm("contentModelTitle")}
                 </h3>
                 <p
                     style={{
@@ -50,7 +50,7 @@ const ClaimSelectType = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    {t("claimForm:selectContentModel")}
+                    {tClaimForm("selectContentModel")}
                 </p>
             </div>
 
@@ -65,12 +65,12 @@ const ClaimSelectType = () => {
                 {Object.keys(ContentModelEnum).map((key) => (
                     <AletheiaButton
                         onClick={() => handleClickStart(key)}
-                        style={{ gap:"10px",textTransform: "uppercase" }}
+                        style={{ gap: "10px", textTransform: "uppercase" }}
                         data-cy={`testSelectType${key}`}
                         key={key}
                     >
                         {icons[key]}
-                        {t(`claimForm:${key}`)}
+                        {tClaimForm(`${key}`)}
                     </AletheiaButton>
                 ))}
             </Grid>

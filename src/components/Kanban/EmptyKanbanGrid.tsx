@@ -1,9 +1,9 @@
 import { Divider } from "@mui/material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 const EmptyKanbanGrid = ({ title }) => {
-    const { t } = useTranslation();
+    const tList = useTranslations("list");
     return (
         <div
             style={{
@@ -15,7 +15,7 @@ const EmptyKanbanGrid = ({ title }) => {
         >
             <span style={{ fontSize: 24 }}>{title}</span>
 
-            <span>{t("list:totalItems", { total: 0 })}</span>
+            <span>{tList("totalItems", { total: 0 })}</span>
             <Divider flexItem variant="middle" style={{ marginTop: 12 }} />
         </div>
     );

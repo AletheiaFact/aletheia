@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import router from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -10,9 +9,10 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import Loading from "../Loading";
+import { useTranslations } from "next-intl";
 
 const OverlaySearchResults = () => {
-    const { t } = useTranslation();
+    const tSearch = useTranslations("search");
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     const { results, searchOverlayName, isFetching } = useAppSelector(
@@ -84,7 +84,7 @@ const OverlaySearchResults = () => {
                     const type = ["personality", "claim", "sentence"][i];
                     return (
                         <SearchCard
-                            title={t(`search:${type}HeaderTitle`)}
+                            title={tSearch(`${type}HeaderTitle`)}
                             content={result}
                             searchName={searchOverlayName}
                             handleSearchClick={handleSearchClick}

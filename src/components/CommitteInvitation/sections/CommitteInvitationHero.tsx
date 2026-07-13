@@ -9,12 +9,12 @@ import {
     Typography,
 } from "@mui/material";
 import { ArrowForward, FormatQuoteOutlined } from "@mui/icons-material";
-import { Trans, useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
 import AletheiaAvatar from "../../AletheiaAvatar";
+import { useTranslations } from "next-intl";
 
 const CommitteInvitationHero = () => {
-    const { t } = useTranslation("committeeInvitation");
+    const tCommitteeInvitation = useTranslations("committeeInvitation");
 
     return (
         <Box className="hero-wrapper">
@@ -23,7 +23,7 @@ const CommitteInvitationHero = () => {
                     <Grid item xs={12}>
                         <Chip
                             icon={<Box component="span" className="badge-dot" />}
-                            label={t("hero.chip")}
+                            label={tCommitteeInvitation("hero.chip")}
                             size="small"
                             className="hero-chip"
                         />
@@ -32,14 +32,12 @@ const CommitteInvitationHero = () => {
                         <Stack spacing={3}>
                             <Box>
                                 <Typography variant="h1" className="hero-title">
-                                    <Trans
-                                        i18nKey="hero.title"
-                                        ns="committeeInvitation"
-                                        components={{ br: <br /> }}
-                                    />
+                                    {tCommitteeInvitation.rich("hero.title", {
+                                        br: () => <br />
+                                    })}
                                 </Typography>
                                 <Typography variant="body1" className="hero-description">
-                                    {t("hero.description")}
+                                    {tCommitteeInvitation("hero.description")}
                                 </Typography>
                             </Box>
 
@@ -64,7 +62,7 @@ const CommitteInvitationHero = () => {
                                     href="#join"
                                     component="a"
                                 >
-                                    {t("hero.ctaPrimary")}
+                                    {tCommitteeInvitation("hero.ctaPrimary")}
                                 </Button>
                                 <Button
                                     variant="outlined"
@@ -85,7 +83,7 @@ const CommitteInvitationHero = () => {
                                     href="#mission"
                                     component="a"
                                 >
-                                    {t("hero.ctaSecondary")}
+                                    {tCommitteeInvitation("hero.ctaSecondary")}
                                 </Button>
                             </Stack>
 
@@ -94,28 +92,28 @@ const CommitteInvitationHero = () => {
                             <Stack direction="row" spacing={{ xs: 2, sm: 5 }}>
                                 <Box className="stat-item">
                                     <Typography variant="h5" className="stat-value">
-                                        {t("hero.stat1Value")}
+                                        {tCommitteeInvitation("hero.stat1Value")}
                                     </Typography>
                                     <Typography variant="caption" className="stat-label">
-                                        {t("hero.stat1Label")}
+                                        {tCommitteeInvitation("hero.stat1Label")}
                                     </Typography>
                                 </Box>
                                 <Divider orientation="vertical" flexItem />
                                 <Box className="stat-item">
                                     <Typography variant="h5" className="stat-value">
-                                        {t("hero.stat2Value")}
+                                        {tCommitteeInvitation("hero.stat2Value")}
                                     </Typography>
                                     <Typography variant="caption" className="stat-label">
-                                        {t("hero.stat2Label")}
+                                        {tCommitteeInvitation("hero.stat2Label")}
                                     </Typography>
                                 </Box>
                                 <Divider orientation="vertical" flexItem />
                                 <Box className="stat-item">
                                     <Typography variant="h5" className="stat-value">
-                                        {t("hero.stat3Value")}
+                                        {tCommitteeInvitation("hero.stat3Value")}
                                     </Typography>
                                     <Typography variant="caption" className="stat-label">
-                                        {t("hero.stat3Label")}
+                                        {tCommitteeInvitation("hero.stat3Label")}
                                     </Typography>
                                 </Box>
                             </Stack>
@@ -130,7 +128,7 @@ const CommitteInvitationHero = () => {
                                 </Box>
 
                                 <Typography variant="body1" className="quote-text">
-                                    {t("hero.quote")}
+                                    {tCommitteeInvitation("hero.quote")}
                                 </Typography>
 
                                 <Stack
@@ -149,13 +147,13 @@ const CommitteInvitationHero = () => {
                                             variant="body2"
                                             className="quote-author-name"
                                         >
-                                            {t("hero.quoteAuthor")}
+                                            {tCommitteeInvitation("hero.quoteAuthor")}
                                         </Typography>
                                         <Typography
                                             variant="caption"
                                             className="quote-author-source"
                                         >
-                                            {t("hero.quoteSource")}
+                                            {tCommitteeInvitation("hero.quoteSource")}
                                         </Typography>
                                     </Box>
                                 </Stack>

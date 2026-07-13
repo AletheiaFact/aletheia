@@ -3,6 +3,7 @@ import colors from "../../../styles/colors";
 import styled from "styled-components";
 import FilterToggleButtons, { ViewMode } from "../../FilterToggleButtons";
 import { FormatQuoteOutlined, ReportProblemOutlined } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 
 const TypographyGrid = styled(Grid)`
   display: flex;
@@ -10,26 +11,29 @@ const TypographyGrid = styled(Grid)`
   align-items: center;
 `;
 
-const TotalCountText = ({ total, t }: { total: number; t: any }) => (
-    <Typography variant="body2" color={colors.blackSecondary} data-cy="testTotalCountText">
-        {t("events:totalItems", { total: total })}
-    </Typography>
-);
+const TotalCountText = ({ total }: { total: number; }) => {
+    const tEvents = useTranslations("events");
+    (
+        <Typography variant="body2" color={colors.blackSecondary} data-cy="testTotalCountText">
+            {tEvents("totalItems", { total: total })}
+        </Typography>
+    );
+}
 
 interface EventTitleProps {
     total: number;
     hasToggle?: boolean;
     viewMode?: ViewMode;
     setViewMode?: (mode: ViewMode) => void;
-    t: (key: string, options?: { total: number }) => string;
 }
 
-const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: EventTitleProps) => {
+const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode }: EventTitleProps) => {
+    const tEvents = useTranslations("events")
 
     if (hasToggle) {
         return (
             <TypographyGrid container>
-                <TotalCountText total={total} t={t} data-cy="testEventGridCount" />
+                <TotalCountText total={total} data-cy="testEventGridCount" />
                 <Box
                     style={{
                         display: "flex",
@@ -46,14 +50,14 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
                         leftOption={
                             <Stack direction="row" alignItems="center" gap={1}>
                                 <FormatQuoteOutlined fontSize="small" />
-                                {t("events:claimToggleOption")}
+                                {tEvents("claimToggleOption")}
                             </Stack>
 
                         }
                         rightOption={
                             <Stack direction="row" alignItems="center" gap={1}>
                                 <ReportProblemOutlined fontSize="small" />
-                                {t("events:verificationRequestsStats")}
+                                {tEvents("verificationRequestsStats")}
                             </Stack>
                         }
                     />
@@ -65,9 +69,9 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
     return (
         <TypographyGrid container>
             <Typography variant="h2" fontSize={24}>
-                {t("events:eventsList")}
+                {tEvents("eventsList")}
             </Typography>
-            <TotalCountText total={total} t={t} data-cy="testEventGridCount" />
+            <TotalCountText total={total} data-cy="testEventGridCount" />
         </TypographyGrid>
     );
 };

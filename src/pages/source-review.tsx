@@ -1,13 +1,10 @@
-import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import { GetLocale } from "../utils/GetLocale";
 import { NextPage } from "next";
 import React from "react";
 import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../store/actions";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "next-i18next";
 import { VisualEditorProvider } from "../components/Collaborative/VisualEditorProvider";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
@@ -16,6 +13,8 @@ import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ClassificationEnum } from "../types/enums";
 import JsonLd from "../components/JsonLd";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 export interface SourceReviewPageProps {
     source: any;
@@ -33,7 +32,7 @@ export interface SourceReviewPageProps {
 }
 
 const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
@@ -85,8 +84,8 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
             bestRating: 8,
             worstRating: 1,
             alternateName: claimReview?.isHidden
-                ? t("claimReviewForm:notReviewed")
-                : t(`claimReviewForm:${review}`),
+                ? tClaimReviewForm("notReviewed")
+                : tClaimReviewForm(`${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -127,7 +126,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             source: JSON.parse(JSON.stringify(query.source)),
             reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sourceReview: JSON.parse(JSON.stringify(query.claimReview)),

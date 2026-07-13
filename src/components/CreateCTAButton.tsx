@@ -1,9 +1,9 @@
 import { Grid } from "@mui/material"
 import React from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const CreateCTAButton = ({ children }) => {
-    const { t } = useTranslation();
+    const tPersonalityCTA = useTranslations("personalityCTA");
 
     return (
         <Grid container
@@ -15,10 +15,10 @@ const CreateCTAButton = ({ children }) => {
             }}
         >
             <p>
-                <b>{t("personalityCTA:header")}</b>
+                <b>{tPersonalityCTA("header")}</b>
             </p>
             <p>{children}</p>
-            <p>{t("personalityCTA:footer")}</p>
+            <p>{tPersonalityCTA("footer")}</p>
         </Grid>
     );
 };

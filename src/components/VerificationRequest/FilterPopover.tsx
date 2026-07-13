@@ -5,6 +5,7 @@ import AdvancedSearch from "../Search/AdvancedSearch";
 import SelectFilter from "./SelectFilter";
 import { FilterList } from "@mui/icons-material";
 import { ActionTypes } from "../../store/types";
+import { useTranslations } from "next-intl";
 
 const FilterPopover = ({ state, actions }) => {
     const {
@@ -24,11 +25,11 @@ const FilterPopover = ({ state, actions }) => {
         setFilterType,
         setAnchorEl,
         dispatch,
-        t,
     } = actions;
 
     const handleFilterClick = (event) => setAnchorEl(event.currentTarget);
     const handleFilterClose = () => setAnchorEl(null);
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     const handleFilterApply = () => {
         setAnchorEl(null);
@@ -105,7 +106,7 @@ const FilterPopover = ({ state, actions }) => {
                             type={ButtonType.primary}
                             onClick={handleFilterApply}
                         >
-                            {t("verificationRequest:applyButtonLabel")}
+                            {tVerificationRequest("applyButtonLabel")}
                         </AletheiaButton>
                     </Grid>
                 </Grid>

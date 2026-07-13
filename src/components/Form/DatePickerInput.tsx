@@ -4,9 +4,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import colors from "../../styles/colors";
 import styled from "styled-components";
-import { useTranslation } from "next-i18next";
 import { CSSProperties, useState } from "react";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
 
 const StyledTextField = styled(TextField)`
   background: ${(props) => (props.$white ? colors.white : colors.lightNeutral)};
@@ -40,54 +40,54 @@ const StyledTextField = styled(TextField)`
 `;
 
 interface IDatePickerInput {
-    defaultValue?: any,
-    placeholder: string,
-    onChange: (value: any) => void,
-    disabledFuture?: boolean,
-    dataCy?: string,
-    disabled?: boolean,
-    style?: CSSProperties,
+  defaultValue?: any,
+  placeholder: string,
+  onChange: (value: any) => void,
+  disabledFuture?: boolean,
+  dataCy?: string,
+  disabled?: boolean,
+  style?: CSSProperties,
 }
 
 const DatePickerInput = ({
-    defaultValue,
-    placeholder,
-    onChange,
-    disabledFuture = true,
-    dataCy,
-    disabled,
-    style
+  defaultValue,
+  placeholder,
+  onChange,
+  disabledFuture = true,
+  dataCy,
+  disabled,
+  style
 }: IDatePickerInput) => {
-    const { t } = useTranslation();
-    const [value, setValue] = useState(defaultValue || null);
-    const [open, setOpen] = useState(false);
+  const t = useTranslations();
+  const [value, setValue] = useState(defaultValue || null);
+  const [open, setOpen] = useState(false);
 
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-                label={t(placeholder)}
-                value={value}
-                inputFormat="DD/MM/YYYY"
-                open={open}
-                onClose={() => setOpen(false)}
-                onChange={(newValue) => {
-                    setValue(newValue);
-                    onChange?.(newValue);
-                }}
-                disableFuture={disabledFuture}
-                disabled={disabled}
-                renderInput={(params) =>
-                    <StyledTextField
-                        {...params}
-                        onClick={() => setOpen(true)}
-                        data-cy={dataCy}
-                        style={{ ...style }}
-                    />}
-                PopperProps={{ placement: 'bottom-start', }}
-                desktopModeMediaQuery="@media (min-width: 0)"
-            />
-        </LocalizationProvider>
-    );
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        label={t(placeholder)}
+        value={value}
+        inputFormat="DD/MM/YYYY"
+        open={open}
+        onClose={() => setOpen(false)}
+        onChange={(newValue) => {
+          setValue(newValue);
+          onChange?.(newValue);
+        }}
+        disableFuture={disabledFuture}
+        disabled={disabled}
+        renderInput={(params) =>
+          <StyledTextField
+            {...params}
+            onClick={() => setOpen(true)}
+            data-cy={dataCy}
+            style={{ ...style }}
+          />}
+        PopperProps={{ placement: 'bottom-start', }}
+        desktopModeMediaQuery="@media (min-width: 0)"
+      />
+    </LocalizationProvider>
+  );
 };
 
 export default DatePickerInput;

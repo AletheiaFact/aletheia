@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
@@ -12,6 +11,7 @@ import getNextEvents from "./getNextEvent";
 import { FormField } from "../../components/Form/FormField";
 import { useAtom } from "jotai";
 import { currentUserId } from "../../atoms/currentUser";
+import { useTranslations } from "next-intl";
 
 interface ContextType {
     machineService: any;
@@ -84,7 +84,7 @@ export const ReviewTaskMachineProvider = (
     const [reportModel, setReportModel] = useState<ReportModelEnum | null>(
         props.baseReportModel
     );
-    const { t } = useTranslation();
+    const t = useTranslations();
     const preloadedOptions =
         globalMachineService?.state?.context?.preloadedOptions;
 

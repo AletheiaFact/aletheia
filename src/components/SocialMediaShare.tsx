@@ -10,7 +10,6 @@ import {
     TelegramShareButton,
     TelegramIcon,
 } from "react-share";
-import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import SocialMediaShareStyle from "./SocialMediaShare.style";
 import { trackUmamiEvent } from "../lib/umami";
@@ -18,13 +17,14 @@ import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
-    const { t } = useTranslation();
+    const tShare = useTranslations("share");
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [nameSpace] = useAtom(currentNameSpace);
 
-    quote = quote || t("share:quote");
+    quote = quote || tShare("quote");
 
     const trimPersonality = quote.replace(" ", "");
 
@@ -54,7 +54,7 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
             <Typography
                 variant="h3"
                 style={{
-                    fontFamily:"initial",
+                    fontFamily: "initial",
                     width: "auto",
                     textAlign: "center",
                     marginBottom: 0,
@@ -64,7 +64,7 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                     color: colors.blackSecondary,
                 }}
             >
-                {t("share:title")}
+                {tShare("title")}
             </Typography>
             <nav className="social-media-container">
                 <ul
@@ -110,10 +110,9 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             hashtags={[
                                 "aletheia",
                                 trimPersonality,
-                                `${
-                                    claim !== null
-                                        ? camelize(claimCamelize)
-                                        : ""
+                                `${claim !== null
+                                    ? camelize(claimCamelize)
+                                    : ""
                                 }\n`,
                             ]}
                             beforeOnClick={() => {

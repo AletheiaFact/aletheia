@@ -2,10 +2,10 @@ import { Grid } from "@mui/material";
 import React from "react";
 import { ModalCancelButton } from "./AletheiaModal.style";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
-    const { t } = useTranslation();
+    const tOrderModal = useTranslations("orderModal");
 
     return (
         <Grid item
@@ -22,7 +22,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
                             textDecorationLine: "underline",
                         }}
                     >
-                        {t("orderModal:cancelButton")}
+                        {tOrderModal("cancelButton")}
                     </span>
                 </ModalCancelButton>
             )}
@@ -33,7 +33,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
                 htmlType="submit"
                 type={ButtonType.primary}
             >
-                {t("orderModal:okButton")}
+                {tOrderModal("okButton")}
             </AletheiaButton>
         </Grid>
     );

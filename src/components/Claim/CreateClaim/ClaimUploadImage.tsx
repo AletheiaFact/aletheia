@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import ImageApi from "../../../api/image";
@@ -12,9 +11,11 @@ import ImageUpload, { UploadFile } from "../../ImageUpload";
 import Label from "../../Label";
 import BaseClaimForm from "./BaseClaimForm";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { useTranslations } from "next-intl";
 
 const ClaimUploadImage = () => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const t = useTranslations();
     const router = useRouter();
     const [, send] = useAtom(createClaimMachineAtom);
 
@@ -89,7 +90,7 @@ const ClaimUploadImage = () => {
                         textTransform: "capitalize",
                     }}
                 >
-                    {t("claimForm:image")}
+                    {tClaimForm("image")}
                 </h3>
                 <p
                     style={{
@@ -99,14 +100,14 @@ const ClaimUploadImage = () => {
                         marginBottom: "24px",
                     }}
                 >
-                    {t("claimForm:uploadImageText")}
+                    {tClaimForm("uploadImageText")}
                 </p>
             </div>
 
             <BaseClaimForm
                 handleSubmit={handleSubmit}
                 isLoading={isLoading}
-                dateExtraText={t("claimForm:dateFieldHelpImage")}
+                dateExtraText={tClaimForm("dateFieldHelpImage")}
                 errors={errors}
                 clearError={clearError}
                 recaptcha={recaptcha}
@@ -119,7 +120,7 @@ const ClaimUploadImage = () => {
                 sources={sources}
                 content={
                     <Grid container style={{ marginBottom: 24 }}>
-                        <Label required>{t("claimForm:fileInputButton")}</Label>
+                        <Label required>{tClaimForm("fileInputButton")}</Label>
                         <ImageUpload
                             onChange={handleFileChange}
                             error={imageError}

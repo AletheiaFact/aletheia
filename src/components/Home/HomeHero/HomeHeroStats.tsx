@@ -1,24 +1,24 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { HomeHeroStatsProps } from "../../../types/Home";
 import CountUp from "react-countup"
+import { useTranslations } from "next-intl";
 
 const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: HomeHeroStatsProps) => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
 
     const items = [
         {
             value: stats.personalities,
-            label: t("home:statsPersonalities"),
+            label: tHome("statsPersonalities"),
         },
         {
             value: stats.claims,
-            label: t("home:statsClaims"),
+            label: tHome("statsClaims"),
         },
         {
             value: stats.reviews,
-            label: t("home:statsClaimReviews"),
+            label: tHome("statsClaimReviews"),
         },
     ];
 

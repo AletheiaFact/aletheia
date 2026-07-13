@@ -11,12 +11,12 @@ import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
-import { TFunction } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
 import { Comment, NewCommentPayload } from "../../../types/Comment";
 import { User } from "../../../types/User";
 import { Box } from "@mui/material";
 import TextError from "../../TextErrorForm";
+import { useTranslations } from "next-intl";
 
 interface CommentCardFormProps {
     user: User | null;
@@ -24,7 +24,6 @@ interface CommentCardFormProps {
     isEditing: boolean;
     setIsCommentVisible?: Dispatch<SetStateAction<boolean>>;
     setShowForm?: Dispatch<SetStateAction<boolean>>;
-    t: TFunction
 }
 
 
@@ -34,7 +33,6 @@ const CommentCardForm = ({
     isEditing,
     setIsCommentVisible,
     setShowForm,
-    t
 }: CommentCardFormProps) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
@@ -55,12 +53,13 @@ const CommentCardForm = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [commentValue, setCommentValue] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
+    const tCommon = useTranslations("common")
 
     const isReplying = !!content._id;
 
     const handleOnSubmit = async () => {
         if (!commentValue) {
-            setError(t("common:requiredFieldError"));
+            setError(tCommon("requiredFieldError"));
             return;
         }
 
@@ -162,14 +161,14 @@ const CommentCardForm = ({
                     onClick={handleOnSubmit}
                     loading={isLoading}
                 >
-                    {t("common:submit")}
+                    {tCommon("submit")}
                 </AletheiaButton>
                 <AletheiaButton
                     type={ButtonType.whiteBlack}
                     onClick={handleCancel}
                     loading={isLoading}
                 >
-                    {t("common:cancel")}
+                    {tCommon("cancel")}
                 </AletheiaButton>
             </Box>
         </Box>

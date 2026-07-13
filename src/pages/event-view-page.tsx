@@ -1,5 +1,4 @@
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { EventPayload } from "../types/event";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
@@ -9,6 +8,7 @@ import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import EventView from "../components/Event/EventView/EventView";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { getMessages } from "../lib/getMessages";
 
 interface EventPageProps {
     event: EventPayload;
@@ -44,7 +44,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
 
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             event: query.event || null,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             sitekey: query.sitekey,

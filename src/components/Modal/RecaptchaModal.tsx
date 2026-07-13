@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import { useTranslations } from "next-intl";
 
 interface RecaptchaModalProps {
     open: boolean;
@@ -12,7 +12,7 @@ interface RecaptchaModalProps {
 }
 
 const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
-    const { t } = useTranslation();
+    const tReviewTask = useTranslations("reviewTask");
     const [token, setToken] = useState("");
     const captchaRef = useRef(null);
 
@@ -38,7 +38,7 @@ const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
                         paddingRight: 28,
                     }}
                 >
-                    {t("reviewTask:recaptchaModalTitle")}
+                    {tReviewTask("recaptchaModalTitle")}
                 </span>
             }
         >
@@ -69,7 +69,7 @@ const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
                                 textDecorationLine: "underline",
                             }}
                         >
-                            {t("reviewTask:recaptchaModalCancel")}
+                            {tReviewTask("recaptchaModalCancel")}
                         </span>
                     </ModalCancelButton>
 
@@ -79,7 +79,7 @@ const RecaptchaModal = ({ open, onConfirm, onCancel }: RecaptchaModalProps) => {
                         disabled={!token}
                         data-cy="testRecaptchaConfirm"
                     >
-                        {t("reviewTask:recaptchaModalConfirm")}
+                        {tReviewTask("recaptchaModalConfirm")}
                     </AletheiaButton>
                 </Grid>
             </Grid>

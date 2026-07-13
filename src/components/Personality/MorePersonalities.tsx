@@ -1,16 +1,16 @@
 import React from "react";
 import Grid from "@mui/material/Grid"
 import SocialMediaShare from "../SocialMediaShare";
-import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "./PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import CTAFolder from "../Home/CTAFolder/CTAFolder";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
+import { useTranslations } from "next-intl";
 
 const MorePersonalities = ({ personalities, href, title }) => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     const { vw } = useAppSelector((state) => state);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
@@ -45,7 +45,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
 
                 {(!isLoggedIn && !vw?.md) && (
                     <SectionTitle>
-                        {t("home:sectionTitle2")}
+                        {tHome("sectionTitle2")}
                     </SectionTitle>
                 )}
 

@@ -1,8 +1,8 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const Aletheia404 = () => {
-    const { t } = useTranslation();
+    const tNotFound = useTranslations("notFound");
     return (
         <div
             style={{
@@ -13,7 +13,7 @@ const Aletheia404 = () => {
                 fontWeight: 600,
             }}
         >
-            <div> {t("notFound:message")}</div>
+            <div> {tNotFound("message")}</div>
         </div>
     );
 };

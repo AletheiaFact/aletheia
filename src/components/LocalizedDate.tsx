@@ -1,4 +1,4 @@
-import { useTranslation } from "next-i18next";
+import { useLocale } from "next-intl";
 import React from "react";
 
 interface LocalizedDateProps {
@@ -7,8 +7,7 @@ interface LocalizedDateProps {
 }
 
 const LocalizedDate = ({ date, showTime = false }: LocalizedDateProps) => {
-  const { i18n } = useTranslation();
-  const currentLocale = i18n.language || "en";
+  const currentLocale = useLocale();
   const dateObj = new Date(date);
 
   if (Number.isNaN(dateObj.getTime())) return null;

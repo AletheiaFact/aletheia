@@ -1,11 +1,11 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../atoms/currentUser";
 import { Status } from "../types/enums";
 
 const AcessDeniedPage = ({ originalUrl, status }) => {
-    const { t } = useTranslation();
+    const tUnauthorized = useTranslations("unauthorized");
     const [role] = useAtom(currentUserRole);
 
     if (status !== Status.Inactive)
@@ -20,10 +20,10 @@ const AcessDeniedPage = ({ originalUrl, status }) => {
                 }}
             >
                 {originalUrl
-                    ? t("unauthorized:firstPartMessageURL")
-                    : t("unauthorized:firstPartMessage")}
+                    ? tUnauthorized("firstPartMessageURL")
+                    : tUnauthorized("firstPartMessage")}
                 {originalUrl === "/" ? "Home" : originalUrl}
-                {t("unauthorized:secondPartMessage")}
+                {tUnauthorized("secondPartMessage")}
                 {role}
             </div>
         );
@@ -38,8 +38,8 @@ const AcessDeniedPage = ({ originalUrl, status }) => {
                     fontWeight: 600,
                 }}
             >
-                <h2>{t("unauthorized:inactiveAccountTitle")}</h2>
-                <h3>{t("unauthorized:inactiveAccountBody")}</h3>
+                <h2>{tUnauthorized("inactiveAccountTitle")}</h2>
+                <h3>{tUnauthorized("inactiveAccountBody")}</h3>
             </div>
         );
 };

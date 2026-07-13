@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Chip } from "@mui/material"
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 interface MetaChipProps {
     icon: React.ReactNode;
     label: string;
@@ -10,7 +10,7 @@ interface MetaChipProps {
 }
 
 export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, style, dataCy }) => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
     return (
         <Box
             sx={{
@@ -35,7 +35,7 @@ export const MetaChip: React.FC<MetaChipProps> = ({ icon, label, label_value, st
                 </Typography>
             </Box>
             <Chip
-                label={label_value || t("claimForm:noAnswer")}
+                label={label_value || tClaimForm("noAnswer")}
                 style={style}
                 size="small"
                 data-cy={dataCy}

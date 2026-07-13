@@ -3,13 +3,13 @@ import { Grid, Tooltip } from "@mui/material";
 import AletheiaButton from "../../AletheiaButton";
 import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import EditorCard from "./EditorCard";
 import { uniqueId } from "remirror";
 import { VisualEditorContext } from "../VisualEditorProvider";
+import { useTranslations } from "next-intl";
 
 const QuestionCard = ({ forwardRef, node, initialPosition }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const { editorConfiguration } = useContext(VisualEditorContext);
     const command = useCommands();
 
@@ -24,7 +24,7 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
 
     return (
         <EditorCard
-            label={t("claimReviewForm:questionsLabel")}
+            label={tClaimReviewForm("questionsLabel")}
             dataCy="testClaimReviewquestions0"
             span={11}
             forwardRef={forwardRef}
@@ -34,7 +34,7 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                     <Tooltip
                         title={
                             editorConfiguration?.readonly
-                                ? t("claimReviewForm:viewOnlyTooltip")
+                                ? tClaimReviewForm("viewOnlyTooltip")
                                 : ""
                         }
                         arrow

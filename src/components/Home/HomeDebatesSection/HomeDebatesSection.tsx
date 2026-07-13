@@ -1,5 +1,4 @@
 import { Box, Grid, Typography } from "@mui/material"
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import colors from "../../../styles/colors";
@@ -12,13 +11,14 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import HomeDebatesSectionStyle from "./HomeDebatesSection.style";
 import { Debate } from "../../../types/Debates";
+import { useTranslations } from "next-intl";
 
 interface HomeDebatesSectionProps {
     debates: Debate[];
 }
 
 const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
     const [nameSpace] = useAtom(currentNameSpace);
 
     const seeAllHref =
@@ -31,12 +31,12 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
         <HomeDebatesSectionStyle>
             <Box className="debates-inner">
                 <GridList
-                    title={t("debates:sectionTitle")}
-                    subtitle={t("debates:sectionSubtitle")}
+                    title={tDebates("sectionTitle")}
+                    subtitle={tDebates("sectionSubtitle")}
                     dataSource={debates}
                     itemSize={{ xs: 12, sm: 6 }}
                     href={seeAllHref}
-                    seeMoreButtonLabel={t("debates:seeAll")}
+                    seeMoreButtonLabel={tDebates("seeAll")}
                     seeMoreButtonPosition="top"
                     dataCy="testSeeMoreDebates"
                     getKey={(debate) => debate.claimId}
@@ -66,7 +66,7 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
                                             }}
                                         >
                                             {debateClaim.title} (
-                                            {t("debates:liveLabel")})
+                                            {tDebates("liveLabel")})
                                         </Typography>
                                     </Grid>
                                     <Grid container
@@ -99,7 +99,7 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
                                                         : `/${nameSpace}/claim/${debateClaim.claimId}/debate`
                                                 }
                                             >
-                                                {t("debates:seeDebate")}
+                                                {tDebates("seeDebate")}
                                             </AletheiaButton>
                                         </Grid>
                                     </Grid>

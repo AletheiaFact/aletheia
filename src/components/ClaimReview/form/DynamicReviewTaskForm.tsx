@@ -27,7 +27,6 @@ import { trackUmamiEvent } from "../../../lib/umami";
 import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
-import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
 import RecaptchaModal from "../../Modal/RecaptchaModal";
 import { currentNameSpace } from "../../../atoms/namespace";
@@ -35,6 +34,7 @@ import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
+import { useTranslations } from "next-intl";
 
 const DynamicReviewTaskForm = ({
     data_hash,
@@ -69,7 +69,9 @@ const DynamicReviewTaskForm = ({
     const isReported = useSelector(machineService, reportSelector);
     const { comments, editorSources } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
+    const tWarningModal = useTranslations("warningModal");
+    const t = useTranslations();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
     const [isLoading, setIsLoading] = useState({});
@@ -152,10 +154,10 @@ const DynamicReviewTaskForm = ({
 
         const filteredFormData = eventsWithoutVisualEditor.includes(eventName)
             ? Object.fromEntries(
-                  Object.entries(formData).filter(
-                      ([key]) => key !== "visualEditor"
-                  )
-              )
+                Object.entries(formData).filter(
+                    ([key]) => key !== "visualEditor"
+                )
+            )
             : formData;
 
         const payload = {
@@ -194,9 +196,9 @@ const DynamicReviewTaskForm = ({
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                  !reviewData.usersId.includes(data.crossCheckerId)
+                !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                  !reviewData.usersId.includes(data.reviewerId);
+                !reviewData.usersId.includes(data.reviewerId);
 
         if (!isValidReviewer) {
             setSubmitValidationErrors([
@@ -205,7 +207,7 @@ const DynamicReviewTaskForm = ({
                         event === ReviewTaskEvents.sendToCrossChecking
                             ? "crossCheckerId"
                             : "reviewerId",
-                    message: "reviewTask:invalidReviewerMessage",
+                    message: "reviewTask.invalidReviewerMessage",
                 },
             ]);
         }
@@ -356,80 +358,80 @@ const DynamicReviewTaskForm = ({
                 <>
                     {(Object.keys(errors).length > 0 ||
                         submitValidationErrors.length > 0) && (
-                        <div
-                            ref={errorAlertRef}
-                            style={{ margin: "0 20px 16px" }}
-                        >
-                            <AletheiaAlert
-                                type="error"
-                                message={t(
-                                    "claimReviewForm:validationErrorTitle"
-                                )}
-                                showIcon
-                                description={
-                                    submitValidationErrors.length > 0 ? (
-                                        <ul
-                                            style={{
-                                                margin: "8px 0 0",
-                                                paddingLeft: "20px",
-                                                listStyle: "none",
-                                            }}
-                                        >
-                                            {submitValidationErrors.map(
-                                                (err) => (
-                                                    <li
-                                                        key={err.field}
-                                                        data-cy={
-                                                            err.field ===
-                                                                "reviewerId" ||
-                                                            err.field ===
-                                                                "crossCheckerId"
-                                                                ? "testReviewerError"
-                                                                : undefined
-                                                        }
-                                                        style={{
-                                                            cursor: "pointer",
-                                                            padding: "4px 0",
-                                                            color: colors.error,
-                                                            fontWeight: 500,
-                                                            fontSize: "13px",
-                                                        }}
-                                                        onClick={() => {
-                                                            const el =
-                                                                document.getElementById(
-                                                                    `field-${err.field}`
-                                                                ) ||
-                                                                document.getElementById(
-                                                                    "field-visualEditor"
-                                                                );
-                                                            el?.scrollIntoView({
-                                                                behavior:
-                                                                    "smooth",
-                                                                block: "center",
-                                                            });
-                                                        }}
-                                                    >
-                                                        {"\u2022 "}
-                                                        {err.label
-                                                            ? `${t(
-                                                                  err.label
-                                                              )}: ${t(
-                                                                  err.message
-                                                              )}`
-                                                            : t(err.message)}
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-                                    ) : (
-                                        t(
-                                            "claimReviewForm:validationErrorDescription"
+                            <div
+                                ref={errorAlertRef}
+                                style={{ margin: "0 20px 16px" }}
+                            >
+                                <AletheiaAlert
+                                    type="error"
+                                    message={tClaimReviewForm(
+                                        "validationErrorTitle"
+                                    )}
+                                    showIcon
+                                    description={
+                                        submitValidationErrors.length > 0 ? (
+                                            <ul
+                                                style={{
+                                                    margin: "8px 0 0",
+                                                    paddingLeft: "20px",
+                                                    listStyle: "none",
+                                                }}
+                                            >
+                                                {submitValidationErrors.map(
+                                                    (err) => (
+                                                        <li
+                                                            key={err.field}
+                                                            data-cy={
+                                                                err.field ===
+                                                                    "reviewerId" ||
+                                                                    err.field ===
+                                                                    "crossCheckerId"
+                                                                    ? "testReviewerError"
+                                                                    : undefined
+                                                            }
+                                                            style={{
+                                                                cursor: "pointer",
+                                                                padding: "4px 0",
+                                                                color: colors.error,
+                                                                fontWeight: 500,
+                                                                fontSize: "13px",
+                                                            }}
+                                                            onClick={() => {
+                                                                const el =
+                                                                    document.getElementById(
+                                                                        `field-${err.field}`
+                                                                    ) ||
+                                                                    document.getElementById(
+                                                                        "field-visualEditor"
+                                                                    );
+                                                                el?.scrollIntoView({
+                                                                    behavior:
+                                                                        "smooth",
+                                                                    block: "center",
+                                                                });
+                                                            }}
+                                                        >
+                                                            {"\u2022 "}
+                                                            {err.label
+                                                                ? `${t(
+                                                                    err.label
+                                                                )}: ${t(
+                                                                    err.message
+                                                                )}`
+                                                                : t(err.message)}
+                                                        </li>
+                                                    )
+                                                )}
+                                            </ul>
+                                        ) : (
+                                            tClaimReviewForm(
+                                                "validationErrorDescription"
+                                            )
                                         )
-                                    )
-                                }
-                            />
-                        </div>
-                    )}
+                                    }
+                                />
+                            </div>
+                        )}
                     <DynamicForm
                         currentForm={form}
                         machineValues={reviewData}
@@ -458,8 +460,8 @@ const DynamicReviewTaskForm = ({
 
             <WarningModal
                 open={gobackWarningModal}
-                title={t("warningModal:title", {
-                    warning: t("warningModal:gobackWarning"),
+                title={tWarningModal("title", {
+                    warning: tWarningModal("gobackWarning"),
                 })}
                 width={400}
                 handleOk={() => {
@@ -474,8 +476,8 @@ const DynamicReviewTaskForm = ({
 
             <WarningModal
                 open={finishReportWarningModal}
-                title={t("warningModal:title", {
-                    warning: t("warningModal:crossCheckingClassification"),
+                title={tWarningModal("title", {
+                    warning: tWarningModal("crossCheckingClassification"),
                 })}
                 width={400}
                 handleOk={() => {

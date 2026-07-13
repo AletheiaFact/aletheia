@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { IEditVerificationRequestDrawer } from "../../../types/VerificationRequest";
-import { useTranslation } from "react-i18next";
 import { Divider, Grid } from "@mui/material";
 import verificationRequestApi from "../../../api/verificationRequestApi";
 import LargeDrawer from "../../LargeDrawer";
 import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
+import { useTranslations } from "next-intl";
 
 const EditVerificationRequestDrawer = ({
     open,
@@ -12,7 +12,7 @@ const EditVerificationRequestDrawer = ({
     verificationRequest,
     onSave,
 }: IEditVerificationRequestDrawer) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ const EditVerificationRequestDrawer = ({
             const response = await verificationRequestApi.updateVerificationRequest(
                 verificationRequest._id,
                 updateData,
-                t,
+                tVerificationRequest,
                 'update'
             );
 
@@ -52,7 +52,7 @@ const EditVerificationRequestDrawer = ({
         <LargeDrawer open={open} onClose={onClose}>
             <Grid container style={{ padding: "30px" }}>
                 <h2>
-                    {t("verificationRequest:titleEditVerificationRequest")}
+                    {tVerificationRequest("titleEditVerificationRequest")}
                 </h2>
                 <Divider />
                 <DynamicVerificationRequestForm

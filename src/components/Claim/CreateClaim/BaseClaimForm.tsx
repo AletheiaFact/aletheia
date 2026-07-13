@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FormControl, FormLabel, Checkbox, Grid, FormHelperText } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import colors from "../../../styles/colors";
@@ -9,6 +8,7 @@ import Input from "../../AletheiaInput";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
+import { useTranslations } from "next-intl";
 
 interface BaseClaimFormProps {
     content?: React.ReactNode;
@@ -50,7 +50,8 @@ const BaseClaimForm = ({
     title,
     sources,
 }: BaseClaimFormProps) => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const tSourceForm = useTranslations("sourceForm");
     const router = useRouter();
     const [disableSubmit, setDisableSubmit] = useState(true);
 
@@ -84,7 +85,7 @@ const BaseClaimForm = ({
                 <div className="root-label">
                     <span className="require-label">*</span>
                     <p className="form-label">
-                        {t("claimForm:titleField")}
+                        {tClaimForm("titleField")}
                     </p>
                 </div>
                 <Input
@@ -93,7 +94,7 @@ const BaseClaimForm = ({
                         setTitle(e.target.value);
                         clearError("title");
                     }}
-                    placeholder={t("claimForm:titleFieldPlaceholder")}
+                    placeholder={tClaimForm("titleFieldPlaceholder")}
                     data-cy={"testTitleClaimForm"}
                 />
                 {errors?.title && (
@@ -111,11 +112,11 @@ const BaseClaimForm = ({
                 <div className="root-label">
                     <span className="require-label">*</span>
                     <p className="form-label">
-                        {t("claimForm:dateField")}
+                        {tClaimForm("dateField")}
                     </p>
                 </div>
                 <DatePickerInput
-                    placeholder={t("claimForm:dateFieldPlaceholder")}
+                    placeholder={tClaimForm("dateFieldPlaceholder")}
                     onChange={(value) => {
                         setDate(value);
                         clearError("date");
@@ -134,7 +135,7 @@ const BaseClaimForm = ({
             <SourceInput
                 errors={errors}
                 clearError={clearError}
-                label={t("sourceForm:label")}
+                label={tSourceForm("label")}
                 onChange={(e, index) => {
                     setSources(
                         sources.map((source, i) => {
@@ -152,7 +153,7 @@ const BaseClaimForm = ({
                         })
                     );
                 }}
-                placeholder={t("sourceForm:placeholder")}
+                placeholder={tSourceForm("placeholder")}
                 sources={sources}
             />
             {disclaimer && (
@@ -167,7 +168,7 @@ const BaseClaimForm = ({
             )}
             <FormLabel style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
                 <Checkbox data-cy={"testCheckboxAcceptTerms"} />
-                <p className="form-label">{t("claimForm:checkboxAcceptTerms")}</p>
+                <p className="form-label">{tClaimForm("checkboxAcceptTerms")}</p>
             </FormLabel>
             <FormLabel>
                 <AletheiaCaptcha onChange={onChangeCaptcha} />
@@ -182,7 +183,7 @@ const BaseClaimForm = ({
                     type={ButtonType.white}
                     onClick={() => router.back()}
                 >
-                    {t("claimForm:cancelButton")}
+                    {tClaimForm("cancelButton")}
                 </AletheiaButton>
                 <AletheiaButton
                     onClick={onFinish}
@@ -192,7 +193,7 @@ const BaseClaimForm = ({
                     disabled={disableSubmit || isLoading}
                     data-cy={"testSaveButton"}
                 >
-                    {t("claimForm:saveButton")}
+                    {tClaimForm("saveButton")}
                 </AletheiaButton>
             </Grid>
         </FormControl>

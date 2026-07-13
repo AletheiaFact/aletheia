@@ -7,10 +7,11 @@ import Typography from "@mui/material/Typography";
 import ClassificationText from "../ClassificationText";
 import reviewColors from "../../constants/reviewColors";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const SentenceReportComments = ({ context }) => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const tClaimReview = useTranslations("claimReview");
     const crossCheckingComments = context?.crossCheckingComments || [];
 
     const getDate = (createdAt) => {
@@ -41,11 +42,11 @@ const SentenceReportComments = ({ context }) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <p>
-                            {t("claimForm:dateField")}{" "}
+                            {tClaimForm("dateField")}{" "}
                             {getDate(crossCheckingComment.createdAt)}
                         </p>
                         <p>
-                            {t("claimReview:crossCheckingClassification")}:{" "}
+                            {tClaimReview("crossCheckingClassification")}:{" "}
                             <ClassificationText
                                 classification={crossCheckingComment.text}
                             />
@@ -54,7 +55,7 @@ const SentenceReportComments = ({ context }) => {
                             variant="body2"
                             style={{ whiteSpace: "pre-wrap" }}
                         >
-                            {t("claimReview:crossCheckingComments")}:{" "}
+                            {tClaimReview("crossCheckingComments")}:{" "}
                             {crossCheckingComment.comment}
                         </Typography>
                     </AccordionDetails>

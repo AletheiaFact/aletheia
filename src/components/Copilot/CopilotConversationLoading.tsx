@@ -1,15 +1,15 @@
 import React from "react";
 import { CircularProgress } from "@mui/material";
 import CopilotConversationLoadingStyle from "./CopilotConversationLoading.style";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const CopilotConversationLoading = () => {
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
     return (
         <CopilotConversationLoadingStyle>
             <CircularProgress size={22} />
             <span className="loading-text">
-                {t("copilotChatBot:agentLoadingThoughts")}
+                {tCopilotChatBot("agentLoadingThoughts")}
             </span>
         </CopilotConversationLoadingStyle>
     );

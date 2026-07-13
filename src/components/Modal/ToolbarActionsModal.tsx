@@ -6,9 +6,9 @@ import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import { useAppSelector } from "../../store/store";
 import ModalButtons from "./ModalButtons";
-import { useTranslation } from "react-i18next";
 import AletheiaTextArea from "../AletheiaTextArea";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const UnhideContentModal = ({
     open,
@@ -20,7 +20,7 @@ const UnhideContentModal = ({
     hasDescription = false,
     updatingHideStatus = true,
 }) => {
-    const { t } = useTranslation();
+    const tClaimReview = useTranslations("claimReview");
     const { vw } = useAppSelector((state) => state);
     const [recaptcha, setRecaptcha] = useState("");
     const hasCaptcha = !!recaptcha;
@@ -88,11 +88,11 @@ const UnhideContentModal = ({
                             <AletheiaTextArea
                                 multiline
                                 white="white"
-                                placeholder={t(
-                                    "claimReview:descriptionInputPlaceholder"
+                                placeholder={tClaimReview(
+                                    "descriptionInputPlaceholder"
                                 )}
                                 {...register("description", {
-                                    required: t("claimReview:descriptionInputError"),
+                                    required: tClaimReview("descriptionInputError"),
                                 })}
                             />
                             {errors.description && (
@@ -101,7 +101,7 @@ const UnhideContentModal = ({
                                         color: colors.error, marginTop: 4
                                     }}
                                 >
-                                    {t("claimReview:descriptionInputError")}
+                                    {tClaimReview("descriptionInputError")}
                                 </p>
                             )}
                         </div>

@@ -3,7 +3,7 @@ import { Button, Divider, Box, Typography, Link } from "@mui/material";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { StyledMenu } from "./Header.style";
 import { MenuSection } from "../../types/header";
-import { TFunction } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export interface HeaderMenuProps {
     buttonLabel: string;
@@ -11,7 +11,6 @@ export interface HeaderMenuProps {
     sections: MenuSection[];
     anchorEl: HTMLElement | null;
     setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
-    t: TFunction;
 }
 
 const HeaderMenu = ({
@@ -20,8 +19,9 @@ const HeaderMenu = ({
     sections,
     anchorEl,
     setAnchorEl,
-    t,
 }: HeaderMenuProps) => {
+    const tHeader = useTranslations("header");
+
     return (
         <>
             <Button
@@ -53,7 +53,7 @@ const HeaderMenu = ({
 
                     sectionElements.push(
                         <Box key={`header-${section.title}`} className="section-header">
-                            {t(`header:${section.title}Section`)}
+                            {tHeader(`${section.title}Section`)}
                         </Box>
                     );
 
@@ -72,10 +72,10 @@ const HeaderMenu = ({
                                     </Box>
                                     <Box className="text-wrapper">
                                         <Typography variant="h2" className="item-title">
-                                            {t(`header:${item.key}Item`)}
+                                            {tHeader(`${item.key}Item`)}
                                         </Typography>
                                         <Typography variant="body1" className="item-subtitle">
-                                            {t(`header:${item.key}Subtitle`)}
+                                            {tHeader(`${item.key}Subtitle`)}
                                         </Typography>
                                     </Box>
                                 </Box>
