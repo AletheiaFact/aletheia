@@ -32,6 +32,14 @@ const staticLinks = [
         link: "https://aletheiafact-supportive-materials.s3.amazonaws.com/Poster+Timeline.pdf",
         image: "/timeline-thumb.png",
     },
+    {
+        title: "Relatório do Comitê Nacional — 1º semestre de 2026",
+        description:
+            "Balanço das atividades do Comitê Nacional no primeiro semestre de 2026.",
+        link: "/relatorio-comite-nacional-1sem2026.html",
+        image: "/comite-thumb.png",
+        actionLabel: "Ver relatório",
+    },
     // Add more links as needed
 ];
 
@@ -89,7 +97,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                     </div>
                 ) : (
                     staticLinks.map(
-                        ({ title, description, link, image }, index) => (
+                        ({ title, description, link, image, actionLabel }, index) => (
                             <Card
                                 key={title}
                                 sx={{
@@ -113,10 +121,9 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                     <Image
                                         src={image}
                                         alt={title}
-                                        width={345} // Adjust based on your design needs
-                                        height={140} // Adjust based on your design needs
-                                        layout="fill"
-                                        objectFit="contain"
+                                        fill
+                                        unoptimized
+                                        style={{ objectFit: "contain" }}
                                     />
                                 </div>
                                 <CardContent>
@@ -140,7 +147,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                         href={link}
                                         target="_blank"
                                     >
-                                        Download
+                                        {actionLabel ?? "Download"}
                                     </Button>
                                 </CardActions>
                             </Card>
