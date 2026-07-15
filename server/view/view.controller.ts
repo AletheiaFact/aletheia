@@ -135,11 +135,10 @@ export class ViewController {
     @Header("Cache-Control", "max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        await this.viewService.render(
-            req,
-            res,
-            parsedUrl.pathname ?? "/",
-            parsedUrl.query
+        await this.viewService.getRequestHandler()(
+            req as any,
+            res as any,
+            parsedUrl
         );
     }
 
