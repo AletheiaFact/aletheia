@@ -737,4 +737,3 @@ export class MongoPersonalityService {
 // Port conformance: fails build if MongoPersonalityService drifts from IPersonalityService.
 const _assertImplementsPort: IPersonalityService =
     {} as MongoPersonalityService;
-void _assertImplementsPort;
