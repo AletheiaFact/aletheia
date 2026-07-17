@@ -57,23 +57,23 @@ import { UpdateHiddenStatusDTO } from "./dto/update-hidden-status.dto";
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
     constructor(
-        private claimReviewService: ClaimReviewService,
-        private reviewTaskService: ReviewTaskService,
+        private readonly claimReviewService: ClaimReviewService,
+        private readonly reviewTaskService: ReviewTaskService,
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService,
-        private sentenceService: SentenceService,
-        private configService: ConfigService,
-        private viewService: ViewService,
-        private captchaService: CaptchaService,
-        private imageService: ImageService,
-        private debateService: DebateService,
-        private editorService: EditorService,
-        private parserService: ParserService,
-        private historyService: HistoryService,
-        private claimRevisionService: ClaimRevisionService,
-        private featureFlagService: FeatureFlagService,
-        private groupService: GroupService
+        private readonly claimService: ClaimService,
+        private readonly sentenceService: SentenceService,
+        private readonly configService: ConfigService,
+        private readonly viewService: ViewService,
+        private readonly captchaService: CaptchaService,
+        private readonly imageService: ImageService,
+        private readonly debateService: DebateService,
+        private readonly editorService: EditorService,
+        private readonly parserService: ParserService,
+        private readonly historyService: HistoryService,
+        private readonly claimRevisionService: ClaimRevisionService,
+        private readonly featureFlagService: FeatureFlagService,
+        private readonly groupService: GroupService
     ) {}
 
     _verifyInputsQuery(query: GetClaimsDTO) {

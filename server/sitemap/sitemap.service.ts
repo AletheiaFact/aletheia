@@ -12,8 +12,8 @@ export class SitemapService {
     constructor(
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService,
-        private claimReviewService: ClaimReviewService
+        private readonly claimService: ClaimService,
+        private readonly claimReviewService: ClaimReviewService
     ) {}
     private readonly logger = new Logger("SitemapService");
 

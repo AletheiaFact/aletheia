@@ -40,10 +40,10 @@ export class PersonalityController {
     constructor(
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private viewService: ViewService,
-        private configService: ConfigService,
-        private captchaService: CaptchaService,
-        private historyService: HistoryService
+        private readonly viewService: ViewService,
+        private readonly configService: ConfigService,
+        private readonly captchaService: CaptchaService,
+        private readonly historyService: HistoryService
     ) {}
 
     @Public()

@@ -10,11 +10,11 @@ import type { IPersonalityService } from "../interfaces/personality.service.inte
 @Injectable({ scope: Scope.REQUEST })
 export class StatsService {
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
-        private claimReviewService: ClaimReviewService,
+        @Inject(REQUEST) private readonly req: BaseRequest,
+        private readonly claimReviewService: ClaimReviewService,
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService
+        private readonly claimService: ClaimService
     ) {}
 
     getHomeStats() {

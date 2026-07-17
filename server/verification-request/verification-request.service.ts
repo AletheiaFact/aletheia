@@ -58,7 +58,7 @@ export class VerificationRequestService {
         private readonly VerificationRequestModel: Model<VerificationRequestDocument>,
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
-        private sourceService: SourceService,
+        private readonly sourceService: SourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,

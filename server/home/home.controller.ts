@@ -28,15 +28,15 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 @Controller("/")
 export class HomeController {
     constructor(
-        private viewService: ViewService,
+        private readonly viewService: ViewService,
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private statsService: StatsService,
-        private debateService: DebateService,
-        private claimRevisionService: ClaimRevisionService,
-        private claimReviewService: ClaimReviewService,
+        private readonly statsService: StatsService,
+        private readonly debateService: DebateService,
+        private readonly claimRevisionService: ClaimRevisionService,
+        private readonly claimReviewService: ClaimReviewService,
         private readonly eventsService: EventsService,
-        private featureFlagService: FeatureFlagService
+        private readonly featureFlagService: FeatureFlagService
     ) {}
 
     @ApiTags("pages")

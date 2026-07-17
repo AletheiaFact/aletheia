@@ -24,12 +24,12 @@ import type { IPersonalityService } from "../interfaces/personality.service.inte
 export class SearchController {
     private readonly logger = new Logger("SearchController");
     constructor(
-        private viewService: ViewService,
+        private readonly viewService: ViewService,
         @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private sentenceService: SentenceService,
-        private claimRevisionService: ClaimRevisionService,
-        private configService: ConfigService
+        private readonly sentenceService: SentenceService,
+        private readonly claimRevisionService: ClaimRevisionService,
+        private readonly configService: ConfigService
     ) {}
 
     @Public()
