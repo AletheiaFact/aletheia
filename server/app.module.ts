@@ -67,6 +67,7 @@ import { AiTaskModule } from "./ai-task/ai-task.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
+import { McpModule } from "./mcp/mcp.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -159,6 +160,7 @@ export class AppModule implements NestModule {
                 FeatureFlagModule,
                 GroupModule,
                 AiTaskModule,
+                ...(options?.mcp?.enabled ? [McpModule] : []),
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],
