@@ -63,6 +63,10 @@ describe("McpAuthGuard", () => {
         guard = module.get(McpAuthGuard);
     });
 
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     it("rejects requests without a bearer token with a WWW-Authenticate challenge", async () => {
         const { context, response } = createMockContext();
         await expect(guard.canActivate(context)).rejects.toThrow(
@@ -142,6 +146,78 @@ describe("McpAuthGuard", () => {
         );
     });
 
+    it("rejects when token introspection fails with a network error", async () => {
+        mockIntrospect.mockRejectedValue(new Error("Hydra unavailable"));
+        const { context, response } = createMockContext("Bearer flaky-token");
+        await expect(guard.canActivate(context)).rejects.toThrow(
+            UnauthorizedException
+        );
+        expect(response.setHeader).toHaveBeenCalledWith(
+            "WWW-Authenticate",
+            'Bearer resource_metadata="https://aletheiafact.org/.well-known/oauth-protected-resource/server/mcp"'
+        );
+    });
+
+    it("rejects when the identity lookup fails", async () => {
+        mockIntrospect.mockResolvedValue({
+            data: { active: true, client_id: "mcp-client", sub: "identity-x" },
+        });
+        mockGetIdentity.mockRejectedValue(
+            new Error("Failed to fetch identity identity-x: 404")
+        );
+        const { context } = createMockContext("Bearer user-token-x");
+        await expect(guard.canActivate(context)).rejects.toThrow(
+            UnauthorizedException
+        );
+    });
+
+    it("rejects identities when app_affiliation config is unset (fails closed)", async () => {
+        const previous = configValues.app_affiliation;
+        delete configValues.app_affiliation;
+        try {
+            mockIntrospect.mockResolvedValue({
+                data: {
+                    active: true,
+                    client_id: "mcp-client",
+                    sub: "identity-3",
+                },
+            });
+            mockGetIdentity.mockResolvedValue({
+                id: "identity-3",
+                state: "active",
+                traits: {
+                    user_id: "u3",
+                    role: { main: "admin" },
+                },
+            });
+            const { context } = createMockContext("Bearer user-token-d");
+            await expect(guard.canActivate(context)).rejects.toThrow(
+                UnauthorizedException
+            );
+        } finally {
+            configValues.app_affiliation = previous;
+        }
+    });
+
+    it("rejects identities that are not active", async () => {
+        mockIntrospect.mockResolvedValue({
+            data: { active: true, client_id: "mcp-client", sub: "identity-4" },
+        });
+        mockGetIdentity.mockResolvedValue({
+            id: "identity-4",
+            state: "inactive",
+            traits: {
+                user_id: "u4",
+                role: { main: "admin" },
+                app_affiliation: "aletheia",
+            },
+        });
+        const { context } = createMockContext("Bearer user-token-e");
+        await expect(guard.canActivate(context)).rejects.toThrow(
+            UnauthorizedException
+        );
+    });
+
     it("caches successful introspections per token", async () => {
         mockIntrospect.mockResolvedValue({
             data: { active: true, client_id: "mcp-client", sub: "identity-9" },
@@ -161,5 +237,56 @@ describe("McpAuthGuard", () => {
         await guard.canActivate(second.context);
         expect(mockIntrospect).toHaveBeenCalledTimes(1);
         expect(second.request.user.role).toEqual({ main: "fact-checker" });
+        // Raw bearer tokens must never be used as cache keys.
+        expect((guard as any).cache.has("user-token-c")).toBe(false);
+        expect((guard as any).cache.size).toBe(1);
+    });
+
+    it("re-introspects tokens after the cache TTL expires", async () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date("2026-07-18T12:00:00Z"));
+        mockIntrospect.mockResolvedValue({
+            data: { active: true, client_id: "mcp-client", sub: "identity-9" },
+        });
+        mockGetIdentity.mockResolvedValue({
+            id: "identity-9",
+            state: "active",
+            traits: {
+                user_id: "u9",
+                role: { main: "fact-checker" },
+                app_affiliation: "aletheia",
+            },
+        });
+        const first = createMockContext("Bearer user-token-f");
+        const second = createMockContext("Bearer user-token-f");
+        await guard.canActivate(first.context);
+        vi.advanceTimersByTime(McpAuthGuard.CACHE_TTL_MS + 1);
+        await guard.canActivate(second.context);
+        expect(mockIntrospect).toHaveBeenCalledTimes(2);
+    });
+
+    it("evicts expired entries from the cache on write", async () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date("2026-07-18T12:00:00Z"));
+        mockIntrospect.mockResolvedValue({
+            data: { active: true, client_id: "mcp-client", sub: "identity-9" },
+        });
+        mockGetIdentity.mockResolvedValue({
+            id: "identity-9",
+            state: "active",
+            traits: {
+                user_id: "u9",
+                role: { main: "fact-checker" },
+                app_affiliation: "aletheia",
+            },
+        });
+        const stale = createMockContext("Bearer user-token-stale");
+        await guard.canActivate(stale.context);
+        expect((guard as any).cache.size).toBe(1);
+        vi.advanceTimersByTime(McpAuthGuard.CACHE_TTL_MS + 1);
+        // A different token triggers a cache write, which sweeps stale entries.
+        const fresh = createMockContext("Bearer user-token-fresh");
+        await guard.canActivate(fresh.context);
+        expect((guard as any).cache.size).toBe(1);
     });
 });

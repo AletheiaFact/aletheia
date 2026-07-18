@@ -7,6 +7,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
 import { Configuration, OAuth2Api } from "@ory/client";
+import { createHash } from "crypto";
 import { BaseGuard } from "../auth/base.guard";
 import OryService from "../auth/ory/ory.service";
 import { toError } from "../util/error-handling";
@@ -51,7 +52,9 @@ export class McpAuthGuard extends BaseGuard {
             this.deny(response, "Missing bearer token");
         }
 
-        const cached = this.cache.get(token);
+        // Never keep raw bearer tokens in memory as cache keys.
+        const cacheKey = createHash("sha256").update(token).digest("hex");
+        const cached = this.cache.get(cacheKey);
         if (cached && cached.expiresAt > Date.now()) {
             request.user = cached.user;
             return true;
@@ -82,12 +85,26 @@ export class McpAuthGuard extends BaseGuard {
         }
 
         const user = await this.resolveUser(introspection, response);
-        this.cache.set(token, {
+        this.evictExpiredEntries();
+        this.cache.set(cacheKey, {
             user,
             expiresAt: Date.now() + McpAuthGuard.CACHE_TTL_MS,
         });
         request.user = user;
         return true;
+    }
+
+    /**
+     * Lazy sweep run on each cache write so entries for tokens never seen
+     * again don't accumulate indefinitely.
+     */
+    private evictExpiredEntries(): void {
+        const now = Date.now();
+        for (const [key, entry] of this.cache) {
+            if (entry.expiresAt <= now) {
+                this.cache.delete(key);
+            }
+        }
     }
 
     private async resolveUser(
@@ -123,8 +140,18 @@ export class McpAuthGuard extends BaseGuard {
         const traits = identity?.traits;
         const expectedAffiliation =
             this.configService.get<string>("app_affiliation");
-        if (!traits || traits.app_affiliation !== expectedAffiliation) {
+        // Fail closed: missing config must never let an identity without an
+        // affiliation trait through (undefined === undefined).
+        if (
+            !expectedAffiliation ||
+            !traits ||
+            traits.app_affiliation !== expectedAffiliation
+        ) {
             this.deny(response, "Affiliation mismatch");
+        }
+
+        if (identity.state !== "active") {
+            this.deny(response, "Inactive identity");
         }
 
         return {
