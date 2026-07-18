@@ -1,6 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Public } from "../auth/decorators/auth.decorator";
+import { MCP_RESOURCE_METADATA_PATH } from "./mcp.constants";
 
 /**
  * OAuth 2.0 Protected Resource Metadata (RFC 9728) for the MCP endpoint.
@@ -12,7 +13,7 @@ export class McpWellKnownController {
     constructor(private readonly configService: ConfigService) {}
 
     @Public()
-    @Get(".well-known/oauth-protected-resource/server/mcp")
+    @Get(MCP_RESOURCE_METADATA_PATH)
     getProtectedResourceMetadata() {
         const publicUrl = this.configService.get<string>("mcp.public_url");
         const authorizationServer =
