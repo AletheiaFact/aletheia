@@ -11,6 +11,7 @@ import { createHash } from "crypto";
 import { BaseGuard } from "../auth/base.guard";
 import OryService from "../auth/ory/ory.service";
 import { toError } from "../util/error-handling";
+import { MCP_RESOURCE_METADATA_PATH } from "./mcp.constants";
 
 interface CachedAuth {
     user: Record<string, any>;
@@ -167,7 +168,7 @@ export class McpAuthGuard extends BaseGuard {
         const publicUrl = this.configService.get<string>("mcp.public_url");
         response.setHeader(
             "WWW-Authenticate",
-            `Bearer resource_metadata="${publicUrl}/.well-known/oauth-protected-resource/server/mcp"`
+            `Bearer resource_metadata="${publicUrl}/${MCP_RESOURCE_METADATA_PATH}"`
         );
         throw new UnauthorizedException(reason);
     }
