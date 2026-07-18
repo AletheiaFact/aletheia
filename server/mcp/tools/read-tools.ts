@@ -1,6 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import mongoose from "mongoose";
-import { jsonResult, safeTool } from "./tool-helpers";
+import {
+    assertNamespaceAccess,
+    jsonResult,
+    safeTool,
+} from "./tool-helpers";
 import {
     GetClaimReviewSchema,
     GetClaimSchema,
@@ -34,12 +38,14 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("search", async (args) => {
             const { searchText, pageSize, language, nameSpace } = args;
+            assertNamespaceAccess(deps.request.user, nameSpace);
             if (deps.configService.get("db.atlas")) {
                 const [personalities, sentences, claims] = await Promise.all([
                     deps.personalityService.findAll({
                         searchText,
                         pageSize,
                         language,
+                        nameSpace,
                     }),
                     deps.sentenceService.findAll({
                         searchText,
@@ -74,6 +80,7 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListClaimsSchema.shape as any,
         },
         safeTool("list_claims", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
             const query: Record<string, any> = {
                 isHidden: false,
                 nameSpace: args.nameSpace,
@@ -104,11 +111,12 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             description: "Get a claim by id, including its latest revision",
             inputSchema: GetClaimSchema.shape as any,
         },
-        safeTool("get_claim", async (args) =>
-            jsonResult(
+        safeTool("get_claim", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            return jsonResult(
                 await deps.claimService.getById(args.claimId, args.nameSpace)
-            )
-        )
+            );
+        })
     );
 
     server.registerTool(
@@ -117,8 +125,9 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             description: "List public figures (personalities)",
             inputSchema: ListPersonalitiesSchema.shape as any,
         },
-        safeTool("list_personalities", async (args) =>
-            jsonResult(
+        safeTool("list_personalities", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            return jsonResult(
                 await deps.personalityService.combinedListAll({
                     page: args.page,
                     pageSize: args.pageSize,
@@ -126,8 +135,8 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
                     language: args.language,
                     nameSpace: args.nameSpace,
                 })
-            )
-        )
+            );
+        })
     );
 
     server.registerTool(
@@ -136,29 +145,30 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             description: "Get a personality by id, with claims",
             inputSchema: GetPersonalitySchema.shape as any,
         },
-        safeTool("get_personality", async (args) =>
-            jsonResult(
+        safeTool("get_personality", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            return jsonResult(
                 await deps.personalityService.getById(args.personalityId, {
                     language: args.language,
                     nameSpace: args.nameSpace,
                 })
-            )
-        )
+            );
+        })
     );
 
-    // GetClaimReviewSchema uses `.refine()`, which yields a ZodEffects
-    // wrapper with no `.shape` property. Passing the whole schema (rather
-    // than the plan's `.shape`) keeps the refine's "one of the two fields"
-    // validation working; `.shape` would be `undefined` at runtime and the
-    // MCP SDK would then drop all incoming arguments for this tool.
+    // Registered with `.shape` (plain object schema) so tools/list advertises
+    // claimReviewId/dataHash; the "at least one" rule is enforced here (I1).
     server.registerTool(
         "get_claim_review",
         {
             description:
                 "Get a published fact-check review by id or data_hash",
-            inputSchema: GetClaimReviewSchema as any,
+            inputSchema: GetClaimReviewSchema.shape as any,
         },
         safeTool("get_claim_review", async (args: any) => {
+            if (!args.claimReviewId && !args.dataHash) {
+                throw new Error("Provide claimReviewId or dataHash");
+            }
             const review = args.claimReviewId
                 ? await deps.claimReviewService.getById(args.claimReviewId)
                 : await deps.claimReviewService.getReviewByDataHash(
@@ -175,8 +185,9 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
                 "List fact-checking review tasks by workflow state (unassigned, assigned, reported, published)",
             inputSchema: ListReviewTasksSchema.shape as any,
         },
-        safeTool("list_review_tasks", async (args) =>
-            jsonResult(
+        safeTool("list_review_tasks", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            return jsonResult(
                 await deps.reviewTaskService.listAll({
                     value: args.value,
                     filterUser: {
@@ -190,8 +201,8 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
                     pageSize: args.pageSize,
                     order: args.order,
                 })
-            )
-        )
+            );
+        })
     );
 
     server.registerTool(
@@ -263,15 +274,16 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             description: "List classified sources (references)",
             inputSchema: ListSourcesSchema.shape as any,
         },
-        safeTool("list_sources", async (args) =>
-            jsonResult(
+        safeTool("list_sources", async (args) => {
+            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            return jsonResult(
                 await deps.sourceService.listAll({
                     page: args.page,
                     pageSize: String(args.pageSize),
                     order: args.order,
                     nameSpace: args.nameSpace,
                 })
-            )
-        )
+            );
+        })
     );
 }

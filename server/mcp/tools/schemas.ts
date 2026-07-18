@@ -43,17 +43,16 @@ export const GetPersonalitySchema = z.object({
     nameSpace,
 });
 
-export const GetClaimReviewSchema = z
-    .object({
-        claimReviewId: z.string().optional(),
-        dataHash: z
-            .string()
-            .optional()
-            .describe("The review's data_hash (sentence/content hash)"),
-    })
-    .refine((value) => value.claimReviewId || value.dataHash, {
-        message: "Provide claimReviewId or dataHash",
-    });
+// Plain object (no .refine) so the SDK can emit the field list in
+// tools/list — a ZodEffects wrapper has no `.shape`, which would advertise
+// empty params (I1). The "at least one of" rule is enforced in the handler.
+export const GetClaimReviewSchema = z.object({
+    claimReviewId: z.string().optional(),
+    dataHash: z
+        .string()
+        .optional()
+        .describe("The review's data_hash (sentence/content hash)"),
+});
 
 export const ListReviewTasksSchema = z.object({
     ...pagination,
