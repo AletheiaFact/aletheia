@@ -48,6 +48,8 @@ export abstract class BaseGuard implements CanActivate {
             "/api/user/register",
             "/api/claim", // Allow this route to be public temporarily for testing
             "/signup-invite",
+            "/server/mcp",
+            "/.well-known/oauth-protected-resource",
         ].some((route) => request.url.startsWith(route));
 
         const overridePublicRoutes =
