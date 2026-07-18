@@ -156,4 +156,21 @@ export default class OryService {
             return Promise.reject(response);
         });
     }
+
+    async getIdentity(id: string): Promise<any> {
+        const { access_token: token } = this.configService.get("ory");
+        const response = await fetch(`${this.adminUrl}/identities/${id}`, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch identity ${id}: ${response.status}`
+            );
+        }
+        return response.json();
+    }
 }
