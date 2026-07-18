@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { ClaimModule } from "../claim/claim.module";
 import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
@@ -26,6 +27,7 @@ import { McpAuthGuard } from "./mcp-auth.guard";
         TopicModule,
         PersonalityModule.register(),
         OryModule,
+        ConfigModule,
     ],
     controllers: [McpController, McpWellKnownController],
     providers: [McpService, McpAuthGuard],
