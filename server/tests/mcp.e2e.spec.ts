@@ -19,16 +19,22 @@ import { AdminUserMock } from "./utils/AdminUserMock";
 
 const MCP_ACCEPT = "application/json, text/event-stream";
 
+const adminUser = () => ({
+    isM2M: false,
+    _id: AdminUserMock._id.toString(),
+    id: AdminUserMock._id.toString(),
+    role: { main: "admin" },
+    status: "active",
+});
+
+// Mutable so individual tests can inject a different authenticated user
+// shape (role, namespace membership, M2M) before issuing a tool call.
+let mockUser: any = adminUser();
+
 const McpAuthGuardMock = {
     canActivate: (context: any) => {
         const request = context.switchToHttp().getRequest();
-        request.user = {
-            isM2M: false,
-            _id: AdminUserMock._id.toString(),
-            id: AdminUserMock._id.toString(),
-            role: { main: "admin" },
-            status: "active",
-        };
+        request.user = mockUser;
         return true;
     },
 };
@@ -98,6 +104,10 @@ describe("MCP server (e2e)", () => {
         await app?.close();
     });
 
+    beforeEach(() => {
+        mockUser = adminUser();
+    });
+
     it("serves protected resource metadata", async () => {
         const res = await request(app.getHttpServer())
             .get("/.well-known/oauth-protected-resource/server/mcp")
@@ -158,6 +168,20 @@ describe("MCP server (e2e)", () => {
         );
     });
 
+    it("advertises get_claim_review params in tools/list (I1)", async () => {
+        const res = await request(app.getHttpServer())
+            .post("/server/mcp")
+            .set("Accept", MCP_ACCEPT)
+            .send(rpc("tools/list"))
+            .expect(200);
+        const tool = res.body.result.tools.find(
+            (t: any) => t.name === "get_claim_review"
+        );
+        expect(tool).toBeDefined();
+        expect(tool.inputSchema.properties).toHaveProperty("claimReviewId");
+        expect(tool.inputSchema.properties).toHaveProperty("dataHash");
+    });
+
     it("calls list_claims and returns a JSON payload", async () => {
         const body = await callTool(app, "list_claims", {
             page: 0,
@@ -167,5 +191,64 @@ describe("MCP server (e2e)", () => {
         const payload = JSON.parse(body.result.content[0].text);
         expect(payload).toHaveProperty("totalClaims");
         expect(payload).toHaveProperty("claims");
+    });
+
+    it("rejects cross-namespace access (C1)", async () => {
+        // Admin only in `main`; requesting another namespace must fail closed.
+        mockUser = adminUser();
+        const body = await callTool(app, "list_review_tasks", {
+            reviewTaskType: "Claim",
+            nameSpace: "secret",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toMatch(/namespace/i);
+    });
+
+    it("allows a namespace the user belongs to (C1)", async () => {
+        mockUser = {
+            ...adminUser(),
+            role: { main: "admin", secret: "reviewer" },
+        };
+        const body = await callTool(app, "list_review_tasks", {
+            reviewTaskType: "Claim",
+            nameSpace: "secret",
+        });
+        expect(body.result.isError).toBeFalsy();
+    });
+
+    it("blocks writes for a Regular (read-only) user (I3)", async () => {
+        mockUser = { ...adminUser(), role: { main: "regular" } };
+        const body = await callTool(app, "create_personality", {
+            name: "Read Only Person",
+            description: "should not be created",
+            wikidata: "Q-regular-block",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toMatch(/not authorized/i);
+    });
+
+    it("allows writes for an admin user (I3)", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "create_personality", {
+            name: `MCP Admin Person ${Date.now()}`,
+            description: "created via MCP by admin",
+            wikidata: `Q-admin-${Date.now()}`,
+        });
+        expect(body.result.isError).toBeFalsy();
+    });
+
+    it("rejects M2M tokens on user-attributed writes (I2)", async () => {
+        mockUser = {
+            isM2M: true,
+            clientId: "mcp-client",
+            subject: "mcp-client",
+            role: { main: "integration" },
+            namespace: "main",
+        };
+        const body = await callTool(app, "create_source", {
+            href: "https://example.com/m2m-source",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toMatch(/user session/i);
     });
 });
