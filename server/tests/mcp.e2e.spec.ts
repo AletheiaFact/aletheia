@@ -16,6 +16,7 @@ import { McpAuthGuard } from "../mcp/mcp-auth.guard";
 import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
 import { AdminUserMock } from "./utils/AdminUserMock";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
 const MCP_ACCEPT = "application/json, text/event-stream";
 
@@ -86,6 +87,12 @@ describe("MCP server (e2e)", () => {
             .useValue(McpAuthGuardMock)
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
+            .overrideProvider(VerificationRequestStateMachineService)
+            .useValue({
+                request: vi
+                    .fn()
+                    .mockResolvedValue({ status: "pre-triage", ok: true }),
+            })
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -250,5 +257,44 @@ describe("MCP server (e2e)", () => {
         });
         expect(body.result.isError).toBe(true);
         expect(body.result.content[0].text).toMatch(/user session/i);
+    });
+
+    it("creates a personality", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "create_personality", {
+            name: `MCP Test Person ${Date.now()}`,
+            description: "Created via MCP e2e",
+            wikidata: `Q999999${Date.now()}`,
+        });
+        expect(body.result.isError).toBeFalsy();
+        const created = JSON.parse(body.result.content[0].text);
+        expect(created.slug).toMatch(/^mcp-test-person/);
+    });
+
+    it("creates a source attributed to the authenticated user", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "create_source", {
+            href: `https://example.org/mcp-e2e-source-${Date.now()}`,
+        });
+        expect(body.result.isError).toBeFalsy();
+        const created = JSON.parse(body.result.content[0].text);
+        expect(created.href).toContain("https://example.org/mcp-e2e-source-");
+    });
+
+    it("routes verification requests through the state machine with the MCP user", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "create_verification_request", {
+            content: "Is this viral message about vaccines true or false?",
+        });
+        expect(body.result.isError).toBeFalsy();
+    });
+
+    it("returns a readable tool error instead of crashing on bad input", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "get_claim", {
+            claimId: "not-an-objectid",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toContain("get_claim failed");
     });
 });
