@@ -15,17 +15,14 @@ import { Roles } from "./ability/ability.factory";
 // declared via vi.hoisted() because vi.mock() is hoisted above all imports
 // during the Vitest transform pipeline. Constructor mocks must use `function`
 // (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const {
-    mockToSession,
-    mockCreateBrowserLogoutFlow,
-    mockUpdateLogoutFlow,
-} = vi.hoisted(() => ({
-    mockToSession: vi.fn(),
-    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
-        data: { logout_token: "mock-logout-token" },
-    }),
-    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
-}));
+const { mockToSession, mockCreateBrowserLogoutFlow, mockUpdateLogoutFlow } =
+    vi.hoisted(() => ({
+        mockToSession: vi.fn(),
+        mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+            data: { logout_token: "mock-logout-token" },
+        }),
+        mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+    }));
 
 vi.mock("@ory/client", () => ({
     Configuration: vi.fn().mockImplementation(function () {
@@ -193,9 +190,7 @@ describe("SessionGuard", () => {
         it("should logout and redirect to signup-invite when user not in MongoDB", async () => {
             const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
-            usersService.getById.mockRejectedValue(
-                new Error("User not found")
-            );
+            usersService.getById.mockRejectedValue(new Error("User not found"));
 
             const { context, response } = createMockContext(
                 "ory_session=abc",
@@ -218,6 +213,60 @@ describe("SessionGuard", () => {
             const session = createMockSession({
                 traits: { app_affiliation: "wrong-app" },
             });
+            mockToSession.mockResolvedValue({ data: session });
+
+            const { context, response } = createMockContext(
+                "ory_session=abc",
+                false,
+                "/dashboard"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(mockCreateBrowserLogoutFlow).toHaveBeenCalled();
+            expect(response.redirect).toHaveBeenCalledWith("/unauthorized");
+            expect(result).toBe(false);
+        });
+    });
+
+    describe("missing app_affiliation config", () => {
+        const setConfigWithoutAffiliation = () => {
+            configService.get.mockImplementation((key: string) => {
+                const config = {
+                    authentication_type: "ory",
+                    "ory.url": "http://localhost:4433",
+                    "ory.access_token": "mock-access-token",
+                    override_public_routes: undefined,
+                };
+                return config[key];
+            });
+        };
+
+        it("should fail closed when config and trait are both unset", async () => {
+            setupDefaultUserMock();
+            setConfigWithoutAffiliation();
+            const session = createMockSession({
+                traits: { app_affiliation: undefined },
+            });
+            mockToSession.mockResolvedValue({ data: session });
+
+            const { context, response } = createMockContext(
+                "ory_session=abc",
+                false,
+                "/dashboard"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(mockCreateBrowserLogoutFlow).toHaveBeenCalled();
+            expect(response.redirect).toHaveBeenCalledWith("/unauthorized");
+            expect(result).toBe(false);
+        });
+
+        it("should fail closed when config is unset even if trait is present", async () => {
+            setupDefaultUserMock();
+            setConfigWithoutAffiliation();
+            const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
 
             const { context, response } = createMockContext(
