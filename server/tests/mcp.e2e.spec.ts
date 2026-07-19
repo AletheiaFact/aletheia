@@ -46,7 +46,7 @@ function rpc(method: string, params: any = {}, id = 1) {
 
 async function callTool(app: any, name: string, args: any = {}) {
     const res = await request(app.getHttpServer())
-        .post("/server/mcp")
+        .post("/api/mcp")
         .set("Accept", MCP_ACCEPT)
         .send(rpc("tools/call", { name, arguments: args }))
         .expect(200);
@@ -117,15 +117,15 @@ describe("MCP server (e2e)", () => {
 
     it("serves protected resource metadata", async () => {
         const res = await request(app.getHttpServer())
-            .get("/.well-known/oauth-protected-resource/server/mcp")
+            .get("/.well-known/oauth-protected-resource/api/mcp")
             .expect(200);
-        expect(res.body.resource).toBe("http://localhost:3000/server/mcp");
+        expect(res.body.resource).toBe("http://localhost:3000/api/mcp");
         expect(res.body.authorization_servers).toHaveLength(1);
     });
 
     it("answers the MCP initialize handshake", async () => {
         const res = await request(app.getHttpServer())
-            .post("/server/mcp")
+            .post("/api/mcp")
             .set("Accept", MCP_ACCEPT)
             .send(
                 rpc("initialize", {
@@ -140,14 +140,14 @@ describe("MCP server (e2e)", () => {
 
     it("rejects GET with 405 (stateless transport)", async () => {
         await request(app.getHttpServer())
-            .get("/server/mcp")
+            .get("/api/mcp")
             .set("Accept", MCP_ACCEPT)
             .expect(405);
     });
 
     it("lists all v1 tools", async () => {
         const res = await request(app.getHttpServer())
-            .post("/server/mcp")
+            .post("/api/mcp")
             .set("Accept", MCP_ACCEPT)
             .send(rpc("tools/list"))
             .expect(200);
@@ -177,7 +177,7 @@ describe("MCP server (e2e)", () => {
 
     it("advertises get_claim_review params in tools/list (I1)", async () => {
         const res = await request(app.getHttpServer())
-            .post("/server/mcp")
+            .post("/api/mcp")
             .set("Accept", MCP_ACCEPT)
             .send(rpc("tools/list"))
             .expect(200);

@@ -74,7 +74,7 @@ describe("McpAuthGuard", () => {
         );
         expect(response.setHeader).toHaveBeenCalledWith(
             "WWW-Authenticate",
-            'Bearer resource_metadata="https://aletheiafact.org/.well-known/oauth-protected-resource/server/mcp"'
+            'Bearer resource_metadata="https://aletheiafact.org/.well-known/oauth-protected-resource/api/mcp"'
         );
     });
 
@@ -154,7 +154,7 @@ describe("McpAuthGuard", () => {
         );
         expect(response.setHeader).toHaveBeenCalledWith(
             "WWW-Authenticate",
-            'Bearer resource_metadata="https://aletheiafact.org/.well-known/oauth-protected-resource/server/mcp"'
+            'Bearer resource_metadata="https://aletheiafact.org/.well-known/oauth-protected-resource/api/mcp"'
         );
     });
 

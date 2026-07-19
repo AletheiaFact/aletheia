@@ -1,7 +1,7 @@
 # Aletheia MCP Server
 
 Remote [Model Context Protocol](https://modelcontextprotocol.io) endpoint at
-`POST /server/mcp` (Streamable HTTP, stateless). Lets MCP clients (claude.ai,
+`POST /api/mcp` (Streamable HTTP, stateless). Lets MCP clients (claude.ai,
 Claude Code, Cursor) authenticate as real Aletheia users via OAuth 2.1 and run
 fact-checking tools.
 
@@ -25,23 +25,23 @@ mcp:
 
 ## Auth flow
 
-1. Client POSTs to `/server/mcp` → 401 with
-   `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/server/mcp"`.
+1. Client POSTs to `/api/mcp` → 401 with
+   `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/api/mcp"`.
 2. Client reads the metadata, discovers Ory as the authorization server,
    registers via DCR, and runs the authorization-code + PKCE flow in the
    user's browser (Kratos login + consent).
-3. Client calls `/server/mcp` with `Authorization: Bearer <token>`.
+3. Client calls `/api/mcp` with `Authorization: Bearer <token>`.
    `McpAuthGuard` introspects the token via Hydra and resolves the Kratos
    identity to the real user and role; CASL abilities apply as usual.
 
 ## Connecting from Claude Code
 
 ```bash
-claude mcp add --transport http aletheia https://aletheiafact.org/server/mcp
+claude mcp add --transport http aletheia https://aletheiafact.org/api/mcp
 ```
 
 From claude.ai: Settings → Connectors → Add custom connector →
-`https://aletheiafact.org/server/mcp`.
+`https://aletheiafact.org/api/mcp`.
 
 ## Tools
 
