@@ -69,11 +69,18 @@ describe("TokenIdentityService", () => {
         expect(await service.resolveBearerToken("x")).toBeNull();
     });
 
-    it("fails closed when app_affiliation config is unset", async () => {
+    it("does not enforce affiliation when app_affiliation config is unset (matches the platform's fail-open default)", async () => {
         (service as any).configService.get = vi.fn((k: string) => (k === "app_affiliation" ? undefined : config[k]));
         mockIntrospect.mockResolvedValue({ data: { active: true, client_id: "mcp", sub: "id-4" } });
+        // Deployment without app_affiliation configured; identity has no affiliation trait (e.g. the CI/cypress env).
         mockGetIdentity.mockResolvedValue({ id: "id-4", state: "active", traits: { user_id: "u4", role: { main: "admin" } } });
-        expect(await service.resolveBearerToken("x")).toBeNull();
+        expect(await service.resolveBearerToken("x")).toEqual({
+            isM2M: false,
+            _id: "u4",
+            id: "u4",
+            role: { main: "admin" },
+            status: "active",
+        });
     });
 
     it("returns null when the identity is not active", async () => {
@@ -82,10 +89,16 @@ describe("TokenIdentityService", () => {
         expect(await service.resolveBearerToken("x")).toBeNull();
     });
 
-    it("isAffiliationValid: true only when config set and traits match", () => {
+    it("isAffiliationValid: enforces the configured value, and is not enforced when unset", () => {
+        // config app_affiliation === "aletheia"
         expect(service.isAffiliationValid({ app_affiliation: "aletheia" })).toBe(true);
         expect(service.isAffiliationValid({ app_affiliation: "other" })).toBe(false);
+        expect(service.isAffiliationValid({})).toBe(false);
         expect(service.isAffiliationValid(undefined)).toBe(false);
+        // when app_affiliation is not configured, affiliation is not enforced
+        (service as any).configService.get = vi.fn(() => undefined);
+        expect(service.isAffiliationValid({})).toBe(true);
+        expect(service.isAffiliationValid(undefined)).toBe(true);
     });
 
     it("buildIdentityUser shapes the session/user object", () => {

@@ -45,9 +45,16 @@ export class TokenIdentityService {
         }
     }
 
+    /**
+     * Affiliation is enforced only when `app_affiliation` is configured for the
+     * deployment. When it is set, the identity's trait must match it exactly;
+     * when it is not set (e.g. CI/test/dev), affiliation is not enforced. This
+     * mirrors the platform's long-standing SessionGuard behavior (`trait ===
+     * expected`) — the refactor must preserve it, not tighten it.
+     */
     isAffiliationValid(traits: any): boolean {
         const expected = this.configService.get<string>("app_affiliation");
-        return Boolean(expected && traits && traits.app_affiliation === expected);
+        return traits?.app_affiliation === expected;
     }
 
     buildIdentityUser(traits: any, state?: string): AuthenticatedUser {
