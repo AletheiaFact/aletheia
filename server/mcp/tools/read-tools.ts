@@ -1,10 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import mongoose from "mongoose";
-import {
-    assertNamespaceAccess,
-    jsonResult,
-    safeTool,
-} from "./tool-helpers";
+import { assertNamespaceAccess, jsonResult, safeTool } from "./tool-helpers";
 import {
     GetClaimReviewSchema,
     GetClaimSchema,
@@ -38,7 +34,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("search", async (args) => {
             const { searchText, pageSize, language, nameSpace } = args;
-            assertNamespaceAccess(deps.request.user, nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                nameSpace
+            );
             if (deps.configService.get("db.atlas")) {
                 const [personalities, sentences, claims] = await Promise.all([
                     deps.personalityService.findAll({
@@ -80,7 +80,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListClaimsSchema.shape as any,
         },
         safeTool("list_claims", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             const query: Record<string, any> = {
                 isHidden: false,
                 nameSpace: args.nameSpace,
@@ -112,7 +116,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: GetClaimSchema.shape as any,
         },
         safeTool("get_claim", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.claimService.getById(args.claimId, args.nameSpace)
             );
@@ -126,7 +134,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListPersonalitiesSchema.shape as any,
         },
         safeTool("list_personalities", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.personalityService.combinedListAll({
                     page: args.page,
@@ -146,7 +158,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: GetPersonalitySchema.shape as any,
         },
         safeTool("get_personality", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.personalityService.getById(args.personalityId, {
                     language: args.language,
@@ -161,8 +177,7 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "get_claim_review",
         {
-            description:
-                "Get a published fact-check review by id or data_hash",
+            description: "Get a published fact-check review by id or data_hash",
             inputSchema: GetClaimReviewSchema.shape as any,
         },
         safeTool("get_claim_review", async (args: any) => {
@@ -186,7 +201,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListReviewTasksSchema.shape as any,
         },
         safeTool("list_review_tasks", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.reviewTaskService.listAll({
                     value: args.value,
@@ -212,9 +231,7 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: GetReviewTaskSchema.shape as any,
         },
         safeTool("get_review_task", async (args) =>
-            jsonResult(
-                await deps.reviewTaskService.getById(args.reviewTaskId)
-            )
+            jsonResult(await deps.reviewTaskService.getById(args.reviewTaskId))
         )
     );
 
@@ -260,10 +277,7 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("search_topics", async (args) =>
             jsonResult(
-                await deps.topicService.searchTopics(
-                    args.query,
-                    args.language
-                )
+                await deps.topicService.searchTopics(args.query, args.language)
             )
         )
     );
@@ -275,7 +289,11 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListSourcesSchema.shape as any,
         },
         safeTool("list_sources", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.sourceService.listAll({
                     page: args.page,

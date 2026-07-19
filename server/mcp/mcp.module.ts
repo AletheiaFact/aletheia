@@ -11,6 +11,7 @@ import { TopicModule } from "../topic/topic.module";
 import { PersonalityModule } from "../personality/personality.module";
 import OryModule from "../auth/ory/ory.module";
 import { AbilityModule } from "../auth/ability/ability.module";
+import { NameSpaceModule } from "../auth/name-space/name-space.module";
 import { McpController } from "./mcp.controller";
 import { McpWellKnownController } from "./mcp-well-known.controller";
 import { McpService } from "./mcp.service";
@@ -29,6 +30,7 @@ import { McpAuthGuard } from "./mcp-auth.guard";
         PersonalityModule.register(),
         OryModule,
         AbilityModule,
+        NameSpaceModule,
         ConfigModule,
     ],
     controllers: [McpController, McpWellKnownController],

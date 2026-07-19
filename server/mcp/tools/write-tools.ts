@@ -25,8 +25,16 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: CreateVerificationRequestSchema.shape as any,
         },
         safeTool("create_verification_request", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            assertCanWrite(
+                deps.abilityFactory,
+                deps.request.user,
+                args.nameSpace
+            );
             assertUserSession(deps.request.user);
             return jsonResult(
                 await deps.verificationRequestStateMachineService.request(
@@ -68,8 +76,16 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: CreateClaimSchema.shape as any,
         },
         safeTool("create_claim", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            assertCanWrite(
+                deps.abilityFactory,
+                deps.request.user,
+                args.nameSpace
+            );
             return jsonResult(
                 await deps.claimService.create({
                     title: args.title,
@@ -109,8 +125,16 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: CreateSourceSchema.shape as any,
         },
         safeTool("create_source", async (args) => {
-            assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            assertCanWrite(
+                deps.abilityFactory,
+                deps.request.user,
+                args.nameSpace
+            );
             assertUserSession(deps.request.user);
             return jsonResult(
                 await deps.sourceService.create({

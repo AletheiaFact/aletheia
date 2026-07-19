@@ -15,6 +15,7 @@ import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { McpAuthGuard } from "../mcp/mcp-auth.guard";
 import { TestConfigOptions } from "./utils/TestConfigOptions";
 import { SeedTestUser } from "./utils/SeedTestUser";
+import { SeedTestNameSpace } from "./utils/SeedTestNameSpace";
 import { AdminUserMock } from "./utils/AdminUserMock";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 
@@ -59,6 +60,10 @@ describe("MCP server (e2e)", () => {
     beforeAll(async () => {
         const mongoUri = process.env.MONGO_URI!;
         await SeedTestUser(mongoUri);
+        // Seeds the "secret" (admin is a member) and "forbidden" (no
+        // members) NameSpace documents used by the DB-membership tests
+        // below (C1), mirroring what NameSpaceGuard checks in production.
+        await SeedTestNameSpace(mongoUri);
 
         const testConfig = {
             ...TestConfigOptions.config,
@@ -201,21 +206,33 @@ describe("MCP server (e2e)", () => {
     });
 
     it("rejects cross-namespace access (C1)", async () => {
-        // Admin only in `main`; requesting another namespace must fail closed.
+        // Admin is not a member of the seeded "forbidden" NameSpace
+        // document (no `users`); requesting it must fail closed, driven by
+        // NameSpaceService (DB membership), not the role map.
         mockUser = adminUser();
         const body = await callTool(app, "list_review_tasks", {
             reviewTaskType: "Claim",
-            nameSpace: "secret",
+            nameSpace: "forbidden",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toMatch(/namespace/i);
+    });
+
+    it("rejects access to a namespace that doesn't exist (C1)", async () => {
+        mockUser = adminUser();
+        const body = await callTool(app, "list_review_tasks", {
+            reviewTaskType: "Claim",
+            nameSpace: "does-not-exist",
         });
         expect(body.result.isError).toBe(true);
         expect(body.result.content[0].text).toMatch(/namespace/i);
     });
 
     it("allows a namespace the user belongs to (C1)", async () => {
-        mockUser = {
-            ...adminUser(),
-            role: { main: "admin", secret: "reviewer" },
-        };
+        // Admin (AdminUserMock._id) is seeded as a member of the "secret"
+        // NameSpace document (see SeedTestNameSpace); the role map no
+        // longer drives this check.
+        mockUser = adminUser();
         const body = await callTool(app, "list_review_tasks", {
             reviewTaskType: "Claim",
             nameSpace: "secret",
