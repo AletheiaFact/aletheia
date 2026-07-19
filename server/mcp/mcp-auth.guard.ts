@@ -6,11 +6,9 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
-import { Configuration, OAuth2Api } from "@ory/client";
 import { createHash } from "crypto";
 import { BaseGuard } from "../auth/base.guard";
-import OryService from "../auth/ory/ory.service";
-import { toError } from "../util/error-handling";
+import { TokenIdentityService } from "../auth/token-identity.service";
 import { MCP_RESOURCE_METADATA_PATH } from "./mcp.constants";
 
 interface CachedAuth {
@@ -36,7 +34,7 @@ export class McpAuthGuard extends BaseGuard {
     constructor(
         protected configService: ConfigService,
         protected reflector: Reflector,
-        private readonly oryService: OryService
+        private readonly tokenIdentity: TokenIdentityService
     ) {
         super(configService, reflector);
     }
@@ -61,31 +59,11 @@ export class McpAuthGuard extends BaseGuard {
             return true;
         }
 
-        let introspection;
-        try {
-            const hydraConfig = new Configuration({
-                basePath: this.configService.get<string>("ory.hydra.url"),
-                accessToken:
-                    this.configService.get<string>("ory.access_token"),
-            });
-            const hydraApi = new OAuth2Api(hydraConfig);
-            ({ data: introspection } = await hydraApi.introspectOAuth2Token({
-                token,
-            }));
-        } catch (error) {
-            const err = toError(error);
-            this.logger.error(
-                `MCP token introspection failed: ${err.message}`,
-                err.stack
-            );
-            this.deny(response, "Token introspection failed");
+        const user = await this.tokenIdentity.resolveBearerToken(token);
+        if (!user) {
+            this.deny(response, "Invalid or unauthorized token");
         }
 
-        if (!introspection.active) {
-            this.deny(response, "Inactive token");
-        }
-
-        const user = await this.resolveUser(introspection, response);
         this.evictExpiredEntries();
         this.cache.set(cacheKey, {
             user,
@@ -106,62 +84,6 @@ export class McpAuthGuard extends BaseGuard {
                 this.cache.delete(key);
             }
         }
-    }
-
-    private async resolveUser(
-        introspection: Record<string, any>,
-        response: any
-    ): Promise<Record<string, any>> {
-        const isM2M =
-            introspection.client_id &&
-            introspection.sub === introspection.client_id;
-        if (isM2M) {
-            return {
-                isM2M: true,
-                clientId: introspection.client_id,
-                subject: introspection.sub,
-                scopes: introspection.scope?.split(" "),
-                role: { main: "integration" },
-                namespace: "main",
-            };
-        }
-
-        let identity;
-        try {
-            identity = await this.oryService.getIdentity(introspection.sub);
-        } catch (error) {
-            const err = toError(error);
-            this.logger.error(
-                `MCP identity lookup failed: ${err.message}`,
-                err.stack
-            );
-            this.deny(response, "Identity lookup failed");
-        }
-
-        const traits = identity?.traits;
-        const expectedAffiliation =
-            this.configService.get<string>("app_affiliation");
-        // Fail closed: missing config must never let an identity without an
-        // affiliation trait through (undefined === undefined).
-        if (
-            !expectedAffiliation ||
-            !traits ||
-            traits.app_affiliation !== expectedAffiliation
-        ) {
-            this.deny(response, "Affiliation mismatch");
-        }
-
-        if (identity.state !== "active") {
-            this.deny(response, "Inactive identity");
-        }
-
-        return {
-            isM2M: false,
-            _id: traits.user_id,
-            id: traits.user_id,
-            role: traits.role,
-            status: identity.state,
-        };
     }
 
     private deny(response: any, reason: string): never {
