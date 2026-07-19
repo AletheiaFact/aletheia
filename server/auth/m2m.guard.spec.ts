@@ -91,6 +91,16 @@ describe("M2MGuard", () => {
         expect(request.user).toEqual(m2mUser);
     });
 
+    it("should return false (not throw) when resolveBearerToken rejects", async () => {
+        tokenIdentity.resolveBearerToken.mockRejectedValue(
+            new Error("token resolution blew up")
+        );
+
+        const { context } = createMockContext("Bearer boom-token");
+
+        await expect(guard.canActivate(context)).resolves.toBe(false);
+    });
+
     it("should return true and set request.user for a resolved real user (non-integration role)", async () => {
         const realUser = {
             isM2M: false,
