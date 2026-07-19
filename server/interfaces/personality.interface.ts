@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const PersonalitySchema = z.object({
+export const PersonalitySchema = z.object({
     _id: z.any().optional(),
     name: z.string(),
     slug: z.string(),
