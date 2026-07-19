@@ -1,6 +1,17 @@
 import { z } from "zod";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { ReviewTaskTypeEnum } from "../../types/enums";
+import { PersonalitySchema } from "../../interfaces/personality.interface";
+import { SourceZodSchema } from "../../source/schemas/source.zod";
+import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
+import { VerificationRequestCreateZodSchema } from "../../verification-request/schemas/verification-request.zod";
+
+// Entity-shaped create inputs below are derived (.pick/.extend) from the
+// canonical Zod schema colocated with each module (personality, source,
+// claim, verification-request) so entity fields are single-sourced and
+// can't drift between the MCP tool layer and the rest of the app. Only
+// tool-specific query/pagination/search shapes are declared locally here,
+// since those aren't entities.
 
 const pagination = {
     page: z.number().int().min(0).default(0),
@@ -90,17 +101,8 @@ export const ListSourcesSchema = z.object({
     nameSpace,
 });
 
-export const CreateVerificationRequestSchema = z.object({
-    content: z.string().min(10).describe("The content to be verified"),
-    sourceChannel: z.string().default("mcp"),
-    source: z
-        .array(z.object({ href: z.string().url() }))
-        .optional()
-        .describe("URLs where the content circulates"),
-    publicationDate: z.string().optional(),
-    heardFrom: z.string().optional(),
-    nameSpace,
-});
+export const CreateVerificationRequestSchema =
+    VerificationRequestCreateZodSchema;
 
 export const AddReviewCommentSchema = z.object({
     dataHash: z.string().describe("The review task's data_hash"),
@@ -108,25 +110,28 @@ export const AddReviewCommentSchema = z.object({
     text: z.string().min(1).describe("Plain-text version of the comment"),
 });
 
-export const CreateClaimSchema = z.object({
-    title: z.string().min(3),
-    content: z.string().min(10).describe("The speech/claim text"),
-    date: z.string().describe("ISO date the claim was made"),
+export const CreateClaimSchema = ClaimCreateZodSchema.pick({
+    title: true,
+    content: true,
+    date: true,
+    sources: true,
+    nameSpace: true,
+}).extend({
     personalityId: z
         .string()
         .describe("Personality (author) Mongo ObjectId"),
-    sources: z.array(z.string().url()).min(1),
-    nameSpace,
 });
 
-export const CreatePersonalitySchema = z.object({
+export const CreatePersonalitySchema = PersonalitySchema.pick({
+    name: true,
+    description: true,
+    wikidata: true,
+}).extend({
     name: z.string().min(2),
-    description: z.string(),
-    wikidata: z.string().describe("Wikidata entity id, e.g. Q123"),
 });
 
-export const CreateSourceSchema = z.object({
-    href: z.string().url(),
-    targetId: z.string().optional().describe("Claim/target ObjectId"),
-    nameSpace,
+export const CreateSourceSchema = SourceZodSchema.pick({
+    href: true,
+    targetId: true,
+    nameSpace: true,
 });
