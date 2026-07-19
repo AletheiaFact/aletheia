@@ -11,6 +11,7 @@ import { VerificationRequestService } from "../verification-request/verification
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
 import { SourceService } from "../source/source.service";
 import { TopicService } from "../topic/topic.service";
+import { AbilityFactory } from "../auth/ability/ability.factory";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import type { BaseRequest } from "../types";
 import { registerReadTools } from "./tools/read-tools";
@@ -29,6 +30,7 @@ export interface McpToolDeps {
     verificationRequestStateMachineService: VerificationRequestStateMachineService;
     sourceService: SourceService;
     topicService: TopicService;
+    abilityFactory: AbilityFactory;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -46,7 +48,8 @@ export class McpService {
         private readonly verificationRequestService: VerificationRequestService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
         private readonly sourceService: SourceService,
-        private readonly topicService: TopicService
+        private readonly topicService: TopicService,
+        private readonly abilityFactory: AbilityFactory
     ) {}
 
     buildServer(): McpServer {
@@ -65,6 +68,7 @@ export class McpService {
                 this.verificationRequestStateMachineService,
             sourceService: this.sourceService,
             topicService: this.topicService,
+            abilityFactory: this.abilityFactory,
         };
         registerReadTools(server, deps);
         registerWriteTools(server, deps);
