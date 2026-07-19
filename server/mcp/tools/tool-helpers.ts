@@ -1,5 +1,6 @@
 import { Logger } from "@nestjs/common";
 import { AbilityFactory, Action } from "../../auth/ability/ability.factory";
+import { NameSpaceService } from "../../auth/name-space/name-space.service";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 const logger = new Logger("McpTools");
@@ -21,21 +22,34 @@ interface McpUser {
     clientId?: string;
 }
 
-/** Namespaces the authenticated user actually belongs to. */
-export function getAllowedNamespaces(user: McpUser): Set<string> {
-    if (user?.isM2M) {
-        return new Set([user.namespace || NameSpaceEnum.Main]);
-    }
-    return new Set(Object.keys(user?.role || {}));
-}
-
 /**
- * Reject any namespace the user is not a member of. The caller-supplied
- * `nameSpace` argument is untrusted; membership comes from the resolved
- * identity's role map (or the M2M namespace). Fails closed.
+ * Reject any namespace the user is not a member of, using the platform's
+ * NameSpace collection membership (same source of truth as NameSpaceGuard).
+ * The default/main namespace is open to any authenticated user (matches
+ * NameSpaceGuard bypassing unscoped routes). Caller-supplied nameSpace is
+ * untrusted. Fails closed.
  */
-export function assertNamespaceAccess(user: McpUser, nameSpace: string): void {
-    if (!getAllowedNamespaces(user).has(nameSpace)) {
+export async function assertNamespaceAccess(
+    nameSpaceService: NameSpaceService,
+    user: McpUser,
+    nameSpace: string = NameSpaceEnum.Main
+): Promise<void> {
+    if (nameSpace === NameSpaceEnum.Main) return;
+    const namespace = await nameSpaceService.findOne({ slug: nameSpace });
+    if (!namespace) {
+        throw new Error(`Namespace "${nameSpace}" not found`);
+    }
+    const userId = user?._id?.toString();
+    // NameSpaceService.findOne() doesn't .populate("users"), so `users` is
+    // an array of raw ObjectId refs, not populated User documents (unlike
+    // NameSpaceService.listAll()). Handle both shapes defensively.
+    const isMember =
+        !!userId &&
+        !!namespace.users?.some((entry: any) => {
+            const candidateId = entry?._id ?? entry;
+            return candidateId?.toString() === userId;
+        });
+    if (!isMember) {
         throw new Error(`Not authorized for namespace "${nameSpace}"`);
     }
 }
