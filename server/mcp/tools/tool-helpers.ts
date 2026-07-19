@@ -1,14 +1,16 @@
 import { Logger } from "@nestjs/common";
-import { Roles } from "../../auth/ability/ability.factory";
+import { AbilityFactory, Action } from "../../auth/ability/ability.factory";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 const logger = new Logger("McpTools");
 
 /**
  * The MCP endpoint is @Public, so the global NameSpaceGuard/AbilitiesGuard
- * never run. These helpers re-implement the two authorization checks those
- * guards would have applied, driven entirely by the authenticated user
- * resolved by McpAuthGuard (never by caller-supplied arguments).
+ * never run. These helpers re-run the platform's own authorization
+ * primitives (CASL AbilityFactory, NameSpace collection membership) driven
+ * entirely by the authenticated user resolved by McpAuthGuard (never by
+ * caller-supplied arguments), so MCP and the web app share one source of
+ * truth instead of two hand-rolled, divergent checks.
  */
 interface McpUser {
     isM2M?: boolean;
@@ -18,17 +20,6 @@ interface McpUser {
     subject?: string;
     clientId?: string;
 }
-
-// Roles allowed to create/update, mirroring AbilityFactory: fact-checker,
-// reviewer, admin and super-admin get write abilities on the web, and an
-// M2M `integration` token gets create ability.
-const WRITE_ROLES: string[] = [
-    Roles.FactChecker,
-    Roles.Reviewer,
-    Roles.Admin,
-    Roles.SuperAdmin,
-    Roles.Integration,
-];
 
 /** Namespaces the authenticated user actually belongs to. */
 export function getAllowedNamespaces(user: McpUser): Set<string> {
@@ -49,27 +40,18 @@ export function assertNamespaceAccess(user: McpUser, nameSpace: string): void {
     }
 }
 
-/** The user's role in a namespace, falling back to their `main` role. */
-export function resolveUserRole(
-    user: McpUser,
-    nameSpace: string = NameSpaceEnum.Main
-): string | undefined {
-    const role = user?.role || {};
-    return role[nameSpace] ?? role[NameSpaceEnum.Main];
-}
-
-/** Require a write-capable role in the target namespace (I3). */
+/**
+ * Require create ability in the target namespace, via the platform's CASL
+ * AbilityFactory (single source of truth) (I3).
+ */
 export function assertCanWrite(
+    abilityFactory: AbilityFactory,
     user: McpUser,
     nameSpace: string = NameSpaceEnum.Main
 ): void {
-    const role = resolveUserRole(user, nameSpace);
-    if (!role || !WRITE_ROLES.includes(role)) {
-        throw new Error(
-            `Not authorized to write in namespace "${nameSpace}" (role: ${
-                role ?? "none"
-            })`
-        );
+    const ability = abilityFactory.defineAbility(user as any, nameSpace);
+    if (!ability.can(Action.Create, "all")) {
+        throw new Error(`Not authorized to write in namespace "${nameSpace}"`);
     }
 }
 

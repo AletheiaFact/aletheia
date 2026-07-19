@@ -26,7 +26,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("create_verification_request", async (args) => {
             assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.request.user, args.nameSpace);
+            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
             assertUserSession(deps.request.user);
             return jsonResult(
                 await deps.verificationRequestStateMachineService.request(
@@ -51,7 +51,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: AddReviewCommentSchema.shape as any,
         },
         safeTool("add_review_comment", async (args) => {
-            assertCanWrite(deps.request.user);
+            assertCanWrite(deps.abilityFactory, deps.request.user);
             return jsonResult(
                 await deps.reviewTaskService.addComment(args.dataHash, {
                     comment: args.comment,
@@ -69,7 +69,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("create_claim", async (args) => {
             assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.request.user, args.nameSpace);
+            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
             return jsonResult(
                 await deps.claimService.create({
                     title: args.title,
@@ -91,7 +91,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: CreatePersonalitySchema.shape as any,
         },
         safeTool("create_personality", async (args) => {
-            assertCanWrite(deps.request.user);
+            assertCanWrite(deps.abilityFactory, deps.request.user);
             return jsonResult(
                 await deps.personalityService.create({
                     name: args.name,
@@ -110,7 +110,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("create_source", async (args) => {
             assertNamespaceAccess(deps.request.user, args.nameSpace);
-            assertCanWrite(deps.request.user, args.nameSpace);
+            assertCanWrite(deps.abilityFactory, deps.request.user, args.nameSpace);
             assertUserSession(deps.request.user);
             return jsonResult(
                 await deps.sourceService.create({
