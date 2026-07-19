@@ -1,12 +1,15 @@
 import { Controller, Get } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Public } from "../auth/decorators/auth.decorator";
-import { MCP_RESOURCE_METADATA_PATH } from "./mcp.constants";
+import {
+    MCP_ENDPOINT_PATH,
+    MCP_RESOURCE_METADATA_PATH,
+} from "./mcp.constants";
 
 /**
  * OAuth 2.0 Protected Resource Metadata (RFC 9728) for the MCP endpoint.
  * MCP clients discover the authorization server (Ory) from this document
- * after receiving a 401 challenge from /server/mcp.
+ * after receiving a 401 challenge from /api/mcp.
  */
 @Controller()
 export class McpWellKnownController {
@@ -20,7 +23,7 @@ export class McpWellKnownController {
             this.configService.get<string>("mcp.authorization_server") ||
             this.configService.get<string>("ory.url");
         return {
-            resource: `${publicUrl}/server/mcp`,
+            resource: `${publicUrl}/${MCP_ENDPOINT_PATH}`,
             authorization_servers: [authorizationServer],
             bearer_methods_supported: ["header"],
         };

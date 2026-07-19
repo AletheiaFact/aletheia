@@ -13,8 +13,9 @@ import { Public } from "../auth/decorators/auth.decorator";
 import { McpAuthGuard } from "./mcp-auth.guard";
 import { McpService } from "./mcp.service";
 import type { BaseRequest } from "../types";
+import { MCP_ENDPOINT_PATH } from "./mcp.constants";
 
-@Controller("server/mcp")
+@Controller(MCP_ENDPOINT_PATH)
 export class McpController {
     constructor(private readonly mcpService: McpService) {}
 
