@@ -33,6 +33,12 @@ services:
           url: ORY_SDK_URL
           # When using the cloud, the endpoint should be "admin".
           admin_endpoint:
+      mcp:
+        enabled: false
+        # Public base URL of this deployment, used in OAuth metadata
+        public_url: MCP_PUBLIC_URL
+        # Optional override; defaults to ory.url
+        authorization_server:
       feature_flag:
         url: GITLAB_FEATURE_FLAG_URL
         appName: ENV
