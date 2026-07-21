@@ -40,7 +40,10 @@ export class TokenIdentityService {
             return data;
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Token introspection failed: ${err.message}`, err.stack);
+            this.logger.error(
+                `Token introspection failed: ${err.message}`,
+                err.stack
+            );
             return null;
         }
     }
@@ -58,7 +61,13 @@ export class TokenIdentityService {
     }
 
     buildIdentityUser(traits: any, state?: string): AuthenticatedUser {
-        return { isM2M: false, _id: traits.user_id, id: traits.user_id, role: traits.role, status: state };
+        return {
+            isM2M: false,
+            _id: traits.user_id,
+            id: traits.user_id,
+            role: traits.role,
+            status: state,
+        };
     }
 
     shapeM2MUser(introspection: Record<string, any>): AuthenticatedUser {
@@ -72,11 +81,19 @@ export class TokenIdentityService {
         };
     }
 
+    /**
+     * Resolves a bearer token to an AuthenticatedUser, or null to deny.
+     * Never throws, so guards can rely on null-or-user without a catch.
+     * User tokens are scope-blind by design: authorization comes from the
+     * Kratos role (CASL), not OAuth scopes; only the M2M shape carries scopes.
+     */
     async resolveBearerToken(token: string): Promise<AuthenticatedUser | null> {
         const introspection = await this.introspect(token);
         if (!introspection?.active) return null;
 
-        const isM2M = introspection.client_id && introspection.sub === introspection.client_id;
+        const isM2M =
+            introspection.client_id &&
+            introspection.sub === introspection.client_id;
         if (isM2M) return this.shapeM2MUser(introspection);
 
         let identity;
@@ -84,10 +101,18 @@ export class TokenIdentityService {
             identity = await this.oryService.getIdentity(introspection.sub);
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Identity lookup failed: ${err.message}`, err.stack);
+            this.logger.error(
+                `Identity lookup failed: ${err.message}`,
+                err.stack
+            );
             return null;
         }
         const traits = identity?.traits;
+        // Deny traits-less identities; buildIdentityUser would throw on them.
+        if (!traits) {
+            this.logger.warn("Bearer identity has no traits");
+            return null;
+        }
         if (!this.isAffiliationValid(traits)) {
             this.logger.warn("Bearer identity failed affiliation check");
             return null;
