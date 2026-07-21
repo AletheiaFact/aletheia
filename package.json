@@ -118,7 +118,7 @@
         "aws-sdk": "^2.1154.0",
         "axios": "1.13.6",
         "babel-plugin-styled-components": "^1.13.2",
-        "body-parser": "1.20.3",
+        "body-parser": "1.20.6",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "compromise": "^13.11.4",
