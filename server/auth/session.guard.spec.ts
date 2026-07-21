@@ -4,6 +4,8 @@ import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { SessionGuard } from "./session.guard";
 import { UsersService } from "../users/users.service";
+import { TokenIdentityService } from "./token-identity.service";
+import OryService from "./ory/ory.service";
 import {
     createMockSession,
     mockUsersService,
@@ -15,17 +17,14 @@ import { Roles } from "./ability/ability.factory";
 // declared via vi.hoisted() because vi.mock() is hoisted above all imports
 // during the Vitest transform pipeline. Constructor mocks must use `function`
 // (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const {
-    mockToSession,
-    mockCreateBrowserLogoutFlow,
-    mockUpdateLogoutFlow,
-} = vi.hoisted(() => ({
-    mockToSession: vi.fn(),
-    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
-        data: { logout_token: "mock-logout-token" },
-    }),
-    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
-}));
+const { mockToSession, mockCreateBrowserLogoutFlow, mockUpdateLogoutFlow } =
+    vi.hoisted(() => ({
+        mockToSession: vi.fn(),
+        mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+            data: { logout_token: "mock-logout-token" },
+        }),
+        mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+    }));
 
 vi.mock("@ory/client", () => ({
     Configuration: vi.fn().mockImplementation(function () {
@@ -79,6 +78,8 @@ describe("SessionGuard", () => {
                 { provide: UsersService, useValue: usersService },
                 { provide: ConfigService, useValue: configService },
                 Reflector,
+                TokenIdentityService,
+                { provide: OryService, useValue: { getIdentity: vi.fn() } },
             ],
         }).compile();
 
@@ -193,9 +194,7 @@ describe("SessionGuard", () => {
         it("should logout and redirect to signup-invite when user not in MongoDB", async () => {
             const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
-            usersService.getById.mockRejectedValue(
-                new Error("User not found")
-            );
+            usersService.getById.mockRejectedValue(new Error("User not found"));
 
             const { context, response } = createMockContext(
                 "ory_session=abc",
