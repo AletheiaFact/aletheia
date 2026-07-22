@@ -2,11 +2,9 @@ import { MessageManager } from "../components/Messages";
 import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
 import type { User } from "../types/User";
-import type {
-    TranslationFn,
-    PasswordChangeResponse,
-} from "../types/ApiResponse";
+import type { PasswordChangeResponse } from "../types/ApiResponse";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/user");
 
@@ -62,7 +60,7 @@ const getUsers = (
         .catch((e) => {
             return (
                 e?.response?.data || {
-                    message: t("login:getUsersFailed"),
+                    message: t("login.getUsersFailed"),
                 }
             );
         });
@@ -77,7 +75,7 @@ const register = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("login:signupSuccessfulMessage")
+                t("login.signupSuccessfulMessage")
             );
             return response?.data;
         })
@@ -85,12 +83,12 @@ const register = (
             if (e.response?.status === 409) {
                 MessageManager.showMessage(
                     "error",
-                    t("login:userAlreadyExists")
+                    t("login.userAlreadyExists")
                 );
             } else {
                 MessageManager.showMessage(
                     "error",
-                    t("login:signupFailedMessage")
+                    t("login.signupFailedMessage")
                 );
             }
             return e?.response?.data;
@@ -125,11 +123,11 @@ const update = (
     return request
         .put(`/${userId}`, params)
         .then((response) => {
-            MessageManager.showMessage("success", t("admin:roleUpdated"));
+            MessageManager.showMessage("success", t("admin.roleUpdated"));
             return response?.data;
         })
         .catch((e) => {
-            MessageManager.showMessage("error", t("admin:roleUpdateFailed"));
+            MessageManager.showMessage("error", t("admin.roleUpdateFailed"));
             return e?.response?.data;
         });
 };

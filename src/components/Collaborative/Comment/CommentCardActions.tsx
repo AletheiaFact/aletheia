@@ -15,8 +15,8 @@ import { useCommands } from "@remirror/react";
 import { useAppSelector } from "../../../store/store";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import { currentUserId } from "../../../atoms/currentUser";
-import { useTranslation } from "next-i18next";
 import { Comment } from "../../../types/Comment";
+import { useTranslations } from "next-intl";
 
 interface CommentCardActionsProps {
     content: Comment;
@@ -29,7 +29,7 @@ const CommentCardActions = ({
     content,
     setIsResolved,
 }: CommentCardActionsProps) => {
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
 
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
@@ -94,7 +94,7 @@ const CommentCardActions = ({
 
         return (
             <Box className="comment-card-actions" onClick={stopPropagation}>
-                <Tooltip title={t("common:delete")}>
+                <Tooltip title={tCommon("delete")}>
                     <span>
                         <AletheiaButton
                             type={ButtonType.white}
@@ -112,7 +112,7 @@ const CommentCardActions = ({
 
     return (
         <Box className="comment-card-actions" onClick={stopPropagation}>
-            <Tooltip title={t("common:resolve")}>
+            <Tooltip title={tCommon("resolve")}>
                 <span>
                     <AletheiaButton
                         type={ButtonType.white}

@@ -3,10 +3,10 @@ import React, { useContext, useState } from "react";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../AletheiaButton";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestResultList = ({ results }) => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const [isLoading, setIsLoading] = useState(false);
     const { group, addRecommendation } = useContext(VerificationRequestContext);
 
@@ -30,7 +30,7 @@ const VerificationRequestResultList = ({ results }) => {
                         <VerificationRequestCard
                             verificationRequest={verificationRequest}
                             expandable={false}
-                            t={t}
+                            t={tVerificationRequest}
                             style={{ minHeight: "100%" }}
                             actions={[
                                 <Grid container
@@ -51,11 +51,11 @@ const VerificationRequestResultList = ({ results }) => {
                                         }}
                                     >
                                         {checkIfIsInGroup(verificationRequest._id)
-                                            ? t(
-                                                "verificationRequest:alreadyInGroupMessage"
+                                            ? tVerificationRequest(
+                                                "alreadyInGroupMessage"
                                             )
-                                            : t(
-                                                "verificationRequest:addInGroupButton"
+                                            : tVerificationRequest(
+                                                "addInGroupButton"
                                             )}
                                     </AletheiaButton>
                                 </Grid>

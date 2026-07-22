@@ -1,11 +1,11 @@
 import { NextPage } from "next";
 import PersonalityList from "../components/Personality/PersonalityList";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AffixButton from "../components/AffixButton/AffixButton";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { getMessages } from "../lib/getMessages";
 
 const PersonalityListPage: NextPage<{ nameSpace: NameSpaceEnum }> = ({
     nameSpace,
@@ -25,7 +25,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

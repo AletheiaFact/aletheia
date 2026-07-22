@@ -1,10 +1,11 @@
 import { Link } from "@mui/material";
 import { useHeaderData } from "./useHeaderData";
+import { useTranslations } from "next-intl";
 
 const HeaderNavLinks = () => {
-    const { state, actions } = useHeaderData();
+    const { state } = useHeaderData();
     const { navigationConfig } = state;
-    const { t } = actions;
+    const tHeader = useTranslations("header")
 
     return (
         <>
@@ -16,7 +17,7 @@ const HeaderNavLinks = () => {
                     underline="none"
                     data-cy={link.dataCy}
                 >
-                    {t(`header:${link.key}Item`)}
+                    {tHeader(`${link.key}Item`)}
                 </Link>
             ))}
         </>

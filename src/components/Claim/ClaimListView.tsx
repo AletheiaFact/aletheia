@@ -1,20 +1,20 @@
 import { Grid, Typography } from "@mui/material"
 import React from "react";
 import ClaimList from "./ClaimList";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 // import SourceList from "../Source/SourceList";
 
 const ClaimListView = () => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     return (
         <>
             <Grid container style={{ marginTop: "64px", justifyContent: "center" }} >
                 <Grid item xs={11} md={9.5}>
                     <Typography variant="h1" fontSize={32}>
-                        {t("claim:claimListTitle")}
+                        {tClaim("claimListTitle")}
                     </Typography>
                     <Typography variant="body1" marginTop={1}>
-                        {t("claim:claimListDescription")}
+                        {tClaim("claimListDescription")}
                     </Typography>
                 </Grid>
 

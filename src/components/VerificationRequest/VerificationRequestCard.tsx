@@ -25,6 +25,7 @@ import {
     getSeverityColor,
     getSeverityLabel,
 } from "../../helpers/verificationRequestCardHelper";
+import { useTranslations } from "next-intl";
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -53,20 +54,22 @@ const VerificationRequestCard = ({
     verificationRequest,
     actions = [],
     expandable = true,
-    t,
     style = {},
 }) => {
     const [visible, setVisible] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const textRef = useRef(null);
+    const tClaimForm = useTranslations("claimForm");
+    const tVerificationRequest = useTranslations("verificationRequest");
+    const t = useTranslations();
 
     const metaChipData = [
         {
             icon: <Filter style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|reportType`,
-            label: t("verificationRequest:tagReportType"),
-            label_value: t(
-                `claimForm:${verificationRequest.reportType || "undefined"}`
+            label: tVerificationRequest("tagReportType"),
+            label_value: tClaimForm(
+                `${verificationRequest.reportType || "undefined"}`
             ),
             dataCy: "testVerificationRequestReportType",
             style: { backgroundColor: colors.secondary, color: colors.white },
@@ -74,10 +77,10 @@ const VerificationRequestCard = ({
         {
             icon: <Share style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|receptionChannel`,
-            label: t("verificationRequest:tagSourceChannel"),
+            label: tVerificationRequest("tagSourceChannel"),
             label_value:
-                t(
-                    `verificationRequest:${verificationRequest.sourceChannel}`,
+                tVerificationRequest(
+                    `${verificationRequest.sourceChannel}`,
                     { defaultValue: verificationRequest.sourceChannel },
                 ),
             dataCy: "testVerificationRequestSourceChannel",
@@ -86,7 +89,7 @@ const VerificationRequestCard = ({
         {
             icon: <Public style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|impactArea`,
-            label: t("verificationRequest:tagImpactArea"),
+            label: tVerificationRequest("tagImpactArea"),
             label_value: verificationRequest.impactArea?.name,
             dataCy: "testVerificationRequestImpactArea",
             style: {
@@ -97,7 +100,7 @@ const VerificationRequestCard = ({
         {
             icon: <WarningAmber style={{ fontSize: 18 }} />,
             key: `${verificationRequest._id}|severity`,
-            label: t("verificationRequest:tagSeverity"),
+            label: tVerificationRequest("tagSeverity"),
             label_value: getSeverityLabel(verificationRequest.severity, t),
             dataCy: "testVerificationRequestSeverity",
             style: {
@@ -132,7 +135,7 @@ const VerificationRequestCard = ({
                             marginBottom: "2px",
                         }}
                     >
-                        {t("verificationRequest:tagReportedContent")}
+                        {tVerificationRequest("tagReportedContent")}
                     </Typography>
                     <AlertTitle>
                         <Typography
@@ -161,7 +164,7 @@ const VerificationRequestCard = ({
                         <RequestDates
                             dataCy="testVerificationRequestPublicationDate"
                             icon={<DateRange style={smallGreyIcon} />}
-                            label={t("verificationRequest:tagPublicationDate")}
+                            label={tVerificationRequest("tagPublicationDate")}
                             value={verificationRequest.publicationDate}
                         />
                     )}
@@ -170,7 +173,7 @@ const VerificationRequestCard = ({
                         <RequestDates
                             dataCy="testVerificationRequestDate"
                             icon={<DateRange style={smallGreyIcon} />}
-                            label={t("verificationRequest:tagDate")}
+                            label={tVerificationRequest("tagDate")}
                             value={verificationRequest.date}
                         />
                     )}
@@ -178,7 +181,7 @@ const VerificationRequestCard = ({
                 <Box mt={2}>
                     {verificationRequest.heardFrom && (
                         <VerificationRequestContent
-                            label={t("verificationRequest:tagHeardFrom")}
+                            label={tVerificationRequest("tagHeardFrom")}
                             value={verificationRequest.heardFrom || " "}
                             dataCy="testVerificationRequestHeardFrom"
                         />
@@ -188,7 +191,7 @@ const VerificationRequestCard = ({
                     {verificationRequest.source && (
                         <SourceList
                             sources={verificationRequest.source}
-                            t={t}
+                            t={tVerificationRequest}
                             id={verificationRequest._id}
                         />
                     )}
@@ -225,7 +228,7 @@ const VerificationRequestCard = ({
                         }}
                         onClick={handleToggle}
                     >
-                        {t("verificationRequest:showText")}
+                        {tVerificationRequest("showText")}
                     </Button>
                 )}
             </ContentWrapper>

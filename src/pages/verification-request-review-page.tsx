@@ -4,7 +4,6 @@ import { NextPage } from "next";
 import React from "react";
 import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../store/actions";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
@@ -13,6 +12,7 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { VerificationRequestProvider } from "../components/VerificationRequest/VerificationRequestProvider";
 import { VerificationRequest } from "../types/VerificationRequest";
+import { getMessages } from "../lib/getMessages";
 
 export interface SourceReviewPageProps {
     verificationRequest: VerificationRequest;
@@ -62,7 +62,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             verificationRequest: JSON.parse(
                 JSON.stringify(query.verificationRequest)
             ),

@@ -1,9 +1,9 @@
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 interface StartReviewAlertModalProps {
     open: boolean;
@@ -11,7 +11,7 @@ interface StartReviewAlertModalProps {
 }
 
 function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
-    const { t } = useTranslation("copilotChatBot");
+    const tCopilotChatBot = useTranslations("copilotChatBot");
 
     return (
         <AletheiaModal
@@ -30,7 +30,7 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                         color: colors.neutral,
                     }}
                 >
-                    {t("startReviewTitle")}
+                    {tCopilotChatBot("startReviewTitle")}
                 </Typography>
             }
         >
@@ -44,7 +44,7 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                         lineHeight: "1.5",
                     }}
                 >
-                    {t("startReviewMessage")}
+                    {tCopilotChatBot("startReviewMessage")}
                 </Typography>
 
                 <AletheiaButton
@@ -52,7 +52,7 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                     onClick={onCancel}
                     style={{ minWidth: "120px" }}
                 >
-                    {t("understoodBtn")}
+                    {tCopilotChatBot("understoodBtn")}
                 </AletheiaButton>
             </Box>
         </AletheiaModal>

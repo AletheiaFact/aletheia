@@ -1,20 +1,20 @@
 import { Avatar } from "@mui/material";
 import InfoTooltip from "../Claim/InfoTooltip";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import { useAtom } from "jotai";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 import colors from "../../styles/colors";
 import { Roles } from "../../types/enums";
+import { useTranslations } from "next-intl";
 
 const UserTag = ({ user }) => {
-    const { t } = useTranslation();
+    const tUserTag = useTranslations("userTag");
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const userName =
         role !== Roles.Regular && isLoggedIn
             ? user
-            : t("userTag:anonymousFactChecker");
+            : tUserTag("anonymousFactChecker");
     const firstLetter = userName[0];
     return (
         <InfoTooltip

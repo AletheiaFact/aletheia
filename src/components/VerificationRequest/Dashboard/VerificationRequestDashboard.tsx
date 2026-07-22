@@ -10,11 +10,11 @@ import { Dashboard } from "./VerificationRequestDashboard.style";
 import VerificationRequestCounts from "./VerificationRequestCounts";
 import VerificationRequestOverview from "./VerificationRequestOverview";
 import VerificationRequestActivity from "./VerificationRequestActivity";
-import { useTranslation } from "next-i18next";
 import Loading from "../../Loading";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ canViewBoard }) => {
-    const { t } = useTranslation("verificationRequest");
+    const tVerificationRequest = useTranslations("verificationRequest");
     const [stats, setStats] = useState<{
         statsCount: StatsCount;
         statsSourceChannels: StatsSourceChannels[];
@@ -52,7 +52,7 @@ const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ can
     if (error || !stats) {
         return (
             <Dashboard style={{ justifyContent: "center" }}>
-                <Typography>{t("dashboard.errorLoading")}</Typography>
+                <Typography>{tVerificationRequest("dashboard.errorLoading")}</Typography>
             </Dashboard>
         );
     }
@@ -63,10 +63,10 @@ const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ can
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Typography className="title">
-                            {t("dashboard.title")}
+                            {tVerificationRequest("dashboard.title")}
                         </Typography>
                         <Typography className="subtitle">
-                            {t("dashboard.subtitle")}
+                            {tVerificationRequest("dashboard.subtitle")}
                         </Typography>
                     </Grid>
 
@@ -83,7 +83,7 @@ const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ can
                         />
                     </Grid>
 
-                    { canViewBoard && (
+                    {canViewBoard && (
                         <Grid item xs={12} lg={5}>
                             <VerificationRequestActivity
                                 statsRecentActivity={stats.statsRecentActivity}

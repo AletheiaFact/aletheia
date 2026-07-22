@@ -1,10 +1,10 @@
 import React from "react";
 import { Divider, Grid, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { EventPayload, EventsActions, EventsState } from "../../../types/event";
 import LargeDrawer from "../../LargeDrawer";
 import DynamicEventForm from "./DynamicEventForm";
 import EventApi from "../../../api/eventApi";
+import { useTranslations } from "next-intl";
 
 interface EventDrawerProps {
     open: boolean;
@@ -23,7 +23,8 @@ const EventDrawer = ({
     state,
     actions
 }: EventDrawerProps) => {
-    const { t } = useTranslation();
+    const tEvents = useTranslations("events");
+    const t = useTranslations() as any;
     const { hasCaptcha, isLoading } = state;
     const { setRecaptchaString, setIsLoading } = actions;
 
@@ -64,7 +65,7 @@ const EventDrawer = ({
         <LargeDrawer open={open} onClose={onClose}>
             <Grid container style={{ padding: "30px" }}>
                 <Typography variant="h2" fontSize={24}>
-                    {t("events:titleEditEvent")}
+                    {tEvents("titleEditEvent")}
                 </Typography>
                 <Divider />
                 <DynamicEventForm

@@ -1,10 +1,10 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import styled from "styled-components";
+import { useTranslations } from "next-intl";
 
 const ClassificationModal = ({
     open,
@@ -13,7 +13,8 @@ const ClassificationModal = ({
     handleOk,
     handleCancel,
 }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
+    const tOrderModal = useTranslations("orderModal");
     const onChangeRadio = (e) => {
         setValue(e.target.value);
     };
@@ -47,7 +48,7 @@ const ClassificationModal = ({
                         textTransform: "uppercase",
                     }}
                 >
-                    {t("claimReviewForm:classificationLabel")}
+                    {tClaimReviewForm("classificationLabel")}
                 </h2>
             }
         >
@@ -117,7 +118,7 @@ const ClassificationModal = ({
                     onClick={handleCancel}
                     style={{ width: "62%" }}
                 >
-                    <span>{t("orderModal:cancelButton")}</span>
+                    <span>{tOrderModal("cancelButton")}</span>
                 </ModalCancelButton>
 
                 <AletheiaButton
@@ -125,7 +126,7 @@ const ClassificationModal = ({
                     onClick={handleOk}
                     style={{ width: "48%", paddingTop: 0 }}
                 >
-                    {t("orderModal:okButton")}
+                    {tOrderModal("okButton")}
                 </AletheiaButton>
             </div>
         </AletheiaModal>

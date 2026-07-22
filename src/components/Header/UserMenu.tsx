@@ -4,6 +4,7 @@ import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { StyledMenu } from "./Header.style";
 import UserMenuContent from "./UserMenuContent";
 import { useHeaderData } from "./useHeaderData";
+import { useTranslations } from "next-intl";
 
 const UserMenu = () => {
     const { state, actions } = useHeaderData();
@@ -15,7 +16,8 @@ const UserMenu = () => {
         user,
         isLoadingUser
     } = state;
-    const { t, setAnchorEl, handleClose } = actions;
+    const { setAnchorEl, handleClose } = actions;
+    const tHeader = useTranslations("header");
 
     return (
         <>
@@ -27,7 +29,7 @@ const UserMenu = () => {
                 aria-haspopup="true"
                 aria-expanded={Boolean(anchorEl)}
             >
-                {t("header:myAccountItem")}
+                {tHeader("myAccountItem")}
             </Button >
 
             <StyledMenu
@@ -45,7 +47,6 @@ const UserMenu = () => {
                     user={user}
                     isLoadingUser={isLoadingUser}
                     nameSpace={nameSpace}
-                    t={t}
                 />
             </StyledMenu>
         </>

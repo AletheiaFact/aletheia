@@ -21,7 +21,7 @@ import { isUserLoggedIn } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
 import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 import { useReviewTaskPermissions } from "../../machines/reviewTask/usePermissions";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const SentenceReportView = ({
     context,
@@ -31,7 +31,7 @@ const SentenceReportView = ({
     componentStyle,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
-    const { t } = useTranslation();
+    const tReviewTask = useTranslations("reviewTask");
 
     const { machineService, publishedReview, reviewTaskType, reportModel } =
         useContext(ReviewTaskMachineContext);
@@ -115,7 +115,7 @@ const SentenceReportView = ({
                                         fontWeight: 500,
                                     }}
                                 >
-                                    {t("reviewTask:reviewerInstructions")}
+                                    {tReviewTask("reviewerInstructions")}
                                 </Typography>
                             </Paper>
                         )}
@@ -155,7 +155,7 @@ const SentenceReportView = ({
                                             marginBottom: "4px",
                                         }}
                                     >
-                                        {t("reviewTask:rejectionCommentTitle")}
+                                        {tReviewTask("rejectionCommentTitle")}
                                     </Typography>
                                     <Typography
                                         variant="body2"

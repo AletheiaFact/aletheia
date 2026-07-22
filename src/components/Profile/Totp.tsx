@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import Label from "../Label";
 import { MessageManager } from "../Messages";
 import { Grid, Typography } from "@mui/material"
-import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
 import InputPassword from "../InputPassword";
@@ -15,13 +14,17 @@ import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
 import TextError from "../TextErrorForm";
+import { useTranslations } from "next-intl";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
     const [textSource, setTextSource] = useState("");
     const [showForm, setShowForm] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const { t } = useTranslation();
+    const tProfile = useTranslations("profile");
+    const tCommon = useTranslations("common");
+    const tLogin = useTranslations("login");
+    const t = useTranslations();
     const router = useRouter();
     const {
         register,
@@ -75,7 +78,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                MessageManager.showMessage("error", `${tProfile("totpIncorectCodeMessage")}`);
                 setIsLoading(false);
             });
     };
@@ -91,7 +94,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                MessageManager.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
+                MessageManager.showMessage("error", `${tProfile("totpUnLinkErrorMessage")}`);
                 setIsLoading(false);
             });
     };
@@ -122,7 +125,7 @@ export const Totp = ({ flow, setFlow }) => {
         <>
             <Grid container>
                 <Typography variant="h4" className="subtitle">
-                    {t("profile:totpSectionTittle")}
+                    {tProfile("totpSectionTittle")}
                 </Typography>
             </Grid>
             {showForm && (
@@ -132,29 +135,38 @@ export const Totp = ({ flow, setFlow }) => {
                 >
                     <Grid item xs={12} style={{ marginBottom: "20px" }}>
                         <p>
-                            <Trans
-                                i18nKey={"profile:totpSectionDescription"}
-                                components={[
+                            {tProfile.rich("totpSectionDescription", {
+                                lastpass: (chunks) => (
                                     <a
                                         style={{ whiteSpace: "pre-wrap" }}
                                         href="https://www.lastpass.com"
                                         target="_blank"
                                         rel="noreferrer"
-                                    ></a>,
+                                    >
+                                        {chunks}
+                                    </a>
+                                ),
+                                appStore: (chunks) => (
                                     <a
                                         style={{ whiteSpace: "pre-wrap" }}
                                         href="https://apps.apple.com/us/app/google-authenticator/id388497605"
                                         target="_blank"
                                         rel="noreferrer"
-                                    ></a>,
+                                    >
+                                        {chunks}
+                                    </a>
+                                ),
+                                playStore: (chunks) => (
                                     <a
                                         style={{ whiteSpace: "pre-wrap" }}
                                         href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US"
                                         target="_blank"
                                         rel="noreferrer"
-                                    ></a>,
-                                ]}
-                            />
+                                    >
+                                        {chunks}
+                                    </a>
+                                ),
+                            })}
                         </p>
                         <img
                             style={{
@@ -168,7 +180,7 @@ export const Totp = ({ flow, setFlow }) => {
                             alt="TOTP QR code"
                             src={imgSource}
                         />
-                        <p>{t("profile:totpCodeDescription")}</p>
+                        <p>{tProfile("totpCodeDescription")}</p>
                         <code
                             style={{
                                 borderRadius: "10px",
@@ -186,7 +198,7 @@ export const Totp = ({ flow, setFlow }) => {
                     </Grid>
                     <Grid item style={{ marginBottom: "20px" }}>
                         <Label required>
-                            {t("profile:totpInputTittle")}
+                            {tProfile("totpInputTittle")}
                         </Label>
                         <Grid item xs={7} sm={5} md={4} lg={3}>
                             <InputPassword
@@ -196,7 +208,7 @@ export const Totp = ({ flow, setFlow }) => {
                             />
                             <TextError
                                 stateError={errors.totp}
-                                children={t("common:requiredFieldError")}
+                                children={tCommon("requiredFieldError")}
                                 data-cy="testTotpInputPasswordError"
                             />
                         </Grid>
@@ -206,7 +218,7 @@ export const Totp = ({ flow, setFlow }) => {
                         htmlType="submit"
                         loading={isLoading}
                     >
-                        {t("login:submitButton")}
+                        {tLogin("submitButton")}
                     </AletheiaButton>
                 </form >
             )}
@@ -233,7 +245,7 @@ export const Totp = ({ flow, setFlow }) => {
                                 margin: 0,
                             }}
                         >
-                            {t("profile:totpUnLinkSubmit")}
+                            {tProfile("totpUnLinkSubmit")}
                         </Typography>
                     </AletheiaButton>
                 </form>

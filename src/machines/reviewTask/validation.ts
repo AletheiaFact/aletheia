@@ -38,8 +38,8 @@ export function validateFormSubmission(
     if (!formData.classification || formData.classification === "") {
         errors.push({
             field: "classification",
-            label: "claimReviewForm:classificationLabel",
-            message: "common:requiredFieldError",
+            label: "claimReviewForm.classificationLabel",
+            message: "common.requiredFieldError",
         });
     }
 
@@ -47,7 +47,7 @@ export function validateFormSubmission(
     if (!formData.visualEditor) {
         errors.push({
             field: "visualEditor",
-            message: "common:requiredFieldError",
+            message: "common.requiredFieldError",
         });
     } else {
         const editorParser = new EditorParser();
@@ -65,7 +65,7 @@ export function validateFormSubmission(
             if (isEmpty) {
                 errors.push({
                     field: "visualEditor",
-                    message: `common:${key}RequiredFieldError`,
+                    message: `common.${key}RequiredFieldError`,
                 });
             }
         }
@@ -79,7 +79,7 @@ export function validateFormSubmission(
         if (!hasSources) {
             errors.push({
                 field: "sources",
-                message: "common:sourceRequiredFieldError",
+                message: "common.sourceRequiredFieldError",
             });
         }
     }

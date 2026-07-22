@@ -3,7 +3,6 @@ import CardBase from "../CardBase";
 import UserTag from "./UserTag";
 import claimApi from "../../api/claimApi";
 import personalityApy from "../../api/personality";
-import { useTranslation } from "next-i18next";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
@@ -17,6 +16,7 @@ import verificationRequestApi from "../../api/verificationRequestApi";
 import colors from "../../styles/colors";
 import reviewColors from "../../constants/reviewColors";
 import { Content } from "../../types/Content";
+import { useTranslations } from "next-intl";
 
 interface IKanbanCardProps {
     reviewTask: {
@@ -33,7 +33,8 @@ interface IKanbanCardProps {
 }
 
 const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
+    const t = useTranslations() as any;
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     const apiCallFunctions = {
@@ -126,8 +127,8 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                             reviewTask.content?.props?.classification && (
                                 <Chip
                                     data-cy="testKanbanClassificationChip"
-                                    label={t(
-                                        `claimReviewForm:${reviewTask.content.props.classification}`
+                                    label={tClaimReviewForm(
+                                        `${reviewTask.content.props.classification}`
                                     ).toUpperCase()}
                                     size="small"
                                     style={{

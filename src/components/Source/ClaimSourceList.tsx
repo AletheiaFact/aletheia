@@ -4,7 +4,7 @@ import { Grid, Typography } from "@mui/material";
 import React from "react";
 import ClaimSourceListItem from "./ClaimSourceListItem";
 import { ClaimSourceListStyle } from "./ClaimSourceList.style";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const ClaimSourceList = ({
     sources,
@@ -15,7 +15,7 @@ const ClaimSourceList = ({
     seeMoreHref: string;
     showAllSources?: boolean;
 }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const sourcesGridColumns = 6;
     const dataSource = showAllSources
         ? sources
@@ -49,7 +49,7 @@ const ClaimSourceList = ({
                     className="all-sources-link-button"
                 >
                     <Typography variant="h4" className="all-sources-link">
-                        {t("claim:seeSourcesButton")}
+                        {tClaim("seeSourcesButton")}
                     </Typography>
                 </AletheiaButton>
             )}

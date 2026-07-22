@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import LocalizedDate from "../LocalizedDate";
-import { TFunction } from "i18next";
 import { HistoryListItemProps, PerformedBy } from "../../types/History";
 import { isM2M, isUser } from "../../utils/TypeGuards";
 import { M2MSubject } from "../../types/enums";
 
-const getDisplayName = (user: PerformedBy, t: TFunction): string => {
+type Translator = (key: string) => string;
+
+const getDisplayName = (user: PerformedBy, t: Translator): string => {
   if (isM2M(user) && user.subject === M2MSubject.Chatbot) {
     return t("virtualAssistant");
   }
@@ -20,7 +21,7 @@ const getDisplayName = (user: PerformedBy, t: TFunction): string => {
 };
 
 const HistoryListItem: React.FC<HistoryListItemProps> = ({ history }) => {
-  const { t } = useTranslation("history");
+  const t = useTranslations("history");
 
   const currentHistory = useMemo(() => {
     try {

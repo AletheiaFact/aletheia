@@ -15,12 +15,12 @@ import {
   Download,
 } from "@mui/icons-material";
 import Image from "next/image";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 export default function HeroSection() {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
@@ -29,7 +29,7 @@ export default function HeroSection() {
           <Stack spacing={4}>
             <Box>
               <Chip
-                label={t("about:heroChip")}
+                label={tAbout("heroChip")}
                 sx={{ mb: 3, bgcolor: "grey.100", color: "text.secondary" }}
               />
               <Typography
@@ -41,7 +41,7 @@ export default function HeroSection() {
                   mb: 3,
                 }}
               >
-                {t("about:heroTitle")}
+                {tAbout("heroTitle")}
                 <Typography
                   component="span"
                   variant="h1"
@@ -51,11 +51,11 @@ export default function HeroSection() {
                     fontWeight: 500,
                   }}
                 >
-                  {t("about:heroTitleHighlight")}
+                  {tAbout("heroTitleHighlight")}
                 </Typography>
               </Typography>
               <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 600, mb: 4, lineHeight: 1.6 }}>
-                {t("about:heroDescription")}
+                {tAbout("heroDescription")}
               </Typography>
             </Box>
 
@@ -69,7 +69,7 @@ export default function HeroSection() {
                 component="a"
                 onClick={() => trackUmamiEvent("about-hero-access-platform", "navigation")}
               >
-                {t("about:accessPlatform")}
+                {tAbout("accessPlatform")}
               </Button>
               <Button
                 variant="outlined"
@@ -80,18 +80,18 @@ export default function HeroSection() {
                 component="a"
                 onClick={() => trackUmamiEvent("about-hero-download-manual", "download")}
               >
-                {t("about:downloadManual")}
+                {tAbout("downloadManual")}
               </Button>
             </Stack>
 
             <Stack direction="row" spacing={4} sx={{ color: "text.secondary" }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Check sx={{ fontSize: 16, color: theme.palette.success.main }} />
-                <Typography variant="body2">{t("about:openSource")}</Typography>
+                <Typography variant="body2">{tAbout("openSource")}</Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Check sx={{ fontSize: 16, color: theme.palette.success.main }} />
-                <Typography variant="body2">{t("about:creativeCommons")}</Typography>
+                <Typography variant="body2">{tAbout("creativeCommons")}</Typography>
               </Box>
             </Stack>
           </Stack>

@@ -3,12 +3,12 @@ import { Grid, Divider, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
 import ClaimSourceList from "../Source/ClaimSourceList";
-import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
 import ClassificationText from "../ClassificationText";
 import { useSelector } from "@xstate/react";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { useTranslations } from "next-intl";
 
 const SentenceReportContent = ({
     context,
@@ -16,7 +16,8 @@ const SentenceReportContent = ({
     showClassification,
     href,
 }) => {
-    const { t } = useTranslation();
+    const tClaimReview = useTranslations("claimReview");
+    const tClaim = useTranslations("claim");
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -33,7 +34,7 @@ const SentenceReportContent = ({
             {showClassification && classification && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
-                        {t(`claimReview:title${reviewTaskType}Review`)}
+                        {tClaimReview(`title${reviewTaskType}Review`)}
                     </Typography>
                     <Typography variant="body1" className="paragraph">
                         <ClassificationText classification={classification} />
@@ -44,7 +45,7 @@ const SentenceReportContent = ({
             {summary && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
-                        {t("claimReview:summarySectionTitle")}
+                        {tClaimReview("summarySectionTitle")}
                     </Typography>
                     <p
                         dangerouslySetInnerHTML={{
@@ -58,7 +59,7 @@ const SentenceReportContent = ({
             {questions && questions.length > 0 && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
-                        {t("claimReview:questionsSectionTitle")}
+                        {tClaimReview("questionsSectionTitle")}
                     </Typography>
                     {questions.map((item) => {
                         return (
@@ -77,7 +78,7 @@ const SentenceReportContent = ({
             {report && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
-                        {t("claimReview:verificationSectionTitle")}
+                        {tClaimReview("verificationSectionTitle")}
                     </Typography>
                     <p
                         dangerouslySetInnerHTML={{ __html: sanitizer(report) }}
@@ -89,7 +90,7 @@ const SentenceReportContent = ({
             {verification && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
-                        {t("claimReview:howSectionTitle")}
+                        {tClaimReview("howSectionTitle")}
                     </Typography>
                     <p
                         dangerouslySetInnerHTML={{
@@ -104,7 +105,7 @@ const SentenceReportContent = ({
                 {sources && sources?.length > 0 && (
                     <>
                         <Typography className="title" variant="h4">
-                            {t("claim:sourceSectionTitle")}
+                            {tClaim("sourceSectionTitle")}
                         </Typography>
                         <ClaimSourceList
                             sources={sortedSources}

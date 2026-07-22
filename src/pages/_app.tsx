@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import Head from "next/head";
 import "../styles/app.css";
-import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
 import { GlobalMessage } from "../components/Messages";
 import { SessionExpiredModal } from "../components/SessionExpiredModal";
@@ -25,10 +24,17 @@ import { AletheiaThemeConfig } from "../styles/namespaceThemes";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 import { featureFlagsAtom } from "../atoms/featureFlags";
+import {
+    NextIntlClientProvider,
+    useTranslations,
+} from "next-intl";
 
-function MyApp({ Component, pageProps }) {
+function AppContent({ Component, pageProps }) {
     const store = useStore();
-    const { t } = useTranslation();
+
+    const tSeo = useTranslations("seo");
+    const tCookieConsent = useTranslations("cookieConsent");
+
     const setCurrentRole = useSetAtom(currentUserRole);
     const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
     const setCurrentUserId = useSetAtom(currentUserId);
@@ -37,7 +43,10 @@ function MyApp({ Component, pageProps }) {
     const setFeatureFlags = useSetAtom(featureFlagsAtom);
 
     const [nameSpace] = useAtom(currentNameSpace);
+
     const safeNamespace = nameSpace || NameSpaceEnum.Main;
+    const getUserRole = GetUserRole();
+
     const namespaceTheme = useMemo(
         () => AletheiaThemeConfig(safeNamespace),
         [safeNamespace]
@@ -51,37 +60,42 @@ function MyApp({ Component, pageProps }) {
         }
     }, [pageProps.enableEventsFeature, setFeatureFlags]);
 
-    GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
-        setCurrentRole(role);
-        setCurrentLoginStatus(isLoggedIn);
-        setCurrentUserId(id);
-        setCurrentLevelAuthentication(aal);
-        setAuthResolved(true);
-    });
-
+    useEffect(() => {
+        getUserRole().then(({ role, isLoggedIn, id, aal }) => {
+            setCurrentRole(role);
+            setCurrentLoginStatus(isLoggedIn);
+            setCurrentUserId(id);
+            setCurrentLevelAuthentication(aal);
+            setAuthResolved(true);
+        });
+    }, [getUserRole]);
     return (
         <>
             <Head>
-                <title>{t("seo:siteName")}</title>
+                <title>{tSeo("siteName")}</title>
+
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
+
                 <meta
                     httpEquiv="Content-Type"
                     content="text/html; charset=utf-8"
                 />
+
                 <meta
                     name="google-site-verification"
                     content="hM4P5Iyoy9bojyEm1AhZF5O5ZSCtScgyXwFDHdrcnFI"
                 />
+
                 {umamiConfig?.UMAMI_SITE_ID && (
                     <script
                         async
                         defer
-                        data-website-id={umamiConfig?.UMAMI_SITE_ID}
+                        data-website-id={umamiConfig.UMAMI_SITE_ID}
                         src="https://analytics.aletheiafact.org/script.js"
-                    ></script>
+                    />
                 )}
             </Head>
             <Provider store={store}>
@@ -89,14 +103,15 @@ function MyApp({ Component, pageProps }) {
                     <GlobalMessage />
                     <SessionExpiredModal />
                     <CssBaseline />
+
                     <MainApp>
                         <DefaultSeo
-                            titleTemplate={`%s | ${t("seo:siteName")}`}
-                            defaultTitle={t("seo:siteName")}
+                            titleTemplate={`%s | ${tSeo("siteName")}`}
+                            defaultTitle={tSeo("siteName")}
                             openGraph={{
                                 type: "website",
                                 url: pageProps.href,
-                                site_name: t("seo:siteName"),
+                                site_name: tSeo("siteName"),
                                 images: [
                                     {
                                         url: "https://pbs.twimg.com/profile_images/1426648783614619651/p43eLo43_400x400.jpg",
@@ -112,12 +127,16 @@ function MyApp({ Component, pageProps }) {
                                 cardType: "summary",
                             }}
                         />
+
                         <Component {...pageProps} />
+
                         <CookieConsent
                             location="bottom"
-                            buttonText={t("cookieConsent:button")}
+                            buttonText={tCookieConsent("button")}
                             cookieName="termsAgreementCookie"
-                            style={{ background: colors.neutral }}
+                            style={{
+                                background: colors.neutral,
+                            }}
                             buttonStyle={{
                                 background: colors.white,
                                 color: colors.primary,
@@ -130,21 +149,24 @@ function MyApp({ Component, pageProps }) {
                             }}
                             expires={150}
                         >
-                            <Trans
-                                i18nKey={"cookieConsent:text"}
-                                components={[
-                                    // eslint-disable-next-line jsx-a11y/anchor-has-content
+                            {tCookieConsent.rich("text", {
+                                privacyLink: (chunks) => (
                                     <a
                                         style={{ whiteSpace: "pre-wrap" }}
                                         href="/privacy-policy"
-                                    ></a>,
-                                    // eslint-disable-next-line jsx-a11y/anchor-has-content
+                                    >
+                                        {chunks}
+                                    </a>
+                                ),
+                                conductLink: (chunks) => (
                                     <a
                                         style={{ whiteSpace: "pre-wrap" }}
                                         href="/code-of-conduct"
-                                    ></a>,
-                                ]}
-                            />
+                                    >
+                                        {chunks}
+                                    </a>
+                                ),
+                            })}
                         </CookieConsent>
                     </MainApp>
                 </ThemeProvider>
@@ -153,4 +175,18 @@ function MyApp({ Component, pageProps }) {
     );
 }
 
-export default appWithTranslation(MyApp);
+function MyApp({ Component, pageProps }) {
+    return (
+        <NextIntlClientProvider
+            locale={pageProps.locale ?? "pt"}
+            messages={pageProps.messages ?? {}}
+        >
+            <AppContent
+                Component={Component}
+                pageProps={pageProps}
+            />
+        </NextIntlClientProvider>
+    );
+}
+
+export default MyApp;

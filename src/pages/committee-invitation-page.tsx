@@ -1,17 +1,17 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import CommitteInvitationPage from "../components/CommitteInvitation/CommitteInvitationPage";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const CommitteeInvitationPage: NextPage = () => {
-    const { t } = useTranslation();
+    const tCommitteeInvitation = useTranslations("committeeInvitation");
     return (
         <>
-            <Seo title={t("committeeInvitation:title")} description={t("committeeInvitation:hero.description")} />
+            <Seo title={tCommitteeInvitation("title")} description={tCommitteeInvitation("hero.description")} />
             <CommitteInvitationPage />
         </>
     );
@@ -22,7 +22,8 @@ export async function getServerSideProps({ locale, locales, req }) {
 
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };

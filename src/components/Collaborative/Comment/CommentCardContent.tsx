@@ -5,12 +5,12 @@ import CommentCardHeader from "./CommentCardHeader";
 import CommentReplyList from "./CommentReplyList";
 import { Box, Typography } from "@mui/material";
 import reviewColors from "../../../constants/reviewColors";
-import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
 import { usePluginReady } from "../utils/usePluginReady";
 import { Comment } from "../../../types/Comment";
 import { User } from "../../../types/User";
+import { useTranslations } from "next-intl";
 
 interface CommentCardContentProps {
     user: User | null;
@@ -40,7 +40,7 @@ const CommentCardContent = ({
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     const { from } = useCurrentSelection();
     const { getAnnotationsAt } = useHelpers();
 
@@ -91,7 +91,7 @@ const CommentCardContent = ({
                     className="comment-card-classification-text "
                     sx={{ color: reviewColors[content.text] }}
                 >
-                    {t(`claimReviewForm:${content?.text}`)}
+                    {tClaimReviewForm(`${content?.text}`)}
                 </Typography>
             )}
 
@@ -120,7 +120,6 @@ const CommentCardContent = ({
                         isEditing={isEditing}
                         setIsCommentVisible={setIsCommentVisible}
                         setShowForm={setShowForm}
-                        t={t}
                     />
                 </Box>
             )}

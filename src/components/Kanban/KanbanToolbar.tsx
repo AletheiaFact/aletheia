@@ -1,10 +1,10 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 
 import { FormControlLabel, Switch, Grid } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 const KanbanToolbar = ({ filterUserTasks, setFilterUserTasks }) => {
-    const { t } = useTranslation();
+    const tKanban = useTranslations("kanban");
 
     const handleChange = (selectedTask) => {
         setFilterUserTasks((prev) => ({
@@ -27,9 +27,8 @@ const KanbanToolbar = ({ filterUserTasks, setFilterUserTasks }) => {
                             onChange={() => handleChange(task)}
                         />
                     }
-                    label={t(
-                        `kanban:my${
-                            task.charAt(0).toUpperCase() + task.slice(1)
+                    label={tKanban(
+                        `my${task.charAt(0).toUpperCase() + task.slice(1)
                         }`
                     )}
                 />

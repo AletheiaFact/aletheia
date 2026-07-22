@@ -3,8 +3,8 @@ import { MenuItem, FormControl } from "@mui/material";
 import { ContentModelEnum } from "../../../../types/enums";
 import { SelectInput } from "../../../Form/ClaimReviewSelect";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { IReportTypeSelect } from "../../../../types/VerificationRequest";
+import { useTranslations } from "next-intl";
 
 const ReportTypeSelect = ({
     onChange,
@@ -15,7 +15,7 @@ const ReportTypeSelect = ({
     dataCy,
 }: IReportTypeSelect) => {
     const [value, setValue] = useState(defaultValue || "");
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
 
     const onChangeSelect = (e) => {
         setValue(e.target.value);
@@ -40,7 +40,7 @@ const ReportTypeSelect = ({
                 </MenuItem>
                 {Object.values(ContentModelEnum).map((option) => (
                     <MenuItem key={option} value={option}>
-                        {t(`claimForm:${option}`)}
+                        {tClaimForm(`${option}`)}
                     </MenuItem>
                 ))}
             </SelectInput>

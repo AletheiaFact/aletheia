@@ -1,5 +1,3 @@
-import { TFunction } from "i18next";
-
 export interface PaginatedResponse<T> {
     data: T[];
     total: number;
@@ -16,5 +14,3 @@ export interface PasswordChangeResponse {
     success: boolean;
     message: string;
 }
-
-export type TranslationFn = TFunction;

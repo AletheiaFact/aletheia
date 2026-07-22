@@ -2,12 +2,12 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../../../AletheiaButton";
 import AletheiaInput from "../../../AletheiaInput";
 import { IInputExtraSourcesList } from "../../../../types/VerificationRequest";
 import { SourceType } from "../../../../types/Source";
 import { debounce } from "lodash";
+import { useTranslations } from "next-intl";
 
 const formatSources = (sources: SourceType[]) => {
     const sourceArray = Array.isArray(sources) ? sources : [];
@@ -27,7 +27,8 @@ const createEmptySource = () => ({
 });
 
 const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder, dataCy }: IInputExtraSourcesList) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tSourceForm = useTranslations("sourceForm");
     const [sourcesList, setSourcesList] = useState(() => formatSources(defaultSources as SourceType[]));
 
     const handleListChange = useCallback((newSourcesList: typeof sourcesList) => {
@@ -107,7 +108,7 @@ const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder
                         style={{ marginTop: 12 }}
                     >
                         <AddIcon fontSize="small" />
-                        {t("sourceForm:addNewSourceButton")}
+                        {tSourceForm("addNewSourceButton")}
                     </AletheiaButton>
                 </Grid>
             )}

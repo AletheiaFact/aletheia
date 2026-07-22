@@ -1,17 +1,17 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 
 import About from "../components/About/About";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const AboutPage: NextPage<{ data: string }> = () => {
-    const { t } = useTranslation();
+    const tAbout = useTranslations("about");
     return (
         <>
-            <Seo title={t("about:title")} description={t("about:intro")} />
+            <Seo title={tAbout("title")} description={tAbout("intro")} />
             <About />
         </>
     );
@@ -22,8 +22,13 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            locale,
+            messages: await getMessages(locale),
+            href:
+                req.protocol +
+                "://" +
+                req.get("host") +
+                req.originalUrl,
         },
     };
 }

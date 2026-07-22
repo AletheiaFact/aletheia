@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import ReviewTaskApi from "../../api/reviewTaskApi";
@@ -9,6 +8,7 @@ import BaseList from "../List/BaseList";
 import EmptyKanbanGrid from "./EmptyKanbanGrid";
 import KanbanCard from "./KanbanCard";
 import styled from "styled-components";
+import { useTranslations } from "next-intl";
 
 const StyledColumn = styled.div`
     padding: 0 10px;
@@ -34,12 +34,12 @@ const KanbanGrid = ({
     filterUser,
     reviewTaskType,
 }: KanbanColProps) => {
-    const { t } = useTranslation();
+    const tReviewTask = useTranslations("reviewTask");
 
     return (
         <StyledColumn>
             <BaseList
-                title={t(`reviewTask:${state}`)}
+                title={tReviewTask(`${state}`)}
                 apiCall={ReviewTaskApi.getReviewTasks}
                 filter={{
                     value: state,
@@ -54,7 +54,7 @@ const KanbanGrid = ({
                     />
                 )}
                 emptyFallback={
-                    <EmptyKanbanGrid title={t(`reviewTask:${state}`)} />
+                    <EmptyKanbanGrid title={tReviewTask(`${state}`)} />
                 }
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}

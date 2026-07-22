@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { useAtom } from "jotai";
 import { currentAuthentication, currentUserId } from "../atoms/currentUser";
 import userApi from "../api/userApi";
-import { useTranslation } from "next-i18next";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { useTranslations } from "next-intl";
 
 const AalCheckPage = () => {
-    const { t } = useTranslation();
+    const tCheckAal = useTranslations("checkAal");
     const [nameSpace] = useAtom(currentNameSpace);
 
     const [aal] = useAtom(currentAuthentication);
@@ -39,7 +39,7 @@ const AalCheckPage = () => {
                 fontWeight: 600,
             }}
         >
-            <div>{t("checkAal:informationUpdated")}</div>
+            <div>{tCheckAal("informationUpdated")}</div>
             <a
                 href={nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/"}
                 style={{
@@ -48,7 +48,7 @@ const AalCheckPage = () => {
                     placeContent: "center",
                 }}
             >
-                {t("checkAal:goBack")}
+                {tCheckAal("goBack")}
             </a>
         </div>
     );

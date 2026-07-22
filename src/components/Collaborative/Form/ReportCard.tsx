@@ -1,12 +1,12 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 import EditorCard from "./EditorCard";
+import { useTranslations } from "next-intl";
 
 const ReportCard = ({ forwardRef }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     return (
         <EditorCard
-            label={t("claimReviewForm:reportLabel")}
+            label={tClaimReviewForm("reportLabel")}
             dataCy="testClaimReviewreport"
             forwardRef={forwardRef}
         />

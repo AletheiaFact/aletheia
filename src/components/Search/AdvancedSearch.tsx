@@ -1,7 +1,7 @@
 import React from "react";
 import { TextField, Autocomplete } from "@mui/material";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 interface TopicOption {
     name: string;
@@ -29,7 +29,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     defaultValue,
     handleFilter,
 }) => {
-    const { t } = useTranslation();
+    const tSearch = useTranslations("search");
 
     const mappedOptions: MappedOption[] = (options || []).map((option) => ({
         label: option.matchedAlias
@@ -63,8 +63,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 <TextField
                     {...params}
                     style={{ backgroundColor: colors.lightNeutral }}
-                    label={t("search:advancedSearchLabel")}
-                    placeholder={t("search:advancedSearchPlaceHolder")}
+                    label={tSearch("advancedSearchLabel")}
+                    placeholder={tSearch("advancedSearchPlaceHolder")}
                     onChange={(event) => onSearch(event.target.value)}
                 />
             )}

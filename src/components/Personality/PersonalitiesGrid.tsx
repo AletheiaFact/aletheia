@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import GridList from "../GridList";
@@ -7,6 +6,7 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { Personality } from "../../types/Personality";
+import { useTranslations } from "next-intl";
 
 interface PersonalitiesGridProps {
     personalities: Personality[];
@@ -14,7 +14,7 @@ interface PersonalitiesGridProps {
 }
 
 const PersonalitiesGrid = ({ personalities, title }: PersonalitiesGridProps) => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     const [nameSpace] = useAtom(currentNameSpace);
     const href =
         nameSpace !== NameSpaceEnum.Main
@@ -28,7 +28,7 @@ const PersonalitiesGrid = ({ personalities, title }: PersonalitiesGridProps) => 
             itemSize={{ xs: 12, sm: 6 }}
             href={href}
             dataCy="testSeeMorePersonality"
-            seeMoreButtonLabel={t("home:seeMorePersonalitiesButton")}
+            seeMoreButtonLabel={tHome("seeMorePersonalitiesButton")}
             getKey={(personality) => personality.id}
             renderItem={(personality) => (
                 <PersonalityCard personality={personality} summarized={true} />

@@ -1,11 +1,11 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import AddIcon from '@mui/icons-material/Add';
 import CreateCTAButton from "../CreateCTAButton";
+import { useTranslations } from "next-intl";
 
 const PersonalityCreateCTA = ({ href }) => {
-    const { t } = useTranslation();
+    const tPersonalityCTA = useTranslations("personalityCTA");
 
     return (
         <CreateCTAButton>
@@ -15,7 +15,7 @@ const PersonalityCreateCTA = ({ href }) => {
                 data-cy="testButtonCreatePersonality"
                 startIcon={<AddIcon />}
             >
-                {t("personalityCTA:button")}
+                {tPersonalityCTA("button")}
             </AletheiaButton>
         </CreateCTAButton>
     );

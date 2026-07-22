@@ -1,19 +1,19 @@
 import React from "react";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
-import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
 import { Favorite } from "@mui/icons-material";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const DonateButton = ({ header = false, style = {} }) => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
     const { vw } = useAppSelector((state) => state);
 
     return (
         <AletheiaButton
             type={ButtonType.white}
-            href={t("home:donateUrlButton")}
+            href={tHome("donateUrlButton")}
             target="_blank"
             rel="noreferrer"
             onClick={() => {
@@ -31,7 +31,7 @@ const DonateButton = ({ header = false, style = {} }) => {
                 ...style,
             }}
         >
-            {t("home:donateButton")}
+            {tHome("donateButton")}
         </AletheiaButton>
     );
 };

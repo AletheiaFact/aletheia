@@ -1,10 +1,10 @@
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import OryProfileView from "../components/Profile/OryProfileView";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { getMessages } from "../lib/getMessages";
 
 const ProfilePage: NextPage<{ user; nameSpace }> = ({ user, nameSpace }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
@@ -17,10 +17,15 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
+            href:
+                req.protocol +
+                "://" +
+                req.get("host") +
+                req.originalUrl,
             user: query.user ? JSON.parse(JSON.stringify(query.user)) : null,
             // user: req.user ? JSON.parse(JSON.stringify(req.user)) : null,
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

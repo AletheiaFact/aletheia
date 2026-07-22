@@ -70,9 +70,9 @@
     "allSourceChannels": "All Source Channels",
     "priority": {
         "critical": "Critical",
-        "high": "High ({{level}})",
-        "medium": "Medium ({{level}})",
-        "low": "Low ({{level}})",
+        "high": "High ({level})",
+        "medium": "Medium ({level})",
+        "low": "Low ({level})",
         "filter_high": "High",
         "filter_medium": "Medium",
         "filter_low": "Low"
@@ -95,10 +95,10 @@
     "InTriageDescription": "Verification Requests being analyzed by a verifier for approval or rejection.",
     "PostedDescription": "Verification Requests that have been approved and are already published in the system.",
     "activity": {
-        "Posted": "Verification request #{{hash}} verified and forwarded",
-        "In Triage": "Verification request #{{hash}} in the verification process",
+        "Posted": "Verification request #{hash} verified and forwarded",
+        "In Triage": "Verification request #{hash} in the verification process",
         "Pre Triage": "New verification request received by {{source}}",
-        "Declined": "Verification request #{{hash}} checked and archived"
+        "Declined": "Verification request #{hash} checked and archived"
     },
     "dashboard": {
         "title": "Reports Dashboard",
@@ -123,8 +123,8 @@
     "noPersonalitiesFound": "No personalities identified in this request",
     "errorLoadingPersonalities": "Error loading personalities. Please try again.",
     "retryLoadingPersonalities": "Retry",
-    "viewPersonalityPage": "View personality page for {{name}}",
-    "submittedAt": "Submitted on <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
+    "viewPersonalityPage": "View personality page for {name}",
+    "submittedAt": "Submitted on <bold>{date}</bold> via <bold>{channel}</bold>",
     "requestStatus": "Request status: ",
     "cardLinkToFullRequest": "see full verification request"
 }

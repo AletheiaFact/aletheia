@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography, Divider } from "@mui/material";
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 interface PersonalityInfo {
     summarized: boolean;
@@ -13,7 +13,7 @@ interface PersonalityInfo {
 }
 
 export const PersonalityInfo = (props: PersonalityInfo) => {
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
     const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
     return (
@@ -76,7 +76,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         }}
                     >
                         <b>
-                            {t("personality:headerReviewsTotal", {
+                            {tPersonality("headerReviewsTotal", {
                                 totalReviews: personality.stats?.total,
                             })}
                         </b>
@@ -95,7 +95,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     href={personality.wikipedia}
                     rel="noreferrer"
                 >
-                    {t("personality:wikipediaPage")}
+                    {tPersonality("wikipediaPage")}
                 </a>
             )}
             {!summarized && <Divider flexItem variant="middle" style={{ margin: "16px 0" }} />}
@@ -112,14 +112,14 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         >
                             {personality?.claims?.length !== undefined && (
                                 <span>
-                                    {t("personality:headerClaimsTotal", {
+                                    {tPersonality("headerClaimsTotal", {
                                         totalClaims: personality.claims.length,
                                     })}
                                 </span>
                             )}
                             {personality.stats?.total !== undefined && (
                                 <span>
-                                    {t("personality:headerReviewsTotal", {
+                                    {tPersonality("headerReviewsTotal", {
                                         totalReviews: personality.stats?.total,
                                     })}
                                 </span>

@@ -15,8 +15,8 @@ describe("BackButton Component", () => {
     describe("should not render on home page or root path", () => {
 
         beforeEach(() => {
-            cy.stub(require("next-i18next"), "useTranslation").returns({
-                t: (key: string) => key,
+            cy.stub(require("next-intl"), "useTranslations").callsFake(() => {
+                return (key: string) => key;
             });
         });
 

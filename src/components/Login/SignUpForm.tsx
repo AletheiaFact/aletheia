@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React, { useRef, useState } from "react";
 
 import AletheiaAlert from "../AletheiaAlert";
@@ -10,9 +9,13 @@ import { useForm } from "react-hook-form";
 import Label from "../Label";
 import TextError from "../TextErrorForm";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import { useTranslations } from "next-intl";
 
 const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
+    const tMaterials = useTranslations("materials");
+    const tLogin = useTranslations("login");
+    const tProfile = useTranslations("profile");
     const {
         register,
         handleSubmit,
@@ -25,7 +28,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
 
     const handleFormSubmit = (values) => {
         if (!captchaString) {
-            onFinishFailed(t("common:requiredFieldError"));
+            onFinishFailed(tCommon("requiredFieldError"));
             return;
         }
         onFinish({ ...values, recaptcha: captchaString });
@@ -37,9 +40,9 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                 type="info"
                 message={
                     <>
-                        {t("materials:disclaimerFirstParagraph")} <br />
+                        {tMaterials("disclaimerFirstParagraph")} <br />
                         <br />
-                        {t("materials:disclaimerSecondParagraph")}{" "}
+                        {tMaterials("disclaimerSecondParagraph")}{" "}
                         <a href="email:contato@aletheiafact.org">
                             contato@aletheiafact.org
                         </a>
@@ -47,13 +50,13 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     </>
                 }
             />
-            <h2>{t("login:signupFormHeader")}</h2>
+            <h2>{tLogin("signupFormHeader")}</h2>
             <form onSubmit={handleSubmit(handleFormSubmit, onFinishFailed)}>
                 <Grid container>
                     <Grid item xs={12} sm={3}>
                         <Label
                             required
-                            children={t("login:nameLabel") + " :"}
+                            children={tLogin("nameLabel") + " :"}
                         />
                     </Grid>
                     <Grid item xs={12} sm={9}>
@@ -66,13 +69,13 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <TextError
                             data-cy="nameError"
                             stateError={errors.name}
-                            children={t("login:nameErrorMessage")}
+                            children={tLogin("nameErrorMessage")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
                         <Label
                             required
-                            children={t("login:emailLabel") + " :"}
+                            children={tLogin("emailLabel") + " :"}
                         />
                     </Grid>
                     <Grid item xs={12} sm={9}>
@@ -89,15 +92,15 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             stateError={errors.email}
                             children={
                                 errors.email?.type === "pattern"
-                                    ? t("login:invalidEmailErrorMessage")
-                                    : t("login:emailErrorMessage")
+                                    ? tLogin("invalidEmailErrorMessage")
+                                    : tLogin("emailErrorMessage")
                             }
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
                         <Label
                             required
-                            children={t("login:passwordLabel") + " :"}
+                            children={tLogin("passwordLabel") + " :"}
                         />
                     </Grid>
                     <Grid item xs={12} sm={9}>
@@ -110,13 +113,13 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         <TextError
                             data-cy="passwordError"
                             stateError={errors.password}
-                            children={t("login:passwordErrorMessage")}
+                            children={tLogin("passwordErrorMessage")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
                         <Label
                             required
-                            children={t("login:repeatPasswordLabel") + " :"}
+                            children={tLogin("repeatPasswordLabel") + " :"}
                         />
                     </Grid>
                     <Grid item xs={12} sm={9}>
@@ -132,14 +135,14 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                             stateError={errors.repeatedPassword}
                             children={
                                 errors.repeatedPassword?.type === "required"
-                                    ? t("common:requiredFieldError")
-                                    : t("profile:passwordMatchErrorMessage")
+                                    ? tCommon("requiredFieldError")
+                                    : tProfile("passwordMatchErrorMessage")
                             }
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
                         <Label required>
-                            {t("common:captchaLabel") + " :"}
+                            {tCommon("captchaLabel") + " :"}
                         </Label>
                     </Grid>
                     <Grid item xs={12} sm={9}>
@@ -156,7 +159,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                         htmlType="submit"
                         data-cy="loginButton"
                     >
-                        {t("login:submitButton")}
+                        {tLogin("submitButton")}
                     </AletheiaButton>
                 </Grid>
             </form>

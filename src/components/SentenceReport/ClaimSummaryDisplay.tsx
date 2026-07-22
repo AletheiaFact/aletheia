@@ -5,8 +5,8 @@ import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref"
 import ClaimInfo from "../Claim/ClaimInfo";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { useTranslation } from "next-i18next";
 import ReviewContent from "../ClaimReview/ReviewContent";
+import { useTranslations } from "next-intl";
 
 const ClaimSummaryDisplay = ({
     claim,
@@ -17,13 +17,13 @@ const ClaimSummaryDisplay = ({
     claim: any;
     content: any;
 }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const [nameSpace] = useAtom(currentNameSpace);
 
     const contentProps = {
         [ContentModelEnum.Speech]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
@@ -31,10 +31,10 @@ const ClaimSummaryDisplay = ({
                 claim?.contentModel
             ),
             title: `"(...) ${content}"`,
-            speechTypeTranslation: "claim:typeSpeech",
+            speechTypeTranslation: "typeSpeech",
         },
         [ContentModelEnum.Image]: {
-            linkText: "claim:cardLinkToImage",
+            linkText: "cardLinkToImage",
             contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
@@ -45,7 +45,7 @@ const ClaimSummaryDisplay = ({
             speechTypeTranslation: "",
         },
         [ContentModelEnum.Debate]: {
-            linkText: "claim:cardLinkToDebate",
+            linkText: "cardLinkToDebate",
             contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
@@ -53,10 +53,10 @@ const ClaimSummaryDisplay = ({
                 claim?.contentModel
             ),
             title: `"(...) ${content}"`,
-            speechTypeTranslation: "claim:typeDebate",
+            speechTypeTranslation: "typeDebate",
         },
         [ContentModelEnum.Unattributed]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
@@ -64,7 +64,7 @@ const ClaimSummaryDisplay = ({
                 claim?.contentModel
             ),
             title: `"(...) ${content}"`,
-            speechTypeTranslation: "claim:typeSpeech",
+            speechTypeTranslation: "typeSpeech",
         },
     };
 
@@ -82,7 +82,7 @@ const ClaimSummaryDisplay = ({
                     content={content}
                     contentPath={contentPath}
                     isImage={isImage}
-                    linkText={t(linkText)}
+                    linkText={tClaim(linkText)}
                 />
             </SentenceReportSummary>
             <ClaimInfo

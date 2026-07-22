@@ -1,5 +1,5 @@
 {
-    "title": "Are you sure you want {{warning}}?",
+    "title": "Are you sure you want {warning}?",
     "gobackWarning": "to go back",
     "okButton": "Done",
     "deleteButton": "Delete",

@@ -43,8 +43,8 @@
     "uploadImageText": "Escolha uma imagem para enviar",
     "uploadImageButton": "Enviar imagem",
     "fileInputButton": "Escolha o arquivo",
-    "fileTypeError": "Voce só pode enviar arquivos nos formatos {{types}}",
-    "fileSizeError": "O arquivo deve ter menos de {{size}}",
+    "fileTypeError": "Voce só pode enviar arquivos nos formatos {types}",
+    "fileSizeError": "O arquivo deve ter menos de {size}",
     "undefined": "Indefinido",
     "noAnswer": "N/A",
     "errorDuplicateTitle": "já existe um discurso com esse título. Por favor, escolha um título diferente."

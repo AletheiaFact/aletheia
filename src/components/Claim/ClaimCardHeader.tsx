@@ -1,22 +1,22 @@
 import { Grid, Typography } from "@mui/material"
-import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import { ContentModelEnum } from "../../types/enums";
 import LocalizedDate from "../LocalizedDate";
+import { useTranslations } from "next-intl";
 
 const ClaimCardHeader = ({
     personality,
     date,
     claimType = ContentModelEnum.Speech,
 }) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const isImage = claimType === ContentModelEnum.Image;
     const speechTypeMapping = {
-        [ContentModelEnum.Speech]: t("claim:typeSpeech"),
-        [ContentModelEnum.Image]: t("claim:typeImage"),
-        [ContentModelEnum.Debate]: t("claim:typeDebate"),
-        [ContentModelEnum.Unattributed]: t("claim:typeUnattributed"),
+        [ContentModelEnum.Speech]: tClaim("typeSpeech"),
+        [ContentModelEnum.Image]: tClaim("typeImage"),
+        [ContentModelEnum.Debate]: tClaim("typeDebate"),
+        [ContentModelEnum.Unattributed]: tClaim("typeUnattributed"),
     };
 
     const speechTypeTranslation = speechTypeMapping[claimType];
@@ -70,10 +70,10 @@ const ClaimCardHeader = ({
                             color: colors.blackSecondary,
                         }}
                     >
-                        {t("claim:cardHeader1")}&nbsp;
+                        {tClaim("cardHeader1")}&nbsp;
                         <LocalizedDate date={date || new Date()} />
                         &nbsp;
-                        {t("claim:cardHeader2")}&nbsp;
+                        {tClaim("cardHeader2")}&nbsp;
                         <span style={{ fontWeight: 700 }}>
                             {speechTypeTranslation}
                         </span>
@@ -89,7 +89,7 @@ const ClaimCardHeader = ({
                             color: colors.blackSecondary,
                         }}
                     >
-                        {t("claim:cardHeader3")}
+                        {tClaim("cardHeader3")}
                         &nbsp;
                         <LocalizedDate date={date || new Date()} />
                     </Typography>

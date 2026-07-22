@@ -1,4 +1,3 @@
-import { TFunction } from "next-i18next";
 import { User } from "./User";
 
 export type NameSpace = {
@@ -19,5 +18,4 @@ export interface IDynamicNameSpaceForm {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     isDrawerOpen: boolean;
     onClose: () => void;
-    t: TFunction;
 }

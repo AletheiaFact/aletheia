@@ -1,12 +1,12 @@
 import React from "react";
-import { useTranslation } from "next-i18next";
 import EditorCard from "./EditorCard";
+import { useTranslations } from "next-intl";
 
 const VerificationCard = ({ forwardRef }) => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     return (
         <EditorCard
-            label={t("claimReviewForm:verificationLabel")}
+            label={tClaimReviewForm("verificationLabel")}
             dataCy="testClaimReviewverification"
             forwardRef={forwardRef}
         />

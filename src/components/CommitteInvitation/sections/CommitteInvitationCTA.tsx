@@ -17,9 +17,9 @@ import {
     SupportAgentOutlined,
     CheckCircleOutlineOutlined,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
 import { trackUmamiEvent } from "../../../lib/umami";
+import { useTranslations } from "next-intl";
 
 const checklistItems = [
     "checklist.item1",
@@ -36,7 +36,7 @@ const iconItems = [
 ];
 
 const CommitteInvitationCTA = () => {
-    const { t } = useTranslation("committeeInvitation");
+    const t = useTranslations("committeeInvitation");
 
     return (
         <Box className="cta-wrapper" id="join">

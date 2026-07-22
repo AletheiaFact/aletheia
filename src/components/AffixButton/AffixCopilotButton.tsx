@@ -1,5 +1,4 @@
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import React, { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@xstate/react";
@@ -15,9 +14,10 @@ import actions from "../../store/actions";
 import Fab from "./Fab";
 import StartReviewAlertModal from "../Modal/StartReviewAlertModal";
 import { CompoundStates, ReviewTaskStates } from "../../machines/reviewTask/enums";
+import { useTranslations } from "next-intl";
 
 const AffixCopilotButton = () => {
-    const { t } = useTranslation();
+    const tAffix = useTranslations("affix");
     const dispatch = useDispatch();
 
     const { machineService } = useContext(ReviewTaskMachineContext);
@@ -69,7 +69,7 @@ const AffixCopilotButton = () => {
                 }}
             >
                 <Fab
-                    tooltipText={t("affix:affixCopilotTitle")}
+                    tooltipText={tAffix("affixCopilotTitle")}
                     size="70px"
                     onClick={handleClick}
                     data-cy="testCopilotFloatButton"

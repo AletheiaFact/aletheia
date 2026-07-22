@@ -5,7 +5,7 @@ import { useFooterData } from "../hooks/useFooterData";
 import { trackUmamiEvent } from "../../../lib/umami";
 
 const FooterCtaActions = () => {
-    const { t } = useFooterData();
+    const { tFooter } = useFooterData();
 
     return (
         <Stack
@@ -22,7 +22,7 @@ const FooterCtaActions = () => {
                 className="footer-primary-cta-link"
                 data-cy="testFooterCtaPrimaryLink"
             >
-                {t("footer:cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
+                {tFooter("cta.primaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
             <Link
                 onClick={() => trackUmamiEvent("cta-footer-committee-button", "committee-invitation")}
@@ -31,7 +31,7 @@ const FooterCtaActions = () => {
                 className="footer-secondary-cta-link"
                 data-cy="testFooterCtaSecondaryLink"
             >
-                {t("footer:cta.secondaryButton")}
+                {tFooter("cta.secondaryButton")} <ArrowOutwardRounded sx={{ fontSize: 18 }} />
             </Link>
         </Stack>
     );

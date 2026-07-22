@@ -1,8 +1,9 @@
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 import type { SourceType } from "../types/Source";
-import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import type { PaginatedResponse } from "../types/ApiResponse";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/source");
 
@@ -77,7 +78,7 @@ const createSource = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("sources:sourcesCreateSuccess")
+                t("sources.sourcesCreateSuccess")
             );
             router.push(
                 nameSpace === NameSpaceEnum.Main
@@ -90,7 +91,7 @@ const createSource = (
             console.error(err);
             MessageManager.showMessage(
                 "error",
-                t("sources:sourcesCreateError")
+                t("sources.sourcesCreateError")
             );
         });
 };
@@ -108,7 +109,7 @@ const getById = (
         .catch(() => {
             MessageManager.showMessage(
                 "error",
-                t("sources:sourcesErrorFetching")
+                t("sources.sourcesErrorFetching")
             );
         });
 };

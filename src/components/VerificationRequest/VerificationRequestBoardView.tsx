@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
 import {
   Box,
   Card,
@@ -19,18 +18,22 @@ import {
 } from "../../helpers/verificationRequestCardHelper";
 import InfoTooltip from "../Claim/InfoTooltip";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useTranslations } from "next-intl";
 
 const VerificationRequestBoardView = ({ state, actions }) => {
   const { loading, filteredRequests, totalVerificationRequests, paginationModel } = state;
   const { fetchData, setPaginationModel } = actions;
-  const { t } = useTranslation();
+  const tVerificationRequest = useTranslations("verificationRequest");
+  const tList = useTranslations("list");
+  const tCommon = useTranslations("common");
+  const tClaimForm = useTranslations("claimForm");
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const statuses = [
-    { key: VerificationRequestStatus.PRE_TRIAGE, label: t("verificationRequest:PRE_TRIAGE") },
-    { key: VerificationRequestStatus.IN_TRIAGE, label: t("verificationRequest:IN_TRIAGE") },
-    { key: VerificationRequestStatus.POSTED, label: t("verificationRequest:POSTED") },
+    { key: VerificationRequestStatus.PRE_TRIAGE, label: tVerificationRequest("PRE_TRIAGE") },
+    { key: VerificationRequestStatus.IN_TRIAGE, label: tVerificationRequest("IN_TRIAGE") },
+    { key: VerificationRequestStatus.POSTED, label: tVerificationRequest("POSTED") },
   ];
 
   const handleCardClick = (request: any) => {
@@ -112,7 +115,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   />
                   <InfoTooltip
                     placement="bottom"
-                    content={t(`verificationRequest:${formatStatusToTranslationKey(status.key)}Description`)}
+                    content={tVerificationRequest(`${formatStatusToTranslationKey(status.key)}Description`)}
                     useCustomStyle={false}
                   >
                     <InfoOutlinedIcon
@@ -126,7 +129,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                   color={colors.blackSecondary}
                   alignContent="flex-end"
                 >
-                  {t("list:totalItems", {
+                  {tList("totalItems", {
                     total: groupedTotalRequests[status.key],
                   })}
                 </Typography>
@@ -134,7 +137,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
 
               {loading[status.key] ? (
                 <Typography variant="body2" color={colors.blackSecondary}>
-                  {t("common:loading")}
+                  {tCommon("loading")}
                 </Typography>
               ) : (
                 <Box
@@ -162,7 +165,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                           }}
                         >
                           <Chip
-                            label={getSeverityLabel(request.severity, t)}
+                            label={getSeverityLabel(request.severity, tVerificationRequest, tClaimForm)}
                             size="small"
                             sx={{
                               backgroundColor: getSeverityColor(
@@ -192,9 +195,9 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             display="block"
                           >
                             <strong>
-                              {t("verificationRequest:tagReportType")}:
+                              {tVerificationRequest("tagReportType")}:
                             </strong>{" "}
-                            {t(`claimForm:${request.reportType}`)}
+                            {tClaimForm(`${request.reportType}`)}
                           </Typography>
                         )}
 
@@ -205,7 +208,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             display="block"
                           >
                             <strong>
-                              {t("verificationRequest:tagImpactArea")}:
+                              {tVerificationRequest("tagImpactArea")}:
                             </strong>{" "}
                             {request.impactArea.name}
                           </Typography>
@@ -218,11 +221,11 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             display="block"
                           >
                             <strong>
-                              {t("verificationRequest:tagSourceChannel")}:
+                              {tVerificationRequest("tagSourceChannel")}:
                             </strong>{" "}
                             {truncateText(
-                              t(
-                                `verificationRequest:${request.sourceChannel}`,
+                              tVerificationRequest(
+                                `${request.sourceChannel}`,
                                 { defaultValue: request.sourceChannel },
                               ),
                               30,
@@ -242,7 +245,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             target="_blank"
                             onClick={(event) => event.stopPropagation()}
                           >
-                            {t("verificationRequest:openVerificationRequest")}
+                            {tVerificationRequest("openVerificationRequest")}
                           </AletheiaButton>
                         </Box>
                       </CardContent>
@@ -265,7 +268,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       }}
                       data-cy={"testLoadMoreVerificationRequest"}
                     >
-                      {t("list:loadMoreButton")}
+                      {tList("loadMoreButton")}
                     </AletheiaButton>
                   )}
                   {groupedTotalRequests[status.key] === 0 && (
@@ -274,7 +277,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       color="textSecondary"
                       align="center"
                     >
-                      {t("verificationRequest:noRequestsInStatus")}
+                      {tVerificationRequest("noRequestsInStatus")}
                     </Typography>
                   )}
                 </Box>

@@ -1,15 +1,16 @@
 import React, { useCallback } from "react";
 import { EditorComponent, useHelpers } from "@remirror/react";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 
 import EditorApi from "../../api/editor";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import AletheiaButton from "../AletheiaButton";
 import { Grid } from "@mui/material"
+import { useTranslations } from "next-intl";
 
 export const EditorContent = ({ reference, isLive }) => {
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
+    const t = useTranslations();
     // this needs to be called inside the scope of the provider
     // to start the machine with the correct context
     useAtom(callbackTimerAtom);
@@ -27,7 +28,7 @@ export const EditorContent = ({ reference, isLive }) => {
                         onMouseDown={(event) => event.preventDefault()}
                         onClick={handleClickSave}
                     >
-                        {t("debates:saveButtonLabel")}
+                        {tDebates("saveButtonLabel")}
                     </AletheiaButton>
                 )}
             </Grid>

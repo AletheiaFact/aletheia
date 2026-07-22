@@ -1,9 +1,9 @@
 import { CloseOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 const SourceDialogHeader = ({ onCloseModal }) => {
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
     return (
         <header
             style={{
@@ -31,7 +31,7 @@ const SourceDialogHeader = ({ onCloseModal }) => {
                     textAlign: "center",
                 }}
             >
-                {t("sourceForm:sourceModalHeader")}
+                {tSourceForm("sourceModalHeader")}
             </span>
         </header>
     );

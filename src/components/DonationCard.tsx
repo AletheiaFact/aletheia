@@ -1,9 +1,9 @@
-import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 const DonationCard = () => {
-    const { t } = useTranslation();
+    const tDonationCard = useTranslations("donationCard");
     return (
         <div
             style={{
@@ -26,7 +26,7 @@ const DonationCard = () => {
                     lineHeight: "24px",
                 }}
             >
-                {t("donationCard:tittle")}
+                {tDonationCard("tittle")}
             </p>
             <p
                 style={{
@@ -40,7 +40,7 @@ const DonationCard = () => {
                     textAlign: "center",
                 }}
             >
-                {t("donationCard:message")}
+                {tDonationCard("message")}
             </p>
             <div
                 style={{

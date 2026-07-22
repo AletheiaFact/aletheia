@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AdminView from "../components/adminArea/AdminView";
 import UserEditDrawer from "../components/adminArea/Drawer/UserEditDrawer";
@@ -14,6 +13,7 @@ import AdminTabNavigator from "../components/adminArea/AdminTabNavigator";
 import TabPanel from "../components/TabPanel";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { getMessages } from "../lib/getMessages";
 
 const Admin: NextPage<{ users: string; nameSpace: string }> = ({
     users,
@@ -62,7 +62,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             users: JSON.parse(JSON.stringify(query?.users)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

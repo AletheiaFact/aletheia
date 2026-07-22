@@ -1,14 +1,14 @@
 import { CircularProgress } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import colors from "../styles/colors";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const Loading = ({ style = {}, isWhiteLoading = false }) => {
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
     const [nameSpace] = useAtom(currentNameSpace);
 
     const activeColor = isWhiteLoading
@@ -40,7 +40,7 @@ const Loading = ({ style = {}, isWhiteLoading = false }) => {
                     marginTop: "24px",
                 }}
             >
-                {t("common:loading")}
+                {tCommon("loading")}
             </p>
         </div>
     );

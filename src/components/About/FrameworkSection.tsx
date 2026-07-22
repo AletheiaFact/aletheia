@@ -20,22 +20,22 @@ import {
   Favorite,
   Code,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export default function FrameworkSection() {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.50" }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Chip label={t("about:futureVisionChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold", maxWidth: 800, mx: "auto" }}>
-            {t("about:frameworkTitle")}
+          <Chip label={tAbout("futureVisionChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold", maxWidth: 800, mx: "auto" }}>
+            {tAbout("frameworkTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
-            {t("about:frameworkDescription")}
+            {tAbout("frameworkDescription")}
           </Typography>
         </Box>
 
@@ -44,46 +44,46 @@ export default function FrameworkSection() {
             variant="body1"
             sx={{ textAlign: "center", mb: 6, color: "text.primary", maxWidth: 900, mx: "auto", lineHeight: 1.7 }}
           >
-            {t("about:frameworkIntro")}
+            {tAbout("frameworkIntro")}
           </Typography>
 
           <Grid container spacing={4} sx={{ justifyContent: "center" }}>
             {[
               {
                 icon: <Favorite sx={{ fontSize: 24, color: theme.palette.primary.main }} />,
-                title: t("about:socialDimensionTitle"),
+                title: tAbout("socialDimensionTitle"),
                 color: "primary",
                 content: [
-                  t("about:socialDimensionIntro"),
-                  t("about:socialDimensionPoint1"),
-                  t("about:socialDimensionPoint2"),
-                  t("about:socialDimensionPoint3"),
-                  t("about:socialDimensionImpact"),
+                  tAbout("socialDimensionIntro"),
+                  tAbout("socialDimensionPoint1"),
+                  tAbout("socialDimensionPoint2"),
+                  tAbout("socialDimensionPoint3"),
+                  tAbout("socialDimensionImpact"),
                 ],
               },
               {
                 icon: <Code sx={{ fontSize: 24, color: theme.palette.success.main }} />,
-                title: t("about:technicalDimensionTitle"),
+                title: tAbout("technicalDimensionTitle"),
                 color: "success",
                 content: [
-                  t("about:technicalDimensionIntro"),
-                  t("about:technicalDimensionPoint1"),
-                  t("about:technicalDimensionPoint2"),
-                  t("about:technicalDimensionPoint3"),
-                  t("about:technicalDimensionPoint4"),
-                  t("about:technicalDimensionImpact"),
+                  tAbout("technicalDimensionIntro"),
+                  tAbout("technicalDimensionPoint1"),
+                  tAbout("technicalDimensionPoint2"),
+                  tAbout("technicalDimensionPoint3"),
+                  tAbout("technicalDimensionPoint4"),
+                  tAbout("technicalDimensionImpact"),
                 ],
               },
               {
                 icon: <MenuBook sx={{ fontSize: 24, color: theme.palette.secondary.main }} />,
-                title: t("about:culturalDimensionTitle"),
+                title: tAbout("culturalDimensionTitle"),
                 color: "secondary",
                 content: [
-                  t("about:culturalDimensionIntro"),
-                  t("about:culturalDimensionPoint1"),
-                  t("about:culturalDimensionPoint2"),
-                  t("about:culturalDimensionPoint3"),
-                  t("about:culturalDimensionImpact"),
+                  tAbout("culturalDimensionIntro"),
+                  tAbout("culturalDimensionPoint1"),
+                  tAbout("culturalDimensionPoint2"),
+                  tAbout("culturalDimensionPoint3"),
+                  tAbout("culturalDimensionImpact"),
                 ],
               },
             ].map((dimension, index) => (
@@ -140,29 +140,29 @@ export default function FrameworkSection() {
             }}
           >
             <Typography variant="h4" sx={{ textAlign: "center", mb: 4, fontWeight: "bold" }}>
-              {t("about:replicableModelTitle")}
+              {tAbout("replicableModelTitle")}
             </Typography>
             <Grid container spacing={3}>
               {[
                 {
                   icon: <Target sx={{ fontSize: 24 }} />,
-                  title: t("about:modularTitle"),
-                  desc: t("about:modularDescription"),
+                  title: tAbout("modularTitle"),
+                  desc: tAbout("modularDescription"),
                 },
                 {
                   icon: <Language sx={{ fontSize: 24 }} />,
-                  title: t("about:openTitle"),
-                  desc: t("about:openDescription"),
+                  title: tAbout("openTitle"),
+                  desc: tAbout("openDescription"),
                 },
                 {
                   icon: <FlashOn sx={{ fontSize: 24 }} />,
-                  title: t("about:adaptableTitle"),
-                  desc: t("about:adaptableDescription"),
+                  title: tAbout("adaptableTitle"),
+                  desc: tAbout("adaptableDescription"),
                 },
                 {
                   icon: <ArrowForward sx={{ fontSize: 24 }} />,
-                  title: t("about:scalableTitle"),
-                  desc: t("about:scalableDescription"),
+                  title: tAbout("scalableTitle"),
+                  desc: tAbout("scalableDescription"),
                 },
               ].map((item, idx) => (
                 <Grid item xs={6} md={3} key={idx} sx={{ textAlign: "center" }}>

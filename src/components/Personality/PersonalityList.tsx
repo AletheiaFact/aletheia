@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import api from "../../api/personality";
@@ -11,10 +10,12 @@ import PersonalityCreateCTA from "./PersonalityCreateCTA";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { useLocale, useTranslations } from "next-intl";
 
 const PersonalityList = () => {
-    const { i18n, t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
+    const locale = useLocale();
+    const tSeo = useTranslations("seo");
     const createPersonalityCTA = (
         <Grid container
             style={{
@@ -35,13 +36,13 @@ const PersonalityList = () => {
     return (
         <>
             <Seo
-                title={t("seo:personalityListTitle")}
-                description={t("seo:personalityListDescription")}
+                title={tSeo("personalityListTitle")}
+                description={tSeo("personalityListDescription")}
             />
             <BaseList
                 apiCall={api.getPersonalities}
                 filter={{
-                    i18n,
+                    locale,
                     nameSpace,
                 }}
                 style={{ paddingTop: 10 }}

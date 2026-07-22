@@ -1,10 +1,10 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "./AletheiaButton";
+import { useTranslations } from "next-intl";
 
 const LoginButton = () => {
-    const { t } = useTranslation();
+    const tClaimReviewForm = useTranslations("claimReviewForm");
 
     return (
         <Grid
@@ -18,7 +18,7 @@ const LoginButton = () => {
                 type={ButtonType.primary}
                 href="/login"
             >
-                {t("claimReviewForm:loginButton").toUpperCase()}
+                {tClaimReviewForm("loginButton").toUpperCase()}
             </AletheiaButton>
         </Grid>
     );

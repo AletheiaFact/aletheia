@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FormControl, FormLabel, Grid } from '@mui/material';
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
-import { useTranslation } from "next-i18next";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -14,6 +13,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import Loading from "../Loading";
+import { useLocale, useTranslations } from "next-intl";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
@@ -22,7 +22,11 @@ const PersonalityCreateSearch = ({
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { t, i18n } = useTranslation();
+    const locale = useLocale();
+    const tPersonalityCreateForm = useTranslations("personalityCreateForm");
+    const tHeader = useTranslations("header");
+    const tPersonalityCTA = useTranslations("personalityCTA");
+    const t = useTranslations();
     const [nameSpace] = useAtom(currentNameSpace);
     const dispatch = useDispatch();
 
@@ -69,7 +73,11 @@ const PersonalityCreateSearch = ({
             };
 
             await api.getPersonalities(
-                { withSuggestions, searchName: searchName, i18n, headers },
+                {
+                    withSuggestions, searchName: searchName, i18n: {
+                        languages: [locale],
+                    }, headers
+                },
                 dispatch
             );
         } catch (e) {
@@ -91,7 +99,11 @@ const PersonalityCreateSearch = ({
             searchName: trimmedName,
         });
         await api.getPersonalities(
-            { withSuggestions, searchName: trimmedName, i18n },
+            {
+                withSuggestions, searchName: trimmedName, i18n: {
+                    languages: [locale],
+                }
+            },
             dispatch
         );
         setIsLoading(false);
@@ -121,11 +133,11 @@ const PersonalityCreateSearch = ({
                     }}
                 >
                     <Label>
-                        {t("personalityCreateForm:name")}
+                        {tPersonalityCreateForm("name")}
                     </Label>
                 </FormLabel>
                 <InputSearch
-                    placeholder={t("header:search_placeholder")}
+                    placeholder={tHeader("search_placeholder")}
                     callback={handleInputSearch}
                 />
             </FormControl>
@@ -136,14 +148,14 @@ const PersonalityCreateSearch = ({
                     <PersonalitySearchResultSection
                         selectPersonality={selectPersonality}
                         personalities={personalitiesCreated}
-                        label={t("personalityCTA:created")}
+                        label={tPersonalityCTA("created")}
                         onClick={onClickSeeProfile}
                         isFormSubmitted={isFormSubmitted}
                     />
                     <PersonalitySearchResultSection
                         selectPersonality={selectPersonality}
                         personalities={personalitiesAvailable}
-                        label={t("personalityCTA:available")}
+                        label={tPersonalityCTA("available")}
                         onClick={createPersonality}
                         isFormSubmitted={isFormSubmitted}
                     />

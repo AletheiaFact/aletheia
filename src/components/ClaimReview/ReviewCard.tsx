@@ -2,7 +2,6 @@ import React from "react";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import CardBase from "../CardBase";
 import { Divider, Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
@@ -15,10 +14,13 @@ import ClaimInfo from "../Claim/ClaimInfo";
 import ReviewClassification from "./ReviewClassification";
 import ReviewContent from "./ReviewContent";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 const ReviewCard = ({ review, summarized = false }) => {
     const { personality, claim, content, reviewHref } = review;
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
+    const tClaimReview = useTranslations("claimReview");
+    const tHome = useTranslations("home");
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
     const claimItem =
@@ -37,19 +39,19 @@ const ReviewCard = ({ review, summarized = false }) => {
 
     const contentProps = {
         [ContentModelEnum.Speech]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             title: `"(...) ${content.content}"`,
         },
         [ContentModelEnum.Image]: {
-            linkText: "claim:cardLinkToImage",
+            linkText: "cardLinkToImage",
             title: claimItem?.title,
         },
         [ContentModelEnum.Debate]: {
-            linkText: "claim:cardLinkToDebate",
+            linkText: "cardLinkToDebate",
             title: `"(...) ${content.content}"`,
         },
         [ContentModelEnum.Unattributed]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             title: `"(...) ${content.content}"`,
         },
     };
@@ -82,8 +84,8 @@ const ReviewCard = ({ review, summarized = false }) => {
                         <ClaimInfo
                             isImage={isImage}
                             date={claimItem.date}
-                            speechTypeTranslation={t(
-                                `claim:type${claimItem.contentModel}`
+                            speechTypeTranslation={tClaim(
+                                `type${claimItem.contentModel}`
                             )}
                             style={{
                                 fontSize: vw?.xs ? 10 : 12,
@@ -93,6 +95,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                         />
                         {content?.props?.classification && (
                             <ReviewClassification
+                                label={tClaimReview("titleClaimReview")}
                                 classification={content.props.classification}
                                 classificationTextStyle={{
                                     fontSize: 12,
@@ -121,7 +124,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                             content={content?.content}
                             contentPath={contentPath}
                             isImage={isImage}
-                            linkText={t(linkText)}
+                            linkText={tClaim(linkText)}
                             style={{ fontSize: vw?.xs ? 16 : 18 }}
                         />
                     </Grid>
@@ -136,7 +139,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                 target="_blank"
                                 style={{ width: "fit-content" }}
                             >
-                                {t("home:reviewsCarouselOpen")}
+                                {tHome("reviewsCarouselOpen")}
                             </AletheiaButton>
                         </Grid>
                     </Grid>

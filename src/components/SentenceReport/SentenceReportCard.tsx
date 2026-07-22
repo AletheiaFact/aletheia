@@ -1,5 +1,4 @@
 import { Grid, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 
 import ReviewClassification from "../ClaimReview/ReviewClassification";
@@ -12,6 +11,7 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import ClaimSummaryDisplay from "./ClaimSummaryDisplay";
 import SourceSummaryDisplay from "./SourceSummaryDisplay";
 import VerificationRequestDisplay from "../VerificationRequest/VerificationRequestDisplay";
+import { useTranslations } from "next-intl";
 
 // If the data is isVerificationRequest and is opened by the kanban, for some reason the content is not being passed correctly.
 // TODO: Fix what is causing this.
@@ -28,7 +28,8 @@ const SentenceReportCard = ({
     classification?: any;
     hideDescription?: string;
 }) => {
-    const { t } = useTranslation();
+    const tClaimReview = useTranslations("claimReview");
+    const tClaim = useTranslations("claim");
     const { reviewTaskType } = useContext(ReviewTaskMachineContext);
     const isClaim = reviewTaskType === ReviewTaskTypeEnum.Claim;
     const {
@@ -58,8 +59,8 @@ const SentenceReportCard = ({
                     <Typography variant="h1" className="classification">
                         <ReviewClassification
                             // TODO: Create a more meaningful h1 for this page
-                            label={t(
-                                `claimReview:title${reviewTaskType}Review`
+                            label={tClaimReview(
+                                `title${reviewTaskType}Review`
                             )}
                             classification={classification}
                         />
@@ -79,7 +80,7 @@ const SentenceReportCard = ({
                 {hideDescription && (
                     <AletheiaAlert
                         type="warning"
-                        message={t("claim:warningTitle")}
+                        message={tClaim("warningTitle")}
                         description={hideDescription}
                         showIcon={true}
                         style={{ padding: "10px" }}

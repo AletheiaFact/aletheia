@@ -1,5 +1,4 @@
 import { SearchOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
 import SearchApi from "../../api/searchApi";
@@ -9,9 +8,10 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 const OverlaySearchInput = () => {
-    const { t } = useTranslation();
+    const tHeader = useTranslations("header");
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -49,7 +49,7 @@ const OverlaySearchInput = () => {
     return (
         <InputSearch
             size="small"
-            placeholder={t("header:search_placeholder")}
+            placeholder={tHeader("search_placeholder")}
             callback={handleInputSearch}
             suffix={<SearchOutlined />}
             data-cy={"testInputSearchOverlay"}

@@ -2,14 +2,15 @@ import { Box, Divider, MenuItem, Typography } from "@mui/material";
 import React from "react";
 import colors from "../../styles/colors";
 import { SidebarSection } from "../../types/header";
-import { TFunction } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export interface SidebarNavLinksProps {
     sections: SidebarSection[];
-    t: TFunction;
 }
 
-const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
+const SidebarNavLinks = ({ sections }: SidebarNavLinksProps) => {
+    const tHeader = useTranslations("header");
+
     return (
         <Box>
             {sections.map((section, index) => (
@@ -26,7 +27,7 @@ const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
                                 marginBottom: "10px",
                             }}
                         >
-                            {t(`header:${section.title}Section`).toUpperCase()}
+                            {tHeader(`${section.title}Section`).toUpperCase()}
                         </Typography>
                     )}
 
@@ -58,7 +59,7 @@ const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
                                     </Box>
                                 )}
 
-                                {t(`header:${item.key}Item`)}
+                                {tHeader(`${item.key}Item`)}
                             </MenuItem>
                         ))}
                     </Box>

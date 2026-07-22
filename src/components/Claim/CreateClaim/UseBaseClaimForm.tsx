@@ -4,11 +4,12 @@ import { validateUrl } from "../../../utils/ValidateUrl";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) => {
     const { shouldValidateContent = true } = options || {};
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const t = useTranslations();
     const router = useRouter();
     const [, send] = useAtom(createClaimMachineAtom);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +38,9 @@ export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) 
             return validateUrl(src, t);
         });
 
-        if (!title.trim()) newErrors.title = t("claimForm:titleFieldError");
-        if (shouldValidateContent && !content.trim()) newErrors.content = t("claimForm:contentFieldError");
-        if (!date) newErrors.date = t("claimForm:dateFieldError");
+        if (!title.trim()) newErrors.title = tClaimForm("titleFieldError");
+        if (shouldValidateContent && !content.trim()) newErrors.content = tClaimForm("contentFieldError");
+        if (!date) newErrors.date = tClaimForm("dateFieldError");
         if (newSourceErrors.some(msg => msg)) newErrors.sources = newSourceErrors;
 
         return newErrors;

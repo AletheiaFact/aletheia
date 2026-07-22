@@ -1,6 +1,4 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
@@ -9,16 +7,18 @@ import { currentNameSpace } from "../atoms/namespace";
 import { useSetAtom } from "jotai";
 import SourceList from "../components/Source/SourceList";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const ClaimSourcePage: NextPage<{ nameSpace }> = ({ nameSpace }) => {
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
     return (
         <>
             <Seo
-                title={t("seo:sourcesTitle")}
-                description={t("seo:sourcesDescription")}
+                title={tSeo("sourcesTitle")}
+                description={tSeo("sourcesDescription")}
             />
             <SourceList />
             <AffixButton />
@@ -31,7 +31,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             href: req.protocol + "://" + req.get("host") + req.originalUrl,

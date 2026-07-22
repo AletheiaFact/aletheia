@@ -1,10 +1,10 @@
 import React from "react";
 import { ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const WarningModal = ({
     open,
@@ -14,7 +14,7 @@ const WarningModal = ({
     handleCancel,
     ...props
 }) => {
-    const { t } = useTranslation();
+    const tWarningModal = useTranslations("warningModal");
 
     return (
         <AletheiaModal
@@ -37,7 +37,7 @@ const WarningModal = ({
                             lineHeight: "18px",
                         }}
                     >
-                        {t(title)}
+                        {tWarningModal(title)}
                     </span>
                 </Grid>
             }
@@ -56,7 +56,7 @@ const WarningModal = ({
                             textDecorationLine: "underline",
                         }}
                     >
-                        {t("warningModal:cancelButton")}
+                        {tWarningModal("cancelButton")}
                     </span>
                 </ModalCancelButton>
 
@@ -64,7 +64,7 @@ const WarningModal = ({
                     onClick={handleOk}
                     type={ButtonType.primary}
                 >
-                    {t("warningModal:okButton")}
+                    {tWarningModal("okButton")}
                 </AletheiaButton>
             </Grid>
         </AletheiaModal>

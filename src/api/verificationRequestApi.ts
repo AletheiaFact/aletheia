@@ -26,7 +26,7 @@ const createVerificationRequest = (t, verificationRequest: any = {}) => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("verificationRequest:verificationRequestCreateSuccess")
+                t("verificationRequest.verificationRequestCreateSuccess")
             );
             return response.data;
         })
@@ -34,7 +34,7 @@ const createVerificationRequest = (t, verificationRequest: any = {}) => {
             console.error(err);
             MessageManager.showMessage(
                 "error",
-                t("verificationRequest:verificationRequestCreateError")
+                t("verificationRequest.verificationRequestCreateError")
             );
         });
 };
@@ -121,12 +121,12 @@ const getById = (id, _t = null, params = {}) => {
 const updateVerificationRequest = (id, params, t, operationType = "update") => {
     const messages = {
         update: {
-            success: "verificationRequest:editVerificationRequestSuccess",
-            error: "verificationRequest:editVerificationRequestError",
+            success: "verificationRequest.editVerificationRequestSuccess",
+            error: "verificationRequest.editVerificationRequestError",
         },
         updateGroup: {
-            success: "verificationRequest:addVerificationRequestSuccess",
-            error: "verificationRequest:addVerificationRequestError",
+            success: "verificationRequest.addVerificationRequestSuccess",
+            error: "verificationRequest.addVerificationRequestError",
         },
     };
 
@@ -154,14 +154,14 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("verificationRequest:addVerificationRequestSuccess")
+                t("verificationRequest.addVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t("verificationRequest:addVerificationRequestError")
+                t("verificationRequest.addVerificationRequestError")
             );
             console.error("error while updating verification request", e);
         });
@@ -173,14 +173,14 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t("verificationRequest:removeVerificationRequestSuccess")
+                t("verificationRequest.removeVerificationRequestSuccess")
             );
             return response.data;
         })
         .catch((e) => {
             MessageManager.showMessage(
                 "error",
-                t("verificationRequest:removeVerificationRequestError")
+                t("verificationRequest.removeVerificationRequestError")
             );
             console.error("error while removing verification request", e);
         });
@@ -190,11 +190,11 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            MessageManager.showMessage("success", t("topics:deleteTopics"));
+            MessageManager.showMessage("success", t("topics.deleteTopics"));
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t("topics:deleteTopicsError"));
+            MessageManager.showMessage("error", t("topics.deleteTopicsError"));
             throw err;
         });
 };

@@ -3,8 +3,8 @@ import AletheiaAvatar from "../AletheiaAvatar";
 import SearchResult from "./SearchResult";
 import colors from "../../styles/colors";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import SearchDescription from "./SearchDescription";
+import { useTranslations } from "next-intl";
 
 const SearchCard = ({
     content,
@@ -14,7 +14,7 @@ const SearchCard = ({
     type,
     avatar = true,
 }) => {
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
 
     const getParams = (type, c) => {
         if (type === "personality") {
@@ -66,8 +66,8 @@ const SearchCard = ({
                                             <AletheiaAvatar
                                                 size={30}
                                                 src={c.avatar}
-                                                alt={t(
-                                                    "seo:personalityImageAlt",
+                                                alt={tSeo(
+                                                    "personalityImageAlt",
                                                     {
                                                         name: c.name,
                                                     }
@@ -79,7 +79,7 @@ const SearchCard = ({
                                     searchName={searchName}
                                     description={
                                         type === "sentence" ||
-                                        type === "claim" ? (
+                                            type === "claim" ? (
                                             <SearchDescription
                                                 personalityName={
                                                     c?.personality[0]?.name

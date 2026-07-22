@@ -2,13 +2,13 @@ import { Box, Typography } from "@mui/material";
 import { LegendColor, PieChartSVG } from "./VerificationRequestDashboard.style";
 import colors from "../../../styles/colors";
 import { VerificationRequestSourceChannel } from "../../../../server/verification-request/dto/types";
-import { useTranslation } from "next-i18next";
 import { StatsSourceChannelsProps } from "../../../types/VerificationRequest";
+import { useTranslations } from "next-intl";
 
 const SourceChannelDistribution = ({
     statsSourceChannels,
 }: StatsSourceChannelsProps) => {
-    const { t } = useTranslation("verificationRequest");
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     const sourceColors = {
         [VerificationRequestSourceChannel.Whatsapp]: colors.lightPrimary,
@@ -60,10 +60,10 @@ const SourceChannelDistribution = ({
     return (
         <>
             <Typography className="title">
-                {t("dashboard.sourcesTitle")}
+                {tVerificationRequest("dashboard.sourcesTitle")}
             </Typography>
             <Typography className="subtitle">
-                {t("dashboard.sourcesSubtitle")}
+                {tVerificationRequest("dashboard.sourcesSubtitle")}
             </Typography>
             <Box className="PieChart-container">
                 <PieChartSVG width="200" height="200" viewBox="0 0 200 200">
@@ -87,7 +87,7 @@ const SourceChannelDistribution = ({
                     <Box className="legend-item" key={channel.label}>
                         <LegendColor color={sourceColors[channel.label]} />
                         <Typography className="legend-label">
-                            {t(`verificationRequest:${channel.label}`, {
+                            {tVerificationRequest(`${channel.label}`, {
                                 defaultValue:
                                     channel.label.charAt(0).toUpperCase() +
                                     channel.label.slice(1),

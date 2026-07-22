@@ -1,8 +1,9 @@
 import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
-import type { PaginatedResponse, TranslationFn } from "../types/ApiResponse";
+import type { PaginatedResponse } from "../types/ApiResponse";
 import { Comment, NewCommentPayload } from "../types/Comment";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/reviewtask");
 
@@ -57,7 +58,7 @@ const getMachineByDataHash = (params: string): Promise<unknown> => {
 
 const createReviewTask = (
     params: Record<string, unknown>,
-    t: TranslationFn,
+    t: (key: string) => string,
     type: string
 ): Promise<unknown> => {
     return request
@@ -65,12 +66,12 @@ const createReviewTask = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(`reviewTask:${type}_SUCCESS`)
+                t(`reviewTask.${type}_SUCCESS`)
             );
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t(`reviewTask:${type}_ERROR`));
+            MessageManager.showMessage("error", t(`reviewTask.${type}_ERROR`));
             throw err;
         });
 };
@@ -84,7 +85,7 @@ const autoSaveDraft = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(`reviewTask:SAVE_DRAFT_SUCCESS`)
+                t(`reviewTask.SAVE_DRAFT_SUCCESS`)
             );
             return response.data;
         })
@@ -113,14 +114,14 @@ const saveDraft = (
         .then((response) => {
             MessageManager.showMessage(
                 "success",
-                t(`reviewTask:SAVE_DRAFT_SUCCESS`)
+                t(`reviewTask.SAVE_DRAFT_SUCCESS`)
             );
             return response.data;
         })
         .catch((err) => {
             MessageManager.showMessage(
                 "error",
-                t(`reviewTask:SAVE_DRAFT_ERROR`)
+                t(`reviewTask.SAVE_DRAFT_ERROR`)
             );
             throw err;
         });
@@ -142,7 +143,7 @@ const getEditorContentObject = (
 
 const addComment = (
     hash: string,
-    comment: NewCommentPayload,
+    comment: NewCommentPayload
 ): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })

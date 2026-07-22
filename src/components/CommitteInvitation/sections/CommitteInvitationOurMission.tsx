@@ -7,7 +7,7 @@ import {
     OpenInNewOutlined,
     FormatQuote,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const missionItems = [
     { key: "combat", icon: <SecurityOutlined /> },
@@ -17,7 +17,7 @@ const missionItems = [
 ];
 
 const CommitteInvitationOurMission = () => {
-    const { t } = useTranslation("committeeInvitation");
+    const t = useTranslations("committeeInvitation");
 
     return (
         <Box className="section-wrapper">

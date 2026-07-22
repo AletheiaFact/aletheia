@@ -4,9 +4,9 @@ import type { Claim } from "../types/Claim";
 import type {
     PaginatedResponse,
     ClaimCreateResponse,
-    TranslationFn,
 } from "../types/ApiResponse";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/Translations";
 
 const request = createApiInstance("/api/claim");
 
@@ -17,7 +17,7 @@ interface FetchOptions {
     isHidden?: boolean;
     nameSpace?: string;
     personality: string;
-    i18n?: { languages?: any };
+    locale?: string;
     fetchOnly?: boolean;
 }
 
@@ -29,7 +29,7 @@ const get = (
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
         personality: options.personality,
-        language: options?.i18n?.languages[0],
+        language: options?.locale,
         isHidden: options?.isHidden || false,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
@@ -53,7 +53,7 @@ const get = (
 
 const getById = (
     id: string,
-    t: TranslationFn,
+    t: (key: string) => string,
     params = {}
 ): Promise<Claim | void> => {
     return request
@@ -64,7 +64,7 @@ const getById = (
         .catch(() => {
             MessageManager.showMessage(
                 "error",
-                `${t("claim:errorWhileFetching")}`
+                `${t("claim.errorWhileFetching")}`
             );
         });
 };
@@ -80,24 +80,22 @@ const executeClaimRequest = async (
 
         MessageManager.showMessage(
             "success",
-            `"${title}" ${t("claimForm:successCreateMessage")}`
+            `"${title}" ${t("claimForm.successCreateMessage")}`
         );
         return response.data;
-
     } catch (err: any) {
         const response = err?.response;
         const data = response?.data;
         const status = response?.status;
 
-        let errorMessage = t("claimForm:errorCreateMessage");
-
+        let errorMessage = t("claimForm.errorCreateMessage");
 
         if (status === 409) {
             const titleUsed = payload?.title || "";
-            errorMessage = `"${titleUsed}" ${t("claimForm:errorDuplicateTitle")}`;
-        }
-
-        else if (data?.message) {
+            errorMessage = `"${titleUsed}" ${t(
+                "claimForm.errorDuplicateTitle"
+            )}`;
+        } else if (data?.message) {
             if (typeof data.message === "string") {
                 errorMessage = data.message;
             } else if (typeof data.message?.message === "string") {
@@ -150,7 +148,7 @@ const updateDebate = (
                 "error",
                 data && data.message
                     ? data.message
-                    : t("claimForm:errorUpdateMessage")
+                    : t("claimForm.errorUpdateMessage")
             );
         });
 };
@@ -159,11 +157,11 @@ const deleteClaim = (id: string, t: TranslationFn): Promise<void> => {
     return request
         .delete(`/${id}`)
         .then(() => {
-            MessageManager.showMessage("success", t("claim:deleteSuccess"));
+            MessageManager.showMessage("success", t("claim.deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-            MessageManager.showMessage("error", t("claim:deleteError"));
+            MessageManager.showMessage("error", t("claim.deleteError"));
         });
 };
 
@@ -183,14 +181,14 @@ const updateClaimHiddenStatus = (
         .then(() => {
             MessageManager.showMessage(
                 "success",
-                t(`claim:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+                t(`claim.${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
             MessageManager.showMessage(
                 "error",
-                t(`claim:${isHidden ? "hideError" : "unhideError"}`)
+                t(`claim.${isHidden ? "hideError" : "unhideError"}`)
             );
         });
 };

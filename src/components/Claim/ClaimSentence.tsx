@@ -6,8 +6,8 @@ import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import InfoTooltip from "./InfoTooltip";
 import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
 import { ViewMode } from "../FilterToggleButtons";
+import { useTranslations } from "next-intl";
 
 const Sentence = styled.a`
     color: ${colors.primary};
@@ -36,7 +36,7 @@ const ClaimSentence = ({
     handleSentenceClick,
 }) => {
     let style = {};
-    const { t } = useTranslation();
+    const tReviewTask = useTranslations("reviewTask");
     if (properties.classification && showHighlights === "left") {
         style = {
             ...style,
@@ -63,7 +63,7 @@ const ClaimSentence = ({
             }}
         >
             <SecurityOutlined fontSize="small" />
-            {t("reviewTask:sentenceInfo")}
+            {tReviewTask("sentenceInfo")}
         </span>
     );
 

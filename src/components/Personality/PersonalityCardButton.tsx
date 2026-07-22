@@ -1,8 +1,8 @@
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 const PersonalityCardButton = ({
     personality,
@@ -13,7 +13,8 @@ const PersonalityCardButton = ({
     onClick,
     isMobileDevice
 }) => {
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
+    const tPersonality = useTranslations("personality");
     const buttonProps = {
         type: ButtonType.primary,
         "data-cy": personality.name,
@@ -32,8 +33,8 @@ const PersonalityCardButton = ({
             >
                 <span>
                     {isCreatingClaim
-                        ? t("claimForm:personalityFound")
-                        : t("personality:profile_button")}
+                        ? tClaimForm("personalityFound")
+                        : tPersonality("profile_button")}
                 </span>
             </AletheiaButton>
         );
@@ -59,8 +60,8 @@ const PersonalityCardButton = ({
                 }}
             >
                 {isCreatingClaim
-                    ? t("claimForm:personalityNotFound")
-                    : t("personality:add_button")}
+                    ? tClaimForm("personalityNotFound")
+                    : tPersonality("add_button")}
             </AletheiaButton>
         );
     }

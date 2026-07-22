@@ -2,13 +2,13 @@ import React, { useMemo } from "react";
 import { Grid, Typography } from "@mui/material";
 import CardBase from "../CardBase";
 import AletheiaButton from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
 import SourceListItemStyled from "./SourceListItem.style";
 import ReviewClassification from "../ClaimReview/ReviewClassification";
+import { useTranslations } from "next-intl";
 const DOMAIN_PROTOCOL_REGEX = /^(https?:\/\/)?(www\.)?/;
 
 const SourceListItem = ({ source }) => {
-    const { t } = useTranslation();
+    const tSources = useTranslations("sources");
 
     const title = useMemo(() => {
         const domainWithoutProtocol = source.href.replace(
@@ -47,7 +47,7 @@ const SourceListItem = ({ source }) => {
 
                 <Grid item className="footer">
                     <ReviewClassification
-                        label={t("sources:sourceReview")}
+                        label={tSources("sourceReview")}
                         classification={source.props.classification}
                     />
                     <AletheiaButton
@@ -61,7 +61,7 @@ const SourceListItem = ({ source }) => {
                             padding: "8px 16px",
                         }}
                     >
-                        {t("sources:sourceCardButton")}
+                        {tSources("sourceCardButton")}
                     </AletheiaButton>
                 </Grid>
             </SourceListItemStyled>

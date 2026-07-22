@@ -3,7 +3,6 @@ import { Button, Grid, Toolbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import HideContentButton from "../HideContentButton";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 import ToolbarActionsModal from "../Modal/ToolbarActionsModal";
 import AletheiaAlert from "../AletheiaAlert";
 import AdminToolBarStyle from "./AdminToolBar.style";
@@ -11,6 +10,7 @@ import { TargetModel } from "../../types/enums";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { useTranslations } from "next-intl";
 
 //TODO: Make admin tool bar dynamic and react based on target
 const AdminToolBar = ({
@@ -20,7 +20,7 @@ const AdminToolBar = ({
     target,
     hideDescriptions,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const router = useRouter();
     const [nameSpace] = useAtom(currentNameSpace);
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);

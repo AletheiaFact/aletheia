@@ -1,14 +1,14 @@
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import { trackUmamiEvent } from "../../lib/umami";
 
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import BannerStyle from "./Banner.style";
 import AletheiaVideo from "../AletheiaVideo";
+import { useTranslations } from "next-intl";
 
 function Banner() {
-    const { t } = useTranslation();
+    const tLogin = useTranslations("login");
 
     return (
         <BannerStyle container>
@@ -28,7 +28,7 @@ function Banner() {
                     className="cta-registration-button"
                     size="large"
                 >
-                    {t("login:signup")}
+                    {tLogin("signup")}
                 </AletheiaButton>
             </Grid>
         </BannerStyle>

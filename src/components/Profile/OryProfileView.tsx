@@ -4,7 +4,6 @@ import {
     UpdateSettingsFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
 import AletheiaAlert from "../AletheiaAlert";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, } from "react";
 
@@ -19,12 +18,16 @@ import { Totp } from "./Totp";
 import { useForm } from "react-hook-form";
 import OryProfileGrid from "./OryProfileView.style";
 import TextError from "../TextErrorForm";
+import { useTranslations } from "next-intl";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SettingsFlowState>();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tProfile = useTranslations("profile");
+    const tCommon = useTranslations("common");
+    const tLogin = useTranslations("login");
     const {
         register,
         handleSubmit,
@@ -77,15 +80,15 @@ const OryProfileView = ({ user }) => {
         <OryProfileGrid container spacing={2} my={2}>
             <Grid item xs={7}>
                 <Typography variant="h3" className="title">
-                    {t("profile:pageTitle")}
+                    {tProfile("pageTitle")}
                 </Typography>
 
                 <Typography variant="subtitle1" marginBottom="14px">
-                    {t("profile:loggedInAs")}: <Label>{user.email}</Label>
+                    {tProfile("loggedInAs")}: <Label>{user.email}</Label>
                 </Typography>
 
                 <Typography variant="h4" className="subtitle">
-                    {t("profile:badgesTitle")}
+                    {tProfile("badgesTitle")}
                 </Typography>
 
                 {user.badges.length > 0 ? (
@@ -101,18 +104,18 @@ const OryProfileView = ({ user }) => {
                     </Grid>
                 ) : (
                     <Typography variant="subtitle1">
-                        {t("profile:emptyBadges")}
+                        {tProfile("emptyBadges")}
                     </Typography>
                 )}
 
                 <Typography variant="h4" className="subtitle">
-                    {t("profile:changePasswordSectionTitle")}
+                    {tProfile("changePasswordSectionTitle")}
                 </Typography>
 
                 {!user.firstPasswordChanged && (
                     <AletheiaAlert
                         style={{ padding: "0 10px", margin: 0 }}
-                        message={t("profile:warningMessage")}
+                        message={tProfile("warningMessage")}
                         type="warning"
                     />
                 )}
@@ -122,7 +125,7 @@ const OryProfileView = ({ user }) => {
                 >
                     <Grid container>
                         <Grid item xs={12} sm={3} md={2} lg={1.5} xl={1.25}>
-                            <Label required children={t("profile:newPasswordLabel") + ":"} />
+                            <Label required children={tProfile("newPasswordLabel") + ":"} />
                         </Grid>
                         <Grid item xs={12} sm={9} md={10} lg={10.5} xl={10.75}>
                             <InputPassword
@@ -133,12 +136,12 @@ const OryProfileView = ({ user }) => {
                             />
                             <TextError
                                 stateError={errors.newPassword}
-                                children={t("common:requiredFieldError")}
+                                children={tCommon("requiredFieldError")}
                                 data-cy="testNewPasswordError"
                             />
                         </Grid>
                         <Grid item xs={12} sm={4.5} md={3.25} lg={2.5} xl={2}>
-                            <Label required children={t("profile:repeatedNewPasswordLabel") + ":"} />
+                            <Label required children={tProfile("repeatedNewPasswordLabel") + ":"} />
                         </Grid>
                         <Grid item xs={12} sm={7.5} md={8.75} lg={9.5} xl={10}>
                             <InputPassword
@@ -153,8 +156,8 @@ const OryProfileView = ({ user }) => {
                                 stateError={errors.repeatedNewPassword}
                                 children={
                                     errors.repeatedNewPassword?.type === "required"
-                                        ? t("common:requiredFieldError")
-                                        : t("profile:passwordMatchErrorMessage")
+                                        ? tCommon("requiredFieldError")
+                                        : tProfile("passwordMatchErrorMessage")
                                 }
                                 data-cy="testRepeatedNewPasswordError"
                             />
@@ -166,7 +169,7 @@ const OryProfileView = ({ user }) => {
                         htmlType="submit"
                         data-cy="submitChangePasswordButton"
                     >
-                        {t("login:submitButton")}
+                        {tLogin("submitButton")}
                     </AletheiaButton>
                 </form>
                 <Totp flow={flow} setFlow={setFlow} />

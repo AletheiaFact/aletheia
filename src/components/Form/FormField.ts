@@ -63,36 +63,41 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
     return {
         fieldName,
         type,
-        label: `${i18nNamespace}:${i18nKey}Label`,
-        placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
+        label: `${i18nNamespace}.${i18nKey}Label`,
+        placeholder: `${i18nNamespace}.${i18nKey}Placeholder`,
         defaultValue,
         disabled,
         hasTooltip,
         ...props,
         rules: {
-            required: !disabled && required && "common:requiredFieldError",
+            required: !disabled && required && "common.requiredFieldError",
             ...rules,
             validate: {
                 ...(!disabled &&
                     required && {
-                    notBlank: (v) =>
-                        validateBlank(v) || "common:requiredFieldError",
-                }),
+                        notBlank: (v) =>
+                            validateBlank(v) || "common.requiredFieldError",
+                    }),
                 ...(!disabled &&
                     isURLField && {
-                    validURL: (v) =>
-                        !v ||
-                        validateUrl(v, (key) => key) || true,
-                }),
-                ...(!disabled && mustBeAfterField && {
-                    afterDate: (value, formValues) => {
-                        const otherValue = formValues[mustBeAfterField];
-                        if (!value || !otherValue) return true;
-                        const isAfterOrSame = dayjs(value).isAfter(dayjs(otherValue)) || dayjs(value).isSame(dayjs(otherValue));
+                        validURL: (v) =>
+                            !v || validateUrl(v, (key) => key) || true,
+                    }),
+                ...(!disabled &&
+                    mustBeAfterField && {
+                        afterDate: (value, formValues) => {
+                            const otherValue = formValues[mustBeAfterField];
+                            if (!value || !otherValue) return true;
+                            const isAfterOrSame =
+                                dayjs(value).isAfter(dayjs(otherValue)) ||
+                                dayjs(value).isSame(dayjs(otherValue));
 
-                        return isAfterOrSame || "common:endDateMustBeAfterStartDate";
-                    }
-                }),
+                            return (
+                                isAfterOrSame ||
+                                "common.endDateMustBeAfterStartDate"
+                            );
+                        },
+                    }),
                 ...rules?.validate,
             },
         },
@@ -112,10 +117,10 @@ const validateSchema = (
         const value = schema[key];
         if (SKIP_KEYS.includes(key)) continue;
         if (Array.isArray(value) && value.length <= 0) {
-            return `common:${key}RequiredFieldError`;
+            return `common.${key}RequiredFieldError`;
         }
         if (!Array.isArray(value) && !value.trim()) {
-            return `common:${key}RequiredFieldError`;
+            return `common.${key}RequiredFieldError`;
         }
         if (key === "source") {
             const urlError = validateUrl(schema[key], (key) => key);
@@ -131,7 +136,7 @@ const fieldValidation = (value, validationFunction) => {
     }
 
     if (dayjs.isDayjs(value)) {
-        return dayjs(value).isValid()
+        return dayjs(value).isValid();
     }
 
     if (

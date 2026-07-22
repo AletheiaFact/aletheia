@@ -1,12 +1,13 @@
 import React from "react";
-import { Trans, useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
 import { Box } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 
 const RegistrationInvite = () => {
-    const { t } = useTranslation();
+    const tNotFound = useTranslations("notFound");
+    const tHome = useTranslations("home");
     return (
         <Box
             style={{
@@ -17,7 +18,7 @@ const RegistrationInvite = () => {
                 fontWeight: 600,
             }}
         >
-            <Trans i18nKey="notFound:signupInvite" />
+            {tNotFound.rich("signupInvite")}
             <Box
                 style={{
                     display: "flex",
@@ -35,7 +36,7 @@ const RegistrationInvite = () => {
                     href="/sign-up"
                     data-cy="testCTAButton"
                 >
-                    {t("home:createAccountButton")}
+                    {tHome("createAccountButton")}
                 </AletheiaButton>
             </Box>
         </Box>

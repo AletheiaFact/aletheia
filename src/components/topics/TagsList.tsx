@@ -1,10 +1,10 @@
 import { Chip, Grid } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import router from "next/router";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 interface TagsListProps {
     tags: any[];
     editable?: boolean;
@@ -12,7 +12,7 @@ interface TagsListProps {
 }
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
-    const { t } = useTranslation();
+    const tTopics = useTranslations("topics");
     const { vw } = useAppSelector((state) => state);
     const maxWidthMap = {
         xs: "15.6rem",
@@ -36,7 +36,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
 
     return (
         <Grid item padding={1}>
-            {tags.length <= 0 && <span>{t("topics:noTopics")}</span>}
+            {tags.length <= 0 && <span>{tTopics("noTopics")}</span>}
 
             {tags &&
                 tags.map((tag, index) => {

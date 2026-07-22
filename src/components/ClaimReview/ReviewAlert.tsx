@@ -1,7 +1,6 @@
 import { Grid } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import AletheiaAlert from "../AletheiaAlert";
-import { useTranslation } from "next-i18next";
 import { useSelector } from "@xstate/react";
 import {
     reviewingSelector,
@@ -18,9 +17,10 @@ import {
 } from "../../atoms/currentUser";
 import { TargetModel } from "../../types/enums";
 import { isAdmin } from "../../utils/GetUserPermission";
+import { useTranslations } from "next-intl";
 
 const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [authResolved] = useAtom(isAuthResolved);
@@ -47,22 +47,22 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         hiddenReport: {
             show: true,
             description: hideDescription?.[TargetModel.ClaimReview],
-            title: "claimReview:warningAlertTitle",
+            title: "claimReview.warningAlertTitle",
         },
         crossChecking: {
             show: true,
             description: "",
-            title: "reviewTask:crossCheckingAlertTitle",
+            title: "reviewTask.crossCheckingAlertTitle",
         },
         reviewing: {
             show: true,
             description: "",
-            title: "reviewTask:reviewingAlertTitle",
+            title: "reviewTask.reviewingAlertTitle",
         },
         hasStarted: {
             show: true,
             description: "",
-            title: "reviewTask:hasStartedAlertTitle",
+            title: "reviewTask.hasStartedAlertTitle",
         },
         noAlert: {
             show: false,

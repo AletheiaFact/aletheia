@@ -1,11 +1,11 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const MetricsOverview = ({ stats }) => {
-    const { t } = useTranslation();
+    const tMetrics = useTranslations("metrics");
 
     return (
         <Grid container justifyContent="center">
@@ -28,7 +28,7 @@ const MetricsOverview = ({ stats }) => {
                                 marginBottom: 0,
                             }}
                         >
-                            {t("metrics:headerTitle")}
+                            {tMetrics("headerTitle")}
                         </p>
                         <p
                             style={{
@@ -38,11 +38,11 @@ const MetricsOverview = ({ stats }) => {
                                 marginBottom: "16px",
                             }}
                         >
-                            {t("metrics:header")}
+                            {tMetrics("header")}
                         </p>
                     </div>
                 ) : (
-                    t("metrics:empytOverview")
+                    tMetrics("empytOverview")
                 )}
                 <ReviewStats stats={stats} countInTitle={true} type="line" />
             </Grid>

@@ -70,9 +70,9 @@
     "allSourceChannels": "Todos os Canais de Origem",
     "priority": {
         "critical": "Crítico",
-        "high": "Alta ({{level}})",
-        "medium": "Média ({{level}})",
-        "low": "Baixa ({{level}})",
+        "high": "Alta ({level})",
+        "medium": "Média ({level})",
+        "low": "Baixa ({level})",
         "filter_high": "Alta",
         "filter_medium": "Média",
         "filter_low": "Baixa"
@@ -94,10 +94,10 @@
     "InTriageDescription": "Denúncias sendo analisadas por um verificador para aprovação ou rejeição.",
     "PostedDescription": "Denúncias aprovadas e já publicadas no sistema.",
     "activity": {
-        "Posted": "Denúncia #{{hash}} verificada e encaminhada",
-        "In Triage": "Denúncia #{{hash}} em processo de verificação",
-        "Pre Triage": "Nova denúncia recebida via {{source}}",
-        "Declined": "Denúncia #{{hash}} verificada e arquivada"
+        "Posted": "Denúncia #{hash} verificada e encaminhada",
+        "In Triage": "Denúncia #{hash} em processo de verificação",
+        "Pre Triage": "Nova denúncia recebida via {source}",
+        "Declined": "Denúncia #{hash} verificada e arquivada"
     },
     "dashboard": {
         "title": "Painel de Denúncias",
@@ -123,8 +123,8 @@
     "noPersonalitiesFound": "Nenhuma personalidade identificada nesta denúncia",
     "errorLoadingPersonalities": "Erro ao carregar personalidades. Por favor, tente novamente.",
     "retryLoadingPersonalities": "Tentar novamente",
-    "viewPersonalityPage": "Ver página da personalidade {{name}}",
-    "submittedAt": "Enviado em <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
+    "viewPersonalityPage": "Ver página da personalidade {name}",
+    "submittedAt": "Enviado em <bold>{date}</bold> via <bold>{channel}</bold>",
     "requestStatus": "Status da solicitação: ",
     "cardLinkToFullRequest": "veja a denúncia completa"
 }

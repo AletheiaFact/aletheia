@@ -1,15 +1,15 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../../lib/umami";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 type CTAFolderActionsProps = {
     isHomeFolder?: boolean;
 };
 
 const CTAFolderActions = ({ isHomeFolder }: CTAFolderActionsProps) => {
-    const { t } = useTranslation();
+    const tCTAFolder = useTranslations("CTAFolder");
 
     return (
         <Grid className="ctaButtonWrapper">
@@ -19,7 +19,7 @@ const CTAFolderActions = ({ isHomeFolder }: CTAFolderActionsProps) => {
                 href="/about"
                 data-cy="testCtaAboutUsButton"
             >
-                {t("CTAFolder:aboutUsButton")}
+                {tCTAFolder("aboutUsButton")}
             </AletheiaButton>
         </Grid>
     );

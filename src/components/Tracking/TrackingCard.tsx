@@ -6,7 +6,7 @@ import CardBase from "../CardBase";
 import Loading from "../Loading";
 import TrackingStep from "./TrackingStepper";
 import Typography from "@mui/material/Typography";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const initialTrackingState: TrackingResponseDTO = {
   currentStatus: null,
@@ -16,7 +16,8 @@ const initialTrackingState: TrackingResponseDTO = {
 const TrackingCard = ({ verificationRequestId, isMinimal }: TrackingCardProps) => {
   const [trackingData, setTrackingData] = useState<TrackingResponseDTO>(initialTrackingState);
   const [isLoading, setIsLoading] = useState(true);
-  const { t } = useTranslation();
+  const tTracking = useTranslations("tracking");
+  const t = useTranslations() as any;
 
   const { currentStatus, historyEvents } = trackingData;
 
@@ -56,13 +57,13 @@ const TrackingCard = ({ verificationRequestId, isMinimal }: TrackingCardProps) =
     >
       <Typography
         style={{
-           fontFamily: "initial",
-           fontSize: 26,
-           lineHeight: 1.35
+          fontFamily: "initial",
+          fontSize: 26,
+          lineHeight: 1.35
         }}
         variant="h1"
       >
-        {t("tracking:verificationProgress")}
+        {tTracking("verificationProgress")}
       </Typography>
       <TrackingStep
         currentStatus={currentStatus}

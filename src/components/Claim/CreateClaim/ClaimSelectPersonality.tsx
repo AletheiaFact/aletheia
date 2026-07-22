@@ -1,7 +1,6 @@
 import { Grid, Card, CardActions, CardContent } from "@mui/material";
 import { MessageManager } from "../../../components/Messages";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { stateSelector } from "../../../machines/createClaim/selectors";
@@ -11,13 +10,14 @@ import { ContentModelEnum } from "../../../types/enums";
 import AletheiaButton from "../../AletheiaButton";
 import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 import PersonalityMinimalCard from "../../Personality/PersonalityMinimalCard";
+import { useTranslations } from "next-intl";
 
 const ClaimSelectPersonality = () => {
     const [state, send] = useAtom(createClaimMachineAtom);
     const isDebate = stateSelector(state, "setupDebate");
     const { claimData } = state.context;
     const { personalities } = claimData;
-    const { t } = useTranslation();
+    const tClaimForm = useTranslations("claimForm");
     const canContinueWithoutPersonality =
         claimData.contentModel === ContentModelEnum.Image;
 
@@ -34,7 +34,7 @@ const ClaimSelectPersonality = () => {
 
     const addPersonality = (personality) => {
         if (claimData.personalities.some((p) => p._id === personality._id)) {
-            MessageManager.showMessage("info", t("claimForm:personalityAlreadyAdded"));
+            MessageManager.showMessage("info", tClaimForm("personalityAlreadyAdded"));
             return;
         }
         send({
@@ -50,7 +50,7 @@ const ClaimSelectPersonality = () => {
     const continueWithPersonality = () => {
         if (claimData.personalities.length !== 0) {
             send(CreateClaimEvents.savePersonality);
-        } else MessageManager.showMessage("warning", t("claimForm:selectPersonalityText"));
+        } else MessageManager.showMessage("warning", tClaimForm("selectPersonalityText"));
     };
 
     const continueWithoutPersonality = () => {
@@ -78,7 +78,7 @@ const ClaimSelectPersonality = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    {t("claimForm:selectPersonalityTitle")}
+                    {tClaimForm("selectPersonalityTitle")}
                 </h3>
                 <p
                     style={{
@@ -88,7 +88,7 @@ const ClaimSelectPersonality = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    {t("claimForm:selectPersonalityText")}
+                    {tClaimForm("selectPersonalityText")}
                 </p>
             </div>
             <PersonalityCreateSearch
@@ -105,7 +105,7 @@ const ClaimSelectPersonality = () => {
                     marginBottom: "8px",
                 }}
             >
-                {t("claimForm:selectedPersonalities")}
+                {tClaimForm("selectedPersonalities")}
             </h3>
             <Grid container>
                 {personalities &&
@@ -129,7 +129,7 @@ const ClaimSelectPersonality = () => {
                                             handleRemovePersonality(personality)
                                         }
                                     >
-                                        {t("claimForm:remove")}
+                                        {tClaimForm("remove")}
                                     </AletheiaButton>
                                 </CardActions>
                             </Card>
@@ -149,7 +149,7 @@ const ClaimSelectPersonality = () => {
                     style={{ textTransform: "uppercase" }}
                     data-cy="testSelectPersonality"
                 >
-                    {t("claimForm:selectPersonalityButton")}
+                    {tClaimForm("selectPersonalityButton")}
                 </AletheiaButton>
                 {canContinueWithoutPersonality && (
                     <AletheiaButton
@@ -157,7 +157,7 @@ const ClaimSelectPersonality = () => {
                         style={{ textTransform: "uppercase" }}
                         data-cy="testContinueWithoutPersonality"
                     >
-                        {t("claimForm:noPersonalityButton")}
+                        {tClaimForm("noPersonalityButton")}
                     </AletheiaButton>
                 )}
             </Grid>

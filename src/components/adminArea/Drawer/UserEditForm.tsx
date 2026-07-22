@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { atomUserList } from "../../../atoms/userEdit";
 import { Autocomplete, Avatar, Box, Grid, TextField } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { Roles } from "../../../types/enums";
 import Label from "../../Label";
 import userApi from "../../../api/userApi";
@@ -16,9 +15,14 @@ import UserEditRoles from "./UserEditRoles";
 import { NameSpace, NameSpaceEnum } from "../../../types/Namespace";
 import NameSpacesApi from "../../../api/namespace";
 import { currentNameSpace } from "../../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const UserEditForm = ({ currentUser, setIsLoading }) => {
-    const { t } = useTranslation();
+    const tHeader = useTranslations("header");
+    const tNamespaces = useTranslations("namespaces");
+    const tBadges = useTranslations("badges");
+    const tAdmin = useTranslations("admin");
+    const t = useTranslations();
     const [, finishEditing] = useAtom(finishEditingItem);
     const [badges, setBadges] = useState([]);
     const [role, setUserRole] = useState(currentUser?.role || Roles.Regular);
@@ -147,7 +151,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             </Grid>
             {nameSpace === NameSpaceEnum.Main ?
                 <Grid item xs={10} mt={2}>
-                    <Label>{t("header:nameSpaceItem")}</Label>
+                    <Label>{tHeader("nameSpaceItem")}</Label>
                     <Autocomplete
                         disabled={!shouldEdit}
                         multiple
@@ -159,7 +163,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                         disableCloseOnSelect
                         renderInput={(params) => (
                             <TextField {...params}
-                                placeholder={t("namespaces:selectNameSpaces")}
+                                placeholder={tNamespaces("selectNameSpaces")}
                             />
                         )}
                         renderOption={(props, option) => (
@@ -172,7 +176,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 : null
             }
             <Grid item xs={10} mt={2}>
-                <Label>{t("header:badgesItem")}</Label>
+                <Label>{tHeader("badgesItem")}</Label>
                 <Autocomplete
                     disabled={!shouldEdit}
                     multiple
@@ -186,7 +190,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            placeholder={t("badges:selectBadges")}
+                            placeholder={tBadges("selectBadges")}
                         />
                     )}
                     renderOption={(props, option) => (
@@ -204,7 +208,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             <Grid item xs={10} mt={5}>
                 {shouldEdit && (
                     <AletheiaButton onClick={handleClickSave}>
-                        {t("admin:saveButtonLabel")}
+                        {tAdmin("saveButtonLabel")}
                     </AletheiaButton>
                 )}
             </Grid>

@@ -2,7 +2,7 @@ import { useCommands } from "@remirror/react";
 import React, { useCallback } from "react";
 import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
 import AletheiaButton from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const AddPersonalityEditorButton = ({
     personalityId,
@@ -10,7 +10,7 @@ const AddPersonalityEditorButton = ({
     disabled,
 }) => {
     const commands = useCommands();
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
     const handleClick = useCallback(() => {
         commands.focus();
         commands.insertHtml(
@@ -29,7 +29,7 @@ const AddPersonalityEditorButton = ({
             onClick={handleClick}
             disabled={disabled}
         >
-            {`${t("debates:addClaimEditorButton")} ${personalityName}`}
+            {`${tDebates("addClaimEditorButton")} ${personalityName}`}
         </AletheiaButton>
     );
 };

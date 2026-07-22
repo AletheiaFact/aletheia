@@ -2,10 +2,10 @@ import React from "react";
 import { Rating } from "@mui/material";
 import colors from "../../styles/colors";
 import { trackUmamiEvent } from "../../lib/umami";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 
 const CopilotFeedback = ({ setShowButtons }) => {
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
 
     const handleChange = (rate) => {
         trackUmamiEvent(`copilot-rate: ${rate}`, "copilot");
@@ -29,7 +29,7 @@ const CopilotFeedback = ({ setShowButtons }) => {
             }}
         >
             <span style={{ fontSize: 12 }}>
-                {t("copilotChatBot:rateQuestion")}
+                {tCopilotChatBot("rateQuestion")}
             </span>
             <Rating
                 style={{ fontSize: 24, width: "fit-content" }}

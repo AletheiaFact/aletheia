@@ -12,15 +12,15 @@ type FooterBrandColumnProps = {
 };
 
 const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
-    const { t } = useFooterData();
+    const { tFooter } = useFooterData();
 
     return (
         <Grid item xs={12} md={4} lg={4}>
             <Typography className="footer-brand-title">
-                {t("footer:brand")}
+                {tFooter("brand")}
             </Typography>
             <Typography className="footer-brand-description">
-                {t("footer:description")}
+                {tFooter("description")}
             </Typography>
 
             <Stack direction="row" spacing={1} className="footer-social-stack">
@@ -55,7 +55,7 @@ const FooterBrandColumn = ({ socialLinks }: FooterBrandColumnProps) => {
 
             <Box className="footer-open-source-pill">
                 <GitHub className="footer-icon" />
-                {t("footer:openSource")}
+                {tFooter("openSource")}
             </Box>
         </Grid >
     );

@@ -10,22 +10,22 @@ import {
   CardContent,
 } from "@mui/material";
 import { Download } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useTranslations } from "next-intl";
 
 export default function ImpactSection() {
-  const { t } = useTranslation();
+  const tAbout = useTranslations("about");
 
   return (
     <Box id="impact" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Chip label={t("about:impactChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem"}, mb: 2, fontWeight: "bold" }}>
-            {t("about:impactTitle")}
+          <Chip label={tAbout("impactChip")} sx={{ mb: 2, bgcolor: "grey.100" }} />
+          <Typography variant="h3" sx={{ fontSize: { xs: "2.2rem", sm: "3.0rem", md: "3.5rem" }, mb: 2, fontWeight: "bold" }}>
+            {tAbout("impactTitle")}
           </Typography>
           <Typography variant="h6" sx={{ color: "text.secondary", maxWidth: 700, mx: "auto", fontWeight: 400 }}>
-            {t("about:impactDescription")}
+            {tAbout("impactDescription")}
           </Typography>
         </Box>
 
@@ -33,26 +33,26 @@ export default function ImpactSection() {
           {[
             {
               number: "600+",
-              title: t("about:trainedAgents"),
-              desc: t("about:trainedAgentsDescription"),
+              title: tAbout("trainedAgents"),
+              desc: tAbout("trainedAgentsDescription"),
               color: "primary.main",
             },
             {
               number: "20+",
-              title: t("about:partnerUniversities"),
-              desc: t("about:partnerUniversitiesDescription"),
+              title: tAbout("partnerUniversities"),
+              desc: tAbout("partnerUniversitiesDescription"),
               color: "success.main",
             },
             {
               number: "UN",
-              title: t("about:internationalRecognition"),
-              desc: t("about:internationalRecognitionDescription"),
+              title: tAbout("internationalRecognition"),
+              desc: tAbout("internationalRecognitionDescription"),
               color: "secondary.main",
             },
             {
               number: "🌍",
-              title: t("about:crossBorderPartnerships"),
-              desc: t("about:crossBorderPartnershipsDescription"),
+              title: tAbout("crossBorderPartnerships"),
+              desc: tAbout("crossBorderPartnershipsDescription"),
               color: "warning.main",
             },
           ].map((stat, index) => (
@@ -84,7 +84,7 @@ export default function ImpactSection() {
             target="_blank"
             onClick={() => trackUmamiEvent("about-impact-download-reports", "download")}
           >
-            {t("about:downloadReports")}
+            {tAbout("downloadReports")}
           </Button>
         </Box>
       </Container>

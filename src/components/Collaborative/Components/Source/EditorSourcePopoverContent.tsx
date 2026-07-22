@@ -4,14 +4,14 @@ import { Grid } from "@mui/material";
 import InfoTooltip from "../../../Claim/InfoTooltip";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 
 const EditorSourcePopoverContent = ({
     isArchive,
     handleArchiveClick,
     handleDeleteClick,
 }) => {
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
 
     const ButtonTooltip = (
         <span>
@@ -39,7 +39,7 @@ const EditorSourcePopoverContent = ({
                 <InfoTooltip
                     useCustomStyle={false}
                     children={ButtonTooltip}
-                    content={t("sourceForm:intertArchiveTooltip")}
+                    content={tSourceForm("intertArchiveTooltip")}
                 />
             )}
             <AletheiaButton
@@ -56,7 +56,7 @@ const EditorSourcePopoverContent = ({
                 }}
                 onClick={handleDeleteClick}
             >
-                {t("sourceForm:deleteSourceButton")}
+                {tSourceForm("deleteSourceButton")}
             </AletheiaButton>
         </Grid>
     );

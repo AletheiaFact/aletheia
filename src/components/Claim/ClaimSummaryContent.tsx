@@ -1,9 +1,9 @@
 import colors from "../../styles/colors";
 import { Grid } from "@mui/material";
 import React from "react";
-import { useTranslation } from "next-i18next";
 import { ContentModelEnum } from "../../types/enums";
 import ReviewContent from "../ClaimReview/ReviewContent";
+import { useTranslations } from "next-intl";
 
 interface ClaimSummaryContentProps {
     claimContent: any;
@@ -20,26 +20,26 @@ const ClaimSummaryContent = ({
     claimTitle,
     contentModel,
 }: ClaimSummaryContentProps) => {
-    const { t } = useTranslation();
+    const tClaim = useTranslations("claim");
     const isImage = contentModel === ContentModelEnum.Image;
     const contentProps = {
         [ContentModelEnum.Speech]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             title: claimContent,
             contentHeight: "6.4em",
         },
         [ContentModelEnum.Image]: {
-            linkText: "claim:cardLinkToImage",
+            linkText: "cardLinkToImage",
             title: claimTitle,
             contentHeight: "1.6em",
         },
         [ContentModelEnum.Debate]: {
-            linkText: "claim:cardLinkToDebate",
+            linkText: "cardLinkToDebate",
             title: claimTitle,
             contentHeight: "5.3em",
         },
         [ContentModelEnum.Unattributed]: {
-            linkText: "claim:cardLinkToFullText",
+            linkText: "cardLinkToFullText",
             title: claimContent,
             contentHeight: "6.4em",
         },
@@ -49,10 +49,10 @@ const ClaimSummaryContent = ({
 
     const elipsizedTitleProps: React.CSSProperties = isImage
         ? {
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-          }
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+        }
         : {};
 
     return (
@@ -80,7 +80,7 @@ const ClaimSummaryContent = ({
                 content={claimContent.content}
                 isImage={isImage}
                 contentPath={href}
-                linkText={t(linkText)}
+                linkText={tClaim(linkText)}
                 ellipsis={true}
             />
         </Grid>

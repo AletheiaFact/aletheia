@@ -2,9 +2,9 @@ import React from "react";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { FormControl, FormHelperText, Grid } from "@mui/material";
 import { validateUrl } from "../../utils/ValidateUrl";
-import { useTranslation } from "next-i18next";
 import Input from "../AletheiaInput";
 import AletheiaButton from "../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 const SourceInput = ({
     onChange,
@@ -16,7 +16,9 @@ const SourceInput = ({
     errors,
     clearError,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tSourceForm = useTranslations("sourceForm");
+
     return (
         <>
             {sources && sources.map((source, index) => (
@@ -54,7 +56,7 @@ const SourceInput = ({
                                 </FormHelperText>
                             )}
                             <p className="extra-label">
-                                {index === (sources.length - 1) ? t("sourceForm:extra") : null}
+                                {index === (sources.length - 1) ? tSourceForm("extra") : null}
                             </p>
                         </Grid>
                         <Grid item xs={2}>
@@ -90,8 +92,7 @@ const SourceInput = ({
                         textDecoration: "underline"
                     }}
                 >
-                    <AddOutlined fontSize="small" />{" "}
-                    {t("sourceForm:addNewSourceButton")}
+                    <AddOutlined fontSize="small" /> {tSourceForm("addNewSourceButton")}
                 </a>
             </div>
         </>

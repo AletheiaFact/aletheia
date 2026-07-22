@@ -1,40 +1,40 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { StatsRecentActivityProps } from "../../../types/VerificationRequest";
-import { useTranslation } from "next-i18next";
 import { formatTimeAgo } from "../../../helpers/formatTimeAgo";
 import { getStatusStyles } from "../../../helpers/verificationRequestCardHelper";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestActivity = ({
   statsRecentActivity,
 }: StatsRecentActivityProps) => {
-  const { t } = useTranslation();
+  const tVerificationRequest = useTranslations("verificationRequest");
+  const t = useTranslations() as any;
 
   return (
     <Card className="card">
       <CardContent className="card-content">
         <Typography className="title">
-          {t("verificationRequest:dashboard.activityTitle")}
+          {tVerificationRequest("dashboard.activityTitle")}
         </Typography>
         <Typography className="subtitle">
-          {t("verificationRequest:dashboard.activitySubtitle")}
+          {tVerificationRequest("dashboard.activitySubtitle")}
         </Typography>
 
         <Box mt={2}>
           {statsRecentActivity.map((activity) => {
-            const { color, label } = getStatusStyles(activity.status, t);
+            const { color, label } = getStatusStyles(activity.status);
 
-            const message = t(`verificationRequest:activity.${activity.status}`, {
+            const message = tVerificationRequest(`activity.${activity.status}`, {
               hash: activity.data_hash,
-              source: t(
-                `verificationRequest:${activity.sourceChannel}`,
-                activity.sourceChannel
+              source: tVerificationRequest(
+                `${activity.sourceChannel}`,
               ).toLowerCase(),
             });
 
             return (
               <Box className="item" key={activity.id}>
                 <Typography className="badge" variant="body2" bgcolor={color}>
-                  {t(`${label}`)}
+                  {tVerificationRequest(`${label}`)}
                 </Typography>
                 <Typography className="legend-label">{message}</Typography>
                 <Typography className="legend-percentage">

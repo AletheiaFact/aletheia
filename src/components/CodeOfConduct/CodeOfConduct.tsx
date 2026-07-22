@@ -1,8 +1,8 @@
 import { Grid, Typography } from "@mui/material"
 import colors from "../../styles/colors";
-import { useTranslation } from "next-i18next";
 import Paragraph from "../Paragraph";
 import styled from "styled-components";
+import { useTranslations } from "next-intl";
 
 const CodeOfConductStyle = styled(Grid)`
     color: ${colors.primary};
@@ -29,120 +29,121 @@ const CodeOfConductStyle = styled(Grid)`
 `;
 
 const CodeOfConduct = () => {
-    const { t } = useTranslation();
+    const tCodeOfConduct = useTranslations("codeOfConduct");
+    const tClaimReviewForm = useTranslations("claimReviewForm");
     return (
         <CodeOfConductStyle item>
-            <Typography style={{ fontSize:40,textAlign:"center", fontFamily: "initial", fontWeight:600}} variant="h1">
-                {t("codeOfConduct:title")}
-            </Typography>            
+            <Typography style={{ fontSize: 40, textAlign: "center", fontFamily: "initial", fontWeight: 600 }} variant="h1">
+                {tCodeOfConduct("title")}
+            </Typography>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:introductionSection")}
+                {tCodeOfConduct("introductionSection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:introductionSectionFirstParagraph")}
+                {tCodeOfConduct("introductionSectionFirstParagraph")}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:principlesSection")}
+                {tCodeOfConduct("principlesSection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:principlesSectionFirstParagraph")}
+                {tCodeOfConduct("principlesSectionFirstParagraph")}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:dutiesSection")}
+                {tCodeOfConduct("dutiesSection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:dutiesSectionFirstParagraph")}
+                {tCodeOfConduct("dutiesSectionFirstParagraph")}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:methodologySection")}
+                {tCodeOfConduct("methodologySection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:methodologySectionFirstParagraph")}
+                {tCodeOfConduct("methodologySectionFirstParagraph")}
             </Paragraph>
             <ul style={{ width: "100%", marginTop: "15px" }}>
-                <li key={1}>{t("claimReviewForm:not-fact")}</li>
-                <li key={2}>{t("claimReviewForm:trustworthy")}</li>
-                <li key={3}>{t("claimReviewForm:trustworthy-but")}</li>
-                <li key={4}>{t("claimReviewForm:arguable")}</li>
-                <li key={5}>{t("claimReviewForm:misleading")}</li>
-                <li key={6}>{t("claimReviewForm:false")}</li>
-                <li key={7}>{t("claimReviewForm:unsustainable")}</li>
-                <li key={8}>{t("claimReviewForm:exaggerated")}</li>
-                <li key={9}>{t("claimReviewForm:unverifiable")}</li>
+                <li key={1}>{tClaimReviewForm("not-fact")}</li>
+                <li key={2}>{tClaimReviewForm("trustworthy")}</li>
+                <li key={3}>{tClaimReviewForm("trustworthy-but")}</li>
+                <li key={4}>{tClaimReviewForm("arguable")}</li>
+                <li key={5}>{tClaimReviewForm("misleading")}</li>
+                <li key={6}>{tClaimReviewForm("false")}</li>
+                <li key={7}>{tClaimReviewForm("unsustainable")}</li>
+                <li key={8}>{tClaimReviewForm("exaggerated")}</li>
+                <li key={9}>{tClaimReviewForm("unverifiable")}</li>
             </ul>
             <Paragraph>
-                {t("codeOfConduct:methodologySectionSecondParagraph")}
+                {tCodeOfConduct("methodologySectionSecondParagraph")}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:expectedBehaviorSection")}
+                {tCodeOfConduct("expectedBehaviorSection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:expectedBehaviorSectionFirstParagraph")}
+                {tCodeOfConduct("expectedBehaviorSectionFirstParagraph")}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:expectedBehaviorSubSection1")}
+                {tCodeOfConduct("expectedBehaviorSubSection1")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:expectedBehaviorSubSection1FirstParagraph")}
+                {tCodeOfConduct("expectedBehaviorSubSection1FirstParagraph")}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:expectedBehaviorSubSection2")}
+                {tCodeOfConduct("expectedBehaviorSubSection2")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:expectedBehaviorSubSection2FirstParagraph")}
+                {tCodeOfConduct("expectedBehaviorSubSection2FirstParagraph")}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:unacceptableBehaviorSection")}
+                {tCodeOfConduct("unacceptableBehaviorSection")}
             </Typography>
             <Paragraph>
-                {t("codeOfConduct:unacceptableBehaviorSectionFirstParagraph")}
+                {tCodeOfConduct("unacceptableBehaviorSectionFirstParagraph")}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:unacceptableBehaviorSubSection1")}
+                {tCodeOfConduct("unacceptableBehaviorSubSection1")}
             </Typography>
             <Paragraph>
-                {t(
-                    "codeOfConduct:unacceptableBehaviorSubSection1FirstParagraph"
+                {tCodeOfConduct(
+                    "unacceptableBehaviorSubSection1FirstParagraph"
                 )}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:unacceptableBehaviorSubSection2")}
+                {tCodeOfConduct("unacceptableBehaviorSubSection2")}
             </Typography>
             <Paragraph>
-                {t(
-                    "codeOfConduct:unacceptableBehaviorSubSection2FirstParagraph"
+                {tCodeOfConduct(
+                    "unacceptableBehaviorSubSection2FirstParagraph"
                 )}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:unacceptableBehaviorSubSection3")}
+                {tCodeOfConduct("unacceptableBehaviorSubSection3")}
             </Typography>
             <Paragraph>
-                {t(
-                    "codeOfConduct:unacceptableBehaviorSubSection3FirstParagraph"
+                {tCodeOfConduct(
+                    "unacceptableBehaviorSubSection3FirstParagraph"
                 )}
             </Paragraph>
             <Typography className="title-conduct" variant="h2">
-                {t("codeOfConduct:responsibilitiesSection")}
+                {tCodeOfConduct("responsibilitiesSection")}
             </Typography>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:responsibilitiesSectionSubSection1")}
+                {tCodeOfConduct("responsibilitiesSectionSubSection1")}
             </Typography>
             <Paragraph>
-                {t(
-                    "codeOfConduct:responsibilitiesSectionSubSection1FirstParagraph"
+                {tCodeOfConduct(
+                    "responsibilitiesSectionSubSection1FirstParagraph"
                 )}
             </Paragraph>
             <Typography className="subtitle-conduct" variant="h3">
-                {t("codeOfConduct:responsibilitiesSectionSubSection2")}
+                {tCodeOfConduct("responsibilitiesSectionSubSection2")}
             </Typography>
             <Paragraph>
-                {t(
-                    "codeOfConduct:responsibilitiesSectionSubSection2FirstParagraph"
+                {tCodeOfConduct(
+                    "responsibilitiesSectionSubSection2FirstParagraph"
                 )}
             </Paragraph>
             <Paragraph>
-                {t(
-                    "codeOfConduct:responsibilitiesSectionSubSection2SecondParagraph"
+                {tCodeOfConduct(
+                    "responsibilitiesSectionSubSection2SecondParagraph"
                 )}
             </Paragraph>
         </CodeOfConductStyle>

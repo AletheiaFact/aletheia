@@ -2,7 +2,7 @@ import React from "react";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { Grid } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 
 interface CommentPopoverContentProps {
     handleDeleteClick: () => void;
@@ -11,7 +11,7 @@ interface CommentPopoverContentProps {
 const CommentPopoverContent = ({
     handleDeleteClick,
 }: CommentPopoverContentProps) => {
-    const { t } = useTranslation();
+    const tSourceForm = useTranslations("sourceForm");
 
     return (
         <Grid className="source-card-popover-content">
@@ -21,7 +21,7 @@ const CommentPopoverContent = ({
                 onClick={handleDeleteClick}
             >
                 <DeleteIcon />
-                {t("sourceForm:deleteSourceButton")}
+                {tSourceForm("deleteSourceButton")}
             </AletheiaButton>
         </Grid>
     );

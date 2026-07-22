@@ -1,15 +1,15 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import AletheiaAvatar from "../AletheiaAvatar";
-import { useTranslation } from "next-i18next";
 import PersonalityCardAvatarTooltip from "./PersonalityCardAvatarTooltip";
+import { useTranslations } from "next-intl";
 
 const PersonalityCardAvatar = ({
     hoistAvatar,
     personality,
     componentStyle,
 }) => {
-    const { t } = useTranslation();
+    const tSeo = useTranslations("seo");
 
     return (
         <Grid item
@@ -32,7 +32,7 @@ const PersonalityCardAvatar = ({
                     <AletheiaAvatar
                         size={componentStyle.avatarSize}
                         src={personality.avatar}
-                        alt={t("seo:personalityImageAlt", {
+                        alt={tSeo("personalityImageAlt", {
                             name: personality.name,
                         })}
                     />

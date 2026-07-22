@@ -1,8 +1,10 @@
 import React from "react";
 import colors from "../../styles/colors";
+import { useTranslations } from "next-intl";
 
-const ForgotPasswordLink = ({ t }) => {
+const ForgotPasswordLink = () => {
     const href = "/api/.ory/self-service/recovery/browser";
+    const tLogin = useTranslations("login")
 
     return (
         <a
@@ -15,7 +17,7 @@ const ForgotPasswordLink = ({ t }) => {
                 width: "180px",
             }}
         >
-            {t("login:forgotPassword")}
+            {tLogin("forgotPassword")}
         </a>
     );
 };

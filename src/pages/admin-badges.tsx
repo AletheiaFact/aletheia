@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import BadgesView from "../components/badges/BadgesView";
 import BadgesFormDrawer from "../components/badges/BadgesFormDrawer";
 import { useSetAtom } from "jotai";
 import { atomBadgesList } from "../atoms/badges";
 import Seo from "../components/Seo";
-import { useTranslation } from "next-i18next";
 import { atomUserList } from "../atoms/userEdit";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import actions from "../store/actions";
 import { useDispatch } from "react-redux";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
@@ -28,13 +28,14 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
         setBadgesList(badges);
         setUserlist(users);
     }, [badges, setBadgesList, setUserlist, users]);
-    const { t } = useTranslation();
+    const tHeader = useTranslations("header");
+    const tBadges = useTranslations("badges");
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
 
     return (
         <>
-            <Seo title={t("header:badgesItem")} description={t("badges:title")} />
+            <Seo title={tHeader("badgesItem")} description={tBadges("title")} />
             <BadgesView />
             <BadgesFormDrawer />
         </>
@@ -46,7 +47,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     query = JSON.parse(query.props);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             badges: JSON.parse(JSON.stringify(query.badges)),
             users: JSON.parse(JSON.stringify(query.users)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

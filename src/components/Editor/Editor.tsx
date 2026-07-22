@@ -10,10 +10,10 @@ import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
 import { EditorContent } from "./EditorContent";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claimApi";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../store/types";
+import { useTranslations } from "next-intl";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -26,7 +26,8 @@ export interface IEditorProps {
 
 const Editor = ({ claim, sitekey }: IEditorProps) => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
+    const t = useTranslations() as any;
     const personalities = claim.personalities;
     const { manager, state } = useRemirror({
         extensions,
@@ -86,8 +87,8 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                     onClick={handleClickUpdateStatus}
                     type={ButtonType.whiteBlack}
                 >
-                    {t(
-                        `debates:${isLive
+                    {tDebates(
+                        `${isLive
                             ? "finishDebateButtonLabel"
                             : "reopenDebateButtonLabel"
                         }`

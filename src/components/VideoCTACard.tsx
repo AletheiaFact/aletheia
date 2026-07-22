@@ -1,9 +1,9 @@
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 import colors from "../styles/colors";
 import AletheiaVideo from "./AletheiaVideo";
 
 const VideoCTACard = () => {
-    const { t } = useTranslation();
+    const tVideoCard = useTranslations("videoCard");
     return (
         <div
             style={{
@@ -24,7 +24,7 @@ const VideoCTACard = () => {
                     lineHeight: "22px",
                 }}
             >
-                {t("videoCard:content")}
+                {tVideoCard("content")}
             </p>
             <div
                 style={{

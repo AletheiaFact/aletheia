@@ -5,13 +5,13 @@ import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaAvatar from "../../AletheiaAvatar";
 import { Topic } from "../../../types/Topic";
 import { PersonalityWithWikidata } from "../../../types/PersonalityWithWikidata";
+import { useTranslations } from "next-intl";
 
 interface VerificationRequestMinimumCardActionsProps {
     verificationRequestId: string;
     dataHash: string;
     topics: Topic[];
     personalities: PersonalityWithWikidata[];
-    t: (key: string) => string;
 }
 
 const VerificationRequestMinimumCardActions = ({
@@ -19,11 +19,11 @@ const VerificationRequestMinimumCardActions = ({
     dataHash,
     topics,
     personalities,
-    t
 }: VerificationRequestMinimumCardActionsProps) => {
     const tags = topics?.map((topic) => ({
         name: topic.aliases?.[0] || topic.name
     })) || [];
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     return (
         <Grid item className="verification-actions">
@@ -31,7 +31,7 @@ const VerificationRequestMinimumCardActions = ({
             <Box className="verification-actions-row">
                 <Box>
                     <Typography variant="caption" className="verification-actions-caption">
-                        {t("verificationRequest:identifiedPersonalities")}
+                        {tVerificationRequest("identifiedPersonalities")}
                     </Typography>
 
                     <Box className="verification-actions-avatars">
@@ -50,7 +50,7 @@ const VerificationRequestMinimumCardActions = ({
                     type={ButtonType.primary}
                     href={`/verification-request/${dataHash}`}
                 >
-                    {t("verificationRequest:openVerificationRequest")}
+                    {tVerificationRequest("openVerificationRequest")}
                 </AletheiaButton>
             </Box>
         </Grid>

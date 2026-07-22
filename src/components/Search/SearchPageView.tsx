@@ -8,19 +8,20 @@ import { ActionTypes, SearchTypes } from "../../store/types";
 import { useRouter } from "next/router";
 import SearchCard from "./SearchCard";
 import SearchWithAutocomplete from "./AutoCompleteList";
-import { useTranslation } from "next-i18next";
 import PaginationOptions from "./PaginationOptions";
 import topicApi from "../../api/topicsApi";
 import AdvancedSearch from "./AdvancedSearch";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 function SearchPageView({ searchText }) {
     const dispatch = useDispatch();
     const router = useRouter();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { t } = useTranslation();
+    const t = useTranslations();
+    const tSearch = useTranslations("search");
 
     const {
         results,
@@ -176,7 +177,7 @@ function SearchPageView({ searchText }) {
             >
                 <Grid item xs={7}>
                     <Typography fontSize={24} fontWeight={600} variant="h3">
-                        {t("search:searchPageTittle")}
+                        {tSearch("searchPageTittle")}
                     </Typography>
                     <Divider />
                     <form style={{ width: "50%" }} onSubmit={handleSubmit}>
@@ -224,7 +225,7 @@ function SearchPageView({ searchText }) {
                                 return (
                                     <SearchCard
                                         key={key}
-                                        title={t(`search:${type}HeaderTitle`)}
+                                        title={tSearch(`${type}HeaderTitle`)}
                                         content={result}
                                         searchName={searchName}
                                         handleSearchClick={handleSearchClick}

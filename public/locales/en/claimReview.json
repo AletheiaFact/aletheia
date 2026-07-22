@@ -1,5 +1,5 @@
 {
-    "cardAuthor": "{{name}} reviewed this as:",
+    "cardAuthor": "{name} reviewed this as:",
     "anonymousUserName": "Anonymous",
     "titleClaimReview": "Claim reviewed as: ",
     "titleSourceReview": "Source reviewed as: ",

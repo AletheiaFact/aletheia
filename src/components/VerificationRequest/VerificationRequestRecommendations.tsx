@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import { Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
 import VerificationRequestResultList from "./VerificationRequestResultList";
+import { useTranslations } from "next-intl";
 
 const VerificationRequestRecommendations = () => {
-    const { t } = useTranslation();
+    const tVerificationRequest = useTranslations("verificationRequest");
     const { recommendations } = useContext(VerificationRequestContext);
 
     return (
@@ -13,7 +13,7 @@ const VerificationRequestRecommendations = () => {
             {recommendations?.length > 0 && (
                 <section className="container">
                     <Typography className="title" variant="h1">
-                        {t("verificationRequest:recommendationTitle")}
+                        {tVerificationRequest("recommendationTitle")}
                     </Typography>
                     <VerificationRequestResultList results={recommendations} />
                 </section>

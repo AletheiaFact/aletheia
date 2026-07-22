@@ -1,5 +1,4 @@
 import { CircularProgress, Grid, List, ListItem } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
 import Loading from "../Loading";
@@ -10,6 +9,7 @@ import SortByButton from "./SortByButton";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useTranslations } from "next-intl";
 
 const BaseList = ({
     apiCall,
@@ -24,7 +24,7 @@ const BaseList = ({
     bluePrimary = false,
     skeleton = null,
 }) => {
-    const { t } = useTranslation();
+    const tList = useTranslations("list");
 
     const [loading, setLoading] = useState(false);
     const [initLoading, setInitLoading] = useState(true);
@@ -107,7 +107,7 @@ const BaseList = ({
                 type={ButtonType.whiteOutline}
                 onClick={loadMoreData}
             >
-                {t("list:loadMoreButton")}
+                {tList("loadMoreButton")}
             </AletheiaButton>
         ) : null;
 
@@ -141,7 +141,7 @@ const BaseList = ({
                                 marginBottom: 0,
                             }}
                         >
-                            {t("list:totalItems", {
+                            {tList("totalItems", {
                                 total: totalItems,
                             })}
                         </p>
@@ -189,7 +189,7 @@ const BaseList = ({
                         marginBottom: "20px",
                     }}
                 >
-                    {t("list:totalItems", {
+                    {tList("totalItems", {
                         total: totalItems,
                     })}
                 </Grid>

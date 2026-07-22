@@ -5,8 +5,8 @@ import NameSpaceMenu from "./NameSpaceMenu";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { BoxMenuHeader } from "./Header.style";
 import { User } from "../../types/User";
-import { TFunction } from "next-i18next";
 import Loading from "../Loading";
+import { useTranslations } from "next-intl";
 
 export interface UserMenuHeaderProps {
     isLoadingUser: boolean;
@@ -14,7 +14,6 @@ export interface UserMenuHeaderProps {
     user: User | null;
     hasSession: boolean;
     nameSpace: string | null;
-    t: TFunction;
     isSidebar?: boolean;
 }
 
@@ -24,10 +23,10 @@ const UserMenuHeader = ({
     user,
     hasSession,
     nameSpace,
-    t,
     isSidebar
 }: UserMenuHeaderProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const tCommon = useTranslations("common");
 
     const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
     const UserMenuHeaderRef = useRef();
@@ -70,7 +69,7 @@ const UserMenuHeader = ({
                             onClick={showNameSpaces}
                             className="select-namespace"
                         >
-                            {t<string>("common:change")}
+                            {tCommon("change")}
                         </Typography>
                     </Stack>
                 </Box>

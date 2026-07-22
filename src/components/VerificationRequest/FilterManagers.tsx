@@ -6,6 +6,7 @@ import FilterBar from "./FilterBar";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import FilterPopover from "./FilterPopover";
 import { ViewList, ViewModule } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 
 const FilterManager = ({ state, actions }) => {
     const {
@@ -25,12 +26,12 @@ const FilterManager = ({ state, actions }) => {
         setFilterValue,
         setApplyFilters,
         dispatch,
-        t,
         setStartDate,
         setEndDate,
     } = actions;
 
     const isBoard = viewMode === "left"
+    const tVerificationRequest = useTranslations("verificationRequest");
 
     const handleResetFilters = () => {
         setFilterValue([]);
@@ -84,7 +85,7 @@ const FilterManager = ({ state, actions }) => {
                         <AletheiaButton
                             type={ButtonType.whiteBlack}
                             onClick={handleResetFilters}>
-                            {t("verificationRequest:resetFiltersButton")}
+                            {tVerificationRequest("resetFiltersButton")}
                         </AletheiaButton>
                     )}
             </Grid>

@@ -1,9 +1,9 @@
-import { useTranslation } from "next-i18next";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useAppSelector } from "../store/store";
 import Typography from "@mui/material/Typography";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
 const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 interface CaptchaProps {
@@ -12,7 +12,7 @@ interface CaptchaProps {
 
 const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
     const [showRequired, setShowRequired] = useState(true);
-    const { t } = useTranslation();
+    const tCommon = useTranslations("common");
     // Allows the parent component to call function inside this block by using a ref
     useImperativeHandle(ref, () => ({
         resetRecaptcha: () => {
@@ -45,7 +45,7 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
                 onExpired={onExpiredCaptcha}
             />
             {showRequired && (
-                <Typography variant="h1" style={{ color: colors.error, fontSize: 16 }} >{t("common:requiredFieldError")}</Typography>
+                <Typography variant="h1" style={{ color: colors.error, fontSize: 16 }} >{tCommon("requiredFieldError")}</Typography>
             )}
         </div>
     );

@@ -1,11 +1,11 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import SentenceReportSummary from "./SentenceReportSummary";
 import AletheiaButton from "../AletheiaButton";
+import { useTranslations } from "next-intl";
 
 const SourceSummaryDisplay = ({ href }) => {
-    const { t } = useTranslation();
+    const tSources = useTranslations("sources");
 
     return (
         <SentenceReportSummary item>
@@ -23,7 +23,7 @@ const SourceSummaryDisplay = ({ href }) => {
                 rel="noopener noreferrer"
                 style={{ minWidth: "fit-content" }}
             >
-                {t("sources:sourceCardButton")}
+                {tSources("sourceCardButton")}
             </AletheiaButton>
         </SentenceReportSummary>
     );

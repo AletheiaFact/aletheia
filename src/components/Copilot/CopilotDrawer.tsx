@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { useAppSelector } from "../../store/store";
 import CopilotForm from "./CopilotForm";
-import { useTranslation } from "next-i18next";
 import CopilotDrawerStyled from "./CopilotDrawer.style";
 import copilotApi from "../../api/copilotApi";
 import { SenderEnum } from "../../types/enums";
@@ -24,6 +23,7 @@ import Loading from "../Loading";
 import { AnyExtension, RemirrorManager } from "remirror";
 import { ReactExtensions } from "@remirror/react";
 import CopilotToolbar from "./CopilotToolbar";
+import { useTranslations } from "next-intl";
 const CopilotConversation = React.lazy(() => import("./CopilotConversation"));
 
 interface Size {
@@ -44,7 +44,7 @@ const CopilotDrawer = ({
     sentence,
     dataHash,
 }: CopilotDrawerProps) => {
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
     const { vw, copilotDrawerCollapsed, selectedContent } = useAppSelector(
         (state) => ({
             vw: state?.vw,
@@ -60,11 +60,11 @@ const CopilotDrawer = ({
         () => [
             {
                 type: ChatMessageType.info,
-                content: t("copilotChatBot:chatBotGreetings"),
+                content: tCopilotChatBot("chatBotGreetings"),
                 sender: SenderEnum.Assistant,
             },
         ],
-        [t]
+        [tCopilotChatBot]
     );
 
     const [open, setOpen] = useState<boolean>(!copilotDrawerCollapsed);
@@ -190,7 +190,7 @@ const CopilotDrawer = ({
             addNewMessage({
                 type: ChatMessageType.error,
                 sender: SenderEnum.Assistant,
-                content: t("copilotChatBot:copilotChatBotErrorMessage"),
+                content: tCopilotChatBot("copilotChatBotErrorMessage"),
             });
             console.error({ Error: error });
         } finally {
@@ -237,7 +237,7 @@ const CopilotDrawer = ({
                 </Suspense>
             )}
             <CopilotForm handleSendMessage={handleSendMessage} />
-            <span className="footer">{t("copilotChatBot:footer")}</span>
+            <span className="footer">{tCopilotChatBot("footer")}</span>
         </CopilotDrawerStyled>
     );
 };

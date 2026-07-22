@@ -1,15 +1,15 @@
 import { Box } from "@mui/material";
 import { EventMetrics } from "../../../types/event";
 import colors from "../../../styles/colors";
-import { useTranslation } from "next-i18next";
 import MetricBox from "./MetricBox";
+import { useTranslations } from "next-intl";
 
 interface EventMetricsChipProps {
   eventMetrics?: EventMetrics;
 }
 
 const EventMetricsChip = ({ eventMetrics }: EventMetricsChipProps) => {
-  const { t } = useTranslation();
+  const tEvents = useTranslations("events");
 
   const metrics = eventMetrics || {
     reviews: 0,
@@ -27,19 +27,19 @@ const EventMetricsChip = ({ eventMetrics }: EventMetricsChipProps) => {
     >
       <MetricBox
         value={metrics.reviews}
-        label={t("events:reviewStats")}
+        label={tEvents("reviewStats")}
         color={colors.lightPrimary}
         dataCy="testEventMetricsReviews"
       />
       <MetricBox
         value={metrics.verificationRequests}
-        label={t("events:verificationRequestsStats")}
+        label={tEvents("verificationRequestsStats")}
         color={colors.low}
         dataCy="testEventMetricsVerificationRequests"
       />
       <MetricBox
         value={metrics.claims}
-        label={t("events:claimsStats")}
+        label={tEvents("claimsStats")}
         color={colors.error}
         dataCy="testEventMetricsClaims"
       />

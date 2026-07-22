@@ -1,8 +1,8 @@
 import React from "react";
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Aletheia404 from "../components/Aletheia404";
 import { GetLocale } from "../utils/GetLocale";
+import { getMessages } from "../lib/getMessages";
 
 const Custom404Page: NextPage = () => {
     return (
@@ -14,8 +14,13 @@ export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales)
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            locale,
+            messages: await getMessages(locale),
+            href:
+                req.protocol +
+                "://" +
+                req.get("host") +
+                req.originalUrl,
         },
     };
 }

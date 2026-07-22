@@ -10,22 +10,22 @@ import {
     TelegramShareButton,
     TelegramIcon,
 } from "react-share";
-import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import colors from "../../../styles/colors";
 import { trackUmamiEvent } from "../../../lib/umami";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { NameSpaceEnum } from "../../../types/Namespace";
+import { useTranslations } from "next-intl";
 
 type HomeJoinSectionShareProps = {
     href: string;
 };
 
 const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
-    const { t } = useTranslation();
+    const tShare = useTranslations("share");
     const [nameSpace] = useAtom(currentNameSpace);
 
-    const quote = t("share:quote");
+    const quote = tShare("quote");
     const trimPersonality = quote.replace(" ", "");
     const iconColor =
         nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary;
@@ -38,7 +38,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                 component="h3"
                 className="home-join-share-title"
             >
-                {t("share:title")}
+                {tShare("title")}
             </Typography>
             <Box component="ul" className="home-join-share-list">
                 <Box component="li">

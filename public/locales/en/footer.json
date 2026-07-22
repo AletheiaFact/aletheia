@@ -1,5 +1,5 @@
 {
-  "copyright": "AletheiaFact.org ©{{date}}",
+  "copyright": "AletheiaFact.org ©{date}",
   "creativeCommonsLabel": "CC BY-SA 4.0 International",
   "contactEmail": "contact@aletheiafact.org",
   "adressStreet": "Av Maria Ranieri, N 7-50, 17.055-175 - Parque Viaduto - Bauru/SP",
@@ -43,6 +43,7 @@
         "collaboration": "Collaboration Proposals",
         "universities": "Partner Universities",
         "volunteering": "I want to be a volunteer",
+        "volunteerForm": "https://docs.google.com/forms/d/1O1e-zIDj2aJIAmuNIfO5T4VznenuYfHMTlFB8L_sFG4/viewform?ts=69b97c51&edit_requested=true",
         "sendEmailButton": "mailto:contact@aletheiafact.org",
         "sendEmailCollaborationButton": "mailto:tvolcean@aletheiafact.org"
       }

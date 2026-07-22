@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { ContentModelEnum } from "../../types/enums";
 import ImageApi from "../../api/image";
 import TopicForm from "./TopicForm";
-import { useTranslation } from "next-i18next";
 import TagDisplay from "./TagDisplay";
 import SentenceApi from "../../api/sentenceApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import { ITopicDisplay } from "../../types/Topic";
+import { useTranslations } from "next-intl";
 
 const TopicDisplay = ({
     data_hash,
@@ -19,7 +19,7 @@ const TopicDisplay = ({
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
     const [selectedTags, setSelectedTags] = useState<any[]>([]);
     const [tags, setTags] = useState<any[]>([]);
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     useEffect(() => {
         const formattedSelectedTags = selectedTags.map((selectedTag) =>

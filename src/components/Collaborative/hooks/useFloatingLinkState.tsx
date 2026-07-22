@@ -18,11 +18,11 @@ import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 import { validateUrl } from "../../../utils/ValidateUrl";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 
 function useFloatingLinkState() {
     const { editorSources, setEditorSources } = useContext(VisualEditorContext);
-    const [t] = useTranslation();
+    const t = useTranslations();
 
     const [error, setError] = useState(null);
     const chain = useChainedCommands();

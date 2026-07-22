@@ -1,9 +1,9 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import EventsGrid from "../../Event/EventList/EventGrid";
 import { EventMetrics, EventPayload } from "../../../types/event";
 import HomeEventsSectionStyle from "./HomeEventsSection.style";
+import { useTranslations } from "next-intl";
 
 interface HomeEventsSectionProps {
     events: EventPayload[];
@@ -14,7 +14,7 @@ const HomeEventsSection = ({
     events,
     eventMetrics,
 }: HomeEventsSectionProps) => {
-    const { t } = useTranslation();
+    const tEvents = useTranslations("events");
 
     if (!Array.isArray(events) || events.length === 0) {
         return null;
@@ -26,9 +26,9 @@ const HomeEventsSection = ({
                 <EventsGrid
                     events={events}
                     eventMetrics={eventMetrics}
-                    t={t}
-                    title={t("events:latestEvents")}
-                    subtitle={t("events:latestEventsSubtitle")}
+                    t={tEvents}
+                    title={tEvents("latestEvents")}
+                    subtitle={tEvents("latestEventsSubtitle")}
                     buttonPosition="top"
                 />
             </Box>

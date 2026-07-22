@@ -1,5 +1,4 @@
 import { Box } from "@mui/material"
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import GridList from "../../GridList";
@@ -8,6 +7,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import HomeDebatesSectionStyle from "./HomeDebatesSection.style";
 import { Debate } from "../../../types/Debates";
+import { useTranslations } from "next-intl";
 import DebateCard from "../../Debate/DebateCard";
 
 interface HomeDebatesSectionProps {
@@ -15,7 +15,7 @@ interface HomeDebatesSectionProps {
 }
 
 const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
     const [nameSpace] = useAtom(currentNameSpace);
 
     const seeAllHref =
@@ -28,12 +28,12 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
         <HomeDebatesSectionStyle>
             <Box className="debates-inner">
                 <GridList
-                    title={t("debates:sectionTitle")}
-                    subtitle={t("debates:sectionSubtitle")}
+                    title={tDebates("sectionTitle")}
+                    subtitle={tDebates("sectionSubtitle")}
                     dataSource={debates}
                     itemSize={{ xs: 12, md: 6 }}
                     href={seeAllHref}
-                    seeMoreButtonLabel={t("debates:seeAll")}
+                    seeMoreButtonLabel={tDebates("seeAll")}
                     seeMoreButtonPosition="top"
                     dataCy="testSeeMoreDebates"
                     getKey={(debate) => debate.claimId}

@@ -1,14 +1,14 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import CTAFolderActions from "./CTAFolderActions";
+import { useTranslations } from "next-intl";
 
 type CTAFolderMainColumnProps = {
     isHomeFolder?: boolean;
 };
 
 const CTAFolderMainColumn = ({ isHomeFolder = false }: CTAFolderMainColumnProps) => {
-    const { t } = useTranslation();
+    const tCTAFolder = useTranslations("CTAFolder");
 
     return (
         <Grid item className="ctaMainColumn">
@@ -16,13 +16,13 @@ const CTAFolderMainColumn = ({ isHomeFolder = false }: CTAFolderMainColumnProps)
                 variant="h2"
                 className="ctaTitle"
             >
-                {t("CTAFolder:aboutUsTitle")}
+                {tCTAFolder("aboutUsTitle")}
             </Typography>
             <Typography
                 variant="body1"
                 className="ctaBody"
             >
-                {t("CTAFolder:aboutUsBody")}
+                {tCTAFolder("aboutUsBody")}
             </Typography>
             <CTAFolderActions isHomeFolder={isHomeFolder} />
         </Grid>

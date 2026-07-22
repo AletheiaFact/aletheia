@@ -1,9 +1,9 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import { Status } from "../../../types/enums";
-import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const HeaderStatusStyle = styled(Grid)`
     ::before {
@@ -19,13 +19,13 @@ const HeaderStatusStyle = styled(Grid)`
 `;
 
 const HeaderUserStatus = ({ status, style = {} }) => {
-    const { t } = useTranslation();
+    const tAdmin = useTranslations();
     const statusColor =
         status === Status.Active ? colors.active : colors.inactive;
 
     return (
         <HeaderStatusStyle statuscolor={statusColor} style={{ ...style }}>
-            {t(`admin:user-status-${status}`)}
+            {tAdmin(`user-status-${status}`)}
         </HeaderStatusStyle>
     );
 };

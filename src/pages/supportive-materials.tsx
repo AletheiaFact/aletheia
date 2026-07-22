@@ -1,6 +1,4 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import {
     Card,
@@ -16,6 +14,8 @@ import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import Image from "next/image";
 import colors from "../styles/colors";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const staticLinks = [
     {
@@ -36,12 +36,14 @@ const staticLinks = [
 ];
 
 const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
-    const { t } = useTranslation();
+    const tMaterials = useTranslations("materials");
+    const tLogin = useTranslations("login");
+    const tHeader = useTranslations("header");
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
         <>
-            <Seo title={t("materials:title")} />
+            <Seo title={tMaterials("title")} />
             <Grid container style={{ width: "100%", textAlign: "center" }}>
                 <Typography
                     variant="h1"
@@ -51,7 +53,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                         marginTop: "20px",
                         fontWeight: "bold",
                     }}>
-                    {t("materials:title")}
+                    {tMaterials("title")}
                 </Typography>
             </Grid>
             <div
@@ -69,7 +71,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                 {!isLoggedIn ? (
                     <div style={{ marginBottom: "20px" }}>
                         <Typography variant="h6" gutterBottom>
-                            {t("materials:loggedOutMessage")}
+                            {tMaterials("loggedOutMessage")}
                         </Typography>
                         <Button
                             variant="contained"
@@ -77,14 +79,14 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                             href="/login"
                             style={{ marginRight: "10px" }}
                         >
-                            {t("header:loginItem")}
+                            {tHeader("loginItem")}
                         </Button>
                         <Button
                             variant="outlined"
                             color="primary"
                             href="/sign-up"
                         >
-                            {t("login:signup")}
+                            {tLogin("signup")}
                         </Button>
                     </div>
                 ) : (
@@ -156,7 +158,8 @@ export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };

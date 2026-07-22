@@ -1,19 +1,19 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import LoginView from "../components/Login/LoginView";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { useTranslations } from "next-intl";
+import { getMessages } from "../lib/getMessages";
 
 const LoginPage: NextPage<{ previousUrl: string; host: string }> = ({
     previousUrl,
     host,
 }) => {
-    const { t } = useTranslation();
+    const tLogin = useTranslations("login");
     return (
         <>
-            <Seo title="Login" description={t("login:formHeader")} />
+            <Seo title="Login" description={tLogin("formHeader")} />
             <LoginView shouldGoBack={previousUrl.startsWith(host)} />
         </>
     );
@@ -23,10 +23,15 @@ export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {
-            ...(await serverSideTranslations(locale)),
+            locale,
+            messages: await getMessages(locale),
+            href:
+                req.protocol +
+                "://" +
+                req.get("host") +
+                req.originalUrl,
             previousUrl: req.headers.referer || "none",
             host: req.protocol + "://" + req.get("host"),
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }

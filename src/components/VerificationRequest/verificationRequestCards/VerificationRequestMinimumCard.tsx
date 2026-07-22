@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { i18n, useTranslation } from "next-i18next";
 import { VerificationRequest } from "../../../types/VerificationRequest";
 
 import CardBase from "../../CardBase";
@@ -9,6 +8,7 @@ import ReviewContent from "../../ClaimReview/ReviewContent";
 import VerificationRequestMinimumCardHeader from "./VerificationRequestMinimumCardHeader";
 import VerificationRequestMinimumCardActions from "./VerificationRequestMinimumCardActions";
 import { usePersonalities } from "../../../hooks/usePersonalities";
+import { useLocale, useTranslations } from "next-intl";
 
 interface VerificationRequestMinimumCardProps {
     verificationRequest: VerificationRequest;
@@ -17,7 +17,8 @@ interface VerificationRequestMinimumCardProps {
 const VerificationRequestMinimumCard = ({
     verificationRequest,
 }: VerificationRequestMinimumCardProps) => {
-    const { t } = useTranslation();
+    const locale = useLocale();
+    const tVerificationRequest = useTranslations("verificationRequest")
     const { _id, topics, identifiedData, sourceChannel, date, status, content, data_hash } = verificationRequest
 
     const { personalities } = usePersonalities({
@@ -26,7 +27,7 @@ const VerificationRequestMinimumCard = ({
         hasIdentifiedData:
             identifiedData &&
             identifiedData.length > 0,
-        language: i18n.language || "en",
+        language: locale,
     });
 
     return (
@@ -45,7 +46,7 @@ const VerificationRequestMinimumCard = ({
                         contentPath={`/verification-request/${data_hash}`}
                         isImage={false}
                         ellipsis={true}
-                        linkText={t("verificationRequest:cardLinkToFullRequest")}
+                        linkText={tVerificationRequest("cardLinkToFullRequest")}
                     />
                 </Grid>
 
@@ -54,7 +55,7 @@ const VerificationRequestMinimumCard = ({
                     dataHash={data_hash}
                     topics={topics}
                     personalities={personalities}
-                    t={t}
+                    t={tVerificationRequest}
                 />
             </VerificationCardStyled>
         </CardBase>

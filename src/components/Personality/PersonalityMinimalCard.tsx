@@ -1,11 +1,11 @@
 import { Grid, Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import PersonalityMinimalCardStyle from "./PersonalityMinimalCard.style";
 import PersonalityCardAvatar from "./PersonalityCardAvatar";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { useTranslations } from "next-intl";
 import { Personality } from "../../types/Personality";
 
 interface PersonalityMinimalCardProps {
@@ -19,7 +19,7 @@ const PersonalityMinimalCard = ({
     avatarSize = 117,
     isInline = false,
 }: PersonalityMinimalCardProps) => {
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
     const [nameSpace] = useAtom(currentNameSpace);
     return (
         <PersonalityMinimalCardStyle
@@ -54,7 +54,7 @@ const PersonalityMinimalCard = ({
                                 : `/personality/${personality.slug}`
                         }
                     >
-                        {t("personality:profile_button")}
+                        {tPersonality("profile_button")}
                     </a>
                 </p>
             </Grid>

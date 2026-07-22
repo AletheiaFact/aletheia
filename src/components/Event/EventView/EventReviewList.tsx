@@ -9,6 +9,7 @@ import EventLoadMore from "../EventList/EventLoadMore";
 import ReviewsGrid from "../../ClaimReview/ReviewsGrid";
 import EventTitle from "../EventList/EventTitle";
 import { EventsActions, EventsState } from "../../../types/event";
+import { useTranslations } from "next-intl";
 
 type EventReviewsProps = {
     mainTopic: Topic;
@@ -26,7 +27,8 @@ const EventReviewsList = ({
     actions
 }: EventReviewsProps) => {
     const { reviewQuery, isLoading, error, reviewData, viewMode } = state
-    const { setIsLoading, setError, setReviewData, t, setReviewQuery, setViewMode } = actions
+    const { setIsLoading, setError, setReviewData, setReviewQuery, setViewMode } = actions
+    const tEvents = useTranslations("events");
 
     const handleFetch = async () => {
         setIsLoading(true);
@@ -68,14 +70,14 @@ const EventReviewsList = ({
     }
 
     if (error) {
-        return <ErrorState message={t("events:fetchError") || error} />;
+        return <ErrorState message={tEvents("fetchError") || error} />;
     }
 
     return (
         <Grid container className="eventContainerBase">
             <Grid item xs={11} sm={11} md={8} className="eventSection">
                 <Typography variant="h2" fontSize={24}>
-                    {t("events:latestRelatedClaims")}
+                    {tEvents("latestRelatedClaims")}
                 </Typography>
                 <ReviewsGrid
                     reviews={reviewData.items}
@@ -85,7 +87,6 @@ const EventReviewsList = ({
                             hasToggle={true}
                             viewMode={viewMode}
                             setViewMode={setViewMode}
-                            t={t}
                         />
                     }
                 />
@@ -95,7 +96,7 @@ const EventReviewsList = ({
                 onLoadMore={() =>
                     setReviewQuery((prev) => ({ ...prev, page: prev.page + 1 }))
                 }
-                label={t("events:loadMoreButton")}
+                label={tEvents("loadMoreButton")}
             />
         </Grid>
     );

@@ -1,4 +1,3 @@
-import { TFunction } from "next-i18next";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { NameSpaceEnum } from "./Namespace";
 import { User } from "./User";
@@ -65,7 +64,6 @@ export interface UseHeaderDataReturn {
         isLoadingUser: boolean;
     };
     actions: {
-        t: TFunction;
         handleClose: () => void;
         setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
         onLogout: () => Promise<void>;

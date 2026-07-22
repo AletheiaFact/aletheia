@@ -4,10 +4,10 @@ import { useAtom } from "jotai";
 import { currentUserRole } from "../../atoms/currentUser";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { Roles } from "../../types/enums";
 import CardBase from "../CardBase";
+import { useTranslations } from "next-intl";
 
 interface ClaimListEmptyFallBackProps {
     personality: any;
@@ -18,7 +18,7 @@ const ClaimListEmptyFallBack = ({
 }: ClaimListEmptyFallBackProps) => {
     const [userRole] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
     const router = useRouter();
 
     const hrefPersonalitySlug = personality.slug
@@ -52,8 +52,8 @@ const ClaimListEmptyFallBack = ({
                     }}
                 >
                     {personality.slug
-                        ? t("personality:claimListEmptyFallBackPersonality")
-                        : t("personality:claimListEmptyFallBack")}
+                        ? tPersonality("claimListEmptyFallBackPersonality")
+                        : tPersonality("claimListEmptyFallBack")}
                 </span>
                 {userRole === Roles.Regular ? null : (
                     <div
@@ -67,7 +67,7 @@ const ClaimListEmptyFallBack = ({
                             type={ButtonType.primary}
                             onClick={handleClick}
                         >
-                            {t("personality:claimListEmptyFallBack")}
+                            {tPersonality("claimListEmptyFallBack")}
                         </AletheiaButton>
                     </div>
                 )}

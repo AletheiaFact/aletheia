@@ -1,14 +1,15 @@
 import React from "react";
 import { Stack } from "@mui/material";
-import { useTranslation } from "next-i18next";
+import { useAtom } from "jotai";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 import { trackUmamiEvent } from "../../../lib/umami";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
+import { useTranslations } from "next-intl";
 import smoothScrollTo from "../../../utils/smoothScrollTo";
 
 const HomeHeroActions = () => {
-    const { t } = useTranslation();
+    const tHome = useTranslations("home");
 
     return (
         <Stack className="home-header-actions">
@@ -19,7 +20,7 @@ const HomeHeroActions = () => {
                 onClick={() => trackUmamiEvent("cta-folder-committee-button", "committee")}
                 data-cy="testHomeHeaderSignUpButton"
             >
-                {t("home:committeeButton")}
+                {tHome("committeeButton")}
             </AletheiaButton>
             <AletheiaButton
                 endIcon={<ArrowForwardIcon className="home-header-action-icon" />}
@@ -27,7 +28,7 @@ const HomeHeroActions = () => {
                 onClick={smoothScrollTo("latest-reviews")}
                 data-cy="testHomeHeaderReviewsButton"
             >
-                {t("home:homeHeaderViewReviewsButton")}
+                {tHome("homeHeaderViewReviewsButton")}
             </AletheiaButton>
         </Stack>
     );

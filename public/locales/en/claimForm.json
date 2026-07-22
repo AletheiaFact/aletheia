@@ -43,8 +43,8 @@
     "uploadImageText": "Select an image to upload",
     "uploadImageButton": "Upload image",
     "fileInputButton": "Choose file",
-    "fileTypeError": "You can only upload {{types}} files",
-    "fileSizeError": "File must smaller than {{size}}",
+    "fileTypeError": "You can only upload {types} files",
+    "fileSizeError": "File must smaller than {size}",
     "undefined": "Undefined",
     "noAnswer": "N/A",
     "errorDuplicateTitle": "A claim with this title already exists. Please choose a different title."

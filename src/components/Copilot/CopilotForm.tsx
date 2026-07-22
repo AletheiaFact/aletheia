@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import AletheiaTextAreaAutoSize from "../TextAreaAutoSize";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { SenderEnum } from "../../types/enums";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 //TODO: Implement React Hook forms
 const CopilotForm = ({ handleSendMessage }) => {
-    const { t } = useTranslation();
+    const tCopilotChatBot = useTranslations("copilotChatBot");
     const [message, setMessage] = useState("");
 
     const handleSubmit = (e) => {
@@ -23,7 +23,7 @@ const CopilotForm = ({ handleSendMessage }) => {
             <AletheiaTextAreaAutoSize
                 style={{ maxHeight: "400px", minHeight: "44px" }}
                 value={message}
-                placeholder={t("copilotChatBot:inputPlaceholder")}
+                placeholder={tCopilotChatBot("inputPlaceholder")}
                 onChange={({ target }) => setMessage(target.value)}
                 white={"true"}
                 onKeyDown={(e) => {

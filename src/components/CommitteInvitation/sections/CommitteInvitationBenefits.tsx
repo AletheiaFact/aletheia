@@ -8,7 +8,7 @@ import {
     VisibilityOutlined,
     AssessmentOutlined,
 } from "@mui/icons-material";
-import { useTranslation } from "next-i18next";
+import { useTranslations } from "next-intl";
 
 const benefitItems = [
     { key: "certification", icon: <VerifiedUserOutlined /> },
@@ -20,7 +20,7 @@ const benefitItems = [
 ];
 
 const CommitteInvitationBenefits = () => {
-    const { t } = useTranslation("committeeInvitation");
+    const t = useTranslations("committeeInvitation");
 
     return (
         <Box className="benefits-wrapper">

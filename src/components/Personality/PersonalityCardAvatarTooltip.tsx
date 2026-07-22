@@ -2,16 +2,16 @@ import React from "react";
 import { VisibilityOff, InfoOutlined } from "@mui/icons-material";
 import { Badge, IconButton } from "@mui/material";
 import InfoTooltip from "../Claim/InfoTooltip";
-import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/store";
+import { useTranslations } from "next-intl";
 
 const PersonalityCardAvatarTooltip = ({
     children,
     isHidden,
     style,
 }) => {
-    const { t } = useTranslation();
+    const tPersonality = useTranslations("personality");
     const { vw } = useAppSelector((state) => state);
 
     const InfoBadge = (
@@ -43,7 +43,7 @@ const PersonalityCardAvatarTooltip = ({
 
     return (
         <InfoTooltip
-            placement={vw?.xs ? "bottom":"right-start"}
+            placement={vw?.xs ? "bottom" : "right-start"}
             children={InfoBadge}
             content={
                 <p
@@ -56,8 +56,8 @@ const PersonalityCardAvatarTooltip = ({
                     }}
                 >
                     {isHidden
-                        ? t("personality:hiddenPersonalityAvatarTooltip")
-                        : t("personality:personalityCardWikidataTooltip")
+                        ? tPersonality("hiddenPersonalityAvatarTooltip")
+                        : tPersonality("personalityCardWikidataTooltip")
                     }
                 </p>
             }

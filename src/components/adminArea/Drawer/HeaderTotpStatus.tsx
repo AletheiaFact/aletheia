@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
+import { useTranslations } from "next-intl";
 
 const HeaderTotpStatusStyle = styled(Grid)`
     ::before {
@@ -18,12 +18,12 @@ const HeaderTotpStatusStyle = styled(Grid)`
 `;
 
 const HeaderTotpStatus = ({ status }) => {
-    const { t } = useTranslation();
+    const tAdmin = useTranslations("admin");
     const statusColor = status === true ? colors.active : colors.inactive;
 
     return (
         <HeaderTotpStatusStyle statuscolor={statusColor}>
-            {t(`admin:user-status-${String(status)}`)}
+            {tAdmin(`user-status-${String(status)}`)}
         </HeaderTotpStatusStyle>
     );
 };

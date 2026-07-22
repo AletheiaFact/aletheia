@@ -5,12 +5,13 @@ import { Review } from "./Review";
 import { Topic } from "./Topic";
 import { VerificationRequest } from "./VerificationRequest";
 import { NextRouter } from "next/router";
+import { TranslationFn } from "./Translations";
 
 export type EventOrder = "asc" | "desc";
 export type EventStatus = "happening" | "upcoming" | "finalized" | "all";
 export interface EventPayload {
     id?: string;
-    nameSpace: NameSpaceEnum,
+    nameSpace: NameSpaceEnum;
     badge: string;
     data_hash?: string;
     name: string;
@@ -21,13 +22,13 @@ export interface EventPayload {
     endDate: Date;
     mainTopic: Topic;
     filterTopics?: Topic[];
-    recaptcha?: string
+    recaptcha?: string;
 }
 
 export interface EventMetrics {
-    verificationRequests: number,
-    claims: number,
-    reviews: number,
+    verificationRequests: number;
+    claims: number;
+    reviews: number;
 }
 export interface ListEventsOptions {
     page?: number;
@@ -50,7 +51,7 @@ export interface IReviewData {
 export interface IVerificationRequestData {
     items: VerificationRequest[];
     total: number;
-    totalPages: number
+    totalPages: number;
 }
 
 export interface EventsState {
@@ -72,7 +73,7 @@ export interface EventsState {
 export interface EventsActions {
     setIsLoading: Dispatch<SetStateAction<boolean>>;
     setRecaptchaString: Dispatch<SetStateAction<string>>;
-    t: (key: string) => string;
+    t: TranslationFn;
     router: NextRouter;
     setEventsData: Dispatch<SetStateAction<IData>>;
     setError: Dispatch<SetStateAction<string | null>>;
@@ -80,6 +81,8 @@ export interface EventsActions {
     setReviewData: Dispatch<SetStateAction<IReviewData>>;
     setReviewQuery: Dispatch<SetStateAction<ListEventsOptions>>;
     setViewMode: Dispatch<SetStateAction<ViewMode>>;
-    setVerificationRequestData: Dispatch<SetStateAction<IVerificationRequestData>>;
+    setVerificationRequestData: Dispatch<
+        SetStateAction<IVerificationRequestData>
+    >;
     setVerificationRequestQuery: Dispatch<SetStateAction<ListEventsOptions>>;
 }

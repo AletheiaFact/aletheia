@@ -1,6 +1,5 @@
 import { Grid, Typography } from "@mui/material";
 import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
 import React, { useLayoutEffect, useState } from "react";
 
 import personalityApi from "../../api/personality";
@@ -13,10 +12,12 @@ import { currentNameSpace } from "../../atoms/namespace";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { EditOutlined } from "@mui/icons-material";
 import { isAdmin } from "../../utils/GetUserPermission";
+import { useTranslations } from "next-intl";
 
 const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
-    const { t } = useTranslation();
+    const tDebates = useTranslations("debates");
+    const t = useTranslations() as any;
     const [nameSpace] = useAtom(currentNameSpace);
     const [state] = useAtom(callbackTimerAtom);
 
@@ -89,7 +90,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                         marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
                     }}
                 >
-                    {t("debates:openEditDebateMode")}
+                    {tDebates("openEditDebateMode")}
                 </AletheiaButton>
             ) : null}
             <Grid container
