@@ -27,7 +27,6 @@ const VerificationRequestBoardView = ({ state, actions }) => {
   const tList = useTranslations("list");
   const tCommon = useTranslations("common");
   const tClaimForm = useTranslations("claimForm");
-  const t = useTranslations() as any;
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -166,7 +165,7 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                           }}
                         >
                           <Chip
-                            label={getSeverityLabel(request.severity, t)}
+                            label={getSeverityLabel(request.severity, tVerificationRequest, tClaimForm)}
                             size="small"
                             sx={{
                               backgroundColor: getSeverityColor(

@@ -5,6 +5,7 @@ import {
 } from "../constants/verificationRequestStatusConfig";
 import colors from "../styles/colors";
 import { SeverityLevel } from "../types/VerificationRequest";
+import { TranslationFn } from "../types/Translations";
 
 export const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
     low: colors.low,
@@ -13,9 +14,11 @@ export const SEVERITY_COLOR_MAP: Record<SeverityLevel, string> = {
     critical: colors.critical,
 };
 
-export const getSeverityLabel = (severity: string): string => {
-    const tClaimForm = useTranslations("claimForm");
-    const tVerificationRequest = useTranslations("verificationRequest");
+export const getSeverityLabel = (
+    severity: string,
+    tVerificationRequest: TranslationFn,
+    tClaimForm: TranslationFn
+): string => {
     if (!severity || severity === "N/A") return tClaimForm("noAnswer");
 
     const [label, level] = severity.split("_");
