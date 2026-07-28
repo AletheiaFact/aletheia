@@ -47,7 +47,7 @@ export class OpenAILLMProvider implements LLMProvider {
         return {
             apiKey: this.resolveApiKey(),
             model:
-                this.configService.get<string>("llm.chat_model") ??
+                this.configService.get<string>("llm.chat_model") ||
                 LLM_DEFAULTS.chatModel,
             temperature,
             baseURL: this.resolveBaseURL(),
