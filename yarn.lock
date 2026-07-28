@@ -11942,7 +11942,7 @@ __metadata:
     moment: ^2.30.1
     mongodb: ^6.8.0
     mongodb-memory-server: ^10.0.0
-    mongoose: 6.13.9
+    mongoose: 6.13.10
     mongoose-softdelete-typescript: ^0.0.3
     nestjs-unleash: ^2.2.3
     next: 15.5.14
@@ -21586,9 +21586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:6.13.9":
-  version: 6.13.9
-  resolution: "mongoose@npm:6.13.9"
+"mongoose@npm:6.13.10":
+  version: 6.13.10
+  resolution: "mongoose@npm:6.13.10"
   dependencies:
     bson: ^4.7.2
     kareem: 2.5.1
@@ -21597,7 +21597,7 @@ __metadata:
     mquery: 4.0.3
     ms: 2.1.3
     sift: 16.0.1
-  checksum: 00688058e8bf06099b8640d55bf88c45b65cc7eed8c708be23478fa7b594fcf5fa2e125bce7c819123f55be57bacbe5e486169c7b288f555a4230349776512ff
+  checksum: 4c7c8de41e95addd36fc0349a8329424c9d3511bc45c16d3525a8593d5b25755b0a925746a37546586927f85927673dfbe71379c5341d4dade6fbc33c22ab535
   languageName: node
   linkType: hard
 
