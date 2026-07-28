@@ -50,7 +50,6 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
 
 ### Infrastructure
 - **Containerization**: Docker
-- **Monitoring**: New Relic
 - **Analytics**: Umami v2
 - **Testing**: Jest, Cypress
 - **Package Management**: Yarn with workspace tools plugin

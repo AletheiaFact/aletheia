@@ -188,9 +188,7 @@ Active flags:
 
 8. **Analytics**: Umami v2 (configured via `NEXT_PUBLIC_UMAMI_SITE_ID`)
 
-9. **Monitoring**: New Relic for production
-
-10. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
+9. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
 
 ## Development Setup
 

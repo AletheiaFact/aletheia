@@ -146,7 +146,6 @@
         "mongoose": "6.13.9",
         "mongoose-softdelete-typescript": "^0.0.3",
         "nestjs-unleash": "^2.2.3",
-        "newrelic": "^11.5.0",
         "next": "15.5.14",
         "next-i18next": "^10.2.0",
         "next-seo": "^5.4.0",
