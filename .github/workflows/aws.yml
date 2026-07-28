@@ -27,7 +27,6 @@ jobs:
             GITHUB_SHA: ${{ github.sha }}
             IMAGE: aletheiafact-production
             ENV: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
-            NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
             UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
             MONGODB_URI: ${{ secrets.MONGODB_URI }}
             MONGODB_NAME: ${{ secrets.MONGODB_NAME }}
@@ -39,7 +38,6 @@ jobs:
             RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
             NOVU_API_KEY: ${{ secrets.NOVU_API_KEY }}
             NOVU_APPLICATION_IDENTIFIER: ${{ secrets.NOVU_APPLICATION_IDENTIFIER }}
-            NEW_RELIC_APP_NAME: ${{ secrets.NEW_RELIC_APP_NAME }}
             GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
             GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
             # Needed env variables for first build on next
@@ -109,7 +107,6 @@ jobs:
         env:
             ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
             KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-            NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
             UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
             ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
             ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
