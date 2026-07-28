@@ -9,6 +9,7 @@ import { Badge, BadgeSchema } from "./schemas/badge.schema";
 import { UsersModule } from "../users/users.module";
 import { UtilService } from "../util";
 import { ConfigModule } from "@nestjs/config";
+import { CaptchaModule } from "../captcha/captcha.module";
 
 const BadgeModel = MongooseModule.forFeature([
     {
@@ -25,6 +26,7 @@ const BadgeModel = MongooseModule.forFeature([
         ImageModule,
         UsersModule,
         ConfigModule,
+        CaptchaModule,
     ],
     exports: [BadgeService],
     providers: [BadgeService, UtilService],

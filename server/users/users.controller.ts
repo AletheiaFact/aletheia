@@ -55,11 +55,12 @@ export class UsersController {
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const sitekey = this.configService.get<string>("recaptcha_sitekey");
+        const captcha = this.captchaService.getClientConfig();
         await this.viewService.render(
             req,
             res,
             "/sign-up",
-            Object.assign(parsedUrl.query, { sitekey })
+            Object.assign(parsedUrl.query, { sitekey, captcha })
         );
     }
 
@@ -77,7 +78,10 @@ export class UsersController {
         try {
             return await this.usersService.register(createUserDto);
         } catch (errorResponse) {
-            const { error } = (errorResponse as { error?: { status?: number; message?: string } }) ?? {};
+            const { error } =
+                (errorResponse as {
+                    error?: { status?: number; message?: string };
+                }) ?? {};
             if (error?.status === 409) {
                 // Ory identity already exists
                 throw new ConflictException(error?.message);

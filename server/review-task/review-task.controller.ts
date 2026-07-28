@@ -206,6 +206,7 @@ export class ReviewTaskController {
 
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
