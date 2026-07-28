@@ -48,6 +48,17 @@ services:
         api_key: NOVU_API_KEY
       openai:
         api_key: OPENAI_API_KEY
+      # LLM / embeddings provider (OpenAI-compatible). Point base_url at any
+      # OpenAI-compatible server (Ollama, vLLM, LocalAI, Azure, ...) to self-host.
+      llm:
+        # api_key falls back to openai.api_key, then the OPENAI_API_KEY env var.
+        api_key: OPENAI_API_KEY
+        # base_url: http://localhost:11434/v1   # e.g. Ollama; leave empty for OpenAI
+        chat_model: gpt-5-mini-2025-08-07
+        temperature: 1
+        # embeddings_model: leave UNSET to keep OpenAI's default model. Changing
+        # it changes the vector space and breaks similarity vs. stored embeddings.
+        # embeddings_model: text-embedding-3-small
       zenvia:
         api_url: ZENVIA_API_URL
         api_token: ZENVIA_API_TOKEN
