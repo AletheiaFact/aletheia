@@ -15,12 +15,14 @@ import { useEffect } from "react";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 import { isAdmin } from "../utils/GetUserPermission";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 const PersonalityPage: NextPage<{
     personality: any;
     href: any;
     personalities: any[];
     sitekey: string;
+    captcha: CaptchaClientConfig;
     hideDescriptions: object;
     nameSpace: NameSpaceEnum;
 }> = ({
@@ -28,6 +30,7 @@ const PersonalityPage: NextPage<{
     href,
     personalities,
     sitekey,
+    captcha,
     hideDescriptions,
     nameSpace,
 }) => {
@@ -38,7 +41,8 @@ const PersonalityPage: NextPage<{
 
     useEffect(() => {
         dispatch(actions.setSitekey(sitekey));
-    }, [dispatch, sitekey]);
+        dispatch(actions.setCaptchaConfig(captcha));
+    }, [dispatch, sitekey, captcha]);
 
     const jsonldContent = {
         "@context": "https://schema.org",
@@ -87,6 +91,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
+            captcha: query.captcha,
         },
     };
 }

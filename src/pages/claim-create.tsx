@@ -18,6 +18,7 @@ import { currentNameSpace } from "../atoms/namespace";
 
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
+    captcha,
     personality,
     nameSpace,
     verificationRequestGroup,
@@ -27,6 +28,7 @@ const ClaimCreatePage: NextPage<any> = ({
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     return (
         <>
             <Seo
@@ -58,6 +60,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: query?.personality
