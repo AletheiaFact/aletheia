@@ -1,15 +1,19 @@
 import { PromptTemplate } from "@langchain/core/prompts";
-import { Injectable, Logger } from "@nestjs/common";
-import { loadSummarizationChain, StuffDocumentsChain } from "@langchain/classic/chains";
-import { ChatOpenAI } from "@langchain/openai";
-import { openAI } from "../copilot/openAI.constants";
+import { Inject, Injectable, Logger } from "@nestjs/common";
+import {
+    loadSummarizationChain,
+    StuffDocumentsChain,
+} from "@langchain/classic/chains";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { ConfigService } from "@nestjs/config";
+import { LLM_PROVIDER } from "../llm/llm.tokens";
+import type { LLMProvider } from "../llm/llm.types";
 
 @Injectable()
 export class SummarizationCrawlerChainService {
     private readonly logger = new Logger("SummarizationChainLogger");
-    constructor(private configService: ConfigService) { }
+    constructor(
+        @Inject(LLM_PROVIDER) private readonly llmProvider: LLMProvider
+    ) {}
 
     createBulletPointsChain(): StuffDocumentsChain {
         const systemMessage = `Write a summary of the following text delimited by triple dashes.`;
@@ -25,11 +29,7 @@ export class SummarizationCrawlerChainService {
             template: stuffPromptTemplate,
             inputVariables,
         });
-        const llm = new ChatOpenAI({
-            temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-            modelName: openAI.GPT_5_MINI.toString(),
-            apiKey: this.configService.get<string>("openai.api_key"),
-        });
+        const llm = this.llmProvider.createChatModel();
 
         return loadSummarizationChain(llm, {
             type: "stuff",
