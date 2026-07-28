@@ -236,6 +236,12 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
+        case ActionTypes.SET_CAPTCHA_CONFIG:
+            return {
+                ...state,
+                captcha: action.captcha,
+                sitekey: action.captcha?.sitekey,
+            };
         default:
             return state;
     }
