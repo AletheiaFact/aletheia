@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { ChatOpenAI } from "@langchain/openai";
 import { OpenAILLMProvider } from "./openai.llm-provider";
-import { LLM_DEFAULTS } from "../llm.constants";
+import { LLM_DEFAULTS, LOCAL_PLACEHOLDER_API_KEY } from "../llm.constants";
 
 /** Build a ConfigService whose get(key) reads from a plain map. */
 function configFrom(values: Record<string, unknown>) {
@@ -88,6 +88,9 @@ describe("OpenAILLMProvider (Unit)", () => {
             const provider = await build({
                 "llm.base_url": "http://localhost:11434/v1",
             });
+            expect(provider.resolveChatConfig().apiKey).toBe(
+                LOCAL_PLACEHOLDER_API_KEY
+            );
             const model = provider.createChatModel();
             expect(model).toBeInstanceOf(ChatOpenAI);
         } finally {

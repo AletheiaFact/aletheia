@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import type { Embeddings } from "@langchain/core/embeddings";
+import { LOCAL_PLACEHOLDER_API_KEY } from "../llm.constants";
 import type {
     EmbeddingsProvider,
     ResolvedEmbeddingsConfig,
@@ -25,13 +26,15 @@ export class OpenAIEmbeddingsProvider implements EmbeddingsProvider {
      * and stored embedding vectors remain comparable.
      */
     resolveEmbeddingsConfig(): ResolvedEmbeddingsConfig {
+        const apiKey = this.resolveApiKey();
+        const baseURL =
+            this.configService.get<string>("llm.base_url") || undefined;
         return {
-            apiKey: this.resolveApiKey(),
+            apiKey: !apiKey && baseURL ? LOCAL_PLACEHOLDER_API_KEY : apiKey,
             model:
                 this.configService.get<string>("llm.embeddings_model") ||
                 undefined,
-            baseURL:
-                this.configService.get<string>("llm.base_url") || undefined,
+            baseURL,
         };
     }
 

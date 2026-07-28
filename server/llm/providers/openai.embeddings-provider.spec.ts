@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { OpenAIEmbeddingsProvider } from "./openai.embeddings-provider";
+import { LOCAL_PLACEHOLDER_API_KEY } from "../llm.constants";
 
 function configFrom(values: Record<string, unknown>) {
     return { get: (key: string) => values[key] } as unknown as ConfigService;
@@ -50,6 +51,9 @@ describe("OpenAIEmbeddingsProvider (Unit)", () => {
             const provider = await build({
                 "llm.base_url": "http://localhost:11434/v1",
             });
+            expect(provider.resolveEmbeddingsConfig().apiKey).toBe(
+                LOCAL_PLACEHOLDER_API_KEY
+            );
             expect(provider.getEmbeddings()).toBeInstanceOf(OpenAIEmbeddings);
         } finally {
             process.env.OPENAI_API_KEY = prev;

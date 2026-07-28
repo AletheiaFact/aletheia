@@ -11,3 +11,7 @@ export const LLM_DEFAULTS = {
     chatModel: "gpt-5-mini-2025-08-07",
     temperature: 1,
 } as const;
+
+/** Placeholder API key for keyless OpenAI-compatible local servers (e.g. Ollama),
+ *  which require the field to be set but ignore its value. */
+export const LOCAL_PLACEHOLDER_API_KEY = "not-needed";

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ChatOpenAI } from "@langchain/openai";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { LLM_DEFAULTS } from "../llm.constants";
+import { LLM_DEFAULTS, LOCAL_PLACEHOLDER_API_KEY } from "../llm.constants";
 import type {
     ChatModelOptions,
     LLMProvider,
@@ -44,13 +44,15 @@ export class OpenAILLMProvider implements LLMProvider {
             }
             temperature = parsed;
         }
+        const apiKey = this.resolveApiKey();
+        const baseURL = this.resolveBaseURL();
         return {
-            apiKey: this.resolveApiKey(),
+            apiKey: !apiKey && baseURL ? LOCAL_PLACEHOLDER_API_KEY : apiKey,
             model:
                 this.configService.get<string>("llm.chat_model") ||
                 LLM_DEFAULTS.chatModel,
             temperature,
-            baseURL: this.resolveBaseURL(),
+            baseURL,
         };
     }
 
