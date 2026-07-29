@@ -10,7 +10,7 @@ import {
     Post,
     Query,
     Req,
-    Res
+    Res,
 } from "@nestjs/common";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { ApiTags } from "@nestjs/swagger";
@@ -25,6 +25,7 @@ import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
 import { toError } from "../util/error-handling";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class EventsController {
@@ -44,7 +45,8 @@ export class EventsController {
         private readonly eventsService: EventsService,
         private viewService: ViewService,
         private featureFlagService: FeatureFlagService,
-    ) { }
+        private readonly captchaService: CaptchaService
+    ) {}
 
     @FactCheckerOnly()
     @ApiTags("event")
@@ -83,12 +85,11 @@ export class EventsController {
     @ApiTags("pages")
     @Get("event")
     @Header("Cache-Control", "max-age=60")
-    public async eventPage(
-        @Req() req: BaseRequest,
-        @Res() res: Response
-    ) {
+    public async eventPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
@@ -97,14 +98,10 @@ export class EventsController {
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
         });
 
-        await this.viewService.render(
-            req,
-            res,
-            "/event-page",
-            queryObject
-        );
+        await this.viewService.render(req, res, "/event-page", queryObject);
     }
 
     @FactCheckerOnly()
@@ -115,34 +112,31 @@ export class EventsController {
         @Res() res: Response
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService.render(
-            req,
-            res,
-            "/event-create",
-            queryObject
-        );
+        await this.viewService.render(req, res, "/event-create", queryObject);
     }
 
     @Public()
     @ApiTags("pages")
     @Get("event/:data_hash/:event_slug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async eventViewPage(
-        @Req() req: BaseRequest,
-        @Res() res: Response,
-    ) {
+    public async eventViewPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
-            const namespace = this.getSafeNamespaceRedirect(req.params.namespace);
+            const namespace = this.getSafeNamespaceRedirect(
+                req.params.namespace
+            );
             return res.redirect(namespace);
         }
 
@@ -160,6 +154,7 @@ export class EventsController {
                 event,
                 namespace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                captcha: this.captchaService.getClientConfig(),
             });
 
             await this.viewService.render(
@@ -171,7 +166,10 @@ export class EventsController {
         } catch (error) {
             if (!(error instanceof NotFoundException)) {
                 const err = toError(error);
-                this.logger.error(`Error rendering event page: ${err.message}`, err.stack);
+                this.logger.error(
+                    `Error rendering event page: ${err.message}`,
+                    err.stack
+                );
             }
             throw error;
         }

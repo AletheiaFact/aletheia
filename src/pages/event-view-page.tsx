@@ -9,30 +9,31 @@ import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import EventView from "../components/Event/EventView/EventView";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 interface EventPageProps {
     event: EventPayload;
     nameSpace: NameSpaceEnum;
     sitekey: string;
+    captcha: CaptchaClientConfig;
 }
 
 const EventViewPage: NextPage<EventPageProps> = ({
     event,
     nameSpace,
-    sitekey
+    sitekey,
+    captcha,
 }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
 
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <main>
-            <EventView
-                event={event}
-                nameSpace={nameSpace}
-            />
+            <EventView event={event} nameSpace={nameSpace} />
             <AffixButton />
         </main>
     );
@@ -48,6 +49,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             event: query.event || null,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             sitekey: query.sitekey,
+            captcha: query.captcha,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };

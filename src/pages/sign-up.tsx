@@ -7,22 +7,25 @@ import actions from "../store/actions";
 
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { CaptchaClientConfig } from "../types/Captcha";
 
-const SignUpPage: NextPage<{ sitekey: string }> = ({ sitekey }) => {
-    const { t } = useTranslation();
-    const dispatch = useDispatch();
-    dispatch(actions.setSitekey(sitekey));
+const SignUpPage: NextPage<{ sitekey: string; captcha: CaptchaClientConfig }> =
+    ({ sitekey, captcha }) => {
+        const { t } = useTranslation();
+        const dispatch = useDispatch();
+        dispatch(actions.setSitekey(sitekey));
+        dispatch(actions.setCaptchaConfig(captcha));
 
-    return (
-        <>
-            <Seo
-                title={t("login:signup")}
-                description={t("login:signupFormHeader")}
-            />
-            <LoginView isSignUp />
-        </>
-    );
-};
+        return (
+            <>
+                <Seo
+                    title={t("login:signup")}
+                    description={t("login:signupFormHeader")}
+                />
+                <LoginView isSignUp />
+            </>
+        );
+    };
 
 export async function getServerSideProps({ locale, locales, req, query }) {
     locale = GetLocale(req, locale, locales);
@@ -32,6 +35,7 @@ export async function getServerSideProps({ locale, locales, req, query }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
         },
     };
 }

@@ -14,6 +14,7 @@ import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claimApi";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../store/types";
+import { CaptchaClientConfig } from "../../types/Captcha";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -22,9 +23,10 @@ const extensions = () => [
 export interface IEditorProps {
     claim: any;
     sitekey: string;
+    captcha: CaptchaClientConfig;
 }
 
-const Editor = ({ claim, sitekey }: IEditorProps) => {
+const Editor = ({ claim, sitekey, captcha }: IEditorProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const personalities = claim.personalities;
@@ -41,6 +43,10 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
     dispatch({
         type: ActionTypes.SET_SITEKEY,
         sitekey,
+    });
+    dispatch({
+        type: ActionTypes.SET_CAPTCHA_CONFIG,
+        captcha,
     });
 
     const [debate, setDebate] = useAtom(debateAtom);
@@ -80,16 +86,21 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                 justifyContent: "center",
             }}
         >
-            <Grid item sm={11} style={{ display: "flex", justifyContent: "end" }}>
+            <Grid
+                item
+                sm={11}
+                style={{ display: "flex", justifyContent: "end" }}
+            >
                 <AletheiaButton
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={handleClickUpdateStatus}
                     type={ButtonType.whiteBlack}
                 >
                     {t(
-                        `debates:${isLive
-                            ? "finishDebateButtonLabel"
-                            : "reopenDebateButtonLabel"
+                        `debates:${
+                            isLive
+                                ? "finishDebateButtonLabel"
+                                : "reopenDebateButtonLabel"
                         }`
                     )}
                 </AletheiaButton>

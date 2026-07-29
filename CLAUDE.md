@@ -170,6 +170,16 @@ Active flags:
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
 
+## Captcha Provider
+
+Captcha verification is pluggable via `server/captcha/`: a `CaptchaProvider`
+interface + `CAPTCHA_PROVIDER` DI token, selected by `captcha.provider` config
+(`recaptcha` default, or `none` to disable captcha entirely). All existing
+`captchaService.validate(token)` call sites and the ~20 SSR sitekey-injection
+sites are unaffected by provider choice. See
+`server/captcha/WRITING-A-PROVIDER.md` for adding an open provider (ALTCHA is
+provided as a build-excluded `.example.ts(x)` reference, not a dependency).
+
 ## Key Technical Details
 
 1. **TypeScript**: `strict: false` in root `tsconfig.json`. Three configs: root (type-check only, `noEmit: true`), `server/tsconfig.json` (backend build), `src/tsconfig.json` (frontend)

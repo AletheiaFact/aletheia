@@ -14,6 +14,7 @@ import { currentNameSpace } from "../atoms/namespace";
 const DebatePage: NextPage<any> = ({
     claim,
     sitekey,
+    captcha,
     nameSpace,
     enableCollaborativeEditor,
     enableCopilotChatBot,
@@ -25,6 +26,7 @@ const DebatePage: NextPage<any> = ({
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     dispatch(
         actions.setEditorEnvironment(
             enableCollaborativeEditor,
@@ -52,6 +54,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,

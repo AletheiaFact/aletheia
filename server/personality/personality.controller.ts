@@ -199,6 +199,7 @@ export class PersonalityController {
             hideDescriptions,
             nameSpace: req.params.namespace,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
         });
 
         await this.viewService.render(

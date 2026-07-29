@@ -1,0 +1,1 @@
+export const CAPTCHA_PROVIDER = Symbol("CAPTCHA_PROVIDER");

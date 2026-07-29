@@ -56,6 +56,10 @@ const actions = {
         type: ActionTypes.SET_SITEKEY,
         sitekey,
     }),
+    setCaptchaConfig: (captcha) => ({
+        type: ActionTypes.SET_CAPTCHA_CONFIG,
+        captcha,
+    }),
     setWebsocketUrl: (websocketUrl) => ({
         type: ActionTypes.SET_WEBSOCKET_URL,
         websocketUrl,

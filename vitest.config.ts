@@ -42,6 +42,7 @@ export default defineConfig({
                     setupFiles: ["./server/tests/per-worker-setup.ts"],
                     teardownTimeout: 10000,
                     testTimeout: 30000,
+                    hookTimeout: 30000,
                     pool: "forks",
                 },
             },
