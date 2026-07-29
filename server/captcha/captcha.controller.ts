@@ -1,11 +1,22 @@
-import { Controller, Get, Header, Res } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Header,
+    NotFoundException,
+    Res,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Public } from "../auth/decorators/auth.decorator";
+import { CaptchaService } from "./captcha.service";
+import type { CaptchaClientConfig } from "./captcha.types";
 import type { Response } from "express";
 
 @Controller()
 export class CaptchaController {
-    constructor(private configService: ConfigService) {}
+    constructor(
+        private configService: ConfigService,
+        private readonly captchaService: CaptchaService
+    ) {}
 
     @Public()
     @Get("api/captcha-bridge")
@@ -63,5 +74,23 @@ export class CaptchaController {
   </script>
 </body>
 </html>`);
+    }
+
+    @Public()
+    @Get("api/captcha/config")
+    getConfig(): CaptchaClientConfig {
+        return this.captchaService.getClientConfig();
+    }
+
+    @Public()
+    @Get("api/captcha/challenge")
+    async getChallengeEndpoint(): Promise<unknown> {
+        const challenge = await this.captchaService.getChallenge();
+        if (challenge === undefined) {
+            throw new NotFoundException(
+                "The active captcha provider does not support challenges"
+            );
+        }
+        return challenge;
     }
 }

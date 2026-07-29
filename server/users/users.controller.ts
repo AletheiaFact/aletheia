@@ -55,11 +55,12 @@ export class UsersController {
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const sitekey = this.configService.get<string>("recaptcha_sitekey");
+        const captcha = this.captchaService.getClientConfig();
         await this.viewService.render(
             req,
             res,
             "/sign-up",
-            Object.assign(parsedUrl.query, { sitekey })
+            Object.assign(parsedUrl.query, { sitekey, captcha })
         );
     }
 

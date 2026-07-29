@@ -47,10 +47,16 @@ export const mockViewService = {
 
 export const mockRequest = {
     params: {
-        namespace: "main"
-    }
+        namespace: "main",
+    },
 };
 
 export const mockFeatureFlagService = {
     isEnableEventsFeature: vi.fn(),
+};
+
+export const mockCaptchaService = {
+    validate: vi.fn(),
+    getClientConfig: vi.fn(),
+    getChallenge: vi.fn(),
 };

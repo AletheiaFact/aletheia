@@ -17,12 +17,14 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 export interface ClaimReviewPageProps {
     personality?: any;
     claim: any;
     content: any;
     sitekey: string;
+    captcha: CaptchaClientConfig;
     reviewTask: any;
     claimReview: any;
     hideDescriptions: object;
@@ -47,6 +49,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         content,
         claimReview,
         sitekey,
+        captcha,
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
@@ -58,6 +61,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     dispatch(actions.closeCopilotDrawer());
     dispatch(
         actions.setEditorEnvironment(
@@ -161,6 +165,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),

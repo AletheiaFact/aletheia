@@ -16,10 +16,12 @@ import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ClassificationEnum } from "../types/enums";
 import JsonLd from "../components/JsonLd";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 export interface SourceReviewPageProps {
     source: any;
     sitekey: string;
+    captcha: CaptchaClientConfig;
     reviewTask: any;
     sourceReview: any;
     hideDescriptions: object;
@@ -41,6 +43,7 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
         source,
         sourceReview: claimReview,
         sitekey,
+        captcha,
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
@@ -51,6 +54,7 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     dispatch(actions.closeCopilotDrawer());
     dispatch(
         actions.setEditorEnvironment(
@@ -132,6 +136,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sourceReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),

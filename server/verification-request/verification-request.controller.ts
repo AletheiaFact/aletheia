@@ -306,6 +306,7 @@ export class VerificationRequestController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
@@ -368,6 +369,7 @@ export class VerificationRequestController {
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
         });
 
         await this.viewService.render(
@@ -420,6 +422,7 @@ export class VerificationRequestController {
             reviewTask,
             recommendations,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             hideDescriptions: {},
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,

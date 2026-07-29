@@ -25,6 +25,7 @@ import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
 import { toError } from "../util/error-handling";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class EventsController {
@@ -43,7 +44,8 @@ export class EventsController {
         private configService: ConfigService,
         private readonly eventsService: EventsService,
         private viewService: ViewService,
-        private featureFlagService: FeatureFlagService
+        private featureFlagService: FeatureFlagService,
+        private readonly captchaService: CaptchaService
     ) {}
 
     @FactCheckerOnly()
@@ -96,6 +98,7 @@ export class EventsController {
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
         });
 
         await this.viewService.render(req, res, "/event-page", queryObject);
@@ -118,6 +121,7 @@ export class EventsController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
@@ -150,6 +154,7 @@ export class EventsController {
                 event,
                 namespace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                captcha: this.captchaService.getClientConfig(),
             });
 
             await this.viewService.render(

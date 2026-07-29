@@ -8,16 +8,19 @@ import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import EventsList from "../components/Event/EventList/EventsList";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 const EventPage: NextPage<{
     nameSpace: NameSpaceEnum;
     sitekey: string;
-}> = ({ nameSpace, sitekey }) => {
+    captcha: CaptchaClientConfig;
+}> = ({ nameSpace, sitekey, captcha }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
 
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <>
@@ -36,6 +39,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             sitekey: query.sitekey,
+            captcha: query.captcha,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };

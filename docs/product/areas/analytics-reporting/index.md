@@ -61,7 +61,6 @@ The Analytics & Reporting System provides comprehensive insights into platform u
 
 ## Integration Points
 - Umami Analytics for web analytics
-- New Relic for performance monitoring
 - Database for data aggregation
 - Export systems for reporting
 
@@ -69,4 +68,3 @@ The Analytics & Reporting System provides comprehensive insights into platform u
 - **Backend Module**: `server/stats/`, `server/daily-report/`
 - **Frontend Components**: `src/components/Metrics/`
 - **Analytics**: Umami v2 integration
-- **Monitoring**: New Relic APM

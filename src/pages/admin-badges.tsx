@@ -19,6 +19,7 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
     users,
     nameSpace,
     sitekey,
+    captcha,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const setBadgesList = useSetAtom(atomBadgesList);
     const setUserlist = useSetAtom(atomUserList);
@@ -31,6 +32,7 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
     const { t } = useTranslation();
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <>
@@ -54,6 +56,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             users: JSON.parse(JSON.stringify(query.users)),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             sitekey: query.sitekey,
+            captcha: query.captcha,
         },
     };
 }

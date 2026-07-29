@@ -12,13 +12,18 @@ import VerificationRequestView from "../components/VerificationRequest/Verificat
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 
-const VerificationRequestPage: NextPage<{ nameSpace, sitekey }> = ({ nameSpace, sitekey }) => {
+const VerificationRequestPage: NextPage<{ nameSpace; sitekey; captcha }> = ({
+    nameSpace,
+    sitekey,
+    captcha,
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <>
@@ -42,6 +47,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
+            captcha: query.captcha,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

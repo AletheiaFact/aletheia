@@ -278,7 +278,6 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
   - Wikidata for entity data
   - GitLab for feature flags (Unleash)
   - CAPTCHA services
-  - New Relic monitoring
   - Umami analytics
   
 - **API Ecosystem**:
@@ -352,7 +351,6 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
 
 ### Monitoring & Observability
 - Error tracking
-- Performance monitoring (New Relic)
 - Analytics (Umami)
 - Logging system
 - Health checks
@@ -405,7 +403,6 @@ Aletheia is a comprehensive crowd-sourced fact-checking platform designed to ana
 
 ### Infrastructure & DevOps
 - **Containerization**: Docker
-- **Monitoring**: New Relic
 - **Analytics**: Umami v2
 - **Feature Flags**: GitLab/Unleash
 - **Testing**: Jest, Cypress

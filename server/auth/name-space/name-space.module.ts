@@ -8,6 +8,7 @@ import { ViewModule } from "../../view/view.module";
 import { AbilityModule } from "../../auth/ability/ability.module";
 import { ConfigModule } from "@nestjs/config";
 import { NotificationModule } from "../../notifications/notifications.module";
+import { CaptchaModule } from "../../captcha/captcha.module";
 
 const NameSpaceModel = MongooseModule.forFeature([
     {
@@ -24,6 +25,7 @@ const NameSpaceModel = MongooseModule.forFeature([
         AbilityModule,
         ConfigModule,
         NotificationModule,
+        CaptchaModule,
     ],
     providers: [NameSpaceService],
     exports: [NameSpaceService],

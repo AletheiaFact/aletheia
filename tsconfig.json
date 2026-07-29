@@ -48,6 +48,7 @@
     "node_modules",
     "dist",
     "docs",
-    "server/**/*.spec.ts"
+    "server/**/*.spec.ts",
+    "server/**/*.example.ts"
   ]
 }

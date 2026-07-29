@@ -10,12 +10,13 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import CreateSourceView from "../components/Source/CreateSource/CreateSourceView";
 
-const CreateSourcesPage: NextPage<any> = ({ sitekey, nameSpace }) => {
+const CreateSourcesPage: NextPage<any> = ({ sitekey, captcha, nameSpace }) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     return (
         <>
             <Seo
@@ -34,6 +35,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

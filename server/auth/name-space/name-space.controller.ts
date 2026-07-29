@@ -24,6 +24,7 @@ import { Roles } from "../../auth/ability/ability.factory";
 import { NotificationService } from "../../notifications/notifications.service";
 import slugify from "slugify";
 import { ConfigService } from "@nestjs/config";
+import { CaptchaService } from "../../captcha/captcha.service";
 
 @Controller()
 export class NameSpaceController {
@@ -32,7 +33,8 @@ export class NameSpaceController {
         private usersService: UsersService,
         private viewService: ViewService,
         private notificationService: NotificationService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private captchaService: CaptchaService
     ) {}
 
     @AdminOnly()
@@ -110,6 +112,7 @@ export class NameSpaceController {
 
         const query = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpaces,
             users,
         });
