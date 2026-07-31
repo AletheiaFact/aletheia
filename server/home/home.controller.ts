@@ -18,6 +18,7 @@ import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.ser
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { EventsService } from "../events/event.service";
 import { EventsStatus } from "../types/enums";
@@ -27,15 +28,15 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 @Controller("/")
 export class HomeController {
     constructor(
-        private viewService: ViewService,
-        @Inject("PersonalityService")
+        private readonly viewService: ViewService,
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private statsService: StatsService,
-        private debateService: DebateService,
-        private claimRevisionService: ClaimRevisionService,
-        private claimReviewService: ClaimReviewService,
+        private readonly statsService: StatsService,
+        private readonly debateService: DebateService,
+        private readonly claimRevisionService: ClaimRevisionService,
+        private readonly claimReviewService: ClaimReviewService,
         private readonly eventsService: EventsService,
-        private featureFlagService: FeatureFlagService
+        private readonly featureFlagService: FeatureFlagService
     ) {}
 
     @ApiTags("pages")
@@ -101,7 +102,7 @@ export class HomeController {
                     debateRevision.personalities.map((personality) => {
                         if (personality) {
                             return this.personalityService.getById(
-                                personality,
+                                String(personality),
                                 {
                                     language: req.language,
                                     nameSpace:

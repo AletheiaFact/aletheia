@@ -22,6 +22,7 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { GroupService } from "../group/group.service";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { GetByDataHashDto } from "./dto/get-by-datahash.dto";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 
 describe("ClaimController (Unit)", () => {
     let controller: ClaimController;
@@ -40,7 +41,7 @@ describe("ClaimController (Unit)", () => {
             providers: [
                 { provide: ClaimReviewService, useValue: {} },
                 { provide: ReviewTaskService, useValue: {} },
-                { provide: "PersonalityService", useValue: personalityService },
+                { provide: PERSONALITY_SERVICE, useValue: personalityService },
                 { provide: ClaimService, useValue: claimService },
                 { provide: SentenceService, useValue: {} },
                 { provide: ConfigService, useValue: {} },
@@ -124,10 +125,9 @@ describe("ClaimController (Unit)", () => {
             },
         } as any);
 
-        vi.spyOn(
-            controller as any,
-            "returnClaimReviewPage"
-        ).mockResolvedValue(undefined);
+        vi.spyOn(controller as any, "returnClaimReviewPage").mockResolvedValue(
+            undefined
+        );
 
         await expect(
             controller.getImageClaimReviewPage(req, res)

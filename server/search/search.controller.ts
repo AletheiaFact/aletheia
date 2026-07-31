@@ -17,18 +17,19 @@ import { parse } from "url";
 import type { Response } from "express";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller()
 export class SearchController {
     private readonly logger = new Logger("SearchController");
     constructor(
-        private viewService: ViewService,
-        @Inject("PersonalityService")
+        private readonly viewService: ViewService,
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private sentenceService: SentenceService,
-        private claimRevisionService: ClaimRevisionService,
-        private configService: ConfigService
+        private readonly sentenceService: SentenceService,
+        private readonly claimRevisionService: ClaimRevisionService,
+        private readonly configService: ConfigService
     ) {}
 
     @Public()

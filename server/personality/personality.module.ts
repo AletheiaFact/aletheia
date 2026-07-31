@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { MongoPersonalityService } from "./mongo/personality.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
@@ -17,6 +17,7 @@ import { ConfigModule } from "@nestjs/config";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { personalityServiceProvider } from "./personality.provider";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import dbConfig from "../config/db.config";
 
 const PersonalityModel = MongooseModule.forFeature([
@@ -29,20 +30,20 @@ const PersonalityModel = MongooseModule.forFeature([
 @Module({})
 export class PersonalityModule {
     static register(): DynamicModule {
-        const imports: any[] = [];
-        const providers: any[] = [personalityServiceProvider];
+        const dbImports: DynamicModule["imports"] = [];
+        const dbProviders: Provider[] = [personalityServiceProvider];
 
         if (dbConfig.type === "mongodb") {
-            imports.push(PersonalityModel);
-            providers.push(MongoPersonalityService);
+            dbImports.push(PersonalityModel);
+            dbProviders.push(MongoPersonalityService);
         } else {
-            throw new Error("Invalid DB_TYPE in configuration");
+            throw new Error(`Unsupported DB_TYPE: ${dbConfig.type}`);
         }
 
         return {
             module: PersonalityModule,
             imports: [
-                ...imports,
+                ...dbImports,
                 WikidataModule,
                 ClaimReviewModule,
                 ClaimRevisionModule,
@@ -52,9 +53,9 @@ export class PersonalityModule {
                 AbilityModule,
                 CaptchaModule,
             ],
-            providers: [...providers, UtilService, WinstonLogger],
+            providers: [...dbProviders, UtilService, WinstonLogger],
             controllers: [PersonalityController],
-            exports: ["PersonalityService"],
+            exports: [PERSONALITY_SERVICE],
         };
     }
 }

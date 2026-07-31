@@ -25,19 +25,25 @@ import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
+import { PERSONALITY_SERVICE } from "../interfaces/personality.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import {
+    toCreatePersonalityInput,
+    toListPersonalitiesQuery,
+    toUpdatePersonalityInput,
+} from "./dto/mappers";
 import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
-        @Inject("PersonalityService")
+        @Inject(PERSONALITY_SERVICE)
         private readonly personalityService: IPersonalityService,
-        private viewService: ViewService,
-        private configService: ConfigService,
-        private captchaService: CaptchaService,
-        private historyService: HistoryService
+        private readonly viewService: ViewService,
+        private readonly configService: ConfigService,
+        private readonly captchaService: CaptchaService,
+        private readonly historyService: HistoryService
     ) {}
 
     @Public()
@@ -45,14 +51,18 @@ export class PersonalityController {
     @Get("api/personality")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() getPersonalities: GetPersonalities) {
-        return this.personalityService.combinedListAll(getPersonalities);
+        return this.personalityService.combinedListAll(
+            toListPersonalitiesQuery(getPersonalities)
+        );
     }
 
     @ApiTags("personality")
     @Post("api/personality")
     async create(@Body() createPersonality: CreatePersonalityDTO) {
         try {
-            return await this.personalityService.create(createPersonality);
+            return await this.personalityService.create(
+                toCreatePersonalityInput(createPersonality)
+            );
         } catch (error) {
             const err = toError(error);
             if (
@@ -87,7 +97,10 @@ export class PersonalityController {
         @Param("id") personalityId: string,
         @Body() body: Partial<CreatePersonalityDTO>
     ) {
-        return this.personalityService.update(personalityId, body);
+        return this.personalityService.update(
+            personalityId,
+            toUpdatePersonalityInput(body)
+        );
     }
 
     @AdminOnly()
