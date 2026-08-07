@@ -18,5 +18,14 @@
     "totpIncorectCodeMessage": "The provided authentication code is invalid, please try again.",
     "totpUnLinkErrorMessage": "Error while unlinking",
     "changesSaved": "Your changes have been saved!",
-    "loggedInAs": "Logged in as"
+    "loggedInAs": "Logged in as",
+    "deleteAccountSectionTitle": "Delete account",
+    "deleteAccountDescription": "Permanently delete your account and personal data. This action cannot be undone. Your published contributions remain available under their license, but are no longer linked to you.",
+    "deleteAccountButton": "Delete my account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmBody": "This permanently erases your account and cannot be undone. To confirm, type your email address below.",
+    "deleteConfirmInputLabel": "Type your email to confirm",
+    "deleteConfirmButton": "Permanently delete",
+    "deleteSuccessMessage": "Your account has been deleted.",
+    "deleteErrorMessage": "We couldn't delete your account. Please try again."
 }

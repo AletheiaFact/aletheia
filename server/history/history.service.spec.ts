@@ -2,7 +2,7 @@ import { Mock } from "vitest";
 import { getModelToken } from "@nestjs/mongoose";
 import { HistoryService } from "./history.service";
 import { Test, TestingModule } from "@nestjs/testing";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import {
   mockHistoryResponse,
   mockAggregateMongoResult,
@@ -117,6 +117,22 @@ describe("HistoryService (Unit)", () => {
       );
       expect(response).toBe(
         mockHistoryResponse.history[0].details.after.description
+      );
+    });
+  });
+
+  describe("HistoryService.scrubUserReferences", () => {
+    it("nulls the user field for all entries of the given user", async () => {
+      ((mockHistoryModel as any).updateMany as Mock).mockResolvedValue({
+        modifiedCount: 3,
+      });
+
+      const userId = new Types.ObjectId().toHexString();
+      await service.scrubUserReferences(userId);
+
+      expect((mockHistoryModel as any).updateMany).toHaveBeenCalledWith(
+        { user: new Types.ObjectId(userId) },
+        { $set: { user: null } }
       );
     });
   });

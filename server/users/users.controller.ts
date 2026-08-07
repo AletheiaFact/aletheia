@@ -2,6 +2,7 @@ import {
     Body,
     ConflictException,
     Controller,
+    Delete,
     Get,
     Header,
     Param,
@@ -169,6 +170,17 @@ export class UsersController {
         });
 
         await this.viewService.render(req, res, "/profile-page", queryObject);
+    }
+
+    @ApiTags("user")
+    @Delete("api/me")
+    @Auth({ allowM2M: false })
+    async deleteMyAccount(@Req() req: BaseRequest, @Res() res: Response) {
+        await this.usersService.deleteAccount(req.user._id);
+        res.status(200).json({
+            success: true,
+            message: "Account deleted successfully",
+        });
     }
 
     @ApiTags("user")

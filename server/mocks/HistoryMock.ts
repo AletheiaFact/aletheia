@@ -54,3 +54,5 @@ mockHistoryModel.mockImplementation(function (this: any, data) {
 });
 
 mockHistoryModel.aggregate = vi.fn();
+
+(mockHistoryModel as any).updateMany = vi.fn();
