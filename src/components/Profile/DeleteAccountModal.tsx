@@ -65,7 +65,7 @@ const DeleteAccountModal = ({
                 label={t("profile:deleteConfirmInputLabel")}
                 value={typed}
                 onChange={(e) => setTyped(e.target.value)}
-                data-cy="deleteAccountConfirmInput"
+                inputProps={{ "data-cy": "deleteAccountConfirmInput" }}
                 style={{ marginTop: 16 }}
             />
 
