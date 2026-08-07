@@ -18,14 +18,6 @@ describe("Delete account", () => {
         password: "TestPassword123!",
     };
 
-    const dismissTutorialIfPresent = () => {
-        cy.get("body").then(($body) => {
-            if ($body.find(locators.claim.BTN_OK_TUTORIAL).length) {
-                cy.get(locators.claim.BTN_OK_TUTORIAL).click({ force: true });
-            }
-        });
-    };
-
     it("lets a signed-in user permanently delete their own account", () => {
         // --- Create a throwaway account (sign-up auto-logs the user in) ---
         cy.intercept("POST", "/api/user/register").as("registerUser");
@@ -42,7 +34,16 @@ describe("Delete account", () => {
             .should("be.oneOf", [200, 201]);
         cy.wait("@confirmLogin", { timeout: TIMEOUT.API });
         cy.url({ timeout: TIMEOUT.API }).should("eq", `${baseUrl}/`);
-        dismissTutorialIfPresent();
+
+        // The first-visit tutorial modal only renders for a logged-in user with
+        // no `tutorial_shown` cookie (see AffixButton). It appears right after
+        // sign-up and its backdrop covers the header menu, so dismiss it first.
+        // Dismissing sets the cookie, and the user is logged out on deletion, so
+        // it never reappears later in this test.
+        cy.get(locators.claim.BTN_OK_TUTORIAL, { timeout: TIMEOUT.API })
+            .should("be.visible")
+            .click();
+        cy.get(".MuiBackdrop-root").should("not.exist");
 
         // --- Navigate to the profile page ---
         cy.get(locators.header.OPEN_USER_MENU).click();
@@ -71,7 +72,6 @@ describe("Delete account", () => {
 
         // --- After deletion the user is logged out and sent home ---
         cy.url({ timeout: TIMEOUT.API }).should("eq", `${baseUrl}/`);
-        dismissTutorialIfPresent();
         cy.get(locators.header.OPEN_USER_MENU).click();
         cy.get(locators.header.LOGIN_ITEM).should("be.visible");
 
