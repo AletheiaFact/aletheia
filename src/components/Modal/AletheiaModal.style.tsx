@@ -28,14 +28,14 @@ const DefaultModal = styled(Dialog)`
     margin: 0 auto;
     border-radius: 8px;
     background-color: ${(props) =>
-    props.theme === "dark" ? colors.black : colors.lightNeutral};
+    props.$dark ? colors.black : colors.lightNeutral};
     box-shadow: 0px 0px 15px ${colors.shadow};
     padding: 24px;
     max-width: 90vw;
   }
 
   .MuiDialogTitle-root {
-    color: ${(props) => props.theme === "dark" ? colors.white : colors.black};
+    color: ${(props) => props.$dark ? colors.white : colors.black};
     font-size: 14px;
     line-height: 20px;
     margin-bottom: 12;
@@ -55,7 +55,7 @@ const DefaultModal = styled(Dialog)`
     right: 10px;
     position: absolute;
     color: ${(props) =>
-    props.theme === "dark" ? colors.white : colors.primary};
+    props.$dark ? colors.white : colors.primary};
   }
 
   .MuiDialogContent-root {
@@ -88,7 +88,15 @@ interface AletheiaModalProps {
   open: boolean;
   closeIcon?: React.ReactNode;
   width?: string;
-  theme?: string;
+  /**
+   * Renders the dark variant. Deliberately NOT called `theme`: that name is
+   * reserved by styled-components, so passing it here would replace the
+   * styled-components theme for this modal and everything styled beneath it.
+   * Nothing reads `props.theme` today, which is the only reason the old
+   * `theme="dark"` was harmless — adding a styled-components ThemeProvider, or
+   * any nested styled component doing `props.theme.x`, would have broken it.
+   */
+  dark?: boolean;
   namespace?: NameSpaceEnum;
   onCancel?: () => void;
   style?: React.CSSProperties;
@@ -104,23 +112,32 @@ const AletheiaModal: React.FC<AletheiaModalProps> = ({
   title,
   children,
   width,
-  theme,
+  dark,
   namespace
 }) => {
-  // Call sites express "pin the dialog near the top" as
-  // `style={{ alignSelf: "flex-start", paddingTop: "10vh" }}`. Applied to the
-  // root that silently breaks the dialog (see the note on DefaultModal), so
-  // translate it onto `.MuiDialog-container`, where MUI does its own vertical
-  // alignment. Remaining style keys still pass through to the root untouched.
-  const { alignSelf, paddingTop, ...rootStyle } = style;
+  // Call sites express dialog placement through `style` — "pin it near the top"
+  // as `{ alignSelf: "flex-start", paddingTop: "10vh" }`, or "centre it" as
+  // `{ display: "flex", alignItems: "center" }`. All of these land on the root,
+  // where they either break its height (see the note on DefaultModal) or turn
+  // the container into a flex item and defeat MUI's own centring. Strip the
+  // layout keys and express the intent on `.MuiDialog-container` instead;
+  // everything else still passes through to the root untouched.
+  const {
+    alignSelf,
+    paddingTop,
+    display,
+    alignItems,
+    justifyContent,
+    ...rootStyle
+  } = style;
 
   return (
     <DefaultModal
       open={open}
       onClose={onCancel}
       width={width}
-      theme={theme}
       namespace={namespace}
+      $dark={dark}
       $alignTop={alignSelf === "flex-start"}
       $offsetTop={paddingTop}
       style={rootStyle}
