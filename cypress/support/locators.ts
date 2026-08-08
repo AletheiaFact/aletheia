@@ -19,6 +19,12 @@ const locators = {
         ERROR_REPEATED_PASSWORD: "[data-cy=repeatedPasswordError]",
     },
 
+    profile: {
+        OPEN_DELETE_ACCOUNT: "[data-cy=openDeleteAccountButton]",
+        DELETE_CONFIRM_INPUT: "[data-cy=deleteAccountConfirmInput]",
+        DELETE_CONFIRM_BTN: "[data-cy=deleteAccountConfirmButton]",
+    },
+
     personality: {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",

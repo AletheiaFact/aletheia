@@ -9,6 +9,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { UtilService } from "../util";
 import { NotificationModule } from "../notifications/notifications.module";
+import { HistoryModule } from "../history/history.module";
 import { SessionGuard } from "../auth/session.guard";
 import { M2MGuard } from "../auth/m2m.guard";
 import { CaptchaModule } from "../captcha/captcha.module";
@@ -28,6 +29,7 @@ const UserModel = MongooseModule.forFeature([
         ConfigModule,
         AbilityModule,
         NotificationModule,
+        HistoryModule,
         CaptchaModule,
     ],
     exports: [UsersService, UserModel],

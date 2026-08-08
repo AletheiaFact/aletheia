@@ -33,10 +33,6 @@ const ClassificationModal = ({
         <AletheiaModal
             open={open}
             onCancel={handleCancel}
-            style={{
-                display: "flex",
-                alignItems: "center",
-            }}
             title={
                 <h2
                     style={{

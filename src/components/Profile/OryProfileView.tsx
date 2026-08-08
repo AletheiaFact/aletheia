@@ -19,10 +19,16 @@ import { Totp } from "./Totp";
 import { useForm } from "react-hook-form";
 import OryProfileGrid from "./OryProfileView.style";
 import TextError from "../TextErrorForm";
+import DeleteAccountModal from "./DeleteAccountModal";
+import meApi from "../../api/meApi";
+import { CreateLogoutHandler } from "../Login/LogoutAction";
+import colors from "../../styles/colors";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SettingsFlowState>();
     const [isLoading, setIsLoading] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
     const {
@@ -67,6 +73,23 @@ const OryProfileView = ({ user }) => {
             };
             onSubmit(flowValues);
         }
+    };
+
+    const onDeleteAccount = async () => {
+        setDeleting(true);
+        const ok = await meApi.deleteAccount(t);
+        if (ok) {
+            try {
+                await CreateLogoutHandler();
+            } catch (_e) {
+                // The Ory identity is already deleted server-side, so the
+                // browser logout flow may fail — safe to ignore and redirect.
+            }
+            router.push("/");
+            return;
+        }
+        setDeleting(false);
+        setDeleteModalOpen(false);
     };
 
     if (!flow) {
@@ -178,6 +201,29 @@ const OryProfileView = ({ user }) => {
                     </AletheiaButton>
                 </form>
                 <Totp flow={flow} setFlow={setFlow} />
+
+                <Typography variant="h4" className="subtitle">
+                    {t("profile:deleteAccountSectionTitle")}
+                </Typography>
+                <Typography variant="subtitle1" marginBottom="14px">
+                    {t("profile:deleteAccountDescription")}
+                </Typography>
+                <AletheiaButton
+                    type={ButtonType.outline}
+                    onClick={() => setDeleteModalOpen(true)}
+                    data-cy="openDeleteAccountButton"
+                    style={{ color: colors.error, borderColor: colors.error }}
+                >
+                    {t("profile:deleteAccountButton")}
+                </AletheiaButton>
+
+                <DeleteAccountModal
+                    open={deleteModalOpen}
+                    email={user.email}
+                    loading={deleting}
+                    handleConfirm={onDeleteAccount}
+                    handleCancel={() => setDeleteModalOpen(false)}
+                />
             </Grid>
         </OryProfileGrid>
     );

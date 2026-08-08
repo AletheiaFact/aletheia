@@ -85,6 +85,14 @@ describe("NotificationService (Unit)", () => {
             });
         });
 
+        describe("deleteSubscriber", () => {
+            it("should call novu.subscribers.delete with the subscriber id", async () => {
+                await service.deleteSubscriber("sub-123");
+
+                expect(novu.subscribers.delete).toHaveBeenCalledWith("sub-123");
+            });
+        });
+
         describe("sendNotification", () => {
             it("should trigger email-notifications with payload", async () => {
                 const payload = { title: "New Task", body: "Review assigned" };
@@ -114,9 +122,7 @@ describe("NotificationService (Unit)", () => {
             it("should get a topic", async () => {
                 const result = await service.getTopic("review-updates");
 
-                expect(novu.topics.get).toHaveBeenCalledWith(
-                    "review-updates"
-                );
+                expect(novu.topics.get).toHaveBeenCalledWith("review-updates");
                 expect(result).toEqual({
                     _id: "topic-id-123",
                     key: "test-topic",
@@ -214,8 +220,17 @@ describe("NotificationService (Unit)", () => {
         });
 
         it("sendEmail should return undefined", async () => {
-            const result = await service.sendEmail("sub-123", "test@example.com");
+            const result = await service.sendEmail(
+                "sub-123",
+                "test@example.com"
+            );
             expect(result).toBeUndefined();
+        });
+
+        it("deleteSubscriber should be a no-op returning undefined", async () => {
+            const result = await service.deleteSubscriber("sub-123");
+            expect(result).toBeUndefined();
+            expect(novu.subscribers.delete).not.toHaveBeenCalled();
         });
 
         it("sendNotification should return undefined", async () => {

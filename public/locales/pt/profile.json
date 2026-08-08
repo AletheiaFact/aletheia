@@ -18,5 +18,14 @@
     "totpIncorectCodeMessage": "O código de autenticação fornecido é inválido, por favor tente novamente.",
     "totpUnLinkErrorMessage": "Erro ao desvincular",
     "changesSaved": "Suas mudanças foram salvas!",
-    "loggedInAs": "Logado como"
+    "loggedInAs": "Logado como",
+    "deleteAccountSectionTitle": "Excluir conta",
+    "deleteAccountDescription": "Exclua permanentemente sua conta e seus dados pessoais. Esta ação não pode ser desfeita. Suas contribuições publicadas permanecem disponíveis sob a licença, mas deixam de estar vinculadas a você.",
+    "deleteAccountButton": "Excluir minha conta",
+    "deleteConfirmTitle": "Excluir sua conta?",
+    "deleteConfirmBody": "Isso apaga permanentemente sua conta e não pode ser desfeito. Para confirmar, digite seu endereço de e-mail abaixo.",
+    "deleteConfirmInputLabel": "Digite seu e-mail para confirmar",
+    "deleteConfirmButton": "Excluir permanentemente",
+    "deleteSuccessMessage": "Sua conta foi excluída.",
+    "deleteErrorMessage": "Não foi possível excluir sua conta. Tente novamente."
 }

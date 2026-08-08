@@ -47,6 +47,16 @@ export class NotificationService {
         return result.data;
     }
 
+    async deleteSubscriber(subscriberId: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        const result = await this.novu.subscribers.delete(subscriberId);
+
+        return result.data;
+    }
+
     async sendEmail(subscriberId: string, email: string) {
         if (!this.novuIsConfigured()) {
             return;
