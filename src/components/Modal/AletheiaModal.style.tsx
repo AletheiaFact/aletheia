@@ -12,10 +12,13 @@ import { NameSpaceEnum } from "../../types/Namespace";
  * shrink-to-fit, so the root becomes auto-height instead of viewport-height.
  * That breaks the percentage chain MUI relies on — `.MuiDialog-container`
  * (`height: 100%`) and `.MuiDialog-paper` (`max-height: calc(100% - 64px)`)
- * then resolve against an indefinite height. Chromium tolerates it, but WebKit
- * collapses `.MuiDialogContent-root` (`flex: 1 1 auto` + `overflow-y: auto`,
- * so `min-height: auto` resolves to 0) to zero height, rendering a title-only
- * modal on iOS Safari. Vertical placement belongs on the container instead.
+ * then resolve against an indefinite height. Blink still paints the content (it
+ * mis-sizes the root the same way, it is just forgiving about the consequence),
+ * but WebKit resolves the container to 0 and collapses `.MuiDialogContent-root`
+ * (`flex: 1 1 auto` + `overflow-y: auto`, so `min-height: auto` resolves to 0)
+ * to zero height, leaving a title-only modal. That hits Safari on desktop as
+ * well as every browser on iOS, all of which are WebKit. Vertical placement
+ * belongs on the container instead.
  */
 const DefaultModal = styled(Dialog)`
   .MuiDialog-container {
