@@ -2,17 +2,26 @@ import { useState, useCallback, useEffect } from "react";
 import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import { useAtom } from "jotai";
 import TopicsApi from "../../api/topicsApi";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import debounce from "lodash.debounce";
 import { FiltersContext } from "../../types/VerificationRequest";
 import { ViewMode } from "../FilterToggleButtons";
+import { currentUserId, currentUserRole } from "../../atoms/currentUser";
+import { isStaff } from "../../utils/GetUserPermission";
 
 export const useVerificationRequestFilters = (): FiltersContext => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [viewMode, setViewMode] = useState<ViewMode>("left");
+  const [userId] = useAtom(currentUserId);
+  const [role] = useAtom(currentUserRole);
+  const canViewBoard = !!userId && isStaff(role);
+
+  const [viewMode, setViewMode] = useState<ViewMode | null>(null);
+  const effectiveViewMode = viewMode ?? (canViewBoard ? "left" : "right");
+
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sourceChannelFilter, setSourceChannelFilter] = useState("all");
   const [filterValue, setFilterValue] = useState([]);
@@ -144,7 +153,8 @@ export const useVerificationRequestFilters = (): FiltersContext => {
       impactAreaFilterUsed,
       applyFilters,
       isInitialLoad,
-      viewMode,
+      viewMode: effectiveViewMode,
+      canViewBoard,
       startDate,
       endDate,
     },

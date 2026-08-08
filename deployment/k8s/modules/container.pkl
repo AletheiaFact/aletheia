@@ -28,14 +28,6 @@ container: PodSpec.Container = new {
             value = read("env:ORY_ACCESS_TOKEN")
         }
         new {
-            name = "NEW_RELIC_LICENSE_KEY"
-            value = read("env:NEW_RELIC_LICENSE_KEY")
-        }
-        new {
-            name = "NEW_RELIC_APP_NAME"
-            value = "aletheia-" + namespace
-        }
-        new {
             name = "NEXT_PUBLIC_ORY_SDK_URL"
             value = read("env:ORY_SDK_URL")
         }

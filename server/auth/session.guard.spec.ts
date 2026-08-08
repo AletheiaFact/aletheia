@@ -4,6 +4,8 @@ import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { SessionGuard } from "./session.guard";
 import { UsersService } from "../users/users.service";
+import { TokenIdentityService } from "./token-identity.service";
+import OryService from "./ory/ory.service";
 import {
     createMockSession,
     mockUsersService,
@@ -79,6 +81,8 @@ describe("SessionGuard", () => {
                 { provide: UsersService, useValue: usersService },
                 { provide: ConfigService, useValue: configService },
                 Reflector,
+                TokenIdentityService,
+                { provide: OryService, useValue: { getIdentity: vi.fn() } },
             ],
         }).compile();
 

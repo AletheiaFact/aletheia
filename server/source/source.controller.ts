@@ -95,6 +95,7 @@ export class SourceController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
@@ -192,6 +193,7 @@ export class SourceController {
             reviewTask,
             claimReview,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             hideDescriptions,
             enableCollaborativeEditor,
             enableEditorAnnotations,

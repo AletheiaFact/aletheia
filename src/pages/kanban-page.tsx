@@ -18,6 +18,7 @@ import Cookies from "js-cookie";
 
 const KanbanPage: NextPage<{
     sitekey;
+    captcha;
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
@@ -31,6 +32,7 @@ const KanbanPage: NextPage<{
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
     dispatch(actions.setSitekey(props.sitekey));
+    dispatch(actions.setCaptchaConfig(props.captcha));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.closeCopilotDrawer());
     dispatch(
@@ -77,6 +79,7 @@ export async function getServerSideProps({ locale, locales, req, query }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,

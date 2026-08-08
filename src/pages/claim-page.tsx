@@ -11,11 +11,13 @@ import { useTranslation } from "next-i18next";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 export interface ClaimPageProps {
     personality: any;
     claim: any;
     sitekey: string;
+    captcha: CaptchaClientConfig;
     href: string;
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
@@ -32,6 +34,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         personality,
         claim,
         sitekey,
+        captcha,
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
@@ -45,6 +48,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     dispatch(actions.closeCopilotDrawer());
     dispatch(
         actions.setEditorEnvironment(
@@ -103,6 +107,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 : null,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
+            captcha: query.captcha,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,

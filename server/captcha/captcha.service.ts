@@ -1,44 +1,23 @@
-import { HttpService } from "@nestjs/axios";
-import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { firstValueFrom } from "rxjs";
+import { Inject, Injectable } from "@nestjs/common";
+import { CAPTCHA_PROVIDER } from "./captcha.tokens";
+import type { CaptchaClientConfig, CaptchaProvider } from "./captcha.types";
 
 @Injectable()
 export class CaptchaService {
-    private readonly logger = new Logger("CaptchaService");
     constructor(
-        private httpService: HttpService,
-        private configService: ConfigService
+        @Inject(CAPTCHA_PROVIDER)
+        private readonly captchaProvider: CaptchaProvider
     ) {}
 
-    async _checkCaptchaResponse(secret: string, response: string) {
-        const RECAPTCHA_API_URL = "https://www.google.com/recaptcha/api";
-        const querystring = new URLSearchParams({
-            secret,
-            response,
-        }).toString();
-        const { data } = await firstValueFrom(
-            this.httpService.post(
-                `${RECAPTCHA_API_URL}/siteverify`,
-                querystring
-            )
-        );
-
-        return data;
+    validate(token: string): Promise<boolean> {
+        return this.captchaProvider.verify(token);
     }
 
-    async validate(recaptchaString: string) {
-        try {
-            const secret =
-                this.configService.get<string>("recaptcha_secret") ?? "";
-            const captchaVerification = await this._checkCaptchaResponse(
-                secret,
-                recaptchaString
-            );
-            return captchaVerification.success;
-        } catch (err) {
-            this.logger.error(`error/recaptcha ${err} `);
-            return false;
-        }
+    getClientConfig(): CaptchaClientConfig {
+        return this.captchaProvider.getClientConfig();
+    }
+
+    getChallenge(): Promise<unknown> | undefined {
+        return this.captchaProvider.getChallenge?.();
     }
 }

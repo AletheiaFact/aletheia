@@ -91,7 +91,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
             <AletheiaModal
                 open={modalVisible}
                 onCancel={() => setModalVisible(false)}
-                theme="dark"
+                dark
                 width={vw?.xs ? "100%" : "60%"}
                 closeIcon={<CloseIcon />}
                 style={{ alignSelf: "flex-start", paddingTop: "10vh" }}

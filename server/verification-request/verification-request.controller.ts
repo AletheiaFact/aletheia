@@ -31,6 +31,7 @@ import {
     Public,
     AdminOnly,
     RegularUserOnly,
+    FactCheckerOnly,
 } from "../auth/decorators/auth.decorator";
 import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
@@ -297,6 +298,7 @@ export class VerificationRequestController {
 
     @ApiTags("pages")
     @Get("verification-request/create")
+    @FactCheckerOnly()
     public async VerificationRequestCreatePage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -304,6 +306,7 @@ export class VerificationRequestController {
         const parsedUrl = parse(req.url, true);
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
@@ -366,6 +369,7 @@ export class VerificationRequestController {
         const queryObject = Object.assign(parsedUrl.query, {
             nameSpace: req.params.namespace,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
         });
 
         await this.viewService.render(
@@ -418,6 +422,7 @@ export class VerificationRequestController {
             reviewTask,
             recommendations,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             hideDescriptions: {},
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,

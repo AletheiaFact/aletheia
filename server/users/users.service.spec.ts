@@ -5,6 +5,7 @@ import { UsersService } from "./users.service";
 import { User } from "./schemas/user.schema";
 import OryService from "../auth/ory/ory.service";
 import { NotificationService } from "../notifications/notifications.service";
+import { HistoryService } from "../history/history.service";
 import { mockOryService } from "../mocks/AuthMock";
 import { Roles, Status } from "../auth/ability/ability.factory";
 
@@ -22,6 +23,7 @@ describe("UsersService (Unit)", () => {
         findById: vi.fn(),
         findOne: vi.fn(),
         findByIdAndUpdate: vi.fn(),
+        findByIdAndDelete: vi.fn(),
         aggregate: vi.fn(),
     };
 
@@ -43,6 +45,11 @@ describe("UsersService (Unit)", () => {
 
     const mockNotificationService = {
         createSubscriber: vi.fn(),
+        deleteSubscriber: vi.fn(),
+    };
+
+    const mockHistoryService = {
+        scrubUserReferences: vi.fn(),
     };
 
     beforeAll(async () => {
@@ -60,6 +67,10 @@ describe("UsersService (Unit)", () => {
                 {
                     provide: NotificationService,
                     useValue: mockNotificationService,
+                },
+                {
+                    provide: HistoryService,
+                    useValue: mockHistoryService,
                 },
             ],
         }).compile();
@@ -234,6 +245,57 @@ describe("UsersService (Unit)", () => {
         });
     });
 
+    describe("deleteAccount", () => {
+        it("scrubs history, deletes the Novu subscriber, deletes the Ory identity, then hard-deletes the user", async () => {
+            const mockUser = {
+                _id: "user-123",
+                oryId: "ory-123",
+                email: "gone@example.com",
+                name: "Gone User",
+            };
+            mockUserModel.findById.mockReturnValue({
+                populate: vi.fn().mockResolvedValue(mockUser),
+            });
+            mockUserModel.findByIdAndDelete.mockResolvedValue(mockUser);
+
+            await service.deleteAccount("user-123");
+
+            expect(
+                mockHistoryService.scrubUserReferences
+            ).toHaveBeenCalledWith("user-123");
+            expect(
+                mockNotificationService.deleteSubscriber
+            ).toHaveBeenCalledWith("user-123");
+            expect(oryService.deleteIdentity).toHaveBeenCalledWith("ory-123");
+            expect(mockUserModel.findByIdAndDelete).toHaveBeenCalledWith(
+                "user-123"
+            );
+        });
+
+        it("still hard-deletes the user when the Novu deletion fails", async () => {
+            const mockUser = {
+                _id: "user-456",
+                oryId: "ory-456",
+                email: "err@example.com",
+                name: "Err User",
+            };
+            mockUserModel.findById.mockReturnValue({
+                populate: vi.fn().mockResolvedValue(mockUser),
+            });
+            mockUserModel.findByIdAndDelete.mockResolvedValue(mockUser);
+            mockNotificationService.deleteSubscriber.mockRejectedValueOnce(
+                new Error("novu down")
+            );
+
+            await service.deleteAccount("user-456");
+
+            expect(oryService.deleteIdentity).toHaveBeenCalledWith("ory-456");
+            expect(mockUserModel.findByIdAndDelete).toHaveBeenCalledWith(
+                "user-456"
+            );
+        });
+    });
+
     describe("getAllUsers", () => {
         it("should return all users", async () => {
             const mockUsers = [
@@ -291,6 +353,10 @@ describe("UsersService (Unit)", () => {
                     {
                         provide: NotificationService,
                         useValue: mockNotificationService,
+                    },
+                    {
+                        provide: HistoryService,
+                        useValue: mockHistoryService,
                     },
                 ],
             }).compile();

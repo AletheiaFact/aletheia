@@ -12,6 +12,7 @@ import actions from "../store/actions";
 
 const AdminNameSpacesPage: NextPage<{ data: string }> = ({
     sitekey,
+    captcha,
     nameSpaces,
     users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -21,6 +22,7 @@ const AdminNameSpacesPage: NextPage<{ data: string }> = ({
     setUserlist(users);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <>
@@ -38,6 +40,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             nameSpaces: JSON.parse(JSON.stringify(query.nameSpaces)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             users: JSON.parse(JSON.stringify(query.users)),
         },
     };
