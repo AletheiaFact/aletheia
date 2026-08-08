@@ -180,6 +180,25 @@ export class HistoryService {
         ];
     }
 
+    /**
+     * De-identifies a user's audit-trail entries by nulling the `user`
+     * reference. Rows are kept for audit integrity; the identity link is
+     * severed. Used by account deletion (LGPD/GDPR erasure).
+     * @param userId Internal user id whose history entries should be scrubbed.
+     */
+    async scrubUserReferences(
+        userId: string | Types.ObjectId
+    ): Promise<any> {
+        const id =
+            typeof userId === "string" && isValidObjectId(userId)
+                ? new Types.ObjectId(userId)
+                : userId;
+        return this.HistoryModel.updateMany(
+            { user: id },
+            { $set: { user: null } }
+        );
+    }
+
     async getDescriptionForHide(
         content: IHideableContent,
         target: TargetModel
