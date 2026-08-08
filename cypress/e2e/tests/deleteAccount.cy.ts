@@ -53,6 +53,48 @@ describe("Delete account", () => {
         // --- Open the delete-account confirmation modal ---
         cy.get(locators.profile.OPEN_DELETE_ACCOUNT).click();
 
+        // Regression (mobile): AletheiaModal used to put `align-self` on the
+        // Dialog root. An absolutely positioned box with both block offsets set
+        // stretches by default, so any other `align-self` made the fixed root
+        // shrink-to-fit, leaving it auto-height. `.MuiDialog-container`
+        // (height: 100%) and `.MuiDialog-paper` (max-height: calc(100% - 64px))
+        // then resolved against an indefinite height; WebKit collapsed
+        // `.MuiDialogContent-root` to zero and iOS Safari rendered a title-only
+        // modal. Guard the invariant that broke: root fills the viewport and the
+        // content actually has height.
+        cy.viewport(390, 844);
+        cy.get(".MuiDialog-root").should(($root) => {
+            const root = $root[0].getBoundingClientRect();
+            expect(root.height, "dialog root fills the viewport").to.be.closeTo(
+                844,
+                1
+            );
+        });
+        cy.get(".MuiDialogContent-root").should(($content) => {
+            expect(
+                $content[0].getBoundingClientRect().height,
+                "dialog content is not collapsed"
+            ).to.be.greaterThan(0);
+        });
+        // The body copy, the email input and both buttons must all be reachable.
+        cy.get(locators.profile.DELETE_CONFIRM_INPUT).should("be.visible");
+        cy.get(locators.profile.DELETE_CONFIRM_BTN).should("be.visible");
+
+        // ...and the confirm button must sit inside the paper, not overflow it.
+        cy.get(".MuiDialog-paper").then(($paper) => {
+            const paper = $paper[0].getBoundingClientRect();
+            cy.get(locators.profile.DELETE_CONFIRM_BTN).should(($confirm) => {
+                const confirm = $confirm[0].getBoundingClientRect();
+                expect(confirm.right, "confirm button within paper").to.be.at.most(
+                    paper.right + 1
+                );
+                expect(confirm.left, "confirm button within paper").to.be.at.least(
+                    paper.left - 1
+                );
+            });
+        });
+        cy.viewport(1280, 900);
+
         // Confirm button stays disabled until the typed value matches the email
         cy.get(locators.profile.DELETE_CONFIRM_BTN).should("be.disabled");
         cy.get(locators.profile.DELETE_CONFIRM_INPUT).type("not-my-email");

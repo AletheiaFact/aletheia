@@ -4,10 +4,24 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import { NameSpaceEnum } from "../../types/Namespace";
 
+/**
+ * NOTE: never set `align-self` (or any height-affecting alignment) on the
+ * Dialog root. Per CSS Box Alignment, an absolutely positioned box with both
+ * block offsets set (MUI's root is `position: fixed; inset: 0`) stretches to
+ * its containing block by default; any other `align-self` makes it
+ * shrink-to-fit, so the root becomes auto-height instead of viewport-height.
+ * That breaks the percentage chain MUI relies on — `.MuiDialog-container`
+ * (`height: 100%`) and `.MuiDialog-paper` (`max-height: calc(100% - 64px)`)
+ * then resolve against an indefinite height. Chromium tolerates it, but WebKit
+ * collapses `.MuiDialogContent-root` (`flex: 1 1 auto` + `overflow-y: auto`,
+ * so `min-height: auto` resolves to 0) to zero height, rendering a title-only
+ * modal on iOS Safari. Vertical placement belongs on the container instead.
+ */
 const DefaultModal = styled(Dialog)`
-  display: flex;
-  justify-content: center;
-  align-self: center;
+  .MuiDialog-container {
+    align-items: ${(props) => (props.$alignTop ? "flex-start" : "center")};
+    padding-top: ${(props) => props.$offsetTop || "0"};
+  }
 
   .MuiDialog-paper {
     width: ${(props) => (props.width ? props.width : "300px")};
@@ -92,29 +106,40 @@ const AletheiaModal: React.FC<AletheiaModalProps> = ({
   width,
   theme,
   namespace
-}) => (
-  <DefaultModal
-    open={open}
-    onClose={onCancel}
-    width={width}
-    theme={theme}
-    namespace={namespace}
-    style={{ ...style }}
-  >
-    <DialogTitle>
-      {title}
-      {typeof closeIcon === 'boolean' ? (
-        <IconButton size="small" onClick={onCancel}>
-          <CloseOutlined />
-        </IconButton>
-      ) : (
-        <IconButton size="small" onClick={onCancel}>
-          {closeIcon}
-        </IconButton>
-      )}
-    </DialogTitle>
-    <DialogContent>{children}</DialogContent>
-  </DefaultModal>
-);
+}) => {
+  // Call sites express "pin the dialog near the top" as
+  // `style={{ alignSelf: "flex-start", paddingTop: "10vh" }}`. Applied to the
+  // root that silently breaks the dialog (see the note on DefaultModal), so
+  // translate it onto `.MuiDialog-container`, where MUI does its own vertical
+  // alignment. Remaining style keys still pass through to the root untouched.
+  const { alignSelf, paddingTop, ...rootStyle } = style;
+
+  return (
+    <DefaultModal
+      open={open}
+      onClose={onCancel}
+      width={width}
+      theme={theme}
+      namespace={namespace}
+      $alignTop={alignSelf === "flex-start"}
+      $offsetTop={paddingTop}
+      style={rootStyle}
+    >
+      <DialogTitle>
+        {title}
+        {typeof closeIcon === 'boolean' ? (
+          <IconButton size="small" onClick={onCancel}>
+            <CloseOutlined />
+          </IconButton>
+        ) : (
+          <IconButton size="small" onClick={onCancel}>
+            {closeIcon}
+          </IconButton>
+        )}
+      </DialogTitle>
+      <DialogContent>{children}</DialogContent>
+    </DefaultModal>
+  );
+};
 
 export { AletheiaModal, ModalCancelButton };
