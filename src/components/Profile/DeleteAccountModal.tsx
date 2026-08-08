@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
 interface DeleteAccountModalProps {
     open: boolean;
@@ -22,6 +23,7 @@ const DeleteAccountModal = ({
     handleCancel,
 }: DeleteAccountModalProps) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
     const [typed, setTyped] = useState("");
     const matches =
         typed.trim().toLowerCase() === (email || "").trim().toLowerCase();
@@ -35,6 +37,7 @@ const DeleteAccountModal = ({
         <AletheiaModal
             open={open}
             onCancel={onCancel}
+            width={vw?.xs ? "100%" : "400px"}
             style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
             title={
                 <Grid item style={{ display: "flex", marginTop: "-4px" }}>
@@ -74,7 +77,14 @@ const DeleteAccountModal = ({
                 style={{
                     marginTop: 24,
                     display: "flex",
-                    justifyContent: "space-around",
+                    // The confirm label is long ("Excluir permanentemente" is
+                    // ~194px wide), so `space-around` alone leaves no gap and
+                    // squeezes it into two clipped lines inside the button's
+                    // fixed 40px height. Wrapping stacks the buttons on the
+                    // narrowest phones instead of crushing them.
+                    flexWrap: "wrap",
+                    gap: "12px",
+                    justifyContent: "flex-end",
                 }}
             >
                 <ModalCancelButton type="button" onClick={onCancel}>
