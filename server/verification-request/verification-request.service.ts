@@ -15,7 +15,6 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
-import { OpenAIEmbeddings } from "@langchain/openai";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { HistoryService } from "../history/history.service";
@@ -44,6 +43,8 @@ import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
 import { toError } from "../util/error-handling";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
+import type { EmbeddingsProvider } from "../llm/llm.types";
 
 const md5 = require("md5");
 
@@ -63,7 +64,9 @@ export class VerificationRequestService {
         private readonly aiTaskService: AiTaskService,
         private readonly topicService: TopicService,
         @Inject("PersonalityService")
-        private readonly personalityService: IPersonalityService
+        private readonly personalityService: IPersonalityService,
+        @Inject(EMBEDDINGS_PROVIDER)
+        private readonly embeddingsProvider: EmbeddingsProvider
     ) {}
 
     async listAll({
@@ -254,7 +257,10 @@ export class VerificationRequestService {
             return vr;
         } catch (error) {
             const err = toError(error);
-            this.logger.error("Failed to create verification request", err.stack);
+            this.logger.error(
+                "Failed to create verification request",
+                err.stack
+            );
 
             if (err.name === "ValidationError" && err.errors) {
                 const fields = Object.keys(err.errors).join(", ");
@@ -929,9 +935,7 @@ export class VerificationRequestService {
      * @returns verification request content embedding
      */
     createEmbedContent(content: string): Promise<number[]> {
-        const embeddings = new OpenAIEmbeddings();
-
-        return embeddings.embedQuery(content);
+        return this.embeddingsProvider.getEmbeddings().embedQuery(content);
     }
 
     /**

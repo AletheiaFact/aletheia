@@ -51,6 +51,7 @@ import { CommentModule } from "./review-task/comment/comment.module";
 import { NameSpaceModule } from "./auth/name-space/name-space.module";
 import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
+import { LlmModule } from "./llm/llm.module";
 import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
 import { DailyReportModule } from "./daily-report/daily-report.module";
@@ -150,6 +151,7 @@ export class AppModule implements NestModule {
                 CommentModule,
                 NameSpaceModule,
                 AutomatedFactCheckingModule,
+                LlmModule,
                 CopilotChatModule,
                 UnattributedModule,
                 DailyReportModule,
