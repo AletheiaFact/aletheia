@@ -97,8 +97,135 @@
         },
         "badge": "Vagas abertas",
         "formTitle": "Manifeste seu interesse",
-        "formDescription": "Preencha o formulário e nossa equipe entrará em contato para apresentar as próximas etapas.",
-        "formButton": "Acessar formulário",
+        "formDescription": "Preencha o formulário aqui mesmo, em menos de 3 minutos. Nossa equipe entrará em contato para apresentar as próximas etapas.",
+        "formButton": "Preencher formulário",
         "orContact": "ou"
+    },
+    "steps": {
+        "title": "ETAPAS DO PROCESSO DE ADESÃO",
+        "items": {
+            "interest": {
+                "title": "Manifestação de interesse",
+                "description": "Você envia este formulário. Leva cerca de três minutos."
+            },
+            "analysis": {
+                "title": "Análise da equipe",
+                "description": "Conferimos perfil, área e núcleo regional correspondente."
+            },
+            "alignment": {
+                "title": "Conversa de alinhamento",
+                "description": "Encontro on-line de 30 minutos com a coordenação do seu núcleo."
+            },
+            "onboarding": {
+                "title": "Adesão e onboarding",
+                "description": "Assinatura do termo de participação e acesso às ferramentas do Comitê."
+            }
+        }
+    },
+    "form": {
+        "title": "Formulário de interesse",
+        "subtitle": "4 blocos curtos · cerca de 3 minutos · você pode voltar a qualquer momento.",
+        "stepCount": "Etapa {{current}} de {{total}}",
+        "regionLabel": "Núcleo {{region}}",
+        "backButton": "Voltar",
+        "continueButton": "Continuar",
+        "submitButton": "Enviar Manifestação",
+        "submitSuccess": "Manifestação enviada com sucesso!",
+        "submitError": "Não foi possível enviar sua manifestação. Tente novamente em alguns instantes.",
+        "fieldCount": "{{count}} campos",
+        "lastStep": "Última etapa",
+        "steps": {
+            "personal": "Dados pessoais",
+            "profile": "Perfil de atuação",
+            "contribution": "Sua contribuição",
+            "consent": "Consentimentos"
+        },
+        "personal": {
+            "description": "Usamos essas informações apenas para entrar em contato sobre o Comitê.",
+            "fullName": "Nome completo",
+            "email": "E-mail",
+            "phone": "Telefone / WhatsApp",
+            "city": "Cidade",
+            "state": "Estado",
+            "country": "País",
+            "autoRegion": "Núcleo regional definido automaticamente pelo seu estado:"
+        },
+        "profile": {
+            "description": "Isso nos ajuda a encaminhar você ao grupo de trabalho mais próximo da sua prática.",
+            "actingAsLabel": "Como você atua hoje?",
+            "institution": "Instituição ou organização (opcional)",
+            "role": "Cargo ou função (opcional)"
+        },
+        "actingAsOptions": {
+            "teacher": "Docente",
+            "researcher": "Pesquisador(a)",
+            "student": "Aluno(a)",
+            "professional": "Profissional",
+            "organization": "Organização",
+            "other": "Outro"
+        },
+        "contribution": {
+            "description": "Marque quantas opções fizerem sentido. Nada aqui é definitivo.",
+            "interestAreasLabel": "Área de interesse no Comitê",
+            "contributionLabel": "Como deseja contribuir",
+            "availabilityLabel": "Disponibilidade para encontros e treinamentos",
+            "priorExperience": "Experiência prévia com checagem, educação midiática ou desinformação (opcional)",
+            "motivation": "Breve motivação para participar"
+        },
+        "interestAreaOptions": {
+            "research": "Pesquisa",
+            "mediaEducation": "Educação midiática",
+            "communication": "Comunicação",
+            "technology": "Tecnologia",
+            "regionalOutreach": "Articulação regional"
+        },
+        "contributionOptions": {
+            "factChecking": "Checagem de afirmações",
+            "workshops": "Oficinas e formações",
+            "contentProduction": "Produção de conteúdo",
+            "softwareDevelopment": "Desenvolvimento de software",
+            "institutionalPartnerships": "Parcerias institucionais",
+            "methodologicalSupport": "Apoio metodológico"
+        },
+        "availabilityOptions": {
+            "morning": "Manhã",
+            "afternoon": "Tarde",
+            "evening": "Noite",
+            "weekends": "Fins de semana"
+        },
+        "consent": {
+            "description": "Os dois consentimentos são registrados separadamente, conforme a LGPD.",
+            "dataLead": "Autorizo o tratamento dos meus dados",
+            "dataDescription": "pela AletheiaFact.org para avaliação desta manifestação de interesse e gestão da minha participação no Comitê, nos termos da Lei nº 13.709/2018 (LGPD). Posso solicitar acesso, correção ou exclusão a qualquer momento.",
+            "commsLead": "Aceito receber comunicações",
+            "commsDescription": "do Comitê e da AletheiaFact.org sobre encontros, treinamentos e chamadas de trabalho.",
+            "summaryTitle": "RESUMO",
+            "summaryName": "Nome",
+            "summaryEmail": "E-mail",
+            "summaryProfile": "Perfil",
+            "summaryRegion": "Núcleo regional"
+        },
+        "success": {
+            "title": "Recebemos sua manifestação de interesse.",
+            "description": "Nossa equipe analisará as informações e enviará por e-mail os próximos passos.",
+            "linkedRegion": "Você foi vinculado ao Núcleo {{region}}",
+            "whatHappensNow": "O QUE ACONTECE AGORA",
+            "timeline": {
+                "first": {
+                    "label": "Em até 5 dias úteis",
+                    "description": "Confirmação de recebimento e verificação do seu perfil pela coordenação."
+                },
+                "second": {
+                    "label": "Em até 15 dias",
+                    "description": "Convite para uma conversa de alinhamento com o núcleo regional indicado."
+                },
+                "third": {
+                    "label": "Depois disso",
+                    "description": "Termo de participação, acesso às ferramentas e agenda dos próximos encontros."
+                }
+            },
+            "questions": "Dúvidas? Escreva para",
+            "resetButton": "Enviar outra manifestação"
+        }
     }
 }

@@ -12119,6 +12119,7 @@ __metadata:
     js-cookie: ^3.0.1
     jsonwebtoken: ^9.0.2
     langchain: 1.2.25
+    libphonenumber-js: ^1.13.10
     lint-staged: ^13.0.3
     lottie-web: ^5.10.1
     md5: ^2.3.0
@@ -20253,6 +20254,13 @@ __metadata:
   version: 1.12.15
   resolution: "libphonenumber-js@npm:1.12.15"
   checksum: 0ff1c492526bd5d323819029ca04e19bbd6204c8d3b06eeeae06b48b003f5009020192ce7dedc03aef10565eed471b8ed1d400b3871a4e5b5995475ce1613314
+  languageName: node
+  linkType: hard
+
+"libphonenumber-js@npm:^1.13.10":
+  version: 1.13.10
+  resolution: "libphonenumber-js@npm:1.13.10"
+  checksum: 310c0005afec074917f51e12d8ccc70a7dfa2d86267a209dc4f80d2f8a4cfb1203a6a10e5caa62e3fb7f28059bd86e14b45cfe2be3d57c44dcb3a7332d7af9dd
   languageName: node
   linkType: hard
 

@@ -139,6 +139,27 @@ export class NotificationService {
         return result.data;
     }
 
+    async sendCommitteeInterestApplication(payload: Record<string, string>) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        // Recipient is a fixed Subscriber managed in the Novu dashboard
+        // (Subscribers > "committee-interest-coordination"), not app config —
+        // whoever owns the Committee inbox can update it there directly.
+        const result = await this.novu.trigger(
+            "committee-interest-application",
+            {
+                to: {
+                    subscriberId: "committee-interest-coordination",
+                },
+                payload,
+            }
+        );
+
+        return result.data;
+    }
+
     async sendDailyReviewsEmail(key: string, body: string) {
         if (!this.novuIsConfigured()) {
             return;
