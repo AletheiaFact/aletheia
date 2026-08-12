@@ -22770,10 +22770,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"orderedmap@npm:^1.1.0":
-  version: 1.1.8
-  resolution: "orderedmap@npm:1.1.8"
-  checksum: fbf110e901fdbaf515caf0cba6c281c085e8fa3c9c1255d831f8ceecc925d4d945004d683c8a15a0d3049005a73a73f343831906c3516deef8dc8cd802235458
+"orderedmap@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "orderedmap@npm:2.1.1"
+  checksum: 082cf970b0b66d1c5a904b07880534092ce8a2f2eea7a52cf111f6c956210fa88226c13866aef4d22a3abe56924f21ead12f7ee8c1dfaf2f63d897a4e7c23328
   languageName: node
   linkType: hard
 
@@ -23791,12 +23791,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-model@npm:1.9.1":
-  version: 1.9.1
-  resolution: "prosemirror-model@npm:1.9.1"
+"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.20.0, prosemirror-model@npm:^1.21.0, prosemirror-model@npm:^1.22.1, prosemirror-model@npm:^1.25.0, prosemirror-model@npm:^1.25.1":
+  version: 1.25.10
+  resolution: "prosemirror-model@npm:1.25.10"
   dependencies:
-    orderedmap: ^1.1.0
-  checksum: 69b4d31be8be1326bf5c15cc66f13bb6657614273dfa109baf7e0e1d122d9a2e83af1edbdb9ef126537465e1ec18f7250a69b0474fd64bb5f73600210d90900c
+    orderedmap: ^2.0.0
+  checksum: ce8da4f89756c27cf6facf25e3a0559a4b46f36612e23327933cfefb02bb94cefc0baeab5a9e77e477a143f7c1a969646101f92216f4fa899d8358d576d3063c
   languageName: node
   linkType: hard
 
