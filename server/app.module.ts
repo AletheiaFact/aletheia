@@ -65,6 +65,7 @@ import { M2MGuard } from "./auth/m2m.guard";
 import { TokenIdentityModule } from "./auth/token-identity.module";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
+import { CommitteeInterestModule } from "./committee-interest/committee-interest.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
@@ -161,6 +162,7 @@ export class AppModule implements NestModule {
                 FeatureFlagModule,
                 GroupModule,
                 AiTaskModule,
+                CommitteeInterestModule,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],

@@ -9,13 +9,19 @@ import {
 } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { parse } from "url";
+import { ConfigService } from "@nestjs/config";
 import { ViewService } from "./view.service";
+import { CaptchaService } from "../captcha/captcha.service";
 import { Public } from "../auth/decorators/auth.decorator";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
-    constructor(private readonly viewService: ViewService) {}
+    constructor(
+        private readonly viewService: ViewService,
+        private readonly configService: ConfigService,
+        private readonly captchaService: CaptchaService
+    ) {}
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -108,11 +114,15 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
+        });
         await this.viewService.render(
             req,
             res,
             "/committee-invitation-page",
-            parsedUrl.query
+            queryObject
         );
     }
 
