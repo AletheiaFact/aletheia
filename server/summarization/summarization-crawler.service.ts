@@ -1,13 +1,12 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { SummarizationCrawlerChainService } from "./summarization-crawler-chain.service";
 import { WebBrowser } from "@langchain/classic/tools/webbrowser";
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import { openAI } from "../copilot/openAI.constants";
 import {
     AgentExecutor,
     createToolCallingAgent,
 } from "@langchain/classic/agents";
-import { ConfigService } from "@nestjs/config";
+import { LLM_PROVIDER, EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
+import type { LLMProvider, EmbeddingsProvider } from "../llm/llm.types";
 import colors from "../../src/styles/colors";
 import {
     ChatPromptTemplate,
@@ -19,7 +18,9 @@ export class SummarizationCrawlerService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(
         private chainService: SummarizationCrawlerChainService,
-        private configService: ConfigService
+        @Inject(LLM_PROVIDER) private readonly llmProvider: LLMProvider,
+        @Inject(EMBEDDINGS_PROVIDER)
+        private readonly embeddingsProvider: EmbeddingsProvider
     ) {}
 
     async getSummarizedReviews(dailyReviews: any[]): Promise<any[]> {
@@ -145,13 +146,8 @@ export class SummarizationCrawlerService {
             new MessagesPlaceholder({ variableName: "agent_scratchpad" }),
         ]);
 
-        const llm = new ChatOpenAI({
-            temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-            modelName: openAI.GPT_5_MINI.toString(),
-            apiKey: this.configService.get<string>("openai.api_key"),
-        });
-
-        const embeddings = new OpenAIEmbeddings();
+        const llm = this.llmProvider.createChatModel();
+        const embeddings = this.embeddingsProvider.getEmbeddings();
         const tools = [new WebBrowser({ model: llm, embeddings })];
 
         const agent = await createToolCallingAgent({

@@ -50,11 +50,15 @@ describe("SessionGuard", () => {
     const createMockContext = (
         cookie = "ory_session=abc",
         isPublic = false,
-        url = "/api/test"
+        url = "/api/test",
+        sessionToken?: string
     ) => {
         const mockRedirect = vi.fn();
         const request: any = {
-            header: vi.fn().mockReturnValue(cookie),
+            header: vi.fn((name: string) => {
+                if (name === "X-Session-Token") return sessionToken;
+                return cookie;
+            }),
             url,
             params: {},
         };
@@ -160,6 +164,36 @@ describe("SessionGuard", () => {
             expect(request.user._id).toBe("admin-user-id");
             expect(request.user.id).toBe("admin-user-id");
             expect(request.user.role).toEqual({ main: Roles.Admin });
+        });
+    });
+
+    describe("native session token (X-Session-Token)", () => {
+        it("should grant access using the session token when no cookie is present", async () => {
+            setupDefaultUserMock();
+            const session = createMockSession();
+            mockToSession.mockResolvedValue({ data: session });
+
+            const { context, request } = createMockContext(
+                "",
+                false,
+                "/api/me",
+                "ory_st_native-token"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(result).toBe(true);
+            expect(mockToSession).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    xSessionToken: "ory_st_native-token",
+                })
+            );
+            expect(request.user).toEqual(
+                expect.objectContaining({
+                    _id: "mongo-user-id-123",
+                    isM2M: false,
+                })
+            );
         });
     });
 

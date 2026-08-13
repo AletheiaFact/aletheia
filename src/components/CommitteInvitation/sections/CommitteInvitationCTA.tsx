@@ -19,7 +19,7 @@ import {
 } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
-import { trackUmamiEvent } from "../../../lib/umami";
+import smoothScrollTo from "../../../utils/smoothScrollTo";
 
 const checklistItems = [
     "checklist.item1",
@@ -124,13 +124,7 @@ const CommitteInvitationCTA = () => {
                                     </Box>
 
                                     <Button
-                                        onClick={() =>
-                                            trackUmamiEvent(
-                                                "cta-committee-invitation-button",
-                                                "committee-invitation"
-                                            )
-                                        }
-                                        href="https://forms.gle/AnTuCzXtPTrsXHGVA"
+                                        onClick={smoothScrollTo("form")}
                                         variant="contained"
                                         size="large"
                                         endIcon={<ArrowForward />}
@@ -145,9 +139,6 @@ const CommitteInvitationCTA = () => {
                                             borderRadius: "6px",
                                             "&:hover": { bgcolor: colors.lightSecondary },
                                         }}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        component="a"
                                     >
                                         {t("cta.formButton")}
                                     </Button>
@@ -173,7 +164,7 @@ const CommitteInvitationCTA = () => {
                     </Grid>
                 </Box>
             </Box>
-        </Box>
+        </Box >
     );
 };
 
