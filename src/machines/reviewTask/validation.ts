@@ -24,6 +24,8 @@ const EVENTS_REQUIRING_SOURCES = [
     ReviewTaskEvents.publish,
 ];
 
+const NOT_FACT_CLASSIFICATION = "not-fact";
+
 export function validateFormSubmission(
     input: ValidationInput
 ): ValidationError[] {
@@ -43,13 +45,16 @@ export function validateFormSubmission(
         });
     }
 
+    const requiresReportContent =
+        formData.classification !== NOT_FACT_CLASSIFICATION;
+
     // Editor content required — check each block individually to report ALL missing fields
-    if (!formData.visualEditor) {
+    if (requiresReportContent && !formData.visualEditor) {
         errors.push({
             field: "visualEditor",
             message: "common:requiredFieldError",
         });
-    } else {
+    } else if (requiresReportContent) {
         const editorParser = new EditorParser();
         const editorJson =
             formData.visualEditor.toJSON?.() || formData.visualEditor;
