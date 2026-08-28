@@ -150,13 +150,7 @@ export class ViewController {
     @Get("_next/static*")
     @Header("Cache-Control", "public, max-age=31536000, immutable")
     public async staticAssets(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        await this.viewService.render(
-            req,
-            res,
-            parsedUrl.pathname ?? "/",
-            parsedUrl.query
-        );
+        await this.handler(req, res);
     }
 
     /**
@@ -167,13 +161,7 @@ export class ViewController {
     @Get("_next*")
     @Header("Cache-Control", "public, max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        await this.viewService.render(
-            req,
-            res,
-            parsedUrl.pathname ?? "/",
-            parsedUrl.query
-        );
+        await this.handler(req, res);
     }
 
     /**
