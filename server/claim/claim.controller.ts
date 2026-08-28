@@ -421,7 +421,7 @@ export class ClaimController {
     @AdminOnly()
     @Get("claim/:claimId/debate/edit")
     @ApiTags("pages")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     public async getDebateEditor(
         @Req() req: BaseRequest,
         @Res() res: Response

@@ -121,7 +121,7 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Get("api/verification-request/search")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     @ApiQuery({
         name: "sourceUrl",
         required: false,
@@ -157,7 +157,7 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Get("api/verification-request/:id")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     public async getById(@Param("id") verificationRequestId: string) {
         return this.verificationRequestService.getById(verificationRequestId);
     }
