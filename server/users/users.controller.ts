@@ -189,7 +189,7 @@ export class UsersController {
 
     @ApiTags("user")
     @Get("api/user")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     @Auth()
     public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
@@ -206,7 +206,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user/:id")
     @Auth()
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     public async getUser(@Param("id") userId: string) {
         const value = new Types.ObjectId(userId);
         return this.usersService.getById(value);

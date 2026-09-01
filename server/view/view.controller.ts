@@ -140,17 +140,28 @@ export class ViewController {
         );
     }
 
+    /**
+     * Files under /_next/static carry a content hash in the name, so a given
+     * URL always returns the same bytes. They can stay in the browser and in
+     * the CDN for a year. This route must come before the general "_next*"
+     * route below, because Express matches routes in declaration order.
+     */
+    @Public()
+    @Get("_next/static*")
+    @Header("Cache-Control", "public, max-age=31536000, immutable")
+    public async staticAssets(@Req() req: Request, @Res() res: Response) {
+        await this.handler(req, res);
+    }
+
+    /**
+     * Other /_next paths (the image optimizer, the data routes) change when
+     * the content changes, so they get a short TTL.
+     */
     @Public()
     @Get("_next*")
-    @Header("Cache-Control", "max-age=60")
+    @Header("Cache-Control", "public, max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        await this.viewService.render(
-            req,
-            res,
-            parsedUrl.pathname ?? "/",
-            parsedUrl.query
-        );
+        await this.handler(req, res);
     }
 
     /**
@@ -167,7 +178,7 @@ export class ViewController {
     }
 
     @Get("totp")
-    @Header("Cache-Control", "max-age=86400")
+    @Header("Cache-Control", "private, max-age=86400")
     public async showTotpCheck(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         await this.viewService.render(
