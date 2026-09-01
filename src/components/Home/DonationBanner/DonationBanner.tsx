@@ -27,19 +27,25 @@ const DonationBanner = () => {
         return null;
     }
 
-  return showDonationBanner && (
-    <DonationBannerStyle>
-      <Grid container className="banner-container">
-        <CloseOutlined
-          className="close-banner"
-          onClick={() => closeBanner(() => setDonationBanner(false))}
-        />
-        <DonationBannerContent
-          closeClick={() => closeBanner(() => setDonationBanner(false))}
-        />
-      </Grid>
-    </DonationBannerStyle>
-  )
+    return (
+        showDonationBanner && (
+            <DonationBannerStyle>
+                <Grid container className="banner-container">
+                    <CloseOutlined
+                        className="close-banner"
+                        onClick={() =>
+                            closeBanner(() => setDonationBanner(false))
+                        }
+                    />
+                    <DonationBannerContent
+                        closeClick={() =>
+                            closeBanner(() => setDonationBanner(false))
+                        }
+                    />
+                </Grid>
+            </DonationBannerStyle>
+        )
+    );
 };
 
 export default DonationBanner;

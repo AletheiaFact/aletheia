@@ -9,68 +9,75 @@ import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 
 const initialTrackingState: TrackingResponseDTO = {
-  currentStatus: null,
-  historyEvents: [],
+    currentStatus: null,
+    historyEvents: [],
 };
 
-const TrackingCard = ({ verificationRequestId, isMinimal }: TrackingCardProps) => {
-  const [trackingData, setTrackingData] = useState<TrackingResponseDTO>(initialTrackingState);
-  const [isLoading, setIsLoading] = useState(true);
-  const { t } = useTranslation();
+const TrackingCard = ({
+    verificationRequestId,
+    isMinimal,
+}: TrackingCardProps) => {
+    const [trackingData, setTrackingData] =
+        useState<TrackingResponseDTO>(initialTrackingState);
+    const [isLoading, setIsLoading] = useState(true);
+    const { t } = useTranslation();
 
-  const { currentStatus, historyEvents } = trackingData;
+    const { currentStatus, historyEvents } = trackingData;
 
-  useEffect(() => {
-    const fetchTracking = async () => {
-      try {
-        const data = await TrackingApi.getTrackingById(verificationRequestId, t);
-        setTrackingData(data);
-      } catch (error) {
-        console.error("Error when searching for tracking:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    useEffect(() => {
+        const fetchTracking = async () => {
+            try {
+                const data = await TrackingApi.getTrackingById(
+                    verificationRequestId,
+                    t
+                );
+                setTrackingData(data);
+            } catch (error) {
+                console.error("Error when searching for tracking:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    if (verificationRequestId) {
-      setIsLoading(true);
-      fetchTracking();
+        if (verificationRequestId) {
+            setIsLoading(true);
+            fetchTracking();
+        }
+    }, [verificationRequestId]);
+
+    if (isLoading) {
+        return <Loading />;
     }
-  }, [verificationRequestId]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  return (
-    <CardBase
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        maxWidth: "100%",
-        padding: "24px",
-        height: isMinimal ? "100%" : "auto",
-        margin: isMinimal ? 0 : "24px 0",
-        gap: 4
-      }}
-    >
-      <Typography
-        style={{
-           fontFamily: "initial",
-           fontSize: 26,
-           lineHeight: 1.35
-        }}
-        variant="h1"
-      >
-        {t("tracking:verificationProgress")}
-      </Typography>
-      <TrackingStep
-        currentStatus={currentStatus}
-        historyEvents={historyEvents}
-        isMinimal={isMinimal}
-      />
-    </CardBase>
-  );
+    return (
+        <CardBase
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                maxWidth: "100%",
+                padding: "24px",
+                height: isMinimal ? "100%" : "auto",
+                margin: isMinimal ? 0 : "24px 0",
+                gap: 4,
+            }}
+        >
+            <Typography
+                style={{
+                    fontFamily: "initial",
+                    fontSize: 26,
+                    lineHeight: 1.35,
+                }}
+                variant="h1"
+            >
+                {t("tracking:verificationProgress")}
+            </Typography>
+            <TrackingStep
+                currentStatus={currentStatus}
+                historyEvents={historyEvents}
+                isMinimal={isMinimal}
+            />
+        </CardBase>
+    );
 };
 
 export default TrackingCard;

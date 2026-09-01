@@ -84,10 +84,7 @@ const CommentContainer = ({
                 if (combinedComments.length > 0) {
                     setAnnotations(combinedComments);
                 } else if (comments && state.doc.content.size) {
-                    setComments?.([
-                        ...annotations,
-                        ...crossCheckingComments,
-                    ]);
+                    setComments?.([...annotations, ...crossCheckingComments]);
                 }
             }
         }

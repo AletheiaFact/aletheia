@@ -19,18 +19,22 @@ const VerificationRequestMinimumCardActions = ({
     dataHash,
     topics,
     personalities,
-    t
+    t,
 }: VerificationRequestMinimumCardActionsProps) => {
-    const tags = topics?.map((topic) => ({
-        name: topic.aliases?.[0] || topic.name
-    })) || [];
+    const tags =
+        topics?.map((topic) => ({
+            name: topic.aliases?.[0] || topic.name,
+        })) || [];
 
     return (
         <Grid item className="verification-actions">
             <TagsList key={verificationRequestId} tags={tags} />
             <Box className="verification-actions-row">
                 <Box>
-                    <Typography variant="caption" className="verification-actions-caption">
+                    <Typography
+                        variant="caption"
+                        className="verification-actions-caption"
+                    >
                         {t("verificationRequest:identifiedPersonalities")}
                     </Typography>
 
@@ -54,7 +58,7 @@ const VerificationRequestMinimumCardActions = ({
                 </AletheiaButton>
             </Box>
         </Grid>
-    )
-}
+    );
+};
 
 export default VerificationRequestMinimumCardActions;

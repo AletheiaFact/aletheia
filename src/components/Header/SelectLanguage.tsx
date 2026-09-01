@@ -11,11 +11,16 @@ export interface SelectLanguageProps {
     onChange: (newLanguage: string) => void;
 }
 
-const SelectLanguage = ({ dataCy, currentLanguage, sections, onChange }: SelectLanguageProps) => {
+const SelectLanguage = ({
+    dataCy,
+    currentLanguage,
+    sections,
+    onChange,
+}: SelectLanguageProps) => {
     const languageItems = sections[0]?.items || [];
 
     const renderValue = (value: string) => {
-        const selectedItem = languageItems.find(item => item.value === value);
+        const selectedItem = languageItems.find((item) => item.value === value);
         return (
             <Grid item className="language-value-container">
                 <LanguageIcon fontSize="inherit" />
@@ -52,15 +57,19 @@ const SelectLanguage = ({ dataCy, currentLanguage, sections, onChange }: SelectL
 
                                 "&:hover": {
                                     backgroundColor: `${colors.lightNeutralSecondary}`,
-                                }
-                            }
-                        }
-                    }
-                }
+                                },
+                            },
+                        },
+                    },
+                },
             }}
         >
             {languageItems.map((item) => (
-                <MenuItem key={item.key} value={item.value} data-cy={item.dataCy}>
+                <MenuItem
+                    key={item.key}
+                    value={item.value}
+                    data-cy={item.dataCy}
+                >
                     {item.icon}
                     <Typography variant="body1">{item.label}</Typography>
                 </MenuItem>

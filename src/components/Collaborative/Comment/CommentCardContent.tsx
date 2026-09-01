@@ -75,7 +75,8 @@ const CommentCardContent = ({
                 setIsResolved={setIsResolved}
             />
 
-            {isRootComment && !enableEditorAnnotations &&
+            {isRootComment &&
+                !enableEditorAnnotations &&
                 content.type === CommentEnum.review && (
                     <Typography
                         variant="body1"

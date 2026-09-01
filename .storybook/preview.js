@@ -1,6 +1,6 @@
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
-import colors from '../src/styles/colors';
+import colors from "../src/styles/colors";
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },
@@ -11,13 +11,13 @@ export const parameters = {
         },
     },
     backgrounds: {
-        default: 'light',
+        default: "light",
         values: [
-          { name: 'light', value: "rgb(245,245,245)" },
-          { name: 'blue', value: "rgb(17, 39, 58)" },
-          { name: 'dark', value: "rgb(81, 81, 81)" },
+            { name: "light", value: "rgb(245,245,245)" },
+            { name: "blue", value: "rgb(17, 39, 58)" },
+            { name: "dark", value: "rgb(81, 81, 81)" },
         ],
-      },
+    },
 };
 
 export const decorators = [

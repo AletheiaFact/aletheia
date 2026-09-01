@@ -54,10 +54,7 @@ async function initApp() {
         logger.log("All users have been processed for Novu subscription.");
     } catch (error) {
         const err = toError(error);
-        logger.error(
-            "An error occurred while creating Novu subscribers:",
-            err
-        );
+        logger.error("An error occurred while creating Novu subscribers:", err);
     } finally {
         await app.close();
     }

@@ -1,6 +1,12 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateVerificationRequestDTO } from "./create-verification-request-dto";
-import { IsArray, IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
+import {
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Group } from "../../group/schemas/group.schema";
 import { Transform } from "class-transformer";

@@ -33,9 +33,7 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
                 path: url,
             });
         } else {
-            this.logger.log(
-                `Unauthorized page request, redirecting: ${url}`
-            );
+            this.logger.log(`Unauthorized page request, redirecting: ${url}`);
             response.redirect(
                 `/unauthorized?originalUrl=${encodeURIComponent(url)}`
             );

@@ -1,7 +1,7 @@
 import {
     InsertDriveFileOutlined,
     PhotoSizeSelectActualOutlined,
-    VideocamOutlined
+    VideocamOutlined,
 } from "@mui/icons-material";
 import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
@@ -16,13 +16,17 @@ import AletheiaButton from "../../AletheiaButton";
 const ClaimSelectType = () => {
     const [, send] = useAtom(createClaimMachineAtom);
     const { t } = useTranslation();
-    const Sizeicon = { fontSize:"22px", margin:"0 5 5 0"};
+    const Sizeicon = { fontSize: "22px", margin: "0 5 5 0" };
 
     const icons = {
-        [ContentModelEnum.Image]: <PhotoSizeSelectActualOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Speech]: <InsertDriveFileOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Debate]: <VideocamOutlined style={Sizeicon}/>,
-        [ContentModelEnum.Unattributed]: <InsertDriveFileOutlined style={Sizeicon}/>,
+        [ContentModelEnum.Image]: (
+            <PhotoSizeSelectActualOutlined style={Sizeicon} />
+        ),
+        [ContentModelEnum.Speech]: <InsertDriveFileOutlined style={Sizeicon} />,
+        [ContentModelEnum.Debate]: <VideocamOutlined style={Sizeicon} />,
+        [ContentModelEnum.Unattributed]: (
+            <InsertDriveFileOutlined style={Sizeicon} />
+        ),
     };
 
     const handleClickStart = (event) => {
@@ -54,7 +58,8 @@ const ClaimSelectType = () => {
                 </p>
             </div>
 
-            <Grid container
+            <Grid
+                container
                 style={{
                     gap: "10px",
                     margin: "24px 0",
@@ -65,7 +70,7 @@ const ClaimSelectType = () => {
                 {Object.keys(ContentModelEnum).map((key) => (
                     <AletheiaButton
                         onClick={() => handleClickStart(key)}
-                        style={{ gap:"10px",textTransform: "uppercase" }}
+                        style={{ gap: "10px", textTransform: "uppercase" }}
                         data-cy={`testSelectType${key}`}
                         key={key}
                     >

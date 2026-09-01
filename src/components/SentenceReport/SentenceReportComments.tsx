@@ -26,8 +26,9 @@ const SentenceReportComments = ({ context }) => {
                     style={{
                         backgroundColor: colors.lightNeutralSecondary,
                         marginBottom: "16px",
-                        borderTop: `3px solid ${reviewColors[crossCheckingComment.text]
-                            }`,
+                        borderTop: `3px solid ${
+                            reviewColors[crossCheckingComment.text]
+                        }`,
                         borderRadius: "4px",
                         boxShadow: "none",
                     }}

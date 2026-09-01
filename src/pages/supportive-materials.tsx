@@ -50,7 +50,8 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                         fontSize: "40px",
                         marginTop: "20px",
                         fontWeight: "bold",
-                    }}>
+                    }}
+                >
                     {t("materials:title")}
                 </Typography>
             </Grid>

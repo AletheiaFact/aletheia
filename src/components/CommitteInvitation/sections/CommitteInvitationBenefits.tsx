@@ -40,8 +40,14 @@ const CommitteInvitationBenefits = () => {
                 <Grid container spacing={3}>
                     {benefitItems.map(({ key, icon }) => (
                         <Grid item xs={12} sm={6} md={4} key={key}>
-                            <Stack className="benefit-card" direction="row" spacing={2}>
-                                <Box className="benefit-icon-wrapper">{icon}</Box>
+                            <Stack
+                                className="benefit-card"
+                                direction="row"
+                                spacing={2}
+                            >
+                                <Box className="benefit-icon-wrapper">
+                                    {icon}
+                                </Box>
                                 <Box>
                                     <Typography
                                         variant="subtitle1"
@@ -66,7 +72,10 @@ const CommitteInvitationBenefits = () => {
                         <Typography variant="subtitle1" className="pact-title">
                             {t("benefits.pact.title")}
                         </Typography>
-                        <Typography variant="body2" className="pact-description">
+                        <Typography
+                            variant="body2"
+                            className="pact-description"
+                        >
                             {t("benefits.pact.description")}
                         </Typography>
                     </Stack>

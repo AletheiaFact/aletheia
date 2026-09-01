@@ -542,7 +542,9 @@ export class MongoPersonalityService {
             newPersonality
         ).exec();
         if (!updated) {
-            throw new NotFoundException(`Personality not found: ${personality._id}`);
+            throw new NotFoundException(
+                `Personality not found: ${personality._id}`
+            );
         }
         return updated;
     }

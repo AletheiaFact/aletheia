@@ -65,7 +65,10 @@ const CommitteInvitationCTA = () => {
                                 </Typography>
                                 <Stack spacing={0.5} sx={{ mt: 2, mb: 4 }}>
                                     {checklistItems.map((itemKey) => (
-                                        <Box className="checklist-item" key={itemKey}>
+                                        <Box
+                                            className="checklist-item"
+                                            key={itemKey}
+                                        >
                                             <CheckCircleOutlineOutlined className="cta-checklist-icon" />
                                             <Typography
                                                 variant="body2"
@@ -82,7 +85,10 @@ const CommitteInvitationCTA = () => {
                                 <Grid container spacing={2}>
                                     {iconItems.map(({ key, icon }) => (
                                         <Grid item xs={6} sm={3} key={key}>
-                                            <Stack spacing={1} alignItems="center">
+                                            <Stack
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
                                                 <Box className="benefit-icon-wrapper">
                                                     {icon}
                                                 </Box>
@@ -104,7 +110,12 @@ const CommitteInvitationCTA = () => {
                                 <Stack spacing={3}>
                                     <Box>
                                         <Chip
-                                            icon={<Box component="span" className="badge-dot" />}
+                                            icon={
+                                                <Box
+                                                    component="span"
+                                                    className="badge-dot"
+                                                />
+                                            }
                                             label={t("cta.badge")}
                                             size="small"
                                             className="hero-chip"
@@ -137,7 +148,9 @@ const CommitteInvitationCTA = () => {
                                             fontSize: "0.875rem",
                                             fontWeight: 600,
                                             borderRadius: "6px",
-                                            "&:hover": { bgcolor: colors.lightSecondary },
+                                            "&:hover": {
+                                                bgcolor: colors.lightSecondary,
+                                            },
                                         }}
                                     >
                                         {t("cta.formButton")}

@@ -14,8 +14,8 @@ const Loading = ({ style = {}, isWhiteLoading = false }) => {
     const activeColor = isWhiteLoading
         ? colors.white
         : nameSpace === NameSpaceEnum.Main
-            ? colors.primary
-            : colors.secondary;
+        ? colors.primary
+        : colors.secondary;
 
     return (
         <div

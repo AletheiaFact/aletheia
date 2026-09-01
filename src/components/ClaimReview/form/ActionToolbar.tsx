@@ -126,7 +126,9 @@ const ActionToolbar = ({
                         onClick={() => onButtonClick(ReviewTaskEvents.draft)}
                         event={ReviewTaskEvents.draft}
                         data-cy={`testClaimReview${ReviewTaskEvents.draft}`}
-                        startIcon={<SaveOutlinedIcon style={{ fontSize: 16 }} />}
+                        startIcon={
+                            <SaveOutlinedIcon style={{ fontSize: 16 }} />
+                        }
                         fontWeight={500}
                     >
                         {t(`reviewTask:${ReviewTaskEvents.draft}`)}

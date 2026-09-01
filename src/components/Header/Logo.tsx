@@ -17,17 +17,10 @@ const Logo = ({
     const [nameSpace] = useAtom<string>(currentNameSpace);
 
     if (nameSpace === NameSpaceEnum.Main) {
-        return (
-            localConfig.Logo ?
-                <ConfigLogo
-                    height={height}
-                    width={width}
-                />
-                :
-                <LogoAletheia
-                    height={height}
-                    color={color}
-                />
+        return localConfig.Logo ? (
+            <ConfigLogo height={height} width={width} />
+        ) : (
+            <LogoAletheia height={height} color={color} />
         );
     } else if (nameSpace) {
         return (

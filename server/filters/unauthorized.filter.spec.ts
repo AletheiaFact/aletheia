@@ -30,10 +30,7 @@ describe("UnauthorizedExceptionFilter", () => {
         mockRequest.originalUrl = "/api/reviewtask/save-draft/abc123";
         mockRequest.method = "PUT";
 
-        filter.catch(
-            new UnauthorizedException(),
-            mockHost as any
-        );
+        filter.catch(new UnauthorizedException(), mockHost as any);
 
         expect(mockResponse.status).toHaveBeenCalledWith(401);
         expect(mockResponse.json).toHaveBeenCalledWith({
@@ -47,10 +44,7 @@ describe("UnauthorizedExceptionFilter", () => {
     it("should redirect to /unauthorized for page requests", () => {
         mockRequest.originalUrl = "/admin";
 
-        filter.catch(
-            new UnauthorizedException(),
-            mockHost as any
-        );
+        filter.catch(new UnauthorizedException(), mockHost as any);
 
         expect(mockResponse.redirect).toHaveBeenCalledWith(
             "/unauthorized?originalUrl=%2Fadmin"
@@ -59,15 +53,15 @@ describe("UnauthorizedExceptionFilter", () => {
     });
 
     it("should encode special characters in the redirect URL", () => {
-        mockRequest.originalUrl = "/personality/test name/claim/hash?foo=bar&baz=1";
+        mockRequest.originalUrl =
+            "/personality/test name/claim/hash?foo=bar&baz=1";
 
-        filter.catch(
-            new UnauthorizedException(),
-            mockHost as any
-        );
+        filter.catch(new UnauthorizedException(), mockHost as any);
 
         expect(mockResponse.redirect).toHaveBeenCalledWith(
-            `/unauthorized?originalUrl=${encodeURIComponent("/personality/test name/claim/hash?foo=bar&baz=1")}`
+            `/unauthorized?originalUrl=${encodeURIComponent(
+                "/personality/test name/claim/hash?foo=bar&baz=1"
+            )}`
         );
     });
 });

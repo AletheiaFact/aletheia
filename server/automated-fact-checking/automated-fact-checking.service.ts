@@ -20,7 +20,8 @@ export class AutomatedFactCheckingService {
         private configService: ConfigService,
         private jwtService: JwtService
     ) {
-        this.agenciaURL = this.configService.get<string>("automatedFactCheckingAPIUrl") ?? "";
+        this.agenciaURL =
+            this.configService.get<string>("automatedFactCheckingAPIUrl") ?? "";
     }
 
     private getAgenciaToken(): string {

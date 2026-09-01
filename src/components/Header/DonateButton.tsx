@@ -19,7 +19,9 @@ const DonateButton = ({ header = false, style = {} }) => {
             onClick={() => {
                 trackUmamiEvent("header-cta-donate-button", "Donate");
             }}
-            startIcon={<Favorite style={{ fontSize: "12px", color: colors.error }} />}
+            startIcon={
+                <Favorite style={{ fontSize: "12px", color: colors.error }} />
+            }
             style={{
                 fontWeight: 600,
                 height: header ? 32 : 40,

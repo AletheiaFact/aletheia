@@ -260,9 +260,9 @@ describe("UsersService (Unit)", () => {
 
             await service.deleteAccount("user-123");
 
-            expect(
-                mockHistoryService.scrubUserReferences
-            ).toHaveBeenCalledWith("user-123");
+            expect(mockHistoryService.scrubUserReferences).toHaveBeenCalledWith(
+                "user-123"
+            );
             expect(
                 mockNotificationService.deleteSubscriber
             ).toHaveBeenCalledWith("user-123");

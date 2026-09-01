@@ -99,12 +99,15 @@ const NotificationMenu = ({ hasSession, userId }: NotificationMenuProps) => {
                         >
                             <SvgIcon
                                 component={NotificationsOff}
-                                sx={{ fontSize: 50, color: colors.neutralSecondary }}
+                                sx={{
+                                    fontSize: 50,
+                                    color: colors.neutralSecondary,
+                                }}
                             />
                             <p
                                 style={{
                                     color: colors.neutralSecondary,
-                                    marginTop: "16px"
+                                    marginTop: "16px",
                                 }}
                             >
                                 {t("notification:noNotification")}

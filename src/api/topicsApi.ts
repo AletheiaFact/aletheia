@@ -11,21 +11,21 @@ interface IGetTopicsOptions {
 const request = createApiInstance("/api/topics");
 
 const searchTopics = ({ query, limit = 5, language = "pt", dispatch, t }) => {
-  const params = { query, limit, language };
-  return request
-    .get(`/search`, { params })
-    .then((response) => {
-      const topicResults = response.data;
-      dispatch({
-        type: ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE,
-        results: topicResults,
-      });
-      return topicResults;
-    })
-    .catch((e) => {
-      MessageManager.showMessage("error", t("topics:getTopicsFailed"));
-      return [];
-    });
+    const params = { query, limit, language };
+    return request
+        .get(`/search`, { params })
+        .then((response) => {
+            const topicResults = response.data;
+            dispatch({
+                type: ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE,
+                results: topicResults,
+            });
+            return topicResults;
+        })
+        .catch((e) => {
+            MessageManager.showMessage("error", t("topics:getTopicsFailed"));
+            return [];
+        });
 };
 
 const getTopics = ({ topicName, t, dispatch }: IGetTopicsOptions) => {
@@ -55,7 +55,10 @@ const createTopics = (params, t) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            MessageManager.showMessage("success", t("topics:createTopicsSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("topics:createTopicsSuccess")
+            );
             return response.data;
         })
         .catch((err) => {

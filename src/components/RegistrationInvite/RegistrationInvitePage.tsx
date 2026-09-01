@@ -4,7 +4,6 @@ import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { trackUmamiEvent } from "../../lib/umami";
 import { Box } from "@mui/material";
 
-
 const RegistrationInvite = () => {
     const { t } = useTranslation();
     return (
@@ -30,7 +29,12 @@ const RegistrationInvite = () => {
                 }}
             >
                 <AletheiaButton
-                    onClick={() => trackUmamiEvent("cta-registration-button", "registration")}
+                    onClick={() =>
+                        trackUmamiEvent(
+                            "cta-registration-button",
+                            "registration"
+                        )
+                    }
                     type={ButtonType.primary}
                     href="/sign-up"
                     data-cy="testCTAButton"

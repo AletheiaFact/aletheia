@@ -45,11 +45,9 @@ const GridList = <ItemType,>({
     hasDivider = false,
     getKey,
 }: GridListProps<ItemType>) => {
-
     const showTop =
         !disableSeeMoreButton &&
-        (seeMoreButtonPosition === "top" ||
-            seeMoreButtonPosition === "both");
+        (seeMoreButtonPosition === "top" || seeMoreButtonPosition === "both");
 
     const showBottom =
         !disableSeeMoreButton &&
@@ -72,9 +70,7 @@ const GridList = <ItemType,>({
                         </Typography>
                     </Box>
                 ) : (
-                    <>
-                        {title}
-                    </>
+                    <>{title}</>
                 )}
                 {showTop && (
                     <AletheiaButton

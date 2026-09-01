@@ -85,12 +85,14 @@ describe("Delete account", () => {
             const paper = $paper[0].getBoundingClientRect();
             cy.get(locators.profile.DELETE_CONFIRM_BTN).should(($confirm) => {
                 const confirm = $confirm[0].getBoundingClientRect();
-                expect(confirm.right, "confirm button within paper").to.be.at.most(
-                    paper.right + 1
-                );
-                expect(confirm.left, "confirm button within paper").to.be.at.least(
-                    paper.left - 1
-                );
+                expect(
+                    confirm.right,
+                    "confirm button within paper"
+                ).to.be.at.most(paper.right + 1);
+                expect(
+                    confirm.left,
+                    "confirm button within paper"
+                ).to.be.at.least(paper.left - 1);
             });
         });
         cy.viewport(1280, 900);

@@ -2,9 +2,11 @@ import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { HomeHeroStatsProps } from "../../../types/Home";
-import CountUp from "react-countup"
+import CountUp from "react-countup";
 
-const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: HomeHeroStatsProps) => {
+const HomeHeroStats = ({
+    stats = { personalities: 0, claims: 0, reviews: 0 },
+}: HomeHeroStatsProps) => {
     const { t } = useTranslation();
 
     const items = [
@@ -28,10 +30,7 @@ const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: 
             alignItems="center"
             justifyContent="center"
             divider={
-                <Box
-                    component="span"
-                    className="home-header-stats-divider"
-                />
+                <Box component="span" className="home-header-stats-divider" />
             }
             className="home-header-stats"
         >
@@ -47,7 +46,12 @@ const HomeHeroStats = ({ stats = { personalities: 0, claims: 0, reviews: 0 } }: 
                         component="span"
                         className="home-header-stats-value"
                     >
-                        <CountUp start={0} end={item.value} duration={2} separator="." />
+                        <CountUp
+                            start={0}
+                            end={item.value}
+                            duration={2}
+                            separator="."
+                        />
                     </Typography>
                     <Typography
                         component="span"

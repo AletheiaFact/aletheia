@@ -52,7 +52,7 @@ const EditorSourcePopoverContent = ({
                     display: "flex",
                     justifyContent: "start",
                     marginBottom: 10,
-                    width: "100%"
+                    width: "100%",
                 }}
                 onClick={handleDeleteClick}
             >

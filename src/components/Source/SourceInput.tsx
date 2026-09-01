@@ -19,61 +19,61 @@ const SourceInput = ({
     const { t } = useTranslation();
     return (
         <>
-            {sources && sources.map((source, index) => (
-                <FormControl
-                    fullWidth
-                    key={index}
-                >
-                    <Grid container>
-                        {index === 0 ?
-                            <div className="root-label">
-                                <span className="require-label">*</span>
-                                <p className="form-label">{label}</p>
-                            </div>
-                            :
-                            null
-                        }
-                        <Grid item xs={index > 0 ? 10 : 12}>
-                            <Input
-                                key={index}
-                                value={source || ""}
-                                onChange={(event) => {
-                                    onChange(event, index)
-                                    const errorMessage = validateUrl(event.target.value, t);
+            {sources &&
+                sources.map((source, index) => (
+                    <FormControl fullWidth key={index}>
+                        <Grid container>
+                            {index === 0 ? (
+                                <div className="root-label">
+                                    <span className="require-label">*</span>
+                                    <p className="form-label">{label}</p>
+                                </div>
+                            ) : null}
+                            <Grid item xs={index > 0 ? 10 : 12}>
+                                <Input
+                                    key={index}
+                                    value={source || ""}
+                                    onChange={(event) => {
+                                        onChange(event, index);
+                                        const errorMessage = validateUrl(
+                                            event.target.value,
+                                            t
+                                        );
 
-                                    if (!errorMessage) {
-                                        clearError("sources");
-                                    }
-                                }}
-                                placeholder={placeholder}
-                                data-cy={'testSource1'}
-                            />
-                            {errors?.sources?.[index] && (
-                                <FormHelperText className="require-label">
-                                    {errors.sources[index]}
-                                </FormHelperText>
-                            )}
-                            <p className="extra-label">
-                                {index === (sources.length - 1) ? t("sourceForm:extra") : null}
-                            </p>
-                        </Grid>
-                        <Grid item xs={2}>
-                            {index > 0 &&
-                                <AletheiaButton
-                                    style={{
-                                        width: "100%",
-                                        height: "40px"
+                                        if (!errorMessage) {
+                                            clearError("sources");
+                                        }
                                     }}
-                                    onClick={() => removeSource(index)}
-                                >
-                                    <DeleteOutlined fontSize="small" />
-                                </AletheiaButton>
-                            }
+                                    placeholder={placeholder}
+                                    data-cy={"testSource1"}
+                                />
+                                {errors?.sources?.[index] && (
+                                    <FormHelperText className="require-label">
+                                        {errors.sources[index]}
+                                    </FormHelperText>
+                                )}
+                                <p className="extra-label">
+                                    {index === sources.length - 1
+                                        ? t("sourceForm:extra")
+                                        : null}
+                                </p>
+                            </Grid>
+                            <Grid item xs={2}>
+                                {index > 0 && (
+                                    <AletheiaButton
+                                        style={{
+                                            width: "100%",
+                                            height: "40px",
+                                        }}
+                                        onClick={() => removeSource(index)}
+                                    >
+                                        <DeleteOutlined fontSize="small" />
+                                    </AletheiaButton>
+                                )}
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </FormControl >
-            ))
-            }
+                    </FormControl>
+                ))}
             <div
                 style={{
                     width: "100%",
@@ -87,7 +87,7 @@ const SourceInput = ({
                         display: "flex",
                         justifyContent: "end",
                         alignContent: "center",
-                        textDecoration: "underline"
+                        textDecoration: "underline",
                     }}
                 >
                     <AddOutlined fontSize="small" />{" "}

@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import EditorApi from "../../api/editor";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import AletheiaButton from "../AletheiaButton";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 
 export const EditorContent = ({ reference, isLive }) => {
     const { t } = useTranslation();

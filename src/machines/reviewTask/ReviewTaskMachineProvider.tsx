@@ -90,16 +90,16 @@ export const ReviewTaskMachineProvider = (
 
     const extraContext = {
         personality: props.personality,
-        claim: props.claim
+        claim: props.claim,
     };
 
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
                 ? Promise.resolve({
-                    machine: props.baseMachine,
-                    reportModel: props.baseReportModel,
-                })
+                      machine: props.baseMachine,
+                      reportModel: props.baseReportModel,
+                  })
                 : ReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
@@ -117,7 +117,7 @@ export const ReviewTaskMachineProvider = (
             const newMachine =
                 machine ||
                 getMachineInitialState(props.reviewTaskType)[
-                ReportModelEnum.FactChecking
+                    ReportModelEnum.FactChecking
                 ];
 
             setReportModel(reportModel);

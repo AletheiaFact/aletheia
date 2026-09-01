@@ -2,16 +2,23 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import colors from "../../../styles/colors";
 import styled from "styled-components";
 import FilterToggleButtons, { ViewMode } from "../../FilterToggleButtons";
-import { FormatQuoteOutlined, ReportProblemOutlined } from "@mui/icons-material";
+import {
+    FormatQuoteOutlined,
+    ReportProblemOutlined,
+} from "@mui/icons-material";
 
 const TypographyGrid = styled(Grid)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 `;
 
 const TotalCountText = ({ total, t }: { total: number; t: any }) => (
-    <Typography variant="body2" color={colors.blackSecondary} data-cy="testTotalCountText">
+    <Typography
+        variant="body2"
+        color={colors.blackSecondary}
+        data-cy="testTotalCountText"
+    >
         {t("events:totalItems", { total: total })}
     </Typography>
 );
@@ -24,19 +31,28 @@ interface EventTitleProps {
     t: (key: string, options?: { total: number }) => string;
 }
 
-const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: EventTitleProps) => {
-
+const EventTitle = ({
+    total = 0,
+    hasToggle = false,
+    viewMode,
+    setViewMode,
+    t,
+}: EventTitleProps) => {
     if (hasToggle) {
         return (
             <TypographyGrid container>
-                <TotalCountText total={total} t={t} data-cy="testEventGridCount" />
+                <TotalCountText
+                    total={total}
+                    t={t}
+                    data-cy="testEventGridCount"
+                />
                 <Box
                     style={{
                         display: "flex",
                         backgroundColor: `${colors.lightNeutral}`,
                         padding: "4px",
                         boxShadow: `0px 2px 10px ${colors.shadow} `,
-                        borderRadius: "4px"
+                        borderRadius: "4px",
                     }}
                 >
                     <FilterToggleButtons
@@ -48,7 +64,6 @@ const EventTitle = ({ total = 0, hasToggle = false, viewMode, setViewMode, t }: 
                                 <FormatQuoteOutlined fontSize="small" />
                                 {t("events:claimToggleOption")}
                             </Stack>
-
                         }
                         rightOption={
                             <Stack direction="row" alignItems="center" gap={1}>

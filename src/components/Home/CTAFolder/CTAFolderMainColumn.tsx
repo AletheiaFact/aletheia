@@ -7,21 +7,17 @@ type CTAFolderMainColumnProps = {
     isHomeFolder?: boolean;
 };
 
-const CTAFolderMainColumn = ({ isHomeFolder = false }: CTAFolderMainColumnProps) => {
+const CTAFolderMainColumn = ({
+    isHomeFolder = false,
+}: CTAFolderMainColumnProps) => {
     const { t } = useTranslation();
 
     return (
         <Grid item className="ctaMainColumn">
-            <Typography
-                variant="h2"
-                className="ctaTitle"
-            >
+            <Typography variant="h2" className="ctaTitle">
                 {t("CTAFolder:aboutUsTitle")}
             </Typography>
-            <Typography
-                variant="body1"
-                className="ctaBody"
-            >
+            <Typography variant="body1" className="ctaBody">
                 {t("CTAFolder:aboutUsBody")}
             </Typography>
             <CTAFolderActions isHomeFolder={isHomeFolder} />

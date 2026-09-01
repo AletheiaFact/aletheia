@@ -14,10 +14,7 @@ const LoginButton = () => {
                 padding: "0px 0px 15px 0px",
             }}
         >
-            <AletheiaButton
-                type={ButtonType.primary}
-                href="/login"
-            >
+            <AletheiaButton type={ButtonType.primary} href="/login">
                 {t("claimReviewForm:loginButton").toUpperCase()}
             </AletheiaButton>
         </Grid>

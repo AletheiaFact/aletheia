@@ -27,28 +27,28 @@ const HeaderActions = () => {
             <SearchOverlay />
             {!router.pathname.includes("/home-page") && (
                 <IconButton
-                    onClick={() => { dispatch(storeActions.openResultsOverlay()) }}
+                    onClick={() => {
+                        dispatch(storeActions.openResultsOverlay());
+                    }}
                     data-cy="testSearchPersonality"
                     className="navLink"
                 >
                     <SearchOutlined />
                 </IconButton>
             )}
-            {!vw?.md &&
+            {!vw?.md && (
                 <SelectLanguage
                     dataCy="testLanguageSelect"
                     currentLanguage={language}
                     sections={languageSections}
                     onChange={changeLanguage}
                 />
-            }
+            )}
             <NotificationMenu hasSession={hasSession} userId={userId} />
-            {localConfig.header.donateButton.show && !vw?.md &&
+            {localConfig.header.donateButton.show && !vw?.md && (
                 <DonateButton header={true} />
-            }
-            {vw?.md &&
-                <Menu />
-            }
+            )}
+            {vw?.md && <Menu />}
         </Grid>
     );
 };

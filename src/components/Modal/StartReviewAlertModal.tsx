@@ -34,7 +34,13 @@ function StartReviewAlertModal({ open, onCancel }: StartReviewAlertModalProps) {
                 </Typography>
             }
         >
-            <Box style={{ padding: "20px 0", justifyItems: "center", textAlign: "center" }}>
+            <Box
+                style={{
+                    padding: "20px 0",
+                    justifyItems: "center",
+                    textAlign: "center",
+                }}
+            >
                 <Typography
                     variant="body1"
                     style={{

@@ -30,7 +30,7 @@ const Sidebar = () => {
                     backgroundColor: colors.primary,
                     maxHeight: "calc(100vh - 64px)",
                     overflowY: "auto",
-                }
+                },
             }}
         >
             <SidebarContent />

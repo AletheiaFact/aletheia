@@ -13,7 +13,7 @@ const UserMenu = () => {
         myAccountSections,
         hasSession,
         user,
-        isLoadingUser
+        isLoadingUser,
     } = state;
     const { t, setAnchorEl, handleClose } = actions;
 
@@ -28,7 +28,7 @@ const UserMenu = () => {
                 aria-expanded={Boolean(anchorEl)}
             >
                 {t("header:myAccountItem")}
-            </Button >
+            </Button>
 
             <StyledMenu
                 anchorEl={anchorEl}

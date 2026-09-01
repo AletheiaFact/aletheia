@@ -11,7 +11,9 @@ const HomeFeed = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [results, setResults] = useState([]);
 
-    const searchResultsData = useAppSelector((state) => state?.search?.searchResults);
+    const searchResultsData = useAppSelector(
+        (state) => state?.search?.searchResults
+    );
 
     useEffect(() => {
         const fetchFeedData = async () => {
@@ -64,7 +66,8 @@ const HomeFeed = () => {
     return (
         <>
             {results.length > 0 && (
-                <Grid container
+                <Grid
+                    container
                     style={{
                         flexDirection: "column",
                         width: "100%",

@@ -8,10 +8,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { ForbiddenError } from "@casl/ability";
 import { AbilityFactory, Roles } from "../ability/ability.factory";
-import {
-    CHECK_ABILITY,
-    RequiredRule,
-} from "../ability/ability.decorator";
+import { CHECK_ABILITY, RequiredRule } from "../ability/ability.decorator";
 import { NameSpaceEnum } from "../name-space/schemas/name-space.schema";
 import { User } from "../../entities/user.entity";
 import { M2M } from "../../entities/m2m.entity";
@@ -74,4 +71,3 @@ export class M2MOrAbilitiesGuard implements CanActivate {
         }
     }
 }
-

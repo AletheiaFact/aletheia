@@ -53,7 +53,8 @@ export const CommitteInvitationBoxStyle = styled(Box)`
             ${colors.lightNeutral},
             color-mix(in srgb, ${colors.lightQuartiary} 70%, transparent) 100%
         );
-        padding: clamp(48px, 8vw, 80px) clamp(16px, 3.5vw, 32px) clamp(32px, 5vw, 48px);
+        padding: clamp(48px, 8vw, 80px) clamp(16px, 3.5vw, 32px)
+            clamp(32px, 5vw, 48px);
     }
 
     .hero-chip {
@@ -272,7 +273,11 @@ export const CommitteInvitationBoxStyle = styled(Box)`
     }
 
     .pact-box {
-        background-color: color-mix(in srgb, ${colors.lightTertiary} 95%, ${colors.black});
+        background-color: color-mix(
+            in srgb,
+            ${colors.lightTertiary} 95%,
+            ${colors.black}
+        );
         border-radius: 18px;
         border: 1px solid ${colors.lightPrimary};
         padding: clamp(20px, 3vw, 32px) clamp(20px, 4vw, 40px);
@@ -373,7 +378,11 @@ export const CommitteInvitationBoxStyle = styled(Box)`
     }
 
     .cta-card-right .hero-chip {
-        background-color: color-mix(in srgb, ${colors.active} 5%, ${colors.lightNeutral});
+        background-color: color-mix(
+            in srgb,
+            ${colors.active} 5%,
+            ${colors.lightNeutral}
+        );
         color: color-mix(in srgb, ${colors.active} 90%, ${colors.black});
     }
 
@@ -694,7 +703,7 @@ export const CommitteInvitationBoxStyle = styled(Box)`
             height: auto;
         }
 
-        .hero-chip span{
+        .hero-chip span {
             white-space: normal;
         }
 

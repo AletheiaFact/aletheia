@@ -1,9 +1,4 @@
-import React, {
-    Dispatch,
-    MouseEvent,
-    SetStateAction,
-    useContext,
-} from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useContext } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Box, Tooltip } from "@mui/material";
@@ -76,11 +71,11 @@ const CommentCardActions = ({
                 (comments ?? []).map((comment) =>
                     comment._id === content.targetId
                         ? {
-                            ...comment,
-                            replies: comment.replies.filter(
-                                (reply) => reply._id !== content._id
-                            ),
-                        }
+                              ...comment,
+                              replies: comment.replies.filter(
+                                  (reply) => reply._id !== content._id
+                              ),
+                          }
                         : comment
                 )
             );

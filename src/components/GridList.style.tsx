@@ -7,7 +7,7 @@ type GridListStyleProps = {
     $hasSubtitle?: boolean;
 };
 
-const GridListStyle = styled(Grid) <GridListStyleProps>`
+const GridListStyle = styled(Grid)<GridListStyleProps>`
     display: flex;
     flex-direction: column;
     gap: ${({ $hasSubtitle }) => ($hasSubtitle ? "40px" : "14px")};

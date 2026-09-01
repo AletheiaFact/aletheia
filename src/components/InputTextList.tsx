@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 
@@ -59,7 +59,8 @@ export default function InputTextList({
         <div>
             {controlledFields.map((_field, index) => {
                 return (
-                    <Grid container
+                    <Grid
+                        container
                         key={`fieldArray.${index}.content`}
                         style={{
                             marginBottom: 20,

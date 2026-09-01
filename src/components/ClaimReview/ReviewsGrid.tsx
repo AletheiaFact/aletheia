@@ -6,9 +6,9 @@ import { Review } from "../../types/Review";
 type ReviewsGridProps = {
     reviews: Review[];
     title: React.ReactNode;
-}
+};
 
-const ReviewsGrid = ({ reviews, title, }: ReviewsGridProps) => {
+const ReviewsGrid = ({ reviews, title }: ReviewsGridProps) => {
     return (
         <GridList
             title={title}

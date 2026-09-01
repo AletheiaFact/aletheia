@@ -38,31 +38,31 @@ const VerificationRequestSearch = () => {
     };
 
     return (
-          <section className="container">
-              <Grid item sm={12} md={6} xl={4}>
-                    <InputSearch
-                        placeholder={t("verificationRequest:searchPlaceholder")}
-                        suffix={
-                            <AletheiaButton
-                                type={ButtonType.white}
-                                onClick={handleInputSearch}
-                                className="container"
-                                disabled={content.length <= 3}
-                                loading={isLoading}
-                            >
-                                <SearchOutlined />
-                            </AletheiaButton>
+        <section className="container">
+            <Grid item sm={12} md={6} xl={4}>
+                <InputSearch
+                    placeholder={t("verificationRequest:searchPlaceholder")}
+                    suffix={
+                        <AletheiaButton
+                            type={ButtonType.white}
+                            onClick={handleInputSearch}
+                            className="container"
+                            disabled={content.length <= 3}
+                            loading={isLoading}
+                        >
+                            <SearchOutlined />
+                        </AletheiaButton>
+                    }
+                    data-cy={"testInputSearchVerificationRequest"}
+                    backgroundColor={colors.white}
+                    onChange={({ target }) => setContent(target.value)}
+                    onKeyDown={({ key }) => {
+                        if (key === "Enter") {
+                            handleInputSearch();
                         }
-                        data-cy={"testInputSearchVerificationRequest"}
-                        backgroundColor={colors.white}
-                        onChange={({ target }) => setContent(target.value)}
-                        onKeyDown={({ key }) => {
-                            if (key === "Enter") {
-                                handleInputSearch();
-                            }
-                        }}
-                    />
-              </Grid>
+                    }}
+                />
+            </Grid>
             {verificationRequests && (
                 <Grid item>
                     <Typography className="title" variant="h1">
@@ -78,7 +78,7 @@ const VerificationRequestSearch = () => {
                     )}
                 </Grid>
             )}
-          </section>
+        </section>
     );
 };
 

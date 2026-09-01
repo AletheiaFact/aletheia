@@ -190,53 +190,56 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
         const metaChipData = currentRequest
             ? [
-                {
-                    icon: <Filter style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|reportType`,
-                    label: t("verificationRequest:tagReportType"),
-                    label_value: t(
-                        `claimForm:${currentRequest.reportType || "undefined"
-                        }`
-                    ),
-                    style: {
-                        backgroundColor: colors.secondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Share style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|receptionChannel`,
-                    label: t("verificationRequest:tagSourceChannel"),
-                    label_value: t(
-                        `verificationRequest:${currentRequest.sourceChannel}`,
-                        { defaultValue: currentRequest.sourceChannel },
-                    ),
-                    style: {
-                        backgroundColor: colors.primary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Public style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|impactArea`,
-                    label: t("verificationRequest:tagImpactArea"),
-                    label_value: currentRequest.impactArea?.name,
-                    style: {
-                        backgroundColor: colors.neutralSecondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <WarningAmber style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|severity`,
-                    label: t("verificationRequest:tagSeverity"),
-                    label_value: getSeverityLabel(currentRequest.severity, t),
-                    style: {
-                        backgroundColor: getSeverityColor(currentRequest.severity),
-                        color: colors.white,
-                    },
-                },
-            ]
+                  {
+                      icon: <Filter style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|reportType`,
+                      label: t("verificationRequest:tagReportType"),
+                      label_value: t(
+                          `claimForm:${
+                              currentRequest.reportType || "undefined"
+                          }`
+                      ),
+                      style: {
+                          backgroundColor: colors.secondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Share style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|receptionChannel`,
+                      label: t("verificationRequest:tagSourceChannel"),
+                      label_value: t(
+                          `verificationRequest:${currentRequest.sourceChannel}`,
+                          { defaultValue: currentRequest.sourceChannel }
+                      ),
+                      style: {
+                          backgroundColor: colors.primary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Public style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|impactArea`,
+                      label: t("verificationRequest:tagImpactArea"),
+                      label_value: currentRequest.impactArea?.name,
+                      style: {
+                          backgroundColor: colors.neutralSecondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <WarningAmber style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|severity`,
+                      label: t("verificationRequest:tagSeverity"),
+                      label_value: getSeverityLabel(currentRequest.severity, t),
+                      style: {
+                          backgroundColor: getSeverityColor(
+                              currentRequest.severity
+                          ),
+                          color: colors.white,
+                      },
+                  },
+              ]
             : [];
 
         return (
@@ -462,7 +465,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
                                     {currentRequest?.identifiedData &&
                                         currentRequest.identifiedData.length >
-                                        0 && (
+                                            0 && (
                                             <PersonalitiesSection
                                                 personalities={personalities}
                                                 isLoading={loadingPersonalities}

@@ -36,9 +36,10 @@ const CreateVerificationRequestView = () => {
             .createVerificationRequest(t, newVerificationRequest)
             .then((createdVerificationRequest) => {
                 if (createdVerificationRequest?.data_hash) {
-                    const path = nameSpace === NameSpaceEnum.Main
-                        ? `/verification-request/${createdVerificationRequest.data_hash}`
-                        : `/${nameSpace}/verification-request/${createdVerificationRequest.data_hash}`;
+                    const path =
+                        nameSpace === NameSpaceEnum.Main
+                            ? `/verification-request/${createdVerificationRequest.data_hash}`
+                            : `/${nameSpace}/verification-request/${createdVerificationRequest.data_hash}`;
                     router.push(path);
                 }
                 setIsLoading(false);
@@ -46,7 +47,11 @@ const CreateVerificationRequestView = () => {
     };
 
     return (
-        <Grid container justifyContent="center" style={{ background: colors.lightNeutral }}>
+        <Grid
+            container
+            justifyContent="center"
+            style={{ background: colors.lightNeutral }}
+        >
             <Grid item xs={9} padding="30px 0px">
                 <DynamicVerificationRequestForm
                     onSubmit={onSubmit}

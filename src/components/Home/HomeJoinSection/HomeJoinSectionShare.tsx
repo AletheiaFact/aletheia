@@ -47,10 +47,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                         quote={shareTitle}
                         hashtag={trimPersonality}
                         beforeOnClick={() =>
-                            trackUmamiEvent(
-                                "Facebook-share-button",
-                                "Sharing"
-                            )
+                            trackUmamiEvent("Facebook-share-button", "Sharing")
                         }
                     >
                         <FacebookIcon
@@ -66,10 +63,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                         title={shareTitle}
                         hashtags={["aletheia", trimPersonality]}
                         beforeOnClick={() =>
-                            trackUmamiEvent(
-                                "Twitter-share-button",
-                                "Sharing"
-                            )
+                            trackUmamiEvent("Twitter-share-button", "Sharing")
                         }
                     >
                         <TwitterIcon
@@ -84,10 +78,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                         url={href}
                         title={shareTitle}
                         beforeOnClick={() =>
-                            trackUmamiEvent(
-                                "Whatsapp-share-button",
-                                "Sharing"
-                            )
+                            trackUmamiEvent("Whatsapp-share-button", "Sharing")
                         }
                     >
                         <WhatsappIcon
@@ -102,10 +93,7 @@ const HomeJoinSectionShare = ({ href }: HomeJoinSectionShareProps) => {
                         url={href}
                         title={shareTitle}
                         beforeOnClick={() =>
-                            trackUmamiEvent(
-                                "Telegram-share-button",
-                                "Sharing"
-                            )
+                            trackUmamiEvent("Telegram-share-button", "Sharing")
                         }
                     >
                         <TelegramIcon

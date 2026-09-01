@@ -36,7 +36,10 @@ interface IAletheiaButtonProps extends AletheiaButtonProps {
     fontWeight?: number | string;
 }
 
-const SIZE_STYLES: Record<AletheiaButtonSize, { height: number; fontSize: string; padding: string }> = {
+const SIZE_STYLES: Record<
+    AletheiaButtonSize,
+    { height: number; fontSize: string; padding: string }
+> = {
     small: { height: 32, fontSize: "12px", padding: "4px 12px" },
     medium: { height: 40, fontSize: "14px", padding: "6px 16px" },
     large: { height: 48, fontSize: "16px", padding: "8px 24px" },

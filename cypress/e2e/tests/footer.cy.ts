@@ -3,12 +3,19 @@
 import locators from "../../support/locators";
 
 describe("Footer Navigation", () => {
-    const expectInternalNavigation = (selector: string, expectedPath: string) => {
+    const expectInternalNavigation = (
+        selector: string,
+        expectedPath: string
+    ) => {
         cy.get(selector).should("be.visible").click();
         cy.url().should("include", expectedPath);
     };
 
-    const expectExternalLink = (selector: string, expectedHref: string, target = "_blank") => {
+    const expectExternalLink = (
+        selector: string,
+        expectedHref: string,
+        target = "_blank"
+    ) => {
         cy.get(selector)
             .should("be.visible")
             .and("have.attr", "href", expectedHref)
@@ -32,7 +39,10 @@ describe("Footer Navigation", () => {
     it("validates CTA links", () => {
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_PRIMARY).length > 0) {
-                expectExternalLink(locators.footer.CTA_PRIMARY, "https://forms.gle/AnTuCzXtPTrsXHGVA");
+                expectExternalLink(
+                    locators.footer.CTA_PRIMARY,
+                    "https://forms.gle/AnTuCzXtPTrsXHGVA"
+                );
             }
         });
 
@@ -41,16 +51,31 @@ describe("Footer Navigation", () => {
 
         cy.get("body").then(($body) => {
             if ($body.find(locators.footer.CTA_SECONDARY).length > 0) {
-                expectInternalNavigation(locators.footer.CTA_SECONDARY, "/committee-invitation");
+                expectInternalNavigation(
+                    locators.footer.CTA_SECONDARY,
+                    "/committee-invitation"
+                );
             }
         });
     });
 
     it("validates social links", () => {
-        expectExternalLink(locators.footer.SOCIAL_INSTAGRAM, "https://www.instagram.com/aletheiafact");
-        expectExternalLink(locators.footer.SOCIAL_FACEBOOK, "https://www.facebook.com/AletheiaFactorg-107521791638412");
-        expectExternalLink(locators.footer.SOCIAL_LINKEDIN, "https://www.linkedin.com/company/aletheiafact-org");
-        expectExternalLink(locators.footer.SOCIAL_GITHUB, "https://github.com/AletheiaFact/aletheia");
+        expectExternalLink(
+            locators.footer.SOCIAL_INSTAGRAM,
+            "https://www.instagram.com/aletheiafact"
+        );
+        expectExternalLink(
+            locators.footer.SOCIAL_FACEBOOK,
+            "https://www.facebook.com/AletheiaFactorg-107521791638412"
+        );
+        expectExternalLink(
+            locators.footer.SOCIAL_LINKEDIN,
+            "https://www.linkedin.com/company/aletheiafact-org"
+        );
+        expectExternalLink(
+            locators.footer.SOCIAL_GITHUB,
+            "https://github.com/AletheiaFact/aletheia"
+        );
     });
 
     it("validates platform links", () => {
@@ -63,11 +88,17 @@ describe("Footer Navigation", () => {
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectExternalLink(locators.footer.PLATFORM_MANUAL, "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf");
+        expectExternalLink(
+            locators.footer.PLATFORM_MANUAL,
+            "https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pdf"
+        );
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectExternalLink(locators.footer.PLATFORM_DOCS, "https://docs.aletheiafact.org");
+        expectExternalLink(
+            locators.footer.PLATFORM_DOCS,
+            "https://docs.aletheiafact.org"
+        );
     });
 
     it("validates institutional links", () => {
@@ -75,17 +106,29 @@ describe("Footer Navigation", () => {
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectInternalNavigation(locators.footer.INSTITUTIONAL_PARTNERS, "/about#partners-section");
+        expectInternalNavigation(
+            locators.footer.INSTITUTIONAL_PARTNERS,
+            "/about#partners-section"
+        );
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();
-        expectInternalNavigation(locators.footer.INSTITUTIONAL_AWARDS, "/about#awards-section");
+        expectInternalNavigation(
+            locators.footer.INSTITUTIONAL_AWARDS,
+            "/about#awards-section"
+        );
     });
 
     it.only("validates community links", () => {
-        expectMailtoLink(locators.footer.COMMUNITY_COLLABORATION, "tvolcean@aletheiafact.org");
+        expectMailtoLink(
+            locators.footer.COMMUNITY_COLLABORATION,
+            "tvolcean@aletheiafact.org"
+        );
 
-        expectInternalNavigation(locators.footer.COMMUNITY_UNIVERSITIES, "/about#partners-section");
+        expectInternalNavigation(
+            locators.footer.COMMUNITY_UNIVERSITIES,
+            "/about#partners-section"
+        );
 
         cy.visit("/");
         cy.get("footer").scrollIntoView();

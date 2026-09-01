@@ -47,8 +47,8 @@ export const mockViewService = {
 
 export const mockRequest = {
     params: {
-        namespace: "main"
-    }
+        namespace: "main",
+    },
 };
 
 export const mockFeatureFlagService = {

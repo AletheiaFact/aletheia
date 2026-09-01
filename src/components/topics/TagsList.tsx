@@ -20,9 +20,9 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
         md: "36rem",
         lg: "20.7rem",
         xl: "9.3rem",
-        xxl: "14.7rem"
+        xxl: "14.7rem",
     };
-    const currentBreakpoint = Object.keys(maxWidthMap).find(key => vw?.[key]);
+    const currentBreakpoint = Object.keys(maxWidthMap).find((key) => vw?.[key]);
     const maxWidth = maxWidthMap[currentBreakpoint];
 
     const handleTagClick = (tag) => {
@@ -66,11 +66,11 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             onDelete={
                                 editable
                                     ? () =>
-                                        handleClose(
-                                            tag?.wikidataId ||
-                                            tag?.value ||
-                                            tag
-                                        )
+                                          handleClose(
+                                              tag?.wikidataId ||
+                                                  tag?.value ||
+                                                  tag
+                                          )
                                     : undefined
                             }
                             deleteIcon={
@@ -94,9 +94,8 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                                 maxWidth: maxWidth,
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
-                                whiteSpace: "nowrap"
+                                whiteSpace: "nowrap",
                             }}
-
                         />
                     );
                 })}

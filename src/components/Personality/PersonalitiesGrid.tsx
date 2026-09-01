@@ -13,7 +13,10 @@ interface PersonalitiesGridProps {
     title: string;
 }
 
-const PersonalitiesGrid = ({ personalities, title }: PersonalitiesGridProps) => {
+const PersonalitiesGrid = ({
+    personalities,
+    title,
+}: PersonalitiesGridProps) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const href =

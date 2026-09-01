@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import LargeDrawer from "../LargeDrawer";
-import { Grid, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material";
 import colors from "../../styles/colors";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import  { DeleteOutlined }  from "@mui/icons-material";
+import { DeleteOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../Modal/WarningModal";
 

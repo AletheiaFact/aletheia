@@ -25,7 +25,11 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             Promise.all(
                 personalities.map(async (p) => {
                     if (p && p._id) {
-                        return personalityApi.getPersonality(p?._id, { nameSpace }, t);
+                        return personalityApi.getPersonality(
+                            p?._id,
+                            { nameSpace },
+                            t
+                        );
                     } else {
                         throw Error;
                     }
@@ -34,22 +38,24 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                 .then((newPersonalitiesArray) => {
                     setPersonalitiesArray(newPersonalitiesArray);
                 })
-                .catch(() => { });
+                .catch(() => {});
         }
     }, [state, personalities]);
 
-    const baseHref = `/${nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
-        }`;
+    const baseHref = `/${
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+    }`;
     const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
 
     const { vw } = useAppSelector((state) => state);
     return (
-        <Grid container
+        <Grid
+            container
             className="home-header-container"
             style={{
                 paddingTop: "32px",
                 backgroundColor: colors.lightNeutral,
-                justifyContent: "center"
+                justifyContent: "center",
             }}
         >
             <div
@@ -92,39 +98,41 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                     {t("debates:openEditDebateMode")}
                 </AletheiaButton>
             ) : null}
-            <Grid container
+            <Grid
+                container
                 style={{
                     justifyContent: "space-evenly",
                 }}
             >
                 {personalitiesArray
                     ? personalitiesArray.map((p, index) => (
-                        <Grid item
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "flex-start",
-                                width: "40%",
-                                padding: "32px 0",
-                            }}
-                            key={p?._id || index}
-                        >
-                            <PersonalityCard
-                                personality={p}
-                                header={true}
-                                fullWidth={true}
-                                hoistAvatar={true}
-                                centralizedInfo={true}
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    textAlign: "center",
-                                    width: "100%",
-                                    padding: "20px",
-                                }}
-                            />
-                        </Grid>
-                    ))
+                          <Grid
+                              item
+                              style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "flex-start",
+                                  width: "40%",
+                                  padding: "32px 0",
+                              }}
+                              key={p?._id || index}
+                          >
+                              <PersonalityCard
+                                  personality={p}
+                                  header={true}
+                                  fullWidth={true}
+                                  hoistAvatar={true}
+                                  centralizedInfo={true}
+                                  style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      textAlign: "center",
+                                      width: "100%",
+                                      padding: "20px",
+                                  }}
+                              />
+                          </Grid>
+                      ))
                     : null}
             </Grid>
         </Grid>

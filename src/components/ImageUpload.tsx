@@ -39,7 +39,7 @@ const ImageUpload = ({
 
     const [fileList, setFileList] = useState<UploadFile[]>(() => {
         if (Array.isArray(defaultFileList)) {
-            return (defaultFileList as UploadFile[]).filter(file => file.uid);
+            return (defaultFileList as UploadFile[]).filter((file) => file.uid);
         }
         return [];
     });

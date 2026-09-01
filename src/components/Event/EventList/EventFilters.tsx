@@ -9,8 +9,11 @@ interface EventFiltersProps {
     t: (key: string) => string;
 }
 
-const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) => {
-
+const EventFilters = ({
+    selectedStatus,
+    onStatusChange,
+    t,
+}: EventFiltersProps) => {
     const filterOptions = [
         { status: "all" as const, label: t("events:filterAll") },
         { status: "happening" as const, label: t("events:filterHappening") },
@@ -19,22 +22,36 @@ const EventFilters = ({ selectedStatus, onStatusChange, t }: EventFiltersProps) 
     ];
 
     return (
-        <Grid item xs={12} sm={8} display="flex" justifyContent="center" padding={2}>
+        <Grid
+            item
+            xs={12}
+            sm={8}
+            display="flex"
+            justifyContent="center"
+            padding={2}
+        >
             <Box className="EventFiltersBox">
                 {filterOptions.map(({ status, label }) => (
                     <AletheiaButton
                         key={status}
                         data-cy={`testFiltersEvents${status}`}
-                        type={selectedStatus === status ? ButtonType.whiteBlue : ButtonType.gray}
+                        type={
+                            selectedStatus === status
+                                ? ButtonType.whiteBlue
+                                : ButtonType.gray
+                        }
                         onClick={() => onStatusChange(status)}
                         rounded
-                        style={{ padding: "clamp(10px, 2vw, 16px)", fontWeight: 600 }}
+                        style={{
+                            padding: "clamp(10px, 2vw, 16px)",
+                            fontWeight: 600,
+                        }}
                     >
                         {label}
                     </AletheiaButton>
                 ))}
             </Box>
-        </Grid >
+        </Grid>
     );
 };
 

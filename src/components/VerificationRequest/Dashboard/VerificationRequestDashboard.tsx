@@ -13,7 +13,9 @@ import VerificationRequestActivity from "./VerificationRequestActivity";
 import { useTranslation } from "next-i18next";
 import Loading from "../../Loading";
 
-const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ canViewBoard }) => {
+const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({
+    canViewBoard,
+}) => {
     const { t } = useTranslation("verificationRequest");
     const [stats, setStats] = useState<{
         statsCount: StatsCount;
@@ -83,7 +85,7 @@ const VerificationRequestDashboard: React.FC<{ canViewBoard: boolean }> = ({ can
                         />
                     </Grid>
 
-                    { canViewBoard && (
+                    {canViewBoard && (
                         <Grid item xs={12} lg={5}>
                             <VerificationRequestActivity
                                 statsRecentActivity={stats.statsRecentActivity}

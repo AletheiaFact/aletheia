@@ -49,5 +49,5 @@ export type {
     HistoryItem,
     PerformedBy,
     AfterAndBeforeType,
-    IHideableContent
+    IHideableContent,
 };

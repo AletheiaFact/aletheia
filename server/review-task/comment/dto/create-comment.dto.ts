@@ -43,7 +43,7 @@ export class CreateCommentDTO {
 
 export class CreateReplyCommentDTO extends OmitType(CreateCommentDTO, [
     "targetId",
-] as const) { }
+] as const) {}
 
 export class UpdateCommentDTO {
     @IsOptional()

@@ -183,7 +183,12 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                             <h2>{t("login:signUpHeader")}</h2>
                         </Grid>
                         <AletheiaButton
-                            onClick={() => trackUmamiEvent("cta-registration-button", "registration")}
+                            onClick={() =>
+                                trackUmamiEvent(
+                                    "cta-registration-button",
+                                    "registration"
+                                )
+                            }
                             type={ButtonType.primary}
                             href="/sign-up"
                             data-cy="testCTAButton"

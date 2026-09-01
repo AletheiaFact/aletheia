@@ -3,16 +3,17 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
 
-const PersonalityMinimalCardStyle = styled(Box) <{ $isInline?: boolean }>`
+const PersonalityMinimalCardStyle = styled(Box)<{ $isInline?: boolean }>`
     display: flex;
     text-align: ${({ $isInline }) => ($isInline ? "left" : "center")};
     flex-direction: ${({ $isInline }) => ($isInline ? "row" : "column")};
-    justify-content: ${({ $isInline }) => $isInline ? "flex-start" : "center"};
+    justify-content: ${({ $isInline }) =>
+        $isInline ? "flex-start" : "center"};
     align-items: center;
     gap: 14px;
 
     .personality-info {
-         ${({ $isInline }) => $isInline && "text-align: left"}
+        ${({ $isInline }) => $isInline && "text-align: left"}
     }
 
     .personality-name {

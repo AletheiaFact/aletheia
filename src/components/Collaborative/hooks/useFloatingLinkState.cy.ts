@@ -17,7 +17,7 @@ describe("URL Validation Tests", () => {
         "https://example.uk",
         "ftp://example.com",
         "https://example.co",
-        "https://subdomain.example.org"
+        "https://subdomain.example.org",
     ];
 
     const mockT = (key) => key;

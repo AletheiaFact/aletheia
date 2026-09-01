@@ -6,15 +6,8 @@ import AletheiaButton, { ButtonType } from "../AletheiaButton";
 
 const NotificationIcon = ({ unseenCount }: { unseenCount: number }) => {
     return (
-        <AletheiaButton
-            type={ButtonType.text}
-            data-cy="testNotificationIcon"
-        >
-            <Badge
-                color="error"
-                overlap="circular"
-                badgeContent={unseenCount}
-            >
+        <AletheiaButton type={ButtonType.text} data-cy="testNotificationIcon">
+            <Badge color="error" overlap="circular" badgeContent={unseenCount}>
                 <NotificationsIcon
                     style={{ color: colors.white, cursor: "pointer" }}
                 />

@@ -14,8 +14,15 @@ const CTAFolderActions = ({ isHomeFolder }: CTAFolderActionsProps) => {
     return (
         <Grid className="ctaButtonWrapper">
             <AletheiaButton
-                type={isHomeFolder ? ButtonType.whiteOutline : ButtonType.primary}
-                onClick={() => trackUmamiEvent("cta-banner-about-us-button", "bannerAboutUs")}
+                type={
+                    isHomeFolder ? ButtonType.whiteOutline : ButtonType.primary
+                }
+                onClick={() =>
+                    trackUmamiEvent(
+                        "cta-banner-about-us-button",
+                        "bannerAboutUs"
+                    )
+                }
                 href="/about"
                 data-cy="testCtaAboutUsButton"
             >

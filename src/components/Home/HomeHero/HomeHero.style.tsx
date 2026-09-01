@@ -14,45 +14,26 @@ const HomeHeroStyle = styled(Grid)`
         position: relative;
         display: flex;
         background-color: ${colors.primary};
-        background-image:
-            radial-gradient(
+        background-image: radial-gradient(
                 ellipse 60% 45% at 50% 0%,
-                color-mix(in srgb, ${colors.lightSecondary} 14%, transparent)
-                    0%,
-                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent)
-                    70%
+                color-mix(in srgb, ${colors.lightSecondary} 14%, transparent) 0%,
+                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent) 70%
             ),
             radial-gradient(
                 ellipse 60% 45% at 50% 100%,
-                color-mix(in srgb, ${colors.lightSecondary} 10%, transparent)
-                    0%,
-                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent)
-                    70%
+                color-mix(in srgb, ${colors.lightSecondary} 10%, transparent) 0%,
+                color-mix(in srgb, ${colors.lightSecondary} 0%, transparent) 70%
             ),
-            linear-gradient(
-                rgba(255, 255, 255, 0.04) 1px,
-                transparent 1px
-            ),
+            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
             linear-gradient(
                 90deg,
                 rgba(255, 255, 255, 0.04) 1px,
                 transparent 1px
             );
-        background-size:
-            100% 100%,
-            100% 100%,
-            56px 56px,
-            56px 56px;
-        background-position:
-            center top,
-            center bottom,
-            center center,
+        background-size: 100% 100%, 100% 100%, 56px 56px, 56px 56px;
+        background-position: center top, center bottom, center center,
             center center;
-        background-repeat:
-            no-repeat,
-            no-repeat,
-            repeat,
-            repeat;
+        background-repeat: no-repeat, no-repeat, repeat, repeat;
         align-items: center;
         padding: clamp(48px, 8vw, 96px) clamp(16px, 3vw, 24px);
         flex-wrap: wrap;

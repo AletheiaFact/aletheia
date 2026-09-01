@@ -6,7 +6,9 @@ import { useAtom } from "jotai";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { useTranslation } from "next-i18next";
 
-export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) => {
+export const useBaseClaimForm = (options?: {
+    shouldValidateContent?: boolean;
+}) => {
     const { shouldValidateContent = true } = options || {};
     const { t } = useTranslation();
     const router = useRouter();
@@ -38,13 +40,14 @@ export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) 
         });
 
         if (!title.trim()) newErrors.title = t("claimForm:titleFieldError");
-        if (shouldValidateContent && !content.trim()) newErrors.content = t("claimForm:contentFieldError");
+        if (shouldValidateContent && !content.trim())
+            newErrors.content = t("claimForm:contentFieldError");
         if (!date) newErrors.date = t("claimForm:dateFieldError");
-        if (newSourceErrors.some(msg => msg)) newErrors.sources = newSourceErrors;
+        if (newSourceErrors.some((msg) => msg))
+            newErrors.sources = newSourceErrors;
 
         return newErrors;
     };
-
 
     const handleSubmit = (values) => {
         const newErrors = validateFields();

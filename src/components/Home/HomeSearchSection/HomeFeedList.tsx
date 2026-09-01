@@ -39,8 +39,7 @@ const HomeFeedList = ({ results }) => {
                         />
                     )}
                 </Grid>
-            ))
-            }
+            ))}
         </List>
     );
 };

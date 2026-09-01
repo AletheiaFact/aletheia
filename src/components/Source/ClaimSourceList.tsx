@@ -24,16 +24,9 @@ const ClaimSourceList = ({
     return (
         <ClaimSourceListStyle>
             {sources && (
-                <Grid container style={{ width: '100%' }}>
+                <Grid container style={{ width: "100%" }}>
                     {dataSource.map((source, index) => (
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={6}
-                            lg={4}
-                            key={source}
-                        >
+                        <Grid item xs={12} sm={6} md={6} lg={4} key={source}>
                             <ClaimSourceListItem
                                 source={source}
                                 index={index + 1}

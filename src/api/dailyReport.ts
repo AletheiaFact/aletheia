@@ -7,11 +7,17 @@ const sendDailyReportEmail = (topic, nameSpace, t) => {
     return request
         .post(`/topic/${topic}/send/${nameSpace}`)
         .then((response) => {
-            MessageManager.showMessage("success", t("notification:sendDailyReportSuccess"));
+            MessageManager.showMessage(
+                "success",
+                t("notification:sendDailyReportSuccess")
+            );
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error",t("notification:sendDailyReportError"));
+            MessageManager.showMessage(
+                "error",
+                t("notification:sendDailyReportError")
+            );
             throw err;
         });
 };

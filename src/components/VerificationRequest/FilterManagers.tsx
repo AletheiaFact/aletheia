@@ -30,7 +30,7 @@ const FilterManager = ({ state, actions }) => {
         setEndDate,
     } = actions;
 
-    const isBoard = viewMode === "left"
+    const isBoard = viewMode === "left";
 
     const handleResetFilters = () => {
         setFilterValue([]);
@@ -50,10 +50,7 @@ const FilterManager = ({ state, actions }) => {
     };
 
     return (
-        <Grid
-            item
-            className="filterActions"
-        >
+        <Grid item className="filterActions">
             <Grid className="filterToggleContainer">
                 {canViewBoard && (
                     <FilterToggleButtons
@@ -67,12 +64,7 @@ const FilterManager = ({ state, actions }) => {
             </Grid>
 
             <Grid className="filterBarContainer">
-                {isBoard && (
-                    <FilterBar
-                        state={state}
-                        actions={actions}
-                    />
-                )}
+                {isBoard && <FilterBar state={state} actions={actions} />}
 
                 {isBoard &&
                     (topicFilterUsed.length > 0 ||
@@ -83,12 +75,13 @@ const FilterManager = ({ state, actions }) => {
                         endDate) && (
                         <AletheiaButton
                             type={ButtonType.whiteBlack}
-                            onClick={handleResetFilters}>
+                            onClick={handleResetFilters}
+                        >
                             {t("verificationRequest:resetFiltersButton")}
                         </AletheiaButton>
                     )}
             </Grid>
-        </Grid >
+        </Grid>
     );
 };
 export default FilterManager;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import CreateCTAButton from "../CreateCTAButton";
 
 const PersonalityCreateCTA = ({ href }) => {

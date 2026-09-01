@@ -50,10 +50,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton
-                    type={ButtonType.primary}
-                    onClick={handleOk}
-                >
+                <AletheiaButton type={ButtonType.primary} onClick={handleOk}>
                     {t("orderModal:okButton")}
                 </AletheiaButton>
             </div>

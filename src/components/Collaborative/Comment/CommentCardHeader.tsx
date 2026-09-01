@@ -37,10 +37,7 @@ const CommentCardHeader = ({
                         {content.type}
                     </Typography>
                     {!isEditing && (
-                        <Typography
-                            variant="caption"
-                            sx={{ display: "block" }}
-                        >
+                        <Typography variant="caption" sx={{ display: "block" }}>
                             {formatCommentTime(content?.createdAt)}
                         </Typography>
                     )}

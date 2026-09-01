@@ -11,7 +11,7 @@ const SourceDialog = ({
     onCloseModal,
     isLoading,
     activeLink = null,
-    onRemoveLink = () => { },
+    onRemoveLink = () => {},
     ...rest
 }) => {
     const inputRef = useRef<HTMLInputElement>();

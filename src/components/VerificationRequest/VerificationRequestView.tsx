@@ -15,7 +15,7 @@ const VerificationRequestView = () => {
     const [authResolved] = useAtom(isAuthResolved);
 
     if (!authResolved) {
-        return <Loading />
+        return <Loading />;
     }
 
     return (

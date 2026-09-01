@@ -17,17 +17,14 @@ import { Roles } from "./ability/ability.factory";
 // declared via vi.hoisted() because vi.mock() is hoisted above all imports
 // during the Vitest transform pipeline. Constructor mocks must use `function`
 // (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const {
-    mockToSession,
-    mockCreateBrowserLogoutFlow,
-    mockUpdateLogoutFlow,
-} = vi.hoisted(() => ({
-    mockToSession: vi.fn(),
-    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
-        data: { logout_token: "mock-logout-token" },
-    }),
-    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
-}));
+const { mockToSession, mockCreateBrowserLogoutFlow, mockUpdateLogoutFlow } =
+    vi.hoisted(() => ({
+        mockToSession: vi.fn(),
+        mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+            data: { logout_token: "mock-logout-token" },
+        }),
+        mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+    }));
 
 vi.mock("@ory/client", () => ({
     Configuration: vi.fn().mockImplementation(function () {
@@ -231,9 +228,7 @@ describe("SessionGuard", () => {
         it("should logout and redirect to signup-invite when user not in MongoDB", async () => {
             const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
-            usersService.getById.mockRejectedValue(
-                new Error("User not found")
-            );
+            usersService.getById.mockRejectedValue(new Error("User not found"));
 
             const { context, response } = createMockContext(
                 "ory_session=abc",

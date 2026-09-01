@@ -6,9 +6,12 @@ import VerificationRequestMinimumCard from "./verificationRequestCards/Verificat
 type VerificationRequestGridProps = {
     verificationRequest: VerificationRequest[];
     title: React.ReactNode;
-}
+};
 
-const VerificationRequestGridList = ({ verificationRequest, title, }: VerificationRequestGridProps) => {
+const VerificationRequestGridList = ({
+    verificationRequest,
+    title,
+}: VerificationRequestGridProps) => {
     return (
         <GridList
             title={title}
@@ -16,7 +19,11 @@ const VerificationRequestGridList = ({ verificationRequest, title, }: Verificati
             itemSize={{ xs: 12, md: 6 }}
             disableSeeMoreButton={true}
             getKey={(verificationRequest) => verificationRequest._id}
-            renderItem={(verificationRequest) => <VerificationRequestMinimumCard verificationRequest={verificationRequest} />}
+            renderItem={(verificationRequest) => (
+                <VerificationRequestMinimumCard
+                    verificationRequest={verificationRequest}
+                />
+            )}
         />
     );
 };

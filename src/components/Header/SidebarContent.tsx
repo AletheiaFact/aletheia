@@ -16,13 +16,12 @@ const SidebarContent = () => {
         languageSections,
         user,
         hasSession,
-        isLoadingUser
+        isLoadingUser,
     } = state;
     const { t } = actions;
 
-    const flatInstitutionItems = menuInstitutionSections?.flatMap(
-        (section) => section.items
-    ) || [];
+    const flatInstitutionItems =
+        menuInstitutionSections?.flatMap((section) => section.items) || [];
 
     return (
         <>
@@ -41,39 +40,30 @@ const SidebarContent = () => {
                         title: "principal",
                         items: [
                             ...(navigationConfig?.repository?.[0]?.items || []),
-                            ...(navigationConfig?.main || [])
-                        ]
-                    }
+                            ...(navigationConfig?.main || []),
+                        ],
+                    },
                 ]}
             />
 
-            <SidebarNavLinks
-                t={t}
-                sections={myAccountSections}
-            />
+            <SidebarNavLinks t={t} sections={myAccountSections} />
 
             <SidebarNavLinks
                 t={t}
                 sections={[
                     {
                         title: "institutional",
-                        items: flatInstitutionItems
-                    }
+                        items: flatInstitutionItems,
+                    },
                 ]}
             />
 
-            <SidebarNavLinks
-                t={t}
-                sections={languageSections}
-            />
+            <SidebarNavLinks t={t} sections={languageSections} />
 
-            <Box
-                width="100%"
-                padding="24px 18px"
-            >
-                {localConfig.header.donateButton.show &&
+            <Box width="100%" padding="24px 18px">
+                {localConfig.header.donateButton.show && (
                     <DonateButton header={true} />
-                }
+                )}
             </Box>
         </>
     );

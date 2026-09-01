@@ -26,7 +26,6 @@ import { ValidationPipe } from "@nestjs/common";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 const { ObjectId } = require("mongodb");
 
-
 /**
  * ClaimReviewController E2E Test Suite
  *

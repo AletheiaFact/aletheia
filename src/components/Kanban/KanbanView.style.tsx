@@ -23,12 +23,11 @@ const KanbanViewStyled = styled.div`
         gap: 12px;
     }
 
-         @media (min-width: 2000px) {
-            .kanban-board {
-                justify-content: center;
-            }
+    @media (min-width: 2000px) {
+        .kanban-board {
+            justify-content: center;
         }
-
+    }
 `;
 
 export default KanbanViewStyled;

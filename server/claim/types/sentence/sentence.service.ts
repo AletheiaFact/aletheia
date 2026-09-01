@@ -221,8 +221,13 @@ export class SentenceService {
             return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, err.stack);
-            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
+            this.logger.error(
+                `Failed to fetch sentence hashes for topic: ${topicId}`,
+                err.stack
+            );
+            throw new InternalServerErrorException(
+                `An error occurred while retrieving sentences for the requested topic.`
+            );
         }
     }
 }

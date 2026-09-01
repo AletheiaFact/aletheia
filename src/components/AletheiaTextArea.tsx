@@ -3,7 +3,8 @@ import { TextField } from "@mui/material";
 import colors from "../styles/colors";
 
 const AletheiaTextArea = styled(TextField)`
-    background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
+    background: ${(props) =>
+        props.white ? colors.white : colors.lightNeutral};
     box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
     border: none;

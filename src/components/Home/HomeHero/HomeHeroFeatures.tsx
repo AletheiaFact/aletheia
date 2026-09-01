@@ -39,10 +39,7 @@ const HomeHeroFeatures = () => {
                     alignItems="center"
                     className="home-header-feature"
                 >
-                    <Box
-                        component="span"
-                        className="home-header-feature-icon"
-                    >
+                    <Box component="span" className="home-header-feature-icon">
                         {feature.icon}
                     </Box>
                     <Typography

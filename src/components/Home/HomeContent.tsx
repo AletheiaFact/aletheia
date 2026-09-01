@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 import HomePersonalitiesSection from "./HomePersonalitiesSection/HomePersonalitiesSection";
 import HomeDebatesSection from "./HomeDebatesSection/HomeDebatesSection";
 import HomeEventsSection from "./HomeEventsSection/HomeEventsSection";
@@ -10,7 +10,7 @@ const HomeContent = ({
     debateClaims,
     reviews,
     eventsData,
-    enableEventsFeature
+    enableEventsFeature,
 }) => {
     return (
         <>

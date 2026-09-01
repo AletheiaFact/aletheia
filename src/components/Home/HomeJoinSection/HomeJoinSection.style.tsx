@@ -173,7 +173,7 @@ const HomeJoinSectionStyle = styled(Grid)`
     }
 
     @media ${queries.xs} {
-        .ctaButtonWrapper  {
+        .ctaButtonWrapper {
             flex-direction: column;
         }
 

@@ -142,7 +142,7 @@ const getEditorContentObject = (
 
 const addComment = (
     hash: string,
-    comment: NewCommentPayload,
+    comment: NewCommentPayload
 ): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })

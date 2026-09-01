@@ -22,7 +22,12 @@ const CommitteInvitationOurMission = () => {
     return (
         <Box className="section-wrapper">
             <Box className="container-section">
-                <Stack spacing={2} alignItems="center" sx={{ mb: 6 }} id="mission">
+                <Stack
+                    spacing={2}
+                    alignItems="center"
+                    sx={{ mb: 6 }}
+                    id="mission"
+                >
                     <Typography variant="overline" className="section-eyebrow">
                         {t("mission.eyebrow")}
                     </Typography>
@@ -38,7 +43,9 @@ const CommitteInvitationOurMission = () => {
                     {missionItems.map(({ key, icon }) => (
                         <Grid item xs={12} sm={6} lg={3} key={key}>
                             <Stack className="mission-card" spacing={2}>
-                                <Box className="benefit-icon-wrapper">{icon}</Box>
+                                <Box className="benefit-icon-wrapper">
+                                    {icon}
+                                </Box>
                                 <Box>
                                     <Typography
                                         variant="subtitle1"
@@ -66,7 +73,10 @@ const CommitteInvitationOurMission = () => {
                         <Typography variant="body1" className="dark-quote-text">
                             {t("mission.closingQuote")}
                         </Typography>
-                        <Typography variant="caption" className="dark-quote-author">
+                        <Typography
+                            variant="caption"
+                            className="dark-quote-author"
+                        >
                             {t("mission.closingQuoteAuthor")}
                         </Typography>
                     </Stack>

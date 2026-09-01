@@ -10,16 +10,18 @@ const meta: Meta<typeof SidebarContent> = {
     decorators: [
         (Story) => (
             <ProviderWrapper>
-                <div style={{
-                    width: "100%",
-                    padding: "18px",
-                    backgroundColor: colors.primary,
-                }}>
+                <div
+                    style={{
+                        width: "100%",
+                        padding: "18px",
+                        backgroundColor: colors.primary,
+                    }}
+                >
                     <Story />
                 </div>
             </ProviderWrapper>
         ),
-    ]
+    ],
 };
 
 export default meta;

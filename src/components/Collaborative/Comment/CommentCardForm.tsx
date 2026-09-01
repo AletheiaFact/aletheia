@@ -24,9 +24,8 @@ interface CommentCardFormProps {
     isEditing: boolean;
     setIsCommentVisible?: Dispatch<SetStateAction<boolean>>;
     setShowForm?: Dispatch<SetStateAction<boolean>>;
-    t: TFunction
+    t: TFunction;
 }
-
 
 const CommentCardForm = ({
     user,
@@ -34,7 +33,7 @@ const CommentCardForm = ({
     isEditing,
     setIsCommentVisible,
     setShowForm,
-    t
+    t,
 }: CommentCardFormProps) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
@@ -85,9 +84,9 @@ const CommentCardForm = ({
                     comments.map((comment) =>
                         comment._id === content._id
                             ? {
-                                ...comment,
-                                replies: [...comment.replies, replyComment],
-                            }
+                                  ...comment,
+                                  replies: [...comment.replies, replyComment],
+                              }
                             : comment
                     )
                 );
@@ -103,9 +102,7 @@ const CommentCardForm = ({
                     addAnnotation({ id: createdComment?._id });
                 }
                 setComments?.((comments: Comment[] | null) =>
-                    comments
-                        ? [...comments, createdComment]
-                        : [createdComment]
+                    comments ? [...comments, createdComment] : [createdComment]
                 );
                 setIsCommentVisible(false);
             }
@@ -149,19 +146,13 @@ const CommentCardForm = ({
                 onKeyDown={handleKeyDown}
             />
             {error && (
-                <TextError
-                    stateError={true}
-                    data-cy="testCommentFormError"
-                >
+                <TextError stateError={true} data-cy="testCommentFormError">
                     {error}
                 </TextError>
             )}
 
             <Box className="comment-card-form-actions">
-                <AletheiaButton
-                    onClick={handleOnSubmit}
-                    loading={isLoading}
-                >
+                <AletheiaButton onClick={handleOnSubmit} loading={isLoading}>
                     {t("common:submit")}
                 </AletheiaButton>
                 <AletheiaButton

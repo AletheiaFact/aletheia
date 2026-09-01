@@ -23,7 +23,9 @@ const CommitteInvitationHero = () => {
                 <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12}>
                         <Chip
-                            icon={<Box component="span" className="badge-dot" />}
+                            icon={
+                                <Box component="span" className="badge-dot" />
+                            }
                             label={t("hero.chip")}
                             size="small"
                             className="hero-chip"
@@ -35,7 +37,10 @@ const CommitteInvitationHero = () => {
                                 <Typography variant="h1" className="hero-title">
                                     {t("hero.title")}
                                 </Typography>
-                                <Typography variant="body1" className="hero-description">
+                                <Typography
+                                    variant="body1"
+                                    className="hero-description"
+                                >
                                     {t("hero.description")}
                                 </Typography>
                             </Box>
@@ -56,7 +61,9 @@ const CommitteInvitationHero = () => {
                                         fontSize: "0.875rem",
                                         fontWeight: 600,
                                         borderRadius: "6px",
-                                        "&:hover": { bgcolor: colors.lightSecondary },
+                                        "&:hover": {
+                                            bgcolor: colors.lightSecondary,
+                                        },
                                     }}
                                     onClick={smoothScrollTo("join")}
                                     component="a"
@@ -90,28 +97,46 @@ const CommitteInvitationHero = () => {
 
                             <Stack direction="row" spacing={{ xs: 2, sm: 5 }}>
                                 <Box className="stat-item">
-                                    <Typography variant="h5" className="stat-value">
+                                    <Typography
+                                        variant="h5"
+                                        className="stat-value"
+                                    >
                                         {t("hero.stat1Value")}
                                     </Typography>
-                                    <Typography variant="caption" className="stat-label">
+                                    <Typography
+                                        variant="caption"
+                                        className="stat-label"
+                                    >
                                         {t("hero.stat1Label")}
                                     </Typography>
                                 </Box>
                                 <Divider orientation="vertical" flexItem />
                                 <Box className="stat-item">
-                                    <Typography variant="h5" className="stat-value">
+                                    <Typography
+                                        variant="h5"
+                                        className="stat-value"
+                                    >
                                         {t("hero.stat2Value")}
                                     </Typography>
-                                    <Typography variant="caption" className="stat-label">
+                                    <Typography
+                                        variant="caption"
+                                        className="stat-label"
+                                    >
                                         {t("hero.stat2Label")}
                                     </Typography>
                                 </Box>
                                 <Divider orientation="vertical" flexItem />
                                 <Box className="stat-item">
-                                    <Typography variant="h5" className="stat-value">
+                                    <Typography
+                                        variant="h5"
+                                        className="stat-value"
+                                    >
                                         {t("hero.stat3Value")}
                                     </Typography>
-                                    <Typography variant="caption" className="stat-label">
+                                    <Typography
+                                        variant="caption"
+                                        className="stat-label"
+                                    >
                                         {t("hero.stat3Label")}
                                     </Typography>
                                 </Box>
@@ -126,7 +151,10 @@ const CommitteInvitationHero = () => {
                                     <FormatQuoteOutlined fontSize="large" />
                                 </Box>
 
-                                <Typography variant="body1" className="quote-text">
+                                <Typography
+                                    variant="body1"
+                                    className="quote-text"
+                                >
                                     {t("hero.quote")}
                                 </Typography>
 

@@ -21,7 +21,10 @@ const uploadImage = (files, t) => {
             return response.data;
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t(`claim:${err.response.data.message}`));
+            MessageManager.showMessage(
+                "error",
+                t(`claim:${err.response.data.message}`)
+            );
             throw err;
         });
 };

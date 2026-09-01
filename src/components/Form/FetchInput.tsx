@@ -39,7 +39,9 @@ const FetchInput = ({
     value = null,
     preloadedOptions = [],
 }: FetchInputProps) => {
-    const [treatedValue, setTreatedValue] = useState<SelectOption | SelectOption[] | null>(isMultiple ? [] : null);
+    const [treatedValue, setTreatedValue] = useState<
+        SelectOption | SelectOption[] | null
+    >(isMultiple ? [] : null);
     const [isLoading, setIsLoading] = useState(false);
 
     const optimisticallySetRef = useRef(null);
@@ -47,21 +49,30 @@ const FetchInput = ({
 
     useEffect(() => {
         const hydrateValues = async () => {
-            if (JSON.stringify(value) === JSON.stringify(optimisticallySetRef.current)) return;
+            if (
+                JSON.stringify(value) ===
+                JSON.stringify(optimisticallySetRef.current)
+            )
+                return;
 
-            if (value && (Array.isArray(value) ? value.length > 0 : value !== "")) {
+            if (
+                value &&
+                (Array.isArray(value) ? value.length > 0 : value !== "")
+            ) {
                 try {
                     setIsLoading(true);
                     const Promises = Array.isArray(value)
-                        ? value.map(id => apiFunction(id))
+                        ? value.map((id) => apiFunction(id))
                         : [apiFunction(value)];
                     const results = await Promise.all(Promises);
-                    const treatedValues = results.map(item => ({
+                    const treatedValues = results.map((item) => ({
                         label: item?.name || item?.content || "",
                         value: item?._id,
                     }));
 
-                    const finalValue = isMultiple ? treatedValues : treatedValues[0];
+                    const finalValue = isMultiple
+                        ? treatedValues
+                        : treatedValues[0];
 
                     setTreatedValue(finalValue);
                     optimisticallySetRef.current = value;

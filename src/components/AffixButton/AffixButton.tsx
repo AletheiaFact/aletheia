@@ -5,7 +5,7 @@ import {
     PersonAddAlt1Outlined,
     Source,
     Report,
-    Event
+    Event,
     // Source,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
@@ -25,14 +25,18 @@ import { useAppSelector } from "../../store/store";
 
 interface AffixButtonProps {
     personalitySlug?: string;
-    bottom?: string
+    bottom?: string;
     enableEventsFeature?: boolean;
 }
 
 /*** Floating action button that displays the Create Personality option
  * @param personalitySlug if present will display the Create Claim option too
  */
-const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButtonProps) => {
+const AffixButton = ({
+    personalitySlug,
+    bottom,
+    enableEventsFeature,
+}: AffixButtonProps) => {
     const { vw, copilotDrawerCollapsed, reviewDrawerCollapsed, menuCollapsed } =
         useAppSelector((state) => ({
             vw: state?.vw,
@@ -69,9 +73,10 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
             {
                 icon: <NoteAdd />,
                 tooltip: t("affix:affixButtonCreateClaim"),
-                href: nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
-                    : `/claim/create${hrefPersonalitySlug}`,
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
+                        : `/claim/create${hrefPersonalitySlug}`,
                 dataCy: "testFloatButtonAddClaim",
             },
 
@@ -89,9 +94,10 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
             {
                 icon: <Report />,
                 tooltip: t("affix:affixButtonCreateVerificationRequest"),
-                href: nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/verification-request/create`
-                    : `/verification-request/create`,
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/verification-request/create`
+                        : `/verification-request/create`,
                 dataCy: "testFloatButtonAddVerificationRequest",
             }
         );
@@ -100,9 +106,10 @@ const AffixButton = ({ personalitySlug, bottom, enableEventsFeature }: AffixButt
             actions.push({
                 icon: <Event />,
                 tooltip: t("affix:affixButtonCreateEvent"),
-                href: nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/event/create`
-                    : `/event/create`,
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/event/create`
+                        : `/event/create`,
                 dataCy: "testFloatButtonAddEvent",
             });
         }

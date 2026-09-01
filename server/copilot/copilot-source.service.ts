@@ -62,7 +62,9 @@ export class CopilotSourceService {
      * Normalizes a single source entry (string or object) into an AgenciaSource.
      * Returns null if no valid URL can be extracted.
      */
-    private normalizeSource(source: string | AgenciaSource): AgenciaSource | null {
+    private normalizeSource(
+        source: string | AgenciaSource
+    ): AgenciaSource | null {
         if (typeof source === "string") {
             return this.parseStringSource(source);
         }
@@ -133,9 +135,7 @@ export class CopilotSourceService {
                     },
                 });
 
-                this.logger.log(
-                    `Persisted Agencia source: ${normalized.href}`
-                );
+                this.logger.log(`Persisted Agencia source: ${normalized.href}`);
             } catch (error) {
                 const err = toError(error);
                 this.logger.warn(

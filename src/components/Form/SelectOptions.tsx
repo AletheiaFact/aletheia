@@ -15,7 +15,7 @@ const StyledSelect = styled(Autocomplete)`
 
     .MuiInputLabel-root {
         color: ${colors.neutralSecondary};
-        }
+    }
 `;
 
 function SelectOptions({
@@ -47,47 +47,53 @@ function SelectOptions({
         return !preloadedTopics?.includes(slug || options.value);
     });
 
-    const executeFetch = useCallback(async (inputValue = "") => {
-        setFetching(true);
-        const canAssignUsers = !(
-            fieldName === "usersId" && role === Roles.FactChecker
-        );
-        const filterOutRoles =
-            fieldName === "reviewerId"
-                ? [Roles.Regular, Roles.FactChecker]
-                : [Roles.Regular];
-
-        try {
-            const newOptions = await fetchOptions(
-                inputValue,
-                t,
-                nameSpace,
-                filterOutRoles,
-                canAssignUsers
+    const executeFetch = useCallback(
+        async (inputValue = "") => {
+            setFetching(true);
+            const canAssignUsers = !(
+                fieldName === "usersId" && role === Roles.FactChecker
             );
+            const filterOutRoles =
+                fieldName === "reviewerId"
+                    ? [Roles.Regular, Roles.FactChecker]
+                    : [Roles.Regular];
 
-            setOptions(newOptions || []);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setFetching(false);
-        }
-    }, [fetchOptions, fieldName, nameSpace, t, role]);
+            try {
+                const newOptions = await fetchOptions(
+                    inputValue,
+                    t,
+                    nameSpace,
+                    filterOutRoles,
+                    canAssignUsers
+                );
 
-    const debouncedLoad = useCallback((inputValue) => {
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
+                setOptions(newOptions || []);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setFetching(false);
+            }
+        },
+        [fetchOptions, fieldName, nameSpace, t, role]
+    );
 
-        if (!inputValue) {
-            executeFetch("");
-            return;
-        }
+    const debouncedLoad = useCallback(
+        (inputValue) => {
+            if (debounceTimeout.current) {
+                clearTimeout(debounceTimeout.current);
+            }
 
-        debounceTimeout.current = setTimeout(() => {
-            executeFetch(inputValue);
-        }, 800);
-    }, [executeFetch]);
+            if (!inputValue) {
+                executeFetch("");
+                return;
+            }
+
+            debounceTimeout.current = setTimeout(() => {
+                executeFetch(inputValue);
+            }, 800);
+        },
+        [executeFetch]
+    );
 
     useEffect(() => {
         executeFetch("");
@@ -106,10 +112,13 @@ function SelectOptions({
                 option?.value === value?.value
             }
             loading={fetching || loading}
-            value={isMultiple ? (value || []) : (value || null)}
+            value={isMultiple ? value || [] : value || null}
             onChange={(_event, newValue) => {
                 if (Array.isArray(newValue)) {
-                    onChange(newValue.map(item => item?.value), newValue);
+                    onChange(
+                        newValue.map((item) => item?.value),
+                        newValue
+                    );
                 } else {
                     onChange(newValue?.value, newValue);
                 }

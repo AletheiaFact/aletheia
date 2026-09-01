@@ -58,12 +58,12 @@ const ReviewCard = ({ review, summarized = false }) => {
     const href = reviewHref
         ? reviewHref
         : generateSentenceContentPath(
-            nameSpace,
-            personalityItem,
-            claimItem,
-            claimItem?.contentModel,
-            content?.data_hash
-        );
+              nameSpace,
+              personalityItem,
+              claimItem,
+              claimItem?.contentModel,
+              content?.data_hash
+          );
 
     return (
         <CardBase style={{ height: "100%" }}>
@@ -97,7 +97,11 @@ const ReviewCard = ({ review, summarized = false }) => {
                                 classificationTextStyle={{
                                     fontSize: 12,
                                     padding: "4px 14px",
-                                    border: `1px solid ${reviewColors[content.props.classification]}`,
+                                    border: `1px solid ${
+                                        reviewColors[
+                                            content.props.classification
+                                        ]
+                                    }`,
                                     borderRadius: 12,
                                 }}
                             />
@@ -110,7 +114,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                     borderRadius: 50,
                                     background:
                                         reviewColors[
-                                        content.props.classification
+                                            content.props.classification
                                         ],
                                     width: 10,
                                 }}

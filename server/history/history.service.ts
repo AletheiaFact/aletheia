@@ -186,9 +186,7 @@ export class HistoryService {
      * severed. Used by account deletion (LGPD/GDPR erasure).
      * @param userId Internal user id whose history entries should be scrubbed.
      */
-    async scrubUserReferences(
-        userId: string | Types.ObjectId
-    ): Promise<any> {
+    async scrubUserReferences(userId: string | Types.ObjectId): Promise<any> {
         const id =
             typeof userId === "string" && isValidObjectId(userId)
                 ? new Types.ObjectId(userId)

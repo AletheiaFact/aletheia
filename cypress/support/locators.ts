@@ -57,8 +57,9 @@ const locators = {
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
         ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
-        ADD_VERIFICATION_REQUEST: "[data-cy=testFloatButtonAddVerificationRequest]",
-        ADD_EVENT: "[data-cy=testFloatButtonAddEvent]"
+        ADD_VERIFICATION_REQUEST:
+            "[data-cy=testFloatButtonAddVerificationRequest]",
+        ADD_EVENT: "[data-cy=testFloatButtonAddEvent]",
     },
 
     toggleButton: {
@@ -144,7 +145,8 @@ const locators = {
         SAVE_BUTTON: "[data-cy=testSaveButton]",
         CANCEL_BUTTON: "[data-cy=testCancelButton]",
 
-        VERIFICATION_REQUEST_CARD_CONTAINER: "[data-cy=testVerificationRequestCardContainer]"
+        VERIFICATION_REQUEST_CARD_CONTAINER:
+            "[data-cy=testVerificationRequestCardContainer]",
     },
 
     event: {
@@ -167,7 +169,8 @@ const locators = {
 
         EVENT_CARD: "[data-cy=event-card]",
         METRICS_REVIEWS: "[data-cy=testEventMetricsReviews]",
-        METRICS_VERIFICATION_REQUESTS: "[data-cy=testEventMetricsVerificationRequests]",
+        METRICS_VERIFICATION_REQUESTS:
+            "[data-cy=testEventMetricsVerificationRequests]",
         METRICS_CLAIMS: "[data-cy=testEventMetricsClaims]",
         SEE_FULL_EVENT: "[data-cy=testOpenEventButton]",
 
@@ -223,12 +226,13 @@ const locators = {
         INSTITUTIONAL_PARTNERS: "[data-cy=testFooterLinkInstitutionalPartners]",
         INSTITUTIONAL_AWARDS: "[data-cy=testFooterLinkInstitutionalAwards]",
 
-        COMMUNITY_COLLABORATION: "[data-cy=testFooterLinkCommunityCollaboration]",
+        COMMUNITY_COLLABORATION:
+            "[data-cy=testFooterLinkCommunityCollaboration]",
         COMMUNITY_UNIVERSITIES: "[data-cy=testFooterLinkCommunityUniversities]",
         COMMUNITY_VOLUNTEERING: "[data-cy=testFooterLinkCommunityVolunteering]",
 
         STATUTE: "[data-cy=testFooterStatuteLink]",
         CREATIVE_COMMONS: "[data-cy=testFooterCreativeCommonsLink]",
-    }
+    },
 };
 export default locators;

@@ -43,7 +43,7 @@ const SourceEditorButton = ({ manager, state, readonly }) => {
 
     return (
         <Grid
-        container
+            container
             xs={12}
             style={{
                 display: "flex",

@@ -25,11 +25,12 @@ const UserMenuHeader = ({
     hasSession,
     nameSpace,
     t,
-    isSidebar
+    isSidebar,
 }: UserMenuHeaderProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const nameSpaceName = nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
+    const nameSpaceName =
+        nameSpace === NameSpaceEnum.Main ? "Aletheia" : nameSpace;
     const UserMenuHeaderRef = useRef();
 
     const showNameSpaces = () => {
@@ -37,11 +38,16 @@ const UserMenuHeader = ({
     };
 
     if (!hasSession) {
-        return
+        return;
     }
 
     if (isLoadingUser) {
-        return <Loading isWhiteLoading={isWhiteLoading} style={{ height: "20vh" }} />;
+        return (
+            <Loading
+                isWhiteLoading={isWhiteLoading}
+                style={{ height: "20vh" }}
+            />
+        );
     }
 
     return (
@@ -52,16 +58,25 @@ const UserMenuHeader = ({
                 </Avatar>
 
                 <Box sx={{ width: "100%" }}>
-                    <Typography variant="subtitle2" className="menu-header-info name">
+                    <Typography
+                        variant="subtitle2"
+                        className="menu-header-info name"
+                    >
                         {user?.name}
                     </Typography>
 
-                    <Typography variant="body2" className="menu-header-info email">
+                    <Typography
+                        variant="body2"
+                        className="menu-header-info email"
+                    >
                         {user?.email}
                     </Typography>
 
                     <Stack className="menu-header-info namespace">
-                        <Typography variant="caption" className="menu-header-info name title-namespace">
+                        <Typography
+                            variant="caption"
+                            className="menu-header-info name title-namespace"
+                        >
                             {nameSpaceName.replace("-", " ")}
                         </Typography>
 

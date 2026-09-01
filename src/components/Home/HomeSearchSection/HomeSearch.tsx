@@ -37,10 +37,7 @@ const HomeSearch = () => {
     return (
         <Stack spacing={3} className="home-header-search-content">
             <Stack spacing={1} className="home-header-search-heading">
-                <Typography
-                    component="h2"
-                    className="home-header-search-title"
-                >
+                <Typography component="h2" className="home-header-search-title">
                     {t("home:homeHeaderSearchTitle")}
                 </Typography>
                 <Typography

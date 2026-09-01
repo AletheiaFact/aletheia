@@ -23,30 +23,49 @@ const formatSources = (sources: SourceType[]) => {
 const createEmptySource = () => ({
     id: Math.random().toString(),
     href: "",
-    isNewSource: false
+    isNewSource: false,
 });
 
-const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder, dataCy }: IInputExtraSourcesList) => {
+const InputExtraSourcesList = ({
+    defaultSources,
+    onChange,
+    disabled,
+    placeholder,
+    dataCy,
+}: IInputExtraSourcesList) => {
     const { t } = useTranslation();
-    const [sourcesList, setSourcesList] = useState(() => formatSources(defaultSources as SourceType[]));
+    const [sourcesList, setSourcesList] = useState(() =>
+        formatSources(defaultSources as SourceType[])
+    );
 
-    const handleListChange = useCallback((newSourcesList: typeof sourcesList) => {
-        const cleanedSources = [...new Set(newSourcesList.map(source => source.href.trim()).filter(Boolean))];
-        onChange(cleanedSources);
-    }, [onChange]);
+    const handleListChange = useCallback(
+        (newSourcesList: typeof sourcesList) => {
+            const cleanedSources = [
+                ...new Set(
+                    newSourcesList
+                        .map((source) => source.href.trim())
+                        .filter(Boolean)
+                ),
+            ];
+            onChange(cleanedSources);
+        },
+        [onChange]
+    );
 
     const debouncedOnChange = useMemo(
         () =>
             debounce((SourcesList: typeof sourcesList) => {
-                handleListChange(SourcesList)
+                handleListChange(SourcesList);
             }, 800),
         [handleListChange]
     );
 
     const updateSources = (id: string, newHref: string) => {
-        const newSourcesList = sourcesList.map(source => source.id === id ? { ...source, href: newHref } : source);
+        const newSourcesList = sourcesList.map((source) =>
+            source.id === id ? { ...source, href: newHref } : source
+        );
         setSourcesList(newSourcesList);
-        debouncedOnChange(newSourcesList)
+        debouncedOnChange(newSourcesList);
     };
 
     const addField = () => {
@@ -62,25 +81,30 @@ const InputExtraSourcesList = ({ defaultSources, onChange, disabled, placeholder
         setSourcesList(newSourcesList);
         debouncedOnChange.cancel();
 
-        handleListChange(newSourcesList)
+        handleListChange(newSourcesList);
     };
 
     return (
         <Grid container justifyContent="center">
             {sourcesList.map((source, index) => (
-                <Grid item
+                <Grid
+                    item
                     key={source.id}
                     style={{
                         display: "flex",
                         width: "100%",
                         gap: 12,
-                        marginTop: 12
+                        marginTop: 12,
                     }}
                 >
                     <AletheiaInput
                         value={source.href}
-                        disabled={disabled || (index === 0 && source.isNewSource)}
-                        onChange={(newHref) => updateSources(source.id, newHref.target.value)}
+                        disabled={
+                            disabled || (index === 0 && source.isNewSource)
+                        }
+                        onChange={(newHref) =>
+                            updateSources(source.id, newHref.target.value)
+                        }
                         placeholder={t(placeholder)}
                         data-cy={`${dataCy}Edit-${index}`}
                         white="true"

@@ -116,9 +116,9 @@ export const transitionHandler = (state, extraContext) => {
             return event === Events.goback
                 ? setFormAndEvents(nextState)
                 : setFormAndEvents(
-                    event,
-                    isSameLabel(state.context, state.event)
-                );
+                      event,
+                      isSameLabel(state.context, state.event)
+                  );
         })
         .catch((e) => {
             console.error("[ReviewTask] Create review task failed:", e);

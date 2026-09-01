@@ -11,7 +11,7 @@ import {
     mockEventsService,
     mockFeatureFlagService,
     mockViewService,
-    mockCaptchaService
+    mockCaptchaService,
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -26,7 +26,10 @@ describe("EventsController (Unit)", () => {
                 { provide: ConfigService, useValue: mockConfigService },
                 { provide: EventsService, useValue: mockEventsService },
                 { provide: ViewService, useValue: mockViewService },
-                { provide: FeatureFlagService, useValue: mockFeatureFlagService },
+                {
+                    provide: FeatureFlagService,
+                    useValue: mockFeatureFlagService,
+                },
                 { provide: CaptchaService, useValue: mockCaptchaService },
             ],
         })
@@ -45,7 +48,9 @@ describe("EventsController (Unit)", () => {
     describe("create", () => {
         it("should throw NotFoundException if feature flag is disabled", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
-            await expect(controller.create({} as any)).rejects.toThrow(NotFoundException);
+            await expect(controller.create({} as any)).rejects.toThrow(
+                NotFoundException
+            );
         });
 
         it("should delegate creation to eventsService when flag is enabled", async () => {
@@ -63,7 +68,9 @@ describe("EventsController (Unit)", () => {
     describe("update", () => {
         it("should throw NotFoundException if feature flag is disabled", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
-            await expect(controller.update("id", {} as any)).rejects.toThrow(NotFoundException);
+            await expect(controller.update("id", {} as any)).rejects.toThrow(
+                NotFoundException
+            );
         });
 
         it("should delegate update to eventsService when flag is enabled", async () => {
@@ -82,11 +89,18 @@ describe("EventsController (Unit)", () => {
     describe("findAll", () => {
         it("should throw NotFoundException if feature flag is disabled", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
-            await expect(controller.findAll({} as any)).rejects.toThrow(NotFoundException);
+            await expect(controller.findAll({} as any)).rejects.toThrow(
+                NotFoundException
+            );
         });
 
         it("should delegate filtering to eventsService when flag is enabled", async () => {
-            const query = { page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING };
+            const query = {
+                page: 0,
+                pageSize: 10,
+                order: "asc",
+                status: EventsStatus.UPCOMING,
+            };
             const events = [{ _id: "e1" }];
             mockEventsService.findAll.mockResolvedValue(events);
 
@@ -170,7 +184,11 @@ describe("EventsController (Unit)", () => {
         it("should render page when flag is enabled and event exists", async () => {
             const req = {
                 url: "/event/hash-1/slug",
-                params: { data_hash: "hash-1", event_slug: "slug", namespace: "main" },
+                params: {
+                    data_hash: "hash-1",
+                    event_slug: "slug",
+                    namespace: "main",
+                },
             };
             const res = {};
             const event = { _id: "e1" };
@@ -190,9 +208,9 @@ describe("EventsController (Unit)", () => {
             mockEventsService.findByHash.mockResolvedValue(null);
             const req = { params: { data_hash: "none" }, url: "" };
 
-            await expect(controller.eventViewPage(req as any, {} as any)).rejects.toThrow(
-                NotFoundException
-            );
+            await expect(
+                controller.eventViewPage(req as any, {} as any)
+            ).rejects.toThrow(NotFoundException);
         });
     });
 

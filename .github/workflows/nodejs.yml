@@ -132,6 +132,26 @@ jobs:
               env:
                   CI: true
 
+    vitest-postgres:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [22]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - run: yarn install
+            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - name: Run unit tests with DB_TYPE=postgres (pglite)
+              env:
+                  DB_TYPE: postgres
+                  NODE_OPTIONS: "--max_old_space_size=4096"
+              run: yarn test:unit
+
     cypress-run-ferretdb:
         needs: build
         runs-on: ubuntu-22.04

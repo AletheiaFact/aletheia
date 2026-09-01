@@ -52,7 +52,8 @@ export class EventsService {
         try {
             this.logger.debug("Creating event", { createEventDto });
 
-            const topicName = createEventDto.mainTopic.label ?? createEventDto.mainTopic.name;
+            const topicName =
+                createEventDto.mainTopic.label ?? createEventDto.mainTopic.name;
 
             const createdTopic = await this.topicService.findOrCreateTopic({
                 ...createEventDto.mainTopic,
@@ -81,16 +82,23 @@ export class EventsService {
             return newEvent;
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Failed to create event: "${err.name}"`, err.stack);
+            this.logger.error(
+                `Failed to create event: "${err.name}"`,
+                err.stack
+            );
 
             if (err.name === "ValidationError" && err.errors) {
                 const fields = Object.keys(err.errors).join(", ");
-                throw new BadRequestException(`Schema validation failed: missing or invalid fields [${fields}]`);
+                throw new BadRequestException(
+                    `Schema validation failed: missing or invalid fields [${fields}]`
+                );
             }
 
             if (err.code === 11000 && err.keyPattern) {
                 const duplicateField = Object.keys(err.keyPattern)[0];
-                throw new ConflictException(`Duplicate entry: an event with this ${duplicateField} already exists`);
+                throw new ConflictException(
+                    `Duplicate entry: an event with this ${duplicateField} already exists`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -124,13 +132,17 @@ export class EventsService {
                 updateData.slug = slugify(updateEventDto.name, {
                     lower: true,
                     strict: true,
-                    trim: true
+                    trim: true,
                 });
             }
 
             if (mainTopic) {
                 const topicName = mainTopic.label ?? mainTopic.name;
-                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName });
+                updateData.mainTopic =
+                    await this.topicService.findOrCreateTopic({
+                        ...mainTopic,
+                        name: topicName,
+                    });
             }
 
             if (filterTopics !== undefined) {
@@ -170,7 +182,9 @@ export class EventsService {
             }
 
             if (err.name === "CastError") {
-                throw new BadRequestException(`Invalid format for field: ${err.path}`);
+                throw new BadRequestException(
+                    `Invalid format for field: ${err.path}`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -226,7 +240,8 @@ export class EventsService {
             const stackTrace =
                 error instanceof Error ? error.stack : String(error);
             this.logger.error(
-                `Failed to fetch events list: ${error instanceof Error ? error.message : "Unknown error"
+                `Failed to fetch events list: ${
+                    error instanceof Error ? error.message : "Unknown error"
                 }`,
                 stackTrace
             );
@@ -419,7 +434,9 @@ export class EventsService {
             });
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Metrics fetch failed, using fallback: ${err.message}`);
+            this.logger.error(
+                `Metrics fetch failed, using fallback: ${err.message}`
+            );
 
             return events.reduce((acc, event) => {
                 acc[String(event.data_hash)] = {

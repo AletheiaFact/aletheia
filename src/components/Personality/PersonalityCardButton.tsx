@@ -11,7 +11,7 @@ const PersonalityCardButton = ({
     personalityIsSelected,
     isCreatingClaim,
     onClick,
-    isMobileDevice
+    isMobileDevice,
 }) => {
     const { t } = useTranslation();
     const buttonProps = {
@@ -44,7 +44,7 @@ const PersonalityCardButton = ({
                 startIcon={
                     <AddOutlinedIcon
                         style={{
-                            fontSize: isMobileDevice ? "18px" : "24px"
+                            fontSize: isMobileDevice ? "18px" : "24px",
                         }}
                     />
                 }

@@ -4,20 +4,20 @@ import colors from "../../../styles/colors";
 import { Box } from "@mui/material";
 
 const HomeSearchSectionStyled = styled(Box)`
-       background-color: ${colors.lightNeutral};
-       padding: clamp(40px, 6vw, 80px) clamp(16px, 2vw, 24px);
-       width: 100%;
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-       gap: clamp(24px, 3vw, 40px);
+    background-color: ${colors.lightNeutral};
+    padding: clamp(40px, 6vw, 80px) clamp(16px, 2vw, 24px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(24px, 3vw, 40px);
 
     .home-header-search-content {
-       flex-direction: column;
-       align-items: center;
-       width: 100%;
-       max-width: 720px;
-       margin: 0 auto;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
     }
 
     .home-header-search-heading {

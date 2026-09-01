@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
@@ -20,7 +20,6 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
 
     const seeAllHref =
         nameSpace === NameSpaceEnum.Main ? "/claim" : `/${nameSpace}/claim`;
-
 
     if (!Array.isArray(debates) || debates.length === 0) return null;
 

@@ -4,7 +4,7 @@ import HeaderContent from "./HeaderContent";
 import { useAppSelector } from "../../store/store";
 
 const AletheiaHeader = () => {
-    const theme = useTheme()
+    const theme = useTheme();
     const { vw } = useAppSelector((state) => state);
 
     return (

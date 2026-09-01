@@ -1,6 +1,6 @@
 import React from "react";
 import AletheiaButton from "../AletheiaButton";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "next-i18next";
 import CreateCTAButton from "../CreateCTAButton";
 

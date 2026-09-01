@@ -82,7 +82,8 @@ export class SitemapService {
         } catch (error) {
             const err = toError(error);
             const message =
-                "Error while submitting sitemap to search engine: " + err.message;
+                "Error while submitting sitemap to search engine: " +
+                err.message;
             this.logger.error(message);
             return message;
         }

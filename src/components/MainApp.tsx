@@ -40,21 +40,24 @@ const MainApp = ({ children }) => {
         <Box
             sx={{
                 width: "100%",
-                maxWidth: copilotDrawerCollapsed || vw?.md
-                    ? "100%"
-                    : `calc(100% - ${copilotDrawerWidth}px)`,
+                maxWidth:
+                    copilotDrawerCollapsed || vw?.md
+                        ? "100%"
+                        : `calc(100% - ${copilotDrawerWidth}px)`,
                 position: "relative",
                 overflowX: "hidden",
             }}
         >
             <AletheiaHeader />
             <Sidebar />
-            <Box sx={{
-                display: "grid",
-                minHeight: "100dvh",
-                background: colors.white,
-                gridTemplateColumns: "minmax(0, 1fr)",
-            }}>
+            <Box
+                sx={{
+                    display: "grid",
+                    minHeight: "100dvh",
+                    background: colors.white,
+                    gridTemplateColumns: "minmax(0, 1fr)",
+                }}
+            >
                 <Box>
                     <DonationBanner />
                     {renderCTAButton()}

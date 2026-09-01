@@ -33,7 +33,10 @@ export class SessionGuard extends BaseGuard {
             });
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Error during logout flow: ${err.message}`, err.stack);
+            this.logger.error(
+                `Error during logout flow: ${err.message}`,
+                err.stack
+            );
         }
     }
 
@@ -85,9 +88,15 @@ export class SessionGuard extends BaseGuard {
                     );
                 }
 
-                if (!this.tokenIdentity.isAffiliationValid(session?.identity?.traits)) {
+                if (
+                    !this.tokenIdentity.isAffiliationValid(
+                        session?.identity?.traits
+                    )
+                ) {
                     this.logger.error(
-                        `Affiliation mismatch: expected ${this.configService.get<string>("app_affiliation")}, got ${session?.identity?.traits?.app_affiliation}`
+                        `Affiliation mismatch: expected ${this.configService.get<string>(
+                            "app_affiliation"
+                        )}, got ${session?.identity?.traits?.app_affiliation}`
                     );
                     await this.logoutUser(ory, request);
                     return this.checkAndRedirect(
@@ -123,7 +132,10 @@ export class SessionGuard extends BaseGuard {
         } catch (error) {
             const err = toError(error);
 
-            this.logger.error(`Critical failure in AuthGuard: ${err.message}`, err.stack);
+            this.logger.error(
+                `Critical failure in AuthGuard: ${err.message}`,
+                err.stack
+            );
 
             return this.checkAndRedirect(request, response, isPublic, "/login");
         }

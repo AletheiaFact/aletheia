@@ -15,30 +15,30 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { queries } from "../../styles/mediaQueries";
 
 const OverlayWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40vw;
-  height: 60px;
-  z-index: 1000;
-  background-color: ${({ $namespace }) =>
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40vw;
+    height: 60px;
+    z-index: 1000;
+    background-color: ${({ $namespace }) =>
         $namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @media ${queries.xs} {
-    width: 98vw;
-  }
-
-  .content-container {
     display: flex;
     align-items: center;
-    width: 100%;
-    max-width: 600px;
-    gap: 12px;
-  }
+    justify-content: center;
+
+    @media ${queries.xs} {
+        width: 98vw;
+    }
+
+    .content-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        gap: 12px;
+    }
 `;
 
 const SearchOverlay = () => {

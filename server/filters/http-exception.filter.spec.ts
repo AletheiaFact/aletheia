@@ -1,8 +1,4 @@
-import {
-    HttpException,
-    HttpStatus,
-    NotFoundException,
-} from "@nestjs/common";
+import { HttpException, HttpStatus, NotFoundException } from "@nestjs/common";
 import { AllExceptionsFilter } from "./http-exception.filter";
 
 describe("AllExceptionsFilter", () => {
@@ -60,7 +56,10 @@ describe("AllExceptionsFilter", () => {
         it("should return sanitized message for API 500 errors", () => {
             mockRequest.originalUrl = "/api/test";
 
-            filter.catch(new Error("database connection failed"), mockHost as any);
+            filter.catch(
+                new Error("database connection failed"),
+                mockHost as any
+            );
 
             expect(mockResponse.status).toHaveBeenCalledWith(500);
             expect(mockResponse.json).toHaveBeenCalledWith(
@@ -115,7 +114,9 @@ describe("AllExceptionsFilter", () => {
             mockRequest.originalUrl = "/api/test";
             (mockRequest as any).user = { _id: "user-123" };
 
-            const logSpy = vi.spyOn(filter["logger"], "error").mockImplementation(() => {});
+            const logSpy = vi
+                .spyOn(filter["logger"], "error")
+                .mockImplementation(() => {});
 
             filter.catch(new Error("test"), mockHost as any);
 
@@ -130,7 +131,9 @@ describe("AllExceptionsFilter", () => {
         it("should log anonymous when user is not present", () => {
             mockRequest.originalUrl = "/api/test";
 
-            const logSpy = vi.spyOn(filter["logger"], "error").mockImplementation(() => {});
+            const logSpy = vi
+                .spyOn(filter["logger"], "error")
+                .mockImplementation(() => {});
 
             filter.catch(new Error("test"), mockHost as any);
 
@@ -146,7 +149,9 @@ describe("AllExceptionsFilter", () => {
             mockRequest.originalUrl = "/api/user";
             mockRequest.query = { searchName: "test", canAssignUsers: "true" };
 
-            const logSpy = vi.spyOn(filter["logger"], "error").mockImplementation(() => {});
+            const logSpy = vi
+                .spyOn(filter["logger"], "error")
+                .mockImplementation(() => {});
 
             filter.catch(new Error("test"), mockHost as any);
 
@@ -162,7 +167,9 @@ describe("AllExceptionsFilter", () => {
             mockRequest.originalUrl = "/api/test";
             mockRequest.body = { machine: { context: {} }, secret: "s3cr3t" };
 
-            const logSpy = vi.spyOn(filter["logger"], "error").mockImplementation(() => {});
+            const logSpy = vi
+                .spyOn(filter["logger"], "error")
+                .mockImplementation(() => {});
 
             filter.catch(new Error("test"), mockHost as any);
 
@@ -191,7 +198,9 @@ describe("AllExceptionsFilter", () => {
             mockRequest.originalUrl = "/api/test";
 
             filter.catch(
-                new Error("Cannot set headers after they are sent to the client"),
+                new Error(
+                    "Cannot set headers after they are sent to the client"
+                ),
                 mockHost as any
             );
 
