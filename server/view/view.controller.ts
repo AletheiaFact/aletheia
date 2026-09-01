@@ -9,13 +9,19 @@ import {
 } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { parse } from "url";
+import { ConfigService } from "@nestjs/config";
 import { ViewService } from "./view.service";
+import { CaptchaService } from "../captcha/captcha.service";
 import { Public } from "../auth/decorators/auth.decorator";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
-    constructor(private readonly viewService: ViewService) {}
+    constructor(
+        private readonly viewService: ViewService,
+        private readonly configService: ConfigService,
+        private readonly captchaService: CaptchaService
+    ) {}
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -108,11 +114,15 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
+        });
         await this.viewService.render(
             req,
             res,
             "/committee-invitation-page",
-            parsedUrl.query
+            queryObject
         );
     }
 
@@ -130,10 +140,32 @@ export class ViewController {
         );
     }
 
+    /**
+     * Files under /_next/static carry a content hash in the name, so a given
+     * URL always returns the same bytes. They can stay in the browser and in
+     * the CDN for a year. This route must come before the general "_next*"
+     * route below, because Express matches routes in declaration order.
+     */
+    @Public()
+    @Get("_next/static*")
+    @Header("Cache-Control", "public, max-age=31536000, immutable")
+    public async staticAssets(@Req() req: Request, @Res() res: Response) {
+        await this.handler(req, res);
+    }
+
+    /**
+     * Other /_next paths (the image optimizer, the data routes) change when
+     * the content changes, so they get a short TTL.
+     */
     @Public()
     @Get("_next*")
-    @Header("Cache-Control", "max-age=60")
+    @Header("Cache-Control", "public, max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
+        // The image optimizer and data routes depend on the query string
+        // (url, w, q). handler() delegates to ViewService.render(), which
+        // replaces the query with { props }, so those params are lost and the
+        // optimizer answers 400. Serve /_next through Next's own request
+        // handler, which keeps the query intact.
         const parsedUrl = parse(req.url, true);
         await this.viewService.getRequestHandler()(
             req as any,
@@ -156,7 +188,7 @@ export class ViewController {
     }
 
     @Get("totp")
-    @Header("Cache-Control", "max-age=86400")
+    @Header("Cache-Control", "private, max-age=86400")
     public async showTotpCheck(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         await this.viewService.render(

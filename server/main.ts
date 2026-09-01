@@ -12,11 +12,6 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 dotenv.config();
 
-const isLocal = process.env.ENV === "local";
-if (!isLocal) {
-    require("newrelic");
-}
-
 async function initApp() {
     const options = loadConfig();
 

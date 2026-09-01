@@ -13,10 +13,12 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { VerificationRequestProvider } from "../components/VerificationRequest/VerificationRequestProvider";
 import { VerificationRequest } from "../types/VerificationRequest";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 export interface SourceReviewPageProps {
     verificationRequest: VerificationRequest;
     sitekey: string;
+    captcha: CaptchaClientConfig;
     reviewTask: any;
     hideDescriptions: object;
     websocketUrl: string;
@@ -25,13 +27,19 @@ export interface SourceReviewPageProps {
 }
 
 const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
-    const { verificationRequest, sitekey, hideDescriptions, recommendations } =
-        props;
+    const {
+        verificationRequest,
+        sitekey,
+        captcha,
+        hideDescriptions,
+        recommendations,
+    } = props;
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
 
     return (
         <>
@@ -69,6 +77,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             recommendations: JSON.parse(JSON.stringify(query.recommendations)),
             reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),

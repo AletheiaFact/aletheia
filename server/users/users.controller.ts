@@ -2,6 +2,7 @@ import {
     Body,
     ConflictException,
     Controller,
+    Delete,
     Get,
     Header,
     Param,
@@ -55,11 +56,12 @@ export class UsersController {
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const sitekey = this.configService.get<string>("recaptcha_sitekey");
+        const captcha = this.captchaService.getClientConfig();
         await this.viewService.render(
             req,
             res,
             "/sign-up",
-            Object.assign(parsedUrl.query, { sitekey })
+            Object.assign(parsedUrl.query, { sitekey, captcha })
         );
     }
 
@@ -77,7 +79,10 @@ export class UsersController {
         try {
             return await this.usersService.register(createUserDto);
         } catch (errorResponse) {
-            const { error } = (errorResponse as { error?: { status?: number; message?: string } }) ?? {};
+            const { error } =
+                (errorResponse as {
+                    error?: { status?: number; message?: string };
+                }) ?? {};
             if (error?.status === 409) {
                 // Ory identity already exists
                 throw new ConflictException(error?.message);
@@ -172,8 +177,19 @@ export class UsersController {
     }
 
     @ApiTags("user")
+    @Delete("api/me")
+    @Auth({ allowM2M: false })
+    async deleteMyAccount(@Req() req: BaseRequest, @Res() res: Response) {
+        await this.usersService.deleteAccount(req.user._id);
+        res.status(200).json({
+            success: true,
+            message: "Account deleted successfully",
+        });
+    }
+
+    @ApiTags("user")
     @Get("api/user")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     @Auth()
     public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
@@ -190,7 +206,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user/:id")
     @Auth()
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     public async getUser(@Param("id") userId: string) {
         const value = new Types.ObjectId(userId);
         return this.usersService.getById(value);

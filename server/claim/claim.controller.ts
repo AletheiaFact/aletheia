@@ -380,6 +380,7 @@ export class ClaimController {
             reviewTask,
             claimReview,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             hideDescriptions,
             enableCollaborativeEditor,
             enableEditorAnnotations,
@@ -420,7 +421,7 @@ export class ClaimController {
     @AdminOnly()
     @Get("claim/:claimId/debate/edit")
     @ApiTags("pages")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "private, max-age=60, must-revalidate")
     public async getDebateEditor(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -438,6 +439,7 @@ export class ClaimController {
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
         });
 
@@ -471,6 +473,7 @@ export class ClaimController {
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,
             enableCollaborativeEditor,
@@ -551,6 +554,7 @@ export class ClaimController {
         const queryObject = Object.assign(parsedUrl.query, {
             personality,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             nameSpace: req.params.namespace,
             verificationRequestGroup,
         });
@@ -604,6 +608,7 @@ export class ClaimController {
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,
@@ -644,6 +649,7 @@ export class ClaimController {
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot: enableCopilotChatBot,
@@ -703,6 +709,7 @@ export class ClaimController {
             personality,
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,

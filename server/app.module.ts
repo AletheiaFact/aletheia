@@ -51,6 +51,7 @@ import { CommentModule } from "./review-task/comment/comment.module";
 import { NameSpaceModule } from "./auth/name-space/name-space.module";
 import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
+import { LlmModule } from "./llm/llm.module";
 import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
 import { DailyReportModule } from "./daily-report/daily-report.module";
@@ -61,8 +62,10 @@ import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
 import { GroupModule } from "./group/group.module";
 import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
 import { M2MGuard } from "./auth/m2m.guard";
+import { TokenIdentityModule } from "./auth/token-identity.module";
 import { CallbackDispatcherModule } from "./callback-dispatcher/callback-dispatcher.module";
 import { AiTaskModule } from "./ai-task/ai-task.module";
+import { CommitteeInterestModule } from "./committee-interest/committee-interest.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
@@ -134,6 +137,7 @@ export class AppModule implements NestModule {
                 ViewModule,
                 SitemapModule,
                 OryModule,
+                TokenIdentityModule,
                 ReportModule,
                 CaptchaModule,
                 ImageModule,
@@ -148,6 +152,7 @@ export class AppModule implements NestModule {
                 CommentModule,
                 NameSpaceModule,
                 AutomatedFactCheckingModule,
+                LlmModule,
                 CopilotChatModule,
                 UnattributedModule,
                 DailyReportModule,
@@ -157,6 +162,7 @@ export class AppModule implements NestModule {
                 FeatureFlagModule,
                 GroupModule,
                 AiTaskModule,
+                CommitteeInterestModule,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],

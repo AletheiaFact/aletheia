@@ -74,6 +74,7 @@ export const mockOryService = () => ({
     updateIdentity: vi.fn<() => Promise<any>>().mockResolvedValue({}),
     updateUserState: vi.fn<() => Promise<any>>().mockResolvedValue({}),
     updateUserRole: vi.fn<() => Promise<any>>().mockResolvedValue({}),
+    deleteIdentity: vi.fn<() => Promise<any>>().mockResolvedValue({}),
 });
 
 /**

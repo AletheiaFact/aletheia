@@ -1,14 +1,15 @@
 import {
     HttpException,
     HttpStatus,
+    Inject,
     Injectable,
     Logger,
     NotFoundException,
 } from "@nestjs/common";
-import { ChatOpenAI } from "@langchain/openai";
 import customMessage from "./customMessage.response";
 import { MESSAGES } from "./messages.constants";
-import { openAI } from "./openAI.constants";
+import { LLM_PROVIDER } from "../llm/llm.tokens";
+import type { LLMProvider } from "../llm/llm.types";
 import {
     SessionAgentChatDto,
     SenderEnum,
@@ -28,7 +29,6 @@ import {
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
-import { ConfigService } from "@nestjs/config";
 import { CopilotSessionService } from "./copilot-session.service";
 import { CopilotSourceService } from "./copilot-source.service";
 
@@ -43,9 +43,9 @@ export class CopilotChatService {
     constructor(
         private automatedFactCheckingService: AutomatedFactCheckingService,
         private editorParseService: EditorParseService,
-        private configService: ConfigService,
         private copilotSessionService: CopilotSessionService,
-        private copilotSourceService: CopilotSourceService
+        private copilotSourceService: CopilotSourceService,
+        @Inject(LLM_PROVIDER) private readonly llmProvider: LLMProvider
     ) {}
 
     private createFactCheckingReportTool(
@@ -280,11 +280,7 @@ Your primary goal is to gather all relevant information from the user about the 
                 new MessagesPlaceholder({ variableName: "agent_scratchpad" }),
             ]);
 
-            const llm = new ChatOpenAI({
-                temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
-                modelName: openAI.GPT_5_MINI.toString(),
-                apiKey: this.configService.get<string>("openai.api_key"),
-            });
+            const llm = this.llmProvider.createChatModel();
 
             const agent = await createToolCallingAgent({
                 llm,

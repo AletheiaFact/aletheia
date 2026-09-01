@@ -17,10 +17,10 @@ const Editor = dynamic<IEditorProps>(
 
 const DebateEditor: NextPage<
     InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ claim, sitekey, nameSpace }) => {
+> = ({ claim, sitekey, captcha, nameSpace }) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
-    return <Editor claim={claim} sitekey={sitekey} />;
+    return <Editor claim={claim} sitekey={sitekey} captcha={captcha} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -31,6 +31,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

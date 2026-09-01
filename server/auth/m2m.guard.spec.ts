@@ -3,27 +3,12 @@ import { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { M2MGuard } from "./m2m.guard";
+import { TokenIdentityService } from "./token-identity.service";
 import { mockAuthConfigService } from "../mocks/AuthMock";
-
-// Mock @ory/client. Variables referenced inside a vi.mock() factory must be
-// declared via vi.hoisted() because vi.mock() is hoisted above all imports
-// during the Vitest transform pipeline. Constructor mocks must use `function`
-// (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const { mockIntrospectOAuth2Token } = vi.hoisted(() => ({
-    mockIntrospectOAuth2Token: vi.fn(),
-}));
-
-vi.mock("@ory/client", () => ({
-    Configuration: vi.fn().mockImplementation(function () {
-        return {};
-    }),
-    OAuth2Api: vi.fn().mockImplementation(function () {
-        return { introspectOAuth2Token: mockIntrospectOAuth2Token };
-    }),
-}));
 
 describe("M2MGuard", () => {
     let guard: M2MGuard;
+    let tokenIdentity: { resolveBearerToken: ReturnType<typeof vi.fn> };
 
     const createMockContext = (authHeader?: string) => {
         const request: any = {
@@ -43,11 +28,13 @@ describe("M2MGuard", () => {
 
     beforeAll(async () => {
         const configService = mockAuthConfigService();
+        tokenIdentity = { resolveBearerToken: vi.fn() };
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 M2MGuard,
                 { provide: ConfigService, useValue: configService },
+                { provide: TokenIdentityService, useValue: tokenIdentity },
                 Reflector,
             ],
         }).compile();
@@ -63,75 +50,72 @@ describe("M2MGuard", () => {
         const { context } = createMockContext(undefined);
         const result = await guard.canActivate(context);
         expect(result).toBe(false);
+        expect(tokenIdentity.resolveBearerToken).not.toHaveBeenCalled();
     });
 
     it("should return false when authorization header has no Bearer token", async () => {
         const { context } = createMockContext("Basic abc123");
         const result = await guard.canActivate(context);
         expect(result).toBe(false);
+        expect(tokenIdentity.resolveBearerToken).not.toHaveBeenCalled();
     });
 
-    it("should return true and set request.user for valid active M2M token", async () => {
-        mockIntrospectOAuth2Token.mockResolvedValue({
-            data: {
-                active: true,
-                client_id: "m2m-client-id",
-                sub: "m2m-client-id",
-                scope: "read write",
-            },
-        });
+    it("should return false when resolveBearerToken resolves null", async () => {
+        tokenIdentity.resolveBearerToken.mockResolvedValue(null);
+
+        const { context } = createMockContext("Bearer invalid-token");
+        const result = await guard.canActivate(context);
+
+        expect(tokenIdentity.resolveBearerToken).toHaveBeenCalledWith(
+            "invalid-token"
+        );
+        expect(result).toBe(false);
+    });
+
+    it("should return true and set request.user for a resolved M2M user", async () => {
+        const m2mUser = {
+            isM2M: true,
+            clientId: "m2m-client-id",
+            subject: "m2m-client-id",
+            scopes: ["read", "write"],
+            role: { main: "integration" },
+            namespace: "main",
+        };
+        tokenIdentity.resolveBearerToken.mockResolvedValue(m2mUser);
 
         const { context, request } = createMockContext("Bearer valid-token");
 
         const result = await guard.canActivate(context);
 
         expect(result).toBe(true);
-        expect(request.user).toEqual(
-            expect.objectContaining({
-                isM2M: true,
-                clientId: "m2m-client-id",
-                subject: "m2m-client-id",
-                scopes: ["read", "write"],
-                role: { main: "integration" },
-            })
-        );
+        expect(request.user).toEqual(m2mUser);
     });
 
-    it("should return false when token is not active", async () => {
-        mockIntrospectOAuth2Token.mockResolvedValue({
-            data: { active: false },
-        });
-
-        const { context } = createMockContext("Bearer inactive-token");
-        const result = await guard.canActivate(context);
-        expect(result).toBe(false);
-    });
-
-    it("should return false when introspection fails", async () => {
-        mockIntrospectOAuth2Token.mockRejectedValue(
-            new Error("Hydra unavailable")
+    it("should return false (not throw) when resolveBearerToken rejects", async () => {
+        tokenIdentity.resolveBearerToken.mockRejectedValue(
+            new Error("token resolution blew up")
         );
 
-        const { context } = createMockContext("Bearer error-token");
-        const result = await guard.canActivate(context);
-        expect(result).toBe(false);
+        const { context } = createMockContext("Bearer boom-token");
+
+        await expect(guard.canActivate(context)).resolves.toBe(false);
     });
 
-    it("should identify non-M2M tokens when sub differs from client_id", async () => {
-        mockIntrospectOAuth2Token.mockResolvedValue({
-            data: {
-                active: true,
-                client_id: "client-id",
-                sub: "user-subject",
-                scope: "openid",
-            },
-        });
+    it("should return true and set request.user for a resolved real user (non-integration role)", async () => {
+        const realUser = {
+            isM2M: false,
+            _id: "u1",
+            id: "u1",
+            role: { main: "admin" },
+            status: "active",
+        };
+        tokenIdentity.resolveBearerToken.mockResolvedValue(realUser);
 
         const { context, request } = createMockContext("Bearer user-token");
 
         const result = await guard.canActivate(context);
 
         expect(result).toBe(true);
-        expect(request.user.isM2M).toBe(false);
+        expect(request.user).toEqual(realUser);
     });
 });

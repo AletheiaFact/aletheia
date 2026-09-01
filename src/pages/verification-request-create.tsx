@@ -12,6 +12,7 @@ import CreateVerificationRequestView from "../components/VerificationRequest/ver
 
 const CreateVerificationRequestPage: NextPage<any> = ({
     sitekey,
+    captcha,
     nameSpace,
 }) => {
     const { t } = useTranslation();
@@ -19,6 +20,7 @@ const CreateVerificationRequestPage: NextPage<any> = ({
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setCaptchaConfig(captcha));
     return (
         <>
             <Seo
@@ -37,6 +39,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            captcha: query.captcha,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };

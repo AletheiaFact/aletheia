@@ -47,6 +47,16 @@ export class NotificationService {
         return result.data;
     }
 
+    async deleteSubscriber(subscriberId: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        const result = await this.novu.subscribers.delete(subscriberId);
+
+        return result.data;
+    }
+
     async sendEmail(subscriberId: string, email: string) {
         if (!this.novuIsConfigured()) {
             return;
@@ -125,6 +135,27 @@ export class NotificationService {
         const result = await this.novu.topics.removeSubscribers(key, {
             subscribers: subscribersId,
         });
+
+        return result.data;
+    }
+
+    async sendCommitteeInterestApplication(payload: Record<string, string>) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        // Recipient is a fixed Subscriber managed in the Novu dashboard
+        // (Subscribers > "committee-interest-coordination"), not app config —
+        // whoever owns the Committee inbox can update it there directly.
+        const result = await this.novu.trigger(
+            "committee-interest-application",
+            {
+                to: {
+                    subscriberId: "committee-interest-coordination",
+                },
+                payload,
+            }
+        );
 
         return result.data;
     }

@@ -13,6 +13,7 @@ import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
+import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
@@ -26,7 +27,8 @@ export class UsersService {
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(User.name) private UserModel: Model<UserDocument>,
         private oryService: OryService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private historyService: HistoryService
     ) {}
 
     async findAll(userQuery: GetUsersDTO): Promise<UserDocument[]> {
@@ -166,6 +168,38 @@ export class UsersService {
             this.logger.log(`User ${user._id} changed first password`);
             user.save();
         }
+    }
+
+    /**
+     * Permanently deletes a user's account (LGPD/GDPR erasure). Removes every
+     * copy of the user's PII: de-identifies their audit-trail entries, deletes
+     * the external Novu subscriber, deletes the Ory identity, and finally
+     * hard-deletes the Mongo user document. External steps are best-effort so a
+     * processor outage does not leave a half-deleted, unreachable account — the
+     * Mongo user is deleted last, making the operation safely retryable.
+     */
+    async deleteAccount(userId: string | Types.ObjectId) {
+        const user = await this.getById(userId);
+        const id = user._id.toString();
+
+        await this.historyService.scrubUserReferences(id);
+
+        try {
+            await this.notificationService.deleteSubscriber(id);
+        } catch (e) {
+            this.logger.error(`Failed to delete Novu subscriber ${id}`, e);
+        }
+
+        try {
+            if (user.oryId) {
+                await this.oryService.deleteIdentity(user.oryId);
+            }
+        } catch (e) {
+            this.logger.error(`Failed to delete Ory identity for user ${id}`, e);
+        }
+
+        await this.UserModel.findByIdAndDelete(id);
+        this.logger.log(`Deleted account ${id}`);
     }
 
     async updateUser(

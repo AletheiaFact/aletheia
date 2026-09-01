@@ -131,7 +131,7 @@ The platform is organized into 18 main product areas:
 
 ### Infrastructure
 - **Container**: Docker
-- **Monitoring**: New Relic, Umami
+- **Monitoring**: Umami
 - **Notifications**: Novu
 - **Feature Flags**: GitLab/Unleash
 - **Testing**: Jest, Cypress

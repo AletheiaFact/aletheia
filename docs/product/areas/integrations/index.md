@@ -29,7 +29,7 @@ The Integration System connects Aletheia with external services and platforms, e
 - [Authentication Services](./features/authentication-services.md) - Ory Kratos
 - [Storage Services](./features/storage-services.md) - AWS S3
 - [Email Services](./features/email-services.md) - SMTP providers
-- [Analytics Services](./features/analytics-services.md) - Umami, New Relic
+- [Analytics Services](./features/analytics-services.md) - Umami
 
 ### Development Tools
 - [Feature Flags](./features/feature-flags-integration.md) - GitLab/Unleash
@@ -53,7 +53,6 @@ The Integration System connects Aletheia with external services and platforms, e
 
 ### Analytics & Monitoring
 - **Umami**: Web analytics
-- **New Relic**: Performance monitoring
 - **GitLab**: Feature flags
 
 ### Development

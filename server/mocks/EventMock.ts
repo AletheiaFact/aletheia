@@ -54,3 +54,9 @@ export const mockRequest = {
 export const mockFeatureFlagService = {
     isEnableEventsFeature: vi.fn(),
 };
+
+export const mockCaptchaService = {
+    validate: vi.fn(),
+    getClientConfig: vi.fn(),
+    getChallenge: vi.fn(),
+};

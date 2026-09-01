@@ -1,6 +1,7 @@
 import { Content } from "../types/Content";
 import { Personality } from "../types/Personality";
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
+import { CaptchaClientConfig } from "../types/Captcha";
 
 export enum ActionTypes {
     SET_WEBSOCKET_URL,
@@ -37,6 +38,7 @@ export enum ActionTypes {
     SET_SEARCH_OVERLAY_NAME,
     SET_STATUS_FILTER_USED,
     SET_IMPACT_AREA_FILTER_USED,
+    SET_CAPTCHA_CONFIG,
 }
 
 export enum SearchTypes {
@@ -86,4 +88,5 @@ export interface RootState {
     selectedTarget: any;
     selectedContent: Content;
     sitekey: string;
+    captcha: CaptchaClientConfig;
 }

@@ -7,6 +7,7 @@ import { Reflector } from "@nestjs/core";
 import { UsersService } from "../../server/users/users.service";
 import { ConfigService } from "@nestjs/config";
 import { toError } from "../util/error-handling";
+import { TokenIdentityService } from "./token-identity.service";
 
 @Injectable()
 export class SessionGuard extends BaseGuard {
@@ -15,7 +16,8 @@ export class SessionGuard extends BaseGuard {
     constructor(
         protected configService: ConfigService,
         protected reflector: Reflector,
-        private readonly usersService: UsersService
+        private readonly usersService: UsersService,
+        private readonly tokenIdentity: TokenIdentityService
     ) {
         super(configService, reflector);
     }
@@ -54,8 +56,15 @@ export class SessionGuard extends BaseGuard {
                         this.configService.get<string>("ory.access_token"),
                 });
                 const ory = new FrontendApi(oryConfig);
+                // Accept both browser cookie sessions (ory_session_…) and
+                // native/API-flow session tokens (ory_st_…) sent via the
+                // X-Session-Token header. The website keeps using the cookie;
+                // native mobile apps that log in through Ory's API flow send
+                // the token so they can call authenticated endpoints such as
+                // DELETE /api/me for in-app account deletion.
                 const { data: session } = await ory.toSession({
                     cookie: request.header("Cookie"),
+                    xSessionToken: request.header("X-Session-Token"),
                 });
 
                 const mongoUserId = session?.identity?.traits?.user_id;
@@ -76,13 +85,9 @@ export class SessionGuard extends BaseGuard {
                     );
                 }
 
-                const expectedAffiliation =
-                    this.configService.get<string>("app_affiliation");
-                const appAffiliation =
-                    session?.identity?.traits?.app_affiliation;
-                if (appAffiliation !== expectedAffiliation) {
+                if (!this.tokenIdentity.isAffiliationValid(session?.identity?.traits)) {
                     this.logger.error(
-                        `Affiliation mismatch: expected ${expectedAffiliation}, got ${appAffiliation}`
+                        `Affiliation mismatch: expected ${this.configService.get<string>("app_affiliation")}, got ${session?.identity?.traits?.app_affiliation}`
                     );
                     await this.logoutUser(ory, request);
                     return this.checkAndRedirect(
@@ -93,14 +98,10 @@ export class SessionGuard extends BaseGuard {
                     );
                 }
 
-                request.user = {
-                    isM2M: false,
-                    _id: session?.identity?.traits?.user_id,
-                    // Needed to enable feature flag for specific users
-                    id: session?.identity?.traits?.user_id,
-                    role: session?.identity?.traits?.role,
-                    status: session?.identity?.state,
-                };
+                request.user = this.tokenIdentity.buildIdentityUser(
+                    session?.identity?.traits,
+                    session?.identity?.state
+                );
 
                 const overridePublicRoutes =
                     session?.identity?.traits?.role.main === Roles.Regular &&

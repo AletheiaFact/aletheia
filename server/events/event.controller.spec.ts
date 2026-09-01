@@ -11,8 +11,10 @@ import {
     mockEventsService,
     mockFeatureFlagService,
     mockViewService,
+    mockCaptchaService
 } from "../mocks/EventMock";
 import { EventsStatus } from "../types/enums";
+import { CaptchaService } from "../captcha/captcha.service";
 
 describe("EventsController (Unit)", () => {
     let controller: EventsController;
@@ -25,6 +27,7 @@ describe("EventsController (Unit)", () => {
                 { provide: EventsService, useValue: mockEventsService },
                 { provide: ViewService, useValue: mockViewService },
                 { provide: FeatureFlagService, useValue: mockFeatureFlagService },
+                { provide: CaptchaService, useValue: mockCaptchaService },
             ],
         })
             .overrideGuard(AbilitiesGuard)

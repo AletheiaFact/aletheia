@@ -8,6 +8,9 @@ export const mockNovu = () => ({
         identify: vi.fn<() => Promise<any>>().mockResolvedValue({
             data: { subscriberId: "sub-123" },
         }),
+        delete: vi.fn<() => Promise<any>>().mockResolvedValue({
+            data: { acknowledged: true },
+        }),
     },
     trigger: vi.fn<() => Promise<any>>().mockResolvedValue({
         data: { acknowledged: true, transactionId: "tx-123" },

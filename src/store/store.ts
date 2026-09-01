@@ -236,6 +236,14 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
+        case ActionTypes.SET_CAPTCHA_CONFIG:
+            return {
+                ...state,
+                captcha: action.captcha,
+                // Keep any existing sitekey if this config omits one, so a
+                // captcha-less dispatch can't clear a previously set sitekey.
+                sitekey: action.captcha?.sitekey ?? state.sitekey,
+            };
         default:
             return state;
     }

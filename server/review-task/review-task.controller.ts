@@ -39,7 +39,7 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Get("api/reviewtask")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const {
             page = 0,
@@ -89,14 +89,14 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Get("api/reviewtask/:id")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async getById(@Param("id") id: string) {
         return this.reviewTaskService.getById(id);
     }
 
     @ApiTags("review-task")
     @Post("api/reviewtask")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async create(@Body() createReviewTask: CreateReviewTaskDTO): Promise<any> {
         if (createReviewTask.recaptcha) {
             const validateCaptcha = await this.captchaService.validate(
@@ -111,7 +111,7 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Put("api/reviewtask/save-draft/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async saveDraft(
         @Param("data_hash") data_hash: string,
         @Body() saveDraftBody: SaveDraftDTO
@@ -121,7 +121,7 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Put("api/reviewtask/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async autoSaveDraft(
         @Param("data_hash") data_hash: string,
         @Body() reviewTaskBody: UpdateReviewTaskDTO
@@ -145,14 +145,14 @@ export class ReviewTaskController {
     // TODO: remove hash from the url
     @ApiTags("review-task")
     @Get("api/reviewtask/hash/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async getByDataHash(@Param("data_hash") data_hash: string) {
         return this.reviewTaskService.getReviewTaskByDataHash(data_hash);
     }
 
     @ApiTags("review-task")
     @Get("api/reviewtask/editor-content/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async getEditorContentByDataHash(
         @Param("data_hash") data_hash: string,
         @Query() query: { reportModel: string; reviewTaskType: string }
@@ -170,7 +170,7 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Put("api/reviewtask/add-comment/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async addComment(
         @Param("data_hash") data_hash: string,
         @Body() body: { comment: any }
@@ -180,7 +180,7 @@ export class ReviewTaskController {
 
     @ApiTags("review-task")
     @Put("api/reviewtask/delete-comment/:data_hash")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async deleteComment(
         @Param("data_hash") data_hash: string,
         @Body() body: { commentId: string }
@@ -190,7 +190,7 @@ export class ReviewTaskController {
 
     @ApiTags("pages")
     @Get("kanban")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     public async kanbanList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const enableCollaborativeEditor =
@@ -206,6 +206,7 @@ export class ReviewTaskController {
 
         const queryObject = Object.assign(parsedUrl.query, {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            captcha: this.captchaService.getClientConfig(),
             enableCollaborativeEditor,
             enableEditorAnnotations,
             enableCopilotChatBot,

@@ -170,6 +170,16 @@ Active flags:
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
 
+## Captcha Provider
+
+Captcha verification is pluggable via `server/captcha/`: a `CaptchaProvider`
+interface + `CAPTCHA_PROVIDER` DI token, selected by `captcha.provider` config
+(`recaptcha` default, or `none` to disable captcha entirely). All existing
+`captchaService.validate(token)` call sites and the ~20 SSR sitekey-injection
+sites are unaffected by provider choice. See
+`server/captcha/WRITING-A-PROVIDER.md` for adding an open provider (ALTCHA is
+provided as a build-excluded `.example.ts(x)` reference, not a dependency).
+
 ## Key Technical Details
 
 1. **TypeScript**: `strict: false` in root `tsconfig.json`. Three configs: root (type-check only, `noEmit: true`), `server/tsconfig.json` (backend build), `src/tsconfig.json` (frontend)
@@ -188,9 +198,9 @@ Active flags:
 
 8. **Analytics**: Umami v2 (configured via `NEXT_PUBLIC_UMAMI_SITE_ID`)
 
-9. **Monitoring**: New Relic for production
+9. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
 
-10. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
+11. **LLM / Embeddings Providers**: AI features (copilot, summarization, verification-request embeddings) use injectable `LLMProvider` / `EmbeddingsProvider` abstractions (`server/llm/`, DI tokens `LLM_PROVIDER` / `EMBEDDINGS_PROVIDER`, bound by the global `LlmModule`). The default implementations target any OpenAI-compatible endpoint. Configure via the `llm` block in `config.yaml` (`api_key`, optional `base_url`, `chat_model`, `temperature`, `embeddings_model`); `api_key` falls back to `openai.api_key` then `OPENAI_API_KEY`. Point `llm.base_url` at a self-hosted/open-weight server (Ollama, vLLM, LocalAI, Azure) to swap providers with no code change; when no key is configured, a placeholder API key is supplied automatically for keyless local servers. Leave `embeddings_model` unset to preserve stored-vector compatibility. See `server/llm/USING-A-LOCAL-PROVIDER.md` for an Ollama setup example.
 
 ## Development Setup
 
