@@ -1,13 +1,15 @@
 import { Injectable, Inject, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import type { IPersonalityService } from "../../interfaces/personality.service.interface";
+import type {
+    IPersonalityService,
+    PersonalityRef,
+} from "../../interfaces/personality.service.interface";
 import {
     IPersonality,
     ICombinedListResult,
     IFindAllOptions,
     IFindAllResult,
 } from "../../interfaces/personality.interface";
-import type { LeanDocument } from "mongoose";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { DuplicateKeyError, NotImplementedError } from "../../database/errors";
@@ -261,7 +263,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         }
     }
     async getById(
-        id: string | LeanDocument<IPersonality>,
+        id: PersonalityRef,
         _options?: { language?: string; nameSpace?: string }
     ): Promise<IPersonality> {
         const idStr =
