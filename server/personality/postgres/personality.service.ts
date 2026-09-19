@@ -12,7 +12,7 @@ import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
 import { eq, and, sql, desc, asc } from "drizzle-orm";
-import slugify from "slugify";
+import { deriveSlug, defaultDescription } from "../shared/personality.rules";
 import { personality } from "./schema/personality.schema";
 import type {
     PersonalityInsert,
@@ -105,7 +105,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         // slug), so mirror that rather than honoring a caller-supplied slug.
         const values: PersonalityInsert = {
             name: data.name,
-            slug: slugify(data.name, { lower: true, strict: true }),
+            slug: deriveSlug(data.name),
             description: data.description ?? "",
             wikidata: data.wikidata ?? null,
             isHidden: data.isHidden ?? false,
@@ -147,7 +147,7 @@ export class PostgresPersonalityService implements IPersonalityService {
                 .limit(1);
             if (existing) return this.toEntity(existing);
         }
-        const slug = slugify(data.name, { lower: true, strict: true });
+        const slug = deriveSlug(data.name);
 
         // Slug-dedup + wikidata backfill (parity with the Mongo impl): if a
         // non-deleted personality already owns this slug, reuse it — and if it
@@ -177,8 +177,10 @@ export class PostgresPersonalityService implements IPersonalityService {
         const values: PersonalityInsert = {
             name: data.name,
             slug,
-            description:
-                data.wikidata?.description || `Personality: ${data.name}`,
+            description: defaultDescription(
+                data.name,
+                data.wikidata?.description
+            ),
             wikidata: wikidataId,
         };
         const [created] = await this.db
@@ -254,6 +256,11 @@ export class PostgresPersonalityService implements IPersonalityService {
             "isHidden",
         ] as const) {
             if (body[key] !== undefined) patch[key] = body[key];
+        }
+        // Mongo parity: a name change re-derives the slug (caller-supplied
+        // slugs are overridden by the derived one).
+        if (body.name) {
+            patch.slug = deriveSlug(body.name);
         }
         const [row] = await this.db
             .update(personality)
