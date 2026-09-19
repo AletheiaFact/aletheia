@@ -12,7 +12,7 @@
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "env-cmd --silent vitest run",
         "test:unit": "env-cmd --silent vitest run --project unit",
-        "test:pg": "DB_TYPE=postgres env-cmd --silent vitest run",
+        "test:pg": "DB_TYPE=postgres env-cmd --silent vitest run --project unit",
         "test:e2e": "env-cmd --silent vitest run --project e2e",
         "test:watch": "env-cmd --silent vitest",
         "test:coverage": "env-cmd --silent vitest run --coverage",

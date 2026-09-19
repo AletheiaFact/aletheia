@@ -143,23 +143,35 @@ Personality is the template. For module `<m>`:
 
 ---
 
-## 6. Phase 0 completion — remaining work (personality MR)
+## 6. Phase 0 completion — status (personality MR)
 
-Ordered; items 1–2 unblock everything else.
+All completion items landed on 2026-09-18:
 
-1. **Commit the uncommitted parity fixes** (working tree): `toEntity()` `_id` mapper, `NotFoundException` parity, soft-delete restore on create, slug always derived from name, findOrCreate slug-dedup + wikidata backfill + description template, `SET LOCAL` threshold in transaction, partial unique index excluding soft-deletes (regenerated migration 0001).
-2. **Purge merge contamination**: the branch's merge commits reverted stage-side changes (~230 files, indent flips + real code reverts in `tracking`, `history`, `VerificationRequest*`). Restore `origin/stage` versions of every file not touched by the branch's non-merge commits.
-3. **Register the Mongo backend in the contract suite and un-gate it** (D4.1) — mongodb-memory-server factory + `MongoPersonalityService` with stubbed deps; delete the `DB_TYPE` gate from `personality-contract.spec.ts`.
-4. **Fix the two live silent-wrongs**:
-   - `count(query)` ignores `isHidden` — `stats.service.ts` gets wrong counts. Honor `isHidden`/`isDeleted`; guard other keys with `NotImplementedError`.
-   - `listAll` with `pageSize=0`: Mongo `limit(0)` = unlimited; PG `LIMIT 0` = zero rows — `sitemap.service.ts` would emit an empty sitemap. Treat `0` as no limit; guard unsupported `query` keys / `order === "random"` / `withSuggestions` with `NotImplementedError` instead of ignoring them.
-5. **Extract `shared/personality.rules.ts`** (D2): slug derivation, description template, `verifyInputsQuery` normalization; both impls consume.
-6. **`DuplicateKeyError`** + PG `23505` mapping + fix `personality.controller.ts` wikidata-duplicate catch (keep the Mongo path working).
-7. **Add `legacy_object_id` to the personality schema** (regenerate migration 0001 — free while nothing is deployed).
-8. **Drop `LeanDocument`** from `IPersonalityService` (neutral type).
-9. **Testing hardening (D4.2/4.3)**: remove `DB_TYPE` from `.env`, add `test:pg` script, CI canary spec, postgres boot smoke test.
-10. **Pin `drizzle-orm` / `drizzle-kit` exact versions** (D1).
-11. Re-verify: `yarn build-ts`, full suite both backends, `drizzle-kit check`.
+1. ✅ Parity fixes committed: `toEntity()` `_id` mapper, `NotFoundException` on missing rows, soft-delete restore on create, slug always derived from name, findOrCreate slug-dedup + wikidata backfill + description template, `SET LOCAL` threshold in transaction, partial unique index excluding soft-deletes.
+2. ✅ Merge contamination purged (~208 files restored to stage; PR diff is postgres-only).
+3. ✅ Contract suite runs BOTH backends unconditionally (D4.1): Mongo via `server/tests/mongo-contract-setup.ts` (mongodb-memory-server per worker), Postgres via pglite — no `DB_TYPE` gate.
+4. ✅ Silent-wrongs fixed: `count` honors `isHidden` + guards unsupported keys; `listAll` treats `pageSize=0` as unlimited (sitemap) and guards `random`/`withSuggestions`/unsupported query keys with `NotImplementedError`.
+5. ✅ `shared/personality.rules.ts` (D2): `deriveSlug`, `defaultDescription` — both impls consume; Postgres `update` now re-derives slug on name change (Mongo parity).
+6. ✅ `DuplicateKeyError` (HTTP 409) + PG `23505` mapping; controller rethrows it on the Postgres path.
+7. ✅ `legacy_object_id` column + partial unique index (migration 0001 regenerated in place).
+8. ✅ `LeanDocument` dropped from the interface (`PersonalityRef` neutral type).
+9. ✅ Testing hardening (D4.2): `DB_TYPE` removed from local `.env`, `test:pg` script, `db-type-canary.spec.ts` + `CI_EXPECT_DB_TYPE` in the `vitest-postgres` job.
+10. ✅ `drizzle-orm@0.36.4` / `drizzle-kit@0.28.1` pinned exactly (D1).
+11. ✅ Bonus fix on the Mongo path (documented move-only exception): `create()` without a wikidata id no longer restores an arbitrary soft-deleted row.
+
+**Descoped — boot smoke test (D4.3):** a full-app boot under `DB_TYPE=postgres` is structurally impossible until every module has a postgres branch — each unported module's `@InjectModel` fails without a Mongoose root connection. The `DB_TYPE=postgres` boot switch is therefore *theoretical* until later phases; dark shipping is unaffected (prod runs mongodb). Revisit per phase; add the smoke test once the module graph can boot.
+
+### Known divergences (documented, intentional)
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `getById` on missing/deleted id | resolves `null` (callers then 500) | throws `NotFoundException` (404) | contract normalized as "no usable entity"; PG keeps the better 404 |
+| `update` on missing id | upserts (`{upsert: true}`) | throws `NotFoundException` | Mongo upsert looks accidental; not ported |
+| `create` without `description` | Mongoose validation error (required) | defaults to `""` | pg-only spec covers it |
+| duplicate live wikidata on `create` | error swallowed → 201 empty body | `DuplicateKeyError` → 409 | controller keeps Mongo path; PG surfaces conflict |
+| soft-deleted wikidata + `findOrCreatePersonality` | `E11000` (sparse unique index covers deleted rows) | succeeds (partial index excludes deleted) | index semantics; PG behavior is the intended one |
+| `listAll` enrichment | rows post-processed (wikidata props + review stats) | raw entities, guarded 501s for unsupported surface | postProcess needs claim/claim-review (Phases 2–3) |
+| Mongo impl `listAll` positional args | `(…, query, filter, language, withSuggestions)` — differs from the interface order | interface order | prod behavior left as-is; interface is canonical |
 
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
