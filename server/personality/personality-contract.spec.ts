@@ -1,3 +1,4 @@
+import { NotFoundException } from "@nestjs/common";
 import { resetTestDrizzle, getTestDrizzle } from "../tests/postgres-setup";
 import { PostgresPersonalityService } from "./postgres/personality.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
@@ -23,9 +24,14 @@ if ((process.env.DB_TYPE ?? "mongodb") === "postgres") {
             const wikidataStub = {
                 queryWikibaseEntities: async () => [],
             } as any;
+            const configStub = {
+                get: (key: string) =>
+                    key === "db.postgres.fuzzy_threshold" ? 0.3 : undefined,
+            } as any;
             return new PostgresPersonalityService(
                 db,
-                wikidataStub
+                wikidataStub,
+                configStub
             ) as unknown as IPersonalityService;
         },
     });
@@ -141,8 +147,123 @@ if (backends.length === 0) {
             });
             await service.delete((c as any).id);
             const found = await service.getDeletedPersonalityByWikidata("Q1");
-            expect((found as any).id).toBe((c as any).id);
+            expect((found as any)._id).toBe((c as any)._id);
             expect((found as any).isDeleted).toBe(true);
+        });
+
+        // ---- parity assertions (contract-break regressions) ----
+
+        it("returned entities expose `_id` (Mongo-parity id field)", async () => {
+            const created = await service.create({
+                name: "Ada",
+                slug: "ada",
+                description: "x",
+            });
+            expect((created as any)._id).toBeDefined();
+
+            const fetched = await service.getById((created as any)._id);
+            expect((fetched as any)._id).toBe((created as any)._id);
+        });
+
+        it("getById on a missing id throws NotFoundException (404), not a generic error", async () => {
+            await expect(
+                service.getById("00000000-0000-0000-0000-000000000000")
+            ).rejects.toBeInstanceOf(NotFoundException);
+        });
+
+        it("getPersonalityBySlug on a missing slug throws NotFoundException (404)", async () => {
+            await expect(
+                service.getPersonalityBySlug({ slug: "does-not-exist" })
+            ).rejects.toBeInstanceOf(NotFoundException);
+        });
+
+        it("create auto-generates a slug when none is supplied", async () => {
+            const created = await service.create({
+                name: "Ada Lovelace",
+                description: "x",
+            });
+            expect((created as any).slug).toBe("ada-lovelace");
+        });
+
+        it("create defaults description to empty string when omitted", async () => {
+            const created = await service.create({
+                name: "No Desc",
+                slug: "no-desc",
+            });
+            expect((created as any).description).toBe("");
+        });
+
+        it("a soft-deleted wikidata value does not block creating a live one", async () => {
+            const first = await service.create({
+                name: "Ada",
+                slug: "ada",
+                description: "x",
+                wikidata: "Q42",
+            });
+            await service.delete((first as any)._id);
+
+            // Must NOT throw a unique-violation — the partial index excludes
+            // soft-deleted rows.
+            const second = await service.findOrCreatePersonality({
+                name: "Ada Again",
+                wikidata: { id: "Q42" },
+            });
+            expect((second as any)._id).toBeDefined();
+            expect((second as any)._id).not.toBe((first as any)._id);
+        });
+
+        it("create restores a soft-deleted row with the same wikidata (does not duplicate)", async () => {
+            const first = await service.create({
+                name: "Ada",
+                description: "x",
+                wikidata: "Q7259",
+            });
+            await service.delete((first as any)._id);
+
+            const again = await service.create({
+                name: "Ada",
+                description: "x",
+                wikidata: "Q7259",
+            });
+            // Same row, brought back to life — not a second insert.
+            expect((again as any)._id).toBe((first as any)._id);
+            expect((again as any).isDeleted).toBe(false);
+        });
+
+        it("create derives slug from name, ignoring any caller-supplied slug", async () => {
+            const created = await service.create({
+                name: "Ada Lovelace",
+                slug: "totally-different",
+                description: "x",
+            });
+            expect((created as any).slug).toBe("ada-lovelace");
+        });
+
+        it("findOrCreatePersonality dedups on slug and backfills missing wikidata", async () => {
+            // Seed a row that shares the slug but has no wikidata yet.
+            const seeded = await service.create({
+                name: "Ada Lovelace",
+                description: "x",
+            });
+            expect((seeded as any).wikidata ?? null).toBeNull();
+
+            const result = await service.findOrCreatePersonality({
+                name: "Ada Lovelace",
+                wikidata: { id: "Q7259" },
+            });
+            // Same row (slug-dedup), now backfilled with the wikidata id.
+            expect((result as any)._id).toBe((seeded as any)._id);
+            expect((result as any).wikidata).toBe("Q7259");
+        });
+
+        it("findOrCreatePersonality defaults description when none is provided", async () => {
+            const created = await service.findOrCreatePersonality({
+                name: "Grace Hopper",
+                wikidata: { id: "Q11641" },
+            });
+            expect((created as any).description).toBe(
+                "Personality: Grace Hopper"
+            );
         });
     });
 }

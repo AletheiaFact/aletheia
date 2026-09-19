@@ -1,5 +1,5 @@
 {
-  "id": "dc29e184-23eb-40a9-9552-a5297f53eeb3",
+  "id": "acfc3139-3b57-453e-9c63-3e419cf8ba91",
   "prevId": "d64008b7-0e63-4755-a99f-e63d811dcfbb",
   "version": "7",
   "dialect": "postgresql",
@@ -86,7 +86,7 @@
             }
           ],
           "isUnique": true,
-          "where": "\"personality\".\"wikidata\" IS NOT NULL",
+          "where": "\"personality\".\"wikidata\" IS NOT NULL AND \"personality\".\"is_deleted\" = false",
           "concurrently": false,
           "method": "btree",
           "with": {}

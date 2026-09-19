@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS "personality" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "personality_wikidata_uq" ON "personality" USING btree ("wikidata") WHERE "personality"."wikidata" IS NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "personality_wikidata_uq" ON "personality" USING btree ("wikidata") WHERE "personality"."wikidata" IS NOT NULL AND "personality"."is_deleted" = false;--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "personality_slug_idx" ON "personality" USING btree ("slug");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "personality_name_trgm_idx" ON "personality" USING gin ("name" gin_trgm_ops);

@@ -13,7 +13,15 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             const wikidataStub = {
                 queryWikibaseEntities: async () => [],
             } as any;
-            service = new PostgresPersonalityService(db, wikidataStub);
+            const configStub = {
+                get: (key: string) =>
+                    key === "db.postgres.fuzzy_threshold" ? 0.3 : undefined,
+            } as any;
+            service = new PostgresPersonalityService(
+                db,
+                wikidataStub,
+                configStub
+            );
         });
 
         it("findAll fuzzy-matches a 1-edit typo on name", async () => {
@@ -63,7 +71,15 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             const wikidataStub = {
                 queryWikibaseEntities: async () => [],
             } as any;
-            service = new PostgresPersonalityService(db, wikidataStub);
+            const configStub = {
+                get: (key: string) =>
+                    key === "db.postgres.fuzzy_threshold" ? 0.3 : undefined,
+            } as any;
+            service = new PostgresPersonalityService(
+                db,
+                wikidataStub,
+                configStub
+            );
         });
 
         it.each([
