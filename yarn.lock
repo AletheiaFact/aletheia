@@ -12306,8 +12306,8 @@ __metadata:
     domino: ^2.1.6
     dompurify: 3.4.12
     dotenv: ^16.4.5
-    drizzle-kit: ^0.28.0
-    drizzle-orm: ^0.36.0
+    drizzle-kit: 0.28.1
+    drizzle-orm: 0.36.4
     env-cmd: ^10.1.0
     eslint: ^9.39.2
     eslint-config-next: 15.5.15
@@ -15728,7 +15728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drizzle-kit@npm:^0.28.0":
+"drizzle-kit@npm:0.28.1":
   version: 0.28.1
   resolution: "drizzle-kit@npm:0.28.1"
   dependencies:
@@ -15742,7 +15742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drizzle-orm@npm:^0.36.0":
+"drizzle-orm@npm:0.36.4":
   version: 0.36.4
   resolution: "drizzle-orm@npm:0.36.4"
   peerDependencies:
