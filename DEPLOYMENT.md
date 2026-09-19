@@ -9,6 +9,11 @@ PRODUCTION_AWS_ACCESS_KEY_ID=...
 PRODUCTION_AWS_SECRET_ACCESS_KEY=...
 ```
 
+## Caching
+Cloudflare is in front of the production server. Read [CACHING.md](CACHING.md)
+before you change a `Cache-Control` header or a Cloudflare rule. That document
+also holds the cache purge command that each production deploy must run.
+
 ## Troubleshooting
 
 ### Database connection error

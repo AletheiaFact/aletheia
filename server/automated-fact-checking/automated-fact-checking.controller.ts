@@ -11,7 +11,7 @@ export class AutomatedFactCheckingController {
 
     @ApiTags("automated-fact-checking")
     @Post("api/ai-fact-checking")
-    @Header("Cache-Control", "no-cache")
+    @Header("Cache-Control", "private, no-cache")
     async create(@Body() { claim, context }: CreateAutomatedFactCheckingDTO) {
         return this.automatedFactCheckingService.getResponseFromAgents({
             claim,

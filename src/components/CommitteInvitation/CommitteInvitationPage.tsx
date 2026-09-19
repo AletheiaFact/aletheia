@@ -4,6 +4,7 @@ import CommitteInvitationOurMission from "./sections/CommitteInvitationOurMissio
 import CommitteInvitationBenefits from "./sections/CommitteInvitationBenefits";
 import CommitteInvitationCTA from "./sections/CommitteInvitationCTA";
 import { CommitteInvitationBoxStyle } from "./CommitteInvitationPage.style";
+import CommitteInvitationForm from "./sections/CommitteInvitationForm/CommitteInvitationForm";
 
 const CommitteInvitationPage = () => {
     return (
@@ -12,6 +13,7 @@ const CommitteInvitationPage = () => {
             <CommitteInvitationOurMission />
             <CommitteInvitationBenefits />
             <CommitteInvitationCTA />
+            <CommitteInvitationForm />
         </CommitteInvitationBoxStyle>
     );
 };

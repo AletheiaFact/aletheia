@@ -97,8 +97,135 @@
         },
         "badge": "Open spots",
         "formTitle": "Express your interest",
-        "formDescription": "Fill out the form and our team will contact you to present the next steps.",
-        "formButton": "Access form",
+        "formDescription": "Fill out the form right here, in less than 3 minutes. Our team will contact you to present the next steps.",
+        "formButton": "Fill out the form",
         "orContact": "or"
+    },
+    "steps": {
+        "title": "STEPS OF THE JOINING PROCESS",
+        "items": {
+            "interest": {
+                "title": "Express your interest",
+                "description": "You submit this form. It takes about three minutes."
+            },
+            "analysis": {
+                "title": "Team review",
+                "description": "We check your profile, area, and corresponding regional hub."
+            },
+            "alignment": {
+                "title": "Alignment conversation",
+                "description": "A 30-minute online meeting with your hub's coordination."
+            },
+            "onboarding": {
+                "title": "Joining and onboarding",
+                "description": "Signing the participation agreement and access to the Committee's tools."
+            }
+        }
+    },
+    "form": {
+        "title": "Interest form",
+        "subtitle": "4 short blocks · about 3 minutes · you can go back at any time.",
+        "stepCount": "Step {{current}} of {{total}}",
+        "regionLabel": "{{region}} Hub",
+        "backButton": "Back",
+        "continueButton": "Continue",
+        "submitButton": "Submit application",
+        "submitSuccess": "Application submitted successfully!",
+        "submitError": "We couldn't submit your application. Please try again in a moment.",
+        "fieldCount": "{{count}} fields",
+        "lastStep": "Last step",
+        "steps": {
+            "personal": "Personal details",
+            "profile": "Profile",
+            "contribution": "Your contribution",
+            "consent": "Consent"
+        },
+        "personal": {
+            "description": "We use this information only to contact you about the Committee.",
+            "fullName": "Full name",
+            "email": "Email",
+            "phone": "Phone / WhatsApp",
+            "city": "City",
+            "state": "State",
+            "country": "Country",
+            "autoRegion": "Regional hub automatically assigned based on your state:"
+        },
+        "profile": {
+            "description": "This helps us route you to the working group closest to your practice.",
+            "actingAsLabel": "How do you currently work?",
+            "institution": "Institution or organization (optional)",
+            "role": "Role or position (optional)"
+        },
+        "actingAsOptions": {
+            "teacher": "Educator",
+            "researcher": "Researcher",
+            "student": "Student",
+            "professional": "Professional",
+            "organization": "Organization",
+            "other": "Other"
+        },
+        "contribution": {
+            "description": "Select as many options as make sense. Nothing here is final.",
+            "interestAreasLabel": "Area of interest in the Committee",
+            "contributionLabel": "How would you like to contribute",
+            "availabilityLabel": "Availability for meetings and training",
+            "priorExperience": "Prior experience with fact-checking, media literacy, or misinformation (optional)",
+            "motivation": "Brief motivation to participate"
+        },
+        "interestAreaOptions": {
+            "research": "Research",
+            "mediaEducation": "Media literacy",
+            "communication": "Communication",
+            "technology": "Technology",
+            "regionalOutreach": "Regional outreach"
+        },
+        "contributionOptions": {
+            "factChecking": "Fact-checking claims",
+            "workshops": "Workshops and training",
+            "contentProduction": "Content production",
+            "softwareDevelopment": "Software development",
+            "institutionalPartnerships": "Institutional partnerships",
+            "methodologicalSupport": "Methodological support"
+        },
+        "availabilityOptions": {
+            "morning": "Morning",
+            "afternoon": "Afternoon",
+            "evening": "Evening",
+            "weekends": "Weekends"
+        },
+        "consent": {
+            "description": "Both consents are recorded separately, in accordance with LGPD.",
+            "dataLead": "I authorize the processing of my data",
+            "dataDescription": "by AletheiaFact.org to assess this application and manage my participation in the Committee, under Brazilian Law No. 13,709/2018 (LGPD). I can request access, correction, or deletion at any time.",
+            "commsLead": "I agree to receive communications",
+            "commsDescription": "from the Committee and AletheiaFact.org about meetings, training, and calls for work.",
+            "summaryTitle": "SUMMARY",
+            "summaryName": "Name",
+            "summaryEmail": "Email",
+            "summaryProfile": "Profile",
+            "summaryRegion": "Regional hub"
+        },
+        "success": {
+            "title": "We received your application.",
+            "description": "Our team will review the information and email you the next steps.",
+            "linkedRegion": "You were linked to the {{region}} Hub",
+            "whatHappensNow": "WHAT HAPPENS NOW",
+            "timeline": {
+                "first": {
+                    "label": "Within 5 business days",
+                    "description": "Confirmation of receipt and profile verification by the coordination."
+                },
+                "second": {
+                    "label": "Within 15 days",
+                    "description": "Invitation for an alignment conversation with the indicated regional hub."
+                },
+                "third": {
+                    "label": "After that",
+                    "description": "Participation agreement, access to tools, and the schedule of upcoming meetings."
+                }
+            },
+            "questions": "Questions? Write to",
+            "resetButton": "Submit another application"
+        }
     }
 }

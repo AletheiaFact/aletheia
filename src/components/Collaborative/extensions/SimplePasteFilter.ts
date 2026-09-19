@@ -1,5 +1,5 @@
 import { PlainExtension } from "remirror";
-import { Fragment } from "prosemirror-model";
+import { Fragment } from "@remirror/pm/model";
 
 /**
  * Simple extension that removes hyperlinks from pasted content
