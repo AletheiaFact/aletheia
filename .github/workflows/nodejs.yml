@@ -149,6 +149,10 @@ jobs:
             - name: Run unit tests with DB_TYPE=postgres (pglite)
               env:
                   DB_TYPE: postgres
+                  # Canary: db-type-canary.spec.ts fails this job if the suite
+                  # doesn't actually run under DB_TYPE=postgres (a green job
+                  # must prove its skipIf-gated specs executed).
+                  CI_EXPECT_DB_TYPE: postgres
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: yarn test:unit
 
