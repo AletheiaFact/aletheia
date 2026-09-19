@@ -1,5 +1,5 @@
 {
-  "id": "acfc3139-3b57-453e-9c63-3e419cf8ba91",
+  "id": "ba2b3c3f-cadf-40e8-8edd-6a4bb11e1526",
   "prevId": "d64008b7-0e63-4755-a99f-e63d811dcfbb",
   "version": "7",
   "dialect": "postgresql",
@@ -14,6 +14,12 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "legacy_object_id": {
+          "name": "legacy_object_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -87,6 +93,22 @@
           ],
           "isUnique": true,
           "where": "\"personality\".\"wikidata\" IS NOT NULL AND \"personality\".\"is_deleted\" = false",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "personality_legacy_object_id_uq": {
+          "name": "personality_legacy_object_id_uq",
+          "columns": [
+            {
+              "expression": "legacy_object_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"personality\".\"legacy_object_id\" IS NOT NULL",
           "concurrently": false,
           "method": "btree",
           "with": {}

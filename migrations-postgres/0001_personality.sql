@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "personality" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"legacy_object_id" text,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"description" text NOT NULL,
@@ -12,5 +13,6 @@ CREATE TABLE IF NOT EXISTS "personality" (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "personality_wikidata_uq" ON "personality" USING btree ("wikidata") WHERE "personality"."wikidata" IS NOT NULL AND "personality"."is_deleted" = false;--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "personality_legacy_object_id_uq" ON "personality" USING btree ("legacy_object_id") WHERE "personality"."legacy_object_id" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "personality_slug_idx" ON "personality" USING btree ("slug");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "personality_name_trgm_idx" ON "personality" USING gin ("name" gin_trgm_ops);
