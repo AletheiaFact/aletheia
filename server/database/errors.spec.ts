@@ -1,5 +1,5 @@
 import { ArgumentsHost } from "@nestjs/common";
-import { NotImplementedError } from "./errors";
+import { DuplicateKeyError, NotImplementedError } from "./errors";
 import { AllExceptionsFilter } from "../filters/http-exception.filter";
 
 describe("NotImplementedError", () => {
@@ -16,6 +16,21 @@ describe("NotImplementedError", () => {
         expect(err).toBeInstanceOf(Error);
         expect(err).toBeInstanceOf(NotImplementedError);
         expect(err.name).toBe("NotImplementedError");
+    });
+});
+
+describe("DuplicateKeyError", () => {
+    it("captures the violated fields", () => {
+        const err = new DuplicateKeyError(["wikidata"]);
+        expect(err.fields).toEqual(["wikidata"]);
+        expect(err.message).toContain("wikidata");
+    });
+
+    it("is an instance of Error and DuplicateKeyError", () => {
+        const err = new DuplicateKeyError(["slug"]);
+        expect(err).toBeInstanceOf(Error);
+        expect(err).toBeInstanceOf(DuplicateKeyError);
+        expect(err.name).toBe("DuplicateKeyError");
     });
 });
 
@@ -74,5 +89,22 @@ describe("AllExceptionsFilter mapping for NotImplementedError", () => {
         const message = warnSpy.mock.calls[0][0];
         expect(String(message)).toContain("postgres");
         expect(String(message)).toContain("getReviewStats");
+    });
+
+    it("maps DuplicateKeyError to HTTP 409 with the violated fields", () => {
+        const filter = new AllExceptionsFilter();
+        const { host, status, json } = buildHost();
+
+        filter.catch(new DuplicateKeyError(["wikidata"]), host);
+
+        expect(status).toHaveBeenCalledWith(409);
+        expect(json).toHaveBeenCalledWith(
+            expect.objectContaining({
+                statusCode: 409,
+                error: "Conflict",
+                fields: ["wikidata"],
+                message: expect.stringContaining("wikidata"),
+            })
+        );
     });
 });

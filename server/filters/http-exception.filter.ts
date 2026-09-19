@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { randomUUID } from "crypto";
-import { NotImplementedError } from "../database/errors";
+import { DuplicateKeyError, NotImplementedError } from "../database/errors";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -37,6 +37,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
                 message: exception.message,
                 backend: exception.backend,
                 method: exception.method,
+            });
+            return;
+        }
+
+        if (exception instanceof DuplicateKeyError) {
+            this.logger.warn(
+                `Duplicate key: ${request.method} ${
+                    request.url
+                } | RequestId: ${requestId} | Fields: ${exception.fields.join(
+                    ", "
+                )}`
+            );
+            response.status(HttpStatus.CONFLICT).json({
+                requestId,
+                statusCode: HttpStatus.CONFLICT,
+                timestamp: new Date().toISOString(),
+                path: request.url,
+                error: "Conflict",
+                message: exception.message,
+                fields: exception.fields,
             });
             return;
         }

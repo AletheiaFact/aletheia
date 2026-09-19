@@ -1,6 +1,6 @@
 import { PostgresPersonalityService } from "./postgres/personality.service";
 import { getTestDrizzle, resetTestDrizzle } from "../tests/postgres-setup";
-import { NotImplementedError } from "../database/errors";
+import { DuplicateKeyError, NotImplementedError } from "../database/errors";
 
 describe.skipIf(process.env.DB_TYPE !== "postgres")(
     "personality postgres-only",
@@ -122,6 +122,33 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         it("create defaults description to empty string when omitted (documented divergence: Mongo requires it)", async () => {
             const created = await service.create({ name: "No Desc" });
             expect((created as any).description).toBe("");
+        });
+
+        it("create with an already-live wikidata throws DuplicateKeyError naming the field", async () => {
+            await service.create({
+                name: "First",
+                description: "x",
+                wikidata: "Q42",
+            });
+            await expect(
+                service.create({
+                    name: "Second",
+                    description: "y",
+                    wikidata: "Q42",
+                })
+            ).rejects.toMatchObject(
+                expect.objectContaining({
+                    name: "DuplicateKeyError",
+                    fields: ["wikidata"],
+                })
+            );
+            await expect(
+                service.create({
+                    name: "Second",
+                    description: "y",
+                    wikidata: "Q42",
+                })
+            ).rejects.toBeInstanceOf(DuplicateKeyError);
         });
     }
 );

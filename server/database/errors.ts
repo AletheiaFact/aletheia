@@ -14,6 +14,26 @@
  * and observability tooling can identify which deferred operation was hit.
  * Both are mapped to HTTP 501 by `AllExceptionsFilter`.
  */
+/**
+ * Backend-neutral duplicate-key violation. Each backend maps its driver
+ * error to this at the service boundary (Mongo E11000 / code 11000,
+ * Postgres SQLSTATE 23505) so controllers never inspect driver-specific
+ * error shapes. Mapped to HTTP 409 Conflict by `AllExceptionsFilter`.
+ */
+export class DuplicateKeyError extends Error {
+    public readonly fields: string[];
+
+    constructor(fields: string[], message?: string) {
+        super(
+            message ??
+                `Duplicate value for unique field(s): ${fields.join(", ")}.`
+        );
+        this.name = "DuplicateKeyError";
+        this.fields = fields;
+        Object.setPrototypeOf(this, DuplicateKeyError.prototype);
+    }
+}
+
 export class NotImplementedError extends Error {
     public readonly backend: string;
     public readonly method: string;

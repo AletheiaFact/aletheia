@@ -10,7 +10,7 @@ import {
 import type { LeanDocument } from "mongoose";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
-import { NotImplementedError } from "../../database/errors";
+import { DuplicateKeyError, NotImplementedError } from "../../database/errors";
 import { eq, and, sql, desc, asc } from "drizzle-orm";
 import { deriveSlug, defaultDescription } from "../shared/personality.rules";
 import { personality } from "./schema/personality.schema";
@@ -38,6 +38,39 @@ export class PostgresPersonalityService implements IPersonalityService {
      */
     private toEntity(row: PersonalityRow): IPersonality {
         return { ...row, _id: row.id } as unknown as IPersonality;
+    }
+
+    /**
+     * Map a Postgres unique-violation (SQLSTATE 23505) to the backend-neutral
+     * DuplicateKeyError. Any other error is rethrown untouched. Checks both
+     * the error itself and `cause` (drivers/ORMs differ in wrapping), plus the
+     * message as a fallback for pglite, and derives the violated field from
+     * the constraint name (`personality_<field>_uq`).
+     */
+    private rethrowMapped(error: unknown): never {
+        const e = error as any;
+        const candidates = [e, e?.cause];
+        const hit = candidates.find(
+            (c) =>
+                c &&
+                (c.code === "23505" ||
+                    /duplicate key value violates unique constraint/.test(
+                        String(c.message ?? "")
+                    ))
+        );
+        if (hit) {
+            const constraint: string =
+                hit.constraint ??
+                /unique constraint "([^"]+)"/.exec(
+                    String(hit.message ?? "")
+                )?.[1] ??
+                "";
+            const field = constraint
+                .replace(/^personality_/, "")
+                .replace(/_uq$/, "");
+            throw new DuplicateKeyError([field || "unknown"]);
+        }
+        throw error;
     }
 
     async getWikidataEntities(regex: string, language: string): Promise<any> {
@@ -140,11 +173,15 @@ export class PostgresPersonalityService implements IPersonalityService {
             wikidata: data.wikidata ?? null,
             isHidden: data.isHidden ?? false,
         };
-        const [row] = await this.db
-            .insert(personality)
-            .values(values)
-            .returning();
-        return this.toEntity(row);
+        try {
+            const [row] = await this.db
+                .insert(personality)
+                .values(values)
+                .returning();
+            return this.toEntity(row);
+        } catch (error) {
+            this.rethrowMapped(error);
+        }
     }
     async getDeletedPersonalityByWikidata(wikidata: string) {
         const [row] = await this.db
@@ -213,11 +250,15 @@ export class PostgresPersonalityService implements IPersonalityService {
             ),
             wikidata: wikidataId,
         };
-        const [created] = await this.db
-            .insert(personality)
-            .values(values)
-            .returning();
-        return this.toEntity(created);
+        try {
+            const [created] = await this.db
+                .insert(personality)
+                .values(values)
+                .returning();
+            return this.toEntity(created);
+        } catch (error) {
+            this.rethrowMapped(error);
+        }
     }
     async getById(
         id: string | LeanDocument<IPersonality>,
