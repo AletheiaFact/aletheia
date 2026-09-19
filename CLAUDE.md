@@ -200,6 +200,8 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 
 9. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
 
+10. **Postgres migration (in progress)**: MongoDB → Postgres, module by module behind a `DB_TYPE` boot switch. Before touching any `<module>/postgres/`, `server/database/postgres/`, or `migrations-postgres/` code, read `docs/postgres-migration-foundation.md` — it is the single source of truth for the architecture decisions, the per-module porting recipe, and the ship gates
+
 ## Development Setup
 
 1. Copy config files:
