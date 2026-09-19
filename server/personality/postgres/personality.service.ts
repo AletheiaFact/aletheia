@@ -51,25 +51,55 @@ export class PostgresPersonalityService implements IPersonalityService {
         page: number,
         pageSize: number,
         order: string,
-        _query: any,
+        query: any,
         _language: string,
-        _withSuggestions: boolean,
+        withSuggestions: boolean,
         _filter?: any
     ): Promise<IPersonality[]> {
-        // NOTE: the `query` object is currently ignored on the postgres backend.
-        // The Mongo impl interprets it as a Mongo find filter; porting that surface
-        // is tracked in the completion checklist as a Phase 0 follow-up.
+        // Guard unsupported surface loudly (no silent scope reduction):
+        // random ordering ($sample), wikidata suggestions merging, and
+        // Mongo-shaped query filters beyond isDeleted/isHidden all depend on
+        // pieces that land in later phases. NOTE: rows are returned without
+        // the Mongo impl's postProcess enrichment (claim/review stats) —
+        // deferred until claim + claim-review are ported (Phases 2-3).
+        if (order === "random") {
+            throw new NotImplementedError("postgres", "listAll(order=random)");
+        }
+        if (withSuggestions) {
+            throw new NotImplementedError(
+                "postgres",
+                "listAll(withSuggestions)"
+            );
+        }
+        const unsupportedKeys = Object.keys(query ?? {}).filter(
+            (k) => k !== "isDeleted" && k !== "isHidden"
+        );
+        if (unsupportedKeys.length > 0) {
+            throw new NotImplementedError(
+                "postgres",
+                `listAll(query.${unsupportedKeys.join(",query.")})`
+            );
+        }
+
+        const conditions = [eq(personality.isDeleted, false)];
+        if (query?.isHidden !== undefined) {
+            conditions.push(eq(personality.isHidden, Boolean(query.isHidden)));
+        }
         const orderBy =
             order === "asc"
                 ? asc(personality.createdAt)
                 : desc(personality.createdAt);
-        const rows = await this.db
+
+        const base = this.db
             .select()
             .from(personality)
-            .where(eq(personality.isDeleted, false))
+            .where(and(...conditions))
             .orderBy(orderBy)
-            .limit(pageSize)
             .offset(page * pageSize);
+        // Mongo's limit(0) means "no limit" (live caller: sitemap passes
+        // pageSize=0); Postgres LIMIT 0 would return zero rows, so only apply
+        // a LIMIT for a positive pageSize.
+        const rows = pageSize > 0 ? await base.limit(pageSize) : await base;
         return rows.map((r) => this.toEntity(r));
     }
     async create(data: any): Promise<IPersonality> {
@@ -304,11 +334,30 @@ export class PostgresPersonalityService implements IPersonalityService {
                 and(eq(personality.id, id), eq(personality.isDeleted, false))
             );
     }
-    async count(_query?: any): Promise<number> {
+    async count(query?: any): Promise<number> {
+        // Mongo parity: countDocuments().where({ ...query, isDeleted: false,
+        // isHidden: query.isHidden || false }) — hidden rows are never counted
+        // unless explicitly requested. Any other filter key (e.g. the
+        // Mongo-shaped `name` regex from verifyInputsQuery) is unsupported
+        // here until combinedListAll is ported — fail loud, not silently.
+        const unsupportedKeys = Object.keys(query ?? {}).filter(
+            (k) => k !== "isDeleted" && k !== "isHidden"
+        );
+        if (unsupportedKeys.length > 0) {
+            throw new NotImplementedError(
+                "postgres",
+                `count(query.${unsupportedKeys.join(",query.")})`
+            );
+        }
         const [{ c }] = await this.db
             .select({ c: sql<number>`count(*)::int` })
             .from(personality)
-            .where(eq(personality.isDeleted, false));
+            .where(
+                and(
+                    eq(personality.isDeleted, false),
+                    eq(personality.isHidden, Boolean(query?.isHidden))
+                )
+            );
         return c;
     }
     extractClaimWithTextSummary(_claims: any): any {
