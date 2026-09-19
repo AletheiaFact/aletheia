@@ -124,6 +124,25 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect((created as any).description).toBe("");
         });
 
+        it("a soft-deleted wikidata does not block findOrCreate of a live one (documented divergence: Mongo's sparse unique index also covers deleted rows and throws E11000)", async () => {
+            const first = await service.create({
+                name: "Ada",
+                description: "x",
+                wikidata: "Q42",
+            });
+            await service.delete((first as any).id);
+
+            // Must NOT throw a unique-violation — the partial index excludes
+            // soft-deleted rows. (findOrCreatePersonality has no restore
+            // branch on either backend.)
+            const second = await service.findOrCreatePersonality({
+                name: "Ada Again",
+                wikidata: { id: "Q42" },
+            });
+            expect((second as any)._id).toBeDefined();
+            expect((second as any)._id).not.toBe((first as any)._id);
+        });
+
         it("create with an already-live wikidata throws DuplicateKeyError naming the field", async () => {
             await service.create({
                 name: "First",
