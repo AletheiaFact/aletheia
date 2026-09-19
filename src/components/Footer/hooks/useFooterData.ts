@@ -9,8 +9,10 @@ export const useFooterData = () => {
     const { vw } = useAppSelector((state) => state);
     const isMobile = !!vw?.sm;
     const [nameSpace] = useAtom(currentNameSpace);
-    const isMainNamespace = nameSpace === NameSpaceEnum.Main;
-    const namespacePrefix = !isMainNamespace ? `/${nameSpace}` : "/";
+    const isMainNamespace = nameSpace === NameSpaceEnum.Main
+    const namespacePrefix = !isMainNamespace
+        ? `/${nameSpace}`
+        : "/";
 
     const statuteUrl = t("footer:sections.institutional.links.statuteUrl");
 
@@ -19,6 +21,6 @@ export const useFooterData = () => {
         isMainNamespace,
         namespacePrefix,
         statuteUrl,
-        t,
+        t
     };
 };

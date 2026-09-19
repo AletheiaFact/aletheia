@@ -103,12 +103,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                             <FilterToggleButtons
                                                 viewMode={showHighlights}
                                                 setViewMode={setShowHighlights}
-                                                leftOption={t(
-                                                    "claim:showHighlightsButton"
-                                                )}
-                                                rightOption={t(
-                                                    "claim:hideHighlightsButton"
-                                                )}
+                                                leftOption={t("claim:showHighlightsButton")}
+                                                rightOption={t("claim:hideHighlightsButton")}
                                                 isRounded={true}
                                             />
                                         }

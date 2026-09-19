@@ -102,6 +102,7 @@ function useFloatingLinkState() {
 
         setHref("https://");
         setIsLoading(false);
+
     }, [
         setIsLoading,
         ranges,

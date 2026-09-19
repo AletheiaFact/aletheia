@@ -6,7 +6,10 @@ import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/event");
 
-const createEvent = (newEvent: EventPayload, t?: TFunction) => {
+const createEvent = (
+    newEvent: EventPayload,
+    t?: TFunction
+) => {
     return request
         .post("/", newEvent)
         .then((response) => {
@@ -15,21 +18,23 @@ const createEvent = (newEvent: EventPayload, t?: TFunction) => {
                 t("events:eventCreateSuccess")
             );
 
-            return response.data;
+            return response.data
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t("events:createError"));
+            MessageManager.showMessage(
+                "error",
+                t("events:createError")
+            );
             throw err;
         });
 };
 
-const updateEvent = (
-    eventId: string,
-    updatedEvent: Partial<EventPayload>,
-    t?: TFunction
-) => {
+const updateEvent = (eventId: string, updatedEvent: Partial<EventPayload>, t?: TFunction) => {
     if (!HEX24.test(eventId)) {
-        MessageManager.showMessage("error", t("events:errorInvalidId"));
+        MessageManager.showMessage(
+            "error",
+            t("events:errorInvalidId")
+        );
         return Promise.reject(new Error("Invalid ID"));
     }
 
@@ -41,10 +46,13 @@ const updateEvent = (
                 t("events:eventUpdatedSuccess")
             );
 
-            return response.data;
+            return response.data
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t("events:updateError"));
+            MessageManager.showMessage(
+                "error",
+                t("events:updateError")
+            );
             throw err;
         });
 };
@@ -63,11 +71,14 @@ const getEvents = (options: ListEventsOptions = {}, t?: TFunction) => {
             return {
                 events: response.data.events,
                 eventMetrics: response.data.eventMetrics,
-                total: response.data.total,
+                total: response.data.total
             };
         })
         .catch((err) => {
-            MessageManager.showMessage("error", t("events:fetchError"));
+            MessageManager.showMessage(
+                "error",
+                t("events:fetchError")
+            );
             throw err;
         });
 };

@@ -89,6 +89,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
         handleClose();
     };
 
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -159,42 +160,39 @@ export const useHeaderData = (): UseHeaderDataReturn => {
 
     const myAccountSections = buildMyAccountSections();
 
-    const navigationConfig = useMemo(
-        () => ({
-            main: [
-                {
-                    key: "verificationRequest",
-                    path: `${baseHref}/verification-request`,
-                    dataCy: "testVerificationRequestNavLink",
-                },
-                {
-                    key: "event",
-                    path: `${baseHref}/event`,
-                    dataCy: "testEventNavLink",
-                },
-            ],
-            repository: [
-                {
-                    title: "repository",
-                    items: [
-                        {
-                            icon: <PortraitOutlinedIcon />,
-                            key: "personality",
-                            path: `${baseHref}/personality`,
-                            showIcon: false,
-                        },
-                        {
-                            icon: <FactCheckOutlinedIcon />,
-                            key: "claim",
-                            path: `${baseHref}/claim`,
-                            showIcon: false,
-                        },
-                    ],
-                },
-            ],
-        }),
-        [baseHref]
-    );
+    const navigationConfig = useMemo(() => ({
+        main: [
+            {
+                key: "verificationRequest",
+                path: `${baseHref}/verification-request`,
+                dataCy: "testVerificationRequestNavLink",
+            },
+            {
+                key: "event",
+                path: `${baseHref}/event`,
+                dataCy: "testEventNavLink",
+            },
+        ],
+        repository: [
+            {
+                title: "repository",
+                items: [
+                    {
+                        icon: <PortraitOutlinedIcon />,
+                        key: "personality",
+                        path: `${baseHref}/personality`,
+                        showIcon: false,
+                    },
+                    {
+                        icon: <FactCheckOutlinedIcon />,
+                        key: "claim",
+                        path: `${baseHref}/claim`,
+                        showIcon: false,
+                    },
+                ]
+            }
+        ]
+    }), [baseHref]);
 
     const menuInstitutionSections = [
         {
@@ -237,12 +235,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
                     value: "pt",
                     label: "Português",
                     displayAbbreviation: "BR",
-                    icon: (
-                        <ReactCountryFlag
-                            countryCode="BR"
-                            style={{ fontSize: "18px" }}
-                        />
-                    ),
+                    icon: <ReactCountryFlag countryCode="BR" style={{ fontSize: "18px" }} />,
                     key: "portuguese",
                     action: () => changeLanguage("pt"),
                     dataCy: "testLanguagePt",
@@ -251,12 +244,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
                     value: "en",
                     label: "English",
                     displayAbbreviation: "US",
-                    icon: (
-                        <ReactCountryFlag
-                            countryCode="GB"
-                            style={{ fontSize: "18px" }}
-                        />
-                    ),
+                    icon: <ReactCountryFlag countryCode="GB" style={{ fontSize: "18px" }} />,
                     key: "english",
                     action: () => changeLanguage("en"),
                     dataCy: "testLanguageEn",
@@ -280,7 +268,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             languageSections,
             language,
             user,
-            isLoadingUser,
+            isLoadingUser
         },
         actions: {
             t,
@@ -288,6 +276,6 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             setAnchorEl,
             onLogout,
             changeLanguage,
-        },
+        }
     };
 };

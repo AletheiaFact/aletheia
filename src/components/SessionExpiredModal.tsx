@@ -32,9 +32,7 @@ export const SessionExpiredModal: React.FC = () => {
     }, []);
 
     const handleOk = () => {
-        window.location.href = `/login?return_to=${encodeURIComponent(
-            returnTo || "/"
-        )}`;
+        window.location.href = `/login?return_to=${encodeURIComponent(returnTo || "/")}`;
     };
 
     return (
@@ -74,7 +72,10 @@ export const SessionExpiredModal: React.FC = () => {
                     justifyContent: "center",
                 }}
             >
-                <AletheiaButton onClick={handleOk} type={ButtonType.primary}>
+                <AletheiaButton
+                    onClick={handleOk}
+                    type={ButtonType.primary}
+                >
                     {t("login:sessionExpiredButton")}
                 </AletheiaButton>
             </Grid>

@@ -14,13 +14,7 @@ export interface NameSpaceMenuProps {
     nameSpace: string | null;
 }
 
-const NameSpaceMenu = ({
-    isLoading,
-    userRole,
-    anchorEl,
-    setAnchorEl,
-    nameSpace,
-}: NameSpaceMenuProps) => {
+const NameSpaceMenu = ({ isLoading, userRole, anchorEl, setAnchorEl, nameSpace }: NameSpaceMenuProps) => {
     const router = useRouter();
 
     const handleClose = () => {

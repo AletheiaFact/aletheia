@@ -39,8 +39,6 @@ export async function down(db: Db) {
         await collection.dropIndex(INDEX_NAME);
         console.log(`  - claimreviews: dropped index ${INDEX_NAME}`);
     } catch (error) {
-        console.log(
-            `  - claimreviews: index ${INDEX_NAME} not found, skipping`
-        );
+        console.log(`  - claimreviews: index ${INDEX_NAME} not found, skipping`);
     }
 }

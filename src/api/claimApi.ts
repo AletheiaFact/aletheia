@@ -83,6 +83,7 @@ const executeClaimRequest = async (
             `"${title}" ${t("claimForm:successCreateMessage")}`
         );
         return response.data;
+
     } catch (err: any) {
         const response = err?.response;
         const data = response?.data;
@@ -90,12 +91,13 @@ const executeClaimRequest = async (
 
         let errorMessage = t("claimForm:errorCreateMessage");
 
+
         if (status === 409) {
             const titleUsed = payload?.title || "";
-            errorMessage = `"${titleUsed}" ${t(
-                "claimForm:errorDuplicateTitle"
-            )}`;
-        } else if (data?.message) {
+            errorMessage = `"${titleUsed}" ${t("claimForm:errorDuplicateTitle")}`;
+        }
+
+        else if (data?.message) {
             if (typeof data.message === "string") {
                 errorMessage = data.message;
             } else if (typeof data.message?.message === "string") {

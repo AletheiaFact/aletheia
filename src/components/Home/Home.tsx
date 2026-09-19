@@ -5,15 +5,7 @@ import HomeHero from "./HomeHero/HomeHero";
 import HomeJoinSection from "./HomeJoinSection/HomeJoinSection";
 import HomeSearchSection from "./HomeSearchSection/HomeSearchSection";
 
-const Home = ({
-    personalities,
-    stats,
-    href,
-    claims,
-    reviews,
-    eventsData,
-    enableEventsFeature,
-}) => {
+const Home = ({ personalities, stats, href, claims, reviews, eventsData, enableEventsFeature }) => {
     return (
         <>
             <HomeHero stats={stats} />

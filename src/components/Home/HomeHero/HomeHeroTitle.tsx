@@ -13,7 +13,10 @@ const HomeHeroTitle = () => {
                 className="home-header-badge"
             >
                 <Box component="span" className="home-header-badge-dot" />
-                <Typography component="span" className="home-header-badge-text">
+                <Typography
+                    component="span"
+                    className="home-header-badge-text"
+                >
                     {t("home:homeHeaderBadge")}
                 </Typography>
             </Stack>

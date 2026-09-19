@@ -36,9 +36,7 @@ const FilterPopover = ({ state, actions }) => {
             const topicsToAdd = Array.isArray(filterValue)
                 ? filterValue
                 : [filterValue];
-            const updatedTopics = [
-                ...new Set([...topicFilterUsed, ...topicsToAdd]),
-            ];
+            const updatedTopics = [...new Set([...topicFilterUsed, ...topicsToAdd])];
             dispatch({
                 type: ActionTypes.SET_TOPIC_FILTER_USED,
                 topicFilterUsed: updatedTopics,

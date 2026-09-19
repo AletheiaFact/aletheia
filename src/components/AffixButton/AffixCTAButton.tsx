@@ -16,15 +16,7 @@ const CloseIcon = () => {
     return (
         <InfoTooltip
             children={
-                <CloseOutlined
-                    style={{
-                        margin: "10px",
-                        color: colors.white,
-                        position: "absolute",
-                        top: 5,
-                        right: 5,
-                    }}
-                />
+                <CloseOutlined style={{ margin: "10px", color: colors.white, position: "absolute", top: 5, right: 5 }} />
             }
             content={
                 <span style={{ color: colors.black, fontSize: 15 }}>
@@ -86,7 +78,11 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                             size="60px"
                             onClick={handleCTAClick}
                             data-cy={"testCTAFloatButton"}
-                            icon={<HelpOutlineOutlined fontSize="medium" />}
+                            icon={
+                                <HelpOutlineOutlined
+                                    fontSize="medium"
+                                />
+                            }
                         />
                     </CtaAnimation>
                 </div>
@@ -100,12 +96,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                 closeIcon={<CloseIcon />}
                 style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
                 title={
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}
-                    >
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <h2
                             style={{
                                 color: colors.white,

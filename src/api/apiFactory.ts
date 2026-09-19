@@ -4,9 +4,7 @@ import { sessionExpiredManager } from "../components/SessionExpiredModal";
 let isRedirecting = false;
 
 function isRelativePath(url: string): boolean {
-    return (
-        !url.startsWith("http") && !url.startsWith("//") && !url.includes("://")
-    );
+    return !url.startsWith("http") && !url.startsWith("//") && !url.includes("://");
 }
 
 export function createApiInstance(baseURL: string): AxiosInstance {
@@ -29,11 +27,8 @@ export function createApiInstance(baseURL: string): AxiosInstance {
                     if (!isRedirecting) {
                         isRedirecting = true;
 
-                        const returnTo =
-                            window.location.pathname + window.location.search;
-                        const safeReturnTo = isRelativePath(returnTo)
-                            ? returnTo
-                            : "/";
+                        const returnTo = window.location.pathname + window.location.search;
+                        const safeReturnTo = isRelativePath(returnTo) ? returnTo : "/";
 
                         sessionExpiredManager.trigger(safeReturnTo);
                     }

@@ -47,18 +47,12 @@ const HeaderMenu = ({
 
                     if (index > 0) {
                         sectionElements.push(
-                            <Divider
-                                key={`divider-${section.title}`}
-                                className="menu-divider"
-                            />
+                            <Divider key={`divider-${section.title}`} className="menu-divider" />
                         );
                     }
 
                     sectionElements.push(
-                        <Box
-                            key={`header-${section.title}`}
-                            className="section-header"
-                        >
+                        <Box key={`header-${section.title}`} className="section-header">
                             {t(`header:${section.title}Section`)}
                         </Box>
                     );
@@ -77,16 +71,10 @@ const HeaderMenu = ({
                                         {item.icon}
                                     </Box>
                                     <Box className="text-wrapper">
-                                        <Typography
-                                            variant="h2"
-                                            className="item-title"
-                                        >
+                                        <Typography variant="h2" className="item-title">
                                             {t(`header:${item.key}Item`)}
                                         </Typography>
-                                        <Typography
-                                            variant="body1"
-                                            className="item-subtitle"
-                                        >
+                                        <Typography variant="body1" className="item-subtitle">
                                             {t(`header:${item.key}Subtitle`)}
                                         </Typography>
                                     </Box>

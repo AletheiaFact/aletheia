@@ -56,21 +56,19 @@ const DynamicNameSpaceForm = ({
                     hasCaptcha={hasCaptcha}
                     isDrawerOpen={isDrawerOpen}
                     onClose={onClose}
-                    extraButton={
-                        nameSpace?._id && (
-                            <AletheiaButton
-                                onClick={handleDailyReviews}
-                                loading={isLoading}
-                                htmlType="button"
-                            >
-                                {t("notification:dailyReportButton") as string}
-                            </AletheiaButton>
-                        )
-                    }
+                    extraButton={nameSpace?._id && (
+                        <AletheiaButton
+                            onClick={handleDailyReviews}
+                            loading={isLoading}
+                            htmlType="button"
+                        >
+                            {t("notification:dailyReportButton") as string}
+                        </AletheiaButton>
+                    )}
                 />
-            </form>
-        </Grid>
-    );
-};
+            </form >
+        </Grid >
+    )
+}
 
-export default DynamicNameSpaceForm;
+export default DynamicNameSpaceForm

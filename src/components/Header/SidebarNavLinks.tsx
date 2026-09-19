@@ -40,9 +40,7 @@ const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
                                 data-cy={item.dataCy}
                                 sx={{
                                     padding: "6px",
-                                    color: item.isDestructive
-                                        ? colors.error
-                                        : colors.white,
+                                    color: item.isDestructive ? colors.error : colors.white,
                                     fontSize: "14px",
                                     borderRadius: "6px",
                                     display: "flex",
@@ -55,12 +53,7 @@ const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
                                 }}
                             >
                                 {item.icon && item.showIcon !== false && (
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                        }}
-                                    >
+                                    <Box sx={{ display: "flex", alignItems: "center" }}>
                                         {item.icon}
                                     </Box>
                                 )}
@@ -72,7 +65,7 @@ const SidebarNavLinks = ({ sections, t }: SidebarNavLinksProps) => {
 
                     <Divider
                         style={{
-                            backgroundColor: `color-mix(in srgb, ${colors.lightNeutral}, transparent 70%)`,
+                            backgroundColor: `color-mix(in srgb, ${colors.lightNeutral}, transparent 70%)`
                         }}
                     />
                 </Box>

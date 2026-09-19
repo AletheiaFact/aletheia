@@ -47,9 +47,7 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
             return {
                 type: "success",
                 showIcon: false,
-                message: t(
-                    "verificationRequest:openVerificationRequestClaimLabel"
-                ),
+                message: t("verificationRequest:openVerificationRequestClaimLabel"),
                 description: (
                     <AletheiaButton
                         href={`/claim/${targetId?.slug}`}

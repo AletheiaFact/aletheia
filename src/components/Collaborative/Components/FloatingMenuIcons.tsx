@@ -34,7 +34,8 @@ const FloatingMenuIcons = ({
     const enabled = enableEditorAnnotations
         ? addAnnotation?.enabled({ id: "" })
         : true;
-    const canAddComment = isAdmin || isAssignee || isReviewer || isCrossChecker;
+    const canAddComment =
+        isAdmin || isAssignee || isReviewer || isCrossChecker;
 
     return (
         <FloatingToolbar

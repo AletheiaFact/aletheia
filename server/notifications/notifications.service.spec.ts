@@ -122,7 +122,9 @@ describe("NotificationService (Unit)", () => {
             it("should get a topic", async () => {
                 const result = await service.getTopic("review-updates");
 
-                expect(novu.topics.get).toHaveBeenCalledWith("review-updates");
+                expect(novu.topics.get).toHaveBeenCalledWith(
+                    "review-updates"
+                );
                 expect(result).toEqual({
                     _id: "topic-id-123",
                     key: "test-topic",
@@ -220,10 +222,7 @@ describe("NotificationService (Unit)", () => {
         });
 
         it("sendEmail should return undefined", async () => {
-            const result = await service.sendEmail(
-                "sub-123",
-                "test@example.com"
-            );
+            const result = await service.sendEmail("sub-123", "test@example.com");
             expect(result).toBeUndefined();
         });
 

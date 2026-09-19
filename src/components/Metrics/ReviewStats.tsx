@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-    ArrowDownwardOutlined,
-    ArrowUpwardOutlined,
-} from "@mui/icons-material";
+import { ArrowDownwardOutlined, ArrowUpwardOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ReviewProgress from "./ReviewProgress";

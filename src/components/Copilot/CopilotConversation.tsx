@@ -74,9 +74,7 @@ const CopilotConversation = ({
                     }}
                 >
                     <AletheiaButton onClick={handleAddReportClick}>
-                        {t(
-                            "copilotChatBot:addFactCheckingReportButton"
-                        ).toUpperCase()}
+                        {t("copilotChatBot:addFactCheckingReportButton").toUpperCase()}
                     </AletheiaButton>
                 </div>
             )}

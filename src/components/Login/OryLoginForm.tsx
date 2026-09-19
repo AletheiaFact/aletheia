@@ -28,7 +28,9 @@ const OryLoginForm = ({
     return (
         <>
             {flow.refresh && (
-                <Grid container style={{ paddingBottom: "10px" }}>
+                <Grid container
+                    style={{ paddingBottom: "10px" }}
+                >
                     <AletheiaAlert
                         style={{ padding: "0 15px", margin: "0px" }}
                         message={t("login:refreshLoginMessage")}
@@ -37,13 +39,20 @@ const OryLoginForm = ({
                 </Grid>
             )}
             {flow?.requested_aal !== "aal2" && (
-                <Grid container direction="column">
-                    <h2>{t("login:formHeader")}</h2>
-                    <form onSubmit={handleSubmit(onFinish, onFinishFailed)}>
-                        <Grid container marginBottom={2}>
+                <Grid container
+                    direction="column"
+                >
+                    <h2>
+                        {t("login:formHeader")}
+                    </h2>
+                    <form
+                        onSubmit={handleSubmit(onFinish, onFinishFailed)}
+                    >
+                        <Grid container
+                            marginBottom={2}
+                        >
                             <Grid item xs={12} sm={3} lg={2}>
-                                <Label
-                                    required
+                                <Label required
                                     children={t("login:emailLabel") + " :"}
                                 />
                             </Grid>
@@ -51,7 +60,7 @@ const OryLoginForm = ({
                                 <Input
                                     data-cy="emailFormLogin"
                                     {...register("email", {
-                                        required: true,
+                                        required: true
                                     })}
                                 />
                                 <TextError
@@ -61,16 +70,15 @@ const OryLoginForm = ({
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} lg={2}>
-                                <Label
-                                    required
+                                <Label required
                                     children={t("login:passwordLabel") + " :"}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={9} lg={10}>
+                            <Grid item xs={12} sm={9} lg={10} >
                                 <InputPassword
                                     data-cy="passwordFormLogin"
                                     {...register("password", {
-                                        required: true,
+                                        required: true
                                     })}
                                 />
                                 <ForgotPasswordLink t={t} />
@@ -94,13 +102,18 @@ const OryLoginForm = ({
             )}
             {flow?.requested_aal === "aal2" && (
                 <Grid container direction="column">
-                    <h2>{t("totp:formHeader")}</h2>
-                    <p>{t("totp:totpMessage")}</p>
-                    <form onSubmit={handleSubmit(onFinishTotp)}>
+                    <h2>
+                        {t("totp:formHeader")}
+                    </h2>
+                    <p>
+                        {t("totp:totpMessage")}
+                    </p>
+                    <form
+                        onSubmit={handleSubmit(onFinishTotp)}
+                    >
                         <Grid container display="flex">
                             <Grid item xs={12} md={5} lg={3}>
-                                <Label
-                                    required
+                                <Label required
                                     children={t("totp:inputLabel") + " :"}
                                 />
                             </Grid>

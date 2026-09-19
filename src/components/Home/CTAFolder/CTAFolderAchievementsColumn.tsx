@@ -15,7 +15,10 @@ const CTAFolderAchievementsColumn = () => {
 
     return (
         <Grid item className="ctaAchievementsColumn">
-            <Typography variant="h3" className="ctaAchievementsTitle">
+            <Typography
+                variant="h3"
+                className="ctaAchievementsTitle"
+            >
                 {t("CTAFolder:aletheiaMoviment")}
             </Typography>
             <List className="ctaAchievementsList">

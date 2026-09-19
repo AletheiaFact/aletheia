@@ -42,8 +42,7 @@ const WarningModal = ({
                 </Grid>
             }
         >
-            <Grid
-                item
+            <Grid item
                 style={{
                     marginTop: 16,
                     display: "flex",
@@ -61,7 +60,10 @@ const WarningModal = ({
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton onClick={handleOk} type={ButtonType.primary}>
+                <AletheiaButton
+                    onClick={handleOk}
+                    type={ButtonType.primary}
+                >
                     {t("warningModal:okButton")}
                 </AletheiaButton>
             </Grid>

@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-    FormControl,
-    FormLabel,
-    Checkbox,
-    Grid,
-    FormHelperText,
-} from "@mui/material";
+import { FormControl, FormLabel, Checkbox, Grid, FormHelperText } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -77,7 +71,11 @@ const BaseClaimForm = ({
     };
 
     return (
-        <FormControl fullWidth id="createClaim" style={{ padding: "32px 0" }}>
+        <FormControl
+            fullWidth
+            id="createClaim"
+            style={{ padding: "32px 0" }}
+        >
             <FormLabel
                 style={{
                     width: "100%",
@@ -85,7 +83,9 @@ const BaseClaimForm = ({
             >
                 <div className="root-label">
                     <span className="require-label">*</span>
-                    <p className="form-label">{t("claimForm:titleField")}</p>
+                    <p className="form-label">
+                        {t("claimForm:titleField")}
+                    </p>
                 </div>
                 <Input
                     value={title || ""}
@@ -110,7 +110,9 @@ const BaseClaimForm = ({
             >
                 <div className="root-label">
                     <span className="require-label">*</span>
-                    <p className="form-label">{t("claimForm:dateField")}</p>
+                    <p className="form-label">
+                        {t("claimForm:dateField")}
+                    </p>
                 </div>
                 <DatePickerInput
                     placeholder={t("claimForm:dateFieldPlaceholder")}
@@ -125,7 +127,9 @@ const BaseClaimForm = ({
                         {errors.date}
                     </FormHelperText>
                 )}
-                <p className="extra-label">{dateExtraText}</p>
+                <p className="extra-label">
+                    {dateExtraText}
+                </p>
             </FormLabel>
             <SourceInput
                 errors={errors}
@@ -161,23 +165,14 @@ const BaseClaimForm = ({
                     {disclaimer}
                 </FormLabel>
             )}
-            <FormLabel
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "20px",
-                }}
-            >
+            <FormLabel style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
                 <Checkbox data-cy={"testCheckboxAcceptTerms"} />
-                <p className="form-label">
-                    {t("claimForm:checkboxAcceptTerms")}
-                </p>
+                <p className="form-label">{t("claimForm:checkboxAcceptTerms")}</p>
             </FormLabel>
             <FormLabel>
                 <AletheiaCaptcha onChange={onChangeCaptcha} />
             </FormLabel>
-            <Grid
-                container
+            <Grid container
                 style={{
                     justifyContent: "space-evenly",
                     marginBottom: "20px",

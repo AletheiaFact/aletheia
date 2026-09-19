@@ -21,7 +21,7 @@ const UserMenuContent = ({
     user,
     isLoadingUser,
     nameSpace,
-    t,
+    t
 }: UserMenuContentProps) => {
     const menuElements = [];
 
@@ -39,10 +39,7 @@ const UserMenuContent = ({
     myAccountSections.forEach((section, index) => {
         if (index > 0 || hasSession) {
             menuElements.push(
-                <Divider
-                    key={`divider-${section.title}`}
-                    className="menu-divider"
-                />
+                <Divider key={`divider-${section.title}`} className="menu-divider" />
             );
         }
 
@@ -72,14 +69,7 @@ const UserMenuContent = ({
                     <Box className="menu-item-content">
                         <Box
                             className="icon-wrapper"
-                            style={
-                                item.isDestructive
-                                    ? {
-                                          color: `${colors.error}`,
-                                          backgroundColor: "transparent",
-                                      }
-                                    : {}
-                            }
+                            style={item.isDestructive ? { color: `${colors.error}`, backgroundColor: "transparent" } : {}}
                         >
                             {item.icon}
                         </Box>
@@ -87,17 +77,9 @@ const UserMenuContent = ({
                             <Typography
                                 variant="h2"
                                 className="item-title"
-                                style={
-                                    item.isDestructive
-                                        ? { color: `${colors.error}` }
-                                        : {}
-                                }
+                                style={item.isDestructive ? { color: `${colors.error}` } : {}}
                             >
-                                {t<string>(
-                                    item.key === "signUp"
-                                        ? "login:signup"
-                                        : `header:${item.key}Item`
-                                )}
+                                {t<string>(item.key === "signUp" ? "login:signup" : `header:${item.key}Item`)}
                             </Typography>
                         </Box>
                     </Box>

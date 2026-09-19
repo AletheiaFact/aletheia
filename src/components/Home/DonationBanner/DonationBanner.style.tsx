@@ -3,9 +3,10 @@ import colors from "../../../styles/colors";
 import { Grid } from "@mui/material";
 import { queries } from "../../../styles/mediaQueries";
 
+
 const DonationBannerStyle = styled(Grid)`
-    background-color: ${colors.inactive};
-    position: relative;
+        background-color: ${colors.inactive};
+        position: relative;
 
     .close-banner {
         color: ${colors.primary};

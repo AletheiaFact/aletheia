@@ -8,8 +8,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
     const { t } = useTranslation();
 
     return (
-        <Grid
-            item
+        <Grid item
             style={{
                 marginTop: 32,
                 display: "flex",

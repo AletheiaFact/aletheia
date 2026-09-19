@@ -28,10 +28,7 @@ export class M2MGuard extends BaseGuard {
             return true;
         } catch (error) {
             const err = toError(error);
-            this.logger.error(
-                `M2M token resolution failed: ${err.message}`,
-                err.stack
-            );
+            this.logger.error(`M2M token resolution failed: ${err.message}`, err.stack);
             return false;
         }
     }

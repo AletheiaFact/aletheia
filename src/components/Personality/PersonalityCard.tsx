@@ -66,16 +66,16 @@ const PersonalityCard = ({
 
     const personalityFoundProps = isCreatingClaim
         ? {
-              onClick: () => {
-                  if (selectPersonality) {
-                      selectPersonality(personality);
-                  }
-              },
-          }
+            onClick: () => {
+                if (selectPersonality) {
+                    selectPersonality(personality);
+                }
+            },
+        }
         : {
-              href: `${baseHref || nameSpaceHref}${personality.slug}`,
-              onClick,
-          };
+            href: `${baseHref || nameSpaceHref}${personality.slug}`,
+            onClick,
+        };
 
     const personalityIsSelected = personalities.some(
         (item) => item._id === personality._id
@@ -122,8 +122,7 @@ const PersonalityCard = ({
 
     if (personality) {
         return (
-            <Grid
-                container
+            <Grid container
                 sx={{
                     width: "100%",
                     ...cardStyle,
@@ -139,8 +138,7 @@ const PersonalityCard = ({
                         })}
                     />
                 )}
-                <Grid
-                    item
+                <Grid item
                     md={12}
                     lg={header && !mobile && !fullWidth ? 6 : 12}
                     style={{
@@ -148,16 +146,12 @@ const PersonalityCard = ({
                         textAlign: hoistAvatar ? "center" : "inherit",
                     }}
                 >
-                    <Grid
-                        container
+                    <Grid container
                         columnSpacing={summarized ? 0 : 1.5}
                         style={{
                             alignContent: summarized ? "center" : undefined,
                             width: "100%",
-                            padding:
-                                !summarized && mobileDevice
-                                    ? "12px 6px"
-                                    : "12px",
+                            padding: !summarized && mobileDevice ? "12px 6px" : "12px",
                         }}
                     >
                         <PersonalityCardAvatar
@@ -168,25 +162,23 @@ const PersonalityCard = ({
 
                         {((hoistAvatar && (!smallDevice || !mobileDevice)) ||
                             !hoistAvatar) && (
-                            <PersonalityInfo
-                                personality={personality}
-                                componentStyle={componentStyle}
-                                enableStats={enableStats}
-                                summarized={summarized}
-                                titleLevel={titleLevel}
-                                centralized={centralizedInfo}
-                            />
-                        )}
+
+                                <PersonalityInfo
+                                    personality={personality}
+                                    componentStyle={componentStyle}
+                                    enableStats={enableStats}
+                                    summarized={summarized}
+                                    titleLevel={titleLevel}
+                                    centralized={centralizedInfo}
+                                />
+                            )}
 
                         {summarized && (
-                            <Grid
-                                item
+                            <Grid item
                                 xs={componentStyle.buttonSpan}
                                 style={{
                                     display: "flex",
-                                    justifyContent: mobileDevice
-                                        ? "center"
-                                        : "flex-end",
+                                    justifyContent: mobileDevice ? "center" : "flex-end",
                                     maxHeight: 40,
                                 }}
                             >
@@ -208,8 +200,7 @@ const PersonalityCard = ({
                     </Grid>
                 </Grid>
                 {!smallDevice && enableStats && hasReview && (
-                    <Grid
-                        item
+                    <Grid item
                         xs={12}
                         lg={header && !mobile ? 6 : 12}
                         style={{
@@ -218,8 +209,7 @@ const PersonalityCard = ({
                             alignItems: "center",
                         }}
                     >
-                        <Grid
-                            container
+                        <Grid container
                             style={{
                                 width: "100%",
                                 justifyContent: "space-evenly",

@@ -9,14 +9,17 @@ import CTAFolderAchievementsColumn from "./CTAFolderAchievementsColumn";
 
 type CTAFolderProps = {
     isSplit?: Boolean;
-};
+}
 
 const CTAFolder = ({ isSplit }: CTAFolderProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         localConfig.home.folderRedirectForum && (
-            <CTAFolderStyle $nameSpace={nameSpace} $isSplit={isSplit}>
+            <CTAFolderStyle
+                $nameSpace={nameSpace}
+                $isSplit={isSplit}
+            >
                 <Grid container className="ctaFolderContent">
                     <CTAFolderMainColumn isHomeFolder={true} />
                     <CTAFolderAchievementsColumn />
@@ -24,6 +27,7 @@ const CTAFolder = ({ isSplit }: CTAFolderProps) => {
             </CTAFolderStyle>
         )
     );
-};
+}
+
 
 export default CTAFolder;

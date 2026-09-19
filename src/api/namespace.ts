@@ -7,10 +7,7 @@ const createNameSpace = (nameSpace, t) => {
     return request
         .post(`/`, { ...nameSpace })
         .then((response) => {
-            MessageManager.showMessage(
-                "success",
-                t("namespaces:nameSpaceSaved")
-            );
+            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
             return response.data;
         })
         .catch((err) => {
@@ -23,10 +20,7 @@ const updateNameSpace = (nameSpace, t) => {
     return request
         .put(`/${nameSpace._id}`, { ...nameSpace })
         .then((response) => {
-            MessageManager.showMessage(
-                "success",
-                t("namespaces:nameSpaceSaved")
-            );
+            MessageManager.showMessage("success", t("namespaces:nameSpaceSaved"));
             return response.data;
         })
         .catch((err) => {

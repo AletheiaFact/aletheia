@@ -13,10 +13,12 @@ describe("CaptchaController (Unit)", () => {
                 {
                     provide: CaptchaService,
                     useValue: {
-                        getClientConfig: vi.fn().mockReturnValue({
-                            provider: "recaptcha",
-                            sitekey: "abc",
-                        }),
+                        getClientConfig: vi
+                            .fn()
+                            .mockReturnValue({
+                                provider: "recaptcha",
+                                sitekey: "abc",
+                            }),
                         getChallenge: vi.fn().mockResolvedValue(undefined),
                         ...captchaServiceOverrides,
                     },

@@ -195,10 +195,7 @@ export class UsersService {
                 await this.oryService.deleteIdentity(user.oryId);
             }
         } catch (e) {
-            this.logger.error(
-                `Failed to delete Ory identity for user ${id}`,
-                e
-            );
+            this.logger.error(`Failed to delete Ory identity for user ${id}`, e);
         }
 
         await this.UserModel.findByIdAndDelete(id);

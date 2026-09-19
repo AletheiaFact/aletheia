@@ -17,7 +17,9 @@ const HeaderContent = () => {
 
     return (
         <HeaderGridStyle container>
-            <Link href={`${baseHref}/`} className="headerLogo">
+            <Link
+                href={`${baseHref}/`}
+                className="headerLogo">
                 <Logo />
             </Link>
             {!vw?.md && (

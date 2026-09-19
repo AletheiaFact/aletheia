@@ -17,14 +17,17 @@ import { Roles } from "./ability/ability.factory";
 // declared via vi.hoisted() because vi.mock() is hoisted above all imports
 // during the Vitest transform pipeline. Constructor mocks must use `function`
 // (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const { mockToSession, mockCreateBrowserLogoutFlow, mockUpdateLogoutFlow } =
-    vi.hoisted(() => ({
-        mockToSession: vi.fn(),
-        mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
-            data: { logout_token: "mock-logout-token" },
-        }),
-        mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
-    }));
+const {
+    mockToSession,
+    mockCreateBrowserLogoutFlow,
+    mockUpdateLogoutFlow,
+} = vi.hoisted(() => ({
+    mockToSession: vi.fn(),
+    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+        data: { logout_token: "mock-logout-token" },
+    }),
+    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+}));
 
 vi.mock("@ory/client", () => ({
     Configuration: vi.fn().mockImplementation(function () {
@@ -47,11 +50,15 @@ describe("SessionGuard", () => {
     const createMockContext = (
         cookie = "ory_session=abc",
         isPublic = false,
-        url = "/api/test"
+        url = "/api/test",
+        sessionToken?: string
     ) => {
         const mockRedirect = vi.fn();
         const request: any = {
-            header: vi.fn().mockReturnValue(cookie),
+            header: vi.fn((name: string) => {
+                if (name === "X-Session-Token") return sessionToken;
+                return cookie;
+            }),
             url,
             params: {},
         };
@@ -160,6 +167,36 @@ describe("SessionGuard", () => {
         });
     });
 
+    describe("native session token (X-Session-Token)", () => {
+        it("should grant access using the session token when no cookie is present", async () => {
+            setupDefaultUserMock();
+            const session = createMockSession();
+            mockToSession.mockResolvedValue({ data: session });
+
+            const { context, request } = createMockContext(
+                "",
+                false,
+                "/api/me",
+                "ory_st_native-token"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(result).toBe(true);
+            expect(mockToSession).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    xSessionToken: "ory_st_native-token",
+                })
+            );
+            expect(request.user).toEqual(
+                expect.objectContaining({
+                    _id: "mongo-user-id-123",
+                    isM2M: false,
+                })
+            );
+        });
+    });
+
     describe("invalid session", () => {
         it("should redirect to login when session is expired", async () => {
             mockToSession.mockRejectedValue(new Error("401 Unauthorized"));
@@ -194,7 +231,9 @@ describe("SessionGuard", () => {
         it("should logout and redirect to signup-invite when user not in MongoDB", async () => {
             const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
-            usersService.getById.mockRejectedValue(new Error("User not found"));
+            usersService.getById.mockRejectedValue(
+                new Error("User not found")
+            );
 
             const { context, response } = createMockContext(
                 "ory_session=abc",
