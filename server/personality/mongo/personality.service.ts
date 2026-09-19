@@ -139,10 +139,15 @@ export class MongoPersonalityService {
      */
     async create(personality: CreatePersonalityDTO & { slug?: string }) {
         try {
-            const personalityExists =
-                await this.getDeletedPersonalityByWikidata(
-                    personality.wikidata
-                );
+            // Only look up a soft-deleted match when a wikidata id is present:
+            // findOne({ isDeleted: true, wikidata: undefined }) has its
+            // undefined key stripped by Mongoose and would match (and restore)
+            // an arbitrary soft-deleted personality.
+            const personalityExists = personality.wikidata
+                ? await this.getDeletedPersonalityByWikidata(
+                      personality.wikidata
+                  )
+                : null;
 
             if (personalityExists) {
                 return personalityExists.restore();
