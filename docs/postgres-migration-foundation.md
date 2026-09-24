@@ -2,20 +2,19 @@
 
 **Date:** 2026-09-18
 **Status:** Living document — THE single source of truth for the MongoDB → Postgres migration.
-**Supersedes:**
-- `docs/superpowers/plans/2026-05-10-postgres-foundational-layer.md` (executed task plan, kept as history)
+**Supersedes (deleted from the repo; recoverable from git history):**
+- `docs/superpowers/plans/2026-05-10-postgres-foundational-layer.md` (Phase 0 task plan, fully executed)
 - `docs/superpowers/plans/2026-05-22-postgres-migration-delivery-strategy.md` (merged here)
 - `docs/superpowers/specs/2026-09-18-postgres-architecture-decisions.md` (merged here)
-
-**Companions (still authoritative for their scope):**
-- `docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md` — per-phase module scope details
-- `docs/superpowers/specs/2026-05-10-postgres-foundational-layer-design.md` — Phase 0 design rationale
+- `docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md` (per-phase detail merged into §7)
+- `docs/superpowers/specs/2026-05-10-postgres-foundational-layer-design.md` (Phase 0 design, implemented; unique bits merged into §3/§8)
 
 > **How to use this document:** each module migration is one MR that follows §4
-> (the recipe) and passes §5 (the ship gate). Phase 0 (personality) finishes by
-> completing §6. Phase order and dependencies are §7. Delivery/cutover mechanics
-> are §8. Testing rules are §9. Do not relitigate §2 decisions — amend with
-> evidence instead.
+> (the recipe) and passes §5 (the ship gate). Phase status and per-phase porting
+> notes are §7. Delivery/cutover mechanics are §8. Testing rules are §9. Do not
+> relitigate §2 decisions — amend with evidence instead. The
+> `pg-migrate-module` skill (`.claude/skills/pg-migrate-module/`) drives a
+> module port end-to-end against this document.
 
 ---
 
@@ -110,7 +109,7 @@ All driver errors are mapped to neutral errors in `server/database/errors.ts` at
 | Test rails | `server/tests/postgres-setup.ts`, `per-worker-setup.ts` | pglite per Vitest worker, migrations on boot, `TRUNCATE` between tests; per-worker Mongo DBs unchanged |
 | CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (full suite under `DB_TYPE=postgres`) |
 
-Migration discipline: never edit an applied migration; drizzle-kit owns `meta/_journal.json`; custom SQL goes through `drizzle-kit generate --custom`.
+Migration discipline: never edit an applied migration; drizzle-kit owns `meta/_journal.json`; custom SQL goes through `drizzle-kit generate --custom`. Operationally, migrations are NOT run at boot — operators run `yarn migrate:pg` as a deployment step (mirrors the migrate-mongo model); tests run them automatically on first pglite use per worker.
 
 ---
 
@@ -200,6 +199,92 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 ```
 
 Unplaced modules to audit before Phase 1 finalizes the list: `report` (slot Phase 3 or 6), `management` (cascade logic re-expressed per D3 end-game), `callback-dispatcher` / `chat-bot` / `chat-bot-state` (likely Phase 8), `search` (query-layer only — confirm no standalone collection).
+
+### Per-phase porting notes (merged from the completion checklist)
+
+**Phase 1 — verification-request** [M]. Exercises `pgvector` for the first time.
+Manual cosine similarity via `$zip`/`$reduce` (`verification-request.service.ts:901-951`)
+→ `pgvector` `<=>` operator (`1 - (embedding <=> $1) AS similarity`); embedding
+`number[]` → `vector(N)` column, N pinned to the canonical embedding model's
+dimension (`text-embedding-3-small` = 1536 — confirm in the phase spec); HNSW
+index by default (IVFFlat only if write throughput dominates). Sources/group/
+topics populate chains → explicit Drizzle joins — port enough of those leaf
+tables (schema + read surface) to satisfy the joins rather than reading across
+backends. Also builds the cross-cutting tooling: parity differ (`scripts/parity/`),
+real-PG CI leg, latency/error interceptor.
+
+**Phase 2 — claim + claim-revision + content types** [L]. Atlas `$search` on
+sentence content/topics (`sentence.service.ts:85-108`) → trgm GIN on `content`;
+`topics` is an array — needs `unnest` + trgm or a `claim_topic` join table.
+`$search` on revision title (`claim-revision.service.ts:92-101`) → trgm GIN.
+3-way `$lookup` chains (sentences → claimrevisions → claims → personalities) →
+CTEs or chained joins. Modeling: Mongo `Claim` discriminates by a `contentType`
+field in code (no Mongoose discriminators) — **single `claim` table with
+`content_type` + nullable type-specific columns** unless type-specific columns
+exceed ~10; `claim_revision` is a straight port with a `claim_id` reference.
+Unblocks personality's `getClaimsByPersonalitySlug` + `extractClaimWithTextSummary`.
+
+**Phase 3 — claim-review** [M]. Nested `$lookup` chains
+(`claim-review.service.ts:169-230`) → multi-CTE SQL; `$facet` status counts
+(`:101-112`) → `count(*) FILTER (WHERE status = ?)` in one query. `pre("find")`
+auto-populate hooks → explicit Drizzle relational queries. Unblocks personality's
+`getReviewStats` + `combinedListAll` → **personality reaches zero 501s here**.
+
+**Phase 4 — users + roles/badges** [M]. Ory Kratos keeps identity primitives
+(its own Postgres); Aletheia's `users` collection is profile/role/badge data
+keyed to Kratos identity ids. Open before scoping: are roles in Aletheia's DB or
+Kratos traits? Badge storage: rows vs array column. `pre("find")` badge-populate
+hook → explicit joins.
+
+**Phase 5 — review-task + comment** [M]. XState machine is client-side; DB only
+persists state — straightforward schema. `comment` is a child entity with a
+`review_task_id` reference.
+
+**Phase 6 — source/topic/group/badge/history/state-event/tracking (full
+services)** [M aggregate, each S]. Mostly CRUD; bundle into one or two MRs.
+`history` has a `$facet` aggregation (`history.service.ts:114-180`) → single SQL
+query with conditional joins.
+
+**Phase 7 — events/stats/daily-report/vr-stats** [L]. The heaviest `$facet` +
+`$lookup` pipelines: `event.service.ts:266-315` (3× nested `$lookup` + `$facet`
+→ multi-CTE), `verification-request-stats.service.ts:59-100` (`$facet` →
+`FILTER` clauses), `daily-report` → candidate for nightly-refreshed materialized
+views. Performance-critical: §8 perf gates are blocking here.
+
+**Phase 8 — ai-task/copilot/summarization/AFC/chat-bot/files** [M]. Thin DB
+layers orchestrating external APIs (Novu, LLM providers, S3). `copilot`/`AFC`
+reuse Phase 1's pgvector patterns; `file-management` needs only metadata tables.
+
+**Phase 9 — editor/collaborative/yjs** [L, highest uncertainty]. Yjs CRDT state
+as opaque blobs → `bytea`. Phase spec must confirm persistence shape; hybrid
+retention (Mongo for Yjs blobs only) is the last resort, decided then.
+
+**Phase 10 — backfill tooling + FK constraints** [M]. One-shot per-collection
+scripts under `scripts/migrate-to-postgres/`: read via Mongoose models, map
+ObjectId → UUID (uuid v5, fixed namespace), write via Drizzle, idempotent
+(`INSERT ... ON CONFLICT DO NOTHING` keyed on `legacy_object_id` — the column
+every table already carries per §2). Driver: `yarn migrate:to-postgres` in
+dependency order. FK constraints land here via `ADD CONSTRAINT ... NOT VALID` +
+`VALIDATE` (D3).
+
+**Phase 11 — sunset MongoDB** [S]. Remove `mongodb`/`mongoose`/
+`@nestjs/mongoose`/`mongoose-softdelete-typescript`/`mongodb-memory-server`/
+`migrate-mongo-ts`; delete every `<module>/mongo/` dir, `migrations/`,
+FerretDB CI/compose services; remove the `DB_TYPE` switch; drop
+`legacy_object_id` columns; keep the `I*Service` interfaces (testability) but
+delete the now-trivial type-tests; update CLAUDE.md.
+
+### Atlas → Postgres feature map (global inventory)
+
+| Atlas/Mongo feature | Where used | Replacement |
+|---|---|---|
+| `$search` fuzzy text | personality `name`, sentence `content`, revision `title` | `pg_trgm` GIN + `%` operator + `similarity()` ranking |
+| `$vectorSearch` / manual cosine | verification-request, copilot/AFC | `pgvector` `<=>`, HNSW index |
+| `$lookup`/`$facet` pipelines | claim-review, events, history, stats | CTEs, `count(*) FILTER`, materialized views |
+| Change streams | not used | — |
+| GridFS | not used (S3) | — |
+| Mongoose discriminators | not used (`contentType` field in code) | single table + `content_type` column |
+| Soft-delete plugin | all models | `is_deleted`/`deleted_at` + partial indexes (§2) |
 
 ---
 

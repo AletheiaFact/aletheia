@@ -4,6 +4,12 @@ This directory hosts the cross-cutting Postgres infrastructure: the Drizzle
 client provider, the connection factory, the schema barrel, and the test
 harness.
 
+> **Canonical guide:** `docs/postgres-migration-foundation.md` is the single
+> source of truth for the migration — decisions, per-module recipe, ship gates,
+> phase roadmap. The steps below are a quick reference only; when they and the
+> foundation doc disagree, the foundation doc wins. To port a module, use the
+> `pg-migrate-module` skill.
+
 ## Adding a new module to Postgres
 
 To enable Postgres support for an existing Mongo-backed module:
@@ -57,7 +63,7 @@ controller and module-level wiring import sibling modules (`ClaimReviewModule`,
 `ClaimRevisionModule`, `HistoryModule`) which still call
 `MongooseModule.forFeature(...)`. As a result, the Aletheia server cannot
 actually boot under `DB_TYPE=postgres` until those modules are ported (see
-`docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md`).
+the phase roadmap in `docs/postgres-migration-foundation.md` §7).
 
 What works today under `DB_TYPE=postgres`:
 - The personality unit + contract test suites (against pglite, in-process).
