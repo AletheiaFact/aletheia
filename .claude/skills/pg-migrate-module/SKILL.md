@@ -38,7 +38,7 @@ the authority. Where they disagree, the doc wins — and update whichever is sta
    `uuid` named `<entity>_id`, btree-indexed. Unique constraints are NOT
    deferred.
 6. **Never edit an applied migration.** New schema = new drizzle-kit migration
-   (`yarn migrate:pg:create <name>`); drizzle-kit owns `meta/_journal.json`.
+   (`yarn migrate:pg:create --name=<name>`); drizzle-kit owns `meta/_journal.json`.
 7. **Schema conventions** (foundation doc §2): snake_case, singular table names,
    `<table>_<col>_uq|idx` index naming, soft-delete triple (`is_deleted`,
    `deleted_at`, partial unique indexes excluding deleted), `timestamptz`,
@@ -88,7 +88,8 @@ Map before writing:
 ### Step 3 — Schema + migration
 - `server/<module>/postgres/schema/<entity>.schema.ts` per the conventions;
   re-export from `server/database/postgres/schema/index.ts`.
-- `yarn migrate:pg:create <module>` → review the generated SQL by hand
+- `yarn migrate:pg:create --name=<module>` (drizzle-kit takes `--name=`, not a
+  positional arg) → review the generated SQL by hand
   (indexes present? partial predicates right?) → `yarn migrate:pg:status` clean.
 
 ### Step 4 — Port methods (TDD against the contract suite)

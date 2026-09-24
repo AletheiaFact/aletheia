@@ -21,7 +21,7 @@ To enable Postgres support for an existing Mongo-backed module:
 2. **Add the Drizzle schema** at `server/<module>/postgres/schema/<entity>.schema.ts`
    and re-export it from `server/database/postgres/schema/index.ts`.
 
-3. **Generate a migration:** `yarn migrate:pg:create <module>` — review the
+3. **Generate a migration:** `yarn migrate:pg:create --name=<module>` — review the
    generated SQL in `migrations-postgres/`, edit if needed, commit.
 
 4. **Implement the service** at `server/<module>/postgres/<module>.service.ts`,

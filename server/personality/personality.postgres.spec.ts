@@ -45,6 +45,32 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect(res.processedPersonalities[0]?.name).toBe("Ada Lovelace");
         });
 
+        it("findAll excludes hidden personalities from results and totalRows (Mongo $match parity)", async () => {
+            await service.create({
+                name: "Grace Hopper",
+                description: "visible",
+            });
+            await service.create({
+                name: "Grace Hoppers",
+                description: "hidden",
+                isHidden: true,
+            });
+
+            const res = await service.findAll({
+                searchText: "Grace Hopper",
+                pageSize: 10,
+            });
+            expect(res.totalRows).toBe(1);
+            expect(res.processedPersonalities).toHaveLength(1);
+            expect(res.processedPersonalities[0]?.name).toBe("Grace Hopper");
+
+            const noSearch = await service.findAll({ pageSize: 10 } as any);
+            expect(noSearch.totalRows).toBe(1);
+            expect(noSearch.processedPersonalities[0]?.name).toBe(
+                "Grace Hopper"
+            );
+        });
+
         it("listAll without query returns recent rows paginated", async () => {
             for (let i = 0; i < 5; i++) {
                 await service.create({

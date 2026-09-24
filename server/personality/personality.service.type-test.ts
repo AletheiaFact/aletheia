@@ -10,7 +10,9 @@ import type { PostgresPersonalityService } from "./postgres/personality.service"
  * method.
  *
  * This is the per-resource-interface enforcement gate documented in
- * docs/superpowers/specs/2026-05-10-postgres-foundational-layer-design.md §3.5.
+ * docs/postgres-migration-foundation.md §3. Note the gate compares method
+ * NAMES (key sets), not signatures — signature drift is caught behaviorally
+ * by the contract suite.
  */
 
 type PublicSurface<T> = Omit<

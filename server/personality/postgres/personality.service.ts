@@ -233,12 +233,16 @@ export class PostgresPersonalityService implements IPersonalityService {
             .limit(1);
         if (existingBySlug) {
             if (wikidataId && !existingBySlug.wikidata) {
-                const [updated] = await this.db
-                    .update(personality)
-                    .set({ wikidata: wikidataId, updatedAt: new Date() })
-                    .where(eq(personality.id, existingBySlug.id))
-                    .returning();
-                return this.toEntity(updated);
+                try {
+                    const [updated] = await this.db
+                        .update(personality)
+                        .set({ wikidata: wikidataId, updatedAt: new Date() })
+                        .where(eq(personality.id, existingBySlug.id))
+                        .returning();
+                    return this.toEntity(updated);
+                } catch (error) {
+                    this.rethrowMapped(error);
+                }
             }
             return this.toEntity(existingBySlug);
         }
@@ -335,15 +339,23 @@ export class PostgresPersonalityService implements IPersonalityService {
         if (body.name) {
             patch.slug = deriveSlug(body.name);
         }
-        const [row] = await this.db
-            .update(personality)
-            .set(patch)
-            .where(
-                and(eq(personality.id, id), eq(personality.isDeleted, false))
-            )
-            .returning();
-        if (!row) throw new NotFoundException(`Personality not found: ${id}`);
-        return this.toEntity(row);
+        try {
+            const [row] = await this.db
+                .update(personality)
+                .set(patch)
+                .where(
+                    and(
+                        eq(personality.id, id),
+                        eq(personality.isDeleted, false)
+                    )
+                )
+                .returning();
+            if (!row)
+                throw new NotFoundException(`Personality not found: ${id}`);
+            return this.toEntity(row);
+        } catch (error) {
+            this.rethrowMapped(error);
+        }
     }
     async hideOrUnhidePersonality(
         id: string,
@@ -351,8 +363,8 @@ export class PostgresPersonalityService implements IPersonalityService {
         _description: string
     ) {
         // History writes are deferred until HistoryService is ported (see
-        // docs/superpowers/specs/2026-05-10-postgres-completion-checklist.md
-        // — added back in the phase that ports HistoryService).
+        // docs/postgres-migration-foundation.md §7 — added back in the phase
+        // that ports HistoryService).
         const patch: Record<string, any> = { isHidden, updatedAt: new Date() };
         const [row] = await this.db
             .update(personality)
@@ -439,12 +451,16 @@ export class PostgresPersonalityService implements IPersonalityService {
         // must be a literal, not a placeholder.
         const threshold = Number.isFinite(configured) ? configured : 0.3;
 
+        // Mongo parity: findAll always excludes hidden AND deleted rows
+        // ($match: { isHidden: false, isDeleted: false }) — it feeds public
+        // search results.
+        const visible = and(
+            eq(personality.isDeleted, false),
+            eq(personality.isHidden, false)
+        );
         const where = searchText
-            ? and(
-                  eq(personality.isDeleted, false),
-                  sql`${personality.name} % ${searchText}`
-              )
-            : eq(personality.isDeleted, false);
+            ? and(visible, sql`${personality.name} % ${searchText}`)
+            : visible;
 
         const order = searchText
             ? sql`similarity(${personality.name}, ${searchText}) DESC`

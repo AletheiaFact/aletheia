@@ -83,7 +83,7 @@ Rationale: Mongo has zero referential integrity today (`management/` cascades in
 - Soft-delete triple: `is_deleted boolean not null default false`, `deleted_at timestamptz`, partial unique indexes exclude deleted rows (`WHERE ... AND is_deleted = false`).
 - `created_at` / `updated_at` `timestamptz not null default now()`.
 - `id uuid primary key default gen_random_uuid()`.
-- `legacy_object_id text` with partial unique index on every table (nullable; filled by backfill; gives bidirectional Mongo↔PG identity for the parity differ, backfill idempotency, and rollback). *(Pending: add to personality schema before first deploy — free now, ALTER+backfill later.)*
+- `legacy_object_id text` with partial unique index on every table (nullable; filled by backfill; gives bidirectional Mongo↔PG identity for the parity differ, backfill idempotency, and rollback). *(Done for personality: `personality_legacy_object_id_uq` partial unique index in migration 0001.)*
 - Tenant-scoped tables get `name_space text not null default 'main'` + composite indexes `(name_space, <lookup-col>)`. Personality is **global** (its Mongo schema has no `nameSpace`) — record per module which applies.
 - The `toEntity()` boundary mapper is the only place rows become API entities; it exposes `_id` (Mongo-parity alias the frontend reads) alongside `id`. Never return a raw row cast `as I<Entity>`.
 
@@ -91,7 +91,7 @@ Rationale: Mongo has zero referential integrity today (`management/` cascades in
 
 All driver errors are mapped to neutral errors in `server/database/errors.ts` at the service boundary; controllers only catch neutral types:
 - `NotImplementedError { backend, method }` → HTTP 501 (exists).
-- `DuplicateKeyError { fields }` → mapped from Mongo `E11000` and PG `23505`. *(Pending: known live break — `personality.controller.ts` catches `MongoError` by name; dead on Postgres. Two more sites: `verification-request.service.ts`, `event.service.ts` — swept when those modules port.)*
+- `DuplicateKeyError { fields }` → mapped from PG `23505` at the postgres-service boundary (`rethrowMapped`). Design intent covers Mongo `E11000` too, but Mongo impls are move-only and still throw raw driver errors — mapping lands per module as each ports. Personality's controller already rethrows `DuplicateKeyError` before its Mongo swallow path. *(Pending sweeps: driver-specific catches in `verification-request.service.ts` and `event.service.ts` — swept when those modules port.)*
 - `NotFoundException` (Nest) for missing entities — both backends.
 
 ---
@@ -107,7 +107,7 @@ All driver errors are mapped to neutral errors in `server/database/errors.ts` at
 | Errors | `server/database/errors.ts` + `server/filters/http-exception.filter.ts` | Neutral error types + HTTP mapping |
 | Migrations | `drizzle.config.ts`, `migrations-postgres/` | `0000_extensions` (pg_trgm, vector) + one generated migration per module; scripts `migrate:pg`, `migrate:pg:create`, `migrate:pg:status` |
 | Test rails | `server/tests/postgres-setup.ts`, `per-worker-setup.ts` | pglite per Vitest worker, migrations on boot, `TRUNCATE` between tests; per-worker Mongo DBs unchanged |
-| CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (full suite under `DB_TYPE=postgres`) |
+| CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (unit suite under `DB_TYPE=postgres`; e2e stays Mongo-only until the boot descope lifts, §6) |
 
 Migration discipline: never edit an applied migration; drizzle-kit owns `meta/_journal.json`; custom SQL goes through `drizzle-kit generate --custom`. Operationally, migrations are NOT run at boot — operators run `yarn migrate:pg` as a deployment step (mirrors the migrate-mongo model); tests run them automatically on first pglite use per worker.
 
@@ -120,7 +120,7 @@ Personality is the template. For module `<m>`:
 1. **Extract `I<M>Service`** from the existing Mongo service — full public surface, no trimming. Interfaces are backend-neutral: no `mongoose` or `drizzle-orm` imports; query inputs cross as neutral shapes (each backend translates to `$regex` / `ILIKE` internally).
 2. **Move the Mongo impl to `mongo/`** — move-only, byte-equivalent behavior. Wire `<m>.provider.ts` factory + module `postgres` branch.
 3. **Extract shared rules** into `shared/<m>.rules.ts` (D2): slug/derivation logic, defaults, input normalization, validation. Both impls import them.
-4. **Drizzle schema + migration**: follow §2 schema conventions (soft-delete triple, `legacy_object_id`, reference columns as indexed `uuid` — no FK constraints per D3). Register in the schema barrel. `yarn migrate:pg:create <m>`.
+4. **Drizzle schema + migration**: follow §2 schema conventions (soft-delete triple, `legacy_object_id`, reference columns as indexed `uuid` — no FK constraints per D3). Register in the schema barrel. `yarn migrate:pg:create --name=<module>` (drizzle-kit takes `--name=`, not a positional arg).
 5. **Port methods in small commits** (one commit per method or method-group, TDD against the contract spec). Cross-module methods the dependency phases haven't landed yet throw `NotImplementedError` — loud, tracked in the checklist, removed by the phase that unblocks them.
 6. **Map driver errors** to the neutral taxonomy at the service boundary; sweep any backend-specific catches in the module's controllers.
 7. **Tests per D4**: dual-backend contract spec (ungated), type-test, postgres-only spec for driver-specific behavior (trgm ranking, etc.).
@@ -171,6 +171,9 @@ All completion items landed on 2026-09-18:
 | soft-deleted wikidata + `findOrCreatePersonality` | `E11000` (sparse unique index covers deleted rows) | succeeds (partial index excludes deleted) | index semantics; PG behavior is the intended one |
 | `listAll` enrichment | rows post-processed (wikidata props + review stats) | raw entities, guarded 501s for unsupported surface | postProcess needs claim/claim-review (Phases 2–3) |
 | Mongo impl `listAll` positional args | `(…, query, filter, language, withSuggestions)` — differs from the interface order | interface order | prod behavior left as-is; interface is canonical |
+| role-based hidden filtering on `getById`/`getPersonalityBySlug` | non-admin requests get `isHidden: false` injected via `util.getParamsBasedOnUserRole` (REQUEST-scoped) | returns hidden personalities to everyone (service is not REQUEST-scoped) | port role-aware querying when a phase needs PG serving public traffic — before Cutover Milestone A. `findAll`/`count` exclude hidden by default; `listAll` honors the caller-supplied `isHidden` filter |
+| duplicate wikidata on `update` | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
+| `hideOrUnhidePersonality` return value | pre-update doc (`findByIdAndUpdate` without `new: true`) | updated row | callers ignore the body; PG returns the saner value |
 
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
@@ -203,7 +206,7 @@ Unplaced modules to audit before Phase 1 finalizes the list: `report` (slot Phas
 ### Per-phase porting notes (merged from the completion checklist)
 
 **Phase 1 — verification-request** [M]. Exercises `pgvector` for the first time.
-Manual cosine similarity via `$zip`/`$reduce` (`verification-request.service.ts:901-951`)
+Manual cosine similarity via `$zip`/`$reduce` (`verification-request.service.ts:~966`)
 → `pgvector` `<=>` operator (`1 - (embedding <=> $1) AS similarity`); embedding
 `number[]` → `vector(N)` column, N pinned to the canonical embedding model's
 dimension (`text-embedding-3-small` = 1536 — confirm in the phase spec); HNSW
@@ -216,7 +219,7 @@ real-PG CI leg, latency/error interceptor.
 **Phase 2 — claim + claim-revision + content types** [L]. Atlas `$search` on
 sentence content/topics (`sentence.service.ts:85-108`) → trgm GIN on `content`;
 `topics` is an array — needs `unnest` + trgm or a `claim_topic` join table.
-`$search` on revision title (`claim-revision.service.ts:92-101`) → trgm GIN.
+`$search` on revision title (`claim-revision.service.ts:~105`) → trgm GIN.
 3-way `$lookup` chains (sentences → claimrevisions → claims → personalities) →
 CTEs or chained joins. Modeling: Mongo `Claim` discriminates by a `contentType`
 field in code (no Mongoose discriminators) — **single `claim` table with
@@ -225,8 +228,9 @@ exceed ~10; `claim_revision` is a straight port with a `claim_id` reference.
 Unblocks personality's `getClaimsByPersonalitySlug` + `extractClaimWithTextSummary`.
 
 **Phase 3 — claim-review** [M]. Nested `$lookup` chains
-(`claim-review.service.ts:169-230`) → multi-CTE SQL; `$facet` status counts
-(`:101-112`) → `count(*) FILTER (WHERE status = ?)` in one query. `pre("find")`
+(`claim-review.service.ts:~150-176`) → multi-CTE SQL; status counts today are a
+`$count` stage plus app-side JS reduces (no `$facet`) → collapse into
+`count(*) FILTER (WHERE status = ?)` in one query. `pre("find")`
 auto-populate hooks → explicit Drizzle relational queries. Unblocks personality's
 `getReviewStats` + `combinedListAll` → **personality reaches zero 501s here**.
 
@@ -246,7 +250,7 @@ services)** [M aggregate, each S]. Mostly CRUD; bundle into one or two MRs.
 query with conditional joins.
 
 **Phase 7 — events/stats/daily-report/vr-stats** [L]. The heaviest `$facet` +
-`$lookup` pipelines: `event.service.ts:266-315` (3× nested `$lookup` + `$facet`
+`$lookup` pipelines: `event.service.ts:~317-358` (3× nested `$lookup` + `$facet`
 → multi-CTE), `verification-request-stats.service.ts:59-100` (`$facet` →
 `FILTER` clauses), `daily-report` → candidate for nightly-refreshed materialized
 views. Performance-critical: §8 perf gates are blocking here.
@@ -311,7 +315,9 @@ delete the now-trivial type-tests; update CLAUDE.md.
 | Yjs CRDT persistence awkward in PG | 9 | `bytea` blobs first; hybrid-retain Mongo for Yjs only as last resort |
 | Cascade-delete semantics lost | 10 | D3 end-game: explicit transactional deletes; orphan sweep |
 | Dual-write drift | 1+ | shadow-read diff monitoring; Mongo authoritative until diff = 0 |
-| Silent test skips masking coverage | all | D4.2 canary + ungated contract suite |
+| Silent test skips masking coverage | all | D4.2 canary + ungated contract suite; `test:pg` sets `CI_EXPECT_DB_TYPE` so a stale local `.env` `DB_TYPE` fails loudly |
+| pglite ≠ real Postgres (pool semantics, locale/collation ORDER BY, extension availability) | 1+ | D4.5 real-PG CI leg from Phase 1; collation-sensitive assertions avoid locale-dependent ordering |
+| Stray `DB_TYPE` env var disagreeing with config.yaml | deploys | boot fails fast by design (`app.module.ts` mismatch throw) — call out in deploy runbooks |
 | Drizzle pre-1.0 API churn | all | exact version pins; one deliberate upgrade per phase max |
 | Merge-conflict contamination on long-lived branches | all | verify branch diff vs non-merge-commit file list before every MR |
 | Connection-pool exhaustion as modules grow | all | single shared pool + exhaustion metrics |

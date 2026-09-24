@@ -24,8 +24,16 @@ type Backend = "mongodb" | "postgres";
  * docs/postgres-migration-foundation.md).
  */
 
-/** Normalize Mongo ObjectId / PG uuid for identity comparison. */
-const idOf = (x: any): string => String(x?._id ?? x?.id);
+/**
+ * Normalize Mongo ObjectId / PG uuid for identity comparison. Asserts the id
+ * exists so two id-less objects can never satisfy an identity comparison
+ * ("undefined" === "undefined").
+ */
+const idOf = (x: any): string => {
+    const value = x?._id ?? x?.id;
+    expect(value).toBeDefined();
+    return String(value);
+};
 
 /**
  * The contract for "no usable entity for this reference": Postgres throws
