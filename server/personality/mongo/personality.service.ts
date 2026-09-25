@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import slugify from "slugify";
+import { deriveSlug, defaultDescription } from "../shared/personality.rules";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../../wikidata/wikidata.service";
 import { UtilService } from "../../util";
@@ -139,18 +139,20 @@ export class MongoPersonalityService {
      */
     async create(personality: CreatePersonalityDTO & { slug?: string }) {
         try {
-            const personalityExists =
-                await this.getDeletedPersonalityByWikidata(
-                    personality.wikidata
-                );
+            // Only look up a soft-deleted match when a wikidata id is present:
+            // findOne({ isDeleted: true, wikidata: undefined }) has its
+            // undefined key stripped by Mongoose and would match (and restore)
+            // an arbitrary soft-deleted personality.
+            const personalityExists = personality.wikidata
+                ? await this.getDeletedPersonalityByWikidata(
+                      personality.wikidata
+                  )
+                : null;
 
             if (personalityExists) {
                 return personalityExists.restore();
             } else {
-                personality.slug = slugify(personality.name, {
-                    lower: true, // convert to lower case, defaults to `false`
-                    strict: true, // strip special characters except replacement, defaults to `false`
-                });
+                personality.slug = deriveSlug(personality.name);
                 const newPersonality = new this.PersonalityModel(personality);
                 this.logger.log(
                     `Attempting to create new personality with data ${personality}`
@@ -212,10 +214,7 @@ export class MongoPersonalityService {
             }
         }
 
-        const slug = slugify(personalityData.name, {
-            lower: true,
-            strict: true,
-        });
+        const slug = deriveSlug(personalityData.name);
 
         const existingBySlug = await this.PersonalityModel.findOne({
             slug,
@@ -237,9 +236,10 @@ export class MongoPersonalityService {
         const newPersonality = new this.PersonalityModel({
             name: personalityData.name,
             slug,
-            description:
-                personalityData.wikidata?.description ||
-                `Personality: ${personalityData.name}`,
+            description: defaultDescription(
+                personalityData.name,
+                personalityData.wikidata?.description
+            ),
             wikidata: wikidataId,
             isHidden: false,
         });
@@ -482,10 +482,7 @@ export class MongoPersonalityService {
     async update(personalityId: string, newPersonalityBody: any) {
         // eslint-disable-next-line no-useless-catch
         if (newPersonalityBody.name) {
-            newPersonalityBody.slug = slugify(newPersonalityBody.name, {
-                lower: true,
-                strict: true,
-            });
+            newPersonalityBody.slug = deriveSlug(newPersonalityBody.name);
         }
         const personality = await this.getById(personalityId);
         const previousPersonality = { ...personality };
@@ -542,7 +539,9 @@ export class MongoPersonalityService {
             newPersonality
         ).exec();
         if (!updated) {
-            throw new NotFoundException(`Personality not found: ${personality._id}`);
+            throw new NotFoundException(
+                `Personality not found: ${personality._id}`
+            );
         }
         return updated;
     }
