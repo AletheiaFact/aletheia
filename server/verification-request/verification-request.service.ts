@@ -459,7 +459,7 @@ export class VerificationRequestService {
                         `Topics created/found with IDs: ${topicIds.join(", ")}`
                     );
                     break;
-                case "impactArea":
+                case "impactArea": {
                     this.logger.log(`Resolving impact area:`, result);
                     let impactArea = findImpactArea(result);
                     if (!impactArea) {
@@ -480,6 +480,7 @@ export class VerificationRequestService {
                         `Impact area topic created/found with ID: ${valueToUpdate}`
                     );
                     break;
+                }
                 case "severity":
                     if (typeof result === "string") {
                         valueToUpdate = result;

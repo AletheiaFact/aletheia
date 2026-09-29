@@ -25,7 +25,9 @@ const ImpactAreaSelect = ({
     const [areas, setAreas] = useState<ImpactAreaOption[]>([]);
 
     useEffect(() => {
-        TopicsApi.getImpactAreas(t).then(setAreas);
+        TopicsApi.getImpactAreas(t)
+            .then(setAreas)
+            .catch(() => setAreas([]));
     }, [t]);
 
     const isDefaultInList = areas.some((area) => area.slug === defaultArea?.slug);

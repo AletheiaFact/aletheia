@@ -15,6 +15,7 @@
         "strictNullChecks": true,
         "useUnknownInCatchVariables": true,
         "noImplicitAny": true,
+        "resolveJsonModule": true,
         "strictPropertyInitialization": false,
         //
     },
