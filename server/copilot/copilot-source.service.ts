@@ -1,5 +1,5 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { SourceService } from "../source/source.service";
+import { Inject, Injectable, Logger } from "@nestjs/common";
+import type { ISourceService } from "../interfaces/source.service.interface";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { toError } from "../util/error-handling";
 
@@ -27,7 +27,10 @@ const URL_REGEX = /https?:\/\/[^\s,)}\]]+/i;
 export class CopilotSourceService {
     private readonly logger = new Logger("CopilotSourceService");
 
-    constructor(private readonly sourceService: SourceService) {}
+    constructor(
+        @Inject("SourceService")
+        private readonly sourceService: ISourceService
+    ) {}
 
     /**
      * Parses a plain-string source into a normalized AgenciaSource object.
@@ -62,7 +65,9 @@ export class CopilotSourceService {
      * Normalizes a single source entry (string or object) into an AgenciaSource.
      * Returns null if no valid URL can be extracted.
      */
-    private normalizeSource(source: string | AgenciaSource): AgenciaSource | null {
+    private normalizeSource(
+        source: string | AgenciaSource
+    ): AgenciaSource | null {
         if (typeof source === "string") {
             return this.parseStringSource(source);
         }
@@ -133,9 +138,7 @@ export class CopilotSourceService {
                     },
                 });
 
-                this.logger.log(
-                    `Persisted Agencia source: ${normalized.href}`
-                );
+                this.logger.log(`Persisted Agencia source: ${normalized.href}`);
             } catch (error) {
                 const err = toError(error);
                 this.logger.warn(

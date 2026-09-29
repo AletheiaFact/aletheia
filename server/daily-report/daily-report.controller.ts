@@ -1,9 +1,15 @@
-import { Controller, NotFoundException, Param, Post } from "@nestjs/common";
+import {
+    Controller,
+    Inject,
+    NotFoundException,
+    Param,
+    Post,
+} from "@nestjs/common";
 import { AdminOnly } from "../auth/decorators/auth.decorator";
 import { DailyReportService } from "../daily-report/daily-report.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NotificationService } from "../notifications/notifications.service";
-import { SourceService } from "../source/source.service";
+import type { ISourceService } from "../interfaces/source.service.interface";
 import { SourceProps } from "../source/dto/create-source.dto";
 
 interface DailyReportQuery {
@@ -21,7 +27,8 @@ export class DailyReportController {
         private readonly dailyReportService: DailyReportService,
         private claimReviewService: ClaimReviewService,
         private notificationService: NotificationService,
-        private sourceService: SourceService
+        @Inject("SourceService")
+        private sourceService: ISourceService
     ) {}
 
     @AdminOnly()

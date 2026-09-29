@@ -14,7 +14,11 @@ const ReportModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [ReportModel, ConfigModule, forwardRef(() => SourceModule)],
+    imports: [
+        ReportModel,
+        ConfigModule,
+        forwardRef(() => SourceModule.register()),
+    ],
     exports: [ReportService],
     providers: [ReportService],
     controllers: [ReportController],

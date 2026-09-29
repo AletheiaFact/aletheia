@@ -36,7 +36,7 @@ import { CommentEnum } from "./comment/schema/comment.schema";
 import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
-import { Source } from "../source/schemas/source.schema";
+import { Source } from "../source/mongo/schemas/source.schema";
 
 interface IListAllQuery {
     value: any;

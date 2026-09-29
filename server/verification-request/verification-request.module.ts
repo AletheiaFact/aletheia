@@ -35,7 +35,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
 @Module({
     imports: [
         VerificationRequestModel,
-        SourceModule,
+        SourceModule.register(),
         ViewModule,
         ConfigModule,
         ReviewTaskModule,

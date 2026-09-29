@@ -10,7 +10,7 @@ import validator from "validator";
 const md5 = require("md5");
 
 @Injectable()
-export class SourceService {
+export class MongoSourceService {
     constructor(
         @InjectModel(Source.name)
         private SourceModel: Model<SourceDocument>
