@@ -20,6 +20,10 @@ const mockSourceService = {
     getSourceByHref: vi.fn(),
 };
 
+const mockTopicService = {
+    findOrCreateTopic: vi.fn(),
+};
+
 describe("VerificationRequestService (Unit)", () => {
     let testingModule: TestingModule;
     let service: VerificationRequestService;
@@ -45,7 +49,7 @@ describe("VerificationRequestService (Unit)", () => {
                 { provide: GroupService, useValue: {} },
                 { provide: HistoryService, useValue: {} },
                 { provide: AiTaskService, useValue: {} },
-                { provide: TopicService, useValue: {} },
+                { provide: TopicService, useValue: mockTopicService },
                 { provide: "PersonalityService", useValue: {} },
                 {
                     provide: EMBEDDINGS_PROVIDER,
@@ -138,6 +142,61 @@ describe("VerificationRequestService (Unit)", () => {
             });
 
             expect(mockQuery.limit).toHaveBeenCalledWith(5);
+        });
+    });
+    describe("updateFieldByAiTask (impactArea)", () => {
+        const targetId = "507f1f77bcf86cd799439011";
+        const params = { targetId, field: "impactArea" };
+        let mockFindByIdAndUpdate: any;
+
+        beforeEach(() => {
+            (mockVerificationRequestModel as any).findById = vi
+                .fn()
+                .mockResolvedValue({ id: targetId, stateFingerprints: new Map() });
+            mockFindByIdAndUpdate = vi.fn().mockReturnValue({
+                exec: vi.fn().mockResolvedValue({ id: targetId }),
+            });
+            (mockVerificationRequestModel as any).findByIdAndUpdate =
+                mockFindByIdAndUpdate;
+            mockTopicService.findOrCreateTopic.mockImplementation(
+                async (area) => ({ _id: `topic-${area.slug}` })
+            );
+            vi.spyOn(service as any, "trackStateTransition").mockResolvedValue(
+                undefined
+            );
+            vi.spyOn(service as any, "updateProgress").mockResolvedValue(
+                undefined
+            );
+            vi.spyOn(
+                service as any,
+                "revalidateAndRunMissingStatesWithParallel"
+            ).mockResolvedValue(undefined);
+        });
+
+        it("stores the listed area the AI result refers to", async () => {
+            await service.updateFieldByAiTask(params, {
+                name: "Saúde e Bem-Estar",
+            });
+
+            expect(mockTopicService.findOrCreateTopic).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "saude" })
+            );
+            expect(mockFindByIdAndUpdate.mock.calls[0][1].$set.impactArea).toBe(
+                "topic-saude"
+            );
+        });
+
+        it("falls back to the default area when the result is outside the list", async () => {
+            await service.updateFieldByAiTask(params, {
+                name: "Design de interiores",
+            });
+
+            expect(mockTopicService.findOrCreateTopic).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "outros" })
+            );
+            expect(mockFindByIdAndUpdate.mock.calls[0][1].$set.impactArea).toBe(
+                "topic-outros"
+            );
         });
     });
 });
