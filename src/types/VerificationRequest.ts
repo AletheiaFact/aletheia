@@ -142,6 +142,21 @@ interface IReportTypeSelect {
   dataCy?: string;
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface IOptionsSelect {
+  options: SelectOption[];
+  onChange: (value: string | undefined) => void;
+  defaultValue?: string;
+  placeholder?: string;
+  style?: React.CSSProperties;
+  isDisabled: boolean;
+  dataCy?: string;
+}
+
 interface IDynamicVerificationRequestForm {
     data?: VerificationRequest;
     onSubmit: (value: VerificationRequest) => void;
@@ -170,5 +185,7 @@ export type {
   IEditVerificationRequestDrawer,
   IInputExtraSourcesList,
   IReportTypeSelect,
+  SelectOption,
+  IOptionsSelect,
   IDynamicVerificationRequestForm
 };
