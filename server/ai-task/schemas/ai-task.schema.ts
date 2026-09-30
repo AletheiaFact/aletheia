@@ -79,10 +79,10 @@ export const validateTaskContent = (type: AiTaskType, content: unknown) => {
 };
 
 export const AiTaskZodSchema = z.object({
-    type: z.nativeEnum(AiTaskType),
-    state: z.nativeEnum(AiTaskState),
+    type: z.enum(AiTaskType),
+    state: z.enum(AiTaskState),
     content: z.unknown(),
-    callbackRoute: z.nativeEnum(CallbackRoute),
+    callbackRoute: z.enum(CallbackRoute),
     callbackParams: z.object({
         targetId: z.string().min(1),
         field: z.string().min(1),

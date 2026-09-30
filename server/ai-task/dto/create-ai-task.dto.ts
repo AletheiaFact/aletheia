@@ -4,9 +4,9 @@ import { validateTaskContent } from "../schemas/ai-task.schema";
 
 export const CreateAiTaskDtoZ = z
     .object({
-        type: z.nativeEnum(AiTaskType),
+        type: z.enum(AiTaskType),
         content: z.unknown(),
-        callbackRoute: z.nativeEnum(CallbackRoute),
+        callbackRoute: z.enum(CallbackRoute),
         callbackParams: z.object({
             targetId: z.string().min(1),
             field: z.string().min(1),

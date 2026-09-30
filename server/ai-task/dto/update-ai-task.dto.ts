@@ -4,7 +4,7 @@ import { AiTaskState } from "../constants/ai-task.constants";
 const MAX_RESULT_SIZE = 10 * 1024 * 1024;
 
 export const UpdateAiTaskDtoZ = z.object({
-    state: z.nativeEnum(AiTaskState),
+    state: z.enum(AiTaskState),
     result: z
         .any()
         .optional()
@@ -20,7 +20,7 @@ export const UpdateAiTaskDtoZ = z.object({
                 }
             },
             {
-                message: `Result data exceeds maximum size of ${
+                error: `Result data exceeds maximum size of ${
                     MAX_RESULT_SIZE / 1024 / 1024
                 }MB`,
             }

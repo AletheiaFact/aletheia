@@ -1,13 +1,8 @@
-import {
-    Body,
-    Controller,
-    Post,
-    UnprocessableEntityException,
-} from "@nestjs/common";
+import { Controller, Post, UnprocessableEntityException } from "@nestjs/common";
 import { Public } from "../auth/decorators/auth.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { NotificationService } from "../notifications/notifications.service";
-import { ZodValidationPipe } from "../ai-task/pipes/zod-validation.pipe";
+import { ZodBody } from "../common/validation";
 import {
     CreateCommitteeInterestApplicationDto,
     CreateCommitteeInterestApplicationSchema,
@@ -23,16 +18,14 @@ export class CommitteeInterestController {
     @Post("api/committee-interest")
     @Public()
     public async create(
-        @Body(new ZodValidationPipe(CreateCommitteeInterestApplicationSchema))
+        @ZodBody(CreateCommitteeInterestApplicationSchema)
         payload: CreateCommitteeInterestApplicationDto
     ) {
         const validateCaptcha = await this.captchaService.validate(
             payload.recaptcha
         );
         if (!validateCaptcha) {
-            throw new UnprocessableEntityException(
-                "Error validating captcha"
-            );
+            throw new UnprocessableEntityException("Error validating captcha");
         }
 
         await this.notificationService.sendCommitteeInterestApplication({
