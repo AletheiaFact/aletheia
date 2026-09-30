@@ -6,8 +6,7 @@ import {
 import { Model, SortOrder, Types } from "mongoose";
 import { SourceDocument, Source } from "./schemas/source.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import validator from "validator";
-const md5 = require("md5");
+import { deriveDataHash, isValidSourceHref } from "../shared/source.rules";
 
 @Injectable()
 export class MongoSourceService {
@@ -51,14 +50,11 @@ export class MongoSourceService {
         if (data?.props?.date) {
             data.props.date = new Date(data.props.date);
         }
-        if (
-            !data.href ||
-            !validator.isURL(data.href, { require_protocol: true })
-        ) {
+        if (!isValidSourceHref(data.href)) {
             throw new BadRequestException("Invalid URL");
         }
 
-        data.data_hash = md5(data.href);
+        data.data_hash = deriveDataHash(data.href);
         data.user = new Types.ObjectId(data.user);
 
         const existingSource = await this.SourceModel.findOne({
