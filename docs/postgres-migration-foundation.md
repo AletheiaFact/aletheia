@@ -186,6 +186,8 @@ All completion items landed on 2026-09-18:
 | duplicate `data_hash` insert race | raw `E11000` → 500 (dedup pre-check normally prevents it) | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
 | `find(match)` | queries a literal `match` field (broken, zero callers) | throws `NotImplementedError` | dead code kept on the interface for surface parity |
 | non-uuid ids (`getById`/`updateTargetId`/`getByTargetId`) | invalid ObjectId → CastError 500 | invalid uuid → 22P02 → 500 | parity today; Phase 10 may add a 22P02→404 mapping |
+| `create` validation order | coerces `targetId`/`props.date` BEFORE validating href (invalid targetId → BsonError 500 even with a bad href); also mutates the caller's `data` object | validates href first (400), never mutates the input | PG order is saner; live callers unaffected |
+| `update` with `data_hash` in the body | applied (rewrites the dedup key) | `NotImplementedError` (501) | rewriting the dedup key via update is unsupported; loud per §1.5 |
 
 Source reference columns land per D3 without constraints: `user_id uuid` (users port in Phase 4) and polymorphic `target_ids uuid[]` (Claim/ClaimReview, GIN-indexed — Mongo dynamic ref has no single entity). The source Mongo schema has **no soft-delete plugin and no delete method**; the PG table still carries the §2 triple for uniformity (always false/null). `listAllDailySourceReviews` and `count` support exactly the live callers' query shapes (`nameSpace`, `props.date.$gt`) and guard everything else with `NotImplementedError`.
 
@@ -228,7 +230,10 @@ index by default (IVFFlat only if write throughput dominates). Sources/group/
 topics populate chains → explicit Drizzle joins — port enough of those leaf
 tables (schema + read surface) to satisfy the joins rather than reading across
 backends. Also builds the cross-cutting tooling: parity differ (`scripts/parity/`),
-real-PG CI leg, latency/error interceptor.
+real-PG CI leg, latency/error interceptor. Landmine: the Mongo VR service wraps
+source ids in `new Types.ObjectId(id)` (`verification-request.service.ts:~790`)
+— throws on uuid ids; the PG VR impl must drop that wrap (source is already
+ported, ids are uuids under postgres).
 
 **Phase 2 — claim + claim-revision + content types** [L]. Atlas `$search` on
 sentence content/topics (`sentence.service.ts:85-108`) → trgm GIN on `content`;

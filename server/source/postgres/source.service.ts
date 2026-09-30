@@ -283,11 +283,16 @@ export class PostgresSourceService implements ISourceService {
         const row = await this.findByDataHash(dataHash);
         if (!row) throw new NotFoundException();
 
-        // Mongo parity: Object.assign onto the doc, then save — unknown keys
-        // are silently stripped by the strict schema, props is replaced
+        // Mongo parity: Object.assign onto the doc, then save — non-schema
+        // keys are silently stripped by the strict schema, props is replaced
         // whole (shallow merge), data_hash is NOT recomputed on href change,
-        // and a scalar targetId is cast to a one-element array.
+        // and a scalar targetId is cast to a one-element array. data_hash IS
+        // a Mongo schema key (Mongo would apply it) but rewriting the dedup
+        // key through update() is not supported here — guard loud (§1.5).
         const body = sourceBodyUpdate ?? {};
+        if (body.data_hash !== undefined) {
+            throw new NotImplementedError("postgres", "update(data_hash)");
+        }
         const patch: Record<string, any> = { updatedAt: new Date() };
         if (body.href !== undefined) patch.href = body.href;
         if (body.props !== undefined) patch.props = body.props;

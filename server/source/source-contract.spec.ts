@@ -224,6 +224,43 @@ describe.each(backends)(
             expect(updated.data_hash).toBe(created.data_hash);
         });
 
+        it("update silently strips non-schema keys (Mongo strict-mode parity)", async () => {
+            const created: any = await makeSource();
+            const updated: any = await service.update(created.data_hash, {
+                props: { classification: "trustworthy" },
+                notASchemaKey: "ignored",
+            });
+            expect(updated.notASchemaKey).toBeUndefined();
+            expect(updated.props).toMatchObject({
+                classification: "trustworthy",
+            });
+        });
+
+        it("listAll returns insertion order (asc/desc are reverses)", async () => {
+            const ids: string[] = [];
+            for (let i = 0; i < 3; i++) {
+                const s: any = await makeSource();
+                await service.update(s.data_hash, {
+                    props: { classification: "trustworthy" },
+                });
+                ids.push(idOf(s));
+            }
+            const ascRows: any[] = await service.listAll({
+                page: 0,
+                pageSize: "10",
+                order: "asc",
+                nameSpace: "main",
+            });
+            const descRows: any[] = await service.listAll({
+                page: 0,
+                pageSize: "10",
+                order: "desc",
+                nameSpace: "main",
+            });
+            expect(ascRows.map(idOf)).toEqual(ids);
+            expect(descRows.map(idOf)).toEqual([...ids].reverse());
+        });
+
         it("update throws NotFoundException for an unknown data_hash", async () => {
             await expect(
                 service.update("no-such-hash", { props: {} })

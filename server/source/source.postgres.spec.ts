@@ -64,6 +64,12 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect(() => service.find({ href: "x" })).toThrow(
                 NotImplementedError
             );
+            // data_hash IS a Mongo schema key update() would apply — guarded
+            // here instead of silently stripped (documented divergence).
+            const created: any = await service.create({ href: freshHref() });
+            await expect(
+                service.update(created.data_hash, { data_hash: "rewrite" })
+            ).rejects.toBeInstanceOf(NotImplementedError);
         });
 
         it("maps a data_hash unique violation to DuplicateKeyError naming the field", async () => {
@@ -100,14 +106,31 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         });
 
         it("listAll orders by insertion time (created_at) — Mongo sorts by _id", async () => {
-            const a: any = await service.create({
-                href: freshHref(),
-                props: { classification: "x" },
-            });
-            const b: any = await service.create({
-                href: freshHref(),
-                props: { classification: "x" },
-            });
+            // Explicit created_at values: deterministic regardless of clock
+            // precision (sequential service.create timestamps could collide).
+            const db = await getTestDrizzle();
+            const { source } = await import("./postgres/schema/source.schema");
+            const { deriveDataHash } = await import("./shared/source.rules");
+            const mkRow = (href: string, createdAt: Date) =>
+                db
+                    .insert(source)
+                    .values({
+                        href,
+                        dataHash: deriveDataHash(href),
+                        targetIds: [],
+                        props: { classification: "x" },
+                        createdAt,
+                    })
+                    .returning()
+                    .then(([r]) => r);
+            const older = await mkRow(
+                freshHref(),
+                new Date("2026-01-01T00:00:00Z")
+            );
+            const newer = await mkRow(
+                freshHref(),
+                new Date("2026-01-02T00:00:00Z")
+            );
             const asc: any[] = await service.listAll({
                 page: 0,
                 pageSize: "10",
@@ -120,10 +143,8 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
                 order: "desc",
                 nameSpace: "main",
             });
-            expect(asc.map((r) => r.id)).toEqual([a.id, b.id]);
-            expect(desc.map((r) => r.id)).toEqual(
-                [...asc.map((r) => r.id)].reverse()
-            );
+            expect(asc.map((r) => r.id)).toEqual([older.id, newer.id]);
+            expect(desc.map((r) => r.id)).toEqual([newer.id, older.id]);
         });
 
         it("getByTargetId uses uuid containment on target_ids", async () => {
