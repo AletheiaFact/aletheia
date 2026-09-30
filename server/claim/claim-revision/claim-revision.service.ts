@@ -1,9 +1,9 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { ParserService } from "../parser/parser.service";
-import { SourceService } from "../../source/source.service";
-import { SourceTargetModel } from "../../source/schemas/source.schema";
+import type { ISourceService } from "../../interfaces/source.service.interface";
+import { SourceTargetModel } from "../../source/mongo/schemas/source.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
@@ -22,7 +22,8 @@ export class ClaimRevisionService {
     constructor(
         @InjectModel(ClaimRevision.name)
         private ClaimRevisionModel: Model<ClaimRevisionDocument>,
-        private sourceService: SourceService,
+        @Inject("SourceService")
+        private sourceService: ISourceService,
         private parserService: ParserService,
         private imageService: ImageService,
         private debateService: DebateService,
@@ -231,7 +232,7 @@ export class ClaimRevisionService {
                     const existingSources =
                         await this.sourceService.getSourceByHref(source);
                     if (existingSources) {
-                        this.sourceService.updateTargetId(
+                        void this.sourceService.updateTargetId(
                             existingSources._id,
                             claimId
                         );

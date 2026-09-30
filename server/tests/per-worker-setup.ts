@@ -12,9 +12,16 @@ import { inject } from "vitest";
  * per isolated worker (1..maxWorkers). This is the per-worker isolation
  * mechanism that lets the e2e suite run in parallel safely.
  */
-const baseUri = inject("mongoBaseUri");
-const workerId = process.env.VITEST_WORKER_ID || "1";
+const dbType = process.env.DB_TYPE ?? "mongodb";
 
-// mongodb-memory-server's getUri() returns a URI with a trailing slash, so
-// appending the database name directly produces a valid connection string.
-process.env.MONGO_URI = `${baseUri}test-worker-${workerId}`;
+if (dbType === "mongodb") {
+    const baseUri = inject("mongoBaseUri");
+    const workerId = process.env.VITEST_WORKER_ID || "1";
+
+    // mongodb-memory-server's getUri() returns a URI with a trailing slash, so
+    // appending the database name directly produces a valid connection string.
+    process.env.MONGO_URI = `${baseUri}test-worker-${workerId}`;
+}
+// For DB_TYPE=postgres, no per-worker setup is needed: pglite is in-process,
+// each worker is a separate Node process, and getTestDrizzle() lazily creates
+// the per-worker instance on first use (see server/tests/postgres-setup.ts).

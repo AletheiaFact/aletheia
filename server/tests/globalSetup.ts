@@ -11,6 +11,13 @@ import type { TestProject } from "vitest/node";
  * not race on the same collections.
  */
 export async function setup({ provide }: TestProject) {
+    if ((process.env.DB_TYPE ?? "mongodb") !== "mongodb") {
+        // No global setup needed for non-Mongo backends. pglite is in-process
+        // and each worker lazily creates its own instance via getTestDrizzle().
+        provide("mongoBaseUri", "");
+        return async () => {};
+    }
+
     const instance = await MongoMemoryServer.create();
 
     // Expose the base URI to test workers. The trailing slash is significant

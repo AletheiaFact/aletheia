@@ -4,7 +4,6 @@ import { getModelToken } from "@nestjs/mongoose";
 import { VerificationRequestService } from "./verification-request.service";
 import { VerificationRequestDocument } from "./schemas/verification-request.schema";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { SourceService } from "../source/source.service";
 import { GroupService } from "../group/group.service";
 import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
@@ -41,7 +40,7 @@ describe("VerificationRequestService (Unit)", () => {
                     provide: VerificationRequestStateMachineService,
                     useValue: {},
                 },
-                { provide: SourceService, useValue: mockSourceService },
+                { provide: "SourceService", useValue: mockSourceService },
                 { provide: GroupService, useValue: {} },
                 { provide: HistoryService, useValue: {} },
                 { provide: AiTaskService, useValue: {} },

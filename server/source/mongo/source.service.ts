@@ -6,14 +6,13 @@ import {
 import { Model, SortOrder, Types } from "mongoose";
 import { SourceDocument, Source } from "./schemas/source.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import validator from "validator";
-const md5 = require("md5");
+import { deriveDataHash, isValidSourceHref } from "../shared/source.rules";
 
 @Injectable()
-export class SourceService {
+export class MongoSourceService {
     constructor(
         @InjectModel(Source.name)
-        private SourceModel: Model<SourceDocument>
+        private readonly SourceModel: Model<SourceDocument>
     ) {}
 
     async listAll({
@@ -51,14 +50,11 @@ export class SourceService {
         if (data?.props?.date) {
             data.props.date = new Date(data.props.date);
         }
-        if (
-            !data.href ||
-            !validator.isURL(data.href, { require_protocol: true })
-        ) {
+        if (!isValidSourceHref(data.href)) {
             throw new BadRequestException("Invalid URL");
         }
 
-        data.data_hash = md5(data.href);
+        data.data_hash = deriveDataHash(data.href);
         data.user = new Types.ObjectId(data.user);
 
         const existingSource = await this.SourceModel.findOne({
@@ -79,7 +75,11 @@ export class SourceService {
             throw new NotFoundException(`Source not found: ${sourceId}`);
         }
         source.targetId = [...source.targetId, newTargetId];
-        source.save();
+        // Bug fix (approved move-only exception): save() was fire-and-forget,
+        // so a failed write (e.g. VersionError) was silently lost AND became
+        // an unhandled rejection — the source of a flaky CI crash. The method
+        // is async and its callers don't rely on early return timing.
+        await source.save();
         return source;
     }
 

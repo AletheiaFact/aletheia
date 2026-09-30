@@ -1,3 +1,3 @@
 export default {
-    type: "mongodb",
+    type: (process.env.DB_TYPE ?? "mongodb") as "mongodb" | "postgres",
 };

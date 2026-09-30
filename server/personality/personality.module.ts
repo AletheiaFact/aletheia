@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { MongoPersonalityService } from "./mongo/personality.service";
+import { PostgresPersonalityService } from "./postgres/personality.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
     Personality,
@@ -35,6 +36,8 @@ export class PersonalityModule {
         if (dbConfig.type === "mongodb") {
             imports.push(PersonalityModel);
             providers.push(MongoPersonalityService);
+        } else if (dbConfig.type === "postgres") {
+            providers.push(PostgresPersonalityService);
         } else {
             throw new Error("Invalid DB_TYPE in configuration");
         }

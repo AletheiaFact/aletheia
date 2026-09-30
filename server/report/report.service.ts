@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { SourceService } from "../source/source.service";
+import type { ISourceService } from "../interfaces/source.service.interface";
 import { Report, ReportDocument } from "./schemas/report.schema";
 import { ClassificationEnum } from "../claim-review/dto/create-claim-review.dto";
 
@@ -10,7 +10,8 @@ export class ReportService {
     constructor(
         @InjectModel(Report.name)
         private ReportModel: Model<ReportDocument>,
-        private sourceService: SourceService
+        @Inject("SourceService")
+        private sourceService: ISourceService
     ) {}
 
     create(report: any) {
@@ -26,10 +27,10 @@ export class ReportService {
         if (report.sources) {
             this.createReportSources(report.sources, newReport.id);
         } else {
-            this.updateReportSource(report, newReport.id);
+            void this.updateReportSource(report, newReport.id);
         }
 
-        newReport.save();
+        void newReport.save();
         return newReport;
     }
 
@@ -38,7 +39,7 @@ export class ReportService {
         targetId: string
     ) {
         for (const source of sources) {
-            this.sourceService.create({
+            void this.sourceService.create({
                 href: source.href,
                 props: source?.props,
                 targetId,

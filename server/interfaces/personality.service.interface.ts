@@ -1,10 +1,17 @@
-import { LeanDocument } from "mongoose";
 import {
     ICombinedListResult,
     IFindAllOptions,
     IFindAllResult,
     IPersonality,
 } from "./personality.interface";
+
+/**
+ * Backend-neutral reference to a personality: either its id as a string or
+ * an entity-shaped object carrying `_id`/`id` (implementations read those
+ * keys). Interfaces must stay free of mongoose/drizzle types
+ * (docs/postgres-migration-foundation.md §4.1).
+ */
+export type PersonalityRef = string | object;
 
 export type IPersonalityService = {
     getWikidataEntities(regex: string, language: string): Promise<any>;
@@ -29,7 +36,7 @@ export type IPersonalityService = {
         };
     }): Promise<IPersonality>;
     getById(
-        personalityId: string | LeanDocument<IPersonality>,
+        personalityId: PersonalityRef,
         options?: { language?: string; nameSpace?: string }
     ): Promise<IPersonality>;
     getPersonalityBySlug(query: any, language?: string): Promise<IPersonality>;

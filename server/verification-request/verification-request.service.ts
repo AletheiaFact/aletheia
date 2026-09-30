@@ -7,7 +7,7 @@ import {
     UpdateQuery,
 } from "mongoose";
 import { escapeRegex } from "../util/regex.util";
-import { SourceService } from "../source/source.service";
+import type { ISourceService } from "../interfaces/source.service.interface";
 import {
     VerificationRequest,
     VerificationRequestDocument,
@@ -58,7 +58,8 @@ export class VerificationRequestService {
         private readonly VerificationRequestModel: Model<VerificationRequestDocument>,
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
-        private sourceService: SourceService,
+        @Inject("SourceService")
+        private sourceService: ISourceService,
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,

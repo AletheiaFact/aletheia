@@ -23,11 +23,15 @@ services:
       #     sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
       #     secret: RECAPTCHA_SECRET
       db:
+        type: mongodb                            # mongodb | postgres
         connection_uri: mongodb://localhost/Aletheia
-        type: mongodb
         options:
           retryWrites: true
           w: majority
+        postgres:
+          connection_uri: postgres://aletheia:aletheia@localhost:5432/aletheia
+          pool_size: 10
+          fuzzy_threshold: 0.3
       throttle:
         ttl: 60
         limit: 1000
