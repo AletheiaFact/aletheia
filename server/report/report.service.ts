@@ -27,10 +27,10 @@ export class ReportService {
         if (report.sources) {
             this.createReportSources(report.sources, newReport.id);
         } else {
-            this.updateReportSource(report, newReport.id);
+            void this.updateReportSource(report, newReport.id);
         }
 
-        newReport.save();
+        void newReport.save();
         return newReport;
     }
 
@@ -39,7 +39,7 @@ export class ReportService {
         targetId: string
     ) {
         for (const source of sources) {
-            this.sourceService.create({
+            void this.sourceService.create({
                 href: source.href,
                 props: source?.props,
                 targetId,

@@ -82,7 +82,7 @@ export class DailyReportController {
             nameSpace
         );
 
-        this.notificationService.sendDailyReviewsEmail(topic, dailyReport);
+        void this.notificationService.sendDailyReviewsEmail(topic, dailyReport);
 
         if (dailyReviews.length < 1) {
             throw new NotFoundException("No daily reports today");

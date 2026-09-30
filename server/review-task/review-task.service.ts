@@ -449,7 +449,7 @@ export class ReviewTaskService {
             newReviewTask._id
         );
 
-        this.stateEventService.createStateEvent(stateEvent as any);
+        void this.stateEventService.createStateEvent(stateEvent as any);
     }
 
     async _createReportAndClaimReview(
@@ -469,7 +469,7 @@ export class ReviewTaskService {
 
         const report = await this.reportService.create(newReport);
 
-        this.claimReviewService.create(
+        void this.claimReviewService.create(
             {
                 ...reviewData,
                 report,
@@ -538,7 +538,7 @@ export class ReviewTaskService {
         }
 
         if (reviewDataBody.reviewComments) {
-            this.commentService.updateManyComments(
+            void this.commentService.updateManyComments(
                 reviewDataBody.reviewComments
             );
             reviewTaskBody.machine.context.reviewData.reviewComments =
@@ -581,9 +581,9 @@ export class ReviewTaskService {
                     `user=${this.req.user?._id}`
             );
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
-            newReviewTask.save();
-            this._createReviewTaskHistory(newReviewTask);
-            this._createStateEvent(newReviewTask);
+            void newReviewTask.save();
+            void this._createReviewTaskHistory(newReviewTask);
+            void this._createStateEvent(newReviewTask);
             return newReviewTask;
         }
     }
@@ -622,8 +622,8 @@ export class ReviewTaskService {
         );
 
         if (history) {
-            this._createReviewTaskHistory(newReviewTask, reviewTask);
-            this._createStateEvent(newReviewTask);
+            void this._createReviewTaskHistory(newReviewTask, reviewTask);
+            void this._createStateEvent(newReviewTask);
         }
 
         const updated = await this.ReviewTaskModel.findByIdAndUpdate(
@@ -1044,7 +1044,7 @@ export class ReviewTaskService {
                 `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
                     `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
             );
-            this._createReportAndClaimReview(
+            void this._createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,
                 reportModel,

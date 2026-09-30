@@ -232,7 +232,7 @@ export class ClaimRevisionService {
                     const existingSources =
                         await this.sourceService.getSourceByHref(source);
                     if (existingSources) {
-                        this.sourceService.updateTargetId(
+                        void this.sourceService.updateTargetId(
                             existingSources._id,
                             claimId
                         );
