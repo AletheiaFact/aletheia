@@ -41,6 +41,10 @@ import {
 } from "./dto/types";
 import * as crypto from "crypto";
 import { TopicService } from "../topic/topic.service";
+import {
+    findImpactArea,
+    getFallbackImpactArea,
+} from "../topic/constants/impact-areas";
 import { toError } from "../util/error-handling";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
@@ -229,13 +233,23 @@ export class VerificationRequestService {
             }
 
             if (data.impactArea) {
-                const topicWikidataEntities = [data.impactArea];
-                const createdTopic = await this.topicService.create({
-                    topics: topicWikidataEntities,
-                });
+                const impactArea = findImpactArea(data.impactArea);
 
-                vr.impactArea = new Types.ObjectId(createdTopic[0].id);
-                await vr.save();
+                if (impactArea) {
+                    const topic = await this.topicService.findOrCreateTopic(
+                        impactArea
+                    );
+                    vr.impactArea = topic._id;
+                    await vr.save();
+                } else {
+                    // Unknown areas are dropped so the AI triage defines one
+                    // from the closed list, instead of failing the request.
+                    this.logger.warn(
+                        `Ignoring impact area outside the closed list: ${JSON.stringify(
+                            data.impactArea
+                        )}`
+                    );
+                }
             }
 
             const currentUser = user?._id
@@ -446,19 +460,28 @@ export class VerificationRequestService {
                         `Topics created/found with IDs: ${topicIds.join(", ")}`
                     );
                     break;
-                case "impactArea":
-                    this.logger.log(
-                        `Creating/finding topic for impact area:`,
-                        result
-                    );
+                case "impactArea": {
+                    this.logger.log(`Resolving impact area:`, result);
+                    let impactArea = findImpactArea(result);
+                    if (!impactArea) {
+                        // Keeps the triage chain moving while the worker
+                        // still answers with free text.
+                        this.logger.warn(
+                            `Impact area outside the closed list, using fallback: ${JSON.stringify(
+                                result
+                            )}`
+                        );
+                        impactArea = getFallbackImpactArea();
+                    }
                     const topic = await this.topicService.findOrCreateTopic(
-                        result
+                        impactArea
                     );
                     valueToUpdate = topic._id;
                     this.logger.log(
                         `Impact area topic created/found with ID: ${valueToUpdate}`
                     );
                     break;
+                }
                 case "severity":
                     if (typeof result === "string") {
                         valueToUpdate = result;

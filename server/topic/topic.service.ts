@@ -9,6 +9,7 @@ import { TopicData } from "../topic/types/topic.interfaces";
 import { ImageService } from "../claim/types/image/image.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { toError } from "../util/error-handling";
+import { IMPACT_AREAS, ImpactArea } from "./constants/impact-areas";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TopicService {
@@ -175,6 +176,13 @@ export class TopicService {
      */
     getBySlug(slug: string) {
         return this.TopicModel.findOne({ slug });
+    }
+
+    /**
+     * @returns the closed list of impact areas a verification request can have
+     */
+    getImpactAreas(): Pick<ImpactArea, "name" | "slug">[] {
+        return IMPACT_AREAS.map(({ name, slug }) => ({ name, slug }));
     }
 
     /**

@@ -45,9 +45,22 @@ export interface ITopicDisplay {
     contentModel?: ContentModelEnum | null;
 }
 
-export interface IImpactAreaSelect {
+export interface ITopicSelect {
     defaultValue: UnifiedDefaultValue;
     onChange: (value: ManualTopic) => void;
+    placeholder?: string;
+    isDisabled: boolean;
+    dataCy?: string;
+}
+
+export interface ImpactAreaOption {
+    name: string;
+    slug: string;
+}
+
+export interface IImpactAreaSelect {
+    defaultValue: UnifiedDefaultValue;
+    onChange: (value: string | undefined) => void;
     placeholder?: string;
     isDisabled: boolean;
     dataCy?: string;

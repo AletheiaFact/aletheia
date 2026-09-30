@@ -13,6 +13,7 @@ import {
 } from "./verification-request.state-machine.interface";
 import { VerificationRequestService } from "../verification-request.service";
 import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
+import { IMPACT_AREAS } from "../../topic/constants/impact-areas";
 import {
     AiTaskType,
     CallbackRoute,
@@ -125,6 +126,8 @@ const getStateInvokeSrc = (
                     content: {
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
+                        // The worker must answer with one of these names
+                        options: IMPACT_AREAS.map((area) => area.name),
                     },
                     callbackRoute:
                         CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,

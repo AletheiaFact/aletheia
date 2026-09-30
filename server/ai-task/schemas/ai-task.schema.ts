@@ -29,6 +29,7 @@ const DefiningTopicsContentSchema = z.object({
 const DefiningImpactAreaContentSchema = z.object({
     text: z.string().min(1).max(10000),
     model: z.string().min(1),
+    options: z.array(z.string().min(1)).min(1).optional(),
 });
 
 const SourceObjectSchema = z.object({

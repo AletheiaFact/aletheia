@@ -64,10 +64,21 @@ const createTopics = (params, t) => {
         });
 };
 
+const getImpactAreas = (t) => {
+    return request
+        .get("/impact-areas")
+        .then((response) => response.data)
+        .catch(() => {
+            MessageManager.showMessage("error", t("topics:getTopicsFailed"));
+            return [];
+        });
+};
+
 const TopicsApi = {
     createTopics,
     getTopics,
     searchTopics,
+    getImpactAreas,
 };
 
 export default TopicsApi;

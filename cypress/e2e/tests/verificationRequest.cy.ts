@@ -66,11 +66,8 @@ describe("Test verification request", () => {
                 cy.selectDatePickerDate(0, today);
                 cy.get(locators.verificationRequest.FORM_REPORT_TYPE).click();
                 cy.contains(fullVerificationRequest.reportType).click();
-                cy.get(locators.verificationRequest.FORM_IMPACT_AREA).type(
-                    fullVerificationRequest.impactArea,
-                    { delay: 200 }
-                );
-                cy.contains(fullVerificationRequest.impactArea).click();
+                cy.get(locators.verificationRequest.FORM_IMPACT_AREA).click();
+                cy.contains("li", fullVerificationRequest.impactArea).click();
 
                 cy.get(locators.verificationRequest.FORM_HEARD_FROM).type(
                     fullVerificationRequest.heardFrom

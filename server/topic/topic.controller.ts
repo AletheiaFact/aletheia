@@ -14,6 +14,13 @@ export class TopicController {
         return this.topicService.findAll(getTopics);
     }
 
+    @Public()
+    @ApiTags("topics")
+    @Get("api/topics/impact-areas")
+    getImpactAreas() {
+        return this.topicService.getImpactAreas();
+    }
+
     @ApiTags("topics")
     @Get("api/topics/search")
     async searchTopics(
