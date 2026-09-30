@@ -175,6 +175,20 @@ All completion items landed on 2026-09-18:
 | duplicate wikidata on `update` | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
 | `hideOrUnhidePersonality` return value | pre-update doc (`findByIdAndUpdate` without `new: true`) | updated row | callers ignore the body; PG returns the saner value |
 
+**Source module (Phase 0.5) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `getById` on missing id | resolves `null` | throws `NotFoundException` (404) | same normalization as personality |
+| `create` without `user` | fabricates a random ObjectId (`new Types.ObjectId(undefined)`) — accidental | stores `NULL` | fabricated ids are noise; PG keeps honest nulls |
+| `props.date` storage | BSON `Date` | jsonb ISO-8601 string | jsonb has no date type; `listAllDailySourceReviews` casts with `::timestamptz` |
+| list ordering (`sort({_id})`) | ObjectId order (embeds creation time) | `created_at` (+ `id` tiebreak) | equivalent semantics: insertion order |
+| duplicate `data_hash` insert race | raw `E11000` → 500 (dedup pre-check normally prevents it) | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
+| `find(match)` | queries a literal `match` field (broken, zero callers) | throws `NotImplementedError` | dead code kept on the interface for surface parity |
+| non-uuid ids (`getById`/`updateTargetId`/`getByTargetId`) | invalid ObjectId → CastError 500 | invalid uuid → 22P02 → 500 | parity today; Phase 10 may add a 22P02→404 mapping |
+
+Source reference columns land per D3 without constraints: `user_id uuid` (users port in Phase 4) and polymorphic `target_ids uuid[]` (Claim/ClaimReview, GIN-indexed — Mongo dynamic ref has no single entity). The source Mongo schema has **no soft-delete plugin and no delete method**; the PG table still carries the §2 triple for uniformity (always false/null). `listAllDailySourceReviews` and `count` support exactly the live callers' query shapes (`nameSpace`, `props.date.$gt`) and guard everything else with `NotImplementedError`.
+
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
 ---
@@ -185,7 +199,7 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 
 ```
 ✅ Phase 0    Foundation + personality (this MR)
-   Phase 0.5  Leaf tables: source/topic/group/badge (schema + basic CRUD)  [S] ← unblocks joins
+🔶 Phase 0.5  Leaf tables: source ✅ / topic / group / badge (schema + CRUD) [S] ← unblocks joins
    Phase 1    verification-request + pgvector + PARITY HARNESS + real-PG CI [M] ← builds cross-cutting tooling
    Phase 2    claim + claim-revision + content types                       [L] → unblocks personality cross-methods
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
