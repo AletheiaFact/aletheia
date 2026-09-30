@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { User } from "../../users/schemas/user.schema";
-import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { User } from "../../../users/schemas/user.schema";
+import { NameSpaceEnum } from "../../../auth/name-space/schemas/name-space.schema";
 
 export type SourceDocument = Source & mongoose.Document;
 

@@ -35,7 +35,7 @@ const ClaimRevisionModel = MongooseModule.forFeature([
         ConfigModule,
         HttpModule,
         ViewModule,
-        SourceModule,
+        SourceModule.register(),
     ],
     controllers: [ClaimRevisionController],
     exports: [ClaimRevisionService],

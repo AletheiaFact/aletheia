@@ -81,6 +81,12 @@ Map before writing:
 2. Move the Mongo impl to `server/<module>/mongo/` (move-only), wire
    `<module>.provider.ts` factory + `<module>.module.ts` `dbConfig.type` branch
    (copy `personality.provider.ts` / `personality.module.ts`).
+   Then sweep the consumers: every constructor injecting the service CLASS
+   becomes `@Inject("<Module>Service") + import type I<Module>Service`, every
+   importing module switches `XModule` → `XModule.register()` (including
+   `forwardRef(() => XModule.register())`), and test providers switch to the
+   string token. Grep the class name repo-wide until only type-only imports
+   remain.
 3. Extract shared rules to `shared/<module>.rules.ts` + direct unit spec.
 4. Add the type-test (`<module>.service.type-test.ts`, copy the personality one).
    `yarn build-ts` must pass before any Postgres code exists.

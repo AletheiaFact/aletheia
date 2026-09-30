@@ -140,7 +140,7 @@ export class AppModule implements NestModule {
                 EventsModule,
                 ManagementModule,
                 StateEventModule,
-                SourceModule,
+                SourceModule.register(),
                 SpeechModule,
                 ParagraphModule,
                 SentenceModule,

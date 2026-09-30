@@ -23,9 +23,13 @@ import { SourceModule } from "../source/source.module";
         EditorParseModule,
         AbilityModule,
         ConfigModule,
-        SourceModule,
+        SourceModule.register(),
     ],
     controllers: [CopilotChatController],
-    providers: [CopilotChatService, CopilotSessionService, CopilotSourceService],
+    providers: [
+        CopilotChatService,
+        CopilotSessionService,
+        CopilotSourceService,
+    ],
 })
 export class CopilotChatModule {}

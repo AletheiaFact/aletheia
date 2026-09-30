@@ -2,3 +2,4 @@
 // Add new modules here as they are ported (one re-export line per module).
 
 export * from "../../../personality/postgres/schema/personality.schema";
+export * from "../../../source/postgres/schema/source.schema";

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsDate, IsEnum, IsOptional, IsString } from "class-validator";
 import { ContentModelEnum } from "../../types/enums";
-import { Source } from "../../source/schemas/source.schema";
+import { Source } from "../../source/mongo/schemas/source.schema";
 import { Type } from "class-transformer";
 
 export class CreateVerificationRequestDTO {
