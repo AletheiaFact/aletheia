@@ -11,7 +11,8 @@ import type {
 import { ISource } from "../../interfaces/source.interface";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
-import { DuplicateKeyError, NotImplementedError } from "../../database/errors";
+import { NotImplementedError } from "../../database/errors";
+import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
 import { eq, and, sql, desc, asc, SQL } from "drizzle-orm";
 import { deriveDataHash, isValidSourceHref } from "../shared/source.rules";
 import { source } from "./schema/source.schema";
@@ -37,34 +38,9 @@ export class PostgresSourceService implements ISourceService {
         } as unknown as ISource;
     }
 
-    /**
-     * Map a Postgres unique-violation (SQLSTATE 23505) to the neutral
-     * DuplicateKeyError; rethrow anything else untouched.
-     */
+    /** SQLSTATE 23505 → neutral DuplicateKeyError (shared infra). */
     private rethrowMapped(error: unknown): never {
-        const e = error as any;
-        const candidates = [e, e?.cause];
-        const hit = candidates.find(
-            (c) =>
-                c &&
-                (c.code === "23505" ||
-                    /duplicate key value violates unique constraint/.test(
-                        String(c.message ?? "")
-                    ))
-        );
-        if (hit) {
-            const constraint: string =
-                hit.constraint ??
-                /unique constraint "([^"]+)"/.exec(
-                    String(hit.message ?? "")
-                )?.[1] ??
-                "";
-            const field = constraint
-                .replace(/^source_/, "")
-                .replace(/_uq$/, "");
-            throw new DuplicateKeyError([field || "unknown"]);
-        }
-        throw error;
+        rethrowUniqueViolation(error, "source");
     }
 
     /** Mongo-parity `sort({_id: order})`: insertion order via created_at. */
@@ -94,7 +70,7 @@ export class PostgresSourceService implements ISourceService {
         order: string;
         nameSpace: string;
     }): Promise<ISource[]> {
-        const size = parseInt(pageSize, 10);
+        const size = Number.parseInt(pageSize, 10);
         if (!Number.isFinite(size)) {
             throw new NotImplementedError("postgres", "listAll(pageSize=NaN)");
         }
@@ -174,10 +150,9 @@ export class PostgresSourceService implements ISourceService {
         const existing = await this.findByDataHash(dataHash);
         if (existing) return this.toEntity(existing);
 
-        const props =
-            data.props && data.props.date
-                ? { ...data.props, date: new Date(data.props.date) }
-                : data.props ?? null;
+        const props = data.props?.date
+            ? { ...data.props, date: new Date(data.props.date) }
+            : data.props ?? null;
 
         try {
             const [row] = await this.db
@@ -212,10 +187,16 @@ export class PostgresSourceService implements ISourceService {
         if (!row) {
             throw new NotFoundException(`Source not found: ${sourceId}`);
         }
+        // Mongo ObjectId instances stringify to their hex form; uuids pass
+        // through. Explicit toString avoids Object's default stringification.
+        const newTargetIdStr =
+            typeof newTargetId === "string"
+                ? newTargetId
+                : newTargetId.toString();
         const [updated] = await this.db
             .update(source)
             .set({
-                targetIds: [...row.targetIds, String(newTargetId)],
+                targetIds: [...row.targetIds, newTargetIdStr],
                 updatedAt: new Date(),
             })
             .where(eq(source.id, sourceId))
