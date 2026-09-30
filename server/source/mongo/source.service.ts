@@ -12,7 +12,7 @@ import { deriveDataHash, isValidSourceHref } from "../shared/source.rules";
 export class MongoSourceService {
     constructor(
         @InjectModel(Source.name)
-        private SourceModel: Model<SourceDocument>
+        private readonly SourceModel: Model<SourceDocument>
     ) {}
 
     async listAll({
@@ -75,7 +75,11 @@ export class MongoSourceService {
             throw new NotFoundException(`Source not found: ${sourceId}`);
         }
         source.targetId = [...source.targetId, newTargetId];
-        source.save();
+        // Bug fix (approved move-only exception): save() was fire-and-forget,
+        // so a failed write (e.g. VersionError) was silently lost AND became
+        // an unhandled rejection — the source of a flaky CI crash. The method
+        // is async and its callers don't rely on early return timing.
+        await source.save();
         return source;
     }
 
