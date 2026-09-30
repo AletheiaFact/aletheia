@@ -49,6 +49,7 @@
     "dist",
     "docs",
     "server/**/*.spec.ts",
+    "lib/**/*.spec.ts",
     "server/**/*.example.ts"
   ]
 }

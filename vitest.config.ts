@@ -9,7 +9,7 @@ export default defineConfig({
             provider: "v8",
             reporter: ["lcov"],
             reportsDirectory: "./coverage",
-            include: ["server/**/*.ts", "src/**/*.ts"],
+            include: ["server/**/*.ts", "src/**/*.ts", "lib/**/*.ts"],
             exclude: [
                 "**/node_modules/**",
                 "**/dist/**",
@@ -23,7 +23,11 @@ export default defineConfig({
                 extends: true,
                 test: {
                     name: "unit",
-                    include: ["server/**/*.spec.ts", "src/**/*.spec.ts"],
+                    include: [
+                        "server/**/*.spec.ts",
+                        "src/**/*.spec.ts",
+                        "lib/**/*.spec.ts",
+                    ],
                     exclude: [
                         "server/tests/**/*.e2e.spec.ts",
                         "server/**/dist/**",
