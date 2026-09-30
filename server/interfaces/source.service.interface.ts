@@ -2,11 +2,11 @@ import { ISource } from "./source.interface";
 
 /**
  * Backend-neutral reference to a target entity (claim / claim-review): its id
- * as a string, or an id-shaped object (Mongo ObjectId instances qualify).
- * Interfaces must stay free of mongoose/drizzle types
- * (docs/postgres-migration-foundation.md §4.1).
+ * as a string, or an id-shaped object with a meaningful toString (Mongo
+ * ObjectId instances qualify). Interfaces must stay free of mongoose/drizzle
+ * types (docs/postgres-migration-foundation.md §4.1).
  */
-export type SourceTargetRef = string | object;
+export type SourceTargetRef = string | { toString(): string };
 
 export type ISourceService = {
     listAll(options: {

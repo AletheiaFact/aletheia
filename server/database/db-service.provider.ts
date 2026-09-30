@@ -15,10 +15,7 @@ export function createDbServiceProvider<TInterface>(
 ): Provider {
     return {
         provide: token,
-        useFactory: (
-            mongoService: unknown | null,
-            pgService: unknown | null
-        ): TInterface => {
+        useFactory: (mongoService: unknown, pgService: unknown): TInterface => {
             if (dbConfig.type === "mongodb" && mongoService) {
                 return mongoService as TInterface;
             }

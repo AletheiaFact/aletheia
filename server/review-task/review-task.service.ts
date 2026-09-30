@@ -583,7 +583,7 @@ export class ReviewTaskService {
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
             void newReviewTask.save();
             void this._createReviewTaskHistory(newReviewTask);
-            void this._createStateEvent(newReviewTask);
+            this._createStateEvent(newReviewTask);
             return newReviewTask;
         }
     }
@@ -623,7 +623,7 @@ export class ReviewTaskService {
 
         if (history) {
             void this._createReviewTaskHistory(newReviewTask, reviewTask);
-            void this._createStateEvent(newReviewTask);
+            this._createStateEvent(newReviewTask);
         }
 
         const updated = await this.ReviewTaskModel.findByIdAndUpdate(

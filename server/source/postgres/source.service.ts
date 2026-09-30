@@ -188,11 +188,8 @@ export class PostgresSourceService implements ISourceService {
             throw new NotFoundException(`Source not found: ${sourceId}`);
         }
         // Mongo ObjectId instances stringify to their hex form; uuids pass
-        // through. Explicit toString avoids Object's default stringification.
-        const newTargetIdStr =
-            typeof newTargetId === "string"
-                ? newTargetId
-                : newTargetId.toString();
+        // through (SourceTargetRef declares a meaningful toString).
+        const newTargetIdStr = String(newTargetId);
         const [updated] = await this.db
             .update(source)
             .set({

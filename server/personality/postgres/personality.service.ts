@@ -279,22 +279,25 @@ export class PostgresPersonalityService implements IPersonalityService {
         }
         return this.toEntity(row);
     }
-    async getClaimsByPersonalitySlug(
-        _query: any,
-        _language?: string
-    ): Promise<any> {
-        throw new NotImplementedError("postgres", "getClaimsByPersonalitySlug");
+    getClaimsByPersonalitySlug(_query: any, _language?: string): Promise<any> {
+        return Promise.reject(
+            new NotImplementedError("postgres", "getClaimsByPersonalitySlug")
+        );
     }
-    async postProcess(_personality: any, _language?: string): Promise<any> {
+    postProcess(_personality: any, _language?: string): Promise<any> {
         // Not DB-agnostic: the Mongo impl calls `this.getReviewStats(...)`
         // (which queries claim-review) and `this.extractClaimWithTextSummary`
         // (which expects claim shapes). Both are cross-collection methods that
         // throw on the postgres backend until claim/claim-review are ported.
         // Re-enable this once those dependencies are available.
-        throw new NotImplementedError("postgres", "postProcess");
+        return Promise.reject(
+            new NotImplementedError("postgres", "postProcess")
+        );
     }
-    async getReviewStats(_id: string): Promise<any> {
-        throw new NotImplementedError("postgres", "getReviewStats");
+    getReviewStats(_id: string): Promise<any> {
+        return Promise.reject(
+            new NotImplementedError("postgres", "getReviewStats")
+        );
     }
     async update(id: string, body: any): Promise<IPersonality> {
         const patch: Record<string, any> = { updatedAt: new Date() };
@@ -410,8 +413,10 @@ export class PostgresPersonalityService implements IPersonalityService {
         queryInputs.isDeleted = false;
         return queryInputs;
     }
-    async combinedListAll(_query: any): Promise<ICombinedListResult> {
-        throw new NotImplementedError("postgres", "combinedListAll");
+    combinedListAll(_query: any): Promise<ICombinedListResult> {
+        return Promise.reject(
+            new NotImplementedError("postgres", "combinedListAll")
+        );
     }
     async findAll(opts: IFindAllOptions): Promise<IFindAllResult> {
         const { searchText, pageSize, skippedDocuments } = opts;
