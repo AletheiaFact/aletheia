@@ -132,7 +132,7 @@
         "dayjs": "^1.11.13",
         "domino": "^2.1.6",
         "dompurify": "3.4.12",
-        "drizzle-orm": "0.36.4",
+        "drizzle-orm": "0.45.2",
         "express": "4.19.2",
         "express-session": "^1.17.2",
         "helmet": "^6.0.0",
