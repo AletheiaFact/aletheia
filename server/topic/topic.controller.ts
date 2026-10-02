@@ -1,15 +1,16 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Inject,
-    Post,
-    Query,
-    Req,
-} from "@nestjs/common";
+import { Controller, Get, Inject, Post, Req } from "@nestjs/common";
 import type { ITopicService } from "../interfaces/topic.service.interface";
 import { Public } from "../auth/decorators/auth.decorator";
 import { ApiTags } from "@nestjs/swagger";
+import { ZodBody, ZodQuery } from "../common/validation";
+import {
+    CreateTopicsDto,
+    CreateTopicsSchema,
+    GetTopicsQueryDto,
+    GetTopicsQuerySchema,
+    SearchTopicsQueryDto,
+    SearchTopicsQuerySchema,
+} from "./dto/topic.dto";
 
 @Controller()
 export class TopicController {
@@ -20,7 +21,9 @@ export class TopicController {
     @Public()
     @ApiTags("topics")
     @Get("api/topics")
-    public async getAll(@Query() getTopics: { topicName: string }) {
+    public async getAll(
+        @ZodQuery(GetTopicsQuerySchema) getTopics: GetTopicsQueryDto
+    ) {
         return this.topicService.findAll(getTopics);
     }
 
@@ -34,9 +37,8 @@ export class TopicController {
     @ApiTags("topics")
     @Get("api/topics/search")
     async searchTopics(
-        @Query("query") query: string,
-        @Query("limit") limit: number = 10,
-        @Query("language") language: string = "pt"
+        @ZodQuery(SearchTopicsQuerySchema)
+        { query, language, limit }: SearchTopicsQueryDto
     ) {
         return this.topicService.searchTopics(query, language, limit);
     }
@@ -44,8 +46,7 @@ export class TopicController {
     @ApiTags("topics")
     @Post("api/topics")
     create(
-        @Body()
-        topicBody: { contentModel?: any; topics: any[]; data_hash?: string },
+        @ZodBody(CreateTopicsSchema) topicBody: CreateTopicsDto,
         @Req() req: any
     ) {
         return this.topicService.create(
