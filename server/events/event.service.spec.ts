@@ -9,7 +9,6 @@ import {
 import * as crypto from "crypto";
 import { EventsService } from "./event.service";
 import { Event } from "./schema/event.schema";
-import { TopicService } from "../topic/topic.service";
 import {
     mockCreateEventDto,
     mockEventModel,
@@ -22,7 +21,7 @@ import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { REQUEST } from "@nestjs/core";
 import { Types } from "mongoose";
-import { Topic } from "../topic/schemas/topic.schema";
+import { Topic } from "../topic/mongo/schemas/topic.schema";
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -48,7 +47,7 @@ describe("EventsService (Unit)", () => {
                     useValue: mockClaimReviewService,
                 },
                 {
-                    provide: TopicService,
+                    provide: "TopicService",
                     useValue: mockTopicService,
                 },
             ],

@@ -1,11 +1,21 @@
-import { Body, Controller, Get, Post, Query, Req } from "@nestjs/common";
-import { TopicService } from "./topic.service";
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Post,
+    Query,
+    Req,
+} from "@nestjs/common";
+import type { ITopicService } from "../interfaces/topic.service.interface";
 import { Public } from "../auth/decorators/auth.decorator";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class TopicController {
-    constructor(private topicService: TopicService) {}
+    constructor(
+        @Inject("TopicService") private readonly topicService: ITopicService
+    ) {}
 
     @Public()
     @ApiTags("topics")

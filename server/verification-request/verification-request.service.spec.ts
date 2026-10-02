@@ -7,7 +7,6 @@ import { VerificationRequestStateMachineService } from "./state-machine/verifica
 import { GroupService } from "../group/group.service";
 import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
-import { TopicService } from "../topic/topic.service";
 import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
 import {
     createFakeVerificationRequest,
@@ -48,7 +47,7 @@ describe("VerificationRequestService (Unit)", () => {
                 { provide: GroupService, useValue: {} },
                 { provide: HistoryService, useValue: {} },
                 { provide: AiTaskService, useValue: {} },
-                { provide: TopicService, useValue: mockTopicService },
+                { provide: "TopicService", useValue: mockTopicService },
                 { provide: "PersonalityService", useValue: {} },
                 {
                     provide: EMBEDDINGS_PROVIDER,
@@ -151,7 +150,10 @@ describe("VerificationRequestService (Unit)", () => {
         beforeEach(() => {
             (mockVerificationRequestModel as any).findById = vi
                 .fn()
-                .mockResolvedValue({ id: targetId, stateFingerprints: new Map() });
+                .mockResolvedValue({
+                    id: targetId,
+                    stateFingerprints: new Map(),
+                });
             mockFindByIdAndUpdate = vi.fn().mockReturnValue({
                 exec: vi.fn().mockResolvedValue({ id: targetId }),
             });

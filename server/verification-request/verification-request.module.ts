@@ -46,7 +46,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         CallbackDispatcherModule,
         AbilityModule,
         WikidataModule,
-        TopicModule,
+        TopicModule.register(),
         PersonalityModule.register(),
     ],
     exports: [

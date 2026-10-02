@@ -40,7 +40,7 @@ import {
     VerificationRequestStatus,
 } from "./dto/types";
 import * as crypto from "crypto";
-import { TopicService } from "../topic/topic.service";
+import type { ITopicService } from "../interfaces/topic.service.interface";
 import {
     findImpactArea,
     getFallbackImpactArea,
@@ -67,7 +67,8 @@ export class VerificationRequestService {
         private readonly groupService: GroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
-        private readonly topicService: TopicService,
+        @Inject("TopicService")
+        private readonly topicService: ITopicService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
         @Inject(EMBEDDINGS_PROVIDER)

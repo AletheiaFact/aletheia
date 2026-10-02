@@ -2,18 +2,29 @@ import { Injectable, Logger, Scope } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
-import slugify from "slugify";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum } from "../types/enums";
-import { TopicData } from "../topic/types/topic.interfaces";
-import { ImageService } from "../claim/types/image/image.service";
-import { WikidataService } from "../wikidata/wikidata.service";
-import { toError } from "../util/error-handling";
-import { IMPACT_AREAS, ImpactArea } from "./constants/impact-areas";
+import { SentenceService } from "../../claim/types/sentence/sentence.service";
+import { ContentModelEnum } from "../../types/enums";
+import { TopicData } from "../types/topic.interfaces";
+import { ImageService } from "../../claim/types/image/image.service";
+import { WikidataService } from "../../wikidata/wikidata.service";
+import { toError } from "../../util/error-handling";
+import { ImpactArea } from "../constants/impact-areas";
+import type { ITopicService } from "../../interfaces/topic.service.interface";
+import {
+    buildTopicFromInput,
+    buildTopicFromTopicData,
+    deriveTopicSlug,
+    escapeRegex,
+    findMatchedAlias,
+    listImpactAreas,
+    normalizeText,
+    toExistingTopicRef,
+    topicInputSlugSource,
+} from "../shared/topic.rules";
 
 @Injectable({ scope: Scope.REQUEST })
-export class TopicService {
-    private readonly logger = new Logger(TopicService.name);
+export class MongoTopicService implements ITopicService {
+    private readonly logger = new Logger(MongoTopicService.name);
     constructor(
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
@@ -21,15 +32,6 @@ export class TopicService {
         private imageService: ImageService,
         private wikidataService: WikidataService
     ) {}
-
-    /**
-     * Normalize a string by removing accents/diacritical marks
-     * @param text The text to normalize
-     * @returns Normalized text without accents
-     */
-    private normalizeText(text: string): string {
-        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
 
     async getWikidataEntities(regex: string, language: string) {
         return await this.wikidataService.queryWikibaseEntities(
@@ -47,7 +49,7 @@ export class TopicService {
             throw new TypeError("Invalid language");
         }
 
-        const normalizedQuery = this.normalizeText(query);
+        const normalizedQuery = normalizeText(query);
         const searchRegex = new RegExp(normalizedQuery, "i");
 
         const topics = await this.TopicModel.find({
@@ -63,12 +65,10 @@ export class TopicService {
         const normalizedQueryLower = normalizedQuery.toLowerCase();
         return topics.map((topic) => {
             const topicObj = topic.toObject();
-            const matchedAlias =
-                topicObj.aliases?.find((alias: string) =>
-                    this.normalizeText(alias)
-                        .toLowerCase()
-                        .includes(normalizedQueryLower)
-                ) || null;
+            const matchedAlias = findMatchedAlias(
+                topicObj.aliases,
+                normalizedQueryLower
+            );
             return { ...topicObj, matchedAlias };
         });
     }
@@ -110,28 +110,17 @@ export class TopicService {
         try {
             const createdTopics = await Promise.all(
                 topics.map(async (topic: any) => {
-                    const slug = slugify(topic?.label || topic.slug || topic, {
-                        lower: true,
-                        strict: true,
-                    });
+                    const slug = deriveTopicSlug(topicInputSlugSource(topic));
                     const findedTopic = await this.getBySlug(slug);
 
                     if (findedTopic) {
-                        return findedTopic?.wikidataId
-                            ? {
-                                  id: findedTopic._id,
-                                  label: findedTopic?.name,
-                                  value: findedTopic?.wikidataId,
-                              }
-                            : findedTopic.slug;
+                        return toExistingTopicRef(findedTopic);
                     } else {
-                        const newTopic = {
-                            name: topic?.label || topic,
-                            wikidataId: topic?.value,
-                            aliases: topic?.aliases || [],
+                        const newTopic = buildTopicFromInput(
+                            topic,
                             slug,
-                            language,
-                        };
+                            language
+                        );
 
                         const createdTopic = await new this.TopicModel(
                             newTopic
@@ -174,24 +163,15 @@ export class TopicService {
      * @param slug topic slug
      * @returns topic
      */
-    getBySlug(slug: string) {
-        return this.TopicModel.findOne({ slug });
+    getBySlug(slug: string): Promise<TopicDocument | null> {
+        return this.TopicModel.findOne({ slug }).exec();
     }
 
     /**
      * @returns the closed list of impact areas a verification request can have
      */
     getImpactAreas(): Pick<ImpactArea, "name" | "slug">[] {
-        return IMPACT_AREAS.map(({ name, slug }) => ({ name, slug }));
-    }
-
-    /**
-     * Escape special regex characters to prevent ReDoS attacks
-     * @param str The string to escape
-     * @returns Escaped string safe for regex
-     */
-    private escapeRegex(str: string): string {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return listImpactAreas();
     }
 
     /**
@@ -201,7 +181,7 @@ export class TopicService {
      */
     findByNames(names: string[]): Promise<TopicDocument[]> {
         const nameConditions = names.flatMap((name) => {
-            const escapedName = this.escapeRegex(name);
+            const escapedName = escapeRegex(name);
             return [
                 { name: { $regex: new RegExp(`^${escapedName}$`, "i") } },
                 { aliases: { $regex: new RegExp(`^${escapedName}$`, "i") } },
@@ -218,8 +198,10 @@ export class TopicService {
      * @param wikidataIds topic names array
      * @returns wikidataIds
      */
-    findByWikidataIds(wikidataIds: string[]) {
-        return this.TopicModel.find({ wikidataId: { $in: wikidataIds } });
+    findByWikidataIds(wikidataIds: string[]): Promise<TopicDocument[]> {
+        return this.TopicModel.find({
+            wikidataId: { $in: wikidataIds },
+        }).exec();
     }
 
     /**
@@ -230,21 +212,15 @@ export class TopicService {
      */
     async findOrCreateTopic(topicData: TopicData): Promise<TopicDocument> {
         try {
-            const slug = slugify(topicData.name, { lower: true, strict: true });
+            const newTopic = buildTopicFromTopicData(topicData);
 
-            const existingTopic = await this.TopicModel.findOne({ slug });
+            const existingTopic = await this.TopicModel.findOne({
+                slug: newTopic.slug,
+            });
 
             if (existingTopic) {
                 return existingTopic;
             }
-
-            const newTopic = {
-                name: topicData.name,
-                slug,
-                language: topicData.language || "pt",
-                wikidataId:
-                    topicData.wikidataId || topicData.value || undefined,
-            };
 
             const createdTopic = await new this.TopicModel(newTopic).save();
 

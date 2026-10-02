@@ -152,7 +152,7 @@ export class AppModule implements NestModule {
                 ReportModule,
                 CaptchaModule,
                 ImageModule,
-                TopicModule,
+                TopicModule.register(),
                 SearchModule,
                 FileManagementModule,
                 DebateModule,
