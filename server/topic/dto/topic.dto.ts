@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { queryInt } from "../../../lib/schemas";
-import { ContentModelEnum } from "../../types/enums";
 
 export const GetTopicsQuerySchema = z.object({
     topicName: z.string(),
@@ -26,7 +25,10 @@ const TopicInputSchema = z.union([
 ]);
 
 export const CreateTopicsSchema = z.strictObject({
-    contentModel: z.enum(ContentModelEnum).optional(),
+    // Free-form on purpose: the review UI forwards the target's contentModel
+    // verbatim, including non-claim targets ("VerificationRequest"), and the
+    // service only switches on Image / truthy / falsy.
+    contentModel: z.string().nullish(),
     topics: z.array(TopicInputSchema),
     data_hash: z.string().optional(),
 });

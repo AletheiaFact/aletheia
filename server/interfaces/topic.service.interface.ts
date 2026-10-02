@@ -1,5 +1,4 @@
 import { ITopic } from "./topic.interface";
-import type { ContentModelEnum } from "../types/enums";
 import type { TopicData } from "../topic/types/topic.interfaces";
 import type { ImpactArea } from "../topic/constants/impact-areas";
 
@@ -12,7 +11,8 @@ export type TopicInput =
     | { label?: string; value?: string; aliases?: string[]; slug?: string };
 
 export type TopicCreateInput = {
-    contentModel?: ContentModelEnum;
+    /** ContentModelEnum for claim content; the UI also forwards other target kinds. */
+    contentModel?: string | null;
     topics: TopicInput[];
     data_hash?: string;
 };

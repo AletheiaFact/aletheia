@@ -53,13 +53,20 @@ describe("topic DTO schemas", () => {
             expect(result.success).toBe(true);
         });
 
-        it("rejects an unknown content model, a non-array topics and unknown keys", () => {
+        it("accepts any contentModel string or null (the review UI forwards non-claim targets)", () => {
             expect(
                 CreateTopicsSchema.safeParse({
-                    contentModel: "Podcast",
+                    contentModel: "VerificationRequest",
                     topics: ["x"],
                 }).success
-            ).toBe(false);
+            ).toBe(true);
+            expect(
+                CreateTopicsSchema.safeParse({ contentModel: null, topics: [] })
+                    .success
+            ).toBe(true);
+        });
+
+        it("rejects a non-array topics and unknown keys", () => {
             expect(CreateTopicsSchema.safeParse({ topics: "x" }).success).toBe(
                 false
             );
