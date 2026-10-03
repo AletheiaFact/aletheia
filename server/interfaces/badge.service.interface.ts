@@ -1,6 +1,6 @@
 import type { IBadge } from "./badge.interface";
 
-export type BadgeImageRef = { _id: any; [key: string]: any };
+export type BadgeImageRef = { _id?: any; [key: string]: any };
 
 export type BadgeCreateInput = {
     name: string;
