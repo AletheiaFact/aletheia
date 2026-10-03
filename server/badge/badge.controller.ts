@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    Inject,
     NotFoundException,
     Post,
     Put,
@@ -13,7 +14,7 @@ import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
 
 import { ViewService } from "../view/view.service";
-import { BadgeService } from "./badge.service";
+import type { IBadgeService } from "../interfaces/badge.service.interface";
 import { CreateBadgeDTO } from "./dto/create-badge.dto";
 import { UpdateBadgeDTO } from "./dto/update-badge.dto";
 import { UsersService } from "../users/users.service";
@@ -27,7 +28,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 @Controller(":namespace?")
 export class BadgeController {
     constructor(
-        private badgeService: BadgeService,
+        @Inject("BadgeService") private badgeService: IBadgeService,
         private viewService: ViewService,
         private imageService: ImageService,
         private usersService: UsersService,

@@ -11,7 +11,7 @@ import { Model, Aggregate, Types, isValidObjectId } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
-import { Badge } from "../badge/schemas/badge.schema";
+import { Badge } from "../badge/mongo/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
