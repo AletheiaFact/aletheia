@@ -95,6 +95,8 @@ Map before writing:
    string token. Grep the class name repo-wide until only type-only imports
    remain.
 3. Extract shared rules to `shared/<module>.rules.ts` + direct unit spec.
+   If the module has no driver-free rule (badge: ids pass through), skip the
+   file and say so in the foundation doc — don't invent one.
 4. Add the type-test (`<module>.service.type-test.ts`, copy the source one).
    `yarn build-ts` must pass before any Postgres code exists.
 5. Validation (CLAUDE.md "Validation (Zod)"): the port touches the module's
@@ -102,7 +104,10 @@ Map before writing:
    `@Body`/`@Query`/`@Param` to Zod schemas (`<module>/dto/*.dto.ts`,
    `ZodBody`/`ZodQuery`/`ZodParam`), keep the same accepted inputs, call out
    every tightening in the PR, add a 400 case per schema, and delete the
-   module's lines from `validation-coverage.baseline.json`. Separate commit.
+   module's lines from `validation-coverage.baseline.json` (class-DTO bodies
+   are not in the baseline — nothing to delete then). Separate commit.
+   Where the controller dereferences an optional array unguarded (a latent
+   500), prefer making it required in the schema (400) and call it out.
 
 ### Step 3 — Schema + migration
 - `server/<module>/postgres/schema/<entity>.schema.ts` per the conventions;

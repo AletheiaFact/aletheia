@@ -16,6 +16,11 @@ import {
     TopicDocument,
     TopicSchema,
 } from "../topic/mongo/schemas/topic.schema";
+import {
+    Badge,
+    BadgeDocument,
+    BadgeSchema,
+} from "../badge/mongo/schemas/badge.schema";
 
 /**
  * In-process MongoDB for contract tests (the Mongo counterpart of
@@ -33,6 +38,7 @@ let connection: Connection | null = null;
 let personalityModel: PersonalityModelType | null = null;
 let sourceModel: Model<SourceDocument> | null = null;
 let topicModel: Model<TopicDocument> | null = null;
+let badgeModel: Model<BadgeDocument> | null = null;
 
 /** One MongoMemoryServer + connection per worker, shared by every module. */
 async function getTestConnection(): Promise<Connection> {
@@ -92,6 +98,13 @@ export async function getTestTopicModel(): Promise<Model<TopicDocument>> {
     return topicModel;
 }
 
+export async function getTestBadgeModel(): Promise<Model<BadgeDocument>> {
+    if (badgeModel) return badgeModel;
+    const connection = await getTestConnection();
+    badgeModel = connection.model<BadgeDocument>(Badge.name, BadgeSchema);
+    return badgeModel;
+}
+
 /** Remove every personality between tests (soft-deleted rows included). */
 export async function resetTestPersonalities(): Promise<void> {
     if (!personalityModel) return;
@@ -110,6 +123,11 @@ export async function resetTestTopics(): Promise<void> {
     await topicModel.deleteMany({});
 }
 
+export async function resetTestBadges(): Promise<void> {
+    if (!badgeModel) return;
+    await badgeModel.deleteMany({});
+}
+
 export async function stopTestMongo(): Promise<void> {
     await connection?.close();
     await server?.stop();
@@ -117,6 +135,7 @@ export async function stopTestMongo(): Promise<void> {
     personalityModel = null;
     sourceModel = null;
     topicModel = null;
+    badgeModel = null;
     server = null;
 }
 

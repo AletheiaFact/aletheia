@@ -157,7 +157,7 @@ export class AppModule implements NestModule {
                 FileManagementModule,
                 DebateModule,
                 EditorModule,
-                BadgeModule,
+                BadgeModule.register(),
                 EditorParseModule,
                 NotificationModule,
                 CommentModule,
