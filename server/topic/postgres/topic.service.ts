@@ -35,7 +35,7 @@ import type { TopicInsert, TopicRow } from "./schema/topic.schema";
 
 /** Escape LIKE metacharacters so the query matches literally. */
 function escapeLike(str: string): string {
-    return str.replace(/[\\%_]/g, "\\$&");
+    return str.replace(/[\\%_]/g, String.raw`\$&`);
 }
 
 @Injectable()

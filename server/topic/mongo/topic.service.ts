@@ -27,10 +27,10 @@ export class MongoTopicService implements ITopicService {
     private readonly logger = new Logger(MongoTopicService.name);
     constructor(
         @InjectModel(Topic.name)
-        private TopicModel: Model<TopicDocument>,
-        private sentenceService: SentenceService,
-        private imageService: ImageService,
-        private wikidataService: WikidataService
+        private readonly TopicModel: Model<TopicDocument>,
+        private readonly sentenceService: SentenceService,
+        private readonly imageService: ImageService,
+        private readonly wikidataService: WikidataService
     ) {}
 
     async getWikidataEntities(regex: string, language: string) {

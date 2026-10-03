@@ -24,7 +24,7 @@ export function normalizeText(text: string): string {
 
 /** Escape regex metacharacters (ReDoS guard for name/alias exact matches). */
 export function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return str.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 export function listImpactAreas(): Pick<ImpactArea, "name" | "slug">[] {
@@ -50,20 +50,22 @@ export function topicInputSlugSource(topic: any): string {
 
 /** Fields of a brand-new topic built from one `create()` input entry. */
 export function buildTopicFromInput(
-    topic: TopicInput | any,
+    topic: TopicInput,
     slug: string,
     language: string
 ): {
-    name: any;
+    /** A string, unless the input was an object without a label (Mongo: CastError). */
+    name: TopicInput;
     wikidataId?: string;
     aliases: string[];
     slug: string;
     language: string;
 } {
+    const pick = typeof topic === "string" ? undefined : topic;
     return {
-        name: topic?.label || topic,
-        wikidataId: topic?.value,
-        aliases: topic?.aliases || [],
+        name: pick?.label || topic,
+        wikidataId: pick?.value,
+        aliases: pick?.aliases || [],
         slug,
         language,
     };
