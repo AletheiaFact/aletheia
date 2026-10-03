@@ -161,7 +161,17 @@ export class ViewController {
     @Get("_next*")
     @Header("Cache-Control", "public, max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
-        await this.handler(req, res);
+        // The image optimizer and data routes depend on the query string
+        // (url, w, q). handler() delegates to ViewService.render(), which
+        // replaces the query with { props }, so those params are lost and the
+        // optimizer answers 400. Serve /_next through Next's own request
+        // handler, which keeps the query intact.
+        const parsedUrl = parse(req.url, true);
+        await this.viewService.getRequestHandler()(
+            req as any,
+            res as any,
+            parsedUrl
+        );
     }
 
     /**
