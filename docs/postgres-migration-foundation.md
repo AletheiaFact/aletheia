@@ -206,6 +206,17 @@ Source reference columns land per D3 without constraints: `user_id uuid` (users 
 
 Topic is **global** (no `nameSpace` on the Mongo schema). Its Mongo schema has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity (always false/null). `getBySlug` keeps Mongo's `null` on a miss (the `create` loop depends on it) — no 404 normalization here. The `events` module (Mongo until Phase 7) casts `findOrCreateTopic` results back to `TopicDocument`; drop the casts when events ports.
 
+**Badge module (Phase 0.5) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `listAll` | `$lookup` users (holders) + images, image unwound | `NotImplementedError` (501) | users table ports in Phase 4, image in Phase 2; returning rows without the lookups would silently drop data |
+| invalid `image._id` on create/update | `new Types.ObjectId(x)` → BSONError 500 | non-uuid → 22P02 → 500 | parity today; Phase 10 may add a 22P02→400 mapping |
+| unknown body keys reaching the service (`created_at`, `users`) | dropped by the strict Mongoose schema | never selected into the insert/update | same observable result |
+| `getById` / `update` on missing id | `null` | `null` | kept (controller 404s on `update`); no normalization |
+
+Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity. `image_id uuid` lands per D3 without a constraint, btree-indexed. No `shared/badge.rules.ts`: the module has no driver-free business rule (ids pass through, no derivation). The badge controller still wraps ids in `Types.ObjectId` for the Mongo-only `users` service and `imageService` — Phase 4 / Phase 2 remove those. Pre-existing controller bug left as-is: `updateBadge` returns `undefined` (the `return` sits inside a `forEach`); the frontend ignores the body.
+
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
 ---
@@ -216,7 +227,7 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 
 ```
 ✅ Phase 0    Foundation + personality (this MR)
-🔶 Phase 0.5  Leaf tables: source ✅ / topic ✅ / group / badge (schema + CRUD) [S] ← unblocks joins
+🔶 Phase 0.5  Leaf tables: source ✅ / topic ✅ / badge ✅ / group → folded into Phase 1 (pure VR↔Claim join table) [S]
    Phase 1    verification-request + pgvector + PARITY HARNESS + real-PG CI [M] ← builds cross-cutting tooling
    Phase 2    claim + claim-revision + content types                       [L] → unblocks personality cross-methods
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
