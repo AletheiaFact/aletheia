@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Topic } from "../../../../topic/schemas/topic.schema";
+import { Topic } from "../../../../topic/mongo/schemas/topic.schema";
 import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
 
 export type SentenceDocument = Sentence & mongoose.Document;

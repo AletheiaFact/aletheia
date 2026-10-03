@@ -79,8 +79,15 @@ Map before writing:
 1. Extract/verify `I<Module>Service` in `server/interfaces/` — full surface,
    NO mongoose/drizzle types (neutral refs like `PersonalityRef`).
 2. Move the Mongo impl to `server/<module>/mongo/` (move-only), wire
-   `<module>.provider.ts` factory + `<module>.module.ts` `dbConfig.type` branch
-   (copy `personality.provider.ts` / `personality.module.ts`).
+   `<module>.provider.ts` via the shared `createDbServiceProvider<I>()`
+   (`server/database/db-service.provider.ts`) + `<module>.module.ts`
+   `register()` with the `dbConfig.type` branch (copy `source.module.ts`).
+   Other shared infra already extracted — reuse, never re-copy:
+   `rethrowUniqueViolation` (`server/database/postgres/unique-violation.ts`)
+   and `ExactlyImplements` (`server/interfaces/service-surface.type.ts`).
+   Mongoose methods that return a bare `Query` (no `await`/`.exec()`) must
+   gain `.exec()` so the class satisfies the Promise-typed interface — same
+   execution, same results; say so in the commit.
    Then sweep the consumers: every constructor injecting the service CLASS
    becomes `@Inject("<Module>Service") + import type I<Module>Service`, every
    importing module switches `XModule` → `XModule.register()` (including
@@ -88,8 +95,14 @@ Map before writing:
    string token. Grep the class name repo-wide until only type-only imports
    remain.
 3. Extract shared rules to `shared/<module>.rules.ts` + direct unit spec.
-4. Add the type-test (`<module>.service.type-test.ts`, copy the personality one).
+4. Add the type-test (`<module>.service.type-test.ts`, copy the source one).
    `yarn build-ts` must pass before any Postgres code exists.
+5. Validation (CLAUDE.md "Validation (Zod)"): the port touches the module's
+   controller, so migrate its class-validator DTOs / inline-typed
+   `@Body`/`@Query`/`@Param` to Zod schemas (`<module>/dto/*.dto.ts`,
+   `ZodBody`/`ZodQuery`/`ZodParam`), keep the same accepted inputs, call out
+   every tightening in the PR, add a 400 case per schema, and delete the
+   module's lines from `validation-coverage.baseline.json`. Separate commit.
 
 ### Step 3 — Schema + migration
 - `server/<module>/postgres/schema/<entity>.schema.ts` per the conventions;

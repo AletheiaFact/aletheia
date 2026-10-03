@@ -11,6 +11,11 @@ import {
     SourceDocument,
     SourceSchema,
 } from "../source/mongo/schemas/source.schema";
+import {
+    Topic,
+    TopicDocument,
+    TopicSchema,
+} from "../topic/mongo/schemas/topic.schema";
 
 /**
  * In-process MongoDB for contract tests (the Mongo counterpart of
@@ -27,6 +32,7 @@ let server: MongoMemoryServer | null = null;
 let connection: Connection | null = null;
 let personalityModel: PersonalityModelType | null = null;
 let sourceModel: Model<SourceDocument> | null = null;
+let topicModel: Model<TopicDocument> | null = null;
 
 /** One MongoMemoryServer + connection per worker, shared by every module. */
 async function getTestConnection(): Promise<Connection> {
@@ -76,6 +82,16 @@ export async function getTestSourceModel(): Promise<Model<SourceDocument>> {
     return sourceModel;
 }
 
+export async function getTestTopicModel(): Promise<Model<TopicDocument>> {
+    if (topicModel) return topicModel;
+    const connection = await getTestConnection();
+    topicModel = connection.model<TopicDocument>(Topic.name, TopicSchema);
+    // The unique slug index must exist before contract tests exercise
+    // duplicate behavior (Mongo builds indexes lazily otherwise).
+    await topicModel.init();
+    return topicModel;
+}
+
 /** Remove every personality between tests (soft-deleted rows included). */
 export async function resetTestPersonalities(): Promise<void> {
     if (!personalityModel) return;
@@ -88,12 +104,19 @@ export async function resetTestSources(): Promise<void> {
     await sourceModel.deleteMany({});
 }
 
+/** Remove every topic between tests. */
+export async function resetTestTopics(): Promise<void> {
+    if (!topicModel) return;
+    await topicModel.deleteMany({});
+}
+
 export async function stopTestMongo(): Promise<void> {
     await connection?.close();
     await server?.stop();
     connection = null;
     personalityModel = null;
     sourceModel = null;
+    topicModel = null;
     server = null;
 }
 

@@ -191,6 +191,21 @@ All completion items landed on 2026-09-18:
 
 Source reference columns land per D3 without constraints: `user_id uuid` (users port in Phase 4) and polymorphic `target_ids uuid[]` (Claim/ClaimReview, GIN-indexed — Mongo dynamic ref has no single entity). The source Mongo schema has **no soft-delete plugin and no delete method**; the PG table still carries the §2 triple for uniformity (always false/null). `listAllDailySourceReviews` and `count` support exactly the live callers' query shapes (`nameSpace`, `props.date.$gt`) and guard everything else with `NotImplementedError`.
 
+**Topic module (Phase 0.5) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `searchTopics` query semantics | unescaped `$regex` (`.`/`*` are metacharacters; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | regex syntax differs between engines and the input was never escaped; literal match is what callers mean |
+| `create` with duplicate entries in one batch | `Promise.all` races into `E11000` → 500 | sequential loop; the second entry finds the first and returns its ref | deterministic; Mongo behavior is a race, not a rule |
+| `create` with a `{ slug }` reference to a missing topic | `name` is an object → Mongoose CastError → 500 | `BadRequestException` (400) | there is no usable name; 400 is the honest code |
+| `create` with a `contentModel` | attaches topics to the sentence/image | `NotImplementedError` (501) | sentence/image tables port in Phase 2 |
+| `findByNames([])` | `$or: []` is a driver error → 500 | `[]` | live callers guard the empty case; empty result is the honest answer |
+| `findByWikidataIds` with non-string ids | forwarded to `$in` as-is | non-strings dropped before the query | only real ids can match a text column |
+| slug collision on insert (race) | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
+| `wikidataId` absent | field missing on the document | `NULL` column, surfaced as `undefined` by `toEntity` | same observable value for callers |
+
+Topic is **global** (no `nameSpace` on the Mongo schema). Its Mongo schema has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity (always false/null). `getBySlug` keeps Mongo's `null` on a miss (the `create` loop depends on it) — no 404 normalization here. The `events` module (Mongo until Phase 7) casts `findOrCreateTopic` results back to `TopicDocument`; drop the casts when events ports.
+
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
 ---
@@ -201,7 +216,7 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 
 ```
 ✅ Phase 0    Foundation + personality (this MR)
-🔶 Phase 0.5  Leaf tables: source ✅ / topic / group / badge (schema + CRUD) [S] ← unblocks joins
+🔶 Phase 0.5  Leaf tables: source ✅ / topic ✅ / group / badge (schema + CRUD) [S] ← unblocks joins
    Phase 1    verification-request + pgvector + PARITY HARNESS + real-PG CI [M] ← builds cross-cutting tooling
    Phase 2    claim + claim-revision + content types                       [L] → unblocks personality cross-methods
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
