@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import type { IBadgeService } from "../../interfaces/badge.service.interface";
 import { Badge, BadgeDocument } from "./schemas/badge.schema";
 
 @Injectable()
-export class BadgeService {
+export class MongoBadgeService implements IBadgeService {
     constructor(
         @InjectModel(Badge.name)
-        private BadgeModel: Model<BadgeDocument>
+        private readonly BadgeModel: Model<BadgeDocument>
     ) {}
 
     async create(badge: any) {
@@ -28,7 +29,7 @@ export class BadgeService {
             new Types.ObjectId(_id),
             { $set: controlledBadge },
             { new: true }
-        );
+        ).exec();
     }
 
     async listAll() {
@@ -64,11 +65,11 @@ export class BadgeService {
                 },
             },
         ]);
-        return badge;
+        return badge.exec();
     }
 
     async getById(badgeId: string) {
         const badge = this.BadgeModel.findById(badgeId);
-        return badge;
+        return badge.exec();
     }
 }
