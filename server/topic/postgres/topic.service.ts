@@ -38,6 +38,15 @@ function escapeLike(str: string): string {
     return str.replace(/[\\%_]/g, String.raw`\$&`);
 }
 
+export function toTopicEntity(row: TopicRow): ITopic {
+    // wikidata_id NULL surfaces as undefined, like an absent Mongo field.
+    return {
+        ...row,
+        _id: row.id,
+        wikidataId: row.wikidataId ?? undefined,
+    } as unknown as ITopic;
+}
+
 @Injectable()
 export class PostgresTopicService implements ITopicService {
     private readonly logger = new Logger(PostgresTopicService.name);
@@ -52,12 +61,7 @@ export class PostgresTopicService implements ITopicService {
      * exposing `_id` (Mongo-parity alias callers read) alongside `id`.
      */
     private toEntity(row: TopicRow): ITopic {
-        // wikidata_id NULL surfaces as undefined, like an absent Mongo field.
-        return {
-            ...row,
-            _id: row.id,
-            wikidataId: row.wikidataId ?? undefined,
-        } as unknown as ITopic;
+        return toTopicEntity(row);
     }
 
     /** SQLSTATE 23505 → neutral DuplicateKeyError (shared infra). */

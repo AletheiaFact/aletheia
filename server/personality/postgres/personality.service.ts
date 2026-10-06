@@ -24,6 +24,10 @@ import type {
 import { escapeRegex } from "../../util/regex.util";
 import { WikidataService } from "../../wikidata/wikidata.service";
 
+export function toPersonalityEntity(row: PersonalityRow): IPersonality {
+    return { ...row, _id: row.id } as unknown as IPersonality;
+}
+
 @Injectable()
 export class PostgresPersonalityService implements IPersonalityService {
     constructor(
@@ -40,7 +44,7 @@ export class PostgresPersonalityService implements IPersonalityService {
      * because that hides the missing `_id`.
      */
     private toEntity(row: PersonalityRow): IPersonality {
-        return { ...row, _id: row.id } as unknown as IPersonality;
+        return toPersonalityEntity(row);
     }
 
     /** SQLSTATE 23505 → neutral DuplicateKeyError (shared infra). */
