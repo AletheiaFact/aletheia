@@ -38,6 +38,7 @@
         "migrate:pg": "env-cmd drizzle-kit migrate",
         "migrate:pg:create": "env-cmd drizzle-kit generate",
         "migrate:pg:status": "env-cmd drizzle-kit check",
+        "parity:diff": "ts-node scripts/parity/diff.ts",
         "migrate:undo-last": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts down -f migrate-mongo-config.ts && npm run migrate:status",
         "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
         "cypress-open": "cypress open",
