@@ -6,7 +6,7 @@ import { AbilityModule } from "../auth/ability/ability.module";
 import { VerificationRequestModule } from "../verification-request/verification-request.module";
 
 @Module({
-    imports: [HistoryModule, AbilityModule, VerificationRequestModule],
+    imports: [HistoryModule, AbilityModule, VerificationRequestModule.register()],
     controllers: [TrackingController],
     providers: [TrackingService],
     exports: [TrackingService],
