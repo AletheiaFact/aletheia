@@ -75,7 +75,7 @@ const validateIdentifiedData = (
             `Identified data must be an array of ObjectIds, got: ${typeof result}`
         );
     }
-    if (result.length === 0 || result.every(isValidId)) {
+    if (result.every(isValidId)) {
         return ok;
     }
     return fail("All identifiedData must be valid ObjectIds");
