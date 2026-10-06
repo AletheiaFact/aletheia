@@ -11,6 +11,7 @@ import {
     queryBoolean,
     queryInt,
     wikidataId,
+    entityId,
 } from "./index";
 import { z } from "zod";
 
@@ -23,6 +24,16 @@ describe("lib/schemas primitives", () => {
             false
         );
         expect(objectId.safeParse({ $ne: null }).success).toBe(false);
+    });
+
+    it("entityId accepts an ObjectId or a uuid", () => {
+        expect(entityId.safeParse("64b7f0c2e1a2b3c4d5e6f701").success).toBe(
+            true
+        );
+        expect(
+            entityId.safeParse("3f2504e0-4f89-41d3-9a0c-0305e82c3301").success
+        ).toBe(true);
+        expect(entityId.safeParse("nope").success).toBe(false);
     });
 
     it("dataHash", () => {

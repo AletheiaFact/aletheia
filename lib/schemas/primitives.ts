@@ -4,6 +4,9 @@ export const objectId = z
     .string()
     .regex(/^[a-f\d]{24}$/i, { error: "Invalid ObjectId" });
 
+// Mongo ObjectId today, uuid once a module runs on Postgres (DB_TYPE).
+export const entityId = z.union([objectId, z.uuid()]);
+
 export const dataHash = z
     .string()
     .regex(/^[a-f0-9]{32}$/i, { error: "Invalid data_hash" });

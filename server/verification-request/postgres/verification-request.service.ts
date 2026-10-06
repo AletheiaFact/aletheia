@@ -1137,13 +1137,13 @@ export class PostgresVerificationRequestService
     }
 
     async updateVerificationRequestWithTopics(
-        topics: Array<{ value?: string; wikidataId?: string }>,
+        topics: Array<{ value?: string; wikidataId?: string } | string>,
         dataHash: string
     ): Promise<IVerificationRequest | null> {
         const existing = await this.findByDataHash(dataHash, false);
         if (!existing) return null;
         const found = await this.topicService.findByWikidataIds(
-            topics.map((t) => (t.value || t.wikidataId)!)
+            topics.map((t: any) => (t.value || t.wikidataId)!)
         );
         const [updated] = await this.db
             .update(verificationRequest)

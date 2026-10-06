@@ -4,13 +4,10 @@ import {
     NotFoundException,
     Controller,
     Post,
-    Body,
     Get,
     Res,
     Req,
     Header,
-    Query,
-    Param,
     Put,
     Logger,
 } from "@nestjs/common";
@@ -25,8 +22,23 @@ import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { ReviewTaskService } from "../review-task/review-task.service";
-import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
-import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
+import {
+    CreateVerificationRequestDto,
+    CreateVerificationRequestSchema,
+    DataHashParam,
+    ListVerificationRequestsQueryDto,
+    ListVerificationRequestsQuerySchema,
+    PersonalitiesQuerySchema,
+    RemoveFromGroupSchema,
+    SearchVerificationRequestsQueryDto,
+    SearchVerificationRequestsQuerySchema,
+    UpdateVerificationRequestDto,
+    UpdateVerificationRequestSchema,
+    VerificationRequestIdParam,
+    VerificationRequestTopicsDto,
+    VerificationRequestTopicsSchema,
+} from "./dto/verification-request.dto";
+import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
@@ -71,12 +83,15 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Public()
-    public async listAll(@Query() getVerificationRequest: Record<string, any>) {
+    public async listAll(
+        @ZodQuery(ListVerificationRequestsQuerySchema)
+        getVerificationRequest: ListVerificationRequestsQueryDto
+    ) {
         const {
             pageSize,
             page,
-            contentFilters = [],
-            topics = [],
+            contentFilters,
+            topics,
             order,
             startDate,
             endDate,
@@ -92,7 +107,7 @@ export class VerificationRequestController {
                     contentFilters,
                     topics,
                     page,
-                    pageSize,
+                    pageSize: String(pageSize),
                     order,
                     startDate,
                     endDate,
@@ -144,12 +159,8 @@ export class VerificationRequestController {
         description: "Number of results to return",
     })
     public async getAll(
-        @Query()
-        getVerificationRequest: {
-            sourceUrl?: string;
-            searchContent?: string;
-            pageSize?: number;
-        }
+        @ZodQuery(SearchVerificationRequestsQuerySchema)
+        getVerificationRequest: SearchVerificationRequestsQueryDto
     ) {
         if (getVerificationRequest.sourceUrl) {
             return this.verificationRequestService.findBySourceUrl(
@@ -163,7 +174,10 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request/:id")
     @Header("Cache-Control", "private, max-age=60, must-revalidate")
-    public async getById(@Param("id") verificationRequestId: string) {
+    public async getById(
+        @ZodParam("id", VerificationRequestIdParam)
+        verificationRequestId: string
+    ) {
         return this.verificationRequestService.getById(verificationRequestId);
     }
 
@@ -178,8 +192,9 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @Public()
     public async getPersonalitiesWithWikidata(
-        @Param("id") verificationRequestId: string,
-        @Query("language") language: string = "en"
+        @ZodParam("id", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodQuery(PersonalitiesQuerySchema) { language }: { language: string }
     ): Promise<PersonalityWithWikidataDto[]> {
         const verificationRequest =
             await this.verificationRequestService.getByIdWithPopulatedFields(
@@ -279,7 +294,8 @@ export class VerificationRequestController {
     @Post("api/verification-request")
     async create(
         @Req() req: BaseRequest,
-        @Body() verificationRequestBody: CreateVerificationRequestDTO
+        @ZodBody(CreateVerificationRequestSchema)
+        verificationRequestBody: CreateVerificationRequestDto
     ) {
         const isM2MUser = req.user?.role?.main === Roles.Integration;
 
@@ -329,8 +345,10 @@ export class VerificationRequestController {
     @Put("api/verification-request/:verificationRequestId")
     @AdminOnly()
     async updateVerificationRequest(
-        @Param("verificationRequestId") verificationRequestId: string,
-        @Body() updateVerificationRequestDto: UpdateVerificationRequestDTO
+        @ZodParam("verificationRequestId", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodBody(UpdateVerificationRequestSchema)
+        updateVerificationRequestDto: UpdateVerificationRequestDto
     ) {
         return this.verificationRequestService.update(
             verificationRequestId,
@@ -341,8 +359,9 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Put("api/verification-request/:data_hash/topics")
     async updateVerificationRequestWithTopics(
-        @Param("data_hash") data_hash: string,
-        @Body() topics: Array<{ value?: string; wikidataId?: string }>
+        @ZodParam("data_hash", DataHashParam) data_hash: string,
+        @ZodBody(VerificationRequestTopicsSchema)
+        topics: VerificationRequestTopicsDto
     ) {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,
@@ -353,8 +372,9 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId/group")
     async removeVerificationRequestFromGroup(
-        @Param("verificationRequestId") verificationRequestId: string,
-        @Body() { group }: { group: string }
+        @ZodParam("verificationRequestId", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodBody(RemoveFromGroupSchema) { group }: { group: string }
     ) {
         return this.verificationRequestService.removeVerificationRequestFromGroup(
             verificationRequestId,

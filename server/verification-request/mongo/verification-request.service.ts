@@ -14,7 +14,6 @@ import {
 } from "./schemas/verification-request.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import type { IGroupService } from "../../interfaces/group.service.interface";
-import { UpdateVerificationRequestDTO } from "../dto/update-verification-request.dto";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../../types";
 import { HistoryService } from "../../history/history.service";
@@ -774,7 +773,7 @@ export class MongoVerificationRequestService
      */
     async update(
         verificationRequestId: string,
-        verificationRequestBodyUpdate: Partial<UpdateVerificationRequestDTO>,
+        verificationRequestBodyUpdate: Record<string, any>,
         postProcess: boolean = true
     ): Promise<VerificationRequestDocument> {
         try {
@@ -800,14 +799,16 @@ export class MongoVerificationRequestService
 
             if (verificationRequestBodyUpdate.source?.length) {
                 const newSourceIds = await Promise.all(
-                    verificationRequestBodyUpdate.source.map(async (source) => {
-                        const src = await this.sourceService.create({
-                            href: source.href,
-                            targetId: verificationRequest.id,
-                        });
+                    verificationRequestBodyUpdate.source.map(
+                        async (source: { href: string }) => {
+                            const src = await this.sourceService.create({
+                                href: source.href,
+                                targetId: verificationRequest.id,
+                            });
 
-                        return src._id;
-                    })
+                            return src._id;
+                        }
+                    )
                 );
                 updatedVerificationRequestData.source = newSourceIds.map(
                     (id) => new Types.ObjectId(id)
@@ -1035,7 +1036,7 @@ export class MongoVerificationRequestService
     }
 
     async updateVerificationRequestWithTopics(
-        topics: Array<{ value?: string; wikidataId?: string }>,
+        topics: Array<{ value?: string; wikidataId?: string } | string>,
         data_hash: string
     ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
@@ -1043,10 +1044,7 @@ export class MongoVerificationRequestService
             return null;
         }
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(
-                (topic: { value?: string; wikidataId?: string }) =>
-                    (topic.value || topic.wikidataId)!
-            )
+            topics.map((topic: any) => (topic.value || topic.wikidataId)!)
         );
         const topicIds = foundTopics.map((topic: any) => topic._id);
 

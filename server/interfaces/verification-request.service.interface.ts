@@ -85,7 +85,7 @@ export type IVerificationRequestService = {
         pageSize: number | string
     ): Promise<IVerificationRequest[]>;
     updateVerificationRequestWithTopics(
-        topics: Array<{ value?: string; wikidataId?: string }>,
+        topics: Array<{ value?: string; wikidataId?: string } | string>,
         dataHash: string
     ): Promise<IVerificationRequest | null>;
     checkAndRetryStaleAiTasks(): Promise<void>;
