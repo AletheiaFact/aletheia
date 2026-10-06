@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Group } from "../../group/schemas/group.schema";
+import { Group } from "../../group/mongo/schemas/group.schema";
 import { Topic } from "../../topic/mongo/schemas/topic.schema";
 import { ContentModelEnum } from "../../types/enums";
 import { SeverityEnum, TimeStamps, VerificationRequestStatus } from "../dto/types";

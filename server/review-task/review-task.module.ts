@@ -39,7 +39,7 @@ export const ReviewTaskModel = MongooseModule.forFeature([
         EditorParseModule,
         CommentModule,
         FeatureFlagModule,
-        GroupModule,
+        GroupModule.register(),
     ],
     providers: [ReviewTaskService],
     exports: [ReviewTaskService],

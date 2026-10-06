@@ -49,7 +49,7 @@ const ClaimModel = MongooseModule.forFeature([
         EditorModule,
         AbilityModule,
         FeatureFlagModule,
-        GroupModule,
+        GroupModule.register(),
         AdminEditorModule,
     ],
     exports: [ClaimService],

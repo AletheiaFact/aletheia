@@ -13,7 +13,7 @@ import {
     VerificationRequestDocument,
 } from "./schemas/verification-request.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { GroupService } from "../group/group.service";
+import type { IGroupService } from "../interfaces/group.service.interface";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
@@ -64,7 +64,7 @@ export class VerificationRequestService {
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         @Inject("SourceService")
         private sourceService: ISourceService,
-        private readonly groupService: GroupService,
+        @Inject("GroupService") private readonly groupService: IGroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
         @Inject("TopicService")

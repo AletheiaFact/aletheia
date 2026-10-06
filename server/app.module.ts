@@ -171,7 +171,7 @@ export class AppModule implements NestModule {
                 ChatbotModule,
                 VerificationRequestModule,
                 FeatureFlagModule,
-                GroupModule,
+                GroupModule.register(),
                 AiTaskModule,
                 CommitteeInterestModule,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters

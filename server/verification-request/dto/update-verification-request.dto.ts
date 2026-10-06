@@ -8,7 +8,7 @@ import {
     IsString,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import { Group } from "../../group/schemas/group.schema";
+import { Group } from "../../group/mongo/schemas/group.schema";
 import { Transform } from "class-transformer";
 import { Source } from "../../source/mongo/schemas/source.schema";
 import { VerificationRequestStatus } from "./types";
