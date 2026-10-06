@@ -15,18 +15,22 @@ export interface IVerificationRequest {
     group?: any;
     rejected?: boolean;
     isSensitive?: boolean;
-    embedding?: number[];
+    embedding?: number[] | null;
     topics?: any[];
     severity?: string;
     status: string;
     statesExecuted?: string[];
     identifiedData?: any[];
     stateRetries?: any;
-    stateErrors?: Array<{ state: string; error: string; timestamp: Date }>;
+    stateErrors?: Array<{
+        state: string;
+        error: string;
+        timestamp: Date | string;
+    }>;
     stateTransitions?: Array<{
         from: string;
         to: string;
-        timestamp: Date;
+        timestamp: Date | string;
         duration: number;
     }>;
     progress?: any;
