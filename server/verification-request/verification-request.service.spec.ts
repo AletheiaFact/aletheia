@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
-import { VerificationRequestService } from "./verification-request.service";
-import { VerificationRequestDocument } from "./schemas/verification-request.schema";
+import { MongoVerificationRequestService } from "./mongo/verification-request.service";
+import { VerificationRequestDocument } from "./mongo/schemas/verification-request.schema";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 import { HistoryService } from "../history/history.service";
@@ -22,15 +22,15 @@ const mockTopicService = {
     findOrCreateTopic: vi.fn(),
 };
 
-describe("VerificationRequestService (Unit)", () => {
+describe("MongoVerificationRequestService (Unit)", () => {
     let testingModule: TestingModule;
-    let service: VerificationRequestService;
+    let service: MongoVerificationRequestService;
     let model: Model<VerificationRequestDocument>;
 
     beforeAll(async () => {
         testingModule = await Test.createTestingModule({
             providers: [
-                VerificationRequestService,
+                MongoVerificationRequestService,
                 {
                     provide: getModelToken("VerificationRequest"),
                     useValue: mockVerificationRequestModel,
@@ -64,8 +64,8 @@ describe("VerificationRequestService (Unit)", () => {
     });
 
     beforeEach(async () => {
-        service = await testingModule.resolve<VerificationRequestService>(
-            VerificationRequestService
+        service = await testingModule.resolve<MongoVerificationRequestService>(
+            MongoVerificationRequestService
         );
 
         vi.clearAllMocks();

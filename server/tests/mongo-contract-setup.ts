@@ -30,7 +30,7 @@ import {
     VerificationRequest,
     VerificationRequestDocument,
     VerificationRequestSchema,
-} from "../verification-request/schemas/verification-request.schema";
+} from "../verification-request/mongo/schemas/verification-request.schema";
 
 /**
  * In-process MongoDB for contract tests (the Mongo counterpart of

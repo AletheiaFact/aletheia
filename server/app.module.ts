@@ -169,7 +169,7 @@ export class AppModule implements NestModule {
                 DailyReportModule,
                 SummarizationCrawlerModule,
                 ChatbotModule,
-                VerificationRequestModule,
+                VerificationRequestModule.register(),
                 FeatureFlagModule,
                 GroupModule.register(),
                 AiTaskModule,

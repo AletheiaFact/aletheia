@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { VerificationRequest } from "../../../verification-request/schemas/verification-request.schema";
+import { VerificationRequest } from "../../../verification-request/mongo/schemas/verification-request.schema";
 
 export type GroupDocument = Group & mongoose.Document;
 

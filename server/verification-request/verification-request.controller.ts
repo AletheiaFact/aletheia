@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    Inject,
     NotFoundException,
     Controller,
     Post,
@@ -14,7 +15,10 @@ import {
     Logger,
 } from "@nestjs/common";
 import { ApiTags, ApiQuery } from "@nestjs/swagger";
-import { VerificationRequestService } from "./verification-request.service";
+import type {
+    IVerificationRequestService,
+    IVerificationRequestStatsService,
+} from "../interfaces/verification-request.service.interface";
 import type { BaseRequest } from "../types";
 import { parse } from "url";
 import { ConfigService } from "@nestjs/config";
@@ -37,7 +41,6 @@ import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
-import { VerificationRequestStatsService } from "./verification-request-stats.service";
 import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
@@ -45,8 +48,10 @@ export class VerificationRequestController {
     private readonly logger = new Logger(VerificationRequestController.name);
 
     constructor(
-        private verificationRequestService: VerificationRequestService,
-        private readonly verificationRequestStatsService: VerificationRequestStatsService,
+        @Inject("VerificationRequestService")
+        private verificationRequestService: IVerificationRequestService,
+        @Inject("VerificationRequestStatsService")
+        private readonly verificationRequestStatsService: IVerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
@@ -413,7 +418,7 @@ export class VerificationRequestController {
 
         const recommendations =
             await this.verificationRequestService.findSimilarRequests(
-                verificationRequest.embedding,
+                verificationRequest.embedding ?? [],
                 recommendationFilter,
                 5
             );

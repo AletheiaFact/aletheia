@@ -1,6 +1,6 @@
 import { CommonStateMachineStates, StateMachineBase } from "./base";
 import { VerificationRequestStateMachineContext } from "./verification-request.state-machine.interface";
-import { VerificationRequestService } from "../verification-request.service";
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import {
     VerificationRequestStateMachineStates,
     VerificationRequestStatus,
@@ -14,12 +14,12 @@ type StatusToStateMap = Record<
 
 export class VerificationRequestStateMachine extends StateMachineBase<VerificationRequestStateMachineContext> {
     protected stateMachineConfig = getVerificationRequestStateMachineConfig;
-    private getVerificationRequestService: () => VerificationRequestService;
+    private getVerificationRequestService: () => IVerificationRequestService;
 
     constructor({
         getVerificationRequestService,
     }: {
-        getVerificationRequestService: () => VerificationRequestService;
+        getVerificationRequestService: () => IVerificationRequestService;
     }) {
         super({ verificationRequestService: null as any }); // Initialize with a temporary value
         this.getVerificationRequestService = getVerificationRequestService;
