@@ -36,6 +36,13 @@
       "when": 1790996724711,
       "tag": "0004_badge",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791247450826,
+      "tag": "0005_verification_request",
+      "breakpoints": true
     }
   ]
 }
