@@ -1044,7 +1044,7 @@ export class MongoVerificationRequestService
             return null;
         }
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map((topic: any) => (topic.value || topic.wikidataId)!)
+            topics.map(topicWikidataKey)
         );
         const topicIds = foundTopics.map((topic: any) => topic._id);
 

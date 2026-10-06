@@ -59,7 +59,7 @@ const validateTopics = (result: any, isValidId: IdPredicate): Validation => {
     if (!Array.isArray(result) || result.length === 0) {
         return fail("Topics must be a non-empty array");
     }
-    if (!result.every((id: any) => isValidId(id))) {
+    if (!result.every(isValidId)) {
         return fail("All topics must be valid ObjectIds");
     }
     return ok;
@@ -75,7 +75,7 @@ const validateIdentifiedData = (
             `Identified data must be an array of ObjectIds, got: ${typeof result}`
         );
     }
-    if (result.length === 0 || result.every((id: any) => isValidId(id))) {
+    if (result.length === 0 || result.every(isValidId)) {
         return ok;
     }
     return fail("All identifiedData must be valid ObjectIds");

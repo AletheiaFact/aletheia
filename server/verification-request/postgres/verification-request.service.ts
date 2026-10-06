@@ -36,6 +36,7 @@ import type { ITopicService } from "../../interfaces/topic.service.interface";
 import type { IPersonalityService } from "../../interfaces/personality.service.interface";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { NotImplementedError } from "../../database/errors";
 import { uniqueViolationField } from "../../database/postgres/unique-violation";
 import { AiTaskService } from "../../ai-task/ai-task.service";
@@ -1192,10 +1193,7 @@ export class PostgresVerificationRequestService
         return retries;
     }
 
-    private appendJson(
-        column: SQL.Aliased | any,
-        entry: Record<string, any>
-    ): SQL {
+    private appendJson(column: AnyPgColumn, entry: Record<string, any>): SQL {
         return sql`${column} || ${JSON.stringify([entry])}::jsonb`;
     }
 
