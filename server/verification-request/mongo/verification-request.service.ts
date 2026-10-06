@@ -35,7 +35,6 @@ import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
     MAX_RETRY_ATTEMPTS,
-    SeverityEnum,
     VerificationRequestStatus,
 } from "../dto/types";
 import type { ITopicService } from "../../interfaces/topic.service.interface";
@@ -57,6 +56,7 @@ import {
     findRemovedIds,
     hashResult,
     STATE_TO_EVENT,
+    topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
 
@@ -73,7 +73,7 @@ export class MongoVerificationRequestService
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         @Inject("SourceService")
-        private sourceService: ISourceService,
+        private readonly sourceService: ISourceService,
         @Inject("GroupService") private readonly groupService: IGroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,

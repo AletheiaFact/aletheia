@@ -82,7 +82,7 @@ export const PersonalitiesQuerySchema = z.object({
     language: z.string().default("en"),
 });
 
-export const VerificationRequestIdParam = entityId;
+export { entityId as VerificationRequestIdParam };
 export const DataHashParam = z.string().min(1);
 
 // The topic drawer sends wikidata picks, persisted topic documents or bare

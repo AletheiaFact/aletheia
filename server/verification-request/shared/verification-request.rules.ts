@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 import { EXPECTED_STATES, SeverityEnum } from "../dto/types";
 
 const md5 = require("md5");
@@ -39,80 +39,80 @@ export function hashResult(result: any): string {
         .digest("hex");
 }
 
+type Validation = { valid: boolean; error?: string };
+type IdPredicate = (id: any) => boolean;
+
+const ok: Validation = { valid: true };
+const fail = (error: string): Validation => ({ valid: false, error });
+
+const validateEmbedding = (result: any): Validation => {
+    if (!Array.isArray(result) || result.length === 0) {
+        return fail("Embedding must be a non-empty array");
+    }
+    if (result.some((v: any) => typeof v !== "number")) {
+        return fail("Embedding must contain only numbers");
+    }
+    return ok;
+};
+
+const validateTopics = (result: any, isValidId: IdPredicate): Validation => {
+    if (!Array.isArray(result) || result.length === 0) {
+        return fail("Topics must be a non-empty array");
+    }
+    if (!result.every((id: any) => isValidId(id))) {
+        return fail("All topics must be valid ObjectIds");
+    }
+    return ok;
+};
+
+const validateIdentifiedData = (
+    result: any,
+    isValidId: IdPredicate
+): Validation => {
+    if (result === null || result === undefined) return ok;
+    if (!Array.isArray(result)) {
+        return fail(
+            `Identified data must be an array of ObjectIds, got: ${typeof result}`
+        );
+    }
+    if (result.length === 0 || result.every((id: any) => isValidId(id))) {
+        return ok;
+    }
+    return fail("All identifiedData must be valid ObjectIds");
+};
+
+const validateSeverity = (result: any): Validation =>
+    Object.values(SeverityEnum).map(String).includes(String(result))
+        ? ok
+        : fail(`Invalid severity value: ${result}`);
+
 export function validateAiTaskResult(
     field: string,
     result: any,
-    isValidId: (id: any) => boolean
-): { valid: boolean; error?: string } {
+    isValidId: IdPredicate
+): Validation {
     switch (field) {
         case "embedding":
-            if (!Array.isArray(result) || result.length === 0) {
-                return {
-                    valid: false,
-                    error: "Embedding must be a non-empty array",
-                };
-            }
-            if (result.some((v: any) => typeof v !== "number")) {
-                return {
-                    valid: false,
-                    error: "Embedding must contain only numbers",
-                };
-            }
-            break;
+            return validateEmbedding(result);
         case "topics":
-            if (!Array.isArray(result) || result.length === 0) {
-                return {
-                    valid: false,
-                    error: "Topics must be a non-empty array",
-                };
-            }
-            if (!result.every((id: any) => isValidId(id))) {
-                return {
-                    valid: false,
-                    error: "All topics must be valid ObjectIds",
-                };
-            }
-            break;
+            return validateTopics(result, isValidId);
         case "identifiedData":
-            if (
-                result === null ||
-                result === undefined ||
-                (Array.isArray(result) && result.length === 0)
-            ) {
-                return { valid: true };
-            }
-            if (Array.isArray(result)) {
-                if (result.every((id: any) => isValidId(id))) {
-                    return { valid: true };
-                }
-                return {
-                    valid: false,
-                    error: "All identifiedData must be valid ObjectIds",
-                };
-            }
-            return {
-                valid: false,
-                error: `Identified data must be an array of ObjectIds, got: ${typeof result}`,
-            };
+            return validateIdentifiedData(result, isValidId);
         case "impactArea":
-            if (!result) {
-                return { valid: false, error: "Impact area is required" };
-            }
-            break;
+            return result ? ok : fail("Impact area is required");
         case "severity":
-            if (
-                !Object.values(SeverityEnum)
-                    .map(String)
-                    .includes(String(result))
-            ) {
-                return {
-                    valid: false,
-                    error: `Invalid severity value: ${result}`,
-                };
-            }
-            break;
+            return validateSeverity(result);
+        default:
+            return ok;
     }
-    return { valid: true };
+}
+
+export function topicWikidataKey(
+    topic: { value?: string; wikidataId?: string } | string
+): string {
+    const pick =
+        typeof topic === "string" ? undefined : topic.value || topic.wikidataId;
+    return pick!;
 }
 
 export function extractSeverity(result: any): string | undefined {

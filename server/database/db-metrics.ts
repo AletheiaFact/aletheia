@@ -10,6 +10,12 @@ export type DbMetricsSink = (sample: {
     error?: string;
 }) => void;
 
+const errorName = (error: unknown): string => {
+    if (error instanceof Error) return error.name;
+    if (typeof error === "string") return error;
+    return typeof error;
+};
+
 const defaultSink: DbMetricsSink = (sample) => {
     new Logger("DbMetrics").log(JSON.stringify(sample));
 };
@@ -43,10 +49,7 @@ export function withDbMetrics<T extends object>(
                             1000,
                         ...(error !== undefined
                             ? {
-                                  error:
-                                      error instanceof Error
-                                          ? error.name
-                                          : String(error),
+                                  error: errorName(error),
                               }
                             : {}),
                     });

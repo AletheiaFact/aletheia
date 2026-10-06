@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import {
     and,
+    arrayOverlaps,
     asc,
     desc,
     eq,
@@ -36,7 +37,7 @@ import type { IPersonalityService } from "../../interfaces/personality.service.i
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
-import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
+import { uniqueViolationField } from "../../database/postgres/unique-violation";
 import { AiTaskService } from "../../ai-task/ai-task.service";
 import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
 import { VerificationRequestStateMachineService } from "../state-machine/verification-request.state-machine.service";
@@ -64,6 +65,7 @@ import {
     runnableMissingStates,
     stalePendingTaskFields,
     STATE_TO_EVENT,
+    topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
 import { verificationRequest } from "./schema/verification-request.schema";
@@ -349,6 +351,36 @@ export class PostgresVerificationRequestService
         return row ?? null;
     }
 
+    private async anyOfConditions(
+        topics?: string[],
+        impactArea?: string[],
+        contentFilters?: string[]
+    ): Promise<SQL[]> {
+        const [topicsObj, impactAreasObj] = await Promise.all([
+            topics?.length ? this.topicService.findByNames(topics) : [],
+            impactArea?.length ? this.topicService.findByNames(impactArea) : [],
+        ]);
+        const topicIds = topicsObj.map((t: any) => idOf(t));
+        const impactAreaIds = impactAreasObj.map((t: any) => idOf(t));
+        const orConditions: SQL[] = [];
+        if (topicIds.length) {
+            orConditions.push(
+                arrayOverlaps(verificationRequest.topicIds, topicIds)
+            );
+        }
+        if (impactAreaIds.length) {
+            orConditions.push(
+                inArray(verificationRequest.impactAreaId, impactAreaIds)
+            );
+        }
+        for (const filter of contentFilters ?? []) {
+            orConditions.push(
+                ilike(verificationRequest.content, `%${escapeLike(filter)}%`)
+            );
+        }
+        return orConditions;
+    }
+
     private async buildWhere(
         filters: VerificationRequestFilters
     ): Promise<SQL | undefined> {
@@ -363,34 +395,11 @@ export class PostgresVerificationRequestService
             endDate,
         } = filters;
         const conditions: SQL[] = [];
-        const orConditions: SQL[] = [];
-
-        const [topicsObj, impactAreasObj] = await Promise.all([
-            topics?.length ? this.topicService.findByNames(topics) : [],
-            impactArea?.length ? this.topicService.findByNames(impactArea) : [],
-        ]);
-        const topicIds = topicsObj.map((t: any) => idOf(t));
-        const impactAreaIds = impactAreasObj.map((t: any) => idOf(t));
-
-        if (topicIds.length) {
-            orConditions.push(
-                sql`${verificationRequest.topicIds} && ${sql.raw(
-                    `ARRAY[${topicIds
-                        .map((id) => `'${id}'`)
-                        .join(",")}]::uuid[]`
-                )}`
-            );
-        }
-        if (impactAreaIds.length) {
-            orConditions.push(
-                inArray(verificationRequest.impactAreaId, impactAreaIds)
-            );
-        }
-        for (const filter of contentFilters ?? []) {
-            orConditions.push(
-                ilike(verificationRequest.content, `%${escapeLike(filter)}%`)
-            );
-        }
+        const orConditions = await this.anyOfConditions(
+            topics,
+            impactArea,
+            contentFilters
+        );
         if (orConditions.length) conditions.push(or(...orConditions)!);
 
         const { start, end } = localDayBounds(startDate, endDate);
@@ -427,7 +436,7 @@ export class PostgresVerificationRequestService
         order,
         ...filters
     }: VerificationRequestListOptions): Promise<IVerificationRequest[]> {
-        const size = parseInt(String(pageSize), 10);
+        const size = Number.parseInt(String(pageSize), 10);
         const offset = page * size;
         if (!Number.isFinite(size) || !Number.isFinite(offset)) {
             throw new BadRequestException("Invalid page or pageSize");
@@ -535,14 +544,11 @@ export class PostgresVerificationRequestService
                 `Validation failed: ${field} are invalid or missing`
             );
         }
-        try {
-            rethrowUniqueViolation(error, "verification_request");
-        } catch (mapped: any) {
-            if (mapped?.fields) {
-                throw new BadRequestException(
-                    `Duplicate value for field: ${mapped.fields[0]}`
-                );
-            }
+        const duplicate = uniqueViolationField(error, "verification_request");
+        if (duplicate) {
+            throw new BadRequestException(
+                `Duplicate value for field: ${duplicate}`
+            );
         }
         throw new BadRequestException("Failed to create verification request");
     }
@@ -719,80 +725,7 @@ export class PostgresVerificationRequestService
                 return this.toEntity(current, {}, true);
             }
 
-            let valueToUpdate: any;
-            switch (field) {
-                case "embedding":
-                    valueToUpdate = result;
-                    break;
-                case "identifiedData":
-                    if (
-                        result?.personalities &&
-                        Array.isArray(result.personalities)
-                    ) {
-                        valueToUpdate = await Promise.all(
-                            result.personalities.map(
-                                async (p: { name: string; wikidata?: any }) =>
-                                    idOf(
-                                        await this.personalityService.findOrCreatePersonality(
-                                            {
-                                                name: p.name,
-                                                wikidata: p.wikidata,
-                                            }
-                                        )
-                                    )
-                            )
-                        );
-                    } else {
-                        this.logger.warn(
-                            "No personalities identified or unexpected format, setting empty array"
-                        );
-                        valueToUpdate = [];
-                    }
-                    break;
-                case "topics":
-                    if (!Array.isArray(result)) {
-                        throw new BadRequestException(
-                            `Topics must be an array, got: ${typeof result}`
-                        );
-                    }
-                    valueToUpdate = await Promise.all(
-                        result.map(async (topicData: any) =>
-                            idOf(
-                                await this.topicService.findOrCreateTopic(
-                                    topicData
-                                )
-                            )
-                        )
-                    );
-                    break;
-                case "impactArea": {
-                    let impactArea = findImpactArea(result);
-                    if (!impactArea) {
-                        this.logger.warn(
-                            `Impact area outside the closed list, using fallback: ${JSON.stringify(
-                                result
-                            )}`
-                        );
-                        impactArea = getFallbackImpactArea();
-                    }
-                    valueToUpdate = idOf(
-                        await this.topicService.findOrCreateTopic(impactArea)
-                    );
-                    break;
-                }
-                case "severity":
-                    valueToUpdate = extractSeverity(result);
-                    if (valueToUpdate === undefined) {
-                        throw new BadRequestException(
-                            `Invalid severity result format: ${JSON.stringify(
-                                result
-                            )}`
-                        );
-                    }
-                    break;
-                default:
-                    throw new BadRequestException(`Invalid field: ${field}`);
-            }
+            const valueToUpdate = await this.resolveAiFieldValue(field, result);
 
             const validation = validateAiTaskResult(
                 field,
@@ -852,6 +785,79 @@ export class PostgresVerificationRequestService
             await this.handleStateError(targetId, field, err.message);
             throw error;
         }
+    }
+
+    private async resolveAiFieldValue(
+        field: string,
+        result: any
+    ): Promise<any> {
+        switch (field) {
+            case "embedding":
+                return result;
+            case "identifiedData":
+                return this.resolveIdentifiedData(result);
+            case "topics":
+                if (!Array.isArray(result)) {
+                    throw new BadRequestException(
+                        `Topics must be an array, got: ${typeof result}`
+                    );
+                }
+                return Promise.all(
+                    result.map(async (topicData: any) =>
+                        idOf(
+                            await this.topicService.findOrCreateTopic(topicData)
+                        )
+                    )
+                );
+            case "impactArea":
+                return this.resolveImpactArea(result);
+            case "severity": {
+                const severity = extractSeverity(result);
+                if (severity === undefined) {
+                    throw new BadRequestException(
+                        `Invalid severity result format: ${JSON.stringify(
+                            result
+                        )}`
+                    );
+                }
+                return severity;
+            }
+            default:
+                throw new BadRequestException(`Invalid field: ${field}`);
+        }
+    }
+
+    private async resolveIdentifiedData(result: any): Promise<string[]> {
+        if (!result?.personalities || !Array.isArray(result.personalities)) {
+            this.logger.warn(
+                "No personalities identified or unexpected format, setting empty array"
+            );
+            return [];
+        }
+        return Promise.all(
+            result.personalities.map(
+                async (p: { name: string; wikidata?: any }) =>
+                    idOf(
+                        await this.personalityService.findOrCreatePersonality({
+                            name: p.name,
+                            wikidata: p.wikidata,
+                        })
+                    )
+            )
+        );
+    }
+
+    private async resolveImpactArea(result: any): Promise<string> {
+        let impactArea = findImpactArea(result);
+        if (!impactArea) {
+            this.logger.warn(
+                `Impact area outside the closed list, using fallback: ${JSON.stringify(
+                    result
+                )}`
+            );
+            impactArea = getFallbackImpactArea();
+        }
+        return idOf(await this.topicService.findOrCreateTopic(impactArea));
     }
 
     private appendUnique(state: string): SQL {
@@ -1105,7 +1111,7 @@ export class PostgresVerificationRequestService
         pageSize: number | string
     ): Promise<IVerificationRequest[]> {
         if (!queryEmbedding || queryEmbedding.length === 0) return [];
-        const limit = parseInt(String(pageSize), 10);
+        const limit = Number.parseInt(String(pageSize), 10);
         if (!Number.isFinite(limit)) {
             throw new BadRequestException("Invalid pageSize");
         }
@@ -1143,7 +1149,7 @@ export class PostgresVerificationRequestService
         const existing = await this.findByDataHash(dataHash, false);
         if (!existing) return null;
         const found = await this.topicService.findByWikidataIds(
-            topics.map((t: any) => (t.value || t.wikidataId)!)
+            topics.map(topicWikidataKey)
         );
         const [updated] = await this.db
             .update(verificationRequest)
@@ -1333,11 +1339,10 @@ export class PostgresVerificationRequestService
         await this.db
             .update(verificationRequest)
             .set({
-                pendingAiTasks: sql`${
-                    verificationRequest.pendingAiTasks
-                } - ${sql.raw(
-                    `ARRAY[${toClean.map((f) => `'${f}'`).join(",")}]::text[]`
-                )}`,
+                pendingAiTasks: toClean.reduce(
+                    (expr, field) => sql`${expr} - ${field}`,
+                    sql`${verificationRequest.pendingAiTasks}`
+                ),
                 updatedAt: new Date(),
             })
             .where(eq(verificationRequest.id, vr.id));
