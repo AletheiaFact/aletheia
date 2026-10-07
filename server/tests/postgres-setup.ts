@@ -78,14 +78,18 @@ export async function getTestDrizzle(): Promise<ReturnType<typeof _typeProbe>> {
 /**
  * Truncate every table the schema knows about. Cheaper than re-running migrations
  * between tests. Order doesn't matter when CASCADE is used.
+ *
+ * Always connects first: on the real rail the worker database outlives the
+ * test file, so a reset that skipped when this module had no connection yet
+ * would leak the previous file's rows into the next one.
  */
 export async function resetTestDrizzle() {
-    if (!cached) return;
+    const db = await getTestDrizzle();
     const tables = Object.values(schema)
         .filter((v: any) => isTable(v))
         .map((t: any) => `"${getTableName(t)}"`);
     if (tables.length === 0) return;
-    await cached.execute(
+    await db.execute(
         sql.raw(`TRUNCATE ${tables.join(", ")} RESTART IDENTITY CASCADE;`)
     );
 }
