@@ -11,7 +11,7 @@ import { AbilityModule } from "../auth/ability/ability.module";
 @Module({
     imports: [
         HttpModule,
-        VerificationRequestModule,
+        VerificationRequestModule.register(),
         ConfigModule,
         ChatBotStateModule,
         AbilityModule,

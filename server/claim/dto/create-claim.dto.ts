@@ -10,7 +10,7 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { ApiProperty } from "@nestjs/swagger";
-import { Group } from "../../group/schemas/group.schema";
+import { Group } from "../../group/mongo/schemas/group.schema";
 
 export class CreateClaimDTO {
     @IsNotEmpty()

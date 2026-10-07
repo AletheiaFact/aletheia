@@ -1,11 +1,20 @@
-import { Module, OnModuleInit, Logger } from "@nestjs/common";
+import { DynamicModule, Module, OnModuleInit, Logger } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ModuleRef } from "@nestjs/core";
 import {
     VerificationRequestSchema,
     VerificationRequest,
-} from "./schemas/verification-request.schema";
-import { VerificationRequestService } from "./verification-request.service";
+} from "./mongo/schemas/verification-request.schema";
+import { MongoVerificationRequestService } from "./mongo/verification-request.service";
+import { PostgresVerificationRequestService } from "./postgres/verification-request.service";
+import { MongoVerificationRequestStatsService } from "./mongo/verification-request-stats.service";
+import { PostgresVerificationRequestStatsService } from "./postgres/verification-request-stats.service";
+import {
+    verificationRequestServiceProvider,
+    verificationRequestStatsServiceProvider,
+} from "./verification-request.provider";
+import type { IVerificationRequestService } from "../interfaces/verification-request.service.interface";
+import dbConfig from "../config/db.config";
 import { VerificationRequestController } from "./verification-request.controller";
 import { SourceModule } from "../source/source.module";
 import { ViewModule } from "../view/view.module";
@@ -23,7 +32,6 @@ import { TopicModule } from "../topic/topic.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 import { WikidataModule } from "../wikidata/wikidata.module";
-import { VerificationRequestStatsService } from "./verification-request-stats.service";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -32,37 +40,60 @@ const VerificationRequestModel = MongooseModule.forFeature([
     },
 ]);
 
-@Module({
-    imports: [
-        VerificationRequestModel,
-        SourceModule.register(),
-        ViewModule,
-        ConfigModule,
-        ReviewTaskModule,
-        HistoryModule,
-        GroupModule,
-        CaptchaModule,
-        AiTaskModule,
-        CallbackDispatcherModule,
-        AbilityModule,
-        WikidataModule,
-        TopicModule.register(),
-        PersonalityModule.register(),
-    ],
-    exports: [
-        VerificationRequestService,
-        VerificationRequestStatsService,
-        VerificationRequestStateMachineService,
-    ],
-    providers: [
-        VerificationRequestService,
-        VerificationRequestStatsService,
-        VerificationRequestStateMachineService,
-    ],
-    controllers: [VerificationRequestController],
-})
+@Module({})
 export class VerificationRequestModule implements OnModuleInit {
     private readonly logger = new Logger(VerificationRequestModule.name);
+
+    static register(): DynamicModule {
+        const imports: any[] = [];
+        const providers: any[] = [
+            verificationRequestServiceProvider,
+            verificationRequestStatsServiceProvider,
+            VerificationRequestStateMachineService,
+        ];
+
+        if (dbConfig.type === "mongodb") {
+            imports.push(VerificationRequestModel);
+            providers.push(
+                MongoVerificationRequestService,
+                MongoVerificationRequestStatsService
+            );
+        } else if (dbConfig.type === "postgres") {
+            providers.push(
+                PostgresVerificationRequestService,
+                PostgresVerificationRequestStatsService
+            );
+        } else {
+            throw new Error("Invalid DB_TYPE in configuration");
+        }
+
+        return {
+            module: VerificationRequestModule,
+            imports: [
+                ...imports,
+                SourceModule.register(),
+                ViewModule,
+                ConfigModule,
+                ReviewTaskModule,
+                HistoryModule,
+                GroupModule.register(),
+                CaptchaModule,
+                AiTaskModule,
+                CallbackDispatcherModule,
+                AbilityModule,
+                WikidataModule,
+                TopicModule.register(),
+                PersonalityModule.register(),
+            ],
+            exports: [
+                "VerificationRequestService",
+                "VerificationRequestStatsService",
+                VerificationRequestStateMachineService,
+            ],
+            providers,
+            controllers: [VerificationRequestController],
+        };
+    }
 
     constructor(
         private readonly dispatcher: CallbackDispatcherService,
@@ -79,9 +110,10 @@ export class VerificationRequestModule implements OnModuleInit {
                         params
                     )}`
                 );
-                const verificationService = await this.moduleRef.resolve(
-                    VerificationRequestService
-                );
+                const verificationService =
+                    await this.moduleRef.resolve<IVerificationRequestService>(
+                        "VerificationRequestService"
+                    );
                 return verificationService.updateFieldByAiTask(params, result);
             }
         );
@@ -95,9 +127,10 @@ export class VerificationRequestModule implements OnModuleInit {
                         params
                     )}`
                 );
-                const verificationService = await this.moduleRef.resolve(
-                    VerificationRequestService
-                );
+                const verificationService =
+                    await this.moduleRef.resolve<IVerificationRequestService>(
+                        "VerificationRequestService"
+                    );
                 return verificationService.updateFieldByAiTask(params, result);
             }
         );
@@ -111,9 +144,10 @@ export class VerificationRequestModule implements OnModuleInit {
                         params
                     )}`
                 );
-                const verificationService = await this.moduleRef.resolve(
-                    VerificationRequestService
-                );
+                const verificationService =
+                    await this.moduleRef.resolve<IVerificationRequestService>(
+                        "VerificationRequestService"
+                    );
                 return verificationService.updateFieldByAiTask(params, result);
             }
         );
@@ -127,9 +161,10 @@ export class VerificationRequestModule implements OnModuleInit {
                         params
                     )}`
                 );
-                const verificationService = await this.moduleRef.resolve(
-                    VerificationRequestService
-                );
+                const verificationService =
+                    await this.moduleRef.resolve<IVerificationRequestService>(
+                        "VerificationRequestService"
+                    );
                 return verificationService.updateFieldByAiTask(params, result);
             }
         );
@@ -143,9 +178,10 @@ export class VerificationRequestModule implements OnModuleInit {
                         params
                     )}`
                 );
-                const verificationService = await this.moduleRef.resolve(
-                    VerificationRequestService
-                );
+                const verificationService =
+                    await this.moduleRef.resolve<IVerificationRequestService>(
+                        "VerificationRequestService"
+                    );
                 return verificationService.updateFieldByAiTask(params, result);
             }
         );

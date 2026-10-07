@@ -236,7 +236,7 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 Zod 4 (`import { z } from "zod"`, single copy shared with LangChain). Do NOT add `nestjs-zod` or new class-validator DTOs; the legacy class-validator DTOs (30 files) get migrated when their module is touched.
 
 **Where things live**
-- `lib/schemas/` holds isomorphic primitives: `objectId`, `dataHash`, `wikidataId`, `nonEmptyText(max)`, `email`, `captchaToken`, `isoDateTime`, `queryInt`, `pageQuery`, `pageSizeQuery(max)`, `queryBoolean`, `legacyQueryFlag`, `queryArray(item)`, `sortOrder`. No imports from Nest/mongoose/drizzle/react/`server`/`src`, so the frontend can import them. Only add a primitive for a rule that already exists in the codebase, with a spec.
+- `lib/schemas/` holds isomorphic primitives: `objectId`, `dataHash`, `wikidataId`, `nonEmptyText(max)`, `email`, `captchaToken`, `isoDateTime`, `queryInt`, `pageQuery`, `pageSizeQuery(max)`, `queryBoolean`, `legacyQueryFlag`, `legacyBodyFlag` (coerces only a present key, like `@Transform`; use `.optional()` on bodies), `queryArray(item)`, `sortOrder`, `entityId`. No imports from Nest/mongoose/drizzle/react/`server`/`src`, so the frontend can import them. Only add a primitive for a rule that already exists in the codebase, with a spec.
 - `server/common/validation/` holds the Nest glue: `ZodBody`, `ZodQuery`, `ZodParam`, `ZodValidationPipe`, `ZodValidationException`.
 - `server/<module>/dto/*.dto.ts` holds module schemas. Promote one to `lib/schemas/` when the frontend needs the same contract.
 

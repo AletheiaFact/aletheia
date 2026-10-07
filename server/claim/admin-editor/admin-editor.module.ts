@@ -43,7 +43,7 @@ import { TransactionHelper } from "./transaction.helper";
         ViewModule,
         ReviewTaskModule,
         ClaimReviewModule,
-        VerificationRequestModule,
+        VerificationRequestModule.register(),
         CommentModule,
     ],
     controllers: [AdminEditorController, AdminEditorPageController],

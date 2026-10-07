@@ -158,9 +158,21 @@ Plus MR hygiene:
   new divergences, new conventions discovered.
 - Merge dark: prod stays `DB_TYPE=mongodb`. Merging ≠ cutting over (§8).
 
-## From Phase 1 onward (cross-cutting additions)
-Phase 1 (verification-request) also builds, and later phases reuse:
-`scripts/parity/` differ, the real-Postgres CI service-container job, the
-per-method latency/error interceptor, and the `expectParity(op)` contract
-helper. If they exist when you run, extend them for this module; if you ARE
-Phase 1, build them per foundation doc §8/§9 (D4.4, D4.5).
+## From Phase 1 onward (cross-cutting tooling — exists, reuse it)
+- **Parity in the contract suite:** `new ParityRecorder({ dropKeys })` from
+  `server/tests/parity.ts`; `parity.record("<op>", backend, result)` inside
+  the shared cases, `parity.assertAll()` + `expect(parity.incomplete()).toEqual([])`
+  in `afterAll`. Drop raw-column leftovers (`dataHash`, `targetIds`, …) and
+  timing-derived fields (`duration`, `estimatedCompletion`) — never real data.
+- **Offline diff:** `yarn parity:diff --left mongo.json --right pg.json`.
+- **Real Postgres:** the `vitest-postgres-real` CI job runs the suite with
+  `TEST_POSTGRES_URL`; locally `docker run -p 5433:5432 pgvector/pgvector:pg16`
+  then `POSTGRES_URL=… yarn migrate:pg && TEST_POSTGRES_URL=… yarn test:pg`.
+- **Latency samples:** `DB_METRICS=1` logs per-method `{backend, method, ms,
+  error}` from every `createDbServiceProvider` service.
+- **Entity mappers** for already-ported rows are exported next to each
+  Postgres service (`toSourceEntity`, `toTopicEntity`, `toPersonalityEntity`)
+  — use them when populating references, never a raw row spread.
+- **Timestamp ties:** Postgres insertion order is `created_at` + `id`; pglite
+  can tie inside one tick, so ordering-sensitive seeds in specs wait a few ms.
+- `entityId` (`lib/schemas`) validates a route id on both backends.

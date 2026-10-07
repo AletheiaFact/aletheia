@@ -106,8 +106,10 @@ All driver errors are mapped to neutral errors in `server/database/errors.ts` at
 | Schema barrel | `server/database/postgres/schema/index.ts` | One re-export line per ported module |
 | Errors | `server/database/errors.ts` + `server/filters/http-exception.filter.ts` | Neutral error types + HTTP mapping |
 | Migrations | `drizzle.config.ts`, `migrations-postgres/` | `0000_extensions` (pg_trgm, vector) + one generated migration per module; scripts `migrate:pg`, `migrate:pg:create`, `migrate:pg:status` |
-| Test rails | `server/tests/postgres-setup.ts`, `per-worker-setup.ts` | pglite per Vitest worker, migrations on boot, `TRUNCATE` between tests; per-worker Mongo DBs unchanged |
-| CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (unit suite under `DB_TYPE=postgres`; e2e stays Mongo-only until the boot descope lifts, §6) |
+| Test rails | `server/tests/postgres-setup.ts`, `per-worker-setup.ts` | pglite per Vitest worker, migrations on boot, `TRUNCATE` between tests; per-worker Mongo DBs unchanged. `TEST_POSTGRES_URL` switches the same rail to a real server |
+| CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (unit suite under `DB_TYPE=postgres`, pglite) + `vitest-postgres-real` (D4.5: `pgvector/pgvector:pg16` service container, `yarn migrate:pg` then the unit suite with `TEST_POSTGRES_URL`); e2e stays Mongo-only until the boot descope lifts, §6 |
+| Parity (D4.4) | `scripts/parity/normalize.ts`, `server/tests/parity.ts`, `yarn parity:diff` | `normalizeForParity` (ids → `<id:n>`, dates → `<date>`, bookkeeping keys dropped, empties collapsed) + `diffNormalized`; `ParityRecorder` records the same op per backend inside a contract suite and asserts in `afterAll`; the CLI diffs two JSON dumps offline |
+| Latency/error samples | `server/database/db-metrics.ts` | `DB_METRICS=1` wraps every `createDbServiceProvider` service in a Proxy that logs `{token, backend, method, ms, error}` per call — input for the per-method p50/p95 gate |
 
 Migration discipline: never edit an applied migration; drizzle-kit owns `meta/_journal.json`; custom SQL goes through `drizzle-kit generate --custom`. Operationally, migrations are NOT run at boot — operators run `yarn migrate:pg` as a deployment step (mirrors the migrate-mongo model); tests run them automatically on first pglite use per worker.
 
@@ -217,6 +219,44 @@ Topic is **global** (no `nameSpace` on the Mongo schema). Its Mongo schema has *
 
 Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity. `image_id uuid` lands per D3 without a constraint, btree-indexed. No `shared/badge.rules.ts`: the module has no driver-free business rule (ids pass through, no derivation). The badge controller still wraps ids in `Types.ObjectId` for the Mongo-only `users` service and `imageService` — Phase 4 / Phase 2 remove those. Pre-existing controller bug left as-is: `updateBadge` returns `undefined` (the `return` sits inside a `forEach`); the frontend ignores the body.
 
+**Group module (Phase 1) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| table name | collection `groups` | `content_group` | `group` is a reserved word; documented exception to the singular-entity rule |
+| `getByContentId` populate | `pre("find")` populates `content` (VR docs, each with its `source` populated by the VR `pre("find")`) and `targetId` (Claim) | `content` populated from `verification_request` through the shared `toVerificationRequestEntity` mapper (source ids, not documents); `targetId` stays an id | claim table ports in Phase 2; the VR source populate is explicit on PG and not applied here |
+| `target_id` column type | Claim `ObjectId` | `uuid` | claims get uuid ids in Phase 2; until then no Postgres caller exists (a Postgres boot needs every module ported), so `claim.service.ts` passing an ObjectId cannot reach it. Phase 2 must land before any cutover |
+| `removeContent` on the last member | `deleteOne` result `{ deletedCount, acknowledged }` | `{ deletedCount }` | callers read nothing from it |
+
+**Verification-request module (Phase 1) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `findSimilarRequests` | `$zip`/`$reduce` dot product; mismatched dimensions are silently truncated by `$zip` | `-(embedding <#> $1)` (pgvector inner product = the same dot product, threshold 0.8 kept); a dimension mismatch is a loud SQL error | same score for same-length vectors; the Mongo truncation hides a misconfigured embedding model |
+| `embedding` column | `number[]` of any length | dimensionless `vector` (no typmod), exact scan | the worker's `DEFAULT_EMBEDDING_MODEL` (`nomic-embed-text`, 768) and the doc's earlier 1536 assumption disagree; the dimension is deployment config, so the typmod + HNSW index land at cutover once the model is pinned |
+| `Map` fields (`stateRetries`, `stateFingerprints`, `pendingAiTasks`) | Mongoose `Map` on documents | jsonb → plain objects | JSON-identical on the wire; in-process readers use key access |
+| timestamps inside jsonb arrays (`stateErrors`, `stateTransitions`, `auditLog`) | BSON `Date` | ISO-8601 strings | jsonb has no date type |
+| `updateVerificationRequestWithTopics` return value | pre-update document (`findByIdAndUpdate` without `new: true`) | updated entity | callers ignore the body; PG returns the saner value |
+| `update` with a group array and `postProcess = false` | stores the raw array (never exercised: internal calls pass ids or `null`) | `NotImplementedError` | guard, never store garbage |
+| `update(id, { group: [...] })` group reconciliation | `findRemovedIds` compares populated docs by `toString()` (never matches), so every previous member is unset and re-set | removed members unset, kept members re-pointed | same final state; fewer writes |
+| `getByIdWithPopulatedFields` with a non-reference path | populate of an unknown path is a no-op | `NotImplementedError` | loud per §1.5 |
+| `cascadeUpdateDataHash(old, new, session)` | runs inside the Mongo `ClientSession` | `NotImplementedError` when a session is passed (dead method, zero callers) | no cross-backend transactions |
+| `manualOverrideField` on an unmapped field | `$set` any path | `NotImplementedError` outside the AI/body columns | loud per §1.5 |
+| missing required field / duplicate `data_hash` on `create` | Mongoose `ValidationError` / `E11000` → 400 | `23502` / `23505` → the same 400 messages | parity kept on the wire |
+| `listAll` ordering | `_id` (monotonic ObjectId) | `created_at` + `id` tiebreak | equivalent except for rows inserted inside the same timestamp tick |
+| `listAll` with `sourceChannel` as a single string | `$in: "Web"` → server error (500) | treated as `["Web"]` | the UI only sends `"all"` or nothing; PG fixes the latent 500 |
+| history writes on `create` / `update` / topics update | `HistoryService` entries | deferred until Phase 6 ports history (same as personality) | `getHistoryParams` rejects non-ObjectId ids |
+| ids reaching the AI result validator | `isValidObjectId` | uuid regex | shared rule takes the backend's `isValidId` predicate |
+| `embedding` on returned entities | projected out on reads, present on `create`/`findByDataHash`/AI updates | same projection choices | parity |
+| `update(id, { source: [] })` / `{ source: null }` | stores `[]` / `null` | stores `[]` (`source_ids` is NOT NULL) | the edit drawer sends `[]` when every url is removed; both clear |
+| `update` with an impact-area label or option | stores the raw string (the `@Prop` uses the bson class, so no cast) and the `listAll` filter can never match it | resolves through the closed list to the topic id; an unknown label is `NotImplementedError` | loud per §1.5 instead of a garbage uuid cast; ids and populated topics pass through |
+| `checkAndRetryStaleAiTasks` | `Object.entries` on a Mongoose `Map` yields nothing, so stale pending tasks are never cleared and the retry never fires | clears the stale fields and re-triggers the missing states | pre-existing Mongo bug left as-is (move-only); PG is the intended behavior |
+| `date` default | `@Prop({ default: new Date() })` is evaluated once at class load (one timestamp for every row created without `date` since boot) | `defaultNow()` per row | PG is the intended semantics |
+| `updateFieldByAiTask` progress estimate | averages the transitions read before the new one is pushed (n-1) | re-reads after the push (n) | estimate only; `estimatedCompletion` is dropped from parity |
+| `getStats` snapshot | one `$facet` pipeline | three statements outside a transaction | counts can disagree under concurrent writes; dashboard tolerance |
+
+Verification requests are **global** (no `nameSpace` on the Mongo schema; the DTO's `nameSpace` was already dropped by the strict schema). Reference columns per D3: `impact_area_id`/`topic_ids` → topic, `identified_data_ids` → personality, `source_ids` → source, `group_id` → `content_group`, all btree/GIN indexed. The Mongo `pre("find")` source populate becomes an explicit batched select on every `find`-shaped read (`listAll`, `findAll`, `findBySourceUrl`), matching which Mongo reads were populated. The stats service ports as its own token (`"VerificationRequestStatsService"`). `VerificationRequestModule.register()` keeps the `forwardRef` cycle with the state-machine service through the string token. Pre-existing Mongo quirk left as-is: `PUT /:id` with a string `impactArea` stores a string (the `@Prop` uses the bson class, not the SchemaType), so the Mongo `listAll` impact-area filter cannot match it; the contract suite sets impact areas through the AI path.
+
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
 ---
@@ -227,8 +267,8 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 
 ```
 ✅ Phase 0    Foundation + personality (this MR)
-🔶 Phase 0.5  Leaf tables: source ✅ / topic ✅ / badge ✅ / group → folded into Phase 1 (pure VR↔Claim join table) [S]
-   Phase 1    verification-request + pgvector + PARITY HARNESS + real-PG CI [M] ← builds cross-cutting tooling
+✅ Phase 0.5  Leaf tables: source ✅ / topic ✅ / badge ✅ / group ✅ (landed with Phase 1) [S]
+✅ Phase 1    verification-request + group + pgvector + parity recorder/CLI + real-PG CI + DB_METRICS [M]
    Phase 2    claim + claim-revision + content types                       [L] → unblocks personality cross-methods
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
    ── CUTOVER MILESTONE A: deployments using only {personality, claim, claim-review, VR} can flip ──
@@ -247,19 +287,18 @@ Unplaced modules to audit before Phase 1 finalizes the list: `report` (slot Phas
 
 ### Per-phase porting notes (merged from the completion checklist)
 
-**Phase 1 — verification-request** [M]. Exercises `pgvector` for the first time.
-Manual cosine similarity via `$zip`/`$reduce` (`verification-request.service.ts:~966`)
-→ `pgvector` `<=>` operator (`1 - (embedding <=> $1) AS similarity`); embedding
-`number[]` → `vector(N)` column, N pinned to the canonical embedding model's
-dimension (`text-embedding-3-small` = 1536 — confirm in the phase spec); HNSW
-index by default (IVFFlat only if write throughput dominates). Sources/group/
-topics populate chains → explicit Drizzle joins — port enough of those leaf
-tables (schema + read surface) to satisfy the joins rather than reading across
-backends. Also builds the cross-cutting tooling: parity differ (`scripts/parity/`),
-real-PG CI leg, latency/error interceptor. Landmine: the Mongo VR service wraps
-source ids in `new Types.ObjectId(id)` (`verification-request.service.ts:~790`)
-— throws on uuid ids; the PG VR impl must drop that wrap (source is already
-ported, ids are uuids under postgres).
+**Phase 1 — verification-request** [M] ✅. The Mongo similarity is a dot
+product (not cosine), so the port uses pgvector's inner product
+(`-(embedding <#> $1)`) with the same 0.8 threshold. The embedding column is a
+dimensionless `vector`: the worker's `DEFAULT_EMBEDDING_MODEL` is
+`nomic-embed-text` (768) while `config.example.yaml` suggests
+`text-embedding-3-small` (1536), so the dimension is deployment config.
+**Cutover prerequisite:** pin the model, add a migration with the typmod
+(`ALTER COLUMN embedding TYPE vector(N)`) and an HNSW index
+(`USING hnsw (embedding vector_ip_ops)`), and backfill or re-embed rows whose
+length differs. Populate chains became batched selects (see the divergence
+table). Cross-cutting tooling landed in §3 (parity, real-PG CI, `DB_METRICS`).
+The `new Types.ObjectId(id)` source-id wrap stayed on the Mongo side only.
 
 **Phase 2 — claim + claim-revision + content types** [L]. Atlas `$search` on
 sentence content/topics (`sentence.service.ts:85-108`) → trgm GIN on `content`;
@@ -361,7 +400,8 @@ delete the now-trivial type-tests; update CLAUDE.md.
 | Cascade-delete semantics lost | 10 | D3 end-game: explicit transactional deletes; orphan sweep |
 | Dual-write drift | 1+ | shadow-read diff monitoring; Mongo authoritative until diff = 0 |
 | Silent test skips masking coverage | all | D4.2 canary + ungated contract suite; `test:pg` sets `CI_EXPECT_DB_TYPE` so a stale local `.env` `DB_TYPE` fails loudly |
-| pglite ≠ real Postgres (pool semantics, locale/collation ORDER BY, extension availability) | 1+ | D4.5 real-PG CI leg from Phase 1; collation-sensitive assertions avoid locale-dependent ordering |
+| pglite ≠ real Postgres (pool semantics, locale/collation ORDER BY, extension availability) | 1+ | `vitest-postgres-real` job runs the migrations and the unit suite on `pgvector/pgvector:pg16` (`TEST_POSTGRES_URL`); collation-sensitive assertions avoid locale-dependent ordering |
+| Embedding dimension drift between deployments | 1 → cutover | dimensionless `vector` until the model is pinned; typmod + HNSW migration is a cutover prerequisite (§7 Phase 1) |
 | Stray `DB_TYPE` env var disagreeing with config.yaml | deploys | boot fails fast by design (`app.module.ts` mismatch throw) — call out in deploy runbooks |
 | Drizzle pre-1.0 API churn | all | exact version pins; one deliberate upgrade per phase max |
 | Merge-conflict contamination on long-lived branches | all | verify branch diff vs non-merge-commit file list before every MR |

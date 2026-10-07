@@ -1,5 +1,6 @@
 import { Provider, Type } from "@nestjs/common";
 import dbConfig from "../config/db.config";
+import { DB_METRICS_ENV, withDbMetrics } from "./db-metrics";
 
 /**
  * Builds the per-module provider that selects the Mongo or Postgres service
@@ -16,11 +17,16 @@ export function createDbServiceProvider<TInterface>(
     return {
         provide: token,
         useFactory: (mongoService: unknown, pgService: unknown): TInterface => {
+            const metrics = Boolean(process.env[DB_METRICS_ENV]);
+            const pick = (service: object): TInterface =>
+                (metrics
+                    ? withDbMetrics(token, dbConfig.type, service)
+                    : service) as TInterface;
             if (dbConfig.type === "mongodb" && mongoService) {
-                return mongoService as TInterface;
+                return pick(mongoService as object);
             }
             if (dbConfig.type === "postgres" && pgService) {
-                return pgService as TInterface;
+                return pick(pgService as object);
             }
             throw new Error("Invalid DB_TYPE in configuration");
         },

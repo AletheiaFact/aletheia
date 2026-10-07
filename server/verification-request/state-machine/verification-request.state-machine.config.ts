@@ -11,7 +11,7 @@ import {
     VerificationRequestStateMachineContext,
     VerificationRequestStateMachineService,
 } from "./verification-request.state-machine.interface";
-import { VerificationRequestService } from "../verification-request.service";
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
 import { IMPACT_AREAS } from "../../topic/constants/impact-areas";
 import {
@@ -34,7 +34,7 @@ const verificationRequestStateMachineSchema = {
 
 const getStateInvokeSrc = (
     eventName: string,
-    getVerificationRequestService: () => VerificationRequestService
+    getVerificationRequestService: () => IVerificationRequestService
 ): InvokeConfig<any, any>["src"] => {
     switch (eventName) {
         case VerificationRequestStateMachineEvents.CREATE:

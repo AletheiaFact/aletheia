@@ -21,6 +21,16 @@ import {
     BadgeDocument,
     BadgeSchema,
 } from "../badge/mongo/schemas/badge.schema";
+import {
+    Group,
+    GroupDocument,
+    GroupSchema,
+} from "../group/mongo/schemas/group.schema";
+import {
+    VerificationRequest,
+    VerificationRequestDocument,
+    VerificationRequestSchema,
+} from "../verification-request/mongo/schemas/verification-request.schema";
 
 /**
  * In-process MongoDB for contract tests (the Mongo counterpart of
@@ -39,6 +49,8 @@ let personalityModel: PersonalityModelType | null = null;
 let sourceModel: Model<SourceDocument> | null = null;
 let topicModel: Model<TopicDocument> | null = null;
 let badgeModel: Model<BadgeDocument> | null = null;
+let groupModel: Model<GroupDocument> | null = null;
+let verificationRequestModel: Model<VerificationRequestDocument> | null = null;
 
 /** One MongoMemoryServer + connection per worker, shared by every module. */
 async function getTestConnection(): Promise<Connection> {
@@ -50,14 +62,11 @@ async function getTestConnection(): Promise<Connection> {
     return connection;
 }
 
-export async function getTestPersonalityModel(): Promise<PersonalityModelType> {
-    if (personalityModel) return personalityModel;
-
-    const connection = await getTestConnection();
-
-    // getById() populates the "claims" virtual (ref: "Claim"); the ref model
-    // must exist on the connection or populate throws MissingSchemaError. A
-    // minimal schema is enough — contract tests never create claims.
+function ensureClaimModel(connection: Connection) {
+    if (connection.models.Claim) return;
+    // Populate targets (personality "claims" virtual, group targetId) need a
+    // registered model; a minimal schema is enough — contract tests never
+    // create claims.
     connection.model(
         "Claim",
         new mongoose.Schema({
@@ -69,6 +78,13 @@ export async function getTestPersonalityModel(): Promise<PersonalityModelType> {
             nameSpace: String,
         })
     );
+}
+
+export async function getTestPersonalityModel(): Promise<PersonalityModelType> {
+    if (personalityModel) return personalityModel;
+
+    const connection = await getTestConnection();
+    ensureClaimModel(connection);
 
     personalityModel = connection.model<PersonalityDocument>(
         Personality.name,
@@ -105,6 +121,35 @@ export async function getTestBadgeModel(): Promise<Model<BadgeDocument>> {
     return badgeModel;
 }
 
+export async function getTestGroupModel(): Promise<Model<GroupDocument>> {
+    if (groupModel) return groupModel;
+    const connection = await getTestConnection();
+    ensureClaimModel(connection);
+    await getTestVerificationRequestModel();
+    groupModel = connection.model<GroupDocument>(Group.name, GroupSchema);
+    return groupModel;
+}
+
+export async function getTestVerificationRequestModel(): Promise<
+    Model<VerificationRequestDocument>
+> {
+    if (verificationRequestModel) return verificationRequestModel;
+    const connection = await getTestConnection();
+    // Populate targets: source (pre-find hook), topic, personality, group.
+    await getTestSourceModel();
+    await getTestTopicModel();
+    await getTestPersonalityModel();
+    verificationRequestModel = connection.model<VerificationRequestDocument>(
+        VerificationRequest.name,
+        VerificationRequestSchema
+    );
+    await verificationRequestModel.init();
+    if (!groupModel) {
+        groupModel = connection.model<GroupDocument>(Group.name, GroupSchema);
+    }
+    return verificationRequestModel;
+}
+
 /** Remove every personality between tests (soft-deleted rows included). */
 export async function resetTestPersonalities(): Promise<void> {
     if (!personalityModel) return;
@@ -128,6 +173,16 @@ export async function resetTestBadges(): Promise<void> {
     await badgeModel.deleteMany({});
 }
 
+export async function resetTestGroups(): Promise<void> {
+    if (!groupModel) return;
+    await groupModel.deleteMany({});
+}
+
+export async function resetTestVerificationRequests(): Promise<void> {
+    if (!verificationRequestModel) return;
+    await verificationRequestModel.deleteMany({});
+}
+
 export async function stopTestMongo(): Promise<void> {
     await connection?.close();
     await server?.stop();
@@ -136,6 +191,8 @@ export async function stopTestMongo(): Promise<void> {
     sourceModel = null;
     topicModel = null;
     badgeModel = null;
+    groupModel = null;
+    verificationRequestModel = null;
     server = null;
 }
 

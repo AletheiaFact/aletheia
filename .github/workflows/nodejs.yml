@@ -156,6 +156,43 @@ jobs:
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: yarn test:unit
 
+    vitest-postgres-real:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: pgvector/pgvector:pg16
+                env:
+                    POSTGRES_USER: aletheia
+                    POSTGRES_PASSWORD: aletheia
+                    POSTGRES_DB: aletheia
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd "pg_isready -U aletheia"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 10
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Use Node.js 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+            - run: yarn install
+            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - name: Apply the Drizzle migrations on a real Postgres
+              env:
+                  POSTGRES_URL: postgres://aletheia:aletheia@localhost:5432/aletheia
+              run: yarn migrate:pg && yarn migrate:pg:status
+            - name: Run the contract suites against the real Postgres
+              env:
+                  DB_TYPE: postgres
+                  CI_EXPECT_DB_TYPE: postgres
+                  TEST_POSTGRES_URL: postgres://aletheia:aletheia@localhost:5432/aletheia
+                  NODE_OPTIONS: "--max_old_space_size=4096"
+              run: yarn test:unit
+
     cypress-run-ferretdb:
         needs: build
         runs-on: ubuntu-22.04

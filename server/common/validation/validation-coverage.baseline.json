@@ -79,16 +79,6 @@
     "UsersController.getByOryId param:id",
     "UsersController.getUser param:id",
     "UsersController.updateUser param:id",
-    "VerificationRequestController.getAll query",
-    "VerificationRequestController.getById param:id",
-    "VerificationRequestController.getPersonalitiesWithWikidata param:id",
-    "VerificationRequestController.getPersonalitiesWithWikidata query:language",
-    "VerificationRequestController.listAll query",
-    "VerificationRequestController.removeVerificationRequestFromGroup body",
-    "VerificationRequestController.removeVerificationRequestFromGroup param:verificationRequestId",
-    "VerificationRequestController.updateVerificationRequest param:verificationRequestId",
-    "VerificationRequestController.updateVerificationRequestWithTopics body",
-    "VerificationRequestController.updateVerificationRequestWithTopics param:data_hash",
     "ViewController.acessDeniedPage query",
     "ViewController.showPersonAboutPage param:person"
 ]

@@ -19,7 +19,7 @@ import { ParserService } from "./parser/parser.service";
 import { HistoryService } from "../history/history.service";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
-import { GroupService } from "../group/group.service";
+
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { GetByDataHashDto } from "./dto/get-by-datahash.dto";
 
@@ -53,7 +53,7 @@ describe("ClaimController (Unit)", () => {
                 { provide: HistoryService, useValue: {} },
                 { provide: ClaimRevisionService, useValue: {} },
                 { provide: FeatureFlagService, useValue: {} },
-                { provide: GroupService, useValue: {} },
+                { provide: "GroupService", useValue: {} },
 
                 { provide: "REQUEST", useValue: {} },
             ],

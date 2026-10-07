@@ -48,7 +48,7 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { Types, UpdateWriteOpResult } from "mongoose";
-import { GroupService } from "../group/group.service";
+import type { IGroupService } from "../interfaces/group.service.interface";
 import { GetByDataHashDto } from "../claim/dto/get-by-datahash.dto";
 import { UpdateHiddenStatusDTO } from "./dto/update-hidden-status.dto";
 
@@ -72,7 +72,7 @@ export class ClaimController {
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
         private featureFlagService: FeatureFlagService,
-        private groupService: GroupService
+        @Inject("GroupService") private groupService: IGroupService
     ) {}
 
     _verifyInputsQuery(query: GetClaimsDTO) {

@@ -11,7 +11,7 @@ import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
-import { GroupService } from "../group/group.service";
+
 
 describe("ClaimService (Unit)", () => {
     let service: ClaimService;
@@ -106,7 +106,7 @@ describe("ClaimService (Unit)", () => {
                 { provide: StateEventService, useValue: mockStateEventService },
                 { provide: ReviewTaskService, useValue: mockReviewTaskService },
                 { provide: UtilService, useValue: mockUtilService },
-                { provide: GroupService, useValue: mockGroupService },
+                { provide: "GroupService", useValue: mockGroupService },
             ],
         }).compile();
 

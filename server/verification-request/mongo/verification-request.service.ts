@@ -6,23 +6,22 @@ import {
     Types,
     UpdateQuery,
 } from "mongoose";
-import { escapeRegex } from "../util/regex.util";
-import type { ISourceService } from "../interfaces/source.service.interface";
+import { escapeRegex } from "../../util/regex.util";
+import type { ISourceService } from "../../interfaces/source.service.interface";
 import {
     VerificationRequest,
     VerificationRequestDocument,
 } from "./schemas/verification-request.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { GroupService } from "../group/group.service";
-import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
+import type { IGroupService } from "../../interfaces/group.service.interface";
 import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "../types";
-import { HistoryService } from "../history/history.service";
-import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { AiTaskService } from "../ai-task/ai-task.service";
-import { CreateAiTaskDto } from "../ai-task/dto/create-ai-task.dto";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { buildDateQuery } from "../../src/utils/date.utils";
+import type { BaseRequest } from "../../types";
+import { HistoryService } from "../../history/history.service";
+import { HistoryType, TargetModel } from "../../history/schema/history.schema";
+import { AiTaskService } from "../../ai-task/ai-task.service";
+import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
+import { VerificationRequestStateMachineService } from "../state-machine/verification-request.state-machine.service";
+import { buildDateQuery } from "../../../src/utils/date.utils";
 import {
     BadRequestException,
     Injectable,
@@ -36,25 +35,36 @@ import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
     MAX_RETRY_ATTEMPTS,
-    SeverityEnum,
     VerificationRequestStatus,
-} from "./dto/types";
-import * as crypto from "crypto";
-import type { ITopicService } from "../interfaces/topic.service.interface";
+} from "../dto/types";
+import type { ITopicService } from "../../interfaces/topic.service.interface";
 import {
     findImpactArea,
     getFallbackImpactArea,
-} from "../topic/constants/impact-areas";
-import { toError } from "../util/error-handling";
-import type { IPersonalityService } from "../interfaces/personality.service.interface";
-import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
-import type { EmbeddingsProvider } from "../llm/llm.types";
+} from "../../topic/constants/impact-areas";
+import { toError } from "../../util/error-handling";
+import type { IPersonalityService } from "../../interfaces/personality.service.interface";
+import { EMBEDDINGS_PROVIDER } from "../../llm/llm.tokens";
+import type { EmbeddingsProvider } from "../../llm/llm.types";
 
-const md5 = require("md5");
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
+import {
+    calculateAverageDuration,
+    computeDataHash,
+    EXPECTED_STATE_ORDER,
+    filterValidSources,
+    findRemovedIds,
+    hashResult,
+    STATE_TO_EVENT,
+    topicWikidataKey,
+    validateAiTaskResult,
+} from "../shared/verification-request.rules";
 
 @Injectable({ scope: Scope.REQUEST })
-export class VerificationRequestService {
-    private readonly logger = new Logger(VerificationRequestService.name);
+export class MongoVerificationRequestService
+    implements IVerificationRequestService
+{
+    private readonly logger = new Logger(MongoVerificationRequestService.name);
 
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
@@ -63,8 +73,8 @@ export class VerificationRequestService {
         @Inject(forwardRef(() => VerificationRequestStateMachineService))
         private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         @Inject("SourceService")
-        private sourceService: ISourceService,
-        private readonly groupService: GroupService,
+        private readonly sourceService: ISourceService,
+        @Inject("GroupService") private readonly groupService: IGroupService,
         private readonly historyService: HistoryService,
         private readonly aiTaskService: AiTaskService,
         @Inject("TopicService")
@@ -87,7 +97,7 @@ export class VerificationRequestService {
         contentFilters?: string[];
         topics?: string[];
         severity?: string;
-        sourceChannel?: string;
+        sourceChannel?: string | string[];
         status?: string[];
         impactArea?: string[];
         startDate?: string;
@@ -161,7 +171,9 @@ export class VerificationRequestService {
     ): Promise<VerificationRequest | null> {
         return this.VerificationRequestModel.findById(verificationRequestId, {
             embedding: 0,
-        }).populate("group");
+        })
+            .populate("group")
+            .exec();
     }
 
     /**
@@ -205,7 +217,7 @@ export class VerificationRequestService {
         try {
             this.logger.debug("Creating verification request", { data });
 
-            const data_hash = data.data_hash || md5(data.content);
+            const data_hash = data.data_hash || computeDataHash(data.content);
 
             const vr = await this.VerificationRequestModel.create({
                 ...data,
@@ -215,8 +227,7 @@ export class VerificationRequestService {
                 impactArea: null,
             });
 
-            const validSources =
-                data.source?.filter((source) => source?.href?.trim()) || [];
+            const validSources = filterValidSources(data.source);
 
             if (validSources.length) {
                 const srcId = await Promise.all(
@@ -375,7 +386,7 @@ export class VerificationRequestService {
             }
 
             // Check idempotency
-            const resultHash = this.hashResult(result);
+            const resultHash = hashResult(result);
             const existingHash =
                 verificationRequest.stateFingerprints?.get(field);
 
@@ -505,7 +516,11 @@ export class VerificationRequestService {
             }
 
             // Validate result
-            const validation = this.validateAiTaskResult(field, valueToUpdate);
+            const validation = validateAiTaskResult(
+                field,
+                valueToUpdate,
+                isValidObjectId
+            );
             if (!validation.valid) {
                 await this.handleInvalidResult(
                     targetId,
@@ -607,17 +622,7 @@ export class VerificationRequestService {
             return;
         }
 
-        // Define the expected order of states
-        const expectedStates = [
-            "embedding",
-            "identifiedData",
-            "topics",
-            "impactArea",
-            "severity",
-        ];
-
-        // Find the next missing state to execute
-        for (const state of expectedStates) {
+        for (const state of EXPECTED_STATE_ORDER) {
             const isExecuted = statesExecuted.includes(state);
             const isPending =
                 pendingTasks.has(state) || pendingTasks.get(state);
@@ -659,16 +664,7 @@ export class VerificationRequestService {
             `Triggering state machine for VR ${verificationRequest.id} to execute: ${missingState}`
         );
 
-        // Map field names to state machine events
-        const stateToEventMap: Record<string, string> = {
-            embedding: "embed",
-            identifiedData: "identifyData",
-            topics: "defineTopics",
-            impactArea: "defineImpactArea",
-            severity: "defineSeverity",
-        };
-
-        const event = stateToEventMap[missingState];
+        const event = STATE_TO_EVENT[missingState];
         if (!event) {
             this.logger.warn(
                 `No event mapping found for state: ${missingState}`
@@ -707,10 +703,11 @@ export class VerificationRequestService {
                 .populate("source")
                 .populate("impactArea")
                 .populate("topics")
-                .populate("identifiedData");
+                .populate("identifiedData")
+                .exec();
         }
 
-        return this.VerificationRequestModel.findOne({ data_hash });
+        return this.VerificationRequestModel.findOne({ data_hash }).exec();
     }
 
     /**
@@ -723,9 +720,7 @@ export class VerificationRequestService {
         initial: { content: any[] },
         updated: { content: string[] }
     ): string[] {
-        return initial.content.filter(
-            (id) => !updated.content.includes(id.toString())
-        );
+        return findRemovedIds(initial, updated);
     }
 
     /**
@@ -759,7 +754,7 @@ export class VerificationRequestService {
                 verificationRequest._id,
                 { $unset: { group: null } },
                 { new: true, upsert: true }
-            );
+            ).exec();
         } catch (error) {
             this.logger.error(
                 "Failed to remove verification request from group:",
@@ -778,7 +773,7 @@ export class VerificationRequestService {
      */
     async update(
         verificationRequestId: string,
-        verificationRequestBodyUpdate: Partial<UpdateVerificationRequestDTO>,
+        verificationRequestBodyUpdate: Record<string, any>,
         postProcess: boolean = true
     ): Promise<VerificationRequestDocument> {
         try {
@@ -804,14 +799,16 @@ export class VerificationRequestService {
 
             if (verificationRequestBodyUpdate.source?.length) {
                 const newSourceIds = await Promise.all(
-                    verificationRequestBodyUpdate.source.map(async (source) => {
-                        const src = await this.sourceService.create({
-                            href: source.href,
-                            targetId: verificationRequest.id,
-                        });
+                    verificationRequestBodyUpdate.source.map(
+                        async (source: { href: string }) => {
+                            const src = await this.sourceService.create({
+                                href: source.href,
+                                targetId: verificationRequest.id,
+                            });
 
-                        return src._id;
-                    })
+                            return src._id;
+                        }
+                    )
                 );
                 updatedVerificationRequestData.source = newSourceIds.map(
                     (id) => new Types.ObjectId(id)
@@ -848,7 +845,8 @@ export class VerificationRequestService {
                 { new: true, upsert: true }
             )
                 .populate("source")
-                .populate("impactArea");
+                .populate("impactArea")
+                .exec();
         } catch (error) {
             this.logger.error("Failed to update verification request:", error);
             throw error;
@@ -944,7 +942,7 @@ export class VerificationRequestService {
         contentFilters?: string[];
         topics?: string[];
         severity?: string;
-        sourceChannel?: string;
+        sourceChannel?: string | string[];
         status?: string[];
         impactArea?: string[];
         startDate?: string;
@@ -1038,7 +1036,7 @@ export class VerificationRequestService {
     }
 
     async updateVerificationRequestWithTopics(
-        topics: Array<{ value?: string; wikidataId?: string }>,
+        topics: Array<{ value?: string; wikidataId?: string } | string>,
         data_hash: string
     ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
@@ -1046,10 +1044,7 @@ export class VerificationRequestService {
             return null;
         }
         const foundTopics = await this.topicService.findByWikidataIds(
-            topics.map(
-                (topic: { value?: string; wikidataId?: string }) =>
-                    (topic.value || topic.wikidataId)!
-            )
+            topics.map(topicWikidataKey)
         );
         const topicIds = foundTopics.map((topic: any) => topic._id);
 
@@ -1076,14 +1071,14 @@ export class VerificationRequestService {
         return this.VerificationRequestModel.findByIdAndUpdate(
             { _id: verificationRequest._id },
             newVerificationRequest
-        );
+        ).exec();
     }
 
     private async buildVerificationRequestQuery(filters: {
         contentFilters?: string[];
         topics?: string[];
         severity?: string;
-        sourceChannel?: string;
+        sourceChannel?: string | string[];
         status?: string[];
         impactArea?: string[];
         startDate?: string;
@@ -1148,103 +1143,6 @@ export class VerificationRequestService {
             query.status = { $in: status };
         }
         return query;
-    }
-
-    /**
-     * Validates AI task results before updating
-     */
-    private validateAiTaskResult(
-        field: string,
-        result: any
-    ): { valid: boolean; error?: string } {
-        switch (field) {
-            case "embedding":
-                if (!Array.isArray(result) || result.length === 0) {
-                    return {
-                        valid: false,
-                        error: "Embedding must be a non-empty array",
-                    };
-                }
-                if (result.some((v: any) => typeof v !== "number")) {
-                    return {
-                        valid: false,
-                        error: "Embedding must contain only numbers",
-                    };
-                }
-                break;
-            case "topics":
-                if (!Array.isArray(result) || result.length === 0) {
-                    return {
-                        valid: false,
-                        error: "Topics must be a non-empty array",
-                    };
-                }
-                const allValidIds = result.every((id: any) =>
-                    isValidObjectId(id)
-                );
-                if (!allValidIds) {
-                    return {
-                        valid: false,
-                        error: "All topics must be valid ObjectIds",
-                    };
-                }
-                break;
-            case "identifiedData":
-                // Allow empty array (AI processor returns empty when no personalities found)
-                if (
-                    result === null ||
-                    result === undefined ||
-                    (Array.isArray(result) && result.length === 0)
-                ) {
-                    return { valid: true };
-                }
-
-                if (Array.isArray(result)) {
-                    const allValidIds = result.every((id: any) =>
-                        isValidObjectId(id)
-                    );
-                    if (allValidIds) {
-                        return { valid: true };
-                    }
-                    return {
-                        valid: false,
-                        error: "All identifiedData must be valid ObjectIds",
-                    };
-                }
-
-                return {
-                    valid: false,
-                    error: `Identified data must be an array of ObjectIds, got: ${typeof result}`,
-                };
-            case "impactArea":
-                if (!result) {
-                    return { valid: false, error: "Impact area is required" };
-                }
-                break;
-            case "severity":
-                if (
-                    !Object.values(SeverityEnum)
-                        .map(String)
-                        .includes(String(result))
-                ) {
-                    return {
-                        valid: false,
-                        error: `Invalid severity value: ${result}`,
-                    };
-                }
-                break;
-        }
-        return { valid: true };
-    }
-
-    /**
-     * Hash result for idempotency checks
-     */
-    private hashResult(result: any): string {
-        return crypto
-            .createHash("sha256")
-            .update(JSON.stringify(result))
-            .digest("hex");
     }
 
     /**
@@ -1365,9 +1263,7 @@ export class VerificationRequestService {
         const completed = statesExecuted.length;
         const percentage = (completed / totalStates) * 100;
 
-        const avgDuration = this.calculateAverageDuration(
-            vr.stateTransitions || []
-        );
+        const avgDuration = calculateAverageDuration(vr.stateTransitions || []);
         const remainingStates = totalStates - completed;
         const estimatedCompletion =
             avgDuration > 0
@@ -1384,19 +1280,6 @@ export class VerificationRequestService {
                 estimatedCompletion,
             },
         });
-    }
-
-    /**
-     * Calculate average duration from transitions
-     */
-    private calculateAverageDuration(transitions: any[]): number {
-        if (!transitions || transitions.length === 0) return 0;
-
-        const total = transitions.reduce(
-            (sum: number, t: { duration?: number }) => sum + (t.duration || 0),
-            0
-        );
-        return total / transitions.length;
     }
 
     /**
@@ -1425,17 +1308,7 @@ export class VerificationRequestService {
             return;
         }
 
-        // Define the expected order of states
-        const expectedStates = [
-            "embedding",
-            "identifiedData",
-            "topics",
-            "impactArea",
-            "severity",
-        ];
-
-        // Find all missing states
-        const missingStates = expectedStates.filter(
+        const missingStates = EXPECTED_STATE_ORDER.filter(
             (state) => !statesExecuted.includes(state)
         );
 
@@ -1611,7 +1484,7 @@ export class VerificationRequestService {
                 },
             },
             { new: true }
-        );
+        ).exec();
 
         if (!updatedVr) {
             throw new BadRequestException(
@@ -1628,7 +1501,7 @@ export class VerificationRequestService {
     async cascadeUpdateDataHash(
         oldHash: string,
         newHash: string,
-        session: ClientSession
+        session?: ClientSession
     ): Promise<number> {
         const result = await this.VerificationRequestModel.updateMany(
             { data_hash: oldHash },

@@ -23,7 +23,7 @@ import { ContentModelEnum } from "../types/enums";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { GroupService } from "../group/group.service";
+import type { IGroupService } from "../interfaces/group.service.interface";
 import slugify from "slugify";
 import { toError } from "../util/error-handling";
 
@@ -53,7 +53,7 @@ export class ClaimService {
         private claimRevisionService: ClaimRevisionService,
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
-        private groupService: GroupService
+        @Inject("GroupService") private groupService: IGroupService
     ) {}
 
     async listAll(

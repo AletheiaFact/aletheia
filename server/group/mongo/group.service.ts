@@ -1,15 +1,16 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
+import type { IGroupService } from "../../interfaces/group.service.interface";
 import { Group, GroupDocument } from "./schemas/group.schema";
 
 @Injectable()
-export class GroupService {
-    private readonly logger = new Logger(GroupService.name);
+export class MongoGroupService implements IGroupService {
+    private readonly logger = new Logger(MongoGroupService.name);
 
     constructor(
         @InjectModel(Group.name)
-        private GroupModel: Model<GroupDocument>
+        private readonly GroupModel: Model<GroupDocument>
     ) {}
 
     /**
@@ -18,7 +19,7 @@ export class GroupService {
      * @returns
      */
     async getById(groupId: string): Promise<GroupDocument | null> {
-        return this.GroupModel.findById(groupId);
+        return this.GroupModel.findById(groupId).exec();
     }
 
     /**
@@ -27,9 +28,9 @@ export class GroupService {
      * @returns the group document
      */
     async getByContentId(contentId: string): Promise<GroupDocument | null> {
-        return this.GroupModel.findOne({ content: contentId }).populate(
-            "content"
-        );
+        return this.GroupModel.findOne({ content: contentId })
+            .populate("content")
+            .exec();
     }
 
     /**
@@ -83,7 +84,7 @@ export class GroupService {
             group._id,
             { $set: { targetId: new Types.ObjectId(targetId) } },
             { new: true }
-        );
+        ).exec();
     }
 
     /**
