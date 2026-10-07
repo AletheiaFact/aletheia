@@ -82,12 +82,10 @@ import { toTopicEntity } from "../../topic/postgres/topic.service";
 import { toPersonalityEntity } from "../../personality/postgres/personality.service";
 import { toSourceEntity } from "../../source/postgres/source.service";
 
-type PopulateField =
-    | "source"
-    | "impactArea"
-    | "topics"
-    | "identifiedData"
-    | "group";
+import {
+    PopulateField,
+    toVerificationRequestEntity,
+} from "./verification-request.entity";
 
 const POPULATABLE: PopulateField[] = [
     "source",
@@ -176,44 +174,7 @@ export class PostgresVerificationRequestService
         populated: Partial<Record<PopulateField, any>> = {},
         withEmbedding = false
     ): IVerificationRequest {
-        const {
-            dataHash,
-            impactAreaId,
-            sourceIds,
-            groupId,
-            topicIds,
-            identifiedDataIds,
-            embedding,
-            ...rest
-        } = row;
-        const entity: IVerificationRequest = {
-            ...rest,
-            _id: row.id,
-            data_hash: dataHash,
-            reportType: row.reportType ?? undefined,
-            impactArea:
-                "impactArea" in populated
-                    ? populated.impactArea
-                    : impactAreaId ?? undefined,
-            additionalInfo: row.additionalInfo ?? undefined,
-            publicationDate: row.publicationDate ?? undefined,
-            email: row.email ?? undefined,
-            heardFrom: row.heardFrom ?? undefined,
-            source: "source" in populated ? populated.source : sourceIds,
-            group:
-                "group" in populated ? populated.group : groupId ?? undefined,
-            rejected: row.rejected ?? undefined,
-            isSensitive: row.isSensitive ?? undefined,
-            topics: "topics" in populated ? populated.topics : topicIds,
-            severity: row.severity ?? undefined,
-            identifiedData:
-                "identifiedData" in populated
-                    ? populated.identifiedData
-                    : identifiedDataIds,
-            progress: row.progress ?? undefined,
-        };
-        if (withEmbedding) entity.embedding = embedding;
-        return entity;
+        return toVerificationRequestEntity(row, populated, withEmbedding);
     }
 
     private async populate(
@@ -598,14 +559,9 @@ export class PostgresVerificationRequestService
 
             const validSources = filterValidSources(data.source);
             if (validSources.length) {
-                const sourceIds = await Promise.all(
-                    validSources.map(async (s) => {
-                        const src = await this.sourceService.create({
-                            href: s.href,
-                            targetId: row.id,
-                        });
-                        return idOf(src);
-                    })
+                const sourceIds = await this.createSources(
+                    validSources,
+                    row.id
                 );
                 [row] = await this.db
                     .update(verificationRequest)
@@ -848,6 +804,43 @@ export class PostgresVerificationRequestService
         );
     }
 
+    private createSources(
+        sources: Array<{ href?: string }>,
+        targetId: string
+    ): Promise<string[]> {
+        return Promise.all(
+            sources.map(async (s) =>
+                idOf(
+                    await this.sourceService.create({
+                        href: s.href as string,
+                        targetId,
+                    })
+                )
+            )
+        );
+    }
+
+    /**
+     * `update` accepts an impact-area id, a populated topic or a label from the
+     * closed list. Mongo stores an unknown label as a raw string; here it is a
+     * loud 501 rather than a garbage uuid cast.
+     */
+    private async impactAreaIdFor(
+        input: Parameters<typeof findImpactArea>[0] | Record<string, any>
+    ): Promise<string | null> {
+        if (!input) return null;
+        const id = idOf(input);
+        if (isUuid(id)) return id;
+        const impactArea = findImpactArea(input as string);
+        if (!impactArea) {
+            throw new NotImplementedError(
+                "postgres",
+                `update(impactArea: ${JSON.stringify(input)})`
+            );
+        }
+        return idOf(await this.topicService.findOrCreateTopic(impactArea));
+    }
+
     private async resolveImpactArea(result: any): Promise<string> {
         let impactArea = findImpactArea(result);
         if (!impactArea) {
@@ -997,23 +990,17 @@ export class PostgresVerificationRequestService
                 updatedAt: new Date(),
             };
 
-            if (body.source?.length) {
-                patch.sourceIds = await Promise.all(
-                    body.source.map(async (s: { href: string }) =>
-                        idOf(
-                            await this.sourceService.create({
-                                href: s.href,
-                                targetId: row.id,
-                            })
-                        )
-                    )
+            if (body.source !== undefined) {
+                patch.sourceIds = await this.createSources(
+                    body.source ?? [],
+                    row.id
                 );
             }
 
             if (body.impactArea !== undefined) {
-                patch.impactAreaId = body.impactArea
-                    ? idOf(body.impactArea)
-                    : null;
+                patch.impactAreaId = await this.impactAreaIdFor(
+                    body.impactArea
+                );
             }
 
             if (body.group !== undefined) {

@@ -133,6 +133,8 @@ describe.each(backends)(
                     "first",
                     "second",
                 ]);
+                expect(found.content[0].data_hash).toBeDefined();
+                expect(found.content[0]).not.toHaveProperty("dataHash");
             });
 
             it("returns null when no group holds the id", async () => {

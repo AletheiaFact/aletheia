@@ -51,6 +51,31 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             ).rejects.toBeInstanceOf(NotImplementedError);
         });
 
+        it("update resolves an impact-area label through the closed list and 501s on an unknown one (Mongo stores the raw string)", async () => {
+            topicService.findOrCreateTopic.mockImplementation(
+                async (data: { name: string; wikidataId?: string }) => {
+                    const [row] = await db
+                        .insert(topic)
+                        .values({
+                            name: data.name,
+                            slug: data.name.toLowerCase(),
+                            wikidataId: data.wikidataId,
+                            language: "pt",
+                        })
+                        .returning();
+                    return { ...row, _id: row.id };
+                }
+            );
+            const vr = await create();
+            const updated = await service.update(vr._id, {
+                impactArea: "Saúde",
+            });
+            expect(updated.impactArea.name).toBe("Saúde");
+            await expect(
+                service.update(vr._id, { impactArea: "not an area" })
+            ).rejects.toBeInstanceOf(NotImplementedError);
+        });
+
         it("update with a group array and postProcess=false is a 501 (Mongo would store raw ids)", async () => {
             const vr = await create();
             await expect(

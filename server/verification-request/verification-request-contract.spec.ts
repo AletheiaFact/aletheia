@@ -662,6 +662,18 @@ describe.each(backends)(
                 parity.record("update:shape", backend, updated);
             });
 
+            it("clears every source with source: [] (the edit drawer sends this when all urls are removed)", async () => {
+                const created = await service.create(
+                    base({ source: [{ href: "https://old.test" }] })
+                );
+                expect(created.source).toHaveLength(1);
+                const updated = await service.update(idOf(created), {
+                    source: [],
+                });
+                expect(updated.source).toEqual([]);
+                parity.record("update:clear-sources", backend, updated);
+            });
+
             it("throws 404 for a missing id", async () => {
                 await expect(
                     service.update(makeMissingId(), { status: "Posted" })

@@ -10,6 +10,7 @@ import type { DrizzleClient } from "../../database/postgres/connection";
 import { contentGroup } from "./schema/group.schema";
 import type { ContentGroupRow } from "./schema/group.schema";
 import { verificationRequest } from "../../verification-request/postgres/schema/verification-request.schema";
+import { toVerificationRequestEntity } from "../../verification-request/postgres/verification-request.entity";
 
 @Injectable()
 export class PostgresGroupService implements IGroupService {
@@ -57,7 +58,9 @@ export class PostgresGroupService implements IGroupService {
                   .from(verificationRequest)
                   .where(inArray(verificationRequest.id, row.contentIds))
             : [];
-        const byId = new Map(rows.map((r) => [r.id, { ...r, _id: r.id }]));
+        const byId = new Map(
+            rows.map((r) => [r.id, toVerificationRequestEntity(r)])
+        );
         const content = row.contentIds
             .map((id) => byId.get(id))
             .filter(Boolean);
