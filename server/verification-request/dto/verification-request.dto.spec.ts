@@ -31,6 +31,27 @@ describe("verification-request DTO schemas", () => {
             expect(result.data.date).toBeInstanceOf(Date);
         });
 
+        it("accepts null where the class DTO's @IsOptional did (a cleared date picker sends null)", () => {
+            expect(
+                CreateVerificationRequestSchema.safeParse({
+                    content: "c",
+                    sourceChannel: "Web",
+                    reportType: null,
+                    impactArea: null,
+                    source: null,
+                    publicationDate: null,
+                    email: null,
+                    heardFrom: null,
+                }).success
+            ).toBe(true);
+            expect(
+                UpdateVerificationRequestSchema.safeParse({
+                    publicationDate: null,
+                    source: [{ href: "https://a.test" }],
+                }).success
+            ).toBe(true);
+        });
+
         it("rejects a missing content, an invalid date, a non-numeric embedding and unknown keys", () => {
             const base = { content: "c", sourceChannel: "Web" };
             expect(
@@ -88,9 +109,9 @@ describe("verification-request DTO schemas", () => {
                 UpdateVerificationRequestSchema.parse({ rejected: "enabled" })
                     .rejected
             ).toBe(true);
-            expect(UpdateVerificationRequestSchema.parse({}).rejected).toBe(
-                false
-            );
+            expect(
+                UpdateVerificationRequestSchema.parse({}).rejected
+            ).toBeUndefined();
             expect(
                 UpdateVerificationRequestSchema.safeParse({ status: "Nope" })
                     .success
@@ -135,7 +156,12 @@ describe("verification-request DTO schemas", () => {
             ).toBe(false);
             expect(
                 ListVerificationRequestsQuerySchema.safeParse({
-                    pageSize: "101",
+                    pageSize: "120",
+                }).success
+            ).toBe(true);
+            expect(
+                ListVerificationRequestsQuerySchema.safeParse({
+                    pageSize: "501",
                 }).success
             ).toBe(false);
             expect(

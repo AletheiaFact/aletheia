@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
     entityId,
-    legacyQueryFlag,
+    legacyBodyFlag,
     pageQuery,
     pageSizeQuery,
     queryArray,
@@ -10,6 +10,9 @@ import {
 } from "../../../lib/schemas";
 import { ContentModelEnum } from "../../types/enums";
 import { VerificationRequestStatus } from "./types";
+
+// The board grows a column's pageSize by 20 per "load more"; it clamps at this value.
+export const LIST_MAX_PAGE_SIZE = 500;
 
 const ImpactAreaSchema = z.union([
     z.string(),
@@ -24,13 +27,13 @@ const SourceInputSchema = z.looseObject({ href: z.string().optional() });
 export const CreateVerificationRequestSchema = z.strictObject({
     content: z.string(),
     sourceChannel: z.string(),
-    reportType: z.enum(ContentModelEnum).optional(),
-    impactArea: ImpactAreaSchema.optional(),
-    source: z.array(SourceInputSchema).optional(),
-    publicationDate: z.string().optional(),
-    email: z.string().optional(),
+    reportType: z.enum(ContentModelEnum).nullish(),
+    impactArea: ImpactAreaSchema.nullish(),
+    source: z.array(SourceInputSchema).nullish(),
+    publicationDate: z.string().nullish(),
+    email: z.string().nullish(),
     date: z.coerce.date().optional(),
-    heardFrom: z.string().optional(),
+    heardFrom: z.string().nullish(),
     nameSpace: z.string().optional(),
     recaptcha: z.string().optional(),
     embedding: z.array(z.number()).optional(),
@@ -45,7 +48,7 @@ export const UpdateVerificationRequestSchema =
         group: z.array(z.unknown()).nullable().optional(),
         usersId: z.array(z.string()).optional(),
         isSensitive: z.boolean().optional(),
-        rejected: legacyQueryFlag,
+        rejected: legacyBodyFlag.optional(),
         status: z.enum(VerificationRequestStatus).optional(),
     });
 export type UpdateVerificationRequestDto = z.output<
@@ -54,7 +57,7 @@ export type UpdateVerificationRequestDto = z.output<
 
 export const ListVerificationRequestsQuerySchema = z.object({
     page: pageQuery.default(0),
-    pageSize: pageSizeQuery(100).default(10),
+    pageSize: pageSizeQuery(LIST_MAX_PAGE_SIZE).default(10),
     order: sortOrder.default("desc"),
     contentFilters: queryArray(z.string()).default([]),
     topics: queryArray(z.string()).default([]),

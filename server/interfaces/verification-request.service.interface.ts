@@ -24,8 +24,8 @@ export type VerificationRequestListOptions = VerificationRequestFilters & {
 
 export type VerificationRequestCreateInput = {
     content: string;
-    impactArea?: { label: string; value: string } | string;
-    source?: Array<{ href: string }>;
+    impactArea?: { label?: string; value?: string } | string | null;
+    source?: Array<{ href?: string }> | null;
     data_hash?: string;
     [key: string]: any;
 };

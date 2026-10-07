@@ -20,6 +20,10 @@ import {
 import InfoTooltip from "../Claim/InfoTooltip";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
+const LOAD_MORE_STEP = 20;
+// Matches LIST_MAX_PAGE_SIZE on the server list schema.
+const MAX_PAGE_SIZE = 500;
+
 const VerificationRequestBoardView = ({ state, actions }) => {
   const { loading, filteredRequests, totalVerificationRequests, paginationModel } = state;
   const { fetchData, setPaginationModel } = actions;
@@ -248,7 +252,8 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                       </CardContent>
                     </Card>
                   ))}
-                  {groupedTotalRequests[status.key] > paginationModel[status.key].pageSize && (
+                  {groupedTotalRequests[status.key] > paginationModel[status.key].pageSize &&
+                    paginationModel[status.key].pageSize < MAX_PAGE_SIZE && (
                     <AletheiaButton
                       type={ButtonType.gray}
                       onClick={() => {
@@ -257,7 +262,10 @@ const VerificationRequestBoardView = ({ state, actions }) => {
                             ...prev,
                             [status.key]: {
                               ...prev[status.key],
-                              pageSize: prev[status.key].pageSize + 20,
+                              pageSize: Math.min(
+                                prev[status.key].pageSize + LOAD_MORE_STEP,
+                                MAX_PAGE_SIZE
+                              ),
                             },
                           };
                           return updated;
