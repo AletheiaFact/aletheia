@@ -224,7 +224,8 @@ Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
 | table name | collection `groups` | `content_group` | `group` is a reserved word; documented exception to the singular-entity rule |
-| `getByContentId` populate | `pre("find")` populates `content` (VR docs) and `targetId` (Claim) | `content` populated from `verification_request`; `targetId` stays an id | claim table ports in Phase 2 |
+| `getByContentId` populate | `pre("find")` populates `content` (VR docs, each with its `source` populated by the VR `pre("find")`) and `targetId` (Claim) | `content` populated from `verification_request` through the shared `toVerificationRequestEntity` mapper (source ids, not documents); `targetId` stays an id | claim table ports in Phase 2; the VR source populate is explicit on PG and not applied here |
+| `target_id` column type | Claim `ObjectId` | `uuid` | claims get uuid ids in Phase 2; until then no Postgres caller exists (a Postgres boot needs every module ported), so `claim.service.ts` passing an ObjectId cannot reach it. Phase 2 must land before any cutover |
 | `removeContent` on the last member | `deleteOne` result `{ deletedCount, acknowledged }` | `{ deletedCount }` | callers read nothing from it |
 
 **Verification-request module (Phase 1) divergences:**
@@ -247,6 +248,12 @@ Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete 
 | history writes on `create` / `update` / topics update | `HistoryService` entries | deferred until Phase 6 ports history (same as personality) | `getHistoryParams` rejects non-ObjectId ids |
 | ids reaching the AI result validator | `isValidObjectId` | uuid regex | shared rule takes the backend's `isValidId` predicate |
 | `embedding` on returned entities | projected out on reads, present on `create`/`findByDataHash`/AI updates | same projection choices | parity |
+| `update(id, { source: [] })` / `{ source: null }` | stores `[]` / `null` | stores `[]` (`source_ids` is NOT NULL) | the edit drawer sends `[]` when every url is removed; both clear |
+| `update` with an impact-area label or option | stores the raw string (the `@Prop` uses the bson class, so no cast) and the `listAll` filter can never match it | resolves through the closed list to the topic id; an unknown label is `NotImplementedError` | loud per §1.5 instead of a garbage uuid cast; ids and populated topics pass through |
+| `checkAndRetryStaleAiTasks` | `Object.entries` on a Mongoose `Map` yields nothing, so stale pending tasks are never cleared and the retry never fires | clears the stale fields and re-triggers the missing states | pre-existing Mongo bug left as-is (move-only); PG is the intended behavior |
+| `date` default | `@Prop({ default: new Date() })` is evaluated once at class load (one timestamp for every row created without `date` since boot) | `defaultNow()` per row | PG is the intended semantics |
+| `updateFieldByAiTask` progress estimate | averages the transitions read before the new one is pushed (n-1) | re-reads after the push (n) | estimate only; `estimatedCompletion` is dropped from parity |
+| `getStats` snapshot | one `$facet` pipeline | three statements outside a transaction | counts can disagree under concurrent writes; dashboard tolerance |
 
 Verification requests are **global** (no `nameSpace` on the Mongo schema; the DTO's `nameSpace` was already dropped by the strict schema). Reference columns per D3: `impact_area_id`/`topic_ids` → topic, `identified_data_ids` → personality, `source_ids` → source, `group_id` → `content_group`, all btree/GIN indexed. The Mongo `pre("find")` source populate becomes an explicit batched select on every `find`-shaped read (`listAll`, `findAll`, `findBySourceUrl`), matching which Mongo reads were populated. The stats service ports as its own token (`"VerificationRequestStatsService"`). `VerificationRequestModule.register()` keeps the `forwardRef` cycle with the state-machine service through the string token. Pre-existing Mongo quirk left as-is: `PUT /:id` with a string `impactArea` stores a string (the `@Prop` uses the bson class, not the SchemaType), so the Mongo `listAll` impact-area filter cannot match it; the contract suite sets impact areas through the AI path.
 
