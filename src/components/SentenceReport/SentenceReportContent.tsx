@@ -10,6 +10,8 @@ import { useSelector } from "@xstate/react";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 
+const NOT_FACT_CLASSIFICATION = "not-fact";
+
 const SentenceReportContent = ({
     context,
     classification,
@@ -27,6 +29,7 @@ const SentenceReportContent = ({
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review
     );
+    const isNotFact = classification === NOT_FACT_CLASSIFICATION;
 
     return (
         <SentenceReportContentStyle>
@@ -74,13 +77,19 @@ const SentenceReportContent = ({
                     <Divider className="report-Divider" />
                 </Grid>
             )}
-            {report && (
+            {(report || isNotFact) && (
                 <Grid item xs={12}>
                     <Typography variant="body1" className="title">
                         {t("claimReview:verificationSectionTitle")}
                     </Typography>
                     <p
-                        dangerouslySetInnerHTML={{ __html: sanitizer(report) }}
+                        dangerouslySetInnerHTML={{
+                            __html: sanitizer(
+                                isNotFact
+                                    ? t("claimReview:notFactStandardMessage")
+                                    : report
+                            ),
+                        }}
                         className="paragraph"
                     />
                     <Divider className="report-Divider" />
