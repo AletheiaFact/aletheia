@@ -3,6 +3,7 @@ import {
     Inject,
     Injectable,
     Logger,
+    NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { randomUUID } from "node:crypto";
@@ -17,6 +18,7 @@ import type { ISourceService } from "../../../interfaces/source.service.interfac
 import { DRIZZLE } from "../../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../../database/postgres/connection";
 import { NotImplementedError } from "../../../database/errors";
+import { isInvalidUuidError } from "../../../database/postgres/invalid-uuid";
 import { ContentModelEnum } from "../../../types/enums";
 import { ParserService } from "../../parser/parser.service";
 import { claimRevision } from "./schema/claim-revision.schema";
@@ -73,11 +75,17 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
             }
             conditions.push(eq(column, String(value)));
         }
-        const [row] = await this.db
-            .select()
-            .from(claimRevision)
-            .where(and(...conditions))
-            .limit(1);
+        let row: ClaimRevisionRow | undefined;
+        try {
+            [row] = await this.db
+                .select()
+                .from(claimRevision)
+                .where(and(...conditions))
+                .limit(1);
+        } catch (error) {
+            if (isInvalidUuidError(error)) throw new NotFoundException();
+            throw error;
+        }
         return row ? this.populate(row) : null;
     }
 
@@ -94,11 +102,11 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
             `Creating claim revision — claimId=${claimId} revisionId=${revisionId} contentModel=${input.contentModel}`
         );
         try {
-            const contentId = await this.createContentModel(input, revisionId);
-            await this.createSources(input.sources, claimId);
             if (!input.date) {
                 throw new BadRequestException("date is required");
             }
+            const contentId = await this.createContentModel(input, revisionId);
+            await this.createSources(input.sources, claimId);
             const [row] = await this.db
                 .insert(claimRevision)
                 .values({
@@ -284,7 +292,7 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
     private async createSource(href: string, claimId: any) {
         const existing = await this.sourceService.getSourceByHref(href);
         if (existing) {
-            void this.sourceService.updateTargetId(existing._id, claimId);
+            await this.sourceService.updateTargetId(existing._id, claimId);
         } else {
             await this.sourceService.create({
                 href,
