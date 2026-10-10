@@ -36,9 +36,9 @@ export class MongoClaimRevisionService {
         };
     }
 
-    getRevision(match: Record<string, any>) {
+    async getRevision(match: Record<string, any>) {
         try {
-            return this.ClaimRevisionModel.findOne(match)
+            return await this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
                 .populate("content")
                 .lean();
@@ -48,9 +48,9 @@ export class MongoClaimRevisionService {
     }
 
     /** get ClaimRevision by ID */
-    getRevisionById(id: string) {
+    async getRevisionById(id: string) {
         try {
-            return this.ClaimRevisionModel.findById(id)
+            return await this.ClaimRevisionModel.findById(id)
                 .populate("personalities")
                 .populate("content")
                 .lean();
