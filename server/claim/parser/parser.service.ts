@@ -30,7 +30,7 @@ export class ParserService {
 
     async parse(
         content: string,
-        claimRevisionId: object,
+        claimRevisionId: string | object,
         personality: string | null = null,
         contentModel = ContentModelEnum.Speech
     ): Promise<ISpeech | IUnattributed> {
@@ -110,7 +110,7 @@ export class ParserService {
     parseSentence(
         sentenceContent: string,
         paragraphDataHash: string,
-        claimRevisionId: object
+        claimRevisionId: string | object
     ) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = this.hashService.computeSentenceHash(
