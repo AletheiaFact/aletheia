@@ -48,18 +48,18 @@ export class MongoClaimService implements IClaimService {
     private readonly logger = new Logger(MongoClaimService.name);
 
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(Claim.name)
-        private ClaimModel: ISoftDeletedModel<ClaimDocument> &
+        private readonly ClaimModel: ISoftDeletedModel<ClaimDocument> &
             Model<ClaimDocument>,
-        private claimReviewService: ClaimReviewService,
-        private historyService: HistoryService,
-        private stateEventService: StateEventService,
+        private readonly claimReviewService: ClaimReviewService,
+        private readonly historyService: HistoryService,
+        private readonly stateEventService: StateEventService,
         @Inject("ClaimRevisionService")
-        private claimRevisionService: IClaimRevisionService,
-        private reviewTaskService: ReviewTaskService,
-        private util: UtilService,
-        @Inject("GroupService") private groupService: IGroupService
+        private readonly claimRevisionService: IClaimRevisionService,
+        private readonly reviewTaskService: ReviewTaskService,
+        private readonly util: UtilService,
+        @Inject("GroupService") private readonly groupService: IGroupService
     ) {}
 
     async listAll(

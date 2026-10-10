@@ -28,9 +28,9 @@ export class MongoSentenceService {
 
     constructor(
         @InjectModel(Sentence.name)
-        private SentenceModel: Model<SentenceDocument>,
-        @Inject("ReportService") private reportService: IReportService,
-        private util: UtilService
+        private readonly SentenceModel: Model<SentenceDocument>,
+        @Inject("ReportService") private readonly reportService: IReportService,
+        private readonly util: UtilService
     ) {}
 
     async create(sentenceBody: Record<string, any>) {

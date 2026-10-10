@@ -274,17 +274,23 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
 
     private async createSources(sources: string[] | undefined, claimId: any) {
         if (!Array.isArray(sources)) return;
-        for (const href of sources) {
-            const existing = await this.sourceService.getSourceByHref(href);
-            if (existing) {
-                void this.sourceService.updateTargetId(existing._id, claimId);
-            } else {
-                await this.sourceService.create({
-                    href,
-                    targetId: claimId,
-                    targetModel: "Claim",
-                });
-            }
+        await sources.reduce(
+            (previous, href) =>
+                previous.then(() => this.createSource(href, claimId)),
+            Promise.resolve()
+        );
+    }
+
+    private async createSource(href: string, claimId: any) {
+        const existing = await this.sourceService.getSourceByHref(href);
+        if (existing) {
+            void this.sourceService.updateTargetId(existing._id, claimId);
+        } else {
+            await this.sourceService.create({
+                href,
+                targetId: claimId,
+                targetModel: "Claim",
+            });
         }
     }
 }

@@ -22,13 +22,13 @@ export class MongoClaimRevisionService {
 
     constructor(
         @InjectModel(ClaimRevision.name)
-        private ClaimRevisionModel: Model<ClaimRevisionDocument>,
+        private readonly ClaimRevisionModel: Model<ClaimRevisionDocument>,
         @Inject("SourceService")
-        private sourceService: ISourceService,
-        private parserService: ParserService,
-        private imageService: ImageService,
-        private debateService: DebateService,
-        private util: UtilService
+        private readonly sourceService: ISourceService,
+        private readonly parserService: ParserService,
+        private readonly imageService: ImageService,
+        private readonly debateService: DebateService,
+        private readonly util: UtilService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -230,27 +230,34 @@ export class MongoClaimRevisionService {
 
     private async _createSources(sources: string[] | undefined, claimId: any) {
         if (sources && Array.isArray(sources)) {
-            for (let source of sources) {
-                try {
-                    const existingSources =
-                        await this.sourceService.getSourceByHref(source);
-                    if (existingSources) {
-                        void this.sourceService.updateTargetId(
-                            existingSources._id,
-                            claimId
-                        );
-                    } else {
-                        await this.sourceService.create({
-                            href: source,
-                            targetId: claimId,
-                            targetModel: SourceTargetModel.Claim,
-                        });
-                    }
-                } catch (e) {
-                    this.logger.error(e);
-                    throw e;
-                }
+            await sources.reduce(
+                (previous, source) =>
+                    previous.then(() => this._createSource(source, claimId)),
+                Promise.resolve()
+            );
+        }
+    }
+
+    private async _createSource(source: string, claimId: any) {
+        try {
+            const existingSources = await this.sourceService.getSourceByHref(
+                source
+            );
+            if (existingSources) {
+                void this.sourceService.updateTargetId(
+                    existingSources._id,
+                    claimId
+                );
+            } else {
+                await this.sourceService.create({
+                    href: source,
+                    targetId: claimId,
+                    targetModel: SourceTargetModel.Claim,
+                });
             }
+        } catch (e) {
+            this.logger.error(e);
+            throw e;
         }
     }
 }
