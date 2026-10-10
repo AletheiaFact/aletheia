@@ -22,6 +22,7 @@ import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
 import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
 import { isInvalidUuidError } from "../../database/postgres/invalid-uuid";
+import { orderedBy } from "../../database/postgres/ordered-by";
 import { UtilService } from "../../util";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { deriveClaimSlug } from "../shared/claim.rules";
@@ -29,6 +30,7 @@ import { claim } from "./schema/claim.schema";
 import type { ClaimRow } from "./schema/claim.schema";
 import { claimRevision } from "../claim-revision/postgres/schema/claim-revision.schema";
 import type { ClaimRevisionRow } from "../claim-revision/postgres/schema/claim-revision.schema";
+import { toClaimRevisionEntity } from "../claim-revision/postgres/claim-revision.service";
 import { personality } from "../../personality/postgres/schema/personality.schema";
 import { source } from "../../source/postgres/schema/source.schema";
 import { toPersonalityEntity } from "../../personality/postgres/personality.service";
@@ -68,9 +70,10 @@ type ClaimMatch = {
     personalities?: string;
     nameSpace?: string;
     isHidden?: boolean;
+    isDeleted?: boolean;
 };
 
-const MATCH_KEYS = new Set([
+const MATCH_KEYS: ReadonlySet<string> = new Set<keyof ClaimMatch>([
     "_id",
     "slug",
     "personalities",
@@ -399,16 +402,13 @@ export class PostgresClaimService implements IClaimService {
     ) {
         const personalities = await this.loadPersonalities(row.personalityIds);
         const latestRevision = revisionRow
-            ? {
-                  ...revisionRow,
-                  _id: revisionRow.id,
-                  personalities: revisionRow.personalityIds,
+            ? toClaimRevisionEntity(revisionRow, {
                   content: await loadContentTree(
                       this.db,
                       revisionRow.contentModel,
                       revisionRow.contentId
                   ),
-              }
+              })
             : undefined;
         const entity = this.toEntity(row, {
             personalities: personalities.map(toPersonalityEntity),
@@ -452,8 +452,7 @@ export class PostgresClaimService implements IClaimService {
             .select()
             .from(personality)
             .where(inArray(personality.id, ids));
-        const byId = new Map(rows.map((r) => [r.id, r]));
-        return ids.map((id) => byId.get(id)).filter((r) => !!r);
+        return orderedBy(rows, ids);
     }
 
     private async loadSources(claimId: string) {

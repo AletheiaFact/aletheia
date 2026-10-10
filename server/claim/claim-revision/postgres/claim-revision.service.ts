@@ -8,6 +8,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { randomUUID } from "node:crypto";
 import { and, asc, eq, inArray, sql, SQL } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
 import type {
     ClaimContentRef,
     IClaimRevisionService,
@@ -19,6 +20,7 @@ import { DRIZZLE } from "../../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../../database/postgres/connection";
 import { NotImplementedError } from "../../../database/errors";
 import { isInvalidUuidError } from "../../../database/postgres/invalid-uuid";
+import { orderedBy } from "../../../database/postgres/ordered-by";
 import { ContentModelEnum } from "../../../types/enums";
 import { ParserService } from "../../parser/parser.service";
 import { claimRevision } from "./schema/claim-revision.schema";
@@ -27,6 +29,12 @@ import { claim } from "../../postgres/schema/claim.schema";
 import { personality } from "../../../personality/postgres/schema/personality.schema";
 import { toPersonalityEntity } from "../../../personality/postgres/personality.service";
 import { loadContentTree } from "../../postgres/content-tree";
+import {
+    attachPersonalitySummaries,
+    fuzzyThreshold,
+    setSimilarityThreshold,
+    visibleRevisionConditions,
+} from "../../postgres/search";
 
 export function toClaimRevisionEntity(
     row: ClaimRevisionRow,
@@ -44,11 +52,11 @@ export function toClaimRevisionEntity(
     } as IClaimRevision;
 }
 
-const MATCH_COLUMNS = {
+const MATCH_COLUMNS: Record<string, PgColumn | undefined> = {
     _id: claimRevision.id,
     claimId: claimRevision.claimId,
     contentId: claimRevision.contentId,
-} as const;
+};
 
 @Injectable()
 export class PostgresClaimRevisionService implements IClaimRevisionService {
@@ -66,7 +74,7 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
     ): Promise<IClaimRevision | null> {
         const conditions: SQL[] = [];
         for (const [key, value] of Object.entries(match)) {
-            const column = MATCH_COLUMNS[key as keyof typeof MATCH_COLUMNS];
+            const column = MATCH_COLUMNS[key];
             if (!column) {
                 throw new NotImplementedError(
                     "postgres",
@@ -143,22 +151,16 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
         totalRows: number;
         processedRevisions: any[];
     }> {
-        const configured = Number(
-            this.configService.get<number>("db.postgres.fuzzy_threshold")
-        );
-        const threshold = Number.isFinite(configured) ? configured : 0.3;
         const where = and(
             eq(claimRevision.isDeleted, false),
-            eq(claim.isHidden, false),
-            eq(claim.isDeleted, false),
-            eq(claim.nameSpace, nameSpace ?? ""),
-            sql`NOT EXISTS (SELECT 1 FROM ${personality} p WHERE p.id = ANY(${claimRevision.personalityIds}) AND (p.is_hidden = true OR p.is_deleted = true))`,
+            ...visibleRevisionConditions(nameSpace),
             sql`${claimRevision.title} % ${searchText}`
         );
 
         const { rows, totalRows } = await this.db.transaction(async (tx) => {
-            await tx.execute(
-                sql.raw(`SET LOCAL pg_trgm.similarity_threshold = ${threshold}`)
+            await setSimilarityThreshold(
+                tx,
+                fuzzyThreshold(this.configService)
             );
             const rows = await tx
                 .select({
@@ -186,31 +188,9 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
             return { rows, totalRows };
         });
 
-        const personalityIds = [
-            ...new Set(rows.flatMap((r) => r.personalityIds)),
-        ];
-        const personalities =
-            personalityIds.length > 0
-                ? await this.db
-                      .select({
-                          id: personality.id,
-                          slug: personality.slug,
-                          name: personality.name,
-                      })
-                      .from(personality)
-                      .where(inArray(personality.id, personalityIds))
-                : [];
-        const byId = new Map(personalities.map((p) => [p.id, p]));
-
         return {
             totalRows,
-            processedRevisions: rows.map(({ personalityIds, ...row }) => ({
-                ...row,
-                personality: personalityIds
-                    .map((id) => byId.get(id))
-                    .filter((p) => !!p)
-                    .map((p) => ({ slug: p.slug, name: p.name })),
-            })),
+            processedRevisions: await attachPersonalitySummaries(this.db, rows),
         };
     }
 
@@ -235,13 +215,10 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
                 : Promise.resolve([]),
             loadContentTree(this.db, row.contentModel, row.contentId),
         ]);
-        const byId = new Map(
-            personalities.map((p) => [p.id, toPersonalityEntity(p)])
-        );
         return toClaimRevisionEntity(row, {
-            personalities: row.personalityIds
-                .map((id) => byId.get(id))
-                .filter((p) => !!p),
+            personalities: orderedBy(personalities, row.personalityIds).map(
+                toPersonalityEntity
+            ),
             content,
         });
     }
@@ -252,21 +229,15 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
     ): Promise<string> {
         switch (input.contentModel) {
             case ContentModelEnum.Speech:
-                return String(
-                    (await this.parserService.parse(input.content, revisionId))
-                        ._id
+            case ContentModelEnum.Unattributed: {
+                const content = await this.parserService.parse(
+                    input.content,
+                    revisionId,
+                    null,
+                    input.contentModel
                 );
-            case ContentModelEnum.Unattributed:
-                return String(
-                    (
-                        await this.parserService.parse(
-                            input.content,
-                            revisionId,
-                            null,
-                            input.contentModel
-                        )
-                    )._id
-                );
+                return String(content._id);
+            }
             case ContentModelEnum.Image:
             case ContentModelEnum.Debate:
                 throw new NotImplementedError(

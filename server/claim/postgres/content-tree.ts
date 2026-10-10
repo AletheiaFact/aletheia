@@ -1,5 +1,6 @@
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { DrizzleClient } from "../../database/postgres/connection";
+import { orderedBy } from "../../database/postgres/ordered-by";
 import { NotImplementedError } from "../../database/errors";
 import { ContentModelEnum } from "../../types/enums";
 import type {
@@ -20,11 +21,6 @@ import {
     toSpeechEntity,
     toUnattributedEntity,
 } from "./content.entity";
-
-function orderedBy<T extends { id: string }>(rows: T[], ids: string[]): T[] {
-    const byId = new Map(rows.map((r) => [r.id, r]));
-    return ids.map((id) => byId.get(id)).filter((r): r is T => !!r);
-}
 
 export async function loadSentences(
     db: DrizzleClient,
@@ -92,14 +88,16 @@ export async function loadContentTree(
             const [row] = await db
                 .select()
                 .from(speech)
-                .where(inArray(speech.id, [contentId]));
+                .where(eq(speech.id, contentId))
+                .limit(1);
             return row ? [await loadSpeechTree(db, row)] : [];
         }
         case ContentModelEnum.Unattributed: {
             const [row] = await db
                 .select()
                 .from(unattributed)
-                .where(inArray(unattributed.id, [contentId]));
+                .where(eq(unattributed.id, contentId))
+                .limit(1);
             return row ? [await loadUnattributedTree(db, row)] : [];
         }
         default:

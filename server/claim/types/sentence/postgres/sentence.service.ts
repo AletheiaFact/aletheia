@@ -7,7 +7,7 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import type {
     ISentenceService,
     SentenceFindAllOptions,
@@ -20,8 +20,13 @@ import { toError } from "../../../../util/error-handling";
 import { sentence } from "./schema/sentence.schema";
 import { claimRevision } from "../../../claim-revision/postgres/schema/claim-revision.schema";
 import { claim } from "../../../postgres/schema/claim.schema";
-import { personality } from "../../../../personality/postgres/schema/personality.schema";
 import { toSentenceEntity } from "../../../postgres/content.entity";
+import {
+    attachPersonalitySummaries,
+    fuzzyThreshold,
+    setSimilarityThreshold,
+    visibleRevisionConditions,
+} from "../../../postgres/search";
 
 @Injectable()
 export class PostgresSentenceService implements ISentenceService {
@@ -97,10 +102,6 @@ export class PostgresSentenceService implements ISentenceService {
         totalRows: number;
         processedSentences: any[];
     }> {
-        const configured = Number(
-            this.configService.get<number>("db.postgres.fuzzy_threshold")
-        );
-        const threshold = Number.isFinite(configured) ? configured : 0.3;
         const filters = filter ? ([] as string[]).concat(filter) : [];
         if (!searchText && filters.length === 0) {
             throw new BadRequestException(
@@ -110,10 +111,7 @@ export class PostgresSentenceService implements ISentenceService {
 
         const conditions = [
             eq(sentence.isDeleted, false),
-            eq(claim.isHidden, false),
-            eq(claim.isDeleted, false),
-            eq(claim.nameSpace, nameSpace ?? ""),
-            sql`NOT EXISTS (SELECT 1 FROM ${personality} p WHERE p.id = ANY(${claimRevision.personalityIds}) AND (p.is_hidden = true OR p.is_deleted = true))`,
+            ...visibleRevisionConditions(nameSpace),
         ];
         if (searchText) {
             conditions.push(sql`${sentence.content} % ${searchText}`);
@@ -133,13 +131,12 @@ export class PostgresSentenceService implements ISentenceService {
 
         const { rows, totalRows } = await this.db.transaction(async (tx) => {
             if (searchText) {
-                await tx.execute(
-                    sql.raw(
-                        `SET LOCAL pg_trgm.similarity_threshold = ${threshold}`
-                    )
+                await setSimilarityThreshold(
+                    tx,
+                    fuzzyThreshold(this.configService)
                 );
             }
-            const base = tx
+            const rows = await tx
                 .select({
                     _id: sentence.id,
                     content: sentence.content,
@@ -157,8 +154,7 @@ export class PostgresSentenceService implements ISentenceService {
                     eq(claimRevision.id, sentence.claimRevisionId)
                 )
                 .innerJoin(claim, eq(claim.id, claimRevision.claimId))
-                .where(where);
-            const rows = await base
+                .where(where)
                 .orderBy(order, asc(sentence.id))
                 .offset(skippedDocuments ?? 0)
                 .limit(pageSize);
@@ -174,33 +170,18 @@ export class PostgresSentenceService implements ISentenceService {
             return { rows, totalRows };
         });
 
-        const personalityIds = [
-            ...new Set(rows.flatMap((r) => r.personalityIds)),
-        ];
-        const personalities =
-            personalityIds.length > 0
-                ? await this.db
-                      .select({
-                          id: personality.id,
-                          slug: personality.slug,
-                          name: personality.name,
-                      })
-                      .from(personality)
-                      .where(inArray(personality.id, personalityIds))
-                : [];
-        const personalityById = new Map(personalities.map((p) => [p.id, p]));
-
+        const withPersonalities = await attachPersonalitySummaries(
+            this.db,
+            rows
+        );
         const processedSentences = await Promise.all(
-            rows.map(async (row) => {
+            withPersonalities.map(async (row) => {
                 const projected = {
                     _id: row._id,
                     content: row.content,
                     data_hash: row.data_hash,
                     props: row.props,
-                    personality: row.personalityIds
-                        .map((id) => personalityById.get(id))
-                        .filter((p) => !!p)
-                        .map((p) => ({ slug: p.slug, name: p.name })),
+                    personality: row.personality,
                     claim: [
                         {
                             _id: row.revisionId,
