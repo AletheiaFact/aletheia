@@ -3,13 +3,22 @@ import type { IUnattributedService } from "../../../../interfaces/unattributed.s
 import type { IUnattributed } from "../../../../interfaces/claim-content.interface";
 import { DRIZZLE } from "../../../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../../../database/postgres/connection";
-import { NotImplementedError } from "../../../../database/errors";
+import { unattributed } from "./schema/unattributed.schema";
+import { toUnattributedEntity } from "../../../postgres/content.entity";
 
 @Injectable()
 export class PostgresUnattributedService implements IUnattributedService {
     constructor(@Inject(DRIZZLE) private readonly db: DrizzleClient) {}
 
-    create(_unattributedBody: Record<string, any>): Promise<IUnattributed> {
-        throw new NotImplementedError("postgres", "create");
+    async create(
+        unattributedBody: Record<string, any>
+    ): Promise<IUnattributed> {
+        const [row] = await this.db
+            .insert(unattributed)
+            .values({
+                contentIds: (unattributedBody.content ?? []).map(String),
+            })
+            .returning();
+        return toUnattributedEntity(row);
     }
 }
