@@ -115,6 +115,7 @@ export class UsersService {
     async register(user: any) {
         const newUser = new this.UserModel(user);
         this.notificationService.createSubscriber(newUser);
+        let createdOryId: string | undefined;
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const oryUser = await this.oryService.createIdentity(
@@ -125,18 +126,37 @@ export class UsersService {
                 }
             );
             newUser.oryId = oryUser.id;
+            createdOryId = oryUser.id;
         } else {
             const existingUser = await this.getByOryId(newUser.oryId);
+            if (existingUser) {
+                // Saving would hit the unique oryId index; bail out before
+                // pointing the identity's user_id at a document never saved.
+                throw new Error(
+                    `A user is already linked to ory identity ${newUser.oryId}`
+                );
+            }
             this.logger.log("User id provided, updating an ory identity");
-            await this.oryService.updateIdentity(
-                existingUser || newUser,
-                user.password,
-                {
-                    role: user.role,
-                }
-            );
+            await this.oryService.updateIdentity(newUser, user.password, {
+                role: user.role,
+            });
         }
-        return await newUser.save();
+        try {
+            return await newUser.save();
+        } catch (error) {
+            // Don't leave an identity whose user_id points at no document.
+            if (createdOryId) {
+                await this.oryService
+                    .deleteIdentity(createdOryId)
+                    .catch((e) =>
+                        this.logger.error(
+                            `Failed to remove orphan ory identity ${createdOryId}`,
+                            e
+                        )
+                    );
+            }
+            throw error;
+        }
     }
 
     async getById(userId: string | Types.ObjectId) {
@@ -195,7 +215,10 @@ export class UsersService {
                 await this.oryService.deleteIdentity(user.oryId);
             }
         } catch (e) {
-            this.logger.error(`Failed to delete Ory identity for user ${id}`, e);
+            this.logger.error(
+                `Failed to delete Ory identity for user ${id}`,
+                e
+            );
         }
 
         await this.UserModel.findByIdAndDelete(id);
@@ -209,9 +232,12 @@ export class UsersService {
         const user = await this.getById(userId);
 
         if (updates.state) {
-            await this.oryService.updateUserState(user, updates.state);
-        }
-        if (updates.role) {
+            await this.oryService.updateUserState(
+                user,
+                updates.state,
+                updates.role as any
+            );
+        } else if (updates.role) {
             await this.oryService.updateUserRole(user, updates.role as any);
         }
 
