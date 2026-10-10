@@ -102,6 +102,11 @@ export class PostgresSentenceService implements ISentenceService {
         );
         const threshold = Number.isFinite(configured) ? configured : 0.3;
         const filters = filter ? ([] as string[]).concat(filter) : [];
+        if (!searchText && filters.length === 0) {
+            throw new BadRequestException(
+                "searchText or a topic filter is required."
+            );
+        }
 
         const conditions = [
             eq(sentence.isDeleted, false),
