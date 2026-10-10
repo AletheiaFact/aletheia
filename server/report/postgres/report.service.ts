@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    Logger,
+} from "@nestjs/common";
 import { asc, eq } from "drizzle-orm";
 import type {
     IReportService,
@@ -9,6 +14,7 @@ import type { ISource } from "../../interfaces/source.interface";
 import type { ISourceService } from "../../interfaces/source.service.interface";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
+import { toError } from "../../util/error-handling";
 import { isValidClassification } from "../shared/report.rules";
 import { report } from "./schema/report.schema";
 import type { ReportRow } from "./schema/report.schema";
@@ -26,6 +32,8 @@ export function toReportEntity(row: ReportRow): IReport {
 
 @Injectable()
 export class PostgresReportService implements IReportService {
+    private readonly logger = new Logger(PostgresReportService.name);
+
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
         @Inject("SourceService") private readonly sourceService: ISourceService
@@ -57,18 +65,18 @@ export class PostgresReportService implements IReportService {
         if (input.sources) {
             this.createReportSources(input.sources, row.id);
         } else {
-            void this.updateReportSource(input as any, row.id);
+            this.updateReportSource(input as any, row.id).catch((error) =>
+                this.logSourceFailure(row.id, error)
+            );
         }
         return this.toEntity(row);
     }
 
     createReportSources(sources: ReportSourceInput[], targetId: string): void {
         for (const source of sources) {
-            void this.sourceService.create({
-                href: source.href,
-                props: source?.props,
-                targetId,
-            });
+            this.sourceService
+                .create({ href: source.href, props: source?.props, targetId })
+                .catch((error) => this.logSourceFailure(targetId, error));
         }
     }
 
@@ -101,5 +109,13 @@ export class PostgresReportService implements IReportService {
 
     private toEntity(row: ReportRow): IReport {
         return toReportEntity(row);
+    }
+
+    private logSourceFailure(reportId: string, error: unknown) {
+        const err = toError(error);
+        this.logger.error(
+            `Failed to link a source to report ${reportId}: ${err.message}`,
+            err.stack
+        );
     }
 }
