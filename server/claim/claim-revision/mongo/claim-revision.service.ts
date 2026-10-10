@@ -17,7 +17,7 @@ import type { ClaimContentRef } from "../../../interfaces/claim-revision.service
 
 @Injectable()
 export class MongoClaimRevisionService {
-    private optionsToUpdate: { new: boolean; upsert: boolean };
+    private readonly optionsToUpdate: { new: boolean; upsert: boolean };
     private readonly logger = new Logger(MongoClaimRevisionService.name);
 
     constructor(
