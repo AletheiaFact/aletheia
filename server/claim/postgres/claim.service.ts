@@ -21,6 +21,7 @@ import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
 import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
+import { isInvalidUuidError } from "../../database/postgres/invalid-uuid";
 import { UtilService } from "../../util";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { deriveClaimSlug } from "../shared/claim.rules";
@@ -207,11 +208,16 @@ export class PostgresClaimService implements IClaimService {
         isHidden: boolean,
         _description?: string
     ): Promise<any> {
-        const rows = await this.db
-            .update(claim)
-            .set({ isHidden, updatedAt: new Date() })
-            .where(and(eq(claim.id, claimId), eq(claim.isDeleted, false)))
-            .returning({ id: claim.id });
+        let rows: Array<{ id: string }> = [];
+        try {
+            rows = await this.db
+                .update(claim)
+                .set({ isHidden, updatedAt: new Date() })
+                .where(and(eq(claim.id, claimId), eq(claim.isDeleted, false)))
+                .returning({ id: claim.id });
+        } catch (error) {
+            if (!isInvalidUuidError(error)) throw error;
+        }
         if (rows.length === 0) {
             throw new NotFoundException("Claim not found");
         }
@@ -474,16 +480,4 @@ export class PostgresClaimService implements IClaimService {
             )
         );
     }
-}
-
-function isInvalidUuidError(error: unknown): boolean {
-    const e = error as any;
-    return [e, e?.cause].some(
-        (c) =>
-            c &&
-            (c.code === "22P02" ||
-                /invalid input syntax for type uuid/.test(
-                    String(c.message ?? "")
-                ))
-    );
 }
