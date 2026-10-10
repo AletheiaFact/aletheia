@@ -72,3 +72,9 @@ docs/storybook/**/*
 
 # config
 config/localConfig.ts
+
+# Claude Code: share skills, keep machine-local state out
+.claude/*
+!.claude/skills/
+.claude/worktrees/
+.claude/settings.local.json
