@@ -1,6 +1,5 @@
 import {
     ClaimCreatePageQuerySchema,
-    ClaimIdParam,
     CreateClaimSchema,
     CreateDebateClaimSchema,
     CreateImageClaimSchema,
@@ -50,6 +49,7 @@ describe("claim DTO schemas", () => {
             expect(
                 CreateClaimSchema.safeParse({ ...base, content: "" }).success
             ).toBe(false);
+            expect(CreateClaimSchema.safeParse(base).success).toBe(false);
             expect(
                 CreateClaimSchema.safeParse({
                     ...base,
@@ -137,13 +137,21 @@ describe("claim DTO schemas", () => {
         ).toBe(false);
     });
 
-    it("CreateUnattributedClaimSchema allows an empty personalities array", () => {
+    it("CreateUnattributedClaimSchema allows an empty personalities array and no recaptcha", () => {
         expect(
             CreateUnattributedClaimSchema.safeParse({
                 ...base,
                 contentModel: "Unattributed",
                 content: "text",
                 personalities: [],
+            }).success
+        ).toBe(true);
+        const { recaptcha, ...withoutCaptcha } = base;
+        expect(
+            CreateUnattributedClaimSchema.safeParse({
+                ...withoutCaptcha,
+                contentModel: "Unattributed",
+                content: "text",
             }).success
         ).toBe(true);
         expect(
@@ -247,6 +255,15 @@ describe("claim DTO schemas", () => {
         });
     });
 
+    it("GetClaimQuerySchema and ClaimCreatePageQuerySchema reject non-string values", () => {
+        expect(GetClaimQuerySchema.safeParse({ nameSpace: 1 }).success).toBe(
+            false
+        );
+        expect(
+            ClaimCreatePageQuerySchema.safeParse({ personality: ["a"] }).success
+        ).toBe(false);
+    });
+
     it("GetClaimQuerySchema and ClaimCreatePageQuerySchema strip unknown keys", () => {
         expect(
             GetClaimQuerySchema.safeParse({ nameSpace: "main", _: "1" })
@@ -261,15 +278,6 @@ describe("claim DTO schemas", () => {
             success: true,
             data: { personality: "slug", verificationRequest: objectId },
         });
-    });
-
-    it("ClaimIdParam accepts an ObjectId or a uuid and rejects anything else", () => {
-        expect(ClaimIdParam.safeParse(objectId).success).toBe(true);
-        expect(
-            ClaimIdParam.safeParse("3f2504e0-4f89-41d3-9a0c-0305e82c3301")
-                .success
-        ).toBe(true);
-        expect(ClaimIdParam.safeParse("nope").success).toBe(false);
     });
 
     it("SentenceTopicsSchema accepts slug strings and topic refs, rejects a non-array", () => {

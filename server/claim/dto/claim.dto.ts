@@ -7,14 +7,12 @@ import {
 } from "../../../lib/schemas";
 import { ContentModelEnum } from "../../types/enums";
 
-export { entityId as ClaimIdParam } from "../../../lib/schemas";
-
 const claimDate = z.union([
     z.iso.datetime({ offset: true, local: true }),
     z.iso.date(),
 ]);
 
-const notEmpty = z
+const requiredContent = z
     .unknown()
     .refine((v) => v !== undefined && v !== null && v !== "", {
         error: "content should not be empty",
@@ -30,7 +28,7 @@ const CreateClaimBase = z.strictObject({
 });
 
 export const CreateClaimSchema = CreateClaimBase.extend({
-    content: notEmpty,
+    content: requiredContent,
     personalities: z.array(z.string()).min(1).optional(),
     group: z.string().optional(),
 });
@@ -57,7 +55,8 @@ export const CreateImageClaimSchema = CreateClaimBase.extend({
 export type CreateImageClaimDto = z.output<typeof CreateImageClaimSchema>;
 
 export const CreateUnattributedClaimSchema = CreateClaimBase.extend({
-    content: notEmpty,
+    content: requiredContent,
+    recaptcha: captchaToken.optional(),
     personalities: z.array(z.string()).optional(),
     group: z.string().optional(),
 });

@@ -18,9 +18,9 @@ import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
+import { entityId } from "../../lib/schemas";
 import {
     ClaimCreatePageQuerySchema,
-    ClaimIdParam,
     CreateClaimSchema,
     CreateDebateClaimSchema,
     CreateImageClaimSchema,
@@ -112,7 +112,7 @@ export class ClaimController {
     async listAll(
         @ZodQuery(ListClaimsQuerySchema) getClaimsDTO: ListClaimsQueryDto
     ) {
-        const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
+        const { page, pageSize, order } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
 
         try {
@@ -228,7 +228,7 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/debate/:debateId")
     async updateClaimDebate(
-        @ZodParam("debateId", ClaimIdParam) debateId: string,
+        @ZodParam("debateId", entityId) debateId: string,
         @ZodBody(UpdateDebateSchema) updateClaimDebateDto: UpdateDebateDto
     ) {
         const { content, personality, isLive } = updateClaimDebateDto;
@@ -258,14 +258,20 @@ export class ClaimController {
     }
 
     private async _createClaim(
-        createClaimDTO: Record<string, any> & { recaptcha: string },
+        createClaimDTO:
+            | CreateClaimDto
+            | CreateImageClaimDto
+            | CreateDebateClaimDto
+            | CreateUnattributedClaimDto,
         overrideCaptchaValidation = false
     ) {
-        const validateCaptcha = await this.captchaService.validate(
-            createClaimDTO.recaptcha
-        );
-        if (!validateCaptcha && !overrideCaptchaValidation) {
-            throw new BadRequestException("Error validating captcha");
+        if (!overrideCaptchaValidation) {
+            const validateCaptcha = await this.captchaService.validate(
+                createClaimDTO.recaptcha ?? ""
+            );
+            if (!validateCaptcha) {
+                throw new BadRequestException("Error validating captcha");
+            }
         }
         return this.claimService.create(createClaimDTO);
     }
@@ -275,7 +281,7 @@ export class ClaimController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
     getById(
-        @ZodParam("id", ClaimIdParam) claimId: string,
+        @ZodParam("id", entityId) claimId: string,
         @ZodQuery(GetClaimQuerySchema) query: GetClaimQueryDto
     ) {
         return this.claimService.getById(claimId, query.nameSpace);
@@ -284,7 +290,7 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/:id")
     update(
-        @ZodParam("id", ClaimIdParam) claimId: string,
+        @ZodParam("id", entityId) claimId: string,
         @ZodBody(UpdateClaimSchema) updateClaimDTO: UpdateClaimDto
     ) {
         return this.claimService.update(claimId, updateClaimDTO);
@@ -294,7 +300,7 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/hidden/:id")
     async updateHiddenStatus(
-        @ZodParam("id", ClaimIdParam) claimId: string,
+        @ZodParam("id", entityId) claimId: string,
         @ZodBody(UpdateHiddenStatusSchema) body: UpdateHiddenStatusDto
     ): Promise<unknown> {
         const validateCaptcha = await this.captchaService.validate(
