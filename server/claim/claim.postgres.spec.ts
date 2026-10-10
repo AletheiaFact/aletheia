@@ -1,22 +1,17 @@
 import { randomUUID } from "crypto";
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { PostgresClaimService } from "./postgres/claim.service";
 import { PostgresClaimRevisionService } from "./claim-revision/postgres/claim-revision.service";
 import { PostgresSentenceService } from "./types/sentence/postgres/sentence.service";
-import { PostgresParagraphService } from "./types/paragraph/postgres/paragraph.service";
-import { PostgresSpeechService } from "./types/speech/postgres/speech.service";
-import { PostgresUnattributedService } from "./types/unattributed/postgres/unattributed.service";
-import { PostgresReportService } from "../report/postgres/report.service";
-import { PostgresSourceService } from "../source/postgres/source.service";
-import { PostgresGroupService } from "../group/postgres/group.service";
-import { ParserService } from "./parser/parser.service";
-import { SentenceHashService } from "./admin-editor/sentence-hash.service";
-import { UtilService } from "../util";
-import { Roles } from "../auth/ability/ability.factory";
 import { getTestDrizzle, resetTestDrizzle } from "../tests/postgres-setup";
+import {
+    buildPostgresClaimStack,
+    seedPostgresPersonality,
+} from "../tests/postgres-claim-stack";
 import { NotImplementedError } from "../database/errors";
-import { personality } from "../personality/postgres/schema/personality.schema";
 import { claim } from "./postgres/schema/claim.schema";
+import { claimRevision } from "./claim-revision/postgres/schema/claim-revision.schema";
+import { sentence } from "./types/sentence/postgres/schema/sentence.schema";
 
 describe.skipIf(process.env.DB_TYPE !== "postgres")(
     "claim postgres-only",
@@ -27,23 +22,8 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         let sentenceService: PostgresSentenceService;
         let personalityId: string;
 
-        const configStub = {
-            get: (key: string) =>
-                key === "db.postgres.fuzzy_threshold" ? 0.3 : undefined,
-        } as any;
-
-        const seedPersonality = async (name: string, isHidden = false) => {
-            const [row] = await db
-                .insert(personality)
-                .values({
-                    name,
-                    slug: name.toLowerCase().replace(/\s+/g, "-"),
-                    description: name,
-                    isHidden,
-                })
-                .returning();
-            return row.id;
-        };
+        const seedPersonality = async (name: string, isHidden = false) =>
+            (await seedPostgresPersonality(db, name, { isHidden })).id;
 
         const body = (overrides: Record<string, any> = {}) => ({
             title: "Economy grows",
@@ -59,36 +39,8 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         beforeEach(async () => {
             await resetTestDrizzle();
             db = await getTestDrizzle();
-            const sourceService = new PostgresSourceService(db);
-            sentenceService = new PostgresSentenceService(
-                db,
-                new PostgresReportService(db, {} as any),
-                configStub
-            );
-            const parser = new ParserService(
-                new PostgresSpeechService(db),
-                new PostgresParagraphService(db),
-                sentenceService,
-                new PostgresUnattributedService(db),
-                new SentenceHashService()
-            );
-            revisionService = new PostgresClaimRevisionService(
-                db,
-                sourceService,
-                parser,
-                configStub
-            );
-            claimService = new PostgresClaimService(
-                {
-                    user: { _id: randomUUID(), role: { main: Roles.Admin } },
-                    params: {},
-                    query: {},
-                } as any,
-                db,
-                revisionService,
-                new UtilService(),
-                new PostgresGroupService(db)
-            );
+            ({ claimService, revisionService, sentenceService } =
+                buildPostgresClaimStack(db, {} as any));
             personalityId = await seedPersonality("Ada Lovelace");
         });
 
@@ -115,6 +67,47 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             await expect(
                 claimService.getById("not-a-uuid")
             ).rejects.toBeInstanceOf(NotFoundException);
+        });
+
+        it("a claim query with a key the Postgres filter cannot honour is a loud 501", async () => {
+            await expect(
+                claimService.count({ title: "x" } as any)
+            ).rejects.toBeInstanceOf(NotImplementedError);
+        });
+
+        it("reading a revision whose content type has not ported is a loud 501", async () => {
+            const created = await claimService.create(body());
+            const [row] = await db
+                .insert(claimRevision)
+                .values({
+                    title: "Picture",
+                    slug: "picture",
+                    contentId: randomUUID(),
+                    contentModel: "Image",
+                    date: new Date(),
+                    claimId: created._id,
+                    personalityIds: [personalityId],
+                })
+                .returning();
+            await expect(
+                revisionService.getRevisionById(row.id)
+            ).rejects.toBeInstanceOf(NotImplementedError);
+        });
+
+        it("create rejects an unknown contentModel or a missing date before writing any content", async () => {
+            await expect(
+                claimService.create(body({ contentModel: "Nope" }))
+            ).rejects.toBeInstanceOf(BadRequestException);
+            await expect(
+                claimService.create(body({ date: undefined }))
+            ).rejects.toBeInstanceOf(BadRequestException);
+            expect(await db.select().from(sentence)).toEqual([]);
+        });
+
+        it("sentence findAll needs a searchText or a topic filter", async () => {
+            await expect(
+                sentenceService.findAll({ searchText: "", pageSize: 10 })
+            ).rejects.toBeInstanceOf(BadRequestException);
         });
 
         it("image and debate claims are loud 501s until their tables port", async () => {

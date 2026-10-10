@@ -9,27 +9,18 @@ import type { IReportService } from "../interfaces/report.service.interface";
 import type { ISourceService } from "../interfaces/source.service.interface";
 import type { IGroupService } from "../interfaces/group.service.interface";
 import { MongoClaimService } from "./mongo/claim.service";
-import { PostgresClaimService } from "./postgres/claim.service";
 import { MongoClaimRevisionService } from "./claim-revision/mongo/claim-revision.service";
-import { PostgresClaimRevisionService } from "./claim-revision/postgres/claim-revision.service";
 import { MongoSentenceService } from "./types/sentence/mongo/sentence.service";
-import { PostgresSentenceService } from "./types/sentence/postgres/sentence.service";
 import { MongoParagraphService } from "./types/paragraph/mongo/paragraph.service";
-import { PostgresParagraphService } from "./types/paragraph/postgres/paragraph.service";
 import { MongoSpeechService } from "./types/speech/mongo/speech.service";
-import { PostgresSpeechService } from "./types/speech/postgres/speech.service";
 import { MongoUnattributedService } from "./types/unattributed/mongo/unattributed.service";
-import { PostgresUnattributedService } from "./types/unattributed/postgres/unattributed.service";
 import { MongoReportService } from "../report/mongo/report.service";
-import { PostgresReportService } from "../report/postgres/report.service";
 import { MongoSourceService } from "../source/mongo/source.service";
-import { PostgresSourceService } from "../source/postgres/source.service";
 import { MongoGroupService } from "../group/mongo/group.service";
-import { PostgresGroupService } from "../group/postgres/group.service";
 import { ParserService } from "./parser/parser.service";
 import { SentenceHashService } from "./admin-editor/sentence-hash.service";
 import { UtilService } from "../util";
-import { Roles } from "../auth/ability/ability.factory";
+import { deriveSlug } from "../personality/shared/personality.rules";
 import { HistoryServiceMock } from "../tests/mocks/HistoryServiceMock";
 import {
     getTestClaimModels,
@@ -44,8 +35,12 @@ import {
     stopTestMongo,
 } from "../tests/mongo-contract-setup";
 import { getTestDrizzle, resetTestDrizzle } from "../tests/postgres-setup";
+import {
+    adminRequest,
+    buildPostgresClaimStack,
+    seedPostgresPersonality,
+} from "../tests/postgres-claim-stack";
 import { ParityRecorder } from "../tests/parity";
-import { personality } from "../personality/postgres/schema/personality.schema";
 
 type Backend = "postgres" | "mongodb";
 
@@ -71,17 +66,21 @@ const reportSourceStub = {
     update: vi.fn(async () => ({})),
 } as any;
 
-const configStub = {
-    get: (key: string) =>
-        key === "db.postgres.fuzzy_threshold" ? 0.3 : undefined,
-} as any;
-
-const adminRequest = (userId: string) =>
-    ({
-        user: { _id: userId, role: { main: Roles.Admin } },
-        params: {},
-        query: {},
-    } as any);
+// Mongo-only collaborators the claim family never reaches on these paths
+// (history and state-event are deferred to Phase 6, review data to Phase 3).
+const mongoStubs = {
+    imageService: {} as any,
+    debateService: {} as any,
+    claimReviewService: {
+        getReviewClassificationCountsByClaimId: async () => [],
+        getReviewStatsByClaimId: async () => ({}),
+    } as any,
+    stateEventService: {
+        getStateEventParams: () => ({}),
+        createStateEvent: async () => ({}),
+    } as any,
+    reviewTaskService: { getReviewTasksByClaimId: async () => [] } as any,
+};
 
 const backends: Array<{
     name: Backend;
@@ -98,57 +97,9 @@ const backends: Array<{
         setup: async () => {
             await resetTestDrizzle();
             const db = await getTestDrizzle();
-            const sourceService = new PostgresSourceService(db);
-            const groupService = new PostgresGroupService(db);
-            const reportService = new PostgresReportService(
-                db,
-                reportSourceStub
-            );
-            const sentenceService = new PostgresSentenceService(
-                db,
-                reportService,
-                configStub
-            );
-            const speechService = new PostgresSpeechService(db);
-            const parser = new ParserService(
-                speechService,
-                new PostgresParagraphService(db),
-                sentenceService,
-                new PostgresUnattributedService(db),
-                new SentenceHashService()
-            );
-            const revisionService = new PostgresClaimRevisionService(
-                db,
-                sourceService,
-                parser,
-                configStub
-            );
-            const claimService = new PostgresClaimService(
-                adminRequest(randomUUID()),
-                db,
-                revisionService,
-                new UtilService(),
-                groupService
-            );
             return {
-                claimService,
-                revisionService,
-                sentenceService,
-                speechService,
-                reportService,
-                sourceService,
-                groupService,
-                seedPersonality: async (name) => {
-                    const [row] = await db
-                        .insert(personality)
-                        .values({
-                            name,
-                            slug: name.toLowerCase().replace(/\s+/g, "-"),
-                            description: `Personality: ${name}`,
-                        })
-                        .returning();
-                    return { ...row, _id: row.id };
-                },
+                ...buildPostgresClaimStack(db, reportSourceStub),
+                seedPersonality: (name) => seedPostgresPersonality(db, name),
             };
         },
     },
@@ -189,24 +140,18 @@ const backends: Array<{
                 models.claimRevision as any,
                 sourceService,
                 parser,
-                {} as any,
-                {} as any,
+                mongoStubs.imageService,
+                mongoStubs.debateService,
                 new UtilService()
             );
             const claimService = new MongoClaimService(
                 adminRequest(new Types.ObjectId().toString()),
                 models.claim as any,
-                {
-                    getReviewClassificationCountsByClaimId: async () => [],
-                    getReviewStatsByClaimId: async () => ({}),
-                } as any,
+                mongoStubs.claimReviewService,
                 HistoryServiceMock as any,
-                {
-                    getStateEventParams: () => ({}),
-                    createStateEvent: async () => ({}),
-                } as any,
+                mongoStubs.stateEventService,
                 revisionService,
-                { getReviewTasksByClaimId: async () => [] } as any,
+                mongoStubs.reviewTaskService,
                 new UtilService(),
                 groupService
             );
@@ -221,7 +166,7 @@ const backends: Array<{
                 seedPersonality: (name) =>
                     personalityModel.create({
                         name,
-                        slug: name.toLowerCase().replace(/\s+/g, "-"),
+                        slug: deriveSlug(name),
                         description: `Personality: ${name}`,
                     }),
             };
@@ -229,11 +174,8 @@ const backends: Array<{
     },
 ];
 
-const parity = new ParityRecorder({
-    dropKeys: ["id", "claimRevisionId", "contentId", "personality"],
-});
-
-const settle = () => new Promise((resolve) => setTimeout(resolve, 25));
+// `id` is the Postgres column alias next to `_id`; Mongo documents have no such key.
+const parity = new ParityRecorder({ dropKeys: ["id"] });
 
 afterAll(async () => {
     parity.assertAll();
@@ -319,9 +261,10 @@ describe.each(backends)(
             const created = await stack.claimService.create(
                 speechBody({ group: idOf(group) })
             );
-            await settle();
-            const updated = await stack.groupService.getById(idOf(group));
-            expect(String(updated!.targetId)).toBe(idOf(created));
+            await vi.waitFor(async () => {
+                const updated = await stack.groupService.getById(idOf(group));
+                expect(String(updated!.targetId)).toBe(idOf(created));
+            });
         });
 
         it("create accepts an unattributed claim without personalities", async () => {
@@ -453,6 +396,20 @@ describe.each(backends)(
             ).rejects.toBeInstanceOf(NotFoundException);
         });
 
+        it("a malformed claim or revision id is a 404, not a 500", async () => {
+            await stack.claimService.create(speechBody());
+            await expect(
+                stack.claimService.hideOrUnhideClaim("not-an-id", true)
+            ).rejects.toBeInstanceOf(NotFoundException);
+            await expect(
+                stack.claimService.getByClaimSlug(
+                    "my-claim",
+                    "not-an-id",
+                    false
+                )
+            ).rejects.toBeInstanceOf(NotFoundException);
+        });
+
         it("sentences are reachable by data_hash, carry topics and the report classification", async () => {
             const created = await stack.claimService.create(speechBody());
             const revision = await stack.revisionService.getRevisionById(
@@ -488,9 +445,10 @@ describe.each(backends)(
                 sources: ["https://report.test"],
                 classification: "false",
             });
-            await settle();
-            const report = await stack.reportService.findByDataHash(hash);
-            expect(report!.classification).toBe("false");
+            await vi.waitFor(async () => {
+                const report = await stack.reportService.findByDataHash(hash);
+                expect(report!.classification).toBe("false");
+            });
             const classified = await stack.sentenceService.getByDataHash(hash);
             expect(classified.props.classification).toBe("false");
 
