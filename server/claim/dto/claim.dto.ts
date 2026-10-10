@@ -1,14 +1,13 @@
 import { z } from "zod";
 import {
     captchaToken,
-    entityId,
     legacyQueryFlag,
     nonEmptyText,
     pageQuery,
 } from "../../../lib/schemas";
 import { ContentModelEnum } from "../../types/enums";
 
-export const ClaimIdParam = entityId;
+export { entityId as ClaimIdParam } from "../../../lib/schemas";
 
 const claimDate = z.union([
     z.iso.datetime({ offset: true, local: true }),

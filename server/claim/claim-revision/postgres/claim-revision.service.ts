@@ -5,7 +5,7 @@ import {
     Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { and, asc, eq, inArray, sql, SQL } from "drizzle-orm";
 import type {
     ClaimContentRef,
@@ -54,8 +54,8 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
 
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
-        @Inject("SourceService") private sourceService: ISourceService,
-        private parserService: ParserService,
+        @Inject("SourceService") private readonly sourceService: ISourceService,
+        private readonly parserService: ParserService,
         private readonly configService: ConfigService
     ) {}
 

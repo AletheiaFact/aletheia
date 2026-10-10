@@ -29,7 +29,7 @@ export class PostgresSentenceService implements ISentenceService {
 
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
-        @Inject("ReportService") private reportService: IReportService,
+        @Inject("ReportService") private readonly reportService: IReportService,
         private readonly configService: ConfigService
     ) {}
 
@@ -101,11 +101,7 @@ export class PostgresSentenceService implements ISentenceService {
             this.configService.get<number>("db.postgres.fuzzy_threshold")
         );
         const threshold = Number.isFinite(configured) ? configured : 0.3;
-        const filters = filter
-            ? Array.isArray(filter)
-                ? filter
-                : [filter]
-            : [];
+        const filters = filter ? ([] as string[]).concat(filter) : [];
 
         const conditions = [
             eq(sentence.isDeleted, false),

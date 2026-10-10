@@ -7,8 +7,8 @@ import {
     Scope,
 } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
-import { randomUUID } from "crypto";
-import { and, eq, sql, SQL } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
+import { and, eq, inArray, sql, SQL } from "drizzle-orm";
 import type {
     ClaimListQuery,
     IClaimService,
@@ -27,6 +27,7 @@ import { deriveClaimSlug } from "../shared/claim.rules";
 import { claim } from "./schema/claim.schema";
 import type { ClaimRow } from "./schema/claim.schema";
 import { claimRevision } from "../claim-revision/postgres/schema/claim-revision.schema";
+import type { ClaimRevisionRow } from "../claim-revision/postgres/schema/claim-revision.schema";
 import { personality } from "../../personality/postgres/schema/personality.schema";
 import { source } from "../../source/postgres/schema/source.schema";
 import { toPersonalityEntity } from "../../personality/postgres/personality.service";
@@ -68,19 +69,26 @@ type ClaimMatch = {
     isHidden?: boolean;
 };
 
-const MATCH_KEYS = ["_id", "slug", "personalities", "nameSpace", "isHidden"];
+const MATCH_KEYS = new Set([
+    "_id",
+    "slug",
+    "personalities",
+    "nameSpace",
+    "isHidden",
+    "isDeleted",
+]);
 
 @Injectable({ scope: Scope.REQUEST })
 export class PostgresClaimService implements IClaimService {
     private readonly logger = new Logger(PostgresClaimService.name);
 
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
         @Inject("ClaimRevisionService")
-        private claimRevisionService: IClaimRevisionService,
-        private util: UtilService,
-        @Inject("GroupService") private groupService: IGroupService
+        private readonly claimRevisionService: IClaimRevisionService,
+        private readonly util: UtilService,
+        @Inject("GroupService") private readonly groupService: IGroupService
     ) {}
 
     listAll(
@@ -281,7 +289,7 @@ export class PostgresClaimService implements IClaimService {
         { softDeleteFilter = true } = {}
     ): SQL | undefined {
         const unsupported = Object.keys(match).filter(
-            (k) => !MATCH_KEYS.includes(k) && k !== "isDeleted"
+            (k) => !MATCH_KEYS.has(k)
         );
         if (unsupported.length > 0) {
             throw new NotImplementedError(
@@ -317,6 +325,34 @@ export class PostgresClaimService implements IClaimService {
         postprocess = true,
         population = true
     ) {
+        const row = await this.findClaimRow(match);
+        const sources = await this.loadSources(row.id);
+        if (revisionId) {
+            return this.withRevision(
+                row,
+                sources,
+                revisionId,
+                postprocess,
+                population
+            );
+        }
+        const [revisionRow] = await this.db
+            .select()
+            .from(claimRevision)
+            .where(eq(claimRevision.id, row.latestRevisionId))
+            .limit(1);
+        if (population) {
+            return this.withPopulatedRevision(
+                row,
+                revisionRow,
+                sources,
+                postprocess
+            );
+        }
+        return this.withProjectedRevision(row, revisionRow, sources);
+    }
+
+    private async findClaimRow(match: ClaimMatch): Promise<ClaimRow> {
         let row: ClaimRow | undefined;
         try {
             [row] = await this.db
@@ -329,54 +365,58 @@ export class PostgresClaimService implements IClaimService {
             throw error;
         }
         if (!row) throw new NotFoundException();
+        return row;
+    }
 
-        const sources = await this.loadSources(row.id);
+    private async withRevision(
+        row: ClaimRow,
+        sources: any[],
+        revisionId: string,
+        postprocess: boolean,
+        population: boolean
+    ) {
+        const revision = await this.claimRevisionService.getRevision({
+            _id: revisionId,
+            claimId: row.id,
+        });
+        if (!revision) throw new NotFoundException();
+        const { latestRevision, ...entity } = this.toEntity(row, { sources });
+        const merged = { ...entity, ...revision, _id: row.id };
+        return postprocess && population ? this.postProcess(merged) : merged;
+    }
 
-        if (revisionId) {
-            const revision = await this.claimRevisionService.getRevision({
-                _id: revisionId,
-                claimId: row.id,
-            });
-            if (!revision) throw new NotFoundException();
-            const { latestRevision, ...entity } = this.toEntity(row, {
-                sources,
-            });
-            const merged = { ...entity, ...revision, _id: row.id };
-            return postprocess && population
-                ? this.postProcess(merged)
-                : merged;
-        }
+    private async withPopulatedRevision(
+        row: ClaimRow,
+        revisionRow: ClaimRevisionRow | undefined,
+        sources: any[],
+        postprocess: boolean
+    ) {
+        const personalities = await this.loadPersonalities(row.personalityIds);
+        const latestRevision = revisionRow
+            ? {
+                  ...revisionRow,
+                  _id: revisionRow.id,
+                  personalities: revisionRow.personalityIds,
+                  content: await loadContentTree(
+                      this.db,
+                      revisionRow.contentModel,
+                      revisionRow.contentId
+                  ),
+              }
+            : undefined;
+        const entity = this.toEntity(row, {
+            personalities: personalities.map(toPersonalityEntity),
+            latestRevision,
+            sources,
+        });
+        return postprocess ? this.postProcess(entity) : entity;
+    }
 
-        const [revisionRow] = await this.db
-            .select()
-            .from(claimRevision)
-            .where(eq(claimRevision.id, row.latestRevisionId))
-            .limit(1);
-
-        if (population) {
-            const personalities = await this.loadPersonalities(
-                row.personalityIds
-            );
-            const latestRevision = revisionRow
-                ? {
-                      ...revisionRow,
-                      _id: revisionRow.id,
-                      personalities: revisionRow.personalityIds,
-                      content: await loadContentTree(
-                          this.db,
-                          revisionRow.contentModel,
-                          revisionRow.contentId
-                      ),
-                  }
-                : undefined;
-            const entity = this.toEntity(row, {
-                personalities: personalities.map(toPersonalityEntity),
-                latestRevision,
-                sources,
-            });
-            return postprocess ? this.postProcess(entity) : entity;
-        }
-
+    private async withProjectedRevision(
+        row: ClaimRow,
+        revisionRow: ClaimRevisionRow | undefined,
+        sources: any[]
+    ) {
         const personalities = await this.loadPersonalities(row.personalityIds);
         const latestRevision = revisionRow
             ? {
@@ -405,12 +445,7 @@ export class PostgresClaimService implements IClaimService {
         const rows = await this.db
             .select()
             .from(personality)
-            .where(
-                sql`${personality.id} = ANY(${sql`ARRAY[${sql.join(
-                    ids.map((id) => sql`${id}`),
-                    sql`, `
-                )}]::uuid[]`})`
-            );
+            .where(inArray(personality.id, ids));
         const byId = new Map(rows.map((r) => [r.id, r]));
         return ids.map((id) => byId.get(id)).filter((r) => !!r);
     }

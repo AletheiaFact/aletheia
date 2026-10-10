@@ -28,7 +28,7 @@ export function toReportEntity(row: ReportRow): IReport {
 export class PostgresReportService implements IReportService {
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
-        @Inject("SourceService") private sourceService: ISourceService
+        @Inject("SourceService") private readonly sourceService: ISourceService
     ) {}
 
     async create(input: Record<string, any>): Promise<IReport> {

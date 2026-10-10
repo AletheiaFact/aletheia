@@ -56,10 +56,10 @@ export function transformContentObject(
                             claimReview._id.classification[0]
                         );
                     }
-                    const reviewTask = reviewTasks.find(
+                    const inProgress = reviewTasks.some(
                         (task: any) => task?.data_hash === sentence.data_hash
                     );
-                    if (reviewTask) {
+                    if (inProgress) {
                         return processReview(sentence, "in-progress");
                     }
                     return sentence;

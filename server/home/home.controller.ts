@@ -99,19 +99,16 @@ export class HomeController {
                     return { title: "", claimId: null, personalities: [] };
                 }
                 const personalities = await Promise.all(
-                    (debateRevision.personalities ?? []).map((personality) => {
-                        if (personality) {
-                            return this.personalityService.getById(
-                                personality,
-                                {
-                                    language: req.language,
-                                    nameSpace:
-                                        req.params.namespace ||
-                                        NameSpaceEnum.Main,
-                                }
-                            );
-                        }
-                    })
+                    (debateRevision.personalities ?? []).map((personality) =>
+                        personality
+                            ? this.personalityService.getById(personality, {
+                                  language: req.language,
+                                  nameSpace:
+                                      req.params.namespace ||
+                                      NameSpaceEnum.Main,
+                              })
+                            : Promise.resolve(undefined)
+                    )
                 );
                 return {
                     title: debateRevision.title,
