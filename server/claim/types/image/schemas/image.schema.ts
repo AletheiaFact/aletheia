@@ -2,11 +2,15 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ContentModelEnum } from "../../../../types/enums";
 import * as mongoose from "mongoose";
 import { Topic } from "../../../../topic/mongo/schemas/topic.schema";
-import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/mongo/schemas/claim-revision.schema";
 
 export type ImageDocument = Image & mongoose.Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Image {
     @Prop({
         default: ContentModelEnum.Image,

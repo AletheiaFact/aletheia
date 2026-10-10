@@ -21,8 +21,8 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { PerformedBy } from "../history/types/history.interfaces";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
-import { ReportDocument } from "../report/schemas/report.schema";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { ReportDocument } from "../report/mongo/schemas/report.schema";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
@@ -54,7 +54,7 @@ export class ClaimReviewService {
             ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
         private util: UtilService,
-        private sentenceService: SentenceService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private wikidata: WikidataService

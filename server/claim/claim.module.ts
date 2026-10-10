@@ -1,7 +1,9 @@
-import { Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { Claim, ClaimSchema } from "./schemas/claim.schema";
-import { ClaimService } from "./claim.service";
+import { Claim, ClaimSchema } from "./mongo/schemas/claim.schema";
+import { MongoClaimService } from "./mongo/claim.service";
+import { PostgresClaimService } from "./postgres/claim.service";
+import { claimServiceProvider } from "./claim.provider";
 import { ClaimController } from "./claim.controller";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ParserModule } from "./parser/parser.module";
@@ -22,6 +24,7 @@ import { UtilService } from "../util";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { GroupModule } from "../group/group.module";
 import { AdminEditorModule } from "./admin-editor/admin-editor.module";
+import dbConfig from "../config/db.config";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -30,30 +33,47 @@ const ClaimModel = MongooseModule.forFeature([
     },
 ]);
 
-@Module({
-    imports: [
-        ClaimModel,
-        ClaimReviewModule,
-        ReviewTaskModule,
-        ClaimRevisionModule,
-        SentenceModule,
-        ParserModule,
-        PersonalityModule.register(),
-        HistoryModule,
-        StateEventModule,
-        ConfigModule,
-        ViewModule,
-        CaptchaModule,
-        ImageModule,
-        DebateModule,
-        EditorModule,
-        AbilityModule,
-        FeatureFlagModule,
-        GroupModule.register(),
-        AdminEditorModule,
-    ],
-    exports: [ClaimService],
-    providers: [UtilService, ClaimService],
-    controllers: [ClaimController],
-})
-export class ClaimModule {}
+@Module({})
+export class ClaimModule {
+    static register(): DynamicModule {
+        const imports: any[] = [];
+        const providers: any[] = [claimServiceProvider, UtilService];
+
+        if (dbConfig.type === "mongodb") {
+            imports.push(ClaimModel);
+            providers.push(MongoClaimService);
+        } else if (dbConfig.type === "postgres") {
+            providers.push(PostgresClaimService);
+        } else {
+            throw new Error("Invalid DB_TYPE in configuration");
+        }
+
+        return {
+            module: ClaimModule,
+            imports: [
+                ...imports,
+                ClaimReviewModule,
+                ReviewTaskModule,
+                ClaimRevisionModule.register(),
+                SentenceModule,
+                ParserModule,
+                PersonalityModule.register(),
+                HistoryModule,
+                StateEventModule,
+                ConfigModule,
+                ViewModule,
+                CaptchaModule,
+                ImageModule,
+                DebateModule,
+                EditorModule,
+                AbilityModule,
+                FeatureFlagModule,
+                GroupModule.register(),
+                AdminEditorModule,
+            ],
+            exports: ["ClaimService"],
+            providers,
+            controllers: [ClaimController],
+        };
+    }
+}

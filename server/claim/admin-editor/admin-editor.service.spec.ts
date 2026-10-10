@@ -12,11 +12,11 @@ import { TransactionHelper } from "./transaction.helper";
 import { DiffValidatorService } from "./diff-validator.service";
 import { CascadeService } from "./cascade.service";
 import { SentenceHashService } from "./sentence-hash.service";
-import { Claim } from "../schemas/claim.schema";
-import { ClaimRevision } from "../claim-revision/schema/claim-revision.schema";
-import { Sentence } from "../types/sentence/schemas/sentence.schema";
-import { Paragraph } from "../types/paragraph/schemas/paragraph.schema";
-import { Speech } from "../types/speech/schemas/speech.schema";
+import { Claim } from "../mongo/schemas/claim.schema";
+import { ClaimRevision } from "../claim-revision/mongo/schemas/claim-revision.schema";
+import { Sentence } from "../types/sentence/mongo/schemas/sentence.schema";
+import { Paragraph } from "../types/paragraph/mongo/schemas/paragraph.schema";
+import { Speech } from "../types/speech/mongo/schemas/speech.schema";
 import { HistoryService } from "../../history/history.service";
 
 describe("AdminEditorService (Unit)", () => {

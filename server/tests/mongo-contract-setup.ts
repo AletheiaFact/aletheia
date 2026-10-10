@@ -31,6 +31,46 @@ import {
     VerificationRequestDocument,
     VerificationRequestSchema,
 } from "../verification-request/mongo/schemas/verification-request.schema";
+import {
+    Claim,
+    ClaimDocument,
+    ClaimSchema,
+} from "../claim/mongo/schemas/claim.schema";
+import {
+    ClaimRevision,
+    ClaimRevisionDocument,
+    ClaimRevisionSchema,
+} from "../claim/claim-revision/mongo/schemas/claim-revision.schema";
+import {
+    Sentence,
+    SentenceDocument,
+    SentenceSchema,
+} from "../claim/types/sentence/mongo/schemas/sentence.schema";
+import {
+    Paragraph,
+    ParagraphDocument,
+    ParagraphSchema,
+} from "../claim/types/paragraph/mongo/schemas/paragraph.schema";
+import {
+    Speech,
+    SpeechDocument,
+    SpeechSchema,
+} from "../claim/types/speech/mongo/schemas/speech.schema";
+import {
+    Unattributed,
+    UnattributedDocument,
+    UnattributedSchema,
+} from "../claim/types/unattributed/mongo/schemas/unattributed.schema";
+import { Image, ImageSchema } from "../claim/types/image/schemas/image.schema";
+import {
+    Debate,
+    DebateSchema,
+} from "../claim/types/debate/schemas/debate.schema";
+import {
+    Report,
+    ReportDocument,
+    ReportSchema,
+} from "../report/mongo/schemas/report.schema";
 
 /**
  * In-process MongoDB for contract tests (the Mongo counterpart of
@@ -51,6 +91,17 @@ let topicModel: Model<TopicDocument> | null = null;
 let badgeModel: Model<BadgeDocument> | null = null;
 let groupModel: Model<GroupDocument> | null = null;
 let verificationRequestModel: Model<VerificationRequestDocument> | null = null;
+let claimModels: ClaimModels | null = null;
+
+export type ClaimModels = {
+    claim: ISoftDeletedModel<ClaimDocument> & Model<ClaimDocument>;
+    claimRevision: Model<ClaimRevisionDocument>;
+    sentence: Model<SentenceDocument>;
+    paragraph: Model<ParagraphDocument>;
+    speech: Model<SpeechDocument>;
+    unattributed: Model<UnattributedDocument>;
+    report: Model<ReportDocument>;
+};
 
 /** One MongoMemoryServer + connection per worker, shared by every module. */
 async function getTestConnection(): Promise<Connection> {
@@ -64,19 +115,51 @@ async function getTestConnection(): Promise<Connection> {
 
 function ensureClaimModel(connection: Connection) {
     if (connection.models.Claim) return;
-    // Populate targets (personality "claims" virtual, group targetId) need a
-    // registered model; a minimal schema is enough — contract tests never
-    // create claims.
-    connection.model(
-        "Claim",
-        new mongoose.Schema({
-            title: String,
-            content: mongoose.Schema.Types.Mixed,
-            personalities: [mongoose.Schema.Types.ObjectId],
-            isHidden: Boolean,
-            isDeleted: Boolean,
-            nameSpace: String,
-        })
+    connection.model<ClaimDocument>(Claim.name, ClaimSchema);
+}
+
+/** The claim family: claim, revision, the content types and report. */
+export async function getTestClaimModels(): Promise<ClaimModels> {
+    if (claimModels) return claimModels;
+    const connection = await getTestConnection();
+    await getTestPersonalityModel();
+    await getTestSourceModel();
+    await getTestGroupModel();
+    ensureClaimModel(connection);
+    // The ClaimRevision `content` virtual resolves against every
+    // ContentModelEnum model, so image and debate are registered too.
+    if (!connection.models.Image) connection.model(Image.name, ImageSchema);
+    if (!connection.models.Debate) connection.model(Debate.name, DebateSchema);
+    claimModels = {
+        claim: connection.models.Claim as ClaimModels["claim"],
+        claimRevision: connection.model<ClaimRevisionDocument>(
+            ClaimRevision.name,
+            ClaimRevisionSchema
+        ),
+        sentence: connection.model<SentenceDocument>(
+            Sentence.name,
+            SentenceSchema
+        ),
+        paragraph: connection.model<ParagraphDocument>(
+            Paragraph.name,
+            ParagraphSchema
+        ),
+        speech: connection.model<SpeechDocument>(Speech.name, SpeechSchema),
+        unattributed: connection.model<UnattributedDocument>(
+            Unattributed.name,
+            UnattributedSchema
+        ),
+        report: connection.model<ReportDocument>(Report.name, ReportSchema),
+    };
+    return claimModels;
+}
+
+export async function resetTestClaims(): Promise<void> {
+    if (!claimModels) return;
+    await Promise.all(
+        Object.values(claimModels).map((model) =>
+            (model as Model<any>).deleteMany({})
+        )
     );
 }
 
@@ -193,6 +276,7 @@ export async function stopTestMongo(): Promise<void> {
     badgeModel = null;
     groupModel = null;
     verificationRequestModel = null;
+    claimModels = null;
     server = null;
 }
 

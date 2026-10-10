@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
-import type { ReportDocument } from "../../report/schemas/report.schema";
+import type { ReportDocument } from "../../report/mongo/schemas/report.schema";
 import { ReportModelEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { User } from "../../users/schemas/user.schema";

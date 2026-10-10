@@ -11,6 +11,8 @@ import type {
     TopicRef,
 } from "../../interfaces/topic.service.interface";
 import { ITopic } from "../../interfaces/topic.interface";
+import type { ISentenceService } from "../../interfaces/sentence.service.interface";
+import { ContentModelEnum } from "../../types/enums";
 import { TopicData } from "../types/topic.interfaces";
 import { ImpactArea } from "../constants/impact-areas";
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
@@ -53,7 +55,9 @@ export class PostgresTopicService implements ITopicService {
 
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
-        private readonly wikidataService: WikidataService
+        private readonly wikidataService: WikidataService,
+        @Inject("SentenceService")
+        private readonly sentenceService: ISentenceService
     ) {}
 
     /**
@@ -154,12 +158,10 @@ export class PostgresTopicService implements ITopicService {
     }
 
     async create(
-        { contentModel, topics }: TopicCreateInput,
+        { contentModel, topics, data_hash }: TopicCreateInput,
         language: string = DEFAULT_TOPIC_LANGUAGE
     ): Promise<any> {
-        if (contentModel) {
-            // Attaching topics to a sentence/image needs the claim content
-            // tables (Phase 2) — never silently skip the update (§1.5).
+        if (contentModel === ContentModelEnum.Image) {
             throw new NotImplementedError(
                 "postgres",
                 `create(contentModel=${contentModel})`
@@ -197,6 +199,12 @@ export class PostgresTopicService implements ITopicService {
                     label: created.name,
                     value: created.wikidataId ?? undefined,
                 });
+            }
+            if (contentModel) {
+                return this.sentenceService.updateSentenceWithTopics(
+                    createdTopics,
+                    data_hash!
+                );
             }
             return createdTopics;
         } catch (error) {

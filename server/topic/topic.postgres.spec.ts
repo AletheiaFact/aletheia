@@ -11,20 +11,46 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         let service: PostgresTopicService;
         let db: Awaited<ReturnType<typeof getTestDrizzle>>;
 
+        const sentenceService = {
+            updateSentenceWithTopics: vi.fn(async (topics: any[]) => ({
+                topics,
+            })),
+        };
+
         beforeEach(async () => {
             await resetTestDrizzle();
             db = await getTestDrizzle();
-            service = new PostgresTopicService(db, {} as any);
+            vi.clearAllMocks();
+            service = new PostgresTopicService(
+                db,
+                {} as any,
+                sentenceService as any
+            );
         });
 
-        it("create with a contentModel is a loud 501 until the claim content tables port (Phase 2)", async () => {
+        it("create with contentModel=Image is a loud 501 until the image table ports", async () => {
             await expect(
                 service.create({
-                    contentModel: ContentModelEnum.Speech,
+                    contentModel: ContentModelEnum.Image,
                     topics: ["x"],
                     data_hash: "abc",
                 })
             ).rejects.toBeInstanceOf(NotImplementedError);
+        });
+
+        it("create with any other contentModel attaches the created refs to the sentence", async () => {
+            const result = await service.create({
+                contentModel: ContentModelEnum.Speech,
+                topics: [{ label: "Saúde", value: "Q1" }],
+                data_hash: "abc",
+            });
+            expect(
+                sentenceService.updateSentenceWithTopics
+            ).toHaveBeenCalledWith(
+                [expect.objectContaining({ label: "Saúde", value: "Q1" })],
+                "abc"
+            );
+            expect(result.topics[0]).toMatchObject({ label: "Saúde" });
         });
 
         it("create with a {slug} reference to a missing topic is a 400 (documented divergence: Mongo CastError 500)", async () => {
