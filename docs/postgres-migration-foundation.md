@@ -110,6 +110,7 @@ All driver errors are mapped to neutral errors in `server/database/errors.ts` at
 | CI | `.github/workflows/nodejs.yml` | `vitest-postgres` job (unit suite under `DB_TYPE=postgres`, pglite) + `vitest-postgres-real` (D4.5: `pgvector/pgvector:pg16` service container, `yarn migrate:pg` then the unit suite with `TEST_POSTGRES_URL`); e2e stays Mongo-only until the boot descope lifts, §6 |
 | Parity (D4.4) | `scripts/parity/normalize.ts`, `server/tests/parity.ts`, `yarn parity:diff` | `normalizeForParity` (ids → `<id:n>`, dates → `<date>`, bookkeeping keys dropped, empties collapsed) + `diffNormalized`; `ParityRecorder` records the same op per backend inside a contract suite and asserts in `afterAll`; the CLI diffs two JSON dumps offline |
 | Latency/error samples | `server/database/db-metrics.ts` | `DB_METRICS=1` wraps every `createDbServiceProvider` service in a Proxy that logs `{token, backend, method, ms, error}` per call — input for the per-method p50/p95 gate |
+| Module wiring | `<module>.module.ts` | `register()` dynamic modules by default. **Nest 9 cannot `forwardRef` a dynamic module from another dynamic module** (`compiler.extractMetadata` unwraps the forwardRef without checking for a `DynamicModule`, so the `{ module, providers… }` object becomes the module's metatype and boot dies with "metatype is not a constructor"). A module that sits in a `forwardRef` cycle (report, sentence) therefore stays a static `@Module` with the `dbConfig.type` branch inline in the decorator; a static module may still `forwardRef(() => X.register())`. `createDbServiceProvider` throws at wiring time when an implementation class is `undefined` (import cycle) |
 
 Migration discipline: never edit an applied migration; drizzle-kit owns `meta/_journal.json`; custom SQL goes through `drizzle-kit generate --custom`. Operationally, migrations are NOT run at boot — operators run `yarn migrate:pg` as a deployment step (mirrors the migrate-mongo model); tests run them automatically on first pglite use per worker.
 
@@ -200,7 +201,7 @@ Source reference columns land per D3 without constraints: `user_id uuid` (users 
 | `searchTopics` query semantics | unescaped `$regex` (`.`/`*` are metacharacters; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | regex syntax differs between engines and the input was never escaped; literal match is what callers mean |
 | `create` with duplicate entries in one batch | `Promise.all` races into `E11000` → 500 | sequential loop; the second entry finds the first and returns its ref | deterministic; Mongo behavior is a race, not a rule |
 | `create` with a `{ slug }` reference to a missing topic | `name` is an object → Mongoose CastError → 500 | `BadRequestException` (400) | there is no usable name; 400 is the honest code |
-| `create` with a `contentModel` | attaches topics to the sentence/image | `NotImplementedError` (501) | sentence/image tables port in Phase 2 |
+| `create` with `contentModel = Image` | attaches topics to the image | `NotImplementedError` (501) | image table ports in Phase 2 MR 2; any other `contentModel` attaches to the sentence through the `"SentenceService"` token (Phase 2 MR 1) |
 | `findByNames([])` | `$or: []` is a driver error → 500 | `[]` | live callers guard the empty case; empty result is the honest answer |
 | `findByWikidataIds` with non-string ids | forwarded to `$in` as-is | non-strings dropped before the query | only real ids can match a text column |
 | slug collision on insert (race) | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
@@ -225,7 +226,7 @@ Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete 
 |---|---|---|---|
 | table name | collection `groups` | `content_group` | `group` is a reserved word; documented exception to the singular-entity rule |
 | `getByContentId` populate | `pre("find")` populates `content` (VR docs, each with its `source` populated by the VR `pre("find")`) and `targetId` (Claim) | `content` populated from `verification_request` through the shared `toVerificationRequestEntity` mapper (source ids, not documents); `targetId` stays an id | claim table ports in Phase 2; the VR source populate is explicit on PG and not applied here |
-| `target_id` column type | Claim `ObjectId` | `uuid` | claims get uuid ids in Phase 2; until then no Postgres caller exists (a Postgres boot needs every module ported), so `claim.service.ts` passing an ObjectId cannot reach it. Phase 2 must land before any cutover |
+| `target_id` column type | Claim `ObjectId` | `uuid` | closed by Phase 2 MR 1: `PostgresClaimService.create` passes its uuid |
 | `removeContent` on the last member | `deleteOne` result `{ deletedCount, acknowledged }` | `{ deletedCount }` | callers read nothing from it |
 
 **Verification-request module (Phase 1) divergences:**
@@ -257,7 +258,62 @@ Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete 
 
 Verification requests are **global** (no `nameSpace` on the Mongo schema; the DTO's `nameSpace` was already dropped by the strict schema). Reference columns per D3: `impact_area_id`/`topic_ids` → topic, `identified_data_ids` → personality, `source_ids` → source, `group_id` → `content_group`, all btree/GIN indexed. The Mongo `pre("find")` source populate becomes an explicit batched select on every `find`-shaped read (`listAll`, `findAll`, `findBySourceUrl`), matching which Mongo reads were populated. The stats service ports as its own token (`"VerificationRequestStatsService"`). `VerificationRequestModule.register()` keeps the `forwardRef` cycle with the state-machine service through the string token. Pre-existing Mongo quirk left as-is: `PUT /:id` with a string `impactArea` stores a string (the `@Prop` uses the bson class, not the SchemaType), so the Mongo `listAll` impact-area filter cannot match it; the contract suite sets impact areas through the AI path.
 
-Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats`, `extractClaimWithTextSummary` (Phase 2–3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
+**Report module (Phase 2, leaf) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `create` | `save()` is fire-and-forget (`void`); returns the hydrated doc | awaited insert, entity | the row exists when the caller continues |
+| `sources` | `string[]` prop that review-task feeds `{ href, props }` objects (Mongoose cast) | hrefs (`string` or `.href`) | `createReportSources` side effect identical |
+| `usersId` | single ObjectId despite the plural name | `user_id uuid` | users port in Phase 4 |
+| `findByDataHash` with several reports per hash | natural (insertion) order | `created_at, id` | equivalent |
+
+Report is **global**; the classification check is the shared rule `shared/report.rules.ts`. The source side effects of `create` are fire-and-forget on both backends (parity; a rejected source create is logged, never surfaced).
+
+**Claim content types (Phase 2 MR 1: sentence / paragraph / speech / unattributed) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `content` arrays (speech → paragraphs → sentences) | ordered ObjectId arrays + `pre("find")` populate hooks | ordered `content_ids uuid[]` (GIN) + explicit batched loads in `server/claim/postgres/content-tree.ts` | admin-editor shares unedited sentence rows between revisions, so the link is an ordered array, not a parent column |
+| sentence `findAll` search | Atlas `$search` (`sentence_fields`, fuzzy `maxEdits`) on `content`, or on the `topics` path when only a filter is given | `content % $q` (pg_trgm, `db.postgres.fuzzy_threshold`) ordered by similarity; the topics filter is `topics ?| $filters` (string elements, like `$in`) | ranking differs within tolerance; the Mongo `$match` on `topics` is the effective filter on both |
+| sentence `findAll` visibility | `$ne: true` over the `$lookup` arrays (`claimContent`, `personality`) | inner join on a visible claim in the namespace + `NOT EXISTS` hidden/deleted personality | same rows: an orphan revision or a hidden personality excludes the sentence on both |
+| `updateSentenceWithTopics` return | pre-update doc (`findByIdAndUpdate` without `new: true`) | updated entity | callers ignore the body (image already returns the updated doc on Mongo) |
+| `getHashesByTopic` | `topics.id` compared to an ObjectId | jsonb containment `topics @> [{"id": uuid}]` | same predicate on the id the topic service wrote |
+| `getSpeech` / `getRevision` content | populate hooks, `personality` ref never populated | content tree loaded explicitly, `personality` stays an id | parity |
+| `unattributed` | no `claimRevisionId`, no `data_hash` (the parser never sets them) | same columns absent | parity; README spec drift left as-is |
+
+**Claim-revision module (Phase 2 MR 1) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `getRevision(match)` | any Mongo filter | `_id` / `claimId` / `contentId`, else `NotImplementedError` | loud per §1.5 |
+| `create` with `Image` / `Debate` | creates the image / debate document | `NotImplementedError` | Phase 2 MR 2 |
+| `create` with an unknown `contentModel` | no content document, then `contentId required` ValidationError (400) | `BadRequestException` (400) | same code, no orphan writes |
+| `findAll` search | Atlas `$search` (`claimrevisions_fields`) on `title` | `title % $q` (pg_trgm) + the same visibility rules as sentences | ranking differs within tolerance |
+| `getByContentId` | **move-only exception:** the Mongo impl now casts `new Types.ObjectId(String(contentId))` itself (the `contentId` `@Prop` uses the bson class, so Mongoose does not cast query values) | `content_id = $1` | the cast moved out of `claim.controller.ts` so controllers stay backend-neutral; prod callers already passed ObjectIds |
+| `create` sources | `_createSources` through the `"SourceService"` token | same | shared |
+
+`(content_model, content_id)` is the polymorphic pair behind the Mongo `content` virtual (`refPath: "onModel"` on the Mongo schema is dead — no such field). `content_id` is NOT NULL. History is not written by either impl (the Mongo claim service writes it).
+
+**Claim module (Phase 2 MR 1) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| `listAll`, `getById`, `getByClaimSlug` / `getByPersonalityIdAndClaimSlug` with `population = true`, reads with a `revisionId` | `postProcess` annotates sentences from claim-review + review-task and adds review stats | `NotImplementedError("postProcess(claim-review, review-task)")` **after** the row lookup (a missing claim is still a 404) | needs `claim-review` (Phase 3) and `review-task.getReviewTasksByClaimId` (Phase 5, or a leaf read in Phase 3); returning unannotated content would be silently wrong |
+| `population = false` reads (`getByClaimSlug(slug, undefined, false)`, …) | flattened latest revision + `personalities { _id, name }` + `sources { _id, href, targetId }` | same shape (parity-recorded) | the SSR pages use this path |
+| `update` | throws `TypeError` (`toObject` on a `.lean()` doc) — broken, no frontend caller | `NotImplementedError` | port when a caller exists |
+| history + state-event writes on `create` / `update` / `delete` / hide | written | deferred until Phase 6 | `getHistoryParams` rejects non-ObjectId ids |
+| `create` without `personalities` | `claim.personalities.map` → TypeError 500 | `[]` | the frontend always sends an array |
+| `create` with a non-string `nameSpace` | duplicate check against `{ $eq: undefined }`, row saved with the `main` default | resolves `main` before the check | the DTO requires a string anyway |
+| duplicate `(nameSpace, slug)` race | app-level check only (no index) | partial unique `claim_name_space_slug_uq` → `DuplicateKeyError` 409 | unique constraints are not deferred (D3) |
+| `groupService.updateWithTargetId` on `create` | fire-and-forget | awaited | one fewer race; same final state |
+| `delete` / `hideOrUnhideClaim` return | `UpdateWriteOpResult` | `{ modifiedCount }` | callers read nothing from it |
+| malformed id | CastError swallowed by the blanket catch → 404 | `22P02` mapped → 404 | parity kept on the wire |
+| `count` | `countDocuments(query)` — no soft-delete auto filter | same (`isDeleted` only when the caller passes it) | parity; stats passes `isDeleted: false` |
+| `create` return | `{ ...revision.toObject(), ...claim.toObject() }` | `{ ...revisionEntity, ...claimEntity }` | parity-recorded |
+
+Claim is **tenant-scoped** (`name_space`, composite index with `is_hidden` and `created_at`). Both impls are `Scope.REQUEST` so `util.getParamsBasedOnUserRole` keeps the role-based hidden filtering (personality's PG impl still defers it). Reference columns per D3: `personality_ids uuid[]` (GIN), `latest_revision_id`, `group_id`. Zod tightenings versus the class DTOs: `date` accepts ISO datetimes and `YYYY-MM-DD` (not the week/ordinal forms `IsDateString` allowed), `sources` and `personalities` elements must be strings, the image body's `content` must be an object, `:id` / `:debateId` params must be an ObjectId or uuid (a malformed `debateId` was a BSONError 500).
+
+Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats` (Phase 3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
 ---
 
@@ -269,7 +325,7 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 ✅ Phase 0    Foundation + personality (this MR)
 ✅ Phase 0.5  Leaf tables: source ✅ / topic ✅ / badge ✅ / group ✅ (landed with Phase 1) [S]
 ✅ Phase 1    verification-request + group + pgvector + parity recorder/CLI + real-PG CI + DB_METRICS [M]
-   Phase 2    claim + claim-revision + content types                       [L] → unblocks personality cross-methods
+🔶 Phase 2    claim + claim-revision + content types (+ report leaf)         [L] → MR 1 ✅ claim, claim-revision, sentence/paragraph/speech/unattributed, report; MR 2: image, debate, admin-editor
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
    ── CUTOVER MILESTONE A: deployments using only {personality, claim, claim-review, VR} can flip ──
    Phase 4    users + roles/badges                                         [M]
@@ -310,6 +366,23 @@ field in code (no Mongoose discriminators) — **single `claim` table with
 `content_type` + nullable type-specific columns** unless type-specific columns
 exceed ~10; `claim_revision` is a straight port with a `claim_id` reference.
 Unblocks personality's `getClaimsByPersonalitySlug` + `extractClaimWithTextSummary`.
+
+**Phase 2 MR 1 (landed):** the modeling note above was amended by the port. The
+content types stay separate tables (`sentence`, `paragraph`, `speech`,
+`unattributed`; `image` and `debate` in MR 2) because they are separate Mongo
+collections with their own readers (`GET api/sentence/:data_hash`, topics,
+events `$lookup`s) and admin-editor shares sentence rows across revisions;
+`claim_revision` carries the polymorphic `(content_model, content_id)` pair and
+the trees are assembled by `server/claim/postgres/content-tree.ts`. `report`
+ported as a leaf so the sentence read carries its classification. The claim
+`postProcess` enrichment (review annotations + stats) is a 501 until
+claim-review (Phase 3) and the review-task claim lookup port — Phase 3 should
+include `review-task.getReviewTasksByClaimId` as a leaf read so Milestone A
+does not wait for Phase 5. Shared rules: `shared/claim.rules.ts` (slug,
+content assembly, review annotation, overall stats), `shared/report.rules.ts`.
+`ParserService` is backend-neutral (tokens only). `extractClaimWithTextSummary`
+moved to `personality/shared/` and the topic `create(contentModel)` guard now
+covers only `Image`.
 
 **Phase 3 — claim-review** [M]. Nested `$lookup` chains
 (`claim-review.service.ts:~150-176`) → multi-CTE SQL; status counts today are a
@@ -404,6 +477,7 @@ delete the now-trivial type-tests; update CLAUDE.md.
 | Embedding dimension drift between deployments | 1 → cutover | dimensionless `vector` until the model is pinned; typmod + HNSW migration is a cutover prerequisite (§7 Phase 1) |
 | Stray `DB_TYPE` env var disagreeing with config.yaml | deploys | boot fails fast by design (`app.module.ts` mismatch throw) — call out in deploy runbooks |
 | Drizzle pre-1.0 API churn | all | exact version pins; one deliberate upgrade per phase max |
+| `forwardRef(() => X.register())` inside a dynamic module (Nest 9 boot death) | all | §3 module-wiring rule: modules in forwardRef cycles stay static; the parser e2e spec boots the whole `AppModule` and catches it |
 | Merge-conflict contamination on long-lived branches | all | verify branch diff vs non-merge-commit file list before every MR |
 | Connection-pool exhaustion as modules grow | all | single shared pool + exhaustion metrics |
 

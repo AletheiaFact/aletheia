@@ -90,10 +90,18 @@ Map before writing:
    execution, same results; say so in the commit.
    Then sweep the consumers: every constructor injecting the service CLASS
    becomes `@Inject("<Module>Service") + import type I<Module>Service`, every
-   importing module switches `XModule` → `XModule.register()` (including
-   `forwardRef(() => XModule.register())`), and test providers switch to the
-   string token. Grep the class name repo-wide until only type-only imports
-   remain.
+   importing module switches `XModule` → `XModule.register()`, and test
+   providers switch to the string token. Grep the class name repo-wide until
+   only type-only imports remain.
+   **Cycle rule (Nest 9):** a dynamic module must never import
+   `forwardRef(() => XModule.register())` — the compiler unwraps the
+   forwardRef into the `DynamicModule` object and boot dies with "metatype
+   is not a constructor". If the module you are porting is the target of a
+   `forwardRef` anywhere, keep it a static `@Module` with the `dbConfig.type`
+   branch inline (copy `report.module.ts` / `sentence.module.ts`); static
+   modules may still `forwardRef(() => X.register())`. Always run
+   `yarn test:e2e server/tests/parser.service.e2e.spec.ts` (full AppModule
+   boot) after the sweep.
 3. Extract shared rules to `shared/<module>.rules.ts` + direct unit spec.
    If the module has no driver-free rule (badge: ids pass through), skip the
    file and say so in the foundation doc — don't invent one.
