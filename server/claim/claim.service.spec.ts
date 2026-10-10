@@ -3,8 +3,8 @@ import { getModelToken } from "@nestjs/mongoose";
 import { NotFoundException } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { Types } from "mongoose";
-import { ClaimService } from "./claim.service";
-import { Claim } from "./schemas/claim.schema";
+import { MongoClaimService } from "./mongo/claim.service";
+import { Claim } from "./mongo/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
@@ -12,7 +12,7 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 
 describe("ClaimService (Unit)", () => {
-    let service: ClaimService;
+    let service: MongoClaimService;
 
     const mockRequest = {
         user: { _id: "user-123", role: { main: "admin" } },
@@ -90,7 +90,7 @@ describe("ClaimService (Unit)", () => {
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                ClaimService,
+                MongoClaimService,
                 { provide: REQUEST, useValue: mockRequest },
                 {
                     provide: getModelToken(Claim.name),
@@ -112,7 +112,7 @@ describe("ClaimService (Unit)", () => {
             ],
         }).compile();
 
-        service = await module.resolve<ClaimService>(ClaimService);
+        service = await module.resolve<MongoClaimService>(MongoClaimService);
     });
 
     beforeEach(() => {

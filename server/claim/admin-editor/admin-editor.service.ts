@@ -21,7 +21,7 @@ import {
     SentenceTargetRemap,
 } from "./cascade.service";
 import { SentenceHashService } from "./sentence-hash.service";
-import { Claim, ClaimDocument } from "../schemas/claim.schema";
+import { Claim, ClaimDocument } from "../mongo/schemas/claim.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,

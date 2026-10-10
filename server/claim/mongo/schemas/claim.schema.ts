@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Personality } from "../../personality/mongo/schemas/personality.schema";
-import { ClaimRevision } from "../claim-revision/mongo/schemas/claim-revision.schema";
+import { Personality } from "../../../personality/mongo/schemas/personality.schema";
+import { ClaimRevision } from "../../claim-revision/mongo/schemas/claim-revision.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
-import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
-import { Group } from "../../group/mongo/schemas/group.schema";
+import { NameSpaceEnum } from "../../../auth/name-space/schemas/name-space.schema";
+import { Group } from "../../../group/mongo/schemas/group.schema";
 
 export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 

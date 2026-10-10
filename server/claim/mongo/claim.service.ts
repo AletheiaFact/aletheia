@@ -9,23 +9,24 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
-import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
-import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
-import { HistoryService } from "../history/history.service";
-import { StateEventService } from "../state-event/state-event.service";
-import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { TypeModel } from "../state-event/schema/state-event.schema";
+import { Claim, ClaimDocument } from "./schemas/claim.schema";
+import { ClaimReviewService } from "../../claim-review/claim-review.service";
+import type { IClaimRevisionService } from "../../interfaces/claim-revision.service.interface";
+import { HistoryService } from "../../history/history.service";
+import { StateEventService } from "../../state-event/state-event.service";
+import { HistoryType, TargetModel } from "../../history/schema/history.schema";
+import { TypeModel } from "../../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "../types";
-import { ContentModelEnum } from "../types/enums";
-import { ReviewTaskService } from "../review-task/review-task.service";
-import { UtilService } from "../util";
-import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import type { IGroupService } from "../interfaces/group.service.interface";
+import type { BaseRequest } from "../../types";
+import { ContentModelEnum } from "../../types/enums";
+import { ReviewTaskService } from "../../review-task/review-task.service";
+import { UtilService } from "../../util";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import type { IGroupService } from "../../interfaces/group.service.interface";
+import type { IClaimService } from "../../interfaces/claim.service.interface";
 import slugify from "slugify";
-import { toError } from "../util/error-handling";
+import { toError } from "../../util/error-handling";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -39,8 +40,8 @@ type ClaimMatchParameters = (
     FilterQuery<ClaimDocument>;
 
 @Injectable({ scope: Scope.REQUEST })
-export class ClaimService {
-    private readonly logger = new Logger(ClaimService.name);
+export class MongoClaimService implements IClaimService {
+    private readonly logger = new Logger(MongoClaimService.name);
 
     constructor(
         @Inject(REQUEST) private req: BaseRequest,

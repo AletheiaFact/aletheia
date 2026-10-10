@@ -16,7 +16,7 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimService } from "./claim.service";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
@@ -60,7 +60,7 @@ export class ClaimController {
         private reviewTaskService: ReviewTaskService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService,
+        @Inject("ClaimService") private claimService: IClaimService,
         @Inject("SentenceService") private sentenceService: ISentenceService,
         private configService: ConfigService,
         private viewService: ViewService,

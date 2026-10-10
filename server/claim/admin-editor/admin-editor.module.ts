@@ -6,7 +6,7 @@ import { ReviewTaskModule } from "../../review-task/review-task.module";
 import { ClaimReviewModule } from "../../claim-review/claim-review.module";
 import { VerificationRequestModule } from "../../verification-request/verification-request.module";
 import { CommentModule } from "../../review-task/comment/comment.module";
-import { Claim, ClaimSchema } from "../schemas/claim.schema";
+import { Claim, ClaimSchema } from "../mongo/schemas/claim.schema";
 import {
     ClaimRevision,
     ClaimRevisionSchema,

@@ -6,7 +6,6 @@ import {
     mockImageService,
     mockPersonalityService,
 } from "../mocks/ClaimMock";
-import { ClaimService } from "./claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { ConfigService } from "@nestjs/config";
@@ -39,7 +38,7 @@ describe("ClaimController (Unit)", () => {
                 { provide: ClaimReviewService, useValue: {} },
                 { provide: ReviewTaskService, useValue: {} },
                 { provide: "PersonalityService", useValue: personalityService },
-                { provide: ClaimService, useValue: claimService },
+                { provide: "ClaimService", useValue: claimService },
                 { provide: "SentenceService", useValue: {} },
                 { provide: ConfigService, useValue: {} },
                 { provide: ViewService, useValue: {} },
