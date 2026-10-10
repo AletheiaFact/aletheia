@@ -181,7 +181,9 @@ export class MongoClaimRevisionService {
     }
 
     getByContentId(contentId: ClaimContentRef) {
-        return this.ClaimRevisionModel.findOne({ contentId });
+        return this.ClaimRevisionModel.findOne({
+            contentId: new Types.ObjectId(String(contentId)),
+        });
     }
 
     private async _createContentModel(
