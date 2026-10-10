@@ -29,3 +29,4 @@ export const CallbackRoutes = Object.values(CallbackRoute) as CallbackRoute[];
 export const DEFAULT_EMBEDDING_MODEL = "nomic-embed-text";
 export const OPENAI_EMBEDDING_MODEL = "text-embedding-3-small";
 export const OPENAI_IDENTIFY_DATA = "o3";
+export const JEV_TRIAGE_MODEL = "jev-1.13.0";
