@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import type { ISourceService } from "../../interfaces/source.service.interface";
 import { Report, ReportDocument } from "./schemas/report.schema";
-import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
+import { isValidClassification } from "../shared/report.rules";
 
 @Injectable()
 export class MongoReportService {
@@ -15,9 +15,7 @@ export class MongoReportService {
     ) {}
 
     create(report: any) {
-        if (
-            !Object.values(ClassificationEnum).includes(report.classification)
-        ) {
+        if (!isValidClassification(report.classification)) {
             throw new BadRequestException(
                 "Classification doesn't match options"
             );
