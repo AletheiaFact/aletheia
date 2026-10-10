@@ -267,14 +267,15 @@ Verification requests are **global** (no `nameSpace` on the Mongo schema; the DT
 | `usersId` | single ObjectId despite the plural name | `user_id uuid` | users port in Phase 4 |
 | `findByDataHash` with several reports per hash | natural (insertion) order | `created_at, id` | equivalent |
 
-Report is **global**; the classification check is the shared rule `shared/report.rules.ts`. The source side effects of `create` are fire-and-forget on both backends (parity; a rejected source create is logged, never surfaced).
+Report is **global**; the classification check is the shared rule `shared/report.rules.ts`. The source side effects of `create` are fire-and-forget on both backends (parity): Postgres logs a rejected source link, Mongo leaves it as an unhandled rejection.
 
 **Claim content types (Phase 2 MR 1: sentence / paragraph / speech / unattributed) divergences:**
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
 | `content` arrays (speech → paragraphs → sentences) | ordered ObjectId arrays + `pre("find")` populate hooks | ordered `content_ids uuid[]` (GIN) + explicit batched loads in `server/claim/postgres/content-tree.ts` | admin-editor shares unedited sentence rows between revisions, so the link is an ordered array, not a parent column |
-| sentence `findAll` search | Atlas `$search` (`sentence_fields`, fuzzy `maxEdits`) on `content`, or on the `topics` path when only a filter is given | `content % $q` (pg_trgm, `db.postgres.fuzzy_threshold`) ordered by similarity; the topics filter is `topics ?| $filters` (string elements, like `$in`) | ranking differs within tolerance; the Mongo `$match` on `topics` is the effective filter on both |
+| sentence `findAll` search | Atlas `$search` (`sentence_fields`, fuzzy `maxEdits`) on `content`, or on the `topics` path when only a filter is given | `content % $q` (pg_trgm, `db.postgres.fuzzy_threshold` clamped to `[0, 1]`) ordered by similarity; the topics filter is `topics ?| $filters` (string elements, like `$in`) | ranking differs within tolerance; the Mongo `$match` on `topics` is the effective filter on both. Both filters only match legacy string topics: the topic service writes `{ id, label, value }` objects, which neither `$in` nor `?|` matches |
+| sentence `findAll` with neither `searchText` nor `filter` | `$search` with `query: undefined` → Atlas error (500) | `BadRequestException` (400) | listing every visible sentence would be a silent broadening (§1.5); the search controller never sends that combination |
 | sentence `findAll` visibility | `$ne: true` over the `$lookup` arrays (`claimContent`, `personality`) | inner join on a visible claim in the namespace + `NOT EXISTS` hidden/deleted personality | same rows: an orphan revision or a hidden personality excludes the sentence on both |
 | `updateSentenceWithTopics` return | pre-update doc (`findByIdAndUpdate` without `new: true`) | updated entity | callers ignore the body (image already returns the updated doc on Mongo) |
 | `getHashesByTopic` | `topics.id` compared to an ObjectId | jsonb containment `topics @> [{"id": uuid}]` | same predicate on the id the topic service wrote |
@@ -287,7 +288,9 @@ Report is **global**; the classification check is the shared rule `shared/report
 |---|---|---|---|
 | `getRevision(match)` | any Mongo filter | `_id` / `claimId` / `contentId`, else `NotImplementedError` | loud per §1.5 |
 | `create` with `Image` / `Debate` | creates the image / debate document | `NotImplementedError` | Phase 2 MR 2 |
-| `create` with an unknown `contentModel` | no content document, then `contentId required` ValidationError (400) | `BadRequestException` (400) | same code, no orphan writes |
+| `create` with an unknown `contentModel` or without `date` | no content document, then `contentId` / `date` required ValidationError (400); a missing date still writes the content and sources first | `BadRequestException` (400) before any write | same code; PG validates the date first so a 400 leaves no orphan rows |
+| `create` relinking an existing source (`updateTargetId`) | fire-and-forget | awaited | same final state, deterministic tests |
+| malformed revision id (`getRevision`, `getRevisionById`) | CastError → `NotFoundException` (the catch became reachable once the queries were awaited, a sanctioned move-only exception) | `22P02` mapped → `NotFoundException` through `server/database/postgres/invalid-uuid.ts` | parity kept on the wire |
 | `findAll` search | Atlas `$search` (`claimrevisions_fields`) on `title` | `title % $q` (pg_trgm) + the same visibility rules as sentences | ranking differs within tolerance |
 | `getByContentId` | **move-only exception:** the Mongo impl now casts `new Types.ObjectId(String(contentId))` itself (the `contentId` `@Prop` uses the bson class, so Mongoose does not cast query values) | `content_id = $1` | the cast moved out of `claim.controller.ts` so controllers stay backend-neutral; prod callers already passed ObjectIds |
 | `create` sources | `_createSources` through the `"SourceService"` token | same | shared |
@@ -304,14 +307,14 @@ Report is **global**; the classification check is the shared rule `shared/report
 | history + state-event writes on `create` / `update` / `delete` / hide | written | deferred until Phase 6 | `getHistoryParams` rejects non-ObjectId ids |
 | `create` without `personalities` | `claim.personalities.map` → TypeError 500 | `[]` | the frontend always sends an array |
 | `create` with a non-string `nameSpace` | duplicate check against `{ $eq: undefined }`, row saved with the `main` default | resolves `main` before the check | the DTO requires a string anyway |
-| duplicate `(nameSpace, slug)` race | app-level check only (no index) | partial unique `claim_name_space_slug_uq` → `DuplicateKeyError` 409 | unique constraints are not deferred (D3) |
+| duplicate `(nameSpace, slug)` race | app-level check only (no index) | partial unique `claim_name_space_slug_uq` → `DuplicateKeyError` 409; the revision, its content rows and the source links written before the claim insert stay behind | unique constraints are not deferred (D3); `create` is not transactional yet because the parser and content services take the plain `DRIZZLE` client — wrapping the chain in one transaction is a follow-up |
 | `groupService.updateWithTargetId` on `create` | fire-and-forget | awaited | one fewer race; same final state |
 | `delete` / `hideOrUnhideClaim` return | `UpdateWriteOpResult` | `{ modifiedCount }` | callers read nothing from it |
-| malformed id | CastError swallowed by the blanket catch → 404 | `22P02` mapped → 404 | parity kept on the wire |
+| malformed id (`getById`, `getByClaimSlug`, `hideOrUnhideClaim`, `delete`) | CastError swallowed by the blanket catch → 404 | `22P02` mapped → 404 (`isInvalidUuidError`) | parity kept on the wire |
 | `count` | `countDocuments(query)` — no soft-delete auto filter | same (`isDeleted` only when the caller passes it) | parity; stats passes `isDeleted: false` |
 | `create` return | `{ ...revision.toObject(), ...claim.toObject() }` | `{ ...revisionEntity, ...claimEntity }` | parity-recorded |
 
-Claim is **tenant-scoped** (`name_space`, composite index with `is_hidden` and `created_at`). Both impls are `Scope.REQUEST` so `util.getParamsBasedOnUserRole` keeps the role-based hidden filtering (personality's PG impl still defers it). Reference columns per D3: `personality_ids uuid[]` (GIN), `latest_revision_id`, `group_id`. Zod tightenings versus the class DTOs: `date` accepts ISO datetimes and `YYYY-MM-DD` (not the week/ordinal forms `IsDateString` allowed), `sources` and `personalities` elements must be strings, the image body's `content` must be an object, `:id` / `:debateId` params must be an ObjectId or uuid (a malformed `debateId` was a BSONError 500).
+Claim is **tenant-scoped** (`name_space`, composite index with `is_hidden` and `created_at`). Both impls are `Scope.REQUEST` so `util.getParamsBasedOnUserRole` keeps the role-based hidden filtering (personality's PG impl still defers it). Reference columns per D3: `personality_ids uuid[]` (GIN), `latest_revision_id`, `group_id`. Zod tightenings versus the class DTOs: `date` accepts ISO datetimes and `YYYY-MM-DD` (not the week/ordinal forms `IsDateString` allowed), `title` is trimmed and capped at 10 000 characters (whitespace-only titles were accepted), `sources` and `personalities` elements must be strings, the image body's `content` must be an object, `:id` / `:debateId` params must be an ObjectId or uuid (a malformed `debateId` was a BSONError 500). One **behavior change on both backends**: `GET /api/claim` without `isHidden` now filters to visible claims (`legacyQueryFlag` defaults to `false`); the class DTO left the key absent, so the public list also returned hidden claims to any caller that omitted it. The frontend always sends the flag. The unattributed body keeps `recaptcha` optional because that handler skips captcha validation.
 
 Known deferred-by-design on personality (remove at the phase that unblocks them): `getClaimsByPersonalitySlug`, `postProcess`, `getReviewStats` (Phase 3), `combinedListAll` (needs the above), history writes on hide/unhide (history phase). Personality reaches zero 501s only after Phase 3 — the first cutover-eligible milestone.
 
