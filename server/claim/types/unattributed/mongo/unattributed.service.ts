@@ -7,7 +7,7 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
-export class UnattributedService {
+export class MongoUnattributedService {
     constructor(
         @InjectModel(Unattributed.name)
         private UnattributedModel: Model<UnattributedDocument>

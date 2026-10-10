@@ -1,10 +1,12 @@
-import { Controller, Get, Param } from "@nestjs/common";
-import { SpeechService } from "./speech.service";
+import { Controller, Get, Inject, Param } from "@nestjs/common";
+import type { ISpeechService } from "../../../interfaces/speech.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class SpeechController {
-    constructor(private speechService: SpeechService) {}
+    constructor(
+        @Inject("SpeechService") private speechService: ISpeechService
+    ) {}
 
     @ApiTags("claim")
     @Get("api/speech/:id")

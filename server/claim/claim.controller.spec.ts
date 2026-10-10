@@ -9,7 +9,6 @@ import {
 import { ClaimService } from "./claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
-import { SentenceService } from "./types/sentence/sentence.service";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -42,7 +41,7 @@ describe("ClaimController (Unit)", () => {
                 { provide: ReviewTaskService, useValue: {} },
                 { provide: "PersonalityService", useValue: personalityService },
                 { provide: ClaimService, useValue: claimService },
-                { provide: SentenceService, useValue: {} },
+                { provide: "SentenceService", useValue: {} },
                 { provide: ConfigService, useValue: {} },
                 { provide: ViewService, useValue: {} },
                 { provide: CaptchaService, useValue: {} },
@@ -124,10 +123,9 @@ describe("ClaimController (Unit)", () => {
             },
         } as any);
 
-        vi.spyOn(
-            controller as any,
-            "returnClaimReviewPage"
-        ).mockResolvedValue(undefined);
+        vi.spyOn(controller as any, "returnClaimReviewPage").mockResolvedValue(
+            undefined
+        );
 
         await expect(
             controller.getImageClaimReviewPage(req, res)

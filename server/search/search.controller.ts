@@ -11,7 +11,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { Public } from "../auth/decorators/auth.decorator";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { ViewService } from "../view/view.service";
 import { parse } from "url";
 import type { Response } from "express";
@@ -26,7 +26,7 @@ export class SearchController {
         private viewService: ViewService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
-        private sentenceService: SentenceService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private claimRevisionService: ClaimRevisionService,
         private configService: ConfigService
     ) {}

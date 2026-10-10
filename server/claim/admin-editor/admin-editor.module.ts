@@ -14,12 +14,15 @@ import {
 import {
     Sentence,
     SentenceSchema,
-} from "../types/sentence/schemas/sentence.schema";
+} from "../types/sentence/mongo/schemas/sentence.schema";
 import {
     Paragraph,
     ParagraphSchema,
-} from "../types/paragraph/schemas/paragraph.schema";
-import { Speech, SpeechSchema } from "../types/speech/schemas/speech.schema";
+} from "../types/paragraph/mongo/schemas/paragraph.schema";
+import {
+    Speech,
+    SpeechSchema,
+} from "../types/speech/mongo/schemas/speech.schema";
 import { ViewModule } from "../../view/view.module";
 import { AdminEditorController } from "./admin-editor.controller";
 import { AdminEditorPageController } from "./admin-editor-page.controller";

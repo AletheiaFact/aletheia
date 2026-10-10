@@ -1,10 +1,12 @@
-import { Controller, Param, Get } from "@nestjs/common";
-import { ReportService } from "./report.service";
+import { Controller, Param, Get, Inject } from "@nestjs/common";
+import type { IReportService } from "../interfaces/report.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class ReportController {
-    constructor(private reportService: ReportService) {}
+    constructor(
+        @Inject("ReportService") private reportService: IReportService
+    ) {}
 
     @ApiTags("report")
     @Get("api/report/:data_hash")

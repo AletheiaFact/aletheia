@@ -28,10 +28,10 @@ import { UpdateClaimDTO } from "./dto/update-claim.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { SentenceService } from "./types/sentence/sentence.service";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
-import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
+import type { ISentence } from "../interfaces/claim-content.interface";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
@@ -61,7 +61,7 @@ export class ClaimController {
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
-        private sentenceService: SentenceService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private configService: ConfigService,
         private viewService: ViewService,
         private captchaService: CaptchaService,
@@ -331,7 +331,7 @@ export class ClaimController {
         req: BaseRequest,
         res: Response,
         claim: any,
-        content: SentenceDocument | ImageDocument,
+        content: ISentence | ImageDocument,
         personality: any = null
     ) {
         const hideDescriptions: Record<string, any> = {};

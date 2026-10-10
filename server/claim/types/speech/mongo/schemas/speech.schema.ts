@@ -1,11 +1,15 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Personality } from "../../../../personality/mongo/schemas/personality.schema";
-import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
-import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
+import { Personality } from "../../../../../personality/mongo/schemas/personality.schema";
+import { Paragraph } from "../../../paragraph/mongo/schemas/paragraph.schema";
+import { ClaimRevision } from "../../../../../claim/claim-revision/schema/claim-revision.schema";
 
 export type SpeechDocument = Speech & mongoose.Document;
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Speech {
     @Prop({
         default: "speech",

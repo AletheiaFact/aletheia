@@ -1,12 +1,12 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import type { ISourceService } from "../interfaces/source.service.interface";
+import type { ISourceService } from "../../interfaces/source.service.interface";
 import { Report, ReportDocument } from "./schemas/report.schema";
-import { ClassificationEnum } from "../claim-review/dto/create-claim-review.dto";
+import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 
 @Injectable()
-export class ReportService {
+export class MongoReportService {
     constructor(
         @InjectModel(Report.name)
         private ReportModel: Model<ReportDocument>,

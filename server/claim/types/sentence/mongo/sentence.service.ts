@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     Logger,
@@ -8,9 +9,9 @@ import {
 import { Model, PipelineStage, Types } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { ReportService } from "../../../report/report.service";
-import { UtilService } from "../../../util";
-import { toError } from "../../../util/error-handling";
+import type { IReportService } from "../../../../interfaces/report.service.interface";
+import { UtilService } from "../../../../util";
+import { toError } from "../../../../util/error-handling";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -22,13 +23,13 @@ interface FindAllOptionsFilters {
 }
 
 @Injectable()
-export class SentenceService {
-    private readonly logger = new Logger(SentenceService.name);
+export class MongoSentenceService {
+    private readonly logger = new Logger(MongoSentenceService.name);
 
     constructor(
         @InjectModel(Sentence.name)
         private SentenceModel: Model<SentenceDocument>,
-        private reportService: ReportService,
+        @Inject("ReportService") private reportService: IReportService,
         private util: UtilService
     ) {}
 
@@ -221,8 +222,13 @@ export class SentenceService {
             return sentences.map((sentence) => sentence.data_hash);
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Failed to fetch sentence hashes for topic: ${topicId}`, err.stack);
-            throw new InternalServerErrorException(`An error occurred while retrieving sentences for the requested topic.`);
+            this.logger.error(
+                `Failed to fetch sentence hashes for topic: ${topicId}`,
+                err.stack
+            );
+            throw new InternalServerErrorException(
+                `An error occurred while retrieving sentences for the requested topic.`
+            );
         }
     }
 }

@@ -1,7 +1,7 @@
-import { Sentence } from "../../claim/types/sentence/schemas/sentence.schema";
+import type { ISentence } from "../../interfaces/claim-content.interface";
 import { User } from "../../entities/user.entity";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
-import { Report } from "../../report/schemas/report.schema";
+import { Report } from "../../report/mongo/schemas/report.schema";
 import { Image } from "../../claim/types/image/schemas/image.schema";
 import { ContentModelEnum } from "../../types/enums";
 
@@ -28,7 +28,6 @@ export interface IlistAll {
     latest?: boolean;
 }
 
-
 export interface ClaimReviewAggregated {
     _id?: string;
     nameSpace: string;
@@ -36,7 +35,7 @@ export interface ClaimReviewAggregated {
     isHidden: boolean;
     isDeleted?: boolean;
     deletedAt?: Date | null;
-    personality?: Personality
+    personality?: Personality;
     usersId: User[];
     report: Report;
     target: claim;
@@ -51,7 +50,7 @@ export interface ClaimReviewAggregated {
 }
 
 export interface listAllData {
-    content: Image | Sentence;
+    content: Image | ISentence;
     personality?: Personality;
     reviewHref: string;
     claim: claim;

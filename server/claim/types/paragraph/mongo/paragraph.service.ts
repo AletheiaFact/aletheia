@@ -4,7 +4,7 @@ import { ParagraphDocument, Paragraph } from "./schemas/paragraph.schema";
 import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
-export class ParagraphService {
+export class MongoParagraphService {
     constructor(
         @InjectModel(Paragraph.name)
         private ParagraphModel: Model<ParagraphDocument>

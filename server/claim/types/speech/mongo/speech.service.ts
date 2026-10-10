@@ -4,7 +4,7 @@ import { SpeechDocument, Speech } from "./schemas/speech.schema";
 import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
-export class SpeechService {
+export class MongoSpeechService {
     constructor(
         @InjectModel(Speech.name)
         private SpeechModel: Model<SpeechDocument>

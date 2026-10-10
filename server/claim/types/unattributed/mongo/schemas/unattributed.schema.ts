@@ -1,9 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
+import { Paragraph } from "../../../paragraph/mongo/schemas/paragraph.schema";
 
 export type UnattributedDocument = Unattributed & mongoose.Document;
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Unattributed {
     @Prop({
         default: "unattributed",

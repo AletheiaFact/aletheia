@@ -1,11 +1,13 @@
-import { Controller, Param, Put, Body, Get } from "@nestjs/common";
-import { SentenceService } from "./sentence.service";
+import { Controller, Param, Put, Body, Get, Inject } from "@nestjs/common";
+import type { ISentenceService } from "../../../interfaces/sentence.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 import { Auth } from "../../../auth/decorators/auth.decorator";
 
 @Controller()
 export class SentenceController {
-    constructor(private sentenceService: SentenceService) {}
+    constructor(
+        @Inject("SentenceService") private sentenceService: ISentenceService
+    ) {}
 
     @ApiTags("claim")
     @Auth({ public: true })

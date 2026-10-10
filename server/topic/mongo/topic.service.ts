@@ -1,8 +1,8 @@
-import { Injectable, Logger, Scope } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
-import { SentenceService } from "../../claim/types/sentence/sentence.service";
+import type { ISentenceService } from "../../interfaces/sentence.service.interface";
 import { ContentModelEnum } from "../../types/enums";
 import { TopicData } from "../types/topic.interfaces";
 import { ImageService } from "../../claim/types/image/image.service";
@@ -28,7 +28,8 @@ export class MongoTopicService implements ITopicService {
     constructor(
         @InjectModel(Topic.name)
         private readonly TopicModel: Model<TopicDocument>,
-        private readonly sentenceService: SentenceService,
+        @Inject("SentenceService")
+        private readonly sentenceService: ISentenceService,
         private readonly imageService: ImageService,
         private readonly wikidataService: WikidataService
     ) {}

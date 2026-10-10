@@ -28,8 +28,8 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     imports: [
         ClaimRevisionModel,
         ParserModule,
-        ParagraphModule,
-        SpeechModule,
+        ParagraphModule.register(),
+        SpeechModule.register(),
         ImageModule,
         DebateModule,
         ConfigModule,
