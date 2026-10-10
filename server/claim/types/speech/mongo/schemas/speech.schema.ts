@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Personality } from "../../../../../personality/mongo/schemas/personality.schema";
 import { Paragraph } from "../../../paragraph/mongo/schemas/paragraph.schema";
-import { ClaimRevision } from "../../../../../claim/claim-revision/schema/claim-revision.schema";
+import { ClaimRevision } from "../../../../../claim/claim-revision/mongo/schemas/claim-revision.schema";
 
 export type SpeechDocument = Speech & mongoose.Document;
 @Schema({

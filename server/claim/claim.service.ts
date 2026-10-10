@@ -11,7 +11,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -50,7 +50,8 @@ export class ClaimService {
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private claimRevisionService: ClaimRevisionService,
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService,
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
         @Inject("GroupService") private groupService: IGroupService

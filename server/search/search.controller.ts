@@ -9,7 +9,7 @@ import {
     Res,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { Public } from "../auth/decorators/auth.decorator";
 import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { ViewService } from "../view/view.service";
@@ -27,7 +27,8 @@ export class SearchController {
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
         @Inject("SentenceService") private sentenceService: ISentenceService,
-        private claimRevisionService: ClaimRevisionService,
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService,
         private configService: ConfigService
     ) {}
 

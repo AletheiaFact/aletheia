@@ -45,7 +45,7 @@ import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { Types, UpdateWriteOpResult } from "mongoose";
 import type { IGroupService } from "../interfaces/group.service.interface";
@@ -70,7 +70,8 @@ export class ClaimController {
         private editorService: EditorService,
         private parserService: ParserService,
         private historyService: HistoryService,
-        private claimRevisionService: ClaimRevisionService,
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService,
         private featureFlagService: FeatureFlagService,
         @Inject("GroupService") private groupService: IGroupService
     ) {}

@@ -134,7 +134,7 @@ export class AppModule implements NestModule {
                 ClaimModule,
                 ClaimReviewModule,
                 ReviewTaskModule,
-                ClaimRevisionModule,
+                ClaimRevisionModule.register(),
                 HistoryModule,
                 TrackingModule,
                 EventsModule,

@@ -1,23 +1,24 @@
 import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { ParserService } from "../parser/parser.service";
-import type { ISourceService } from "../../interfaces/source.service.interface";
-import { SourceTargetModel } from "../../source/mongo/schemas/source.schema";
+import { ParserService } from "../../parser/parser.service";
+import type { ISourceService } from "../../../interfaces/source.service.interface";
+import { SourceTargetModel } from "../../../source/mongo/schemas/source.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
-} from "./schema/claim-revision.schema";
-import { ContentModelEnum } from "../../types/enums";
-import { ImageService } from "../types/image/image.service";
-import { DebateService } from "../types/debate/debate.service";
-import { UtilService } from "../../util";
-import { IFindAllOptions } from "../../interfaces/personality.interface";
+} from "./schemas/claim-revision.schema";
+import { ContentModelEnum } from "../../../types/enums";
+import { ImageService } from "../../types/image/image.service";
+import { DebateService } from "../../types/debate/debate.service";
+import { UtilService } from "../../../util";
+import { IFindAllOptions } from "../../../interfaces/personality.interface";
+import type { ClaimContentRef } from "../../../interfaces/claim-revision.service.interface";
 
 @Injectable()
-export class ClaimRevisionService {
+export class MongoClaimRevisionService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
-    private readonly logger = new Logger(ClaimRevisionService.name);
+    private readonly logger = new Logger(MongoClaimRevisionService.name);
 
     constructor(
         @InjectModel(ClaimRevision.name)
@@ -179,7 +180,7 @@ export class ClaimRevisionService {
         };
     }
 
-    getByContentId(contentId: Types.ObjectId) {
+    getByContentId(contentId: ClaimContentRef) {
         return this.ClaimRevisionModel.findOne({ contentId });
     }
 

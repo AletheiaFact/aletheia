@@ -25,7 +25,7 @@ import { Claim, ClaimDocument } from "../schemas/claim.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
-} from "../claim-revision/schema/claim-revision.schema";
+} from "../claim-revision/mongo/schemas/claim-revision.schema";
 import {
     Sentence,
     SentenceDocument,

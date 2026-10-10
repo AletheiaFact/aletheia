@@ -16,7 +16,6 @@ import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
 import { ParserService } from "./parser/parser.service";
 import { HistoryService } from "../history/history.service";
-import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
@@ -50,7 +49,7 @@ describe("ClaimController (Unit)", () => {
                 { provide: EditorService, useValue: {} },
                 { provide: ParserService, useValue: {} },
                 { provide: HistoryService, useValue: {} },
-                { provide: ClaimRevisionService, useValue: {} },
+                { provide: "ClaimRevisionService", useValue: {} },
                 { provide: FeatureFlagService, useValue: {} },
                 { provide: "GroupService", useValue: {} },
 

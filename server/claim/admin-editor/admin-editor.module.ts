@@ -10,7 +10,7 @@ import { Claim, ClaimSchema } from "../schemas/claim.schema";
 import {
     ClaimRevision,
     ClaimRevisionSchema,
-} from "../claim-revision/schema/claim-revision.schema";
+} from "../claim-revision/mongo/schemas/claim-revision.schema";
 import {
     Sentence,
     SentenceSchema,

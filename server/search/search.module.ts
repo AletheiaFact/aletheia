@@ -11,7 +11,7 @@ import { ViewModule } from "../view/view.module";
         ViewModule,
         SentenceModule,
         PersonalityModule.register(),
-        ClaimRevisionModule,
+        ClaimRevisionModule.register(),
         ConfigModule,
     ],
     controllers: [SearchController],
