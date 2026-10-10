@@ -19,13 +19,17 @@ import { TypeModel } from "../../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../../types";
-import { ContentModelEnum } from "../../types/enums";
 import { ReviewTaskService } from "../../review-task/review-task.service";
 import { UtilService } from "../../util";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import type { IGroupService } from "../../interfaces/group.service.interface";
 import type { IClaimService } from "../../interfaces/claim.service.interface";
-import slugify from "slugify";
+import {
+    annotateClaimContent,
+    calculateOverallStats,
+    deriveClaimSlug,
+    getClaimContent,
+} from "../shared/claim.rules";
 import { toError } from "../../util/error-handling";
 
 type ClaimMatchParameters = (
@@ -119,10 +123,7 @@ export class MongoClaimService implements IClaimService {
         );
 
         try {
-            const generatedSlug = slugify(claim.title, {
-                lower: true,
-                strict: true,
-            });
+            const generatedSlug = deriveClaimSlug(claim.title);
 
             const existingClaim = await this.ClaimModel.findOne({
                 slug: generatedSlug,
@@ -507,11 +508,6 @@ s    */
         }
     }
 
-    /**
-     * This function merges claim, latestRevision and reviewStats data
-     * @param claim claim from query
-     * @returns return the claim with available revision and reviewStats data
-     */
     private async postProcess(claim: any) {
         let processedClaim = {
             ...(claim?.latestRevision || claim?.revision),
@@ -526,135 +522,17 @@ s    */
             const reviewTasks =
                 await this.reviewTaskService.getReviewTasksByClaimId(claim._id);
 
-            processedClaim.content = this.getClaimContent(processedClaim);
+            processedClaim.content = getClaimContent(processedClaim);
+            annotateClaimContent(processedClaim, reviews, reviewTasks);
 
-            if (processedClaim?.content) {
-                if (processedClaim?.contentModel === ContentModelEnum.Debate) {
-                    processedClaim.content.content =
-                        processedClaim.content.content.map((speech: any) => {
-                            const content = this.transformContentObject(
-                                speech.content,
-                                reviews,
-                                reviewTasks
-                            );
-                            return { ...speech, content };
-                        });
-                } else {
-                    processedClaim.content = this.transformContentObject(
-                        processedClaim.content,
-                        reviews,
-                        reviewTasks
-                    );
-                }
-            }
             const reviewStats =
                 await this.claimReviewService.getReviewStatsByClaimId(
                     claim._id
                 );
-            const overallStats = this.calculateOverallStats(processedClaim);
+            const overallStats = calculateOverallStats(processedClaim);
             const stats = { ...reviewStats, ...overallStats };
             processedClaim = Object.assign(processedClaim, { stats });
         }
         return processedClaim;
-    }
-
-    private calculateOverallStats(claim: any) {
-        let totalClaims = 0;
-        let totalClaimsReviewed = 0;
-
-        if (claim?.content) {
-            if (claim?.contentModel === ContentModelEnum.Image) {
-                totalClaims += 1;
-                if (claim.content.props.classification) {
-                    totalClaimsReviewed++;
-                }
-            } else if (claim?.content.length > 0) {
-                claim.content.forEach((p: any) => {
-                    totalClaims += p.content.length;
-                    p.content.forEach((sentence: any) => {
-                        if (sentence.props.classification) {
-                            totalClaimsReviewed++;
-                        }
-                    });
-                }, 0);
-            }
-        }
-        return {
-            totalClaims,
-            totalClaimsReviewed,
-        };
-    }
-
-    private transformContentObject(
-        claimContent: any,
-        reviews: any[],
-        reviewTasks: any[]
-    ) {
-        if (!claimContent || (reviews.length <= 0 && reviewTasks.length <= 0)) {
-            return claimContent;
-        }
-
-        const processReview = (sentence: any, classification: any) => ({
-            ...sentence,
-            props: {
-                ...sentence.props,
-                classification,
-            },
-        });
-
-        if (claimContent.type === ContentModelEnum.Image) {
-            const claimReview = reviews.find(
-                (review: any) => review._id.data_hash === claimContent.data_hash
-            );
-
-            if (claimReview) {
-                claimContent.props = {
-                    ...claimContent.props,
-                    classification: claimReview._id.classification[0],
-                };
-            }
-        } else {
-            claimContent.forEach((paragraph: any, paragraphIndex: number) => {
-                claimContent[paragraphIndex].content = paragraph.content.map(
-                    (sentence: any) => {
-                        const claimReview = reviews.find(
-                            (review: any) =>
-                                review?._id.data_hash === sentence.data_hash
-                        );
-
-                        if (claimReview) {
-                            return processReview(
-                                sentence,
-                                claimReview._id.classification[0]
-                            );
-                        }
-
-                        const reviewTask = reviewTasks.find(
-                            (task: any) =>
-                                task?.data_hash === sentence.data_hash
-                        );
-
-                        if (reviewTask) {
-                            return processReview(sentence, "in-progress");
-                        }
-
-                        return sentence;
-                    }
-                );
-            });
-        }
-
-        return claimContent;
-    }
-
-    private getClaimContent(claim: any) {
-        if (
-            claim.contentModel === ContentModelEnum.Speech ||
-            claim.contentModel === ContentModelEnum.Unattributed
-        ) {
-            return claim.content[0].content;
-        }
-
-        return claim.content[0];
     }
 }
