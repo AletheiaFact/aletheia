@@ -173,7 +173,15 @@ export class PostgresClaimService implements IClaimService {
     }
 
     async delete(claimId: string): Promise<any> {
-        await this.getById(claimId);
+        await this.getClaim(
+            this.util.getParamsBasedOnUserRole(
+                { _id: claimId, nameSpace: NameSpaceEnum.Main },
+                this.req
+            ) as ClaimMatch,
+            undefined,
+            false,
+            false
+        );
         const rows = await this.db
             .update(claim)
             .set({
@@ -409,10 +417,18 @@ export class PostgresClaimService implements IClaimService {
 
     private async loadSources(claimId: string) {
         const rows = await this.db
-            .select({ id: source.id, href: source.href })
+            .select({
+                id: source.id,
+                href: source.href,
+                targetIds: source.targetIds,
+            })
             .from(source)
             .where(sql`${source.targetIds} @> ARRAY[${claimId}]::uuid[]`);
-        return rows.map((r) => ({ _id: r.id, href: r.href }));
+        return rows.map((r) => ({
+            _id: r.id,
+            href: r.href,
+            targetId: r.targetIds,
+        }));
     }
 
     private postProcess(_claim: any): Promise<any> {
