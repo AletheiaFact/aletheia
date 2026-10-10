@@ -20,6 +20,14 @@ describe("ViewController cache headers (Unit)", () => {
                             res.end("ok");
                             return Promise.resolve();
                         }),
+                        // The /_next* route serves through Next's request
+                        // handler so the image optimizer keeps its query
+                        // string. Return a stub that ends the response.
+                        getRequestHandler: vi.fn(
+                            () => (_req: any, res: any) => {
+                                res.end("ok");
+                            }
+                        ),
                     },
                 },
                 { provide: ConfigService, useValue: { get: () => undefined } },
