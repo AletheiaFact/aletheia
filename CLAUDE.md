@@ -169,6 +169,7 @@ Active flags:
 - `enable_editor_annotations` — Editor annotation support
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
+- `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
 
 ## Captcha Provider
 
