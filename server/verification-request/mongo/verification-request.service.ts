@@ -823,7 +823,8 @@ export class MongoVerificationRequestService
     async update(
         verificationRequestId: string,
         verificationRequestBodyUpdate: Record<string, any>,
-        postProcess: boolean = true
+        postProcess: boolean = true,
+        userId?: string
     ): Promise<VerificationRequestDocument> {
         try {
             const verificationRequest =
@@ -875,7 +876,14 @@ export class MongoVerificationRequestService
             const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
                 { ...latestVerificationRequest, ...patch };
 
-            const user = this.req.user?._id;
+            const user = userId ?? this.req.user?._id;
+
+            const provenance = humanProvenanceChanges(
+                latestVerificationRequest.fieldProvenance,
+                latestVerificationRequest,
+                patch,
+                { userId, at: new Date() }
+            );
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -890,7 +898,7 @@ export class MongoVerificationRequestService
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
-                { $set: patch },
+                { $set: { ...patch, ...this.provenanceSet(provenance) } },
                 { new: true, upsert: true }
             )
                 .populate("source")
@@ -1086,7 +1094,8 @@ export class MongoVerificationRequestService
 
     async updateVerificationRequestWithTopics(
         topics: Array<{ value?: string; wikidataId?: string } | string>,
-        data_hash: string
+        data_hash: string,
+        userId?: string
     ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         if (!verificationRequest) {
@@ -1104,7 +1113,7 @@ export class MongoVerificationRequestService
             topics: topicIds,
         };
 
-        const user = this.req.user?._id;
+        const user = userId ?? this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
@@ -1117,9 +1126,18 @@ export class MongoVerificationRequestService
 
         await this.historyService.createHistory(history as any);
 
+        const provenance = humanProvenanceChanges(
+            latestVerificationRequest.fieldProvenance,
+            latestVerificationRequest,
+            { topics: topicIds },
+            { userId, at: new Date() }
+        );
+
+        // Only the topics (and their provenance): writing the whole document
+        // back would undo concurrent AI callbacks, as in update()
         return this.VerificationRequestModel.findByIdAndUpdate(
             { _id: verificationRequest._id },
-            newVerificationRequest
+            { $set: { topics: topicIds, ...this.provenanceSet(provenance) } }
         ).exec();
     }
 

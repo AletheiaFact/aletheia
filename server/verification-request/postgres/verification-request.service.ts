@@ -1014,7 +1014,8 @@ export class PostgresVerificationRequestService
     async update(
         id: string,
         body: Record<string, any>,
-        postProcess = true
+        postProcess = true,
+        userId?: string
     ): Promise<IVerificationRequest> {
         try {
             const row = await this.findRow(idOf(id));
@@ -1057,6 +1058,16 @@ export class PostgresVerificationRequestService
                 } else {
                     patch.groupId = body.group ? idOf(body.group) : null;
                 }
+            }
+
+            const provenance = humanProvenanceChanges(
+                row.fieldProvenance,
+                this.byField(row),
+                this.byField(patch),
+                { userId, at: new Date() }
+            );
+            if (Object.keys(provenance).length) {
+                patch.fieldProvenance = this.mergeProvenance(provenance);
             }
 
             const [updated] = await this.db
@@ -1170,16 +1181,28 @@ export class PostgresVerificationRequestService
 
     async updateVerificationRequestWithTopics(
         topics: Array<{ value?: string; wikidataId?: string } | string>,
-        dataHash: string
+        dataHash: string,
+        userId?: string
     ): Promise<IVerificationRequest | null> {
         const existing = await this.findByDataHash(dataHash, false);
         if (!existing) return null;
         const found = await this.topicService.findByWikidataIds(
             topics.map(topicWikidataKey)
         );
+        const topicIds = found.map(idOf);
+        const provenance = humanProvenanceChanges(
+            existing.fieldProvenance,
+            existing,
+            { topics: topicIds },
+            { userId, at: new Date() }
+        );
         const [updated] = await this.db
             .update(verificationRequest)
-            .set({ topicIds: found.map(idOf), updatedAt: new Date() })
+            .set({
+                topicIds,
+                fieldProvenance: this.mergeProvenance(provenance),
+                updatedAt: new Date(),
+            })
             .where(eq(verificationRequest.id, idOf(existing)))
             .returning();
         return this.toEntity(updated, {}, true);
@@ -1216,6 +1239,16 @@ export class PostgresVerificationRequestService
             })
             .where(eq(verificationRequest.id, vrId));
         return retries;
+    }
+
+    /** Column values keyed by field name (impactAreaId → impactArea, ...) */
+    private byField(columns: Record<string, any>): Record<string, any> {
+        return Object.fromEntries(
+            Object.entries(AI_FIELD_COLUMNS).map(([field, column]) => [
+                field,
+                columns[column],
+            ])
+        );
     }
 
     private mergeProvenance(entries: FieldProvenanceMap): SQL {

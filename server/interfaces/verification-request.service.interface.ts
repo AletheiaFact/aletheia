@@ -77,7 +77,8 @@ export type IVerificationRequestService = {
     update(
         id: string,
         body: Record<string, any>,
-        postProcess?: boolean
+        postProcess?: boolean,
+        userId?: string
     ): Promise<IVerificationRequest>;
     count(filters: VerificationRequestFilters): Promise<number>;
     createEmbedContent(content: string): Promise<number[]>;
@@ -88,7 +89,8 @@ export type IVerificationRequestService = {
     ): Promise<IVerificationRequest[]>;
     updateVerificationRequestWithTopics(
         topics: Array<{ value?: string; wikidataId?: string } | string>,
-        dataHash: string
+        dataHash: string,
+        userId?: string
     ): Promise<IVerificationRequest | null>;
     checkAndRetryStaleAiTasks(): Promise<void>;
     manualOverrideField(
