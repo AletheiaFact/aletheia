@@ -57,6 +57,7 @@
         "addSource": "Adicionar outra fonte",
         "publishTitle": "Publicar",
         "backButton": "Voltar",
+        "discardWarning": "voltar e descartar o que foi preenchido",
         "speech": {
             "sectionTitle": "O que foi dito ou publicado?",
             "sectionDescription": "Cole o texto original. Depois de criada, a afirmação é dividida em sentenças e cada uma poderá ser checada.",

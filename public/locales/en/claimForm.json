@@ -57,6 +57,7 @@
         "addSource": "Add another source",
         "publishTitle": "Publish",
         "backButton": "Back",
+        "discardWarning": "to go back and discard what you filled in",
         "speech": {
             "sectionTitle": "What was said or published?",
             "sectionDescription": "Paste the original text. Once created, the claim is split into sentences and each one can be fact-checked.",

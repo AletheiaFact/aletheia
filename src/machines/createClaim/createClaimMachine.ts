@@ -8,6 +8,7 @@ import { CreateClaimMachineStates } from "./states";
 import {
     persistClaim,
     removePersonality,
+    resetClaimContext,
     saveClaimContext,
     startDebate,
     startUnattributed,
@@ -19,6 +20,15 @@ import { CreateClaimContext } from "./context";
 const updateGroupEvent = {
     [Events.updateGroup]: {
         actions: [saveClaimContext],
+    },
+};
+
+// Every step currently goes back to the format selection. To go back one step
+// at a time, change the personalityAdded target to the matching setup state.
+const backEvent = {
+    [Events.back]: {
+        target: States.notStarted,
+        actions: [resetClaimContext],
     },
 };
 
@@ -66,6 +76,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         actions: [removePersonality],
                     },
                     ...updateGroupEvent,
+                    ...backEvent,
                 },
             },
             [States.setupImage]: {
@@ -82,6 +93,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.personalityAdded,
                     },
                     ...updateGroupEvent,
+                    ...backEvent,
                 },
             },
             [States.setupDebate]: {
@@ -98,6 +110,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         actions: [removePersonality],
                     },
                     ...updateGroupEvent,
+                    ...backEvent,
                 },
             },
             [States.personalityAdded]: {
@@ -107,6 +120,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         actions: [persistClaim],
                     },
                     ...updateGroupEvent,
+                    ...backEvent,
                 },
             },
             [States.persisted]: {

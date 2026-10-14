@@ -4,13 +4,14 @@ import { useBaseClaimForm } from "./UseBaseClaimForm";
 
 const ClaimCreateDebate = () => {
     const {
-        handleSubmit, title, setTitle, recaptcha, setRecaptcha, date, setDate, setSources, sources, isLoading, errors, clearError
+        handleSubmit, title, setTitle, recaptcha, setRecaptcha, date, setDate, setSources, sources, isLoading, errors, clearError, isDirty
     } = useBaseClaimForm({ shouldValidateContent: false });
 
     return (
         <BaseClaimForm
             variant="debate"
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
             isLoading={isLoading}
             errors={errors}
             clearError={clearError}

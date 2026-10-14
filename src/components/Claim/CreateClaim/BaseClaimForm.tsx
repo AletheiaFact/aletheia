@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FormControl, FormLabel, Checkbox, Grid, FormHelperText, Box, Typography } from "@mui/material";
 import { LinkOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import { useAtom } from "jotai";
 
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -10,6 +10,9 @@ import Input from "../../AletheiaInput";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
+import WarningModal from "../../Modal/WarningModal";
+import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
+import { CreateClaimEvents } from "../../../machines/createClaim/types";
 
 export type ClaimFormVariant = "speech" | "image" | "debate" | "unattributed";
 
@@ -33,6 +36,7 @@ interface BaseClaimFormProps {
     setSources: (sources: string[]) => void;
     title: string;
     sources: string[];
+    isDirty?: boolean;
 }
 
 const FormSection = ({
@@ -87,10 +91,22 @@ const BaseClaimForm = ({
     setSources,
     title,
     sources,
+    isDirty = false,
 }: BaseClaimFormProps) => {
     const { t } = useTranslation();
-    const router = useRouter();
+    const [, send] = useAtom(createClaimMachineAtom);
     const [disableSubmit, setDisableSubmit] = useState(true);
+    const [showDiscardWarning, setShowDiscardWarning] = useState(false);
+
+    const goBack = () => send({ type: CreateClaimEvents.back });
+
+    const onClickBack = () => {
+        if (isDirty) {
+            setShowDiscardWarning(true);
+        } else {
+            goBack();
+        }
+    };
     const copy = (key: string) => t(`claimForm:createForm.${variant}.${key}`);
 
     const onChangeCaptcha = (captchaString) => {
@@ -262,7 +278,7 @@ const BaseClaimForm = ({
             >
                 <AletheiaButton
                     type={ButtonType.whiteBlack}
-                    onClick={() => router.reload()}
+                    onClick={onClickBack}
                 >
                     {t("claimForm:createForm.backButton")}
                 </AletheiaButton>
@@ -277,6 +293,15 @@ const BaseClaimForm = ({
                     {copy("publishButton")}
                 </AletheiaButton>
             </Grid>
+            <WarningModal
+                open={showDiscardWarning}
+                title={t("warningModal:title", {
+                    warning: t("claimForm:createForm.discardWarning"),
+                })}
+                width={400}
+                handleOk={goBack}
+                handleCancel={() => setShowDiscardWarning(false)}
+            />
         </FormControl>
     );
 };

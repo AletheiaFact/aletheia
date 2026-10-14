@@ -9,13 +9,14 @@ interface ClaimCreateProps {
 
 const ClaimCreate = ({ variant = "speech" }: ClaimCreateProps) => {
     const {
-        t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError
+        t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError, isDirty
     } = useBaseClaimForm();
 
     return (
         <BaseClaimForm
             variant={variant}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
             isLoading={isLoading}
             errors={errors}
             clearError={clearError}
