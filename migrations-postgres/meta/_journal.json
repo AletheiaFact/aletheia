@@ -43,6 +43,13 @@
       "when": 1791247450826,
       "tag": "0005_verification_request",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792003413569,
+      "tag": "0006_verification_request_field_provenance",
+      "breakpoints": true
     }
   ]
 }

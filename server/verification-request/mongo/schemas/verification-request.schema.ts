@@ -4,6 +4,7 @@ import { Group } from "../../../group/mongo/schemas/group.schema";
 import { Topic } from "../../../topic/mongo/schemas/topic.schema";
 import { ContentModelEnum } from "../../../types/enums";
 import {
+    FieldProvenanceMap,
     SeverityEnum,
     TimeStamps,
     VerificationRequestStatus,
@@ -171,6 +172,12 @@ export class VerificationRequest {
         of: String,
     })
     pendingAiTasks: Map<string, string>;
+
+    @Prop({
+        required: false,
+        type: Object,
+    })
+    fieldProvenance: FieldProvenanceMap;
 }
 
 const VerificationRequestSchema =
