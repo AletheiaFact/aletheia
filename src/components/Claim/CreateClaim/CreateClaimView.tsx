@@ -101,7 +101,7 @@ const CreateClaimView = () => {
                 {addSpeech && <ClaimCreate />}
                 {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
-                {addUnattributed && <ClaimCreate />}
+                {addUnattributed && <ClaimCreate variant="unattributed" />}
             </Grid>
 
             <VerificationRequestDrawer

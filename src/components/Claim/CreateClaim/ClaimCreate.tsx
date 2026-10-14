@@ -3,17 +3,20 @@ import BaseClaimForm from "./BaseClaimForm";
 import { FormControl, FormHelperText } from "@mui/material";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
 
-const ClaimCreate = () => {
+interface ClaimCreateProps {
+    variant?: "speech" | "unattributed";
+}
+
+const ClaimCreate = ({ variant = "speech" }: ClaimCreateProps) => {
     const {
         t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError
     } = useBaseClaimForm();
 
     return (
         <BaseClaimForm
+            variant={variant}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
-            disclaimer={t("claimForm:disclaimer")}
-            dateExtraText={t("claimForm:dateFieldHelp")}
             errors={errors}
             clearError={clearError}
             recaptcha={recaptcha}
@@ -25,15 +28,12 @@ const ClaimCreate = () => {
             title={title}
             sources={sources}
             content={
-                <FormControl
-                    style={{
-                        width: "100%",
-                        marginTop: "24px",
-                    }}
-                >
+                <FormControl style={{ width: "100%" }}>
                     <div className="root-label">
                         <span className="require-label">*</span>
-                        <p className="form-label">{t("claimForm:contentField")}</p>
+                        <p className="form-label">
+                            {t(`claimForm:createForm.${variant}.contentLabel`)}
+                        </p>
                     </div>
                     <AletheiaTextArea
                         multiline
@@ -42,7 +42,7 @@ const ClaimCreate = () => {
                             setContent(e.target.value);
                             clearError("content");
                         }}
-                        placeholder={t("claimForm:contentFieldPlaceholder")}
+                        placeholder={t("claimForm:createForm.contentPlaceholder")}
                         data-cy={"testContentClaim"}
                     />
                     {errors.content && (
@@ -50,7 +50,7 @@ const ClaimCreate = () => {
                             {errors.content}
                         </FormHelperText>
                     )}
-                    <p className="extra-label">{t("claimForm:contentFieldHelp")}</p>
+                    <p className="extra-label">{t("claimForm:createForm.contentHelp")}</p>
                 </FormControl>
             }
         />
