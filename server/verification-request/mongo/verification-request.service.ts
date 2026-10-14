@@ -62,7 +62,9 @@ import {
 } from "../shared/verification-request.rules";
 import {
     aiFieldUpdate,
+    creationProvenance,
     humanProvenanceChanges,
+    sentByIntegration,
 } from "../shared/field-provenance.rules";
 import type { CallbackMeta } from "../../callback-dispatcher/callback-dispatcher.service";
 
@@ -258,6 +260,12 @@ export class MongoVerificationRequestService
                         impactArea
                     );
                     vr.impactArea = topic._id;
+                    vr.fieldProvenance = {
+                        impactArea: creationProvenance(
+                            topic._id,
+                            sentByIntegration(user)
+                        ),
+                    };
                     await vr.save();
                 } else {
                     // Unknown areas are dropped so the AI triage defines one

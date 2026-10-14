@@ -1052,9 +1052,53 @@ describe.each(backends)(
         });
 
         describe("field provenance", () => {
+            // A reference comes back as a document or id (Mongo) or as an id string (Postgres)
+            const refOf = (value: any) => String(value?._id ?? value);
             const provenanceOf = async (vr: any) =>
                 (await service.findByDataHash(vr.data_hash, false))
                     .fieldProvenance ?? {};
+
+            it("create records the impact area sent by the reporter", async () => {
+                const vr = await service.create(
+                    base({ impactArea: "Saúde" }),
+                    { _id: makeId(), isM2M: false }
+                );
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea).toEqual({
+                    origin: ProvenanceOrigin.REPORTER,
+                    reporterValue: refOf(vr.impactArea),
+                });
+            });
+
+            it("create records the impact area sent by an integration", async () => {
+                const vr = await service.create(base({ impactArea: "Saúde" }), {
+                    isM2M: true,
+                    role: { main: "integration" },
+                });
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea.origin).toBe(ProvenanceOrigin.INTEGRATION);
+            });
+
+            it("create records nothing when no impact area is sent", async () => {
+                const vr = await service.create(base());
+                expect(Object.keys(await provenanceOf(vr))).toEqual([]);
+            });
+
+            it("the AI replaces the impact area sent by the reporter and keeps it", async () => {
+                const vr = await service.create(base({ impactArea: "Saúde" }));
+                const reported = refOf(vr.impactArea);
+                const updated = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "impactArea" },
+                    "Educação"
+                );
+                expect(refOf(updated.impactArea)).not.toBe(reported);
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea).toMatchObject({
+                    origin: ProvenanceOrigin.AI,
+                    reporterValue: reported,
+                    aiValue: refOf(updated.impactArea),
+                });
+            });
 
             it("updateFieldByAiTask records the AI origin, task and model of a triage field", async () => {
                 const vr = await service.create(base());

@@ -42,6 +42,14 @@ export function isHumanOwned(provenance?: FieldProvenance): boolean {
 }
 
 /**
+ * M2M tokens and the chatbot create requests with an isM2M user; anything
+ * else (logged in or anonymous) is the person reporting through the form.
+ */
+export function sentByIntegration(user?: { isM2M?: boolean } | null): boolean {
+    return user?.isM2M === true;
+}
+
+/**
  * Provenance of a value sent with the request. It does not make the field
  * human owned: the AI triage still replaces it, as it always did.
  */

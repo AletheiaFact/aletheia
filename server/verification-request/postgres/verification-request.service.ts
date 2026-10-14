@@ -72,7 +72,9 @@ import {
 } from "../shared/verification-request.rules";
 import {
     aiFieldUpdate,
+    creationProvenance,
     humanProvenanceChanges,
+    sentByIntegration,
 } from "../shared/field-provenance.rules";
 import type { CallbackMeta } from "../../callback-dispatcher/callback-dispatcher.service";
 import { verificationRequest } from "./schema/verification-request.schema";
@@ -542,7 +544,7 @@ export class PostgresVerificationRequestService
 
     async create(
         data: VerificationRequestCreateInput,
-        _user?: any
+        user?: any
     ): Promise<IVerificationRequest> {
         try {
             this.logger.debug("Creating verification request", { data });
@@ -586,6 +588,12 @@ export class PostgresVerificationRequestService
                         .update(verificationRequest)
                         .set({
                             impactAreaId: idOf(found),
+                            fieldProvenance: {
+                                impactArea: creationProvenance(
+                                    idOf(found),
+                                    sentByIntegration(user)
+                                ),
+                            },
                             updatedAt: new Date(),
                         })
                         .where(eq(verificationRequest.id, row.id))

@@ -10,6 +10,7 @@ import {
     isTriageField,
     normalizeTriageValue,
     sameTriageValue,
+    sentByIntegration,
 } from "./field-provenance.rules";
 
 const at = new Date("2026-10-14T12:00:00Z");
@@ -58,6 +59,13 @@ describe("field provenance rules", () => {
             false
         );
         expect(isHumanOwned(undefined)).toBe(false);
+    });
+
+    it("sentByIntegration is true only for M2M users", () => {
+        expect(sentByIntegration({ isM2M: true })).toBe(true);
+        expect(sentByIntegration({ isM2M: false })).toBe(false);
+        expect(sentByIntegration(undefined)).toBe(false);
+        expect(sentByIntegration(null)).toBe(false);
     });
 
     describe("creationProvenance", () => {
