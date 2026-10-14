@@ -64,11 +64,12 @@ const ClaimImageDropzone = ({ onChange, error = false }: ClaimImageDropzoneProps
 
     const openFilePicker = () => fileInputRef.current?.click();
 
-    const borderColor = error
-        ? colors.error
-        : isDragging
-        ? colors.primary
-        : colors.neutralSecondary;
+    let borderColor = colors.neutralSecondary;
+    if (error) {
+        borderColor = colors.error;
+    } else if (isDragging) {
+        borderColor = colors.primary;
+    }
 
     return (
         <Box sx={{ width: "100%" }}>
@@ -126,7 +127,7 @@ const ClaimImageDropzone = ({ onChange, error = false }: ClaimImageDropzoneProps
                                 onClick={openFilePicker}
                                 sx={{ fontSize: 14, textDecoration: "underline" }}
                             >
-                                {t("claimForm:createForm.image.replaceImage")}
+                                {t("claimForm:createForm.Image.replaceImage")}
                             </ButtonBase>
                             <span aria-hidden="true">·</span>
                             <ButtonBase
@@ -137,7 +138,7 @@ const ClaimImageDropzone = ({ onChange, error = false }: ClaimImageDropzoneProps
                                     color: colors.error,
                                 }}
                             >
-                                {t("claimForm:createForm.image.removeImage")}
+                                {t("claimForm:createForm.Image.removeImage")}
                             </ButtonBase>
                         </Box>
                     </>
@@ -164,7 +165,7 @@ const ClaimImageDropzone = ({ onChange, error = false }: ClaimImageDropzoneProps
                             {t("claimForm:fileInputButton")}
                         </Typography>
                         <Typography sx={{ fontSize: 12, color: colors.neutralSecondary }}>
-                            {t("claimForm:createForm.image.fileHint")}
+                            {t("claimForm:createForm.Image.fileHint")}
                         </Typography>
                     </ButtonBase>
                 )}

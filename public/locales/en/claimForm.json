@@ -58,7 +58,7 @@
         "publishTitle": "Publish",
         "backButton": "Back",
         "discardWarning": "to go back and discard what you filled in",
-        "speech": {
+        "Speech": {
             "sectionTitle": "What was said or published?",
             "sectionDescription": "Paste the original text. Once created, the claim is split into sentences and each one can be fact-checked.",
             "titlePlaceholder": "E.g.: Interview on the evening news about the economy",
@@ -72,7 +72,7 @@
             "disclaimer": "* This tool is only for adding real statements and speeches. Any attempt to spread fake news is prohibited and may result in a ban and legal action.",
             "publishButton": "Publish claim"
         },
-        "image": {
+        "Image": {
             "sectionTitle": "Image to be fact-checked",
             "sectionDescription": "Upload the image as it is circulating. It will be the item fact-checked.",
             "titlePlaceholder": "E.g.: Flood photo attributed to Rio Grande do Sul",
@@ -83,27 +83,27 @@
             "removeImage": "Remove",
             "dateHelp": "When was the image published?",
             "sourceDescription": "Where the image was published or is circulating.",
-            "sourceGuidance": "Proof that this was said or published. E.g.: a video, an official transcript, a post by the personality themselves, a news article quoting the statement.",
-            "sourceLabel": "Where was this claim said or published?",
-            "sourceHelp": "We accept news websites, academic papers, official documents and posts on the personality's own social media.",
+            "sourceGuidance": "Proof of where the image was published or is circulating. E.g.: a social media post, a forwarded message, a news article reproducing the image.",
+            "sourceLabel": "Where was the image published or where is it circulating?",
+            "sourceHelp": "We accept news websites, social media posts, forwarded messages and official documents.",
             "publishDescription": "Once published, the image becomes available for fact-checking.",
             "disclaimer": "* This tool is only for adding images that have actually circulated. Any attempt to spread fake news is prohibited and may result in a ban and legal action.",
             "publishButton": "Publish image"
         },
-        "debate": {
+        "Debate": {
             "sectionTitle": "Debate details",
             "sectionDescription": "Statements are not added now. They will be added during or after the debate and become fact-checkable sentences.",
             "titlePlaceholder": "E.g.: Presidential TV debate, 1st round",
             "dateHelp": "When did or will the debate take place?",
             "sourceDescription": "Official page, broadcast or coverage of the debate.",
-            "sourceGuidance": "Proof that this was said or published. E.g.: a video, an official transcript, a post by the personality themselves, a news article quoting the statement.",
-            "sourceLabel": "Where was this claim said or published?",
-            "sourceHelp": "We accept news websites, academic papers, official documents and posts on the personality's own social media.",
+            "sourceGuidance": "Proof that the debate took place or will take place. E.g.: official page, live broadcast, announcement by the broadcaster or organizers.",
+            "sourceLabel": "Where was or will the debate be broadcast?",
+            "sourceHelp": "We accept official pages, broadcasts, news websites and announcements by the broadcaster or organizers.",
             "publishDescription": "Once created, the debate is ready to receive the statements that will be fact-checked.",
             "disclaimer": "* This tool is only for adding real debates. Any attempt to spread fake news is prohibited and may result in a ban and legal action.",
             "publishButton": "Create debate"
         },
-        "unattributed": {
+        "Unattributed": {
             "sectionTitle": "What is circulating?",
             "sectionDescription": "Paste the original text. Once created, the information is split into sentences and each one can be fact-checked.",
             "titlePlaceholder": "E.g.: Rumor about the new vaccination schedule",

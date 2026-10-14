@@ -12,6 +12,7 @@ import { UploadFile } from "../../ImageUpload";
 import ClaimImageDropzone from "./ClaimImageDropzone";
 import BaseClaimForm from "./BaseClaimForm";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { ContentModelEnum } from "../../../types/enums";
 
 const ClaimUploadImage = () => {
     const { t } = useTranslation();
@@ -79,7 +80,7 @@ const ClaimUploadImage = () => {
 
     return (
         <BaseClaimForm
-            variant="image"
+            variant={ContentModelEnum.Image}
             handleSubmit={handleSubmit}
             isDirty={isDirty || fileList.length > 0}
             isLoading={isLoading}
@@ -98,7 +99,7 @@ const ClaimUploadImage = () => {
                     <div className="root-label">
                         <span className="require-label">*</span>
                         <p className="form-label">
-                            {t("claimForm:createForm.image.contentLabel")}
+                            {t(`claimForm:createForm.${ContentModelEnum.Image}.contentLabel`)}
                         </p>
                     </div>
                     <ClaimImageDropzone
@@ -110,7 +111,7 @@ const ClaimUploadImage = () => {
                         style={{ display: "flex", alignItems: "center", gap: "6px" }}
                     >
                         <InfoOutlined aria-hidden="true" sx={{ fontSize: 16 }} />
-                        {t("claimForm:createForm.image.contentHelp")}
+                        {t(`claimForm:createForm.${ContentModelEnum.Image}.contentHelp`)}
                     </p>
                 </FormControl>
             }

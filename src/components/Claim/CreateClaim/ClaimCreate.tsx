@@ -2,12 +2,13 @@ import AletheiaTextArea from "../../AletheiaTextArea";
 import BaseClaimForm from "./BaseClaimForm";
 import { FormControl, FormHelperText } from "@mui/material";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { ContentModelEnum } from "../../../types/enums";
 
 interface ClaimCreateProps {
-    variant?: "speech" | "unattributed";
+    variant?: ContentModelEnum.Speech | ContentModelEnum.Unattributed;
 }
 
-const ClaimCreate = ({ variant = "speech" }: ClaimCreateProps) => {
+const ClaimCreate = ({ variant = ContentModelEnum.Speech }: ClaimCreateProps) => {
     const {
         t, handleSubmit, content, setContent, title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, errors, clearError, isDirty
     } = useBaseClaimForm();

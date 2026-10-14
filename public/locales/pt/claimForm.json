@@ -58,7 +58,7 @@
         "publishTitle": "Publicar",
         "backButton": "Voltar",
         "discardWarning": "voltar e descartar o que foi preenchido",
-        "speech": {
+        "Speech": {
             "sectionTitle": "O que foi dito ou publicado?",
             "sectionDescription": "Cole o texto original. Depois de criada, a afirmação é dividida em sentenças e cada uma poderá ser checada.",
             "titlePlaceholder": "Ex.: Entrevista ao Jornal Nacional sobre economia",
@@ -72,7 +72,7 @@
             "disclaimer": "* Esta ferramenta serve apenas para adicionar declarações e discursos reais. Qualquer tentativa de disseminar notícias falsas é proibida e pode resultar em banimento e ação judicial.",
             "publishButton": "Publicar afirmação"
         },
-        "image": {
+        "Image": {
             "sectionTitle": "Imagem a ser checada",
             "sectionDescription": "Envie a imagem como ela circula. Ela será o item checado.",
             "titlePlaceholder": "Ex.: Foto de enchente atribuída ao Rio Grande do Sul",
@@ -83,27 +83,27 @@
             "removeImage": "Remover",
             "dateHelp": "Quando a imagem foi publicada?",
             "sourceDescription": "Onde a imagem foi publicada ou está circulando.",
-            "sourceGuidance": "Prova de que isso foi dito ou publicado. Ex.: vídeo, transcrição oficial, post da própria personalidade, matéria que reproduz a fala.",
-            "sourceLabel": "Onde essa afirmação foi dita ou publicada?",
-            "sourceHelp": "Aceitamos sites de notícias, artigos acadêmicos, documentos oficiais e posts nas redes da própria personalidade.",
+            "sourceGuidance": "Prova de onde a imagem foi publicada ou está circulando. Ex.: post em rede social, mensagem encaminhada, matéria que reproduz a imagem.",
+            "sourceLabel": "Onde a imagem foi publicada ou está circulando?",
+            "sourceHelp": "Aceitamos sites de notícias, posts em redes sociais, mensagens encaminhadas e documentos oficiais.",
             "publishDescription": "Depois de publicada, a imagem fica disponível para checagem.",
             "disclaimer": "* Esta ferramenta serve apenas para adicionar imagens que realmente circularam. Qualquer tentativa de disseminar notícias falsas é proibida e pode resultar em banimento e ação judicial.",
             "publishButton": "Publicar imagem"
         },
-        "debate": {
+        "Debate": {
             "sectionTitle": "Detalhes do debate",
             "sectionDescription": "As falas não são incluídas agora. Elas serão adicionadas durante ou depois do debate e viram sentenças checáveis.",
             "titlePlaceholder": "Ex.: Debate presidencial na TV, 1º turno",
             "dateHelp": "Quando o debate foi ou será realizado?",
             "sourceDescription": "Página oficial, transmissão ou cobertura do debate.",
-            "sourceGuidance": "Prova de que isso foi dito ou publicado. Ex.: vídeo, transcrição oficial, post da própria personalidade, matéria que reproduz a fala.",
-            "sourceLabel": "Onde essa afirmação foi dita ou publicada?",
-            "sourceHelp": "Aceitamos sites de notícias, artigos acadêmicos, documentos oficiais e posts nas redes da própria personalidade.",
+            "sourceGuidance": "Prova de que o debate foi ou será realizado. Ex.: página oficial, transmissão ao vivo, anúncio da emissora ou dos organizadores.",
+            "sourceLabel": "Onde o debate foi ou será transmitido?",
+            "sourceHelp": "Aceitamos páginas oficiais, transmissões, sites de notícias e anúncios da emissora ou dos organizadores.",
             "publishDescription": "Depois de criado, o debate fica disponível para receber as falas que serão checadas.",
             "disclaimer": "* Esta ferramenta serve apenas para adicionar debates reais. Qualquer tentativa de disseminar notícias falsas é proibida e pode resultar em banimento e ação judicial.",
             "publishButton": "Criar debate"
         },
-        "unattributed": {
+        "Unattributed": {
             "sectionTitle": "O que está circulando?",
             "sectionDescription": "Cole o texto original. Depois de criada, a informação é dividida em sentenças e cada uma poderá ser checada.",
             "titlePlaceholder": "Ex.: Boato sobre o novo calendário de vacinação",

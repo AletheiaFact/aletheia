@@ -47,13 +47,12 @@ const SourceDialogHeader = ({ onCloseModal }) => {
                             {t("sourceForm:sourceModalTooltip")}
                         </>
                     }
-                    children={
-                        <InfoOutlined
-                            data-cy="testSourceModalTooltip"
-                            style={{ height: 16, color: colors.neutralSecondary }}
-                        />
-                    }
-                />
+                >
+                    <InfoOutlined
+                        data-cy="testSourceModalTooltip"
+                        style={{ height: 16, color: colors.neutralSecondary }}
+                    />
+                </InfoTooltip>
             </span>
         </header>
     );

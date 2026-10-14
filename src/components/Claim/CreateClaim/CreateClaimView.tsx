@@ -23,6 +23,7 @@ import { useTranslation } from "next-i18next";
 import VerificationRequestDrawer from "../../VerificationRequest/VerificationRequestDrawer";
 import ManageVerificationRequestGroup from "../../VerificationRequest/ManageVerificationRequestGroup";
 import ClaimCreateStyle from "./ClaimCreate.style";
+import { ContentModelEnum } from "../../../types/enums";
 
 const CreateClaimView = () => {
     const { t } = useTranslation();
@@ -101,7 +102,7 @@ const CreateClaimView = () => {
                 {addSpeech && <ClaimCreate />}
                 {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
-                {addUnattributed && <ClaimCreate variant="unattributed" />}
+                {addUnattributed && <ClaimCreate variant={ContentModelEnum.Unattributed} />}
             </Grid>
 
             <VerificationRequestDrawer

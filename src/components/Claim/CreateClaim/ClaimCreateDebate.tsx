@@ -1,6 +1,7 @@
 import React from "react";
 import BaseClaimForm from "./BaseClaimForm";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { ContentModelEnum } from "../../../types/enums";
 
 const ClaimCreateDebate = () => {
     const {
@@ -9,7 +10,7 @@ const ClaimCreateDebate = () => {
 
     return (
         <BaseClaimForm
-            variant="debate"
+            variant={ContentModelEnum.Debate}
             handleSubmit={handleSubmit}
             isDirty={isDirty}
             isLoading={isLoading}

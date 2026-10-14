@@ -13,11 +13,10 @@ import SourceInput from "../../Source/SourceInput";
 import WarningModal from "../../Modal/WarningModal";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
-
-export type ClaimFormVariant = "speech" | "image" | "debate" | "unattributed";
+import { ContentModelEnum } from "../../../types/enums";
 
 interface BaseClaimFormProps {
-    variant: ClaimFormVariant;
+    variant: ContentModelEnum;
     content?: React.ReactNode;
     handleSubmit: (values: any) => void;
     isLoading: boolean;
