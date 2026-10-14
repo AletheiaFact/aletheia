@@ -13,6 +13,7 @@ The Verification Request module is the core of the Aletheia fact-checking platfo
 - [Services](#services)
 - [State Machine Configuration](#state-machine-configuration)
 - [AI Task Integration](#ai-task-integration)
+- [Field Provenance](#field-provenance)
 - [Error Handling & Resilience](#error-handling--resilience)
 - [Usage Examples](#usage-examples)
 - [Troubleshooting](#troubleshooting)
@@ -164,6 +165,7 @@ canDefineSeverity = topics && impactArea && identifiedData all exist
 | `stateTransitions` | Array | State transition history with duration |
 | `progress` | Object | Current progress (percentage, ETA) |
 | `auditLog` | Array | Complete audit trail of all actions |
+| `fieldProvenance` | Object | Who defined each triage field (AI or human), see [Field Provenance](#field-provenance) |
 
 ### Schema Example
 
@@ -544,14 +546,83 @@ Callbacks are registered in `verification-request.module.ts`:
 onModuleInit() {
     this.dispatcher.register(
         CallbackRoute.VERIFICATION_UPDATE_IDENTIFIED_DATA,
-        (params, result) => {
+        (params, result, meta) => {
             console.log(`[Module] IDENTIFIED_DATA callback invoked`);
-            return this.verificationService.updateFieldByAiTask(params, result);
+            // meta: { taskId, model } of the AI task that produced the result
+            return this.verificationService.updateFieldByAiTask(
+                params,
+                result,
+                meta
+            );
         }
     );
     // ... other callbacks
 }
 ```
+
+---
+
+## Field Provenance
+
+`fieldProvenance` records, for each triage field, whether the AI or a human defined it. It exists so the quality of the AI triage can be measured against what the fact-checkers decided.
+
+Tracked fields (`TriageField`): `impactArea`, `severity`, `topics`, `identifiedData`. The embedding is not tracked.
+
+### Entry shape
+
+```typescript
+fieldProvenance: {
+    severity: {
+        origin: "ai" | "human" | "ai_edited_by_human" | "reporter" | "integration",
+        reporterValue?: any,   // value sent with the request (impactArea only)
+        aiValue?: any,         // last AI answer, kept after a human edit
+        aiTaskId?: string,
+        aiModel?: string,      // e.g. "jev-1.13.0", from the AI task content
+        aiAt?: Date,
+        humanUserId?: string,
+        humanAt?: Date,
+    },
+    // ...one entry per field that has a value
+}
+```
+
+References (`impactArea`, `topics`, `identifiedData`) are stored as id strings, and lists are sorted, so values compare the same on Mongo and Postgres.
+
+### Origins
+
+| Origin | Meaning | Written by |
+|--------|---------|------------|
+| `reporter` | Sent with the request through the public form | `create()` |
+| `integration` | Sent with the request by an M2M client (chatbot, monitoring) | `create()` |
+| `ai` | Defined by the AI triage | `updateFieldByAiTask()` |
+| `human` | Set by a logged in user before the AI answered | `update()`, topics endpoint, `manualOverrideField()` |
+| `ai_edited_by_human` | The AI answered, then a user changed the value | same as `human` |
+
+### Rules
+
+- **The AI does not replace a human value.** When a field is `human` or `ai_edited_by_human`, an AI answer keeps the current value and is only stored in `aiValue`.
+- **Values sent on create are not protected.** `reporter` and `integration` values are replaced by the AI triage (as before this field existed); the sent value stays in `reporterValue`.
+- **Only real changes count.** A human update that sends the value the field already has (topics in another order included) leaves the provenance untouched.
+- **The user comes from the controller.** `update()` and `updateVerificationRequestWithTopics()` take the `userId` explicitly, so both backends record the same user.
+
+The rules live once, as pure functions, in `shared/field-provenance.rules.ts`; both services only apply the result to their database.
+
+### Querying
+
+```javascript
+// Severity defined by the AI and changed by a fact-checker
+db.verificationrequests.find({
+    "fieldProvenance.severity.origin": "ai_edited_by_human",
+});
+
+// AI answer vs final value of the impact area
+db.verificationrequests.find(
+    { "fieldProvenance.impactArea.aiValue": { $exists: true } },
+    { impactArea: 1, "fieldProvenance.impactArea": 1 }
+);
+```
+
+On Postgres the same data is in the `field_provenance` jsonb column.
 
 ---
 
@@ -744,6 +815,7 @@ const updated = await verificationRequestService.manualOverrideField(
 // - identifiedData updated to "Senator Johnson"
 // - statesExecuted updated atomically
 // - Audit log records: { action: 'manual_override', userId, timestamp }
+// - fieldProvenance.identifiedData records the human edit (see Field Provenance)
 // - State machine automatically re-runs dependent states
 ```
 
