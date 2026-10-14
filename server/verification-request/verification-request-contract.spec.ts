@@ -1058,6 +1058,32 @@ describe.each(backends)(
                 (await service.findByDataHash(vr.data_hash, false))
                     .fieldProvenance ?? {};
 
+            it("update does not undo an AI answer that lands while it runs", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "low_1",
+                    { taskId: "task-0" }
+                );
+                // Source creation runs between the update's read and write
+                stubs.sourceService.create.mockImplementationOnce(
+                    async (data: { href: string }) => {
+                        await service.updateFieldByAiTask(
+                            { targetId: idOf(vr), field: "severity" },
+                            "high_1",
+                            { taskId: "task-1" }
+                        );
+                        return seed.source(data.href);
+                    }
+                );
+                await service.update(idOf(vr), {
+                    source: [{ href: "https://example.com/a" }],
+                });
+                const after = await service.findByDataHash(vr.data_hash, false);
+                expect(after.severity).toBe("high_1");
+                expect(after.fieldProvenance?.severity?.aiTaskId).toBe("task-1");
+            });
+
             it("create records the impact area sent by the reporter", async () => {
                 const vr = await service.create(
                     base({ impactArea: "Saúde" }),

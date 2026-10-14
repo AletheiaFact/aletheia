@@ -837,14 +837,15 @@ export class MongoVerificationRequestService
 
             const latestVerificationRequest = verificationRequest.toObject();
 
-            const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
-                {
-                    ...latestVerificationRequest,
-                    ...verificationRequestBodyUpdate,
-                    publicationDate:
-                        verificationRequestBodyUpdate.publicationDate ??
-                        verificationRequest.publicationDate,
-                };
+            // Only the fields this update sets: writing the whole document
+            // back would undo concurrent writes to other fields, like an AI
+            // callback landing between the read above and the write below.
+            const patch: Record<string, any> = {
+                ...verificationRequestBodyUpdate,
+                publicationDate:
+                    verificationRequestBodyUpdate.publicationDate ??
+                    verificationRequest.publicationDate,
+            };
 
             if (verificationRequestBodyUpdate.source?.length) {
                 const newSourceIds = await Promise.all(
@@ -859,21 +860,20 @@ export class MongoVerificationRequestService
                         }
                     )
                 );
-                updatedVerificationRequestData.source = newSourceIds.map(
+                patch.source = newSourceIds.map(
                     (id) => new Types.ObjectId(id)
                 );
             }
 
-            if (
-                postProcess &&
-                Array.isArray(updatedVerificationRequestData.group)
-            ) {
-                updatedVerificationRequestData.group =
-                    await this.handleGroupPostProcessing(
-                        verificationRequest,
-                        updatedVerificationRequestData
-                    );
+            if (postProcess && Array.isArray(patch.group)) {
+                patch.group = await this.handleGroupPostProcessing(
+                    verificationRequest,
+                    patch
+                );
             }
+
+            const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
+                { ...latestVerificationRequest, ...patch };
 
             const user = this.req.user?._id;
 
@@ -890,7 +890,7 @@ export class MongoVerificationRequestService
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
-                updatedVerificationRequestData,
+                { $set: patch },
                 { new: true, upsert: true }
             )
                 .populate("source")
