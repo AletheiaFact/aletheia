@@ -34,6 +34,7 @@ import {
 import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
+    FieldProvenanceMap,
     MAX_RETRY_ATTEMPTS,
     VerificationRequestStatus,
 } from "../dto/types";
@@ -59,6 +60,11 @@ import {
     topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
+import {
+    aiFieldUpdate,
+    humanProvenanceChanges,
+} from "../shared/field-provenance.rules";
+import type { CallbackMeta } from "../../callback-dispatcher/callback-dispatcher.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoVerificationRequestService
@@ -363,7 +369,8 @@ export class MongoVerificationRequestService
 
     async updateFieldByAiTask(
         params: { targetId: string; field: string },
-        result: any
+        result: any,
+        meta: CallbackMeta = {}
     ) {
         const startTime = Date.now();
         const { targetId, field } = params;
@@ -532,11 +539,32 @@ export class MongoVerificationRequestService
                 );
             }
 
+            const { provenance, keepCurrentValue } = aiFieldUpdate(
+                verificationRequest.fieldProvenance,
+                field,
+                {
+                    value: valueToUpdate,
+                    taskId:
+                        meta.taskId ??
+                        verificationRequest.pendingAiTasks?.get(field),
+                    model: meta.model,
+                    at: new Date(),
+                }
+            );
+            if (keepCurrentValue) {
+                this.logger.log(
+                    `Keeping the human value of ${field} on VR ${targetId}, recording the AI answer only`
+                );
+            }
+
             // Use atomic operations to prevent race conditions
             // $set for field updates, $addToSet for array (prevents duplicates), $unset for clearing
             const updateData: any = {
                 $set: {
-                    [field]: valueToUpdate,
+                    ...(keepCurrentValue ? {} : { [field]: valueToUpdate }),
+                    ...(provenance
+                        ? { [`fieldProvenance.${field}`]: provenance }
+                        : {}),
                     [`stateFingerprints.${field}`]: resultHash,
                 },
                 $addToSet: {
@@ -594,6 +622,19 @@ export class MongoVerificationRequestService
             await this.handleStateError(targetId, field, err.message);
             throw error;
         }
+    }
+
+    /**
+     * Dotted $set entries for the fields whose provenance changed, so a
+     * write never replaces the provenance of the other fields.
+     */
+    private provenanceSet(changes: FieldProvenanceMap) {
+        return Object.fromEntries(
+            Object.entries(changes).map(([field, provenance]) => [
+                `fieldProvenance.${field}`,
+                provenance,
+            ])
+        );
     }
 
     /**
@@ -1463,12 +1504,20 @@ export class MongoVerificationRequestService
             );
         }
 
+        const provenance = humanProvenanceChanges(
+            vr.fieldProvenance,
+            { [field]: vr.get(field) },
+            { [field]: value },
+            { userId, at: new Date() }
+        );
+
         // Use atomic operations to prevent race conditions
         const updatedVr = await this.VerificationRequestModel.findByIdAndUpdate(
             vrId,
             {
                 $set: {
                     [field]: value,
+                    ...this.provenanceSet(provenance),
                 },
                 $addToSet: {
                     statesExecuted: field, // Atomic array addition, no duplicates

@@ -78,6 +78,23 @@ export function aiProvenance(
 }
 
 /**
+ * What an AI answer does to a field: the provenance to record (none for
+ * fields outside the triage, like the embedding) and whether the current
+ * value must stay because a human owns it.
+ */
+export function aiFieldUpdate(
+    previous: FieldProvenanceMap | undefined,
+    field: string,
+    ai: { value: any; taskId?: string; model?: string; at: Date }
+): { provenance?: FieldProvenance; keepCurrentValue: boolean } {
+    if (!isTriageField(field)) return { keepCurrentValue: false };
+    return {
+        provenance: aiProvenance(previous?.[field], ai),
+        keepCurrentValue: isHumanOwned(previous?.[field]),
+    };
+}
+
+/**
  * Provenance after a human sets a field. It counts as an edit of the AI
  * triage only when the AI had answered that field before.
  */

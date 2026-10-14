@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { ProvenanceOrigin } from "../dto/types";
 import {
+    aiFieldUpdate,
     aiProvenance,
     creationProvenance,
     humanProvenance,
@@ -124,6 +125,47 @@ describe("field provenance rules", () => {
                 aiTaskId: undefined,
                 aiModel: undefined,
                 aiAt: at,
+            });
+        });
+    });
+
+    describe("aiFieldUpdate", () => {
+        it("records nothing for fields outside the triage", () => {
+            expect(
+                aiFieldUpdate(undefined, "embedding", { value: [0.1], at })
+            ).toEqual({ keepCurrentValue: false });
+        });
+
+        it("replaces a field the AI or the reporter defined", () => {
+            const result = aiFieldUpdate(
+                { severity: { origin: ProvenanceOrigin.AI, aiValue: "low_1" } },
+                "severity",
+                { value: "high_1", taskId: "task-2", at }
+            );
+            expect(result.keepCurrentValue).toBe(false);
+            expect(result.provenance).toMatchObject({
+                origin: ProvenanceOrigin.AI,
+                aiValue: "high_1",
+                aiTaskId: "task-2",
+            });
+        });
+
+        it("keeps the value of a field a human owns", () => {
+            const result = aiFieldUpdate(
+                {
+                    severity: {
+                        origin: ProvenanceOrigin.HUMAN,
+                        humanUserId: "user-1",
+                    },
+                },
+                "severity",
+                { value: "high_1", at }
+            );
+            expect(result.keepCurrentValue).toBe(true);
+            expect(result.provenance).toMatchObject({
+                origin: ProvenanceOrigin.HUMAN,
+                humanUserId: "user-1",
+                aiValue: "high_1",
             });
         });
     });

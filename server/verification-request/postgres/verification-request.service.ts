@@ -52,6 +52,7 @@ import { toError } from "../../util/error-handling";
 import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
+    FieldProvenanceMap,
     MAX_RETRY_ATTEMPTS,
     VerificationRequestStatus,
 } from "../dto/types";
@@ -69,6 +70,11 @@ import {
     topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
+import {
+    aiFieldUpdate,
+    humanProvenanceChanges,
+} from "../shared/field-provenance.rules";
+import type { CallbackMeta } from "../../callback-dispatcher/callback-dispatcher.service";
 import { verificationRequest } from "./schema/verification-request.schema";
 import type {
     VerificationRequestInsert,
@@ -658,7 +664,8 @@ export class PostgresVerificationRequestService
 
     async updateFieldByAiTask(
         params: AiTaskFieldParams,
-        result: any
+        result: any,
+        meta: CallbackMeta = {}
     ): Promise<IVerificationRequest> {
         const startTime = Date.now();
         const { targetId, field } = params;
@@ -700,12 +707,35 @@ export class PostgresVerificationRequestService
                 );
             }
 
+            const { provenance, keepCurrentValue } = aiFieldUpdate(
+                current.fieldProvenance,
+                field,
+                {
+                    value: valueToUpdate,
+                    taskId: meta.taskId ?? current.pendingAiTasks?.[field],
+                    model: meta.model,
+                    at: new Date(),
+                }
+            );
+            if (keepCurrentValue) {
+                this.logger.log(
+                    `Keeping the human value of ${field} on VR ${targetId}, recording the AI answer only`
+                );
+            }
+
             const column =
                 AI_FIELD_COLUMNS[field as keyof typeof AI_FIELD_COLUMNS];
             const [updated] = await this.db
                 .update(verificationRequest)
                 .set({
-                    [column]: valueToUpdate,
+                    ...(keepCurrentValue ? {} : { [column]: valueToUpdate }),
+                    ...(provenance
+                        ? {
+                              fieldProvenance: this.mergeProvenance({
+                                  [field]: provenance,
+                              }),
+                          }
+                        : {}),
                     stateFingerprints: sql`${
                         verificationRequest.stateFingerprints
                     } || ${JSON.stringify({ [field]: resultHash })}::jsonb`,
@@ -1180,6 +1210,12 @@ export class PostgresVerificationRequestService
         return retries;
     }
 
+    private mergeProvenance(entries: FieldProvenanceMap): SQL {
+        return sql`${verificationRequest.fieldProvenance} || ${JSON.stringify(
+            entries
+        )}::jsonb`;
+    }
+
     private appendJson(column: AnyPgColumn, entry: Record<string, any>): SQL {
         return sql`${column} || ${JSON.stringify([entry])}::jsonb`;
     }
@@ -1360,10 +1396,17 @@ export class PostgresVerificationRequestService
                 `manualOverrideField(${field})`
             );
         }
+        const provenance = humanProvenanceChanges(
+            vr.fieldProvenance,
+            { [field]: this.toEntity(vr)[field] },
+            { [field]: value },
+            { userId, at: new Date() }
+        );
         const [updated] = await this.db
             .update(verificationRequest)
             .set({
                 [column]: value,
+                fieldProvenance: this.mergeProvenance(provenance),
                 statesExecuted: this.appendUnique(field),
                 auditLog: this.appendJson(verificationRequest.auditLog, {
                     action: "manual_override",

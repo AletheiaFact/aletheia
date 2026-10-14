@@ -1,3 +1,4 @@
+import type { CallbackMeta } from "../callback-dispatcher/callback-dispatcher.service";
 import type { IVerificationRequest } from "./verification-request.interface";
 import type {
     StatsCount,
@@ -53,7 +54,8 @@ export type IVerificationRequestService = {
     createAiTask(taskDto: any): Promise<any>;
     updateFieldByAiTask(
         params: AiTaskFieldParams,
-        result: any
+        result: any,
+        meta?: CallbackMeta
     ): Promise<IVerificationRequest>;
     revalidateAndRunMissingStates(vr: IVerificationRequest): Promise<void>;
     triggerStateMachineForMissingState(
