@@ -11,6 +11,15 @@ export function isTriageField(field: string): field is TriageField {
     return TRIAGE_FIELDS.includes(field);
 }
 
+// Locale-independent string order, so the canonical form is stable across
+// environments.
+const byString = (x: unknown, y: unknown): number => {
+    const a = String(x);
+    const b = String(y);
+    if (a < b) return -1;
+    return a > b ? 1 : 0;
+};
+
 /**
  * Brings a triage value to a backend-neutral shape: references become id
  * strings (populated documents included) and lists are sorted, since the
@@ -19,7 +28,7 @@ export function isTriageField(field: string): field is TriageField {
 export function normalizeTriageValue(value: any): any {
     if (value === null || value === undefined) return null;
     if (Array.isArray(value)) {
-        return value.map(normalizeTriageValue).sort();
+        return value.map(normalizeTriageValue).sort(byString);
     }
     if (typeof value === "object") {
         return String(value._id ?? value.id ?? value);
