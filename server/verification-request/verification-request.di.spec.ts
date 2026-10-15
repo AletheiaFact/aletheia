@@ -9,6 +9,10 @@ import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
 import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
 
+// The cycle is backend-agnostic; pin the provider to Mongo so the suite also
+// runs in the DB_TYPE=postgres CI jobs.
+vi.mock("../config/db.config", () => ({ default: { type: "mongodb" } }));
+
 // Stands in for the request-scoped services behind "SourceService" & co. in
 // the real module: an async dependency in the tree is what made Nest hand the
 // DB provider factory an unconstructed placeholder of the service.
