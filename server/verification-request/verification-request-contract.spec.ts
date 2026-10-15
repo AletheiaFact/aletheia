@@ -25,7 +25,7 @@ import { ParityRecorder } from "../tests/parity";
 import { topic } from "../topic/postgres/schema/topic.schema";
 import { personality } from "../personality/postgres/schema/personality.schema";
 import { source } from "../source/postgres/schema/source.schema";
-import { VerificationRequestStatus } from "./dto/types";
+import { ProvenanceOrigin, VerificationRequestStatus } from "./dto/types";
 
 type Backend = "postgres" | "mongodb";
 
@@ -1048,6 +1048,297 @@ describe.each(backends)(
                         "u"
                     )
                 ).rejects.toBeInstanceOf(BadRequestException);
+            });
+        });
+
+        describe("field provenance", () => {
+            // A reference comes back as a document or id (Mongo) or as an id string (Postgres)
+            const refOf = (value: any) => String(value?._id ?? value);
+            const provenanceOf = async (vr: any) =>
+                (await service.findByDataHash(vr.data_hash, false))
+                    .fieldProvenance ?? {};
+
+            it("update does not undo an AI answer that lands while it runs", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "low_1",
+                    { taskId: "task-0" }
+                );
+                // Source creation runs between the update's read and write
+                stubs.sourceService.create.mockImplementationOnce(
+                    async (data: { href: string }) => {
+                        await service.updateFieldByAiTask(
+                            { targetId: idOf(vr), field: "severity" },
+                            "high_1",
+                            { taskId: "task-1" }
+                        );
+                        return seed.source(data.href);
+                    }
+                );
+                await service.update(idOf(vr), {
+                    source: [{ href: "https://example.com/a" }],
+                });
+                const after = await service.findByDataHash(vr.data_hash, false);
+                expect(after.severity).toBe("high_1");
+                expect(after.fieldProvenance?.severity?.aiTaskId).toBe("task-1");
+            });
+
+            it("editing topics the AI defined marks them as edited by a human", async () => {
+                const q1 = await seed.topic("Saúde", "Q1");
+                await seed.topic("Outro", "Q2");
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "topics" },
+                    [{ name: "Saúde" }, { name: "Outro" }],
+                    { taskId: "task-1" }
+                );
+                const aiTopics = (await provenanceOf(vr)).topics.aiValue;
+                expect(aiTopics).toHaveLength(2);
+
+                await service.updateVerificationRequestWithTopics(
+                    [{ value: "Q1" }],
+                    vr.data_hash,
+                    "user-1"
+                );
+                const { topics } = await provenanceOf(vr);
+                expect(topics).toMatchObject({
+                    origin: ProvenanceOrigin.AI_EDITED_BY_HUMAN,
+                    aiValue: aiTopics,
+                    aiTaskId: "task-1",
+                    humanUserId: "user-1",
+                });
+                const after = await service.findByDataHash(vr.data_hash, false);
+                expect(after.topics.map(String)).toEqual([idOf(q1)]);
+            });
+
+            it("sending the same topics in another order keeps the AI origin", async () => {
+                await seed.topic("Saúde", "Q1");
+                await seed.topic("Outro", "Q2");
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "topics" },
+                    [{ name: "Saúde" }, { name: "Outro" }]
+                );
+                await service.updateVerificationRequestWithTopics(
+                    [{ value: "Q2" }, { value: "Q1" }],
+                    vr.data_hash,
+                    "user-1"
+                );
+                const { topics } = await provenanceOf(vr);
+                expect(topics.origin).toBe(ProvenanceOrigin.AI);
+                expect(topics.humanUserId).toBeUndefined();
+            });
+
+            it("topics set before the AI answers are human and stay when it does", async () => {
+                const q1 = await seed.topic("Saúde", "Q1");
+                await seed.topic("Outro", "Q2");
+                const vr = await service.create(base());
+                await service.updateVerificationRequestWithTopics(
+                    [{ value: "Q1" }],
+                    vr.data_hash,
+                    "user-1"
+                );
+                expect((await provenanceOf(vr)).topics).toMatchObject({
+                    origin: ProvenanceOrigin.HUMAN,
+                    humanUserId: "user-1",
+                });
+                const updated = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "topics" },
+                    [{ name: "Outro" }]
+                );
+                expect(updated.topics.map(String)).toEqual([idOf(q1)]);
+                expect((await provenanceOf(vr)).topics.origin).toBe(
+                    ProvenanceOrigin.HUMAN
+                );
+            });
+
+            it("update records a human impact area and leaves other fields' provenance alone", async () => {
+                const vr = await service.create(base());
+                const aiAnswered = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "impactArea" },
+                    "Saúde",
+                    { taskId: "task-1" }
+                );
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "high_1"
+                );
+                const education = await seed.topic("Educação");
+
+                await service.update(
+                    idOf(vr),
+                    { status: VerificationRequestStatus.POSTED },
+                    true,
+                    "user-1"
+                );
+                expect((await provenanceOf(vr)).impactArea.origin).toBe(
+                    ProvenanceOrigin.AI
+                );
+
+                await service.update(
+                    idOf(vr),
+                    { impactArea: idOf(education) },
+                    true,
+                    "user-1"
+                );
+                const provenance = await provenanceOf(vr);
+                expect(provenance.impactArea).toMatchObject({
+                    origin: ProvenanceOrigin.AI_EDITED_BY_HUMAN,
+                    aiValue: refOf(aiAnswered.impactArea),
+                    humanUserId: "user-1",
+                });
+                expect(provenance.severity.origin).toBe(ProvenanceOrigin.AI);
+            });
+
+            it("create records the impact area sent by the reporter", async () => {
+                const vr = await service.create(
+                    base({ impactArea: "Saúde" }),
+                    { _id: makeId(), isM2M: false }
+                );
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea).toEqual({
+                    origin: ProvenanceOrigin.REPORTER,
+                    reporterValue: refOf(vr.impactArea),
+                });
+            });
+
+            it("create records the impact area sent by an integration", async () => {
+                const vr = await service.create(base({ impactArea: "Saúde" }), {
+                    isM2M: true,
+                    role: { main: "integration" },
+                });
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea.origin).toBe(ProvenanceOrigin.INTEGRATION);
+            });
+
+            it("create records nothing when no impact area is sent", async () => {
+                const vr = await service.create(base());
+                expect(Object.keys(await provenanceOf(vr))).toEqual([]);
+            });
+
+            it("the AI replaces the impact area sent by the reporter and keeps it", async () => {
+                const vr = await service.create(base({ impactArea: "Saúde" }));
+                const reported = refOf(vr.impactArea);
+                const updated = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "impactArea" },
+                    "Educação"
+                );
+                expect(refOf(updated.impactArea)).not.toBe(reported);
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea).toMatchObject({
+                    origin: ProvenanceOrigin.AI,
+                    reporterValue: reported,
+                    aiValue: refOf(updated.impactArea),
+                });
+            });
+
+            it("updateFieldByAiTask records the AI origin, task and model of a triage field", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    { severity: "high_1" },
+                    { taskId: "task-1", model: "jev-1.13.0" }
+                );
+                const { severity } = await provenanceOf(vr);
+                expect(severity).toMatchObject({
+                    origin: ProvenanceOrigin.AI,
+                    aiValue: "high_1",
+                    aiTaskId: "task-1",
+                    aiModel: "jev-1.13.0",
+                });
+                expect(severity.aiAt).toBeDefined();
+            });
+
+            it("updateFieldByAiTask falls back to the pending task id and stores reference values as ids", async () => {
+                const vr = await service.create(base());
+                const { taskId } = await service.createAiTask({
+                    type: "DEFINING_IMPACT_AREA",
+                    callbackParams: { targetId: idOf(vr), field: "impactArea" },
+                } as any);
+                const updated = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "impactArea" },
+                    "Saúde"
+                );
+                const { impactArea } = await provenanceOf(vr);
+                expect(impactArea).toMatchObject({
+                    origin: ProvenanceOrigin.AI,
+                    aiTaskId: String(taskId),
+                    aiValue: String(updated.impactArea),
+                });
+            });
+
+            it("updateFieldByAiTask records nothing for the embedding", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "embedding" },
+                    [0.1, 0.2],
+                    { taskId: "task-1" }
+                );
+                expect(Object.keys(await provenanceOf(vr))).toEqual([]);
+            });
+
+            it("manualOverrideField marks an AI answered field as edited by a human and keeps the AI value", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "high_1",
+                    { taskId: "task-1" }
+                );
+                await service.manualOverrideField(
+                    idOf(vr),
+                    "severity",
+                    "low_1",
+                    "user-1"
+                );
+                const { severity } = await provenanceOf(vr);
+                expect(severity).toMatchObject({
+                    origin: ProvenanceOrigin.AI_EDITED_BY_HUMAN,
+                    aiValue: "high_1",
+                    aiTaskId: "task-1",
+                    humanUserId: "user-1",
+                });
+                expect(severity.humanAt).toBeDefined();
+            });
+
+            it("manualOverrideField with the value the AI gave keeps the AI origin", async () => {
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "high_1"
+                );
+                await service.manualOverrideField(
+                    idOf(vr),
+                    "severity",
+                    "high_1",
+                    "user-1"
+                );
+                const { severity } = await provenanceOf(vr);
+                expect(severity.origin).toBe(ProvenanceOrigin.AI);
+                expect(severity.humanUserId).toBeUndefined();
+            });
+
+            it("updateFieldByAiTask keeps a value a human set and only records the AI answer", async () => {
+                const vr = await service.create(base());
+                await service.manualOverrideField(
+                    idOf(vr),
+                    "severity",
+                    "low_1",
+                    "user-1"
+                );
+                const updated = await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "severity" },
+                    "high_1",
+                    { taskId: "task-2", model: "jev-1.13.0" }
+                );
+                expect(updated.severity).toBe("low_1");
+                const { severity } = await provenanceOf(vr);
+                expect(severity).toMatchObject({
+                    origin: ProvenanceOrigin.HUMAN,
+                    humanUserId: "user-1",
+                    aiValue: "high_1",
+                    aiTaskId: "task-2",
+                });
             });
         });
 

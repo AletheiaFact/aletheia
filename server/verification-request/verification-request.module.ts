@@ -104,7 +104,7 @@ export class VerificationRequestModule implements OnModuleInit {
         // Register callback for embedding updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_EMBEDDING,
-            async (params, result) => {
+            async (params, result, meta) => {
                 this.logger.debug(
                     `EMBEDDING callback invoked with params: ${JSON.stringify(
                         params
@@ -114,14 +114,18 @@ export class VerificationRequestModule implements OnModuleInit {
                     await this.moduleRef.resolve<IVerificationRequestService>(
                         "VerificationRequestService"
                     );
-                return verificationService.updateFieldByAiTask(params, result);
+                return verificationService.updateFieldByAiTask(
+                    params,
+                    result,
+                    meta
+                );
             }
         );
 
         // Register callback for identifying data updates (legacy, kept for compatibility)
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_IDENTIFYING_DATA,
-            async (params, result) => {
+            async (params, result, meta) => {
                 this.logger.debug(
                     `IDENTIFYING_DATA callback invoked with params: ${JSON.stringify(
                         params
@@ -131,14 +135,18 @@ export class VerificationRequestModule implements OnModuleInit {
                     await this.moduleRef.resolve<IVerificationRequestService>(
                         "VerificationRequestService"
                     );
-                return verificationService.updateFieldByAiTask(params, result);
+                return verificationService.updateFieldByAiTask(
+                    params,
+                    result,
+                    meta
+                );
             }
         );
 
         // Register callback for topics updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_TOPICS,
-            async (params, result) => {
+            async (params, result, meta) => {
                 this.logger.debug(
                     `TOPICS callback invoked with params: ${JSON.stringify(
                         params
@@ -148,14 +156,18 @@ export class VerificationRequestModule implements OnModuleInit {
                     await this.moduleRef.resolve<IVerificationRequestService>(
                         "VerificationRequestService"
                     );
-                return verificationService.updateFieldByAiTask(params, result);
+                return verificationService.updateFieldByAiTask(
+                    params,
+                    result,
+                    meta
+                );
             }
         );
 
         // Register callback for impact area updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,
-            async (params, result) => {
+            async (params, result, meta) => {
                 this.logger.debug(
                     `IMPACT_AREA callback invoked with params: ${JSON.stringify(
                         params
@@ -165,14 +177,18 @@ export class VerificationRequestModule implements OnModuleInit {
                     await this.moduleRef.resolve<IVerificationRequestService>(
                         "VerificationRequestService"
                     );
-                return verificationService.updateFieldByAiTask(params, result);
+                return verificationService.updateFieldByAiTask(
+                    params,
+                    result,
+                    meta
+                );
             }
         );
 
         // Register callback for severity updates
         this.dispatcher.register(
             CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
-            async (params, result) => {
+            async (params, result, meta) => {
                 this.logger.debug(
                     `SEVERITY callback invoked with params: ${JSON.stringify(
                         params
@@ -182,7 +198,11 @@ export class VerificationRequestModule implements OnModuleInit {
                     await this.moduleRef.resolve<IVerificationRequestService>(
                         "VerificationRequestService"
                     );
-                return verificationService.updateFieldByAiTask(params, result);
+                return verificationService.updateFieldByAiTask(
+                    params,
+                    result,
+                    meta
+                );
             }
         );
     }

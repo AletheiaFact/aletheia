@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { vector } from "../../../database/postgres/vector.type";
+import type { FieldProvenanceMap } from "../../dto/types";
 
 // Global (the Mongo schema has no nameSpace). Reference columns land without
 // FKs per D3: impact_area_id/topic_ids → topic, identified_data_ids →
@@ -81,6 +82,10 @@ export const verificationRequest = pgTable(
             .default([]),
         pendingAiTasks: jsonb("pending_ai_tasks")
             .$type<Record<string, string>>()
+            .notNull()
+            .default({}),
+        fieldProvenance: jsonb("field_provenance")
+            .$type<FieldProvenanceMap>()
             .notNull()
             .default({}),
         isDeleted: boolean("is_deleted").notNull().default(false),

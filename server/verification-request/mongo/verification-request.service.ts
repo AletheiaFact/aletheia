@@ -34,6 +34,7 @@ import {
 import {
     AI_TASK_TIMEOUT,
     EXPECTED_STATES,
+    FieldProvenanceMap,
     MAX_RETRY_ATTEMPTS,
     VerificationRequestStatus,
 } from "../dto/types";
@@ -59,6 +60,13 @@ import {
     topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
+import {
+    aiFieldUpdate,
+    creationProvenance,
+    humanProvenanceChanges,
+    sentByIntegration,
+} from "../shared/field-provenance.rules";
+import type { CallbackMeta } from "../../callback-dispatcher/callback-dispatcher.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoVerificationRequestService
@@ -252,6 +260,12 @@ export class MongoVerificationRequestService
                         impactArea
                     );
                     vr.impactArea = topic._id;
+                    vr.fieldProvenance = {
+                        impactArea: creationProvenance(
+                            topic._id,
+                            sentByIntegration(user)
+                        ),
+                    };
                     await vr.save();
                 } else {
                     // Unknown areas are dropped so the AI triage defines one
@@ -363,7 +377,8 @@ export class MongoVerificationRequestService
 
     async updateFieldByAiTask(
         params: { targetId: string; field: string },
-        result: any
+        result: any,
+        meta: CallbackMeta = {}
     ) {
         const startTime = Date.now();
         const { targetId, field } = params;
@@ -532,11 +547,32 @@ export class MongoVerificationRequestService
                 );
             }
 
+            const { provenance, keepCurrentValue } = aiFieldUpdate(
+                verificationRequest.fieldProvenance,
+                field,
+                {
+                    value: valueToUpdate,
+                    taskId:
+                        meta.taskId ??
+                        verificationRequest.pendingAiTasks?.get(field),
+                    model: meta.model,
+                    at: new Date(),
+                }
+            );
+            if (keepCurrentValue) {
+                this.logger.log(
+                    `Keeping the human value of ${field} on VR ${targetId}, recording the AI answer only`
+                );
+            }
+
             // Use atomic operations to prevent race conditions
             // $set for field updates, $addToSet for array (prevents duplicates), $unset for clearing
             const updateData: any = {
                 $set: {
-                    [field]: valueToUpdate,
+                    ...(keepCurrentValue ? {} : { [field]: valueToUpdate }),
+                    ...(provenance
+                        ? { [`fieldProvenance.${field}`]: provenance }
+                        : {}),
                     [`stateFingerprints.${field}`]: resultHash,
                 },
                 $addToSet: {
@@ -594,6 +630,19 @@ export class MongoVerificationRequestService
             await this.handleStateError(targetId, field, err.message);
             throw error;
         }
+    }
+
+    /**
+     * Dotted $set entries for the fields whose provenance changed, so a
+     * write never replaces the provenance of the other fields.
+     */
+    private provenanceSet(changes: FieldProvenanceMap) {
+        return Object.fromEntries(
+            Object.entries(changes).map(([field, provenance]) => [
+                `fieldProvenance.${field}`,
+                provenance,
+            ])
+        );
     }
 
     /**
@@ -774,7 +823,8 @@ export class MongoVerificationRequestService
     async update(
         verificationRequestId: string,
         verificationRequestBodyUpdate: Record<string, any>,
-        postProcess: boolean = true
+        postProcess: boolean = true,
+        userId?: string
     ): Promise<VerificationRequestDocument> {
         try {
             const verificationRequest =
@@ -788,14 +838,15 @@ export class MongoVerificationRequestService
 
             const latestVerificationRequest = verificationRequest.toObject();
 
-            const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
-                {
-                    ...latestVerificationRequest,
-                    ...verificationRequestBodyUpdate,
-                    publicationDate:
-                        verificationRequestBodyUpdate.publicationDate ??
-                        verificationRequest.publicationDate,
-                };
+            // Only the fields this update sets: writing the whole document
+            // back would undo concurrent writes to other fields, like an AI
+            // callback landing between the read above and the write below.
+            const patch: Record<string, any> = {
+                ...verificationRequestBodyUpdate,
+                publicationDate:
+                    verificationRequestBodyUpdate.publicationDate ??
+                    verificationRequest.publicationDate,
+            };
 
             if (verificationRequestBodyUpdate.source?.length) {
                 const newSourceIds = await Promise.all(
@@ -810,23 +861,29 @@ export class MongoVerificationRequestService
                         }
                     )
                 );
-                updatedVerificationRequestData.source = newSourceIds.map(
+                patch.source = newSourceIds.map(
                     (id) => new Types.ObjectId(id)
                 );
             }
 
-            if (
-                postProcess &&
-                Array.isArray(updatedVerificationRequestData.group)
-            ) {
-                updatedVerificationRequestData.group =
-                    await this.handleGroupPostProcessing(
-                        verificationRequest,
-                        updatedVerificationRequestData
-                    );
+            if (postProcess && Array.isArray(patch.group)) {
+                patch.group = await this.handleGroupPostProcessing(
+                    verificationRequest,
+                    patch
+                );
             }
 
-            const user = this.req.user?._id;
+            const updatedVerificationRequestData: UpdateQuery<VerificationRequest> =
+                { ...latestVerificationRequest, ...patch };
+
+            const user = userId ?? this.req.user?._id;
+
+            const provenance = humanProvenanceChanges(
+                latestVerificationRequest.fieldProvenance,
+                latestVerificationRequest,
+                patch,
+                { userId, at: new Date() }
+            );
 
             const history = this.historyService.getHistoryParams(
                 verificationRequest._id,
@@ -841,7 +898,7 @@ export class MongoVerificationRequestService
 
             return await this.VerificationRequestModel.findByIdAndUpdate(
                 verificationRequest._id,
-                updatedVerificationRequestData,
+                { $set: { ...patch, ...this.provenanceSet(provenance) } },
                 { new: true, upsert: true }
             )
                 .populate("source")
@@ -1037,7 +1094,8 @@ export class MongoVerificationRequestService
 
     async updateVerificationRequestWithTopics(
         topics: Array<{ value?: string; wikidataId?: string } | string>,
-        data_hash: string
+        data_hash: string,
+        userId?: string
     ): Promise<VerificationRequestDocument | null> {
         const verificationRequest = await this.findByDataHash(data_hash, false);
         if (!verificationRequest) {
@@ -1055,7 +1113,7 @@ export class MongoVerificationRequestService
             topics: topicIds,
         };
 
-        const user = this.req.user?._id;
+        const user = userId ?? this.req.user?._id;
 
         const history = this.historyService.getHistoryParams(
             verificationRequest._id,
@@ -1068,9 +1126,18 @@ export class MongoVerificationRequestService
 
         await this.historyService.createHistory(history as any);
 
+        const provenance = humanProvenanceChanges(
+            latestVerificationRequest.fieldProvenance,
+            latestVerificationRequest,
+            { topics: topicIds },
+            { userId, at: new Date() }
+        );
+
+        // Only the topics (and their provenance): writing the whole document
+        // back would undo concurrent AI callbacks, as in update()
         return this.VerificationRequestModel.findByIdAndUpdate(
             { _id: verificationRequest._id },
-            newVerificationRequest
+            { $set: { topics: topicIds, ...this.provenanceSet(provenance) } }
         ).exec();
     }
 
@@ -1463,12 +1530,20 @@ export class MongoVerificationRequestService
             );
         }
 
+        const provenance = humanProvenanceChanges(
+            vr.fieldProvenance,
+            { [field]: vr.get(field) },
+            { [field]: value },
+            { userId, at: new Date() }
+        );
+
         // Use atomic operations to prevent race conditions
         const updatedVr = await this.VerificationRequestModel.findByIdAndUpdate(
             vrId,
             {
                 $set: {
                     [field]: value,
+                    ...this.provenanceSet(provenance),
                 },
                 $addToSet: {
                     statesExecuted: field, // Atomic array addition, no duplicates
