@@ -40,7 +40,7 @@ const lifecycleEventForm: FormField[] = [
     }),
     createFormField({
         fieldName: "mainTopic",
-        type: "selectImpactArea", //standardize the type and component to a more generic name
+        type: "selectTopic",
         defaultValue: "",
         hasTooltip: true,
         i18nNamespace: "events",

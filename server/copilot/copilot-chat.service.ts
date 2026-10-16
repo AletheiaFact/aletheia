@@ -86,22 +86,27 @@ export class CopilotChatService {
                     .describe(
                         "Context provided by the user to construct the fact-checking report"
                     ),
+                // Not .default(): Zod 4 marks defaulted fields required in the LLM's JSON schema.
                 searchType: z
-                    .nativeEnum(SearchType)
+                    .enum(SearchType)
+                    .optional()
                     .describe(
                         "The search type provided by the user, must be a valid enum value"
-                    )
-                    .default(SearchType.online),
+                    ),
             }),
             func: async (data: {
                 claim: string;
                 context: any;
-                searchType: SearchType;
+                searchType?: SearchType;
             }) => {
                 try {
                     const { stream, json, executionId } =
                         await this.automatedFactCheckingService.getResponseFromAgents(
-                            data,
+                            {
+                                ...data,
+                                searchType:
+                                    data.searchType ?? SearchType.online,
+                            },
                             sessionId
                         );
 

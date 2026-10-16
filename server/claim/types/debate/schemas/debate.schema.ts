@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Speech } from "../../speech/schemas/speech.schema";
+import { Speech } from "../../speech/mongo/schemas/speech.schema";
 import * as mongoose from "mongoose";
-import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/mongo/schemas/claim-revision.schema";
 
 export type DebateDocument = Debate & mongoose.Document;
 

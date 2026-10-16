@@ -5,6 +5,7 @@ import {
     Get,
     Header,
     Logger,
+    Inject,
     Optional,
     Param,
     Post,
@@ -12,7 +13,7 @@ import {
     Req,
     Res,
 } from "@nestjs/common";
-import { SourceService } from "./source.service";
+import type { ISourceService } from "../interfaces/source.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 import type { BaseRequest } from "../types";
 import { parse } from "url";
@@ -33,7 +34,8 @@ import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 export class SourceController {
     private readonly logger = new Logger("SourceController");
     constructor(
-        private sourceService: SourceService,
+        @Inject("SourceService")
+        private sourceService: ISourceService,
         private viewService: ViewService,
         private configService: ConfigService,
         private captchaService: CaptchaService,

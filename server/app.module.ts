@@ -69,6 +69,8 @@ import { CommitteeInterestModule } from "./committee-interest/committee-interest
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
 import { ManagementModule } from "./management/management.module";
+import { PostgresModule } from "./database/postgres/postgres.module";
+import dbConfig from "./config/db.config";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -81,6 +83,13 @@ export class AppModule implements NestModule {
     }
 
     static register(options: any): DynamicModule {
+        if (options.db.type !== dbConfig.type) {
+            throw new Error(
+                `DB type mismatch: AppModule received options.db.type='${options.db.type}' but ` +
+                    `dbConfig.type (process.env.DB_TYPE ?? "mongodb") resolved to '${dbConfig.type}'. ` +
+                    `These must agree — set DB_TYPE env var to match config.yaml, or vice versa.`
+            );
+        }
         const imports: Array<DynamicModule | typeof NotificationModule> = [];
         if (options.db.type === "mongodb") {
             imports.push(
@@ -89,6 +98,8 @@ export class AppModule implements NestModule {
                     options.db.options
                 )
             );
+        } else if (options.db.type === "postgres") {
+            imports.push(PostgresModule.forRoot(options.db.postgres));
         } else {
             throw new Error("Invalid DB_TYPE in configuration");
         }
@@ -120,18 +131,18 @@ export class AppModule implements NestModule {
                 CallbackDispatcherModule,
                 WikidataModule,
                 PersonalityModule.register(),
-                ClaimModule,
+                ClaimModule.register(),
                 ClaimReviewModule,
                 ReviewTaskModule,
-                ClaimRevisionModule,
+                ClaimRevisionModule.register(),
                 HistoryModule,
                 TrackingModule,
                 EventsModule,
                 ManagementModule,
                 StateEventModule,
-                SourceModule,
-                SpeechModule,
-                ParagraphModule,
+                SourceModule.register(),
+                SpeechModule.register(),
+                ParagraphModule.register(),
                 SentenceModule,
                 StatsModule,
                 ViewModule,
@@ -141,12 +152,12 @@ export class AppModule implements NestModule {
                 ReportModule,
                 CaptchaModule,
                 ImageModule,
-                TopicModule,
+                TopicModule.register(),
                 SearchModule,
                 FileManagementModule,
                 DebateModule,
                 EditorModule,
-                BadgeModule,
+                BadgeModule.register(),
                 EditorParseModule,
                 NotificationModule,
                 CommentModule,
@@ -154,13 +165,13 @@ export class AppModule implements NestModule {
                 AutomatedFactCheckingModule,
                 LlmModule,
                 CopilotChatModule,
-                UnattributedModule,
+                UnattributedModule.register(),
                 DailyReportModule,
                 SummarizationCrawlerModule,
                 ChatbotModule,
-                VerificationRequestModule,
+                VerificationRequestModule.register(),
                 FeatureFlagModule,
-                GroupModule,
+                GroupModule.register(),
                 AiTaskModule,
                 CommitteeInterestModule,
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters

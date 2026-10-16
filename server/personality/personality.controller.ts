@@ -27,6 +27,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { toError } from "../util/error-handling";
+import { DuplicateKeyError } from "../database/errors";
 
 @Controller(":namespace?")
 export class PersonalityController {
@@ -54,6 +55,12 @@ export class PersonalityController {
         try {
             return await this.personalityService.create(createPersonality);
         } catch (error) {
+            // Backend-neutral duplicate-key errors (Postgres path) surface as
+            // HTTP 409 via AllExceptionsFilter. The Mongo path below keeps its
+            // historical swallow-and-log behavior (documented divergence).
+            if (error instanceof DuplicateKeyError) {
+                throw error;
+            }
             const err = toError(error);
             if (
                 err.name === "MongoError" &&

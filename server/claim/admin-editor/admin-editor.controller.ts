@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Logger, Param, Post } from "@nestjs/common";
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Controller, Get, Logger, Param, Post } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AdminOnly } from "../../auth/decorators/auth.decorator";
-import { ZodValidationPipe } from "../../ai-task/pipes/zod-validation.pipe";
+import { ZodBody } from "../../common/validation";
 import { AdminEditorService } from "./admin-editor.service";
 import {
     ClaimEditCommitRequestDto,
@@ -32,13 +32,12 @@ export class AdminEditorController {
     @ApiOperation({
         summary: "Apply the edit and cascade updates atomically",
     })
-    @ApiBody({ description: "ClaimEditCommitRequest" })
     @ApiResponse({ status: 200, description: "Commit succeeded" })
     @ApiResponse({ status: 400, description: "Validation failure" })
     @ApiResponse({ status: 409, description: "Concurrency conflict" })
     commit(
         @Param("id") id: string,
-        @Body(new ZodValidationPipe(ClaimEditCommitRequestSchema))
+        @ZodBody(ClaimEditCommitRequestSchema)
         payload: ClaimEditCommitRequestDto
     ) {
         return this.service.commit(id, payload);

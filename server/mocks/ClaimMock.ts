@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import type { ClaimDocument } from "../claim/schemas/claim.schema";
+import type { ClaimDocument } from "../claim/mongo/schemas/claim.schema";
 import type { ImageDocument } from "../claim/types/image/schemas/image.schema";
 import type { PersonalityDocument } from "../personality/mongo/schemas/personality.schema";
 
@@ -30,8 +30,7 @@ export const mockImageService = () => ({
  * Mock factory for PersonalityService matching actual service interface
  */
 export const mockPersonalityService = () => ({
-    getPersonalityBySlug:
-        vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
+    getPersonalityBySlug: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
     listAll: vi.fn<() => Promise<Partial<PersonalityDocument>[]>>(),
     getById: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),
     create: vi.fn<() => Promise<Partial<PersonalityDocument>>>(),

@@ -14,14 +14,14 @@ import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
 import { SaveDraftDTO } from "./dto/save-draft.dto";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ReportService } from "../report/report.service";
+import type { IReportService } from "../interfaces/report.service.interface";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
@@ -35,8 +35,8 @@ import { CommentService } from "./comment/comment.service";
 import { CommentEnum } from "./comment/schema/comment.schema";
 import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
-import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
-import { Source } from "../source/schemas/source.schema";
+import type { ISentence } from "../interfaces/claim-content.interface";
+import { Source } from "../source/mongo/schemas/source.schema";
 
 interface IListAllQuery {
     value: any;
@@ -56,7 +56,7 @@ interface IPostProcess {
 }
 
 export interface IReviewTask {
-    content: Source | Sentence | Image;
+    content: Source | ISentence | Image;
     usersName: string[];
     value: string;
     personalityName?: string;
@@ -75,10 +75,10 @@ export class ReviewTaskService {
         @InjectModel(ReviewTask.name)
         private ReviewTaskModel: Model<ReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService,
+        @Inject("ReportService") private reportService: IReportService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private sentenceService: SentenceService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private commentService: CommentService
@@ -348,7 +348,7 @@ export class ReviewTaskService {
         const claimTitle = latestRevision?.title;
         const isContentImage = contentModel === ContentModelEnum.Image;
 
-        let content: Source | Sentence | Image = target;
+        let content: Source | ISentence | Image = target;
 
         if (reviewTaskType === ReviewTaskTypeEnum.Claim && latestRevision) {
             if (isContentImage) {
@@ -449,7 +449,7 @@ export class ReviewTaskService {
             newReviewTask._id
         );
 
-        this.stateEventService.createStateEvent(stateEvent as any);
+        void this.stateEventService.createStateEvent(stateEvent as any);
     }
 
     async _createReportAndClaimReview(
@@ -469,7 +469,7 @@ export class ReviewTaskService {
 
         const report = await this.reportService.create(newReport);
 
-        this.claimReviewService.create(
+        void this.claimReviewService.create(
             {
                 ...reviewData,
                 report,
@@ -538,7 +538,7 @@ export class ReviewTaskService {
         }
 
         if (reviewDataBody.reviewComments) {
-            this.commentService.updateManyComments(
+            void this.commentService.updateManyComments(
                 reviewDataBody.reviewComments
             );
             reviewTaskBody.machine.context.reviewData.reviewComments =
@@ -581,8 +581,8 @@ export class ReviewTaskService {
                     `user=${this.req.user?._id}`
             );
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
-            newReviewTask.save();
-            this._createReviewTaskHistory(newReviewTask);
+            void newReviewTask.save();
+            void this._createReviewTaskHistory(newReviewTask);
             this._createStateEvent(newReviewTask);
             return newReviewTask;
         }
@@ -622,7 +622,7 @@ export class ReviewTaskService {
         );
 
         if (history) {
-            this._createReviewTaskHistory(newReviewTask, reviewTask);
+            void this._createReviewTaskHistory(newReviewTask, reviewTask);
             this._createStateEvent(newReviewTask);
         }
 
@@ -1044,7 +1044,7 @@ export class ReviewTaskService {
                 `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
                     `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
             );
-            this._createReportAndClaimReview(
+            void this._createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,
                 reportModel,

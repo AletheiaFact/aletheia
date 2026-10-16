@@ -6,7 +6,7 @@ import {
     IsOptional,
     IsString,
 } from "class-validator";
-import { Badge } from "../../badge/schemas/badge.schema";
+import { Badge } from "../../badge/mongo/schemas/badge.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateUserDTO {
