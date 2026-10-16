@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
+import { Claim } from "../../claim/mongo/schemas/claim.schema";
 import { ReviewTask } from "../../review-task/schemas/review-task.schema";
 
 export type StateEventDocument = StateEvent & mongoose.Document;
@@ -12,7 +12,11 @@ export enum TypeModel {
     Published = "published",
 }
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class StateEvent {
     @Prop({
         type: mongoose.Types.ObjectId,

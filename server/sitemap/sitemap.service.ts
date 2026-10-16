@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
-import { ClaimService } from "../claim/claim.service";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { toError } from "../util/error-handling";
@@ -11,7 +11,7 @@ export class SitemapService {
     constructor(
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService,
+        @Inject("ClaimService") private claimService: IClaimService,
         private claimReviewService: ClaimReviewService
     ) {}
     private readonly logger = new Logger("SitemapService");
@@ -82,7 +82,8 @@ export class SitemapService {
         } catch (error) {
             const err = toError(error);
             const message =
-                "Error while submitting sitemap to search engine: " + err.message;
+                "Error while submitting sitemap to search engine: " +
+                err.message;
             this.logger.error(message);
             return message;
         }

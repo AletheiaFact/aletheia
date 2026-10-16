@@ -29,3 +29,14 @@ export function defaultDescription(
 ): string {
     return wikidataDescription || `Personality: ${name}`;
 }
+
+/** Claims carry their parsed content; listings only need its text. */
+export function extractClaimWithTextSummary(claims: any) {
+    const list = Array.isArray(claims) ? claims : [claims];
+    return list.map((claim: any) => {
+        if (!claim.content) {
+            return claim;
+        }
+        return { ...claim, content: claim.content.text };
+    });
+}

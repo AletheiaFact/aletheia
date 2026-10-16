@@ -14,6 +14,11 @@ export function createDbServiceProvider<TInterface>(
     mongoClass: Type<unknown>,
     postgresClass: Type<unknown>
 ): Provider {
+    if (!mongoClass || !postgresClass) {
+        throw new Error(
+            `createDbServiceProvider(${token}): an implementation class is undefined (import cycle?)`
+        );
+    }
     return {
         provide: token,
         useFactory: (mongoService: unknown, pgService: unknown): TInterface => {

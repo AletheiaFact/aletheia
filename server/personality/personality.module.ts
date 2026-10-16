@@ -48,7 +48,7 @@ export class PersonalityModule {
                 ...imports,
                 WikidataModule,
                 ClaimReviewModule,
-                ClaimRevisionModule,
+                ClaimRevisionModule.register(),
                 HistoryModule,
                 ViewModule,
                 ConfigModule,

@@ -15,7 +15,11 @@ import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
 import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
 import { eq, and, sql, desc, asc } from "drizzle-orm";
-import { deriveSlug, defaultDescription } from "../shared/personality.rules";
+import {
+    deriveSlug,
+    defaultDescription,
+    extractClaimWithTextSummary,
+} from "../shared/personality.rules";
 import { personality } from "./schema/personality.schema";
 import type {
     PersonalityInsert,
@@ -395,11 +399,8 @@ export class PostgresPersonalityService implements IPersonalityService {
             );
         return c;
     }
-    extractClaimWithTextSummary(_claims: any): any {
-        throw new NotImplementedError(
-            "postgres",
-            "extractClaimWithTextSummary"
-        );
+    extractClaimWithTextSummary(claims: any): any {
+        return extractClaimWithTextSummary(claims);
     }
     verifyInputsQuery(query: any): any {
         // Ported verbatim from the Mongo impl. The returned shape is a Mongo

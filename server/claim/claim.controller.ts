@@ -1,13 +1,10 @@
 import {
     BadRequestException,
-    Body,
     Controller,
     Get,
     Logger,
-    Param,
     Post,
     Put,
-    Query,
     Redirect,
     Req,
     Res,
@@ -16,41 +13,59 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimService } from "./claim.service";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
-import * as mongoose from "mongoose";
-import { CreateClaimDTO } from "./dto/create-claim.dto";
-import { GetClaimsDTO } from "./dto/get-claims.dto";
-import { UpdateClaimDTO } from "./dto/update-claim.dto";
+import { entityId } from "../../lib/schemas";
+import {
+    ClaimCreatePageQuerySchema,
+    CreateClaimSchema,
+    CreateDebateClaimSchema,
+    CreateImageClaimSchema,
+    CreateUnattributedClaimSchema,
+    GetClaimQuerySchema,
+    ListClaimsQuerySchema,
+    UpdateClaimSchema,
+    UpdateDebateSchema,
+    UpdateHiddenStatusSchema,
+} from "./dto/claim.dto";
+import type {
+    ClaimCreatePageQueryDto,
+    CreateClaimDto,
+    CreateDebateClaimDto,
+    CreateImageClaimDto,
+    CreateUnattributedClaimDto,
+    GetClaimQueryDto,
+    ListClaimsQueryDto,
+    UpdateClaimDto,
+    UpdateDebateDto,
+    UpdateHiddenStatusDto,
+} from "./dto/claim.dto";
+import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { SentenceService } from "./types/sentence/sentence.service";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
-import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
+import type { ISentence } from "../interfaces/claim-content.interface";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
-import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
-import { UpdateDebateDto } from "./dto/update-debate.dto";
 import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
-import { Types, UpdateWriteOpResult } from "mongoose";
 import type { IGroupService } from "../interfaces/group.service.interface";
 import { GetByDataHashDto } from "../claim/dto/get-by-datahash.dto";
-import { UpdateHiddenStatusDTO } from "./dto/update-hidden-status.dto";
 
 @Controller(":namespace?")
 export class ClaimController {
@@ -60,8 +75,8 @@ export class ClaimController {
         private reviewTaskService: ReviewTaskService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService,
-        private sentenceService: SentenceService,
+        @Inject("ClaimService") private claimService: IClaimService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private configService: ConfigService,
         private viewService: ViewService,
         private captchaService: CaptchaService,
@@ -70,12 +85,13 @@ export class ClaimController {
         private editorService: EditorService,
         private parserService: ParserService,
         private historyService: HistoryService,
-        private claimRevisionService: ClaimRevisionService,
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService,
         private featureFlagService: FeatureFlagService,
         @Inject("GroupService") private groupService: IGroupService
     ) {}
 
-    _verifyInputsQuery(query: GetClaimsDTO) {
+    _verifyInputsQuery(query: ListClaimsQueryDto) {
         const inputs: any = {
             isHidden: query.isHidden,
         };
@@ -83,9 +99,7 @@ export class ClaimController {
             inputs.nameSpace = query.nameSpace;
         }
         if (query.personality && !query.isHidden) {
-            inputs.personalities = new mongoose.Types.ObjectId(
-                query.personality as string
-            );
+            inputs.personalities = query.personality;
         }
 
         return inputs;
@@ -95,8 +109,10 @@ export class ClaimController {
     @ApiTags("claim")
     @Get("api/claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async listAll(@Query() getClaimsDTO: GetClaimsDTO) {
-        const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
+    async listAll(
+        @ZodQuery(ListClaimsQuerySchema) getClaimsDTO: ListClaimsQueryDto
+    ) {
+        const { page, pageSize, order } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
 
         try {
@@ -128,7 +144,7 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO) {
+    async create(@ZodBody(CreateClaimSchema) createClaimDTO: CreateClaimDto) {
         const claim = await this._createClaim(createClaimDTO);
         const personality = await this.personalityService.getById(
             claim.personalities[0]
@@ -148,7 +164,9 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim/image")
-    async createClaimImage(@Body() createClaimDTO: any) {
+    async createClaimImage(
+        @ZodBody(CreateImageClaimSchema) createClaimDTO: CreateImageClaimDto
+    ) {
         const claim = await this._createClaim(createClaimDTO);
 
         const personality = claim.personalities[0]
@@ -169,7 +187,7 @@ export class ClaimController {
     @ApiTags("claim")
     @Post("api/claim/debate")
     async createClaimDebate(
-        @Body() createClaimDTO: CreateDebateClaimDTO,
+        @ZodBody(CreateDebateClaimSchema) createClaimDTO: CreateDebateClaimDto,
         @Req() req: BaseRequest
     ) {
         const claim = await this._createClaim(createClaimDTO);
@@ -192,7 +210,10 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim/unattributed")
-    async createUnattributedClaim(@Body() createClaimDTO: any) {
+    async createUnattributedClaim(
+        @ZodBody(CreateUnattributedClaimSchema)
+        createClaimDTO: CreateUnattributedClaimDto
+    ) {
         const claim = await this._createClaim(createClaimDTO, true);
 
         return {
@@ -207,20 +228,20 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/debate/:debateId")
     async updateClaimDebate(
-        @Param("debateId") debateId: string,
-        @Body() updateClaimDebateDto: UpdateDebateDto
+        @ZodParam("debateId", entityId) debateId: string,
+        @ZodBody(UpdateDebateSchema) updateClaimDebateDto: UpdateDebateDto
     ) {
         const { content, personality, isLive } = updateClaimDebateDto;
         let newSpeech;
 
         const claimRevision = await this.claimRevisionService.getByContentId(
-            new Types.ObjectId(debateId)
+            debateId
         );
 
         if (!claimRevision) {
             throw new NotFoundException();
         }
-        const claimRevisionId = new Types.ObjectId(claimRevision._id);
+        const claimRevisionId = claimRevision._id;
 
         if (content && personality) {
             newSpeech = await this.parserService.parse(
@@ -237,14 +258,20 @@ export class ClaimController {
     }
 
     private async _createClaim(
-        createClaimDTO: CreateClaimDTO | CreateDebateClaimDTO,
+        createClaimDTO:
+            | CreateClaimDto
+            | CreateImageClaimDto
+            | CreateDebateClaimDto
+            | CreateUnattributedClaimDto,
         overrideCaptchaValidation = false
     ) {
-        const validateCaptcha = await this.captchaService.validate(
-            createClaimDTO.recaptcha
-        );
-        if (!validateCaptcha && !overrideCaptchaValidation) {
-            throw new BadRequestException("Error validating captcha");
+        if (!overrideCaptchaValidation) {
+            const validateCaptcha = await this.captchaService.validate(
+                createClaimDTO.recaptcha ?? ""
+            );
+            if (!validateCaptcha) {
+                throw new BadRequestException("Error validating captcha");
+            }
         }
         return this.claimService.create(createClaimDTO);
     }
@@ -254,8 +281,8 @@ export class ClaimController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
     getById(
-        @Param("id") claimId: string,
-        @Query() query: { nameSpace?: string }
+        @ZodParam("id", entityId) claimId: string,
+        @ZodQuery(GetClaimQuerySchema) query: GetClaimQueryDto
     ) {
         return this.claimService.getById(claimId, query.nameSpace);
     }
@@ -263,8 +290,8 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/:id")
     update(
-        @Param("id") claimId: string,
-        @Body() updateClaimDTO: UpdateClaimDTO
+        @ZodParam("id", entityId) claimId: string,
+        @ZodBody(UpdateClaimSchema) updateClaimDTO: UpdateClaimDto
     ) {
         return this.claimService.update(claimId, updateClaimDTO);
     }
@@ -273,9 +300,9 @@ export class ClaimController {
     @ApiTags("claim")
     @Put("api/claim/hidden/:id")
     async updateHiddenStatus(
-        @Param("id") claimId: string,
-        @Body() body: UpdateHiddenStatusDTO
-    ): Promise<UpdateWriteOpResult> {
+        @ZodParam("id", entityId) claimId: string,
+        @ZodBody(UpdateHiddenStatusSchema) body: UpdateHiddenStatusDto
+    ): Promise<unknown> {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -331,7 +358,7 @@ export class ClaimController {
         req: BaseRequest,
         res: Response,
         claim: any,
-        content: SentenceDocument | ImageDocument,
+        content: ISentence | ImageDocument,
         personality: any = null
     ) {
         const hideDescriptions: Record<string, any> = {};
@@ -531,7 +558,7 @@ export class ClaimController {
     @ApiTags("pages")
     @Get("claim/create")
     public async claimCreatePage(
-        @Query() query: { personality?: string; verificationRequest?: string },
+        @ZodQuery(ClaimCreatePageQuerySchema) query: ClaimCreatePageQueryDto,
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
