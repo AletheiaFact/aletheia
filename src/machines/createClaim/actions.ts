@@ -56,6 +56,16 @@ const startUnattributed = assign<CreateClaimContext>((context) => {
     };
 });
 
+const resetClaimContext = assign<CreateClaimContext>((context) => {
+    return {
+        claimData: {
+            ...context.claimData,
+            contentModel: null,
+            personalities: context.initialPersonalities,
+        },
+    };
+});
+
 const removePersonality = assign<CreateClaimContext, RemovePersonalityEvent>(
     (contex, event) => {
         const { personality } = event;
@@ -111,5 +121,6 @@ export {
     startDebate,
     startUnattributed,
     removePersonality,
+    resetClaimContext,
     persistClaim,
 };
