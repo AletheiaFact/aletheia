@@ -84,7 +84,7 @@ export const GetReviewTaskSchema = z.object({
 export const ListVerificationRequestsSchema = z.object({
     ...pagination,
     topics: z.array(z.string()).optional(),
-    status: z.string().optional(),
+    status: z.array(z.string()).optional(),
 });
 
 export const GetVerificationRequestSchema = z.object({
