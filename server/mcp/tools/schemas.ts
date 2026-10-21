@@ -73,7 +73,7 @@ export const ListReviewTasksSchema = z.object({
         .describe(
             "Workflow state filter, e.g. unassigned, assigned, reported, published"
         ),
-    reviewTaskType: z.nativeEnum(ReviewTaskTypeEnum),
+    reviewTaskType: z.enum(ReviewTaskTypeEnum),
     nameSpace,
 });
 
@@ -117,9 +117,7 @@ export const CreateClaimSchema = ClaimCreateZodSchema.pick({
     sources: true,
     nameSpace: true,
 }).extend({
-    personalityId: z
-        .string()
-        .describe("Personality (author) Mongo ObjectId"),
+    personalityId: z.string().describe("Personality (author) Mongo ObjectId"),
 });
 
 export const StartReviewTaskSchema = z.object({
@@ -131,7 +129,7 @@ export const StartReviewTaskSchema = z.object({
     nameSpace,
 });
 
-export const CreatePersonalitySchema =PersonalitySchema.pick({
+export const CreatePersonalitySchema = PersonalitySchema.pick({
     name: true,
     description: true,
     wikidata: true,

@@ -29,8 +29,7 @@ export class McpController {
             enableJsonResponse: true,
         });
         res.on("close", () => {
-            transport.close();
-            server.close();
+            void Promise.allSettled([transport.close(), server.close()]);
         });
         await server.connect(transport);
         await transport.handleRequest(req as any, res, req.body);

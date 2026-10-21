@@ -13,7 +13,7 @@ export const SourcePropsZodSchema = z.object({
 });
 
 export const SourceZodSchema = z.object({
-    href: z.string().url(),
+    href: z.url(),
     props: SourcePropsZodSchema.optional(),
     targetId: z.string().optional(),
     user: z.string(),
