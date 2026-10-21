@@ -21,7 +21,7 @@ export const DailyReportModel = MongooseModule.forFeature([
     imports: [
         DailyReportModel,
         ClaimReviewModule,
-        SourceModule,
+        SourceModule.register(),
         SummarizationCrawlerModule,
         AbilityModule,
         NotificationModule,

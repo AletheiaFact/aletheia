@@ -21,20 +21,23 @@ import {
     SentenceTargetRemap,
 } from "./cascade.service";
 import { SentenceHashService } from "./sentence-hash.service";
-import { Claim, ClaimDocument } from "../schemas/claim.schema";
+import { Claim, ClaimDocument } from "../mongo/schemas/claim.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
-} from "../claim-revision/schema/claim-revision.schema";
+} from "../claim-revision/mongo/schemas/claim-revision.schema";
 import {
     Sentence,
     SentenceDocument,
-} from "../types/sentence/schemas/sentence.schema";
+} from "../types/sentence/mongo/schemas/sentence.schema";
 import {
     Paragraph,
     ParagraphDocument,
-} from "../types/paragraph/schemas/paragraph.schema";
-import { Speech, SpeechDocument } from "../types/speech/schemas/speech.schema";
+} from "../types/paragraph/mongo/schemas/paragraph.schema";
+import {
+    Speech,
+    SpeechDocument,
+} from "../types/speech/mongo/schemas/speech.schema";
 import { HistoryService } from "../../history/history.service";
 import { HistoryType, TargetModel } from "../../history/schema/history.schema";
 import type { BaseRequest } from "../../types";

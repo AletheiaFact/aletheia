@@ -147,24 +147,64 @@ describe("UsersService (Unit)", () => {
             );
         });
 
-        it("should update existing Ory identity when oryId is provided", async () => {
+        it("should update the Ory identity with the saved user's id when oryId is provided", async () => {
             const userData = {
-                name: "Existing User",
-                email: "existing@example.com",
+                name: "Seeded User",
+                email: "seeded@example.com",
                 password: "password123",
                 role: { main: Roles.FactChecker },
                 oryId: "existing-ory-id",
             };
 
+            mockUserModel.findOne.mockResolvedValue(null);
+
+            await service.register(userData);
+
+            expect(oryService.updateIdentity).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    _id: "new-user-id",
+                    oryId: "existing-ory-id",
+                }),
+                "password123",
+                { role: userData.role }
+            );
+            expect(oryService.createIdentity).not.toHaveBeenCalled();
+        });
+
+        it("should reject without touching Ory when the oryId is already linked", async () => {
             mockUserModel.findOne.mockResolvedValue({
                 _id: "existing-user-id",
                 oryId: "existing-ory-id",
             });
 
-            await service.register(userData);
+            await expect(
+                service.register({
+                    email: "dup@example.com",
+                    password: "password123",
+                    oryId: "existing-ory-id",
+                })
+            ).rejects.toThrow(/already linked/);
+            expect(oryService.updateIdentity).not.toHaveBeenCalled();
+        });
 
-            expect(oryService.updateIdentity).toHaveBeenCalled();
-            expect(oryService.createIdentity).not.toHaveBeenCalled();
+        it("should delete the created Ory identity when saving the user fails", async () => {
+            UserModelConstructor.mockImplementationOnce(function (data: any) {
+                return {
+                    ...data,
+                    _id: "new-user-id",
+                    save: vi.fn().mockRejectedValue(new Error("E11000")),
+                };
+            });
+
+            await expect(
+                service.register({
+                    email: "dup@example.com",
+                    password: "password123",
+                })
+            ).rejects.toThrow("E11000");
+            expect(oryService.deleteIdentity).toHaveBeenCalledWith(
+                "new-ory-id"
+            );
         });
     });
 
@@ -207,8 +247,30 @@ describe("UsersService (Unit)", () => {
 
             expect(oryService.updateUserState).toHaveBeenCalledWith(
                 mockUser,
-                Status.Inactive
+                Status.Inactive,
+                undefined
             );
+        });
+
+        it("should send state and role in a single Ory update", async () => {
+            const mockUser = { _id: "user-123", role: { main: Roles.Regular } };
+            mockUserModel.findById.mockReturnValue({
+                populate: vi.fn().mockResolvedValue(mockUser),
+            });
+            mockUserModel.findByIdAndUpdate.mockResolvedValue(mockUser);
+            const role = { main: Roles.FactChecker };
+
+            await service.updateUser("user-123", {
+                state: Status.Active,
+                role,
+            });
+
+            expect(oryService.updateUserState).toHaveBeenCalledWith(
+                mockUser,
+                Status.Active,
+                role
+            );
+            expect(oryService.updateUserRole).not.toHaveBeenCalled();
         });
     });
 
@@ -260,9 +322,9 @@ describe("UsersService (Unit)", () => {
 
             await service.deleteAccount("user-123");
 
-            expect(
-                mockHistoryService.scrubUserReferences
-            ).toHaveBeenCalledWith("user-123");
+            expect(mockHistoryService.scrubUserReferences).toHaveBeenCalledWith(
+                "user-123"
+            );
             expect(
                 mockNotificationService.deleteSubscriber
             ).toHaveBeenCalledWith("user-123");

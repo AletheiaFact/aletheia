@@ -169,6 +169,7 @@ Active flags:
 - `enable_editor_annotations` — Editor annotation support
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
+- `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
 
 ## Captcha Provider
 
@@ -200,6 +201,8 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 
 9. **ESLint**: Uses flat config (`eslint.config.mjs`, ESLint v9+)
 
+10. **Postgres migration (in progress)**: MongoDB → Postgres, module by module behind a `DB_TYPE` boot switch. Before touching any `<module>/postgres/`, `server/database/postgres/`, or `migrations-postgres/` code, read `docs/postgres-migration-foundation.md` — it is the single source of truth for the architecture decisions, the per-module porting recipe, and the ship gates. To port a module, invoke the `pg-migrate-module` skill (`.claude/skills/pg-migrate-module/`)
+
 11. **LLM / Embeddings Providers**: AI features (copilot, summarization, verification-request embeddings) use injectable `LLMProvider` / `EmbeddingsProvider` abstractions (`server/llm/`, DI tokens `LLM_PROVIDER` / `EMBEDDINGS_PROVIDER`, bound by the global `LlmModule`). The default implementations target any OpenAI-compatible endpoint. Configure via the `llm` block in `config.yaml` (`api_key`, optional `base_url`, `chat_model`, `temperature`, `embeddings_model`); `api_key` falls back to `openai.api_key` then `OPENAI_API_KEY`. Point `llm.base_url` at a self-hosted/open-weight server (Ollama, vLLM, LocalAI, Azure) to swap providers with no code change; when no key is configured, a placeholder API key is supplied automatically for keyless local servers. Leave `embeddings_model` unset to preserve stored-vector compatibility. See `server/llm/USING-A-LOCAL-PROVIDER.md` for an Ollama setup example.
 
 ## Development Setup
@@ -225,9 +228,44 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 1. **API Routes**: RESTful with NestJS decorators. Use `@Auth()` decorators for access control
 2. **Page Rendering**: NestJS controllers use `ViewService.render()` to pass data to Next.js pages via query params
 3. **Component Structure**: Functional components with hooks. Material-UI for styling
-4. **Validation**: New code MUST use Zod schemas with inferred TS types (`z.infer<typeof Schema>`) via a custom NestJS `ZodValidationPipe` (raw `zod` is already in deps; do NOT add `nestjs-zod`). Legacy class-validator DTOs remain in older modules until migrated; do not add new class-validator DTOs.
+4. **Validation**: Zod 4 only, for all new code. See **Validation (Zod)** below.
 5. **Error Handling**: Global `AllExceptionsFilter` in NestJS. Frontend uses `MessageManager` for toast messages
 6. **Testing**: Vitest for unit/e2e (server), Cypress for browser e2e. E2E tests use mongodb-memory-server with per-worker DB isolation via `server/tests/globalSetup.ts` (provides `mongoBaseUri`) and `server/tests/per-worker-setup.ts` (assigns each Vitest worker its own database). Globals mode is enabled — use `vi.fn()`, `vi.mock()`, etc.
+
+## Validation (Zod)
+
+Zod 4 (`import { z } from "zod"`, single copy shared with LangChain). Do NOT add `nestjs-zod` or new class-validator DTOs; the legacy class-validator DTOs (30 files) get migrated when their module is touched.
+
+**Where things live**
+- `lib/schemas/` holds isomorphic primitives: `objectId`, `dataHash`, `wikidataId`, `nonEmptyText(max)`, `email`, `captchaToken`, `isoDateTime`, `queryInt`, `pageQuery`, `pageSizeQuery(max)`, `queryBoolean`, `legacyQueryFlag`, `legacyBodyFlag` (coerces only a present key, like `@Transform`; use `.optional()` on bodies), `queryArray(item)`, `sortOrder`, `entityId`. No imports from Nest/mongoose/drizzle/react/`server`/`src`, so the frontend can import them. Only add a primitive for a rule that already exists in the codebase, with a spec.
+- `server/common/validation/` holds the Nest glue: `ZodBody`, `ZodQuery`, `ZodParam`, `ZodValidationPipe`, `ZodValidationException`.
+- `server/<module>/dto/*.dto.ts` holds module schemas. Promote one to `lib/schemas/` when the frontend needs the same contract.
+
+**Endpoint pattern**
+```ts
+export const CreateFooSchema = z.strictObject({ title: nonEmptyText(200), personality: objectId, kind: z.enum(FooKind) });
+export type CreateFooDto = z.output<typeof CreateFooSchema>;
+
+create(@ZodBody(CreateFooSchema) body: CreateFooDto) {}
+list(@ZodQuery(ListFooQuery) query: ListFooQueryDto) {}   // z.object (strip), coercing fields
+get(@ZodParam("id", objectId) id: string) {}
+```
+
+**Rules**
+- **Wire every schema.** `@Body() x: ZodInferredType` with no Zod pipe is silently unvalidated: the global class-validator `ValidationPipe` only checks classes. The ratchet `server/common/validation/validation-coverage.spec.ts` fails CI on any new unvalidated `@Body`/`@Query`/`@Param`. Its baseline (`validation-coverage.baseline.json`) can only shrink, so delete a line when you fix it. It can't see `@Req() req.body` reads.
+- **Never combine** a class DTO type with a `Zod*` decorator; both pipes would run.
+- **Bodies use `z.strictObject`.** This keeps the global pipe's `forbidNonWhitelisted` behaviour. **Queries use `z.object`** (strip), so cache-busters don't 400, unless you're porting a class DTO, which was strict. **Upstream/vendor payloads use `z.object`.**
+- **Query values** are `string | string[] | object`. Always coerce (`queryInt`, `queryArray`, `queryBoolean`) and bound page sizes. A raw `@Query() q: any` that reaches a Mongo filter is a NoSQL operator-injection risk (`?x[$ne]=`).
+- **Use v4 APIs:** `z.strictObject`, `z.enum(TsEnum)` (not `nativeEnum`), `z.email()` / `z.url()` / `z.iso.datetime()`, `{ error: "msg" }`, `err.issues` / `z.flattenError`, `z.ZodType`, `.extend()`, `z.record(z.string(), V)`.
+- **Parse, don't cast.** Use `safeParse` at boundaries. No `schema.parse(x) as T`, no `z.any()` (use `z.unknown()`), no `as any` on schemas handed to libraries. Compose schemas; don't wrap `.parse()` in a `.refine` try/catch. Every `JSON.parse` of external text is followed by a `safeParse`.
+- **Porting a class-validator DTO means keeping the same accepted inputs.** Call out any tightening in the PR. Watch for: undecorated props, which were stripped before and are rejected by `strictObject`; `@Transform` booleans, which map to `legacyQueryFlag`; `PartialType`, which maps to `.partial()`; `validator.isURL`, which differs from `z.url()`.
+- **LLM tool schemas:** Zod 4 marks `.default()` fields as *required* in the JSON Schema sent to the model. Use `.optional()` and apply the default in the handler.
+- **Errors:** a Zod failure returns 400 with `message: { message: "Validation failed", target, issues: [{ path, code, message }] }` inside the `AllExceptionsFilter` envelope. Non-Zod errors thrown inside a transform or refinement stay 500s.
+- **Swagger** is generated from the schema by the decorators. Use `.meta({ description })`; don't add a manual `@ApiBody`, because it overrides the generated schema.
+- **Branded types** (`.brand()`) are deferred until the class-validator migration is done.
+- **Tests:** add at least one 400 case per new schema.
+
+**Known gaps not covered by the ratchet:** `chat-bot` webhook `req.body`; `automated-fact-checking` NDJSON `JSON.parse`; `callback-dispatcher` result `z.any()`; LLM outputs (summarization, copilot); Wikidata/Ory/reCAPTCHA responses; `config.yaml`/env and `config/localConfig.schema.ts`, which are not parsed at boot; the frontend (`query.props` in SSR pages, `src/api/*` responses, `react-hook-form` needs ≥ 7.55 for `@hookform/resolvers/zod`).
 
 ## Important Files
 

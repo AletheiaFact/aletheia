@@ -8,10 +8,10 @@ import { SentenceHashService } from "../admin-editor/sentence-hash.service";
 
 @Module({
     imports: [
-        SpeechModule,
-        ParagraphModule,
+        SpeechModule.register(),
+        ParagraphModule.register(),
         SentenceModule,
-        UnattributedModule,
+        UnattributedModule.register(),
     ],
     exports: [ParserService],
     providers: [ParserService, SentenceHashService],

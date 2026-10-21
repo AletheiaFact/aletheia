@@ -5,7 +5,7 @@ import { Public } from "../auth/decorators/auth.decorator";
 export class RootController {
     @Public()
     @Get("robots.txt")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "public, max-age=86400")
     robots(@Res() res: any, @Req() req: any) {
         const host = req.protocol + "://" + req.get("host");
         res.type("text/plain").end(

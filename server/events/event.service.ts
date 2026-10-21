@@ -12,7 +12,7 @@ import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
 import { EventDocument, Event } from "./schema/event.schema";
 import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { FilterEventsDTO } from "./dto/filter.dto";
-import { TopicService } from "../topic/topic.service";
+import type { ITopicService } from "../interfaces/topic.service.interface";
 import {
     BuildMetricsParams,
     EventMetricsData,
@@ -27,7 +27,7 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
-import { Topic, TopicDocument } from "../topic/schemas/topic.schema";
+import { Topic, TopicDocument } from "../topic/mongo/schemas/topic.schema";
 import { toError } from "../util/error-handling";
 import { mapAggregateToRecord } from "../util/mongo-utils";
 
@@ -40,7 +40,8 @@ export class EventsService {
         @InjectModel(Event.name) private eventModel: Model<EventDocument>,
         @InjectModel(Topic.name) private TopicModel: Model<TopicDocument>,
         private readonly claimReviewService: ClaimReviewService,
-        private readonly topicService: TopicService
+        @Inject("TopicService")
+        private readonly topicService: ITopicService
     ) {}
 
     /**
@@ -130,7 +131,9 @@ export class EventsService {
 
             if (mainTopic) {
                 const topicName = mainTopic.label ?? mainTopic.name;
-                updateData.mainTopic = await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName });
+                // Event stays Mongo-only until Phase 7; the Mongo backend
+                // hands back a real TopicDocument.
+                updateData.mainTopic = (await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName })) as TopicDocument;
             }
 
             if (filterTopics !== undefined) {
@@ -140,11 +143,11 @@ export class EventsService {
                     ).values()
                 );
 
-                updateData.filterTopics = await Promise.all(
+                updateData.filterTopics = (await Promise.all(
                     uniqueTopics.map((topic) =>
                         this.topicService.findOrCreateTopic(topic)
                     )
-                );
+                )) as TopicDocument[];
             }
 
             const updatedEvent = await this.eventModel.findByIdAndUpdate(

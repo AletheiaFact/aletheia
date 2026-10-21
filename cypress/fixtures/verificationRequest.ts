@@ -1,7 +1,7 @@
 const fullVerificationRequest = {
     content: "Verification Request Content",
     reportType: "Discurso",
-    impactArea: "Ambientalismo",
+    impactArea: "Ciência e Tecnologia",
     topic: "Socialismo",
     heardFrom: "Verification Request heardFrom",
     source: "wikimedia.org",

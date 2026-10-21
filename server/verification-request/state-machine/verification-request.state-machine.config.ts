@@ -11,8 +11,9 @@ import {
     VerificationRequestStateMachineContext,
     VerificationRequestStateMachineService,
 } from "./verification-request.state-machine.interface";
-import { VerificationRequestService } from "../verification-request.service";
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import { CreateAiTaskDto } from "../../ai-task/dto/create-ai-task.dto";
+import { IMPACT_AREAS } from "../../topic/constants/impact-areas";
 import {
     AiTaskType,
     CallbackRoute,
@@ -33,7 +34,7 @@ const verificationRequestStateMachineSchema = {
 
 const getStateInvokeSrc = (
     eventName: string,
-    getVerificationRequestService: () => VerificationRequestService
+    getVerificationRequestService: () => IVerificationRequestService
 ): InvokeConfig<any, any>["src"] => {
     switch (eventName) {
         case VerificationRequestStateMachineEvents.CREATE:
@@ -125,6 +126,8 @@ const getStateInvokeSrc = (
                     content: {
                         text: context.verificationRequest.content,
                         model: OPENAI_IDENTIFY_DATA,
+                        // The worker must answer with one of these names
+                        options: IMPACT_AREAS.map((area) => area.name),
                     },
                     callbackRoute:
                         CallbackRoute.VERIFICATION_UPDATE_DEFINING_IMPACT_AREA,

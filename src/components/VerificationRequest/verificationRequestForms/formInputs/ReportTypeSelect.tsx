@@ -1,10 +1,8 @@
 import * as React from "react";
-import { MenuItem, FormControl } from "@mui/material";
 import { ContentModelEnum } from "../../../../types/enums";
-import { SelectInput } from "../../../Form/ClaimReviewSelect";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IReportTypeSelect } from "../../../../types/VerificationRequest";
+import OptionsSelect from "./OptionsSelect";
 
 const ReportTypeSelect = ({
     onChange,
@@ -14,37 +12,22 @@ const ReportTypeSelect = ({
     isDisabled,
     dataCy,
 }: IReportTypeSelect) => {
-    const [value, setValue] = useState(defaultValue || "");
     const { t } = useTranslation();
-
-    const onChangeSelect = (e) => {
-        setValue(e.target.value);
-    };
-
-    useEffect(() => {
-        onChange(value || undefined);
-    }, [value, onChange]);
+    const options = Object.values(ContentModelEnum).map((option) => ({
+        value: option,
+        label: t(`claimForm:${option}`),
+    }));
 
     return (
-        <FormControl fullWidth>
-            <SelectInput
-                displayEmpty
-                onChange={onChangeSelect}
-                value={value}
-                style={style}
-                disabled={isDisabled}
-                data-cy={dataCy}
-            >
-                <MenuItem value="" disabled>
-                    {placeholder}
-                </MenuItem>
-                {Object.values(ContentModelEnum).map((option) => (
-                    <MenuItem key={option} value={option}>
-                        {t(`claimForm:${option}`)}
-                    </MenuItem>
-                ))}
-            </SelectInput>
-        </FormControl>
+        <OptionsSelect
+            options={options}
+            onChange={onChange}
+            defaultValue={defaultValue as string}
+            placeholder={placeholder}
+            style={style}
+            isDisabled={isDisabled}
+            dataCy={dataCy}
+        />
     );
 };
 

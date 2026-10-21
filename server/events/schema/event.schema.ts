@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Schema as MongooseSchema } from "mongoose";
-import type { TopicDocument } from "../../topic/schemas/topic.schema";
+import type { TopicDocument } from "../../topic/mongo/schemas/topic.schema";
 
 export type EventDocument = Event & Document;
 

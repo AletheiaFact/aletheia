@@ -6,10 +6,8 @@ import {
     mockImageService,
     mockPersonalityService,
 } from "../mocks/ClaimMock";
-import { ClaimService } from "./claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
-import { SentenceService } from "./types/sentence/sentence.service";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -17,9 +15,8 @@ import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
 import { ParserService } from "./parser/parser.service";
 import { HistoryService } from "../history/history.service";
-import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
-import { GroupService } from "../group/group.service";
+
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { GetByDataHashDto } from "./dto/get-by-datahash.dto";
 
@@ -41,8 +38,8 @@ describe("ClaimController (Unit)", () => {
                 { provide: ClaimReviewService, useValue: {} },
                 { provide: ReviewTaskService, useValue: {} },
                 { provide: "PersonalityService", useValue: personalityService },
-                { provide: ClaimService, useValue: claimService },
-                { provide: SentenceService, useValue: {} },
+                { provide: "ClaimService", useValue: claimService },
+                { provide: "SentenceService", useValue: {} },
                 { provide: ConfigService, useValue: {} },
                 { provide: ViewService, useValue: {} },
                 { provide: CaptchaService, useValue: {} },
@@ -51,9 +48,9 @@ describe("ClaimController (Unit)", () => {
                 { provide: EditorService, useValue: {} },
                 { provide: ParserService, useValue: {} },
                 { provide: HistoryService, useValue: {} },
-                { provide: ClaimRevisionService, useValue: {} },
+                { provide: "ClaimRevisionService", useValue: {} },
                 { provide: FeatureFlagService, useValue: {} },
-                { provide: GroupService, useValue: {} },
+                { provide: "GroupService", useValue: {} },
 
                 { provide: "REQUEST", useValue: {} },
             ],
@@ -124,10 +121,9 @@ describe("ClaimController (Unit)", () => {
             },
         } as any);
 
-        vi.spyOn(
-            controller as any,
-            "returnClaimReviewPage"
-        ).mockResolvedValue(undefined);
+        vi.spyOn(controller as any, "returnClaimReviewPage").mockResolvedValue(
+            undefined
+        );
 
         await expect(
             controller.getImageClaimReviewPage(req, res)

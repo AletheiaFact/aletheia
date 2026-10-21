@@ -52,7 +52,7 @@ export class CallbackDispatcherService {
             if (err instanceof z.ZodError) {
                 this.logger.error(
                     `Invalid callback parameters for key: ${routeKey}`,
-                    err.errors
+                    err.issues
                 );
                 throw new BadRequestException("Invalid callback parameters");
             }

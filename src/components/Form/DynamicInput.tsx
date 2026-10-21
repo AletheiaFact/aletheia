@@ -13,6 +13,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import colors from "../../styles/colors";
 import ReportTypeSelect from "../VerificationRequest/verificationRequestForms/formInputs/ReportTypeSelect";
 import ImpactAreaSelect from "../VerificationRequest/verificationRequestForms/formInputs/ImpactAreaSelect";
+import TopicSelect from "../topics/TopicSelect";
 import InputExtraSourcesList from "../VerificationRequest/verificationRequestForms/formInputs/InputExtraSourcesList";
 import { Topic } from "../../types/Topic";
 import { SourceType } from "../../types/Source";
@@ -121,6 +122,16 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "selectReportType":
             return (
                 <ReportTypeSelect
+                    defaultValue={props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    placeholder={t(props.placeholder)}
+                    isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
+                />
+            );
+        case "selectTopic":
+            return (
+                <TopicSelect
                     defaultValue={props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
