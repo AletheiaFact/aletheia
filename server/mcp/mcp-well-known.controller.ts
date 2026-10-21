@@ -8,8 +8,8 @@ import {
 
 /**
  * OAuth 2.0 Protected Resource Metadata (RFC 9728) for the MCP endpoint.
- * MCP clients discover the authorization server (Ory) from this document
- * after receiving a 401 challenge from /api/mcp.
+ * MCP clients discover the authorization server from this document after
+ * receiving a 401 challenge from /api/mcp.
  */
 @Controller()
 export class McpWellKnownController {
@@ -19,12 +19,11 @@ export class McpWellKnownController {
     @Get(MCP_RESOURCE_METADATA_PATH)
     getProtectedResourceMetadata() {
         const publicUrl = this.configService.get<string>("mcp.public_url");
-        const authorizationServer =
-            this.configService.get<string>("mcp.authorization_server") ||
-            this.configService.get<string>("ory.url");
         return {
             resource: `${publicUrl}/${MCP_ENDPOINT_PATH}`,
-            authorization_servers: [authorizationServer],
+            // Our own origin: McpOAuthController serves the RFC 8414 metadata
+            // that fronts Ory with a spec-compliant registration endpoint.
+            authorization_servers: [publicUrl],
             bearer_methods_supported: ["header"],
         };
     }

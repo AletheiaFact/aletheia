@@ -13,6 +13,8 @@ import { SourceModule } from "../source/source.module";
 import { TopicModule } from "../topic/topic.module";
 import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { McpAuthGuard } from "./mcp-auth.guard";
+import { McpOAuthProxyService } from "./mcp-oauth-proxy.service";
+import { McpOAuthController } from "./mcp-oauth.controller";
 import { McpWellKnownController } from "./mcp-well-known.controller";
 import { McpController } from "./mcp.controller";
 import { McpService } from "./mcp.service";
@@ -34,7 +36,12 @@ import { ReviewWorkflowService } from "./review-workflow.service";
         NameSpaceModule,
         ConfigModule,
     ],
-    controllers: [McpController, McpWellKnownController],
-    providers: [McpService, McpAuthGuard, ReviewWorkflowService],
+    controllers: [McpController, McpWellKnownController, McpOAuthController],
+    providers: [
+        McpService,
+        McpAuthGuard,
+        ReviewWorkflowService,
+        McpOAuthProxyService,
+    ],
 })
 export class McpModule {}
