@@ -22,5 +22,6 @@
     "exclude": [
         "node_modules",
         "./**/*.spec.ts",
+        "./tests/utils/McpTestHelper.ts",
     ]
 }
