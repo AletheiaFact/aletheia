@@ -5,16 +5,16 @@ import { REQUEST } from "@nestjs/core";
 import { AbilityFactory } from "../auth/ability/ability.factory";
 import { NameSpaceService } from "../auth/name-space/name-space.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
-import { ClaimService } from "../claim/claim.service";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
+import type { ISourceService } from "../interfaces/source.service.interface";
+import type { ITopicService } from "../interfaces/topic.service.interface";
+import type { IVerificationRequestService } from "../interfaces/verification-request.service.interface";
 import { ReviewTaskService } from "../review-task/review-task.service";
-import { SourceService } from "../source/source.service";
-import { TopicService } from "../topic/topic.service";
 import type { BaseRequest } from "../types";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ReviewWorkflowService } from "./review-workflow.service";
 import { registerReadTools } from "./tools/read-tools";
 import { registerWriteTools } from "./tools/write-tools";
@@ -22,16 +22,16 @@ import { registerWriteTools } from "./tools/write-tools";
 export interface McpToolDeps {
     request: BaseRequest;
     configService: ConfigService;
-    claimService: ClaimService;
-    claimRevisionService: ClaimRevisionService;
-    sentenceService: SentenceService;
+    claimService: IClaimService;
+    claimRevisionService: IClaimRevisionService;
+    sentenceService: ISentenceService;
     personalityService: IPersonalityService;
     claimReviewService: ClaimReviewService;
     reviewTaskService: ReviewTaskService;
-    verificationRequestService: VerificationRequestService;
+    verificationRequestService: IVerificationRequestService;
     verificationRequestStateMachineService: VerificationRequestStateMachineService;
-    sourceService: SourceService;
-    topicService: TopicService;
+    sourceService: ISourceService;
+    topicService: ITopicService;
     abilityFactory: AbilityFactory;
     nameSpaceService: NameSpaceService;
     reviewWorkflowService: ReviewWorkflowService;
@@ -42,17 +42,23 @@ export class McpService {
     constructor(
         @Inject(REQUEST) private readonly request: BaseRequest,
         private readonly configService: ConfigService,
-        private readonly claimService: ClaimService,
-        private readonly claimRevisionService: ClaimRevisionService,
-        private readonly sentenceService: SentenceService,
+        @Inject("ClaimService")
+        private readonly claimService: IClaimService,
+        @Inject("ClaimRevisionService")
+        private readonly claimRevisionService: IClaimRevisionService,
+        @Inject("SentenceService")
+        private readonly sentenceService: ISentenceService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
         private readonly claimReviewService: ClaimReviewService,
         private readonly reviewTaskService: ReviewTaskService,
-        private readonly verificationRequestService: VerificationRequestService,
+        @Inject("VerificationRequestService")
+        private readonly verificationRequestService: IVerificationRequestService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
-        private readonly sourceService: SourceService,
-        private readonly topicService: TopicService,
+        @Inject("SourceService")
+        private readonly sourceService: ISourceService,
+        @Inject("TopicService")
+        private readonly topicService: ITopicService,
         private readonly abilityFactory: AbilityFactory,
         private readonly nameSpaceService: NameSpaceService,
         private readonly reviewWorkflowService: ReviewWorkflowService

@@ -1,5 +1,10 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { ClaimService } from "../claim/claim.service";
+import {
+    ConflictException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 
@@ -64,7 +69,7 @@ export function buildClaimContext(userId: string, claimId: string) {
 @Injectable()
 export class ReviewWorkflowService {
     constructor(
-        private readonly claimService: ClaimService,
+        @Inject("ClaimService") private readonly claimService: IClaimService,
         private readonly reviewTaskService: ReviewTaskService
     ) {}
 

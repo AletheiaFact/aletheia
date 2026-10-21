@@ -20,14 +20,14 @@ import { ReviewWorkflowService } from "./review-workflow.service";
 
 @Module({
     imports: [
-        ClaimModule,
-        ClaimRevisionModule,
+        ClaimModule.register(),
+        ClaimRevisionModule.register(),
         SentenceModule,
         ClaimReviewModule,
         ReviewTaskModule,
-        VerificationRequestModule,
-        SourceModule,
-        TopicModule,
+        VerificationRequestModule.register(),
+        SourceModule.register(),
+        TopicModule.register(),
         PersonalityModule.register(),
         OryModule,
         AbilityModule,
