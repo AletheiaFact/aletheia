@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import mongoose from "mongoose";
 import { assertNamespaceAccess, jsonResult, safeTool } from "./tool-helpers";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import {
     GetClaimReviewSchema,
     GetClaimSchema,
@@ -134,6 +135,13 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: ListPersonalitiesSchema.shape as any,
         },
         safeTool("list_personalities", async (args) => {
+            // Personalities have no nameSpace field: they are global, so a
+            // namespace filter would silently be ignored. Fail closed instead.
+            if (args.nameSpace !== NameSpaceEnum.Main) {
+                throw new Error(
+                    "Personalities are not namespaced; omit nameSpace"
+                );
+            }
             await assertNamespaceAccess(
                 deps.nameSpaceService,
                 deps.request.user,
