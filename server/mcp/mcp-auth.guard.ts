@@ -29,7 +29,7 @@ interface CachedAuth {
 export class McpAuthGuard extends BaseGuard {
     protected readonly logger = new Logger(McpAuthGuard.name);
     private readonly cache = new Map<string, CachedAuth>();
-    static readonly CACHE_TTL_MS = 60_000;
+    static readonly CACHE_TTL_MS = 10_000;
 
     constructor(
         protected configService: ConfigService,
