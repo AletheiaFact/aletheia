@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 
+# Yarn
+.yarn/cache/
 .yarn/install-state.gz
 
 # testing
@@ -74,3 +76,8 @@ docs/storybook/**/*
 
 # config
 config/localConfig.ts
+
+# AI
+.impeccable/
+.playwright-mcp/
+.agents/
