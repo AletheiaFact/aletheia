@@ -122,7 +122,16 @@ export const CreateClaimSchema = ClaimCreateZodSchema.pick({
         .describe("Personality (author) Mongo ObjectId"),
 });
 
-export const CreatePersonalitySchema = PersonalitySchema.pick({
+export const StartReviewTaskSchema = z.object({
+    claimId: z.string().describe("Claim Mongo ObjectId"),
+    dataHash: z
+        .string()
+        .regex(/^[a-f0-9]{32}$/i)
+        .describe("data_hash of the claim sentence to review"),
+    nameSpace,
+});
+
+export const CreatePersonalitySchema =PersonalitySchema.pick({
     name: true,
     description: true,
     wikidata: true,

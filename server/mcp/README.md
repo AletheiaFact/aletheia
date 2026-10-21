@@ -50,7 +50,12 @@ Read: `search`, `list_claims`, `get_claim`, `list_personalities`,
 `list_verification_requests`, `get_verification_request`, `search_topics`,
 `list_sources`.
 Write: `create_verification_request`, `add_review_comment`, `create_claim`,
-`create_personality`, `create_source`.
+`create_personality`, `create_source`, `start_review_task`.
+
+`start_review_task` claims a claim sentence (by `claimId` + sentence
+`dataHash`) for fact-checking: it creates the review task already `assigned`
+to the caller. In the web app "no task" already means unassigned, so there is
+no separate enqueue step.
 
 Tool inputs are Zod-validated (`server/mcp/tools/schemas.ts`). Adding a tool =
 schema in `schemas.ts` + registration in `read-tools.ts`/`write-tools.ts`.
