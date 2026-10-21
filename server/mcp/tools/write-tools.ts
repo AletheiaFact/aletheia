@@ -60,11 +60,30 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
             inputSchema: AddReviewCommentSchema.shape as any,
         },
         safeTool("add_review_comment", async (args) => {
-            assertCanWrite(deps.abilityFactory, deps.request.user);
+            assertUserSession(deps.request.user);
+            const task = await deps.reviewTaskService.getReviewTaskByDataHash(
+                args.dataHash
+            );
+            if (!task) {
+                throw new Error(
+                    `Review task not found for data_hash ${args.dataHash}`
+                );
+            }
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                task.nameSpace
+            );
+            assertCanWrite(
+                deps.abilityFactory,
+                deps.request.user,
+                task.nameSpace
+            );
             return jsonResult(
                 await deps.reviewTaskService.addComment(args.dataHash, {
                     comment: args.comment,
                     text: args.text,
+                    user: deps.request.user._id,
                 })
             );
         })
