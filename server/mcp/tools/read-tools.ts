@@ -230,9 +230,17 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
             description: "Get a review task by id",
             inputSchema: GetReviewTaskSchema.shape as any,
         },
-        safeTool("get_review_task", async (args) =>
-            jsonResult(await deps.reviewTaskService.getById(args.reviewTaskId))
-        )
+        safeTool("get_review_task", async (args) => {
+            const task = await deps.reviewTaskService.getById(args.reviewTaskId);
+            if (task) {
+                await assertNamespaceAccess(
+                    deps.nameSpaceService,
+                    deps.request.user,
+                    task.nameSpace
+                );
+            }
+            return jsonResult(task);
+        })
     );
 
     server.registerTool(
