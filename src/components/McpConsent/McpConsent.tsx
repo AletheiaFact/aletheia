@@ -1,6 +1,5 @@
 import { Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import AletheiaAlert from "../AletheiaAlert";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
@@ -14,16 +13,13 @@ interface ConsentSummary {
 const consentUrl = (challenge: string) =>
     `/api/mcp/oauth/consent/${encodeURIComponent(challenge)}`;
 
-const McpConsent = () => {
+const McpConsent = ({ challenge }: { challenge: string }) => {
     const { t } = useTranslation();
-    const router = useRouter();
-    const challenge = String(router.query.consent_challenge || "");
     const [summary, setSummary] = useState<ConsentSummary>();
     const [failed, setFailed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!router.isReady) return;
         if (!challenge) {
             setFailed(true);
             return;
@@ -41,7 +37,7 @@ const McpConsent = () => {
             })
             .then((data) => data && setSummary(data))
             .catch(() => setFailed(true));
-    }, [router.isReady, challenge]);
+    }, [challenge]);
 
     const decide = (decision: "accept" | "reject") => {
         setIsSubmitting(true);

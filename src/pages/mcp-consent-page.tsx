@@ -6,21 +6,25 @@ import McpConsent from "../components/McpConsent/McpConsent";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
-const McpConsentPage: NextPage = () => {
+const McpConsentPage: NextPage<{ consentChallenge: string }> = ({
+    consentChallenge,
+}) => {
     const { t } = useTranslation();
     return (
         <>
             <Seo title="Consent" description={t("mcpConsent:scopesIntro")} />
-            <McpConsent />
+            <McpConsent challenge={consentChallenge} />
         </>
     );
 };
 
-export async function getServerSideProps({ locale, locales, req }) {
+export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    const { consent_challenge } = JSON.parse(query.props);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            consentChallenge: consent_challenge ?? "",
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
