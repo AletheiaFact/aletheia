@@ -13,6 +13,7 @@ import {
     CreatePersonalitySchema,
     CreateSourceSchema,
     CreateVerificationRequestSchema,
+    StartReviewTaskSchema,
 } from "./schemas";
 import type { McpToolDeps } from "../mcp.service";
 
@@ -96,6 +97,34 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
                     sources: args.sources,
                     nameSpace: args.nameSpace,
                 })
+            );
+        })
+    );
+
+    server.registerTool(
+        "start_review_task",
+        {
+            description:
+                "Claim a claim sentence for fact-checking: creates its review task already assigned to you",
+            inputSchema: StartReviewTaskSchema.shape as any,
+        },
+        safeTool("start_review_task", async (args) => {
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            assertCanWrite(
+                deps.abilityFactory,
+                deps.request.user,
+                args.nameSpace
+            );
+            assertUserSession(deps.request.user);
+            return jsonResult(
+                await deps.reviewWorkflowService.startReviewTask(
+                    deps.request.user as { _id: string },
+                    args
+                )
             );
         })
     );
