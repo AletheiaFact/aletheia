@@ -189,6 +189,13 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
                 : await deps.claimReviewService.getReviewByDataHash(
                       args.dataHash
                   );
+            if (review) {
+                await assertNamespaceAccess(
+                    deps.nameSpaceService,
+                    deps.request.user,
+                    review.nameSpace
+                );
+            }
             return jsonResult(review);
         })
     );
