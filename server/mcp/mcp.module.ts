@@ -1,21 +1,22 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { ClaimModule } from "../claim/claim.module";
-import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
-import { SentenceModule } from "../claim/types/sentence/sentence.module";
-import { ClaimReviewModule } from "../claim-review/claim-review.module";
-import { ReviewTaskModule } from "../review-task/review-task.module";
-import { VerificationRequestModule } from "../verification-request/verification-request.module";
-import { SourceModule } from "../source/source.module";
-import { TopicModule } from "../topic/topic.module";
-import { PersonalityModule } from "../personality/personality.module";
-import OryModule from "../auth/ory/ory.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { NameSpaceModule } from "../auth/name-space/name-space.module";
-import { McpController } from "./mcp.controller";
-import { McpWellKnownController } from "./mcp-well-known.controller";
-import { McpService } from "./mcp.service";
+import OryModule from "../auth/ory/ory.module";
+import { ClaimReviewModule } from "../claim-review/claim-review.module";
+import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
+import { ClaimModule } from "../claim/claim.module";
+import { SentenceModule } from "../claim/types/sentence/sentence.module";
+import { PersonalityModule } from "../personality/personality.module";
+import { ReviewTaskModule } from "../review-task/review-task.module";
+import { SourceModule } from "../source/source.module";
+import { TopicModule } from "../topic/topic.module";
+import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { McpAuthGuard } from "./mcp-auth.guard";
+import { McpWellKnownController } from "./mcp-well-known.controller";
+import { McpController } from "./mcp.controller";
+import { McpService } from "./mcp.service";
+import { ReviewWorkflowService } from "./review-workflow.service";
 
 @Module({
     imports: [
@@ -34,6 +35,6 @@ import { McpAuthGuard } from "./mcp-auth.guard";
         ConfigModule,
     ],
     controllers: [McpController, McpWellKnownController],
-    providers: [McpService, McpAuthGuard],
+    providers: [McpService, McpAuthGuard, ReviewWorkflowService],
 })
 export class McpModule {}

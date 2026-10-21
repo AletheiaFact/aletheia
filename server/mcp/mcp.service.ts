@@ -1,20 +1,21 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
-import { REQUEST } from "@nestjs/core";
-import { ConfigService } from "@nestjs/config";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ClaimService } from "../claim/claim.service";
-import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ReviewTaskService } from "../review-task/review-task.service";
-import { VerificationRequestService } from "../verification-request/verification-request.service";
-import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
-import { SourceService } from "../source/source.service";
-import { TopicService } from "../topic/topic.service";
+import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { REQUEST } from "@nestjs/core";
 import { AbilityFactory } from "../auth/ability/ability.factory";
 import { NameSpaceService } from "../auth/name-space/name-space.service";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import { ClaimService } from "../claim/claim.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { ReviewTaskService } from "../review-task/review-task.service";
+import { SourceService } from "../source/source.service";
+import { TopicService } from "../topic/topic.service";
 import type { BaseRequest } from "../types";
+import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
+import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { ReviewWorkflowService } from "./review-workflow.service";
 import { registerReadTools } from "./tools/read-tools";
 import { registerWriteTools } from "./tools/write-tools";
 
@@ -33,6 +34,7 @@ export interface McpToolDeps {
     topicService: TopicService;
     abilityFactory: AbilityFactory;
     nameSpaceService: NameSpaceService;
+    reviewWorkflowService: ReviewWorkflowService;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -52,7 +54,8 @@ export class McpService {
         private readonly sourceService: SourceService,
         private readonly topicService: TopicService,
         private readonly abilityFactory: AbilityFactory,
-        private readonly nameSpaceService: NameSpaceService
+        private readonly nameSpaceService: NameSpaceService,
+        private readonly reviewWorkflowService: ReviewWorkflowService
     ) {}
 
     buildServer(): McpServer {
@@ -73,6 +76,7 @@ export class McpService {
             topicService: this.topicService,
             abilityFactory: this.abilityFactory,
             nameSpaceService: this.nameSpaceService,
+            reviewWorkflowService: this.reviewWorkflowService,
         };
         registerReadTools(server, deps);
         registerWriteTools(server, deps);
