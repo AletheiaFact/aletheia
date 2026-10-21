@@ -7,6 +7,7 @@
     "summarySectionTitle": "Summary of conclusion",
     "questionsSectionTitle": "What questions should the verification answer?",
     "verificationSectionTitle": "Verification report",
+    "notFactStandardMessage": "Not fact: subjective information, opinions, or value judgments - this is not information with a theoretical basis;",
     "howSectionTitle": "How do we check?",
     "warningAlertTitle": "This report is hidden",
     "descriptionInputPlaceholder": "Insert the description",
