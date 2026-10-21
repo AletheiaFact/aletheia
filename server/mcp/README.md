@@ -101,33 +101,56 @@ come before the server name.
 
 ## Tools
 
-### Read
+Tools are grouped by subject. **Access** is `read` for lookups and `write` for
+tools that create or change data.
 
-| Tool                         | Description                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------------- |
-| `search`                     | Full-text search across personalities, claim sentences and claim revisions    |
-| `search_topics`              | Search topics by name or alias                                                |
-| `list_claims`                | List claims, optionally filtered by personality                               |
-| `get_claim`                  | Get a claim by id, including its latest revision                              |
-| `list_personalities`         | List public figures (personalities)                                           |
-| `get_personality`            | Get a personality by id, with claims                                          |
-| `list_sources`               | List classified sources (references)                                          |
-| `get_claim_review`           | Get a published fact-check review by id or `data_hash`                        |
-| `list_review_tasks`          | List review tasks by workflow state (unassigned, assigned, reported, published) |
-| `get_review_task`            | Get a review task by id                                                       |
-| `list_verification_requests` | List verification requests (fact-check intake)                                |
-| `get_verification_request`   | Get a verification request by id                                              |
+### Search
 
-### Write
+| Tool            | Access | Description                                                                |
+| --------------- | ------ | -------------------------------------------------------------------------- |
+| `search`        | read   | Full-text search across personalities, claim sentences and claim revisions |
+| `search_topics` | read   | Search topics by name or alias                                             |
 
-| Tool                          | Description                                                                |
-| ----------------------------- | -------------------------------------------------------------------------- |
-| `create_claim`                | Create a speech-type claim for a personality                               |
-| `create_personality`          | Create a public figure (personality)                                       |
-| `create_source`               | Register a source URL, optionally linked to a target                       |
-| `start_review_task`           | Claim a claim sentence for fact-checking; the task is created already assigned to you |
-| `add_review_comment`          | Add a comment to a review task (by `data_hash`)                            |
-| `create_verification_request` | Submit content for fact-checking (enters the triage pipeline)              |
+### Claims
+
+| Tool           | Access | Description                                      |
+| -------------- | ------ | ------------------------------------------------ |
+| `list_claims`  | read   | List claims, optionally filtered by personality  |
+| `get_claim`    | read   | Get a claim by id, including its latest revision |
+| `create_claim` | write  | Create a speech-type claim for a personality     |
+
+### Personalities
+
+| Tool                 | Access | Description                          |
+| -------------------- | ------ | ------------------------------------ |
+| `list_personalities` | read   | List public figures (personalities)  |
+| `get_personality`    | read   | Get a personality by id, with claims |
+| `create_personality` | write  | Create a public figure (personality) |
+
+### Sources
+
+| Tool            | Access | Description                                          |
+| --------------- | ------ | ---------------------------------------------------- |
+| `list_sources`  | read   | List classified sources (references)                 |
+| `create_source` | write  | Register a source URL, optionally linked to a target |
+
+### Reviews
+
+| Tool                 | Access | Description                                                                     |
+| -------------------- | ------ | ------------------------------------------------------------------------------- |
+| `get_claim_review`   | read   | Get a published fact-check review by id or `data_hash`                          |
+| `list_review_tasks`  | read   | List review tasks by workflow state (unassigned, assigned, reported, published) |
+| `get_review_task`    | read   | Get a review task by id                                                         |
+| `start_review_task`  | write  | Claim a claim sentence for fact-checking; the task is created already assigned to you |
+| `add_review_comment` | write  | Add a comment to a review task (by `data_hash`)                                 |
+
+### Verification requests
+
+| Tool                          | Access | Description                                                   |
+| ----------------------------- | ------ | ------------------------------------------------------------- |
+| `list_verification_requests`  | read   | List verification requests (fact-check intake)                |
+| `get_verification_request`    | read   | Get a verification request by id                              |
+| `create_verification_request` | write  | Submit content for fact-checking (enters the triage pipeline) |
 
 `start_review_task` claims a claim sentence (by `claimId` + sentence
 `dataHash`) for fact-checking: it creates the review task already `assigned`
