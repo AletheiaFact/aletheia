@@ -24,9 +24,16 @@ IngressOptions {
 }
 
 DeploymentOptions {
+    // The Node process is CPU-bound and single-threaded: capacity scales by pods.
+    replicas = 3
     containers  {
         (newAletheia.pod.container) {
             name = "aletheia"
+            resources {
+                limits {
+                    ["cpu"] = "1000m"
+                }
+            }
         }
     }
 }
