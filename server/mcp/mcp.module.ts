@@ -6,6 +6,7 @@ import OryModule from "../auth/ory/ory.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 import { ClaimModule } from "../claim/claim.module";
+import { NotificationModule } from "../notifications/notifications.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { ReviewTaskModule } from "../review-task/review-task.module";
@@ -39,6 +40,7 @@ import { ReviewWorkflowService } from "./review-workflow.service";
         NameSpaceModule,
         ConfigModule,
         ViewModule,
+        NotificationModule,
     ],
     controllers: [
         McpController,

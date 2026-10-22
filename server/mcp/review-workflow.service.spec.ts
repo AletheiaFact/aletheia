@@ -8,7 +8,7 @@ describe("buildClaimContext", () => {
             usersId: ["user-1"],
         });
 
-        const server = buildClaimContext("user-1", "claim-1");
+        const server = buildClaimContext(["user-1"], "claim-1");
 
         expect(server.reviewData).toEqual(front.reviewData);
         // The server additionally pins the task to its claim; every other
