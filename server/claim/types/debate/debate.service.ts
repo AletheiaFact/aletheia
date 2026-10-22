@@ -1,8 +1,18 @@
-import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import {
+    ConflictException,
+    Inject,
+    Injectable,
+    NotFoundException,
+    Scope,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EditorService } from "../../../editor/editor.service";
 import { Model } from "mongoose";
-import { Debate, DebateDocument } from "./schemas/debate.schema";
+import {
+    Debate,
+    DebateDocument,
+    DebateTranscriptTurn,
+} from "./schemas/debate.schema";
 import { HistoryService } from "../../../history/history.service";
 import {
     HistoryType,
@@ -61,6 +71,84 @@ export class DebateService {
         debate.content.push(speechId);
         debate.updatedAt = new Date();
         const newDebate = await debate.save();
+
+        await this.saveHistory(newDebate, previousDebate);
+
+        return newDebate;
+    }
+
+    /**
+     * Returns the externalIds from `externalIds` that are already on the
+     * debate's transcript turns. Throws NotFoundException if the debate
+     * does not exist.
+     */
+    async findAppendedExternalIds(
+        debateId: string,
+        externalIds: string[]
+    ): Promise<Set<string>> {
+        const debate = await this.DebateModel.findById(debateId, {
+            transcriptTurns: 1,
+        }).lean();
+        if (!debate) {
+            throw new NotFoundException();
+        }
+        const requested = new Set(externalIds);
+        return new Set(
+            (debate.transcriptTurns ?? [])
+                .map((turn) => turn.externalId)
+                .filter(
+                    (id): id is string => id !== undefined && requested.has(id)
+                )
+        );
+    }
+
+    /**
+     * Appends the speeches of `turns` to the debate content in array order
+     * and records the turn metadata. The update is a single atomic write
+     * that only matches when none of the turns' externalIds is on the
+     * debate yet, so two concurrent requests cannot both append the same
+     * externalId: the losing request gets a ConflictException.
+     */
+    async appendTranscriptTurns(
+        debateId: string,
+        turns: DebateTranscriptTurn[],
+        isLive?: boolean
+    ) {
+        const previousDebate = await this.DebateModel.findById(debateId).lean();
+        if (!previousDebate) {
+            throw new NotFoundException();
+        }
+
+        const externalIds = turns
+            .map((turn) => turn.externalId)
+            .filter((id) => id !== undefined);
+        const filter: Record<string, unknown> = { _id: debateId };
+        if (externalIds.length) {
+            filter["transcriptTurns.externalId"] = { $nin: externalIds };
+        }
+
+        const set: Record<string, unknown> = { updatedAt: new Date() };
+        if (isLive !== undefined) {
+            set.isLive = isLive;
+        }
+        const update: Record<string, unknown> = { $set: set };
+        if (turns.length) {
+            update.$push = {
+                content: { $each: turns.map((turn) => turn.speech) },
+                transcriptTurns: { $each: turns },
+            };
+        }
+
+        const newDebate = await this.DebateModel.findOneAndUpdate(
+            filter,
+            update,
+            { new: true }
+        );
+        if (!newDebate) {
+            throw new ConflictException(
+                "A turn with the same externalId was appended by another request. Retry to skip it."
+            );
+        }
 
         await this.saveHistory(newDebate, previousDebate);
 

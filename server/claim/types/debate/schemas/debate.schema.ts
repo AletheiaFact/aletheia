@@ -5,6 +5,27 @@ import { ClaimRevision } from "../../../../claim/claim-revision/mongo/schemas/cl
 
 export type DebateDocument = Debate & mongoose.Document;
 
+// Metadata of a speech appended through the transcript append endpoint.
+// `externalId` is the caller's id of the turn and is used to skip repeats.
+export interface DebateTranscriptTurn {
+    speech: mongoose.Types.ObjectId;
+    externalId?: string;
+    startedAt?: Date;
+}
+
+const DebateTranscriptTurnSchema = new mongoose.Schema<DebateTranscriptTurn>(
+    {
+        speech: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "Speech",
+        },
+        externalId: { type: String },
+        startedAt: { type: Date },
+    },
+    { _id: false }
+);
+
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Debate {
     @Prop({
@@ -26,6 +47,9 @@ export class Debate {
         ],
     })
     content: Speech[];
+
+    @Prop({ type: [DebateTranscriptTurnSchema], default: [] })
+    transcriptTurns: DebateTranscriptTurn[];
 
     // TODO: move this to the prop object and formalize the claim specification
     @Prop({ type: Boolean, default: false, required: true })

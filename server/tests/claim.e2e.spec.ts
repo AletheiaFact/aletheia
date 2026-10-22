@@ -15,16 +15,18 @@ import { ContentModelEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
+import { M2MOrAbilitiesGuard } from "../auth/decorators/m2m-or-abilities.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { MongoPersonalityService } from "../personality/mongo/personality.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
-
+import { getConnectionToken } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 
 /**
  * ClaimController E2E Test Suite
- * 
+ *
  * Tests the complete claim lifecycle management including:
  * - Multiple content model types (Speech, Image, Debate) with different validation rules
  * - Claim creation, retrieval, and management across content types
@@ -33,14 +35,14 @@ import { CleanupDatabase } from "./utils/CleanupDatabase";
  * - Soft delete functionality with proper access control
  * - Comprehensive validation for required fields and business rules
  * - Pagination and filtering capabilities
- * 
+ *
  * Business Context:
  * Claims are the core content units in the fact-checking platform. They represent
  * statements made by public figures that need verification. The system supports:
  * - Speech Claims: Text-based statements with source citations
  * - Image Claims: Visual content with metadata and file storage
  * - Debate Claims: Multi-personality discussions requiring 2+ participants
- * 
+ *
  * Technical Features:
  * - Content model polymorphism with type-specific validation
  * - Personality service integration with mock data
@@ -48,7 +50,7 @@ import { CleanupDatabase } from "./utils/CleanupDatabase";
  * - Soft delete pattern with mongoose-softdelete
  * - Path generation with SEO-friendly slugs
  * - Namespace-based content organization
- * 
+ *
  * Data Flow:
  * 1. Empty state validation → claim creation by type → retrieval with population
  * 2. Moderation workflows (hide/unhide) → soft deletion → access validation
@@ -95,7 +97,10 @@ describe("ClaimController (e2e)", () => {
 
         await SeedTestUser(mongoUri);
         const { insertedIds } = await SeedTestPersonality(mongoUri);
-        personalitiesId = [insertedIds["0"].toString(), insertedIds["1"].toString()];
+        personalitiesId = [
+            insertedIds["0"].toString(),
+            insertedIds["1"].toString(),
+        ];
 
         // Update test config with shared MongoDB URI
         const testConfig = {
@@ -117,6 +122,8 @@ describe("ClaimController (e2e)", () => {
             .useValue(M2MGuardMock)
             .overrideGuard(AbilitiesGuard)
             .useValue(AbilitiesGuardMock)
+            .overrideGuard(M2MOrAbilitiesGuard)
+            .useValue(SessionGuardMock)
             .overrideProvider(CaptchaService)
             .useValue(captchaService)
             .overrideProvider("PersonalityService")
@@ -184,16 +191,18 @@ describe("ClaimController (e2e)", () => {
                 sources: speechSources,
                 recaptcha: "valid_recaptcha_token",
             });
-        
+
         expect(response.status).toBe(201);
         speechClaimId = response.body?._id;
         claimId = speechClaimId; // Set default claimId for dependent tests
-        
+
         // Validate response structure and content
         expect(response.body?.title).toEqual("Speech Claim Title");
         expect(response.body?._id).toBeDefined();
         expect(response.body?.path).toBeDefined();
-        expect(response.body?.path).toContain("/personality/barack-obama/claim/");
+        expect(response.body?.path).toContain(
+            "/personality/barack-obama/claim/"
+        );
         expect(response.body?.path).toContain("speech-claim-title");
     });
 
@@ -209,13 +218,13 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/:id (GET) - Get by id", async () => {
         expect(claimId).toBeDefined();
-        
+
         const response = await request(app.getHttpServer())
             .get(`/api/claim/${claimId}`)
             .query({ nameSpace: NameSpaceEnum.Main });
-        
+
         expect(response.status).toBe(200);
-        
+
         // Validate personality population works correctly
         const hasBarackObamaPersonality = response.body?.personalities.some(
             (p) => p.name === "Barack Obama"
@@ -223,7 +232,7 @@ describe("ClaimController (e2e)", () => {
         expect(hasBarackObamaPersonality).toBeTruthy();
         expect(response.body?.personalities).toHaveLength(1);
         expect(response.body?.personalities[0]?.slug).toEqual("barack-obama");
-        
+
         // Validate all claim fields are properly returned
         expect(response.body?._id).toEqual(claimId);
         expect(response.body?.title).toEqual("Speech Claim Title");
@@ -265,13 +274,17 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(201);
-        
+
         // Validate response structure and content
         expect(response.status).toBe(201);
-        expect(response.body?.title).toEqual("Image Claim Title With Personality");
+        expect(response.body?.title).toEqual(
+            "Image Claim Title With Personality"
+        );
         expect(response.body?.path).toBeDefined();
-        expect(response.body?.path).toContain("/personality/barack-obama/claim/");
-        
+        expect(response.body?.path).toContain(
+            "/personality/barack-obama/claim/"
+        );
+
         imageClaimId = response.body?._id || response.body?.path;
     });
 
@@ -302,12 +315,13 @@ describe("ClaimController (e2e)", () => {
                 },
                 recaptcha: "valid_recaptcha_token",
             });
-        
-        
+
         expect(response.status).toBe(201);
-        expect(response.body?.title).toEqual("Image Claim Title Without Personality");
+        expect(response.body?.title).toEqual(
+            "Image Claim Title Without Personality"
+        );
         expect(response.body?.path).toBeDefined();
-        
+
         // Validate that path doesn't contain personality slug (since no personality)
         expect(response.body?.path).toContain("/claim/");
         expect(response.body?.path).not.toContain("/personality/");
@@ -341,13 +355,159 @@ describe("ClaimController (e2e)", () => {
 
         // Debate endpoint may return different response formats
         // Accept either _id, path, or just success status
-        debateClaimId = response.body?._id || response.body?.path || "debate-created";
+        debateClaimId =
+            response.body?._id || response.body?.path || "debate-created";
 
         // If the response contains a path, validate it
         if (response.body?.path) {
             expect(response.body.path).toContain("/claim/");
             expect(response.body.path).toContain("/debate");
         }
+    });
+
+    /**
+     * Test: Append transcript turns to a debate
+     * Purpose: Validates POST /api/claim/debate/:debateId/append
+     * Validates:
+     * - Each turn becomes a speech of the turn's personality, in order
+     * - Turns with an externalId already on the debate are skipped
+     * - Body validation (400), speakers outside the debate (400),
+     *   and unknown debate ids (404)
+     */
+    describe("/api/claim/debate/:debateId/append (POST)", () => {
+        let debateId: string;
+        const appendUrl = () => `/api/claim/debate/${debateId}/append`;
+
+        const getDebate = () =>
+            app
+                .get(getConnectionToken())
+                .collection("debates")
+                .findOne({ _id: new Types.ObjectId(debateId) });
+
+        beforeAll(async () => {
+            const claimId = debateClaimId.split("/")[2];
+            const revision = await app
+                .get(getConnectionToken())
+                .collection("claimrevisions")
+                .findOne({ claimId: new Types.ObjectId(claimId) });
+            debateId = revision.contentId.toString();
+        });
+
+        it("appends each turn as a speech in request order", async () => {
+            const response = await request(app.getHttpServer())
+                .post(appendUrl())
+                .send({
+                    turns: [
+                        {
+                            personality: personalitiesId[0],
+                            text: "We will lower taxes. Everyone benefits.",
+                            externalId: "turn-1",
+                            startedAt: "2023-11-25T15:00:00.000Z",
+                        },
+                        {
+                            personality: personalitiesId[1],
+                            text: "That plan was tried before.",
+                            externalId: "turn-2",
+                        },
+                    ],
+                    isLive: true,
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body.skipped).toEqual([]);
+            expect(response.body.isLive).toBe(true);
+            expect(
+                response.body.appended.map((turn) => turn.externalId)
+            ).toEqual(["turn-1", "turn-2"]);
+
+            const debate = await getDebate();
+            expect(debate.isLive).toBe(true);
+            expect(debate.content.map(String)).toEqual(
+                response.body.appended.map((turn) => turn.speechId)
+            );
+            expect(debate.transcriptTurns[0].externalId).toBe("turn-1");
+            expect(debate.transcriptTurns[0].startedAt).toEqual(
+                new Date("2023-11-25T15:00:00.000Z")
+            );
+
+            const speech = await app
+                .get(getConnectionToken())
+                .collection("speeches")
+                .findOne({ _id: debate.content[0] });
+            expect(speech.personality.toString()).toBe(personalitiesId[0]);
+            expect(speech.content).toHaveLength(1);
+        });
+
+        it("skips turns that were already appended", async () => {
+            const response = await request(app.getHttpServer())
+                .post(appendUrl())
+                .send({
+                    turns: [
+                        {
+                            personality: personalitiesId[1],
+                            text: "That plan was tried before.",
+                            externalId: "turn-2",
+                        },
+                        {
+                            personality: personalitiesId[0],
+                            text: "Not like this.",
+                            externalId: "turn-3",
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body.skipped).toEqual(["turn-2"]);
+            expect(
+                response.body.appended.map((turn) => turn.externalId)
+            ).toEqual(["turn-3"]);
+
+            const debate = await getDebate();
+            expect(debate.content).toHaveLength(3);
+            expect(
+                debate.transcriptTurns.map((turn) => turn.externalId)
+            ).toEqual(["turn-1", "turn-2", "turn-3"]);
+        });
+
+        it("returns 400 for an invalid body", async () => {
+            const response = await request(app.getHttpServer())
+                .post(appendUrl())
+                .send({
+                    turns: [{ personality: personalitiesId[0], text: "  " }],
+                });
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe("Validation failed");
+            expect(response.body.issues[0].path).toBe("turns.0.text");
+        });
+
+        it("returns 400 for a speaker who is not in the debate", async () => {
+            const response = await request(app.getHttpServer())
+                .post(appendUrl())
+                .send({
+                    turns: [
+                        {
+                            personality: new Types.ObjectId().toString(),
+                            text: "I was not invited.",
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect((await getDebate()).content).toHaveLength(3);
+        });
+
+        it("returns 404 for an unknown debate", async () => {
+            const response = await request(app.getHttpServer())
+                .post(
+                    `/api/claim/debate/${new Types.ObjectId().toString()}/append`
+                )
+                .send({
+                    turns: [{ personality: personalitiesId[0], text: "Hi." }],
+                });
+
+            expect(response.status).toBe(404);
+        });
     });
 
     /**
@@ -386,7 +546,7 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/hidden/:id (PUT) - Hide claim", async () => {
         expect(claimId).toBeDefined();
-        
+
         // Hide the claim
         await request(app.getHttpServer())
             .put(`/api/claim/hidden/${claimId}`)
@@ -396,7 +556,7 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(200);
-            
+
         // Verify claim no longer appears in public listings
         const response = await request(app.getHttpServer())
             .get("/api/claim")
@@ -409,7 +569,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
             })
             .expect(200);
-            
+
         expect(response.body?.claims.length).toEqual(3); // Should be 3 instead of 4
     });
 
@@ -424,7 +584,7 @@ describe("ClaimController (e2e)", () => {
      */
     it("/api/claim/hidden/:id (PUT) - Unhide claim", async () => {
         expect(claimId).toBeDefined();
-        
+
         // Unhide the claim
         await request(app.getHttpServer())
             .put(`/api/claim/hidden/${claimId}`)
@@ -434,7 +594,7 @@ describe("ClaimController (e2e)", () => {
                 recaptcha: "valid_recaptcha_token",
             })
             .expect(200);
-            
+
         // Verify claim reappears in public listings
         const response = await request(app.getHttpServer())
             .get("/api/claim")
@@ -447,7 +607,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
             })
             .expect(200);
-            
+
         expect(response.body?.claims.length).toEqual(4); // Should be back to 4
     });
 

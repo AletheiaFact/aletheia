@@ -20,6 +20,7 @@ import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { entityId } from "../../lib/schemas";
 import {
+    AppendDebateTranscriptSchema,
     ClaimCreatePageQuerySchema,
     CreateClaimSchema,
     CreateDebateClaimSchema,
@@ -32,6 +33,7 @@ import {
     UpdateHiddenStatusSchema,
 } from "./dto/claim.dto";
 import type {
+    AppendDebateTranscriptDto,
     ClaimCreatePageQueryDto,
     CreateClaimDto,
     CreateDebateClaimDto,
@@ -53,7 +55,9 @@ import slugify from "slugify";
 import type { ISentence } from "../interfaces/claim-content.interface";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
-import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { Auth, Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import { FactCheckerUserAbility } from "../auth/ability/ability.decorator";
+import { ContentModelEnum } from "../types/enums";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
@@ -255,6 +259,99 @@ export class ClaimController {
         } else {
             return this.debateService.updateDebateStatus(debateId, isLive);
         }
+    }
+
+    /**
+     * Appends transcript turns to an existing debate. Each turn is parsed
+     * into a speech (paragraphs and sentences) of the turn's personality,
+     * and the speeches are added to the debate in request order. Turns
+     * whose externalId is already on the debate are skipped, so a caller
+     * can resend a chunk safely.
+     */
+    @Auth({ abilities: [new FactCheckerUserAbility()], allowM2M: true })
+    @ApiTags("claim")
+    @Post("api/claim/debate/:debateId/append")
+    async appendDebateTranscript(
+        @ZodParam("debateId", entityId) debateId: string,
+        @ZodBody(AppendDebateTranscriptSchema) body: AppendDebateTranscriptDto
+    ) {
+        const claimRevision = await this.claimRevisionService.getByContentId(
+            debateId
+        );
+        if (!claimRevision) {
+            throw new NotFoundException();
+        }
+        if (claimRevision.contentModel !== ContentModelEnum.Debate) {
+            throw new BadRequestException("Claim is not a debate");
+        }
+
+        const debatePersonalities = new Set(
+            (claimRevision.personalities ?? []).map((personality) =>
+                String(personality?._id ?? personality)
+            )
+        );
+        const unknownPersonalities = [
+            ...new Set(
+                body.turns
+                    .map((turn) => turn.personality)
+                    .filter((id) => !debatePersonalities.has(id))
+            ),
+        ];
+        if (unknownPersonalities.length) {
+            throw new BadRequestException(
+                `Personalities not in this debate: ${unknownPersonalities.join(
+                    ", "
+                )}`
+            );
+        }
+
+        const appended = await this.debateService.findAppendedExternalIds(
+            debateId,
+            body.turns
+                .map((turn) => turn.externalId)
+                .filter((id) => id !== undefined)
+        );
+        const newTurns = body.turns.filter(
+            (turn) => !turn.externalId || !appended.has(turn.externalId)
+        );
+
+        // Sequential on purpose: speeches are created in transcript order.
+        const transcriptTurns = [];
+        for (const turn of newTurns) {
+            const speech = await this.parserService.parse(
+                turn.text,
+                claimRevision._id,
+                turn.personality
+            );
+            transcriptTurns.push({
+                speech: speech._id,
+                externalId: turn.externalId,
+                startedAt: turn.startedAt
+                    ? new Date(turn.startedAt)
+                    : undefined,
+            });
+        }
+
+        let isLive = body.isLive;
+        if (transcriptTurns.length || isLive !== undefined) {
+            const debate = await this.debateService.appendTranscriptTurns(
+                debateId,
+                transcriptTurns,
+                isLive
+            );
+            isLive = debate.isLive;
+        }
+
+        return {
+            appended: transcriptTurns.map((turn) => ({
+                speechId: String(turn.speech),
+                externalId: turn.externalId,
+            })),
+            skipped: body.turns
+                .map((turn) => turn.externalId)
+                .filter((id) => id !== undefined && appended.has(id)),
+            isLive,
+        };
     }
 
     private async _createClaim(
