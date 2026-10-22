@@ -5,8 +5,8 @@ serve:
 urls:
     self:
         issuer: http://127.0.0.1:4444
-    consent: http://127.0.0.1:3000/consent
-    login: http://127.0.0.1:3000/login
+    consent: http://127.0.0.1:3000/mcp/consent
+    login: http://127.0.0.1:3000/api/mcp/oauth/login
     logout: http://127.0.0.1:3000/logout
 
 secrets:
@@ -14,6 +14,8 @@ secrets:
         - youReallyNeedToChangeThis
 
 oidc:
+    dynamic_client_registration:
+        enabled: true
     subject_identifiers:
         supported_types:
             - pairwise

@@ -85,6 +85,7 @@
         "@langchain/core": "1.1.26",
         "@langchain/langgraph": "^1.1.5",
         "@langchain/openai": "1.2.8",
+        "@modelcontextprotocol/sdk": "^1.29.0",
         "@mui/icons-material": "^5.10.9",
         "@mui/joy": "^5.0.0-beta.48",
         "@mui/lab": "^6.0.0-beta.30",
