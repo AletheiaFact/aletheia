@@ -5,7 +5,7 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import type { IClaimService } from "../../interfaces/claim.service.interface";
-import { ReviewTaskService } from "../../review-task/review-task.service";
+import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import { isReviewerOrAdmin, toObjectId, WorkflowUser } from "./access";
 import {
@@ -26,7 +26,7 @@ import {
 export class ReviewQueueService {
     constructor(
         @Inject("ClaimService") private readonly claimService: IClaimService,
-        private readonly reviewTaskService: ReviewTaskService
+        private readonly reviewTaskQueue: ReviewTaskQueueService
     ) {}
 
     /**
@@ -50,7 +50,7 @@ export class ReviewQueueService {
             context.review.personality = personalityId
                 ? personalityId.toString()
                 : "";
-            const inserted = await this.reviewTaskService.enqueueUnassigned({
+            const inserted = await this.reviewTaskQueue.enqueueUnassigned({
                 data_hash: dataHash,
                 reportModel: ReportModelEnum.FactChecking,
                 reviewTaskType: ReviewTaskTypeEnum.Claim,
@@ -65,7 +65,7 @@ export class ReviewQueueService {
 
     /** Takes the oldest `unassigned` task in the namespace and assigns it to the caller. */
     async nextReviewTask(user: WorkflowUser, nameSpace: string) {
-        return this.reviewTaskService.transitionAtomically(
+        return this.reviewTaskQueue.transitionAtomically(
             { ...this.queueScope(nameSpace), "machine.value": "unassigned" },
             assignTo(user._id)
         );
@@ -83,7 +83,7 @@ export class ReviewQueueService {
             );
         }
         const reviewerId = toObjectId(user._id);
-        return this.reviewTaskService.transitionAtomically(
+        return this.reviewTaskQueue.transitionAtomically(
             {
                 ...this.queueScope(nameSpace),
                 "machine.value": "selectReviewer",
@@ -107,8 +107,8 @@ export class ReviewQueueService {
             "machine.context.reviewData.crossCheckerId": toObjectId(user._id),
         };
         const [[task], waiting] = await Promise.all([
-            this.reviewTaskService.findOldest(filter),
-            this.reviewTaskService.countMatching(filter),
+            this.reviewTaskQueue.findOldest(filter),
+            this.reviewTaskQueue.countMatching(filter),
         ]);
         return { task: task ?? null, waiting };
     }
@@ -126,8 +126,8 @@ export class ReviewQueueService {
             "machine.context.reviewData.reviewerId": toObjectId(user._id),
         };
         const [tasks, total] = await Promise.all([
-            this.reviewTaskService.findOldest(filter, page, pageSize),
-            this.reviewTaskService.countMatching(filter),
+            this.reviewTaskQueue.findOldest(filter, page, pageSize),
+            this.reviewTaskQueue.countMatching(filter),
         ]);
         return { tasks, total, page, pageSize };
     }

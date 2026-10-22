@@ -123,8 +123,11 @@ function buildDeps(user: any) {
             ),
         },
     };
+    // One mock stands in for both ReviewTaskService and ReviewTaskQueueService
+    // so specs assert on a single `mocks.reviewTaskService`.
     const reviewWorkflowService = new ReviewWorkflowService(
         mocks.claimService as any,
+        mocks.reviewTaskService as any,
         mocks.reviewTaskService as any
     );
     const reviewQueueService = new ReviewQueueService(

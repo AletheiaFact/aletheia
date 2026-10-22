@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { IClaimService } from "../../interfaces/claim.service.interface";
+import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReviewTaskService } from "../../review-task/review-task.service";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import {
@@ -49,6 +50,7 @@ export class ReviewWorkflowService {
     constructor(
         @Inject("ClaimService") private readonly claimService: IClaimService,
         private readonly reviewTaskService: ReviewTaskService,
+        private readonly reviewTaskQueue: ReviewTaskQueueService,
         @Optional() private readonly configService?: ConfigService,
         @Optional() private readonly notifier?: ReviewNotifierService
     ) {}
@@ -81,7 +83,7 @@ export class ReviewWorkflowService {
             // else's work.
             const taken =
                 stateName(existing.machine?.value) === "unassigned"
-                    ? await this.reviewTaskService.transitionAtomically(
+                    ? await this.reviewTaskQueue.transitionAtomically(
                           {
                               _id: existing._id,
                               "machine.value": "unassigned",
@@ -133,7 +135,7 @@ export class ReviewWorkflowService {
                 `Task already has the maximum of ${maxAssignees} assignees`
             );
         }
-        const joined = await this.reviewTaskService.transitionAtomically(
+        const joined = await this.reviewTaskQueue.transitionAtomically(
             {
                 _id: task._id,
                 $or: [
@@ -169,7 +171,7 @@ export class ReviewWorkflowService {
                 "Only an assignee of the task or an admin can send it to review"
             );
         }
-        const sent = await this.reviewTaskService.transitionAtomically(
+        const sent = await this.reviewTaskQueue.transitionAtomically(
             { _id: task._id, "machine.value": "reported" },
             {
                 $set: {
@@ -216,7 +218,7 @@ export class ReviewWorkflowService {
                 `Cannot publish: missing ${missing.join(", ")}`
             );
         }
-        const published = await this.reviewTaskService.publishSubmitted(
+        const published = await this.reviewTaskQueue.publishSubmitted(
             task._id.toString()
         );
         if (!published) {
