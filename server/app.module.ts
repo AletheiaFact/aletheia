@@ -18,7 +18,8 @@ import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { ClientIpThrottlerGuard } from "./common/throttler/client-ip-throttler.guard";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim/claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
@@ -192,7 +193,7 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: ThrottlerGuard,
+                    useClass: ClientIpThrottlerGuard,
                 },
                 {
                     provide: APP_GUARD,
