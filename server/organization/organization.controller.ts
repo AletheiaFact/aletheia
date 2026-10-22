@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { objectId } from "../../lib/schemas";
-import { FactCheckerOnly } from "../auth/decorators/auth.decorator";
+import { AdminOnly, FactCheckerOnly } from "../auth/decorators/auth.decorator";
 import { ImageService } from "../claim/types/image/image.service";
 import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
@@ -55,7 +55,8 @@ export class OrganizationController {
         return this.organizationService.create({ ...organization, logo });
     }
 
-    @FactCheckerOnly()
+    // Shared across events: an edit changes every event that lists it.
+    @AdminOnly()
     @ApiTags("organization")
     @Patch("api/organization/:id")
     async update(

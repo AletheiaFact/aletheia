@@ -28,11 +28,7 @@ const create = (
         .catch((err) => {
             MessageManager.showMessage(
                 "error",
-                t(
-                    err?.response?.status === 409
-                        ? "events:organizationAlreadyExists"
-                        : "events:organizationSaveError"
-                )
+                t("events:organizationSaveError")
             );
             throw err;
         });
@@ -49,11 +45,7 @@ const update = (
         .catch((err) => {
             MessageManager.showMessage(
                 "error",
-                t(
-                    err?.response?.status === 409
-                        ? "events:organizationAlreadyExists"
-                        : "events:organizationSaveError"
-                )
+                t("events:organizationSaveError")
             );
             throw err;
         });

@@ -1,6 +1,10 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CHECK_ABILITY,
+} from "../auth/ability/ability.decorator";
 import { ImageService } from "../claim/types/image/image.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { OrganizationController } from "./organization.controller";
@@ -113,5 +117,13 @@ describe("OrganizationController", () => {
         expect(mockOrganizationService.update).toHaveBeenCalledWith(id, {
             website: "https://example.org",
         });
+    });
+
+    it("lets only admins edit a shared organization", () => {
+        const abilities = Reflect.getMetadata(
+            CHECK_ABILITY,
+            OrganizationController.prototype.update
+        );
+        expect(abilities).toEqual([new AdminUserAbility()]);
     });
 });

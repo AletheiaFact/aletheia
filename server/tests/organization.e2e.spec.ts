@@ -25,6 +25,7 @@ describe("OrganizationController (e2e)", () => {
     let moduleFixture: TestingModule;
     let organizationModel: ISoftDeletedModel<OrganizationDocument>;
     let organizationId: string;
+    let duplicateNameId: string;
     let secondOrganizationId: string;
 
     const mockFeatureFlagService = {
@@ -123,11 +124,15 @@ describe("OrganizationController (e2e)", () => {
             });
     });
 
-    it("rejects a duplicate name with 409", () => {
+    it("suffixes the slug when another organization has the same name", () => {
         return request(app.getHttpServer())
             .post("/api/organization")
             .send({ name: "agência exemplo", logo: uploadedLogo("a2") })
-            .expect(409);
+            .expect(201)
+            .expect(({ body }) => {
+                duplicateNameId = body._id;
+                expect(body.slug).toBe("agencia-exemplo-2");
+            });
     });
 
     it("rejects an invalid payload with 400", () => {
@@ -147,7 +152,9 @@ describe("OrganizationController (e2e)", () => {
             .query({ name: "EXEMP" })
             .expect(200)
             .expect(({ body }) => {
-                expect(body.map((org) => org._id)).toEqual([organizationId]);
+                expect(body.map((org) => org._id).sort()).toEqual(
+                    [organizationId, duplicateNameId].sort()
+                );
                 expect(body[0].logo).toHaveProperty("content");
             });
 
@@ -158,13 +165,14 @@ describe("OrganizationController (e2e)", () => {
             .expect(({ body }) => expect(body).toEqual([]));
     });
 
-    it("updates an organization and re-derives its slug", () => {
+    it("updates an organization and keeps its slug", () => {
         return request(app.getHttpServer())
             .patch(`/api/organization/${organizationId}`)
             .send({ name: "Agência Exemplo Checagem" })
             .expect(200)
             .expect(({ body }) => {
-                expect(body.slug).toBe("agencia-exemplo-checagem");
+                expect(body.name).toBe("Agência Exemplo Checagem");
+                expect(body.slug).toBe("agencia-exemplo");
                 expect(body.website).toBe("https://example.org");
             });
     });

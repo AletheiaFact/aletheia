@@ -63,7 +63,6 @@
     "organizationSearchHint": "Type at least 2 characters",
     "organizationSearchEmpty": "No organization found. Create a new one.",
     "organizationSearchError": "Error searching organizations.",
-    "organizationAlreadyExists": "An organization with this name already exists. Search for it instead.",
     "organizationSaveError": "Error saving the organization. Please try again.",
     "organizationNameRequired": "Every participating organization needs a name.",
     "organizationLogoRequired": "Every participating organization needs a logo.",

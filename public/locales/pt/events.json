@@ -63,7 +63,6 @@
     "organizationSearchHint": "Digite ao menos 2 caracteres",
     "organizationSearchEmpty": "Nenhuma organização encontrada. Crie uma nova.",
     "organizationSearchError": "Erro ao buscar organizações.",
-    "organizationAlreadyExists": "Já existe uma organização com este nome. Busque por ela.",
     "organizationSaveError": "Erro ao salvar a organização. Tente novamente.",
     "organizationNameRequired": "Toda organização participante precisa de um nome.",
     "organizationLogoRequired": "Toda organização participante precisa de um logo.",

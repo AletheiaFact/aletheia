@@ -7,6 +7,10 @@ import { ViewService } from "../view/view.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import {
+    AdminUserAbility,
+    CHECK_ABILITY,
+} from "../auth/ability/ability.decorator";
+import {
     mockConfigService,
     mockEventsService,
     mockFeatureFlagService,
@@ -276,5 +280,13 @@ describe("EventsController (Unit)", () => {
 
             expect(res.redirect).toHaveBeenCalledWith("/");
         });
+    });
+
+    it("lets only admins update an event", () => {
+        const abilities = Reflect.getMetadata(
+            CHECK_ABILITY,
+            EventsController.prototype.update
+        );
+        expect(abilities).toEqual([new AdminUserAbility()]);
     });
 });

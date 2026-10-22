@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
-import slugify from "slugify";
 import type {
     IOrganizationService,
     OrganizationCreateInput,
@@ -13,14 +12,16 @@ import type {
 } from "../../interfaces/organization.service.interface";
 import type { IOrganization } from "../../interfaces/organization.interface";
 import { escapeRegex } from "../../util/regex.util";
+import {
+    firstFreeSlug,
+    slugVariantsFilter,
+    toSlug,
+} from "../../util/slug.util";
 import { toError } from "../../util/error-handling";
 import {
     Organization,
     OrganizationDocument,
 } from "./schemas/organization.schema";
-
-export const deriveOrganizationSlug = (name: string) =>
-    slugify(name, { lower: true, strict: true, trim: true });
 
 @Injectable()
 export class MongoOrganizationService implements IOrganizationService {
@@ -33,7 +34,7 @@ export class MongoOrganizationService implements IOrganizationService {
         try {
             const organization = await this.organizationModel.create({
                 ...input,
-                slug: deriveOrganizationSlug(input.name),
+                slug: await this.generateUniqueSlug(input.name),
             });
             return await organization.populate("logo");
         } catch (error) {
@@ -45,26 +46,14 @@ export class MongoOrganizationService implements IOrganizationService {
         id: string,
         input: OrganizationUpdateInput
     ): Promise<IOrganization> {
-        const update: OrganizationUpdateInput & { slug?: string } = {
-            ...input,
-        };
-        if (input.name) {
-            update.slug = deriveOrganizationSlug(input.name);
-        }
-
-        let organization: OrganizationDocument | null;
-        try {
-            organization = await this.organizationModel
-                .findOneAndUpdate(
-                    { _id: id, isDeleted: false },
-                    { $set: update },
-                    { new: true, runValidators: true }
-                )
-                .populate("logo")
-                .exec();
-        } catch (error) {
-            throw this.mapWriteError(error);
-        }
+        const organization = await this.organizationModel
+            .findOneAndUpdate(
+                { _id: id, isDeleted: false },
+                { $set: input },
+                { new: true, runValidators: true }
+            )
+            .populate("logo")
+            .exec();
 
         if (!organization) {
             throw new NotFoundException(`Organization not found: ${id}`);
@@ -96,11 +85,23 @@ export class MongoOrganizationService implements IOrganizationService {
         return organizations.map(({ _id }) => String(_id));
     }
 
+    // Fixed at creation, like event slugs: it will be the public URL of the
+    // organization page. Deleted organizations keep theirs reserved.
+    private async generateUniqueSlug(name: string): Promise<string> {
+        const base = toSlug(name);
+        const existing = await this.organizationModel
+            .find(slugVariantsFilter(base))
+            .select("slug")
+            .lean<Pick<Organization, "slug">[]>()
+            .exec();
+        return firstFreeSlug(base, new Set(existing.map(({ slug }) => slug)));
+    }
+
     private mapWriteError(error: unknown): unknown {
         const err = toError(error);
         if (err.code === 11000) {
             return new ConflictException(
-                "An organization with this name already exists"
+                "Organization slug taken by a concurrent save, retry"
             );
         }
         return error;

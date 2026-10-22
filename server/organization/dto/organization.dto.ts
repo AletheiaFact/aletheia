@@ -6,7 +6,7 @@ import {
     queryInt,
 } from "../../../lib/schemas";
 
-// deriveOrganizationSlug needs at least one letter or digit to build a slug.
+// The slug is derived from the name and needs at least one letter or digit to build a slug.
 const organizationName = nonEmptyText(120).regex(/[\p{L}\p{N}]/u, {
     error: "Name must contain a letter or a digit",
 });

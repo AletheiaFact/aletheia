@@ -26,7 +26,6 @@ import {
     TopicDataAggregation,
 } from "./types/event.interfaces";
 import * as crypto from "crypto";
-import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
@@ -35,7 +34,7 @@ import { REQUEST } from "@nestjs/core";
 import { Topic, TopicDocument } from "../topic/mongo/schemas/topic.schema";
 import { toError } from "../util/error-handling";
 import { mapAggregateToRecord } from "../util/mongo-utils";
-import { escapeRegex } from "../util/regex.util";
+import { firstFreeSlug, slugVariantsFilter, toSlug } from "../util/slug.util";
 
 // Path segments under /event/ that belong to other pages.
 const RESERVED_EVENT_SLUGS = ["create"];
@@ -310,26 +309,19 @@ export class EventsService {
     }
 
     private async generateUniqueSlug(name: string): Promise<string> {
-        const base =
-            slugify(name, { lower: true, strict: true, trim: true }) || "event";
+        const base = toSlug(name) || "event";
         const existing = await this.eventModel
-            .find({ slug: { $regex: `^${escapeRegex(base)}(-\\d+)?$` } })
+            .find(slugVariantsFilter(base))
             .select("slug")
             .lean<Pick<Event, "slug">[]>()
             .exec();
-        const taken = new Set([
-            ...RESERVED_EVENT_SLUGS,
-            ...existing.map(({ slug }) => slug),
-        ]);
-
-        if (!taken.has(base)) {
-            return base;
-        }
-        let suffix = 2;
-        while (taken.has(`${base}-${suffix}`)) {
-            suffix++;
-        }
-        return `${base}-${suffix}`;
+        return firstFreeSlug(
+            base,
+            new Set([
+                ...RESERVED_EVENT_SLUGS,
+                ...existing.map(({ slug }) => slug),
+            ])
+        );
     }
 
     private async validateParticipants(

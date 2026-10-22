@@ -6,6 +6,9 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import { useTranslation } from "next-i18next";
+import { useAtom } from "jotai";
+import { currentUserRole } from "../../../atoms/currentUser";
+import { isAdmin } from "../../../utils/GetUserPermission";
 import colors from "../../../styles/colors";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import AletheiaInput from "../../AletheiaInput";
@@ -34,6 +37,7 @@ const ParticipantsInput = ({
     dataCy,
 }: ParticipantsInputProps) => {
     const { t } = useTranslation();
+    const [role] = useAtom(currentUserRole);
     const [drafts, setDrafts] = useState<ParticipantDraft[]>(
         () => defaultValue ?? []
     );
@@ -86,6 +90,8 @@ const ParticipantsInput = ({
             >
                 {drafts.map((draft, index) => {
                     const isEditing = editingKey === draft.key;
+                    // Saved organizations are shared; only admins edit them.
+                    const canEdit = !draft.organization || isAdmin(role);
                     const label =
                         draft.name.trim() || t("events:organizationUnnamed");
 
@@ -119,21 +125,25 @@ const ParticipantsInput = ({
                                 </Box>
                                 {!disabled && (
                                     <Box display="flex" flex="none">
-                                        <IconButton
-                                            aria-label={t(
-                                                "events:organizationEdit",
-                                                { name: label }
-                                            )}
-                                            aria-expanded={isEditing}
-                                            onClick={() =>
-                                                setEditingKey(
-                                                    isEditing ? null : draft.key
-                                                )
-                                            }
-                                            data-cy={`${dataCy}Edit-${index}`}
-                                        >
-                                            <EditOutlined fontSize="small" />
-                                        </IconButton>
+                                        {canEdit && (
+                                            <IconButton
+                                                aria-label={t(
+                                                    "events:organizationEdit",
+                                                    { name: label }
+                                                )}
+                                                aria-expanded={isEditing}
+                                                onClick={() =>
+                                                    setEditingKey(
+                                                        isEditing
+                                                            ? null
+                                                            : draft.key
+                                                    )
+                                                }
+                                                data-cy={`${dataCy}Edit-${index}`}
+                                            >
+                                                <EditOutlined fontSize="small" />
+                                            </IconButton>
+                                        )}
                                         <IconButton
                                             aria-label={t(
                                                 "events:participantMoveUp"

@@ -22,7 +22,11 @@ import {
 } from "./dto/filter.dto";
 import type { BaseRequest } from "../types";
 import type { Response } from "express";
-import { FactCheckerOnly, Public } from "../auth/decorators/auth.decorator";
+import {
+    AdminOnly,
+    FactCheckerOnly,
+    Public,
+} from "../auth/decorators/auth.decorator";
 import { parse } from "url";
 import { objectId } from "../../lib/schemas";
 import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
@@ -65,7 +69,7 @@ export class EventsController {
         return this.eventsService.create(newEvent);
     }
 
-    @FactCheckerOnly()
+    @AdminOnly()
     @ApiTags("event")
     @Patch("api/event/:id")
     async update(

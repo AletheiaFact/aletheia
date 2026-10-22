@@ -2,7 +2,7 @@ import { Grid, Chip, Typography, Box, IconButton } from "@mui/material";
 import { EventPayload, EventsActions, EventsState } from "../../../types/event";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../../../atoms/currentUser";
-import { isStaff } from "../../../utils/GetUserPermission";
+import { isAdmin } from "../../../utils/GetUserPermission";
 import EditIcon from "@mui/icons-material/Edit";
 import EventDrawer from "../EventForm/EventDrawer";
 import { isEditDrawerOpen } from "../../../atoms/editDrawer";
@@ -47,7 +47,7 @@ const EventHeaderContent = ({
                             {`${location} • ${formatMonthYear(startDate)}`}
                         </Typography>
                     </Box>
-                    {isStaff(role) && (
+                    {isAdmin(role) && (
                         <IconButton size="small">
                             <EditIcon
                                 data-cy="testEventEditButton"
