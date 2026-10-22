@@ -7,9 +7,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import EventDrawer from "../EventForm/EventDrawer";
 import { isEditDrawerOpen } from "../../../atoms/editDrawer";
 import { formatMonthYear } from "../../../helpers/formatTimeAgo";
+import EventParticipants from "../Participants/EventParticipants";
 
 type EventHeaderContentProps = {
-    currentEvent: EventPayload,
+    currentEvent: EventPayload;
     state: EventsState;
     actions: EventsActions;
 };
@@ -17,9 +18,17 @@ type EventHeaderContentProps = {
 const EventHeaderContent = ({
     currentEvent,
     state,
-    actions
+    actions,
 }: EventHeaderContentProps) => {
-    const { badge, name, description, startDate, location, slug } = currentEvent
+    const {
+        badge,
+        name,
+        description,
+        startDate,
+        location,
+        slug,
+        participants,
+    } = currentEvent;
     const [role] = useAtom(currentUserRole);
     const [open, setOpen] = useAtom(isEditDrawerOpen);
 
@@ -31,7 +40,7 @@ const EventHeaderContent = ({
 
             actions.router.replace(newRoute);
         } else {
-           actions.router.reload()
+            actions.router.reload();
         }
     };
 
@@ -60,7 +69,8 @@ const EventHeaderContent = ({
                                 data-cy="testEventEditButton"
                                 className="edit-icon"
                                 color="primary"
-                                onClick={() => setOpen(true)} />
+                                onClick={() => setOpen(true)}
+                            />
                         </IconButton>
                     )}
                     {open && (
@@ -74,15 +84,24 @@ const EventHeaderContent = ({
                         />
                     )}
                 </Grid>
-                <Typography variant="h1" className="title" data-cy="testEventTitle">
+                <Typography
+                    variant="h1"
+                    className="title"
+                    data-cy="testEventTitle"
+                >
                     {name}
                 </Typography>
-                <Typography className="description" variant="body1" data-cy="testEventDescription">
+                <Typography
+                    className="description"
+                    variant="body1"
+                    data-cy="testEventDescription"
+                >
                     {description}
                 </Typography>
+                <EventParticipants participants={participants} />
             </Grid>
             <Grid className="bottomGradient" />
-        </Grid >
+        </Grid>
     );
 };
 

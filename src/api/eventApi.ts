@@ -1,12 +1,12 @@
 import { TFunction } from "i18next";
 import { MessageManager } from "../components/Messages";
 import { HEX24 } from "../types/History";
-import { EventPayload, ListEventsOptions } from "../types/event";
+import { EventRequest, ListEventsOptions } from "../types/event";
 import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("/api/event");
 
-const createEvent = (newEvent: EventPayload, t: TFunction) => {
+const createEvent = (newEvent: EventRequest, t: TFunction) => {
     return request
         .post("/", newEvent)
         .then((response) => {
@@ -25,7 +25,7 @@ const createEvent = (newEvent: EventPayload, t: TFunction) => {
 
 const updateEvent = (
     eventId: string,
-    updatedEvent: Partial<EventPayload>,
+    updatedEvent: Partial<EventRequest>,
     t: TFunction
 ) => {
     if (!HEX24.test(eventId)) {

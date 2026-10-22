@@ -3,8 +3,11 @@ import { Divider, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { EventPayload, EventsActions, EventsState } from "../../../types/event";
 import LargeDrawer from "../../LargeDrawer";
-import DynamicEventForm from "./DynamicEventForm";
+import DynamicEventForm, { EventFormValues } from "./DynamicEventForm";
 import EventApi from "../../../api/eventApi";
+import { draftsFromParticipants } from "../Participants/participantDrafts";
+import { persistParticipants } from "../Participants/persistParticipants";
+import { createParticipantsApi } from "../Participants/participantsApi";
 
 interface EventDrawerProps {
     open: boolean;
@@ -21,13 +24,16 @@ const EventDrawer = ({
     currentEvent,
     onSave,
     state,
-    actions
+    actions,
 }: EventDrawerProps) => {
     const { t } = useTranslation();
     const { hasCaptcha, isLoading } = state;
     const { setRecaptchaString, setIsLoading } = actions;
 
-    const onSubmit = async (formData: Partial<EventPayload>) => {
+    const onSubmit = async ({
+        participants: participantDrafts,
+        ...formData
+    }: EventFormValues) => {
         try {
             if (setIsLoading) setIsLoading(true);
 
@@ -37,7 +43,19 @@ const EventDrawer = ({
                 throw new Error("Event ID not found");
             }
 
-            const response = await EventApi.updateEvent(eventId, formData, t);
+            // Only send participants when the form holds them, so an update
+            // can never clear the list by omission.
+            const participants =
+                participantDrafts &&
+                (await persistParticipants(
+                    participantDrafts,
+                    createParticipantsApi(t)
+                ));
+            const response = await EventApi.updateEvent(
+                eventId,
+                { ...formData, ...(participants && { participants }) },
+                t
+            );
 
             if (response) {
                 onSave(response);
@@ -49,15 +67,16 @@ const EventDrawer = ({
         }
     };
 
-    const formattedEvent = {
+    const formattedEvent: EventFormValues = {
         ...currentEvent,
+        participants: draftsFromParticipants(currentEvent.participants),
         mainTopic: {
             label: currentEvent.mainTopic.name,
             value: currentEvent.mainTopic.wikidataId,
             aliases: currentEvent.mainTopic.aliases || [],
             matchedAlias: null,
             displayLabel: currentEvent.mainTopic.name,
-        }
+        },
     };
 
     return (

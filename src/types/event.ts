@@ -5,6 +5,7 @@ import { Review } from "./Review";
 import { Topic } from "./Topic";
 import { VerificationRequest } from "./VerificationRequest";
 import { NextRouter } from "next/router";
+import { Organization } from "./Organization";
 
 export type EventOrder = "asc" | "desc";
 export type EventStatus = "happening" | "upcoming" | "finalized" | "all";
@@ -21,8 +22,24 @@ export interface EventPayload {
     endDate: Date;
     mainTopic: Topic;
     filterTopics?: Topic[];
+    participants?: EventParticipant[];
     recaptcha?: string;
 }
+
+export interface EventParticipant {
+    organization: Organization;
+    order: number;
+}
+
+/** Participant as sent to the API: the organization id and display order. */
+export interface EventParticipantInput {
+    organization: string;
+    order: number;
+}
+
+export type EventRequest = Omit<EventPayload, "participants"> & {
+    participants?: EventParticipantInput[];
+};
 
 export interface EventMetrics {
     verificationRequests: number;
