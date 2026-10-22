@@ -1,7 +1,10 @@
 import { Claim } from "../../types/Claim";
+import { Personality } from "../../types/Personality";
 
 export type CreateClaimContext = {
     claimData: Partial<Claim>;
+    // Personalities preselected from the URL, restored when the user goes back to the start
+    initialPersonalities: Personality[];
 };
 
 export const initialContext: CreateClaimContext = {
@@ -11,4 +14,5 @@ export const initialContext: CreateClaimContext = {
         sources: [],
         group: null,
     },
+    initialPersonalities: [],
 };
