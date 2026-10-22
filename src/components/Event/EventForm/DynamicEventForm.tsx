@@ -5,14 +5,19 @@ import SharedFormFooter from "../../SharedFormFooter";
 import { EventPayload } from "../../../types/event";
 import lifecycleEventForm from "./CreateEventForm";
 import { ManualTopic } from "../../../types/Topic";
+import { ParticipantDraft } from "../Participants/participantDrafts";
 
-type EventBeingEdited = Omit<EventPayload, "mainTopic"> & {
+export type EventFormValues = Omit<
+    EventPayload,
+    "mainTopic" | "participants"
+> & {
     mainTopic: ManualTopic;
+    participants?: ParticipantDraft[];
 };
 
 interface IDynamicEventForm {
-    data?: EventBeingEdited;
-    onSubmit: (value: EventPayload) => void;
+    data?: EventFormValues;
+    onSubmit: (value: EventFormValues) => void;
     isLoading: boolean;
     setRecaptchaString: React.Dispatch<React.SetStateAction<string>>;
     hasCaptcha: boolean;
@@ -27,7 +32,7 @@ const DynamicEventForm = ({
     setRecaptchaString,
     hasCaptcha,
     isDrawerOpen = false,
-    onClose = () => { },
+    onClose = () => {},
 }: IDynamicEventForm) => {
     const {
         handleSubmit,
@@ -36,10 +41,7 @@ const DynamicEventForm = ({
     } = useForm();
 
     return (
-        <form
-            style={{ width: "100%" }}
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             <DynamicForm
                 currentForm={lifecycleEventForm}
                 control={control}

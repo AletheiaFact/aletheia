@@ -68,6 +68,7 @@ import { AiTaskModule } from "./ai-task/ai-task.module";
 import { CommitteeInterestModule } from "./committee-interest/committee-interest.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
+import { OrganizationModule } from "./organization/organization.module";
 import { ManagementModule } from "./management/management.module";
 import { PostgresModule } from "./database/postgres/postgres.module";
 import dbConfig from "./config/db.config";
@@ -139,6 +140,7 @@ export class AppModule implements NestModule {
                 HistoryModule,
                 TrackingModule,
                 EventsModule,
+                OrganizationModule,
                 ManagementModule,
                 StateEventModule,
                 SourceModule.register(),

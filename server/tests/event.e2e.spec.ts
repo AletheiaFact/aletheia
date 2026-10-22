@@ -18,7 +18,6 @@ import { Model } from "mongoose";
 import { getModelToken } from "@nestjs/mongoose";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
-
 describe("EventController (e2e)", () => {
     let app: any;
     let createdEventId: string;
@@ -86,7 +85,9 @@ describe("EventController (e2e)", () => {
 
         await app.init();
 
-        const eventModel = moduleFixture.get<Model<any>>(getModelToken("Event"));
+        const eventModel = moduleFixture.get<Model<any>>(
+            getModelToken("Event")
+        );
         await eventModel.ensureIndexes();
     });
 
@@ -97,9 +98,7 @@ describe("EventController (e2e)", () => {
     describe("Feature Flag Security", () => {
         it("should return 404 for API when feature flag is DISABLED", async () => {
             mockFeatureFlagService.isEnableEventsFeature.mockReturnValue(false);
-            return request(app.getHttpServer())
-                .get("/api/event")
-                .expect(404);
+            return request(app.getHttpServer()).get("/api/event").expect(404);
         });
 
         it("should redirect to '/' for Public Pages when feature flag is DISABLED", async () => {
@@ -185,14 +184,16 @@ describe("EventController (e2e)", () => {
                 expect(body.events.length).toBeGreaterThanOrEqual(2);
                 expect(body.total).toBeGreaterThanOrEqual(2);
 
-                const created = body.events.find((event) => event._id === createdEventId);
+                const created = body.events.find(
+                    (event) => event._id === createdEventId
+                );
                 expect(created).toBeDefined();
                 expect(created.name).toEqual("Future Event Alpha");
 
                 expect(body.eventMetrics[created.data_hash]).toMatchObject({
                     verificationRequests: expect.any(Number),
                     claims: expect.any(Number),
-                    reviews: expect.any(Number)
+                    reviews: expect.any(Number),
                 });
             });
     });
@@ -226,7 +227,9 @@ describe("EventController (e2e)", () => {
 
         await request(app.getHttpServer())
             .post("/api/event")
-            .send(createEventPayload("Future Event Beta", start, end, "Politics"))
+            .send(
+                createEventPayload("Future Event Beta", start, end, "Politics")
+            )
             .expect(201);
 
         return request(app.getHttpServer())
@@ -248,7 +251,9 @@ describe("EventController (e2e)", () => {
                 expect(body.total).toBeGreaterThanOrEqual(1);
 
                 for (const event of body.events) {
-                    expect(new Date(event.startDate).getTime()).toBeGreaterThan(Date.now() - 24 * 60 * 60 * 1000);
+                    expect(new Date(event.startDate).getTime()).toBeGreaterThan(
+                        Date.now() - 24 * 60 * 60 * 1000
+                    );
                     expect(body.eventMetrics[event.data_hash]).toBeDefined();
                 }
             });
@@ -270,6 +275,61 @@ describe("EventController (e2e)", () => {
                 name: "Invalid Event Payload",
             })
             .expect(400);
+    });
+
+    it("/api/event (POST) - should suffix the slug of an event with a taken name", async () => {
+        const now = new Date();
+        const day = 24 * 60 * 60 * 1000;
+        const first = await request(app.getHttpServer())
+            .post("/api/event")
+            .send(
+                createEventPayload(
+                    "Same Name Event",
+                    new Date(now.getTime() + 20 * day),
+                    new Date(now.getTime() + 21 * day)
+                )
+            )
+            .expect(201);
+        const second = await request(app.getHttpServer())
+            .post("/api/event")
+            .send(
+                createEventPayload(
+                    "Same Name Event",
+                    new Date(now.getTime() + 30 * day),
+                    new Date(now.getTime() + 31 * day)
+                )
+            )
+            .expect(201);
+
+        expect(first.body.slug).toBe("same-name-event");
+        expect(second.body.slug).toBe("same-name-event-2");
+    });
+
+    it("/api/event/:id (PATCH) - should keep the slug when renaming", async () => {
+        const { body } = await request(app.getHttpServer())
+            .patch(`/api/event/${createdEventId}`)
+            .send({ name: "Renamed Again" })
+            .expect(200);
+
+        expect(body.slug).toBe("future-event-alpha");
+    });
+
+    it("/event/:data_hash/:slug (GET) - should 301 to the slug URL", async () => {
+        const { body } = await request(app.getHttpServer())
+            .get("/api/event")
+            .query({ pageSize: 100 })
+            .expect(200);
+        const event = body.events.find(({ _id }) => _id === createdEventId);
+
+        await request(app.getHttpServer())
+            .get(`/event/${event.data_hash}/old-slug`)
+            .expect(301)
+            .expect("Location", "/event/future-event-alpha");
+
+        // Unknown pages go through NotFoundFilter, which redirects to /404.
+        return request(app.getHttpServer())
+            .get("/event/00000000000000000000000000000000/missing")
+            .expect("Location", "/404");
     });
 
     it("/api/event/:id (PATCH) - should return 404 for non-existent event id", () => {

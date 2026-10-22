@@ -5,10 +5,17 @@ import { minimumContent } from "../../fixtures/verificationRequest";
 import locators from "../../support/locators";
 import { getFutureDay, getPastDay, today } from "../../utils/dateUtils";
 import { formatMonthYear } from "../../../src/helpers/formatTimeAgo";
-import { buildEvent, routes, topic, cop28Topic } from "../../fixtures/event";
+import {
+    buildEvent,
+    routes,
+    topic,
+    cop28Topic,
+    participantOrganizations,
+} from "../../fixtures/event";
 import { Dayjs } from "dayjs";
 
 let createdEventUrl = "";
+let legacyEventUrl = "";
 
 const openCreateEventForm = () => {
     cy.get(locators.floatButton.FLOAT_BUTTON).click();
@@ -43,6 +50,37 @@ const fillEventForm = (startDate: Dayjs, endDate: Dayjs, overrides = {}) => {
     );
     cy.wait("@searchTopics");
     cy.contains(event.mainTopic.name).should("be.visible").click();
+};
+
+const addNewParticipant = (
+    index: number,
+    organization: typeof participantOrganizations[number]
+) => {
+    cy.get(locators.event.PARTICIPANTS_ADD_NEW).click();
+    cy.get(locators.event.participantName(index)).type(organization.name);
+    if (organization.website) {
+        cy.get(locators.event.participantWebsite(index)).type(
+            organization.website
+        );
+    }
+    cy.get(locators.event.participantLogoInput(index)).selectFile(
+        organization.logo,
+        { force: true }
+    );
+    cy.get(locators.event.participantDone(index)).click();
+};
+
+const assertParticipantLogos = (names: string[]) => {
+    cy.get(locators.event.DETAIL_PARTICIPANTS).should("be.visible");
+    cy.get(`${locators.event.DETAIL_PARTICIPANT} img`).should(
+        "have.length",
+        names.length
+    );
+    names.forEach((name, index) => {
+        cy.get(`${locators.event.DETAIL_PARTICIPANT} img`)
+            .eq(index)
+            .should("have.attr", "alt", name);
+    });
 };
 
 const saveEvent = () => {
@@ -128,7 +166,8 @@ describe("Test events infrastructure", () => {
                 ]);
                 const { data_hash, slug } = interception.response?.body;
 
-                createdEventUrl = `/event/${data_hash}/${slug}`;
+                createdEventUrl = `/event/${slug}`;
+                legacyEventUrl = `/event/${data_hash}/${slug}`;
                 cy.url().should("contain", createdEventUrl);
                 cy.get(locators.event.DETAIL_TITLE)
                     .should("be.visible")
@@ -213,6 +252,14 @@ describe("Test events infrastructure", () => {
         });
     });
 
+    describe("Event URL", () => {
+        it("should redirect the legacy hash URL to the slug URL", () => {
+            cy.visit(legacyEventUrl);
+            cy.location("pathname").should("eq", createdEventUrl);
+            cy.get(locators.event.DETAIL_TITLE).should("be.visible");
+        });
+    });
+
     describe("Event editing via drawer", () => {
         it("should not be able to open the edit drawer as an unauthenticated user", () => {
             cy.visit(createdEventUrl);
@@ -257,6 +304,91 @@ describe("Test events infrastructure", () => {
             cy.visit("/");
             cy.contains(updatedOverrides.name).should("be.visible");
             assertEventCardMetrics(0, 0, 0);
+        });
+    });
+
+    describe("Event participants", () => {
+        const [first, second] = participantOrganizations;
+
+        beforeEach(() => {
+            cy.login();
+            cy.intercept("PATCH", "**/api/event/*").as("updateEvent");
+        });
+
+        it("should not show the participants row while the event has none", () => {
+            cy.visit(createdEventUrl);
+            cy.get(locators.event.DETAIL_TITLE).should("be.visible");
+            cy.get(locators.event.DETAIL_PARTICIPANTS).should("not.exist");
+        });
+
+        it("should block saving a new organization without a logo", () => {
+            cy.visit(createdEventUrl);
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
+
+            cy.get(locators.event.PARTICIPANTS_ADD_NEW).click();
+            cy.get(locators.event.participantName(0)).type(first.name);
+            saveEvent();
+
+            cy.get(locators.event.ERROR_VALIDATION_PARTICIPANTS).should(
+                "be.visible"
+            );
+        });
+
+        it("should create organizations in the drawer and show their logos in order", () => {
+            cy.visit(createdEventUrl);
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
+
+            addNewParticipant(0, first);
+            addNewParticipant(1, second);
+            saveEvent();
+
+            cy.wait("@updateEvent")
+                .its("response.statusCode")
+                .should("eq", 200);
+            assertParticipantLogos([first.name, second.name]);
+            cy.get(locators.event.DETAIL_PARTICIPANT)
+                .first()
+                .should("have.attr", "href", first.website)
+                .and("have.attr", "rel", "noopener noreferrer");
+
+            cy.get(locators.event.DETAIL_PARTICIPANT)
+                .first()
+                .trigger("mouseover");
+            cy.get("[role=tooltip]").should("contain", first.name);
+        });
+
+        it("should reorder and remove participants", () => {
+            cy.visit(createdEventUrl);
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
+
+            cy.get(locators.event.participantUp(1)).click();
+            saveEvent();
+            cy.wait("@updateEvent");
+            assertParticipantLogos([second.name, first.name]);
+
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
+            cy.get(locators.event.participantRemove(0)).click();
+            saveEvent();
+            cy.wait("@updateEvent");
+            assertParticipantLogos([first.name]);
+        });
+
+        it("should find an existing organization through the search", () => {
+            cy.intercept("GET", "**/api/organization/?name=*").as(
+                "searchOrganizations"
+            );
+            cy.visit(createdEventUrl);
+            cy.get(locators.event.OPEN_EDIT_DRAWER_BTN).click();
+
+            cy.get(locators.event.PARTICIPANTS_SEARCH).type("Dois", {
+                delay: 100,
+            });
+            cy.wait("@searchOrganizations");
+            cy.contains("li", second.name).click();
+            saveEvent();
+
+            cy.wait("@updateEvent");
+            assertParticipantLogos([first.name, second.name]);
         });
     });
 });

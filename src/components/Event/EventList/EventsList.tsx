@@ -12,15 +12,16 @@ import EventListHeader from "./EventListHeader";
 import EventListGrid from "./EventList.style";
 
 const EventsList = () => {
-    const { state, actions } = useEventsHook()
-    const { eventsQuery, error, isLoading, eventsData } = state
-    const { setIsLoading, setError, setEventsData, t, setEventsQuery } = actions
+    const { state, actions } = useEventsHook();
+    const { eventsQuery, error, isLoading, eventsData } = state;
+    const { setIsLoading, setError, setEventsData, t, setEventsQuery } =
+        actions;
 
     const handleFetch = async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const events = await EventApi.getEvents(eventsQuery);
+            const events = await EventApi.getEvents(eventsQuery, t);
 
             if (eventsQuery.page === 1) {
                 setEventsData(events);
@@ -28,11 +29,8 @@ const EventsList = () => {
                 setEventsData((prev) => ({
                     events: [...prev.events, ...events.events],
                     eventMetrics: {
-                        verificationRequests:
-                            prev.eventMetrics.verificationRequests +
-                            events.eventMetrics.verificationRequests,
-                        claims: prev.eventMetrics.claims + events.eventMetrics.claims,
-                        reviews: prev.eventMetrics.reviews + events.eventMetrics.reviews,
+                        ...prev.eventMetrics,
+                        ...events.eventMetrics,
                     },
                     total: events.total,
                 }));
@@ -71,12 +69,7 @@ const EventsList = () => {
 
                 <Grid item xs={11} md={9} lg={8}>
                     <EventsGrid
-                        title={
-                            <EventTitle
-                                total={eventsData.total}
-                                t={t}
-                            />
-                        }
+                        title={<EventTitle total={eventsData.total} t={t} />}
                         events={eventsData.events}
                         eventMetrics={eventsData.eventMetrics}
                         disableSeeMoreButton={true}
@@ -88,7 +81,10 @@ const EventsList = () => {
                 <EventLoadMore
                     visible={eventsData.total > eventsData.events.length}
                     onLoadMore={() =>
-                        setEventsQuery((prev) => ({ ...prev, page: prev.page + 1 }))
+                        setEventsQuery((prev) => ({
+                            ...prev,
+                            page: prev.page + 1,
+                        }))
                     }
                     label={t("events:loadMoreButton")}
                 />
