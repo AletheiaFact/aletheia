@@ -309,3 +309,95 @@ Open questions added by the builder:
 - How to make the claim atomic while still writing history/state events
   (a guarded `findOneAndUpdate` plus the normal update path, or equivalent).
 - Result shapes, pagination, and load-test approach.
+
+## Tasks
+
+`[x]` done, `[~]` started, `[ ]` not started. Work lands in draft PR #2653.
+
+### Data and storage
+
+- [x] Persist `assigned` in the web's shape (`{ assigned: "undraft" | "draft" }`)
+      in `start_review_task` and `saveDraft`'s auto-create
+- [x] Migration `20261021130000`: normalize existing plain `"assigned"` values
+      (run on the local DB)
+- [x] Migration `20261021120000`: make sure the unique `reviewtasks.data_hash`
+      index exists (log and skip on duplicates)
+- [x] Confirm queue queries use the existing
+      `reviewTaskType_1_nameSpace_1_machine.value_1__id_-1` index (`explain`)
+- [ ] Run both migrations on staging and production; check the duplicate log
+- [ ] Close the `start_review_task` create race (the `it.fails` test):
+      `ReviewTaskService.create` fires `save()` without awaiting, so a
+      duplicate-key error is lost
+
+### Queue primitives (`ReviewTaskQueueService`)
+
+- [x] `transitionAtomically`: guarded `findOneAndUpdate`, then best-effort
+      history and state event
+- [x] `enqueueUnassigned`: upsert on `data_hash`, duplicate key means queued
+- [x] `findOldest` / `countMatching` for caller-scoped reads
+- [x] `publishSubmitted`: one-shot `submitted` → `published`, then Report +
+      ClaimReview like the web path
+
+### MCP tools
+
+- [x] `next_review_task` (atomic hand-out of the oldest `unassigned` task)
+- [x] `join_review_task` (`assigned`/`reported`, idempotent, cap
+      `mcp.task_queue.max_assignees`, default 10)
+- [x] `next_cross_checking` (oldest task where the caller is cross-checker, plus
+      count)
+- [x] `list_my_review_tasks` (`submitted` where the caller is reviewer)
+- [x] `list_review_tasks`: session-only `mine` filter
+- [x] `send_to_review` (`reported` → backlog, assignee or admin)
+- [x] `claim_review_task` (reviewer/admin, four-eyes, atomic)
+- [x] `publish_review_task` (reviewer or admin, web publish fields required)
+- [x] `start_review_task` takes a queued `unassigned` task instead of refusing
+- [x] Compact task view in tool results (state, sentence, people)
+- [ ] Update `server/mcp/README.md` with the new tools
+
+### Queue feed
+
+- [x] MCP `create_claim` enqueues one `unassigned` task per sentence
+- [~] Feed the queue from the web claim form and the live debate editor
+      (`ClaimService` create, `DebateService.addSpeechToDebate`), waiting on
+      open question 7
+- [ ] Backfill existing claims without tasks, if the debate needs it
+
+### Notifications
+
+- [x] Server-side notifications for `send_to_review` ("reviewSubmit") and
+      `publish_review_task` ("reviewPublished")
+- [ ] Use each recipient's locale instead of always pt
+
+### Tests
+
+- [x] Adversarial suite, one spec per concern (`server/mcp/adversarial/`):
+      roles, namespaces, M2M, four-eyes, state guards, cap, publish rules,
+      operator smuggling
+- [x] e2e on real Mongo: queue feed, concurrent hand-out (`waiting + 3`
+      callers, 5/5 runs), queue → report → backlog → review → published
+      ClaimReview, join
+- [x] Discovery e2e lists the new tools
+- [ ] Manual run through an MCP client (Claude) against a deployed
+      environment
+- [ ] Load test at debate scale (thousands of concurrent `next_review_task`)
+- [ ] Fix the existing full-suite e2e flakes (claim-review, personality,
+      Postgres setup pass alone and fail in parallel); they predate this work
+
+### Code structure
+
+- [x] Split `ReviewWorkflowService` into queue, workflow, notifier and helpers
+      (`server/mcp/review-workflow/`)
+- [x] Split `ReviewTaskService` (1185 → 749 lines): pipelines, effects, queue
+
+### Decisions and delivery
+
+- [x] Record builder findings in this spec
+- [~] Maintainer answers to open questions 1–7 (documented, not answered yet)
+- [~] Show the maintainer the backlog (`selectReviewer`) task on the web:
+      confirmed that "Selecione um revisor" saves nothing, but no screenshot
+      yet (captcha pop-up first, then the local login page kept
+      hot-reloading)
+- [ ] Kanban column for backlog tasks (only if question 6 says yes; frontend
+      change)
+- [~] Land the stacked PRs #2650, #2651 and #2652 (open)
+- [ ] Mark #2653 ready for review
