@@ -177,24 +177,31 @@ const EventBox = styled(Box)`
         width: 152px;
         height: 72px;
         box-sizing: border-box;
-        padding: 10px 14px;
+        padding: 6px;
         border-radius: 12px;
-        background: ${colors.white};
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: ${colors.whiteLow};
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: transform 0.15s ease, background-color 0.15s ease,
+            border-color 0.15s ease;
 
         img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            border-radius: 8px;
         }
+    }
+
+    .eventParticipantTile:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
     }
 
     a.eventParticipantTile:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px -6px ${colors.shadow};
     }
 
     .eventParticipantTile:focus-visible {
@@ -226,7 +233,7 @@ const EventBox = styled(Box)`
         .eventParticipantTile {
             width: 100%;
             height: 56px;
-            padding: 8px;
+            padding: 4px;
         }
     }
 `;

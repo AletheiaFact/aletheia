@@ -350,6 +350,11 @@ describe("Test events infrastructure", () => {
                 .first()
                 .should("have.attr", "href", first.website)
                 .and("have.attr", "rel", "noopener noreferrer");
+
+            cy.get(locators.event.DETAIL_PARTICIPANT)
+                .first()
+                .trigger("mouseover");
+            cy.get("[role=tooltip]").should("contain", first.name);
         });
 
         it("should reorder and remove participants", () => {

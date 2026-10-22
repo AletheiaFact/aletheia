@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Tooltip } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { EventParticipant } from "../../../types/event";
 import { sanitizeUrl } from "../../../utils/ValidateUrl";
@@ -58,26 +59,32 @@ const EventParticipants = ({ participants = [] }: EventParticipantsProps) => {
 
                     return (
                         <li key={organization._id}>
-                            {website ? (
-                                <a
-                                    className="eventParticipantTile"
-                                    href={website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={organization.name}
-                                    data-cy="testEventParticipant"
-                                >
-                                    {logo}
-                                </a>
-                            ) : (
-                                <span
-                                    className="eventParticipantTile"
-                                    title={organization.name}
-                                    data-cy="testEventParticipant"
-                                >
-                                    {logo}
-                                </span>
-                            )}
+                            <Tooltip
+                                title={organization.name}
+                                placement="top"
+                                arrow
+                            >
+                                {website ? (
+                                    <a
+                                        className="eventParticipantTile"
+                                        href={website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        data-cy="testEventParticipant"
+                                    >
+                                        {logo}
+                                    </a>
+                                ) : (
+                                    // Focusable so keyboard users get the name too.
+                                    <span
+                                        className="eventParticipantTile"
+                                        tabIndex={0}
+                                        data-cy="testEventParticipant"
+                                    >
+                                        {logo}
+                                    </span>
+                                )}
+                            </Tooltip>
                         </li>
                     );
                 })}
