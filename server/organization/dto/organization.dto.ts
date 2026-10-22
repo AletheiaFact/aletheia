@@ -38,7 +38,11 @@ export const CreateOrganizationSchema = z.strictObject({
 });
 export type CreateOrganizationDto = z.output<typeof CreateOrganizationSchema>;
 
-export const UpdateOrganizationSchema = CreateOrganizationSchema.partial();
+// "" clears the website, the only field that can be removed once set.
+export const UpdateOrganizationSchema =
+    CreateOrganizationSchema.partial().extend({
+        website: website.or(z.literal("")).optional(),
+    });
 export type UpdateOrganizationDto = z.output<typeof UpdateOrganizationSchema>;
 
 export const SearchOrganizationsQuerySchema = z.object({

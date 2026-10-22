@@ -91,6 +91,9 @@ describe("organization DTO schemas", () => {
                 UpdateOrganizationSchema.safeParse({ website: "not a url" })
                     .success
             ).toBe(false);
+            expect(
+                UpdateOrganizationSchema.safeParse({ website: "" }).success
+            ).toBe(true);
         });
     });
 
