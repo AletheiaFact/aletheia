@@ -29,16 +29,8 @@ export abstract class BaseGuard implements CanActivate {
         return matches?.[1] || null;
     }
 
-    /**
-     * You can implement a shared redirect or fallback logic here.
-     */
-    protected checkAndRedirect(
-        request: any,
-        response: any,
-        isPublic: boolean,
-        redirectPath: string
-    ) {
-        const isAllowedPublicUrl = [
+    protected isAllowedPublicUrl(url: string): boolean {
+        return [
             "/login",
             "/unauthorized",
             "/_next",
@@ -49,7 +41,19 @@ export abstract class BaseGuard implements CanActivate {
             "/api/claim", // Allow this route to be public temporarily for testing
             "/signup-invite",
             "/.well-known/oauth-protected-resource",
-        ].some((route) => request.url.startsWith(route));
+        ].some((route) => url.startsWith(route));
+    }
+
+    /**
+     * You can implement a shared redirect or fallback logic here.
+     */
+    protected checkAndRedirect(
+        request: any,
+        response: any,
+        isPublic: boolean,
+        redirectPath: string
+    ) {
+        const isAllowedPublicUrl = this.isAllowedPublicUrl(request.url);
 
         const overridePublicRoutes =
             !isAllowedPublicUrl &&
