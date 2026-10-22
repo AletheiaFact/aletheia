@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Controller,
     Get,
     Inject,
@@ -78,6 +79,9 @@ export class OrganizationController {
 
     private async resolveLogoId(logo: OrganizationLogoDto): Promise<string> {
         if ("_id" in logo) {
+            if (!(await this.imageService.getById(logo._id))) {
+                throw new BadRequestException("Unknown logo image");
+            }
             return logo._id;
         }
         const image = await this.imageService.create(logo);

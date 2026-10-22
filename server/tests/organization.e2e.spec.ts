@@ -240,6 +240,71 @@ describe("OrganizationController (e2e)", () => {
         ).toEqual(["Agência Exemplo Checagem"]);
     });
 
+    it("reuses an existing Image as logo and rejects an unknown one", async () => {
+        const { body: found } = await request(app.getHttpServer())
+            .get("/api/organization")
+            .query({ name: "Checagem" })
+            .expect(200);
+
+        await request(app.getHttpServer())
+            .post("/api/organization")
+            .send({
+                name: "Terceira Org",
+                logo: { _id: found[0].logo._id },
+            })
+            .expect(201)
+            .expect(({ body }) => {
+                expect(body.logo._id).toBe(found[0].logo._id);
+            });
+
+        return request(app.getHttpServer())
+            .post("/api/organization")
+            .send({
+                name: "Quarta Org",
+                logo: { _id: "507f1f77bcf86cd799439098" },
+            })
+            .expect(400);
+    });
+
+    it("updates participants via PATCH and rejects deleted organizations", async () => {
+        const eventsService = await moduleFixture.resolve(EventsService);
+        const { body: list } = await request(app.getHttpServer())
+            .get("/api/event")
+            .expect(200);
+        const event = list.events.find(
+            ({ name }) => name === "Debate com participantes"
+        );
+        const { body: third } = await request(app.getHttpServer())
+            .get("/api/organization")
+            .query({ name: "Terceira" })
+            .expect(200);
+
+        // secondOrganizationId was soft deleted by the previous test.
+        await request(app.getHttpServer())
+            .patch(`/api/event/${event._id}`)
+            .send({
+                participants: [
+                    { organization: secondOrganizationId, order: 0 },
+                ],
+            })
+            .expect(400);
+
+        await request(app.getHttpServer())
+            .patch(`/api/event/${event._id}`)
+            .send({
+                participants: [
+                    { organization: organizationId, order: 1 },
+                    { organization: third[0]._id, order: 0 },
+                ],
+            })
+            .expect(200);
+
+        const updated = await eventsService.findByHash(event.data_hash);
+        expect(
+            updated.participants.map(({ organization }) => organization.name)
+        ).toEqual(["Terceira Org", "Agência Exemplo Checagem"]);
+    });
+
     afterAll(async () => {
         vi.restoreAllMocks();
         await app.close();

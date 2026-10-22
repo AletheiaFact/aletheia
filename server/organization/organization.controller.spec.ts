@@ -1,4 +1,4 @@
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { ImageService } from "../claim/types/image/image.service";
@@ -13,7 +13,7 @@ describe("OrganizationController", () => {
         update: vi.fn(),
         search: vi.fn(),
     };
-    const mockImageService = { create: vi.fn() };
+    const mockImageService = { create: vi.fn(), getById: vi.fn() };
     const mockFeatureFlagService = { isEnableEventsFeature: vi.fn() };
 
     const uploadedLogo = {
@@ -78,6 +78,8 @@ describe("OrganizationController", () => {
     });
 
     it("reuses an existing Image without creating a new one", async () => {
+        mockImageService.getById.mockResolvedValue({ _id: "img" });
+
         await controller.create({
             name: "Org",
             logo: { _id: "507f1f77bcf86cd799439012" },
@@ -88,6 +90,18 @@ describe("OrganizationController", () => {
             name: "Org",
             logo: "507f1f77bcf86cd799439012",
         });
+    });
+
+    it("rejects an existing Image id that does not exist", async () => {
+        mockImageService.getById.mockResolvedValue(null);
+
+        await expect(
+            controller.create({
+                name: "Org",
+                logo: { _id: "507f1f77bcf86cd799439012" },
+            })
+        ).rejects.toThrow(BadRequestException);
+        expect(mockOrganizationService.create).not.toHaveBeenCalled();
     });
 
     it("leaves the logo untouched when an update omits it", async () => {
