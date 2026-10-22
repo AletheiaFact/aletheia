@@ -16,6 +16,7 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
+import { SkipThrottle } from "@nestjs/throttler";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { entityId } from "../../lib/schemas";
@@ -277,6 +278,8 @@ export class ClaimController {
     }
 
     @Public()
+    // Polled by every live debate viewer; visitors behind CGNAT share an IP.
+    @SkipThrottle()
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
