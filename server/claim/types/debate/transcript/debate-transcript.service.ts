@@ -26,9 +26,9 @@ import type {
 export class DebateTranscriptService {
     constructor(
         @Inject("ClaimRevisionService")
-        private claimRevisionService: IClaimRevisionService,
-        private debateService: DebateService,
-        private parserService: ParserService
+        private readonly claimRevisionService: IClaimRevisionService,
+        private readonly debateService: DebateService,
+        private readonly parserService: ParserService
     ) {}
 
     async append(debateId: string, body: AppendDebateTranscriptDto) {

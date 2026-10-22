@@ -36,7 +36,9 @@ import type {
  */
 @Controller(":namespace?")
 export class DebateTranscriptController {
-    constructor(private debateTranscriptService: DebateTranscriptService) {}
+    constructor(
+        private readonly debateTranscriptService: DebateTranscriptService
+    ) {}
 
     /**
      * Adds transcript turns as drafts. Each turn is parsed into a draft
