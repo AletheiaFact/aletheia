@@ -1,46 +1,33 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { z } from "zod";
 import {
-    IsEnum,
-    IsInt,
-    IsNotEmpty,
-    IsNumber,
-    IsObject,
-    IsOptional,
-    IsString,
-    Min,
-} from "class-validator";
+    isoDateTime,
+    pageQuery,
+    pageSizeQuery,
+    queryBoolean,
+} from "../../../lib/schemas";
 import { ReviewTaskTypeEnum } from "../../types/enums";
 
-export class GetTasksDTO {
-    @IsNumber()
-    @IsInt()
-    @Min(0)
-    page: number;
+export const GET_TASKS_MAX_PAGE_SIZE = 100;
 
-    @IsNumber()
-    @Min(0)
-    pageSize: number;
-
-    @IsString()
-    order: string;
-
-    @IsString()
-    value: string;
-
-    @IsObject()
-    @IsOptional()
-    filterUser?: {
-        assigned: boolean;
-        crossChecked: boolean;
-        reviewed: boolean;
-    };
-
-    @IsString()
-    @IsOptional()
-    nameSpace?: string;
-
-    @IsNotEmpty()
-    @IsEnum(ReviewTaskTypeEnum)
-    @ApiProperty()
-    reviewTaskType: ReviewTaskTypeEnum;
-}
+export const GetTasksQuerySchema = z.strictObject({
+    page: pageQuery,
+    pageSize: pageSizeQuery(GET_TASKS_MAX_PAGE_SIZE),
+    order: z.string(),
+    value: z.string(),
+    filterUser: z
+        .strictObject({
+            assigned: queryBoolean.default(false),
+            crossChecked: queryBoolean.default(false),
+            reviewed: queryBoolean.default(false),
+        })
+        .optional(),
+    nameSpace: z.string().optional(),
+    reviewTaskType: z.enum(ReviewTaskTypeEnum),
+    startDate: isoDateTime
+        .optional()
+        .meta({ description: "Only tasks created on or after this day" }),
+    endDate: isoDateTime
+        .optional()
+        .meta({ description: "Only tasks created on or before this day" }),
+});
+export type GetTasksQueryDto = z.output<typeof GetTasksQuerySchema>;

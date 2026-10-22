@@ -21,6 +21,8 @@ const KanbanView = ({ reviewTaskType }) => {
         crossChecked: false,
         reviewed: false,
     });
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
     const kanbanStates = {
         [ReviewTaskTypeEnum.Claim]: KanbanClaimState,
         [ReviewTaskTypeEnum.Source]: KanbanSourceState,
@@ -35,6 +37,10 @@ const KanbanView = ({ reviewTaskType }) => {
             <KanbanToolbar
                 filterUserTasks={filterUserTasks}
                 setFilterUserTasks={setFilterUserTasks}
+                startDate={startDate}
+                endDate={endDate}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
             />
             <Grid container item xs={11.5} className="kanban-board">
                 {states.map((state) => (
@@ -43,6 +49,8 @@ const KanbanView = ({ reviewTaskType }) => {
                         nameSpace={nameSpace}
                         state={ReviewTaskStates[state]}
                         filterUser={filterUserTasks}
+                        startDate={startDate}
+                        endDate={endDate}
                         reviewTaskType={reviewTaskType}
                     />
                 ))}
