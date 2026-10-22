@@ -74,6 +74,29 @@ export const ListReviewTasksSchema = z.object({
             "Workflow state filter, e.g. unassigned, assigned, reported, published"
         ),
     reviewTaskType: z.enum(ReviewTaskTypeEnum),
+    mine: z
+        .enum(["assigned", "crossChecked", "reviewed"])
+        .optional()
+        .describe(
+            "Only tasks where you are an assignee, the cross-checker or the reviewer"
+        ),
+    nameSpace,
+});
+
+const reviewTaskDataHash = z
+    .string()
+    .regex(/^[a-f0-9]{32}$/i)
+    .describe("data_hash of the review task (its claim sentence)");
+
+export const NamespaceOnlySchema = z.object({ nameSpace });
+
+export const ReviewTaskByHashSchema = z.object({
+    dataHash: reviewTaskDataHash,
+});
+
+export const ListMyReviewTasksSchema = z.object({
+    page: pagination.page,
+    pageSize: pagination.pageSize,
     nameSpace,
 });
 

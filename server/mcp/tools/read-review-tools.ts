@@ -1,10 +1,18 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { assertNamespaceAccess, jsonResult, safeTool } from "./tool-helpers";
+import {
+    assertNamespaceAccess,
+    assertUserSession,
+    jsonResult,
+    safeTool,
+} from "./tool-helpers";
 import {
     GetClaimReviewSchema,
     GetReviewTaskSchema,
+    ListMyReviewTasksSchema,
     ListReviewTasksSchema,
+    NamespaceOnlySchema,
 } from "./schemas";
+import { describeTask } from "./review-task-view";
 import type { McpToolDeps } from "../mcp.service";
 
 export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
@@ -49,13 +57,16 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 deps.request.user,
                 args.nameSpace
             );
+            // "mine" filters match on the session user's _id, which M2M
+            // tokens don't have.
+            if (args.mine) assertUserSession(deps.request.user);
             return jsonResult(
                 await deps.reviewTaskService.listAll({
                     value: args.value,
                     filterUser: {
-                        assigned: false,
-                        crossChecked: false,
-                        reviewed: false,
+                        assigned: args.mine === "assigned",
+                        crossChecked: args.mine === "crossChecked",
+                        reviewed: args.mine === "reviewed",
                     },
                     nameSpace: args.nameSpace,
                     reviewTaskType: args.reviewTaskType,
@@ -64,6 +75,61 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                     order: args.order,
                 })
             );
+        })
+    );
+
+    server.registerTool(
+        "next_cross_checking",
+        {
+            description:
+                "Get your oldest cross-checking task (where you are the cross-checker) and how many are waiting",
+            inputSchema: NamespaceOnlySchema.shape as any,
+        },
+        safeTool("next_cross_checking", async (args) => {
+            assertUserSession(deps.request.user);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            const { task, waiting } =
+                await deps.reviewWorkflowService.nextCrossChecking(
+                    deps.request.user as any,
+                    args.nameSpace
+                );
+            return jsonResult({
+                task: await describeTask(deps, task),
+                waiting,
+            });
+        })
+    );
+
+    server.registerTool(
+        "list_my_review_tasks",
+        {
+            description:
+                "List tasks in review (submitted) where you are the reviewer, oldest first: the reports you need to review to publish",
+            inputSchema: ListMyReviewTasksSchema.shape as any,
+        },
+        safeTool("list_my_review_tasks", async (args) => {
+            assertUserSession(deps.request.user);
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                args.nameSpace
+            );
+            const result = await deps.reviewWorkflowService.listMyReviewTasks(
+                deps.request.user as any,
+                args.nameSpace,
+                args.page,
+                args.pageSize
+            );
+            return jsonResult({
+                ...result,
+                tasks: await Promise.all(
+                    result.tasks.map((task) => describeTask(deps, task))
+                ),
+            });
         })
     );
 
