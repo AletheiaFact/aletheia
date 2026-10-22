@@ -82,7 +82,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("next_review_task", async (args) => {
             await authorizeNamespaceWrite(deps, args.nameSpace);
-            const task = await deps.reviewWorkflowService.nextReviewTask(
+            const task = await deps.reviewQueueService.nextReviewTask(
                 deps.request.user as any,
                 args.nameSpace
             );
@@ -145,7 +145,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         },
         safeTool("claim_review_task", async (args) => {
             await authorizeNamespaceWrite(deps, args.nameSpace);
-            const task = await deps.reviewWorkflowService.claimReviewTask(
+            const task = await deps.reviewQueueService.claimReviewTask(
                 deps.request.user as any,
                 args.nameSpace
             );

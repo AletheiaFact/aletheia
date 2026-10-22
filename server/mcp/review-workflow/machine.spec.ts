@@ -1,6 +1,6 @@
-import { getInitialContext } from "../../src/machines/reviewTask/context";
-import { ReviewTaskTypeEnum } from "../../src/machines/reviewTask/enums";
-import { buildClaimContext } from "./review-workflow.service";
+import { getInitialContext } from "../../../src/machines/reviewTask/context";
+import { ReviewTaskTypeEnum } from "../../../src/machines/reviewTask/enums";
+import { buildClaimContext } from "./machine";
 
 describe("buildClaimContext", () => {
     it("matches the frontend initial context for a Claim task", () => {

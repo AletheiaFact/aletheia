@@ -22,7 +22,9 @@ import { McpOAuthController } from "./mcp-oauth.controller";
 import { McpWellKnownController } from "./mcp-well-known.controller";
 import { McpController } from "./mcp.controller";
 import { McpService } from "./mcp.service";
-import { ReviewWorkflowService } from "./review-workflow.service";
+import { ReviewNotifierService } from "./review-workflow/review-notifier.service";
+import { ReviewQueueService } from "./review-workflow/review-queue.service";
+import { ReviewWorkflowService } from "./review-workflow/review-workflow.service";
 
 @Module({
     imports: [
@@ -52,6 +54,8 @@ import { ReviewWorkflowService } from "./review-workflow.service";
         McpService,
         McpAuthGuard,
         ReviewWorkflowService,
+        ReviewQueueService,
+        ReviewNotifierService,
         McpOAuthProxyService,
         McpOAuthProviderService,
     ],

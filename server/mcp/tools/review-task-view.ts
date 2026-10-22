@@ -1,4 +1,4 @@
-import { stateName } from "../review-workflow.service";
+import { stateName } from "../review-workflow/machine";
 import type { McpToolDeps } from "../mcp.service";
 
 /**

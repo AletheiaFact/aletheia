@@ -3,7 +3,8 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { AbilityFactory } from "../../auth/ability/ability.factory";
 import type { McpToolDeps } from "../mcp.service";
-import { ReviewWorkflowService } from "../review-workflow.service";
+import { ReviewQueueService } from "../review-workflow/review-queue.service";
+import { ReviewWorkflowService } from "../review-workflow/review-workflow.service";
 import { registerReadTools } from "../tools/read-tools";
 import { registerWriteTools } from "../tools/write-tools";
 
@@ -126,6 +127,10 @@ function buildDeps(user: any) {
         mocks.claimService as any,
         mocks.reviewTaskService as any
     );
+    const reviewQueueService = new ReviewQueueService(
+        mocks.claimService as any,
+        mocks.reviewTaskService as any
+    );
     const deps = {
         request: { user },
         configService: {},
@@ -143,6 +148,7 @@ function buildDeps(user: any) {
         abilityFactory: new AbilityFactory(),
         nameSpaceService: mocks.nameSpaceService,
         reviewWorkflowService,
+        reviewQueueService,
     } as unknown as McpToolDeps;
     return { deps, mocks };
 }

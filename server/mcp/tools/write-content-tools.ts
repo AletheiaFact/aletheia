@@ -50,7 +50,7 @@ export function registerWriteContentTools(
             if (claim?._id) {
                 try {
                     queuedReviewTasks =
-                        await deps.reviewWorkflowService.enqueueClaimSentences(
+                        await deps.reviewQueueService.enqueueClaimSentences(
                             claim._id.toString(),
                             args.nameSpace
                         );

@@ -93,7 +93,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             const { task, waiting } =
-                await deps.reviewWorkflowService.nextCrossChecking(
+                await deps.reviewQueueService.nextCrossChecking(
                     deps.request.user as any,
                     args.nameSpace
                 );
@@ -118,7 +118,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 deps.request.user,
                 args.nameSpace
             );
-            const result = await deps.reviewWorkflowService.listMyReviewTasks(
+            const result = await deps.reviewQueueService.listMyReviewTasks(
                 deps.request.user as any,
                 args.nameSpace,
                 args.page,
