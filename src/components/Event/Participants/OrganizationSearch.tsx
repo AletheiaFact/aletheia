@@ -85,9 +85,12 @@ const OrganizationSearch = ({
             onChange={(_, organization) => {
                 if (!organization) return;
                 onSelect(organization);
+                // Drop any pending or in-flight search for the old input.
+                search.cancel();
                 latestQuery.current = "";
                 setInputValue("");
                 setOptions([]);
+                setIsLoading(false);
             }}
             renderOption={(props, organization) => (
                 <li {...props} key={organization._id}>

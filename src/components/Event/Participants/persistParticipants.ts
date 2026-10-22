@@ -20,56 +20,87 @@ export interface ParticipantsPersistenceApi {
     ): Promise<Organization>;
 }
 
+export interface PreparedParticipants {
+    /** Event payload: organization ids in editor order. */
+    participants: EventParticipantInput[];
+    /**
+     * Saves edits to existing organizations. Call it only once the event is
+     * saved: organizations are shared, so a failed event save must not
+     * change them on every other event.
+     */
+    commitEdits: () => Promise<void>;
+}
+
+const organizationInput = (
+    draft: ParticipantDraft,
+    logo?: OrganizationLogoInput
+) => {
+    const website = draft.website.trim();
+    return { name: draft.name.trim(), website, ...(logo && { logo }) };
+};
+
 /**
- * Saves what the participants editor changed and returns the event payload:
+ * Prepares the participants of an event save:
  * 1. every new logo is uploaded in a single api/image call,
- * 2. new organizations are created and edited ones updated,
- * 3. untouched organizations are referenced as-is.
- * Order follows the editor rows.
+ * 2. new organizations are created,
+ * 3. edits to existing organizations are deferred to `commitEdits`.
+ *
+ * `createdByKey` should live as long as the form (useRef): it remembers the
+ * organizations created by a previous attempt, so retrying after a failed
+ * event save reuses them instead of hitting 409.
  */
 export const persistParticipants = async (
     drafts: ParticipantDraft[] = [],
-    api: ParticipantsPersistenceApi
-): Promise<EventParticipantInput[]> => {
-    const draftsWithNewLogo = drafts.filter((draft) => newLogoFile(draft));
-    const uploadedLogos = draftsWithNewLogo.length
-        ? await api.uploadLogos(draftsWithNewLogo.map(newLogoFile))
+    api: ParticipantsPersistenceApi,
+    createdByKey: Map<string, Organization> = new Map()
+): Promise<PreparedParticipants> => {
+    const resolved = drafts.map((draft) =>
+        createdByKey.has(draft.key)
+            ? { ...draft, organization: createdByKey.get(draft.key) }
+            : draft
+    );
+    const toCreate = resolved.filter((draft) => !draft.organization);
+    const toEdit = resolved.filter(isDraftDirty);
+
+    const needLogoUpload = [...toCreate, ...toEdit].filter((draft) =>
+        newLogoFile(draft)
+    );
+    const uploadedLogos = needLogoUpload.length
+        ? await api.uploadLogos(needLogoUpload.map(newLogoFile))
         : [];
     const uploadedLogoByKey = new Map(
-        draftsWithNewLogo.map((draft, index) => [
-            draft.key,
-            uploadedLogos[index],
-        ])
+        needLogoUpload.map((draft, index) => [draft.key, uploadedLogos[index]])
     );
 
-    const organizationIds = await Promise.all(
-        drafts.map(async (draft) => {
-            const logo = uploadedLogoByKey.get(draft.key);
-            const name = draft.name.trim();
-            const website = draft.website.trim();
-
-            if (!draft.organization) {
-                const created = await api.createOrganization({
-                    name,
-                    ...(website && { website }),
-                    logo,
-                });
-                return created._id;
-            }
-
-            if (isDraftDirty(draft)) {
-                await api.updateOrganization(draft.organization._id, {
-                    name,
-                    website,
-                    ...(logo && { logo }),
-                });
-            }
-            return draft.organization._id;
+    await Promise.all(
+        toCreate.map(async (draft) => {
+            const { website, ...input } = organizationInput(
+                draft,
+                uploadedLogoByKey.get(draft.key)
+            );
+            const created = await api.createOrganization({
+                ...input,
+                ...(website && { website }),
+            });
+            createdByKey.set(draft.key, created);
         })
     );
 
-    return organizationIds.map((organization, order) => ({
-        organization,
+    const participants = resolved.map((draft, order) => ({
+        organization: (draft.organization ?? createdByKey.get(draft.key))._id,
         order,
     }));
+
+    const commitEdits = async () => {
+        await Promise.all(
+            toEdit.map((draft) =>
+                api.updateOrganization(
+                    draft.organization._id,
+                    organizationInput(draft, uploadedLogoByKey.get(draft.key))
+                )
+            )
+        );
+    };
+
+    return { participants, commitEdits };
 };

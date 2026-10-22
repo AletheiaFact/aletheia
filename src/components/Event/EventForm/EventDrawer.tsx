@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Divider, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { EventPayload, EventsActions, EventsState } from "../../../types/event";
@@ -8,6 +8,7 @@ import EventApi from "../../../api/eventApi";
 import { draftsFromParticipants } from "../Participants/participantDrafts";
 import { persistParticipants } from "../Participants/persistParticipants";
 import { createParticipantsApi } from "../Participants/participantsApi";
+import { Organization } from "../../../types/Organization";
 
 interface EventDrawerProps {
     open: boolean;
@@ -30,6 +31,9 @@ const EventDrawer = ({
     const { hasCaptcha, isLoading } = state;
     const { setRecaptchaString, setIsLoading } = actions;
 
+    // Organizations created by a failed attempt, reused when retrying.
+    const createdOrganizations = useRef(new Map<string, Organization>());
+
     const onSubmit = async ({
         participants: participantDrafts,
         ...formData
@@ -45,17 +49,22 @@ const EventDrawer = ({
 
             // Only send participants when the form holds them, so an update
             // can never clear the list by omission.
-            const participants =
+            const prepared =
                 participantDrafts &&
                 (await persistParticipants(
                     participantDrafts,
-                    createParticipantsApi(t)
+                    createParticipantsApi(t),
+                    createdOrganizations.current
                 ));
             const response = await EventApi.updateEvent(
                 eventId,
-                { ...formData, ...(participants && { participants }) },
+                {
+                    ...formData,
+                    ...(prepared && { participants: prepared.participants }),
+                },
                 t
             );
+            await prepared?.commitEdits();
 
             if (response) {
                 onSave(response);

@@ -24,18 +24,23 @@ const withNewLogo = (draft: ParticipantDraft, name: string) => ({
     logo: [{ uid: name, name, originFileObj: { name } as File }],
 });
 
-const mockApi = (): ParticipantsPersistenceApi &
-    {
-        [K in keyof ParticipantsPersistenceApi]: ReturnType<typeof vi.fn>;
-    } => ({
+const newDraft = (name: string, file?: string) => {
+    const draft = { ...createEmptyDraft(), name, website: "" };
+    return file ? withNewLogo(draft, file) : draft;
+};
+
+const mockApi = () => ({
     uploadLogos: vi.fn(async (files: File[]) =>
         files.map((file) => ({ FileURL: `https://bucket/${file.name}` }))
     ),
-    createOrganization: vi.fn(async (input) =>
-        organization(`new-${input.name}`)
+    createOrganization: vi.fn(async (input: { name: string }) =>
+        organization(`new-${input.name}`, { name: input.name, website: "" })
     ),
-    updateOrganization: vi.fn(async (id) => organization(id)),
+    updateOrganization: vi.fn(async (id: string) => organization(id)),
 });
+
+const asApi = (api: ReturnType<typeof mockApi>) =>
+    api as unknown as ParticipantsPersistenceApi;
 
 describe("persistParticipants", () => {
     it("references untouched organizations without any API call", async () => {
@@ -45,9 +50,13 @@ describe("persistParticipants", () => {
             draftFromOrganization(organization("b")),
         ];
 
-        const result = await persistParticipants(drafts, api);
+        const { participants, commitEdits } = await persistParticipants(
+            drafts,
+            asApi(api)
+        );
+        await commitEdits();
 
-        expect(result).toEqual([
+        expect(participants).toEqual([
             { organization: "a", order: 0 },
             { organization: "b", order: 1 },
         ]);
@@ -58,16 +67,16 @@ describe("persistParticipants", () => {
 
     it("uploads every new logo in a single call and maps them back by row", async () => {
         const api = mockApi();
-        const created = withNewLogo(
-            { ...createEmptyDraft(), name: " Nova Org ", website: "" },
-            "new.png"
-        );
+        const created = { ...newDraft(" Nova Org ", "new.png") };
         const edited = withNewLogo(
             draftFromOrganization(organization("a")),
             "edited.png"
         );
 
-        const result = await persistParticipants([created, edited], api);
+        const { participants, commitEdits } = await persistParticipants(
+            [created, edited],
+            asApi(api)
+        );
 
         expect(api.uploadLogos).toHaveBeenCalledTimes(1);
         expect(api.uploadLogos).toHaveBeenCalledWith([
@@ -78,15 +87,19 @@ describe("persistParticipants", () => {
             name: "Nova Org",
             logo: { FileURL: "https://bucket/new.png" },
         });
+        expect(participants).toEqual([
+            { organization: "new-Nova Org", order: 0 },
+            { organization: "a", order: 1 },
+        ]);
+
+        // Shared organizations are only edited once the event is saved.
+        expect(api.updateOrganization).not.toHaveBeenCalled();
+        await commitEdits();
         expect(api.updateOrganization).toHaveBeenCalledWith("a", {
             name: "Org a",
             website: "https://example.org",
             logo: { FileURL: "https://bucket/edited.png" },
         });
-        expect(result).toEqual([
-            { organization: "new-Nova Org", order: 0 },
-            { organization: "a", order: 1 },
-        ]);
     });
 
     it("updates text-only edits without re-uploading the logo", async () => {
@@ -96,7 +109,8 @@ describe("persistParticipants", () => {
             website: "",
         };
 
-        await persistParticipants([draft], api);
+        const { commitEdits } = await persistParticipants([draft], asApi(api));
+        await commitEdits();
 
         expect(api.uploadLogos).not.toHaveBeenCalled();
         expect(api.updateOrganization).toHaveBeenCalledWith("a", {
@@ -105,7 +119,49 @@ describe("persistParticipants", () => {
         });
     });
 
+    it("reuses organizations created by a failed attempt when retrying", async () => {
+        const api = mockApi();
+        const createdByKey = new Map<string, Organization>();
+        const draft = newDraft("Nova Org", "new.png");
+
+        await persistParticipants([draft], asApi(api), createdByKey);
+        const retry = await persistParticipants(
+            [draft],
+            asApi(api),
+            createdByKey
+        );
+
+        expect(api.createOrganization).toHaveBeenCalledTimes(1);
+        expect(retry.participants).toEqual([
+            { organization: "new-Nova Org", order: 0 },
+        ]);
+    });
+
+    it("turns a rename after a failed attempt into an edit of the created organization", async () => {
+        const api = mockApi();
+        const createdByKey = new Map<string, Organization>();
+        const draft = newDraft("Nova Org");
+
+        await persistParticipants([draft], asApi(api), createdByKey);
+        const { commitEdits } = await persistParticipants(
+            [{ ...draft, name: "Nova Org Renomeada" }],
+            asApi(api),
+            createdByKey
+        );
+        await commitEdits();
+
+        expect(api.createOrganization).toHaveBeenCalledTimes(1);
+        expect(api.updateOrganization).toHaveBeenCalledWith("new-Nova Org", {
+            name: "Nova Org Renomeada",
+            website: "",
+        });
+    });
+
     it("returns an empty list when there are no participants", async () => {
-        expect(await persistParticipants(undefined, mockApi())).toEqual([]);
+        const { participants } = await persistParticipants(
+            undefined,
+            asApi(mockApi())
+        );
+        expect(participants).toEqual([]);
     });
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Grid } from "@mui/material";
 import colors from "../../../styles/colors";
 import EventApi from "../../../api/eventApi";
@@ -6,6 +6,7 @@ import DynamicEventForm from "./DynamicEventForm";
 import useEventsHook from "../hooks/useEventsHook";
 import { persistParticipants } from "../Participants/persistParticipants";
 import { createParticipantsApi } from "../Participants/participantsApi";
+import { Organization } from "../../../types/Organization";
 
 const CreateEventView = () => {
     const { state, actions } = useEventsHook();
@@ -13,12 +14,16 @@ const CreateEventView = () => {
         state;
     const { setRecaptchaString, t, router, setIsLoading } = actions;
 
+    // Organizations created by a failed attempt, reused when retrying.
+    const createdOrganizations = useRef(new Map<string, Organization>());
+
     const onSubmit = async (data) => {
         setIsLoading(true);
         try {
-            const participants = await persistParticipants(
+            const { participants, commitEdits } = await persistParticipants(
                 data.participants,
-                createParticipantsApi(t)
+                createParticipantsApi(t),
+                createdOrganizations.current
             );
             const event = await EventApi.createEvent(
                 {
@@ -35,6 +40,7 @@ const CreateEventView = () => {
                 },
                 t
             );
+            await commitEdits();
             router.push(`${eventHref}/${event.slug}`);
         } catch (err) {
             // The API helpers already showed an error message.
