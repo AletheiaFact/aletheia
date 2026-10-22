@@ -35,6 +35,10 @@ import { REQUEST } from "@nestjs/core";
 import { Topic, TopicDocument } from "../topic/mongo/schemas/topic.schema";
 import { toError } from "../util/error-handling";
 import { mapAggregateToRecord } from "../util/mongo-utils";
+import { escapeRegex } from "../util/regex.util";
+
+// Path segments under /event/ that belong to other pages.
+const RESERVED_EVENT_SLUGS = ["create"];
 
 @Injectable()
 export class EventsService {
@@ -67,11 +71,7 @@ export class EventsService {
                 createEventDto.mainTopic
             );
 
-            const slug = slugify(createEventDto.name, {
-                lower: true,
-                strict: true,
-                trim: true,
-            });
+            const slug = await this.generateUniqueSlug(createEventDto.name);
 
             const data_hash = crypto
                 .createHash("md5")
@@ -82,7 +82,7 @@ export class EventsService {
                 ...createEventDto,
                 participants,
                 data_hash,
-                slug: slug,
+                slug,
                 mainTopic: createdTopic._id,
             });
 
@@ -145,13 +145,8 @@ export class EventsService {
                 );
             }
 
-            if (updateEventDto.name) {
-                updateData.slug = slugify(updateEventDto.name, {
-                    lower: true,
-                    strict: true,
-                    trim: true,
-                });
-            }
+            // The slug is fixed at creation: it is the public URL, so a
+            // rename must not break links that were already shared.
 
             if (mainTopic) {
                 // Event stays Mongo-only until Phase 7; the Mongo backend
@@ -269,15 +264,38 @@ export class EventsService {
     }
 
     /**
-     * Searches for an event by its hash.
-     * * @param data_hash - URL identifier hash.
-     * @returns Event document.
+     * Public event page payload, looked up by its URL slug.
+     * @returns The event with topics and active participants populated.
      */
-    async findByHash(data_hash: string) {
-        this.logger.debug(`Fetching public event with hash: ${data_hash}`);
+    findBySlug(slug: string) {
+        return this.findPublicEvent({ slug });
+    }
 
+    /**
+     * Same payload as findBySlug, by the legacy data_hash identifier.
+     */
+    findByHash(data_hash: string) {
+        return this.findPublicEvent({ data_hash });
+    }
+
+    /**
+     * Slug of the event with this data_hash, used to redirect legacy
+     * /event/:data_hash/:slug URLs.
+     */
+    async getSlugByHash(data_hash: string): Promise<string | null> {
         const event = await this.eventModel
             .findOne({ data_hash })
+            .select("slug")
+            .lean<Pick<Event, "slug">>()
+            .exec();
+        return event?.slug ?? null;
+    }
+
+    private async findPublicEvent(filter: FilterQuery<Event>) {
+        this.logger.debug(`Fetching public event: ${JSON.stringify(filter)}`);
+
+        const event = await this.eventModel
+            .findOne(filter)
             .populate("mainTopic")
             .populate("filterTopics")
             .populate({
@@ -289,7 +307,7 @@ export class EventsService {
 
         if (!event) {
             this.logger.warn(
-                `Public access attempt failed - Hash not found: ${data_hash}`
+                `Public event not found: ${JSON.stringify(filter)}`
             );
             throw new NotFoundException(`The requested event was not found.`);
         }
@@ -300,6 +318,33 @@ export class EventsService {
             (participant: EventParticipant) => participant.organization
         );
         return publicEvent;
+    }
+
+    /**
+     * Slug from the name, suffixed (-2, -3, ...) when taken. Reserved words
+     * that collide with sibling routes (/event/create) are never used bare.
+     */
+    private async generateUniqueSlug(name: string): Promise<string> {
+        const base =
+            slugify(name, { lower: true, strict: true, trim: true }) || "event";
+        const existing = await this.eventModel
+            .find({ slug: { $regex: `^${escapeRegex(base)}(-\\d+)?$` } })
+            .select("slug")
+            .lean<Pick<Event, "slug">[]>()
+            .exec();
+        const taken = new Set([
+            ...RESERVED_EVENT_SLUGS,
+            ...existing.map(({ slug }) => slug),
+        ]);
+
+        if (!taken.has(base)) {
+            return base;
+        }
+        let suffix = 2;
+        while (taken.has(`${base}-${suffix}`)) {
+            suffix++;
+        }
+        return `${base}-${suffix}`;
     }
 
     /**

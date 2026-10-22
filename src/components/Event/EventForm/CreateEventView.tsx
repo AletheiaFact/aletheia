@@ -35,7 +35,7 @@ const CreateEventView = () => {
                 },
                 t
             );
-            router.push(`${eventHref}/${event.data_hash}/${event.slug}`);
+            router.push(`${eventHref}/${event.slug}`);
         } catch (err) {
             // The API helpers already showed an error message.
             console.error("Error creating event:", err);

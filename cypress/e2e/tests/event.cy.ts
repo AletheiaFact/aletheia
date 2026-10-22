@@ -15,6 +15,7 @@ import {
 import { Dayjs } from "dayjs";
 
 let createdEventUrl = "";
+let legacyEventUrl = "";
 
 const openCreateEventForm = () => {
     cy.get(locators.floatButton.FLOAT_BUTTON).click();
@@ -165,7 +166,8 @@ describe("Test events infrastructure", () => {
                 ]);
                 const { data_hash, slug } = interception.response?.body;
 
-                createdEventUrl = `/event/${data_hash}/${slug}`;
+                createdEventUrl = `/event/${slug}`;
+                legacyEventUrl = `/event/${data_hash}/${slug}`;
                 cy.url().should("contain", createdEventUrl);
                 cy.get(locators.event.DETAIL_TITLE)
                     .should("be.visible")
@@ -247,6 +249,14 @@ describe("Test events infrastructure", () => {
                 "not.exist"
             );
             cy.get(locators.event.EVENT_ITEMS_TOTAL_COUNT).should("contain", 0);
+        });
+    });
+
+    describe("Event URL", () => {
+        it("should redirect the legacy hash URL to the slug URL", () => {
+            cy.visit(legacyEventUrl);
+            cy.location("pathname").should("eq", createdEventUrl);
+            cy.get(locators.event.DETAIL_TITLE).should("be.visible");
         });
     });
 

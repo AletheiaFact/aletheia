@@ -20,29 +20,13 @@ const EventHeaderContent = ({
     state,
     actions,
 }: EventHeaderContentProps) => {
-    const {
-        badge,
-        name,
-        description,
-        startDate,
-        location,
-        slug,
-        participants,
-    } = currentEvent;
+    const { badge, name, description, startDate, location, participants } =
+        currentEvent;
     const [role] = useAtom(currentUserRole);
     const [open, setOpen] = useAtom(isEditDrawerOpen);
 
-    const handleSave = (updatedEvent) => {
-        const slugChanged = slug !== updatedEvent.slug;
-
-        if (slugChanged) {
-            const newRoute = `/event/${updatedEvent.data_hash}/${updatedEvent.slug}`;
-
-            actions.router.replace(newRoute);
-        } else {
-            actions.router.reload();
-        }
-    };
+    // The slug (and so the URL) never changes on update: just refresh.
+    const handleSave = () => actions.router.reload();
 
     return (
         <Grid container className="eventContainerBase mainContent">

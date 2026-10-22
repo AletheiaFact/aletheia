@@ -39,6 +39,8 @@ export const mockEventsService = {
     update: vi.fn(),
     findAll: vi.fn(),
     findByHash: vi.fn(),
+    findBySlug: vi.fn(),
+    getSlugByHash: vi.fn(),
 };
 
 export const mockConfigService = {

@@ -24,6 +24,15 @@ import { REQUEST } from "@nestjs/core";
 import { Types } from "mongoose";
 import { Topic } from "../topic/mongo/schemas/topic.schema";
 
+const mockExistingSlugs = (slugs: string[] = []) =>
+    mockEventModel.find.mockReturnValue({
+        select: () => ({
+            lean: () => ({
+                exec: async () => slugs.map((slug) => ({ slug })),
+            }),
+        }),
+    });
+
 describe("EventsService (Unit)", () => {
     let service: EventsService;
 
@@ -66,6 +75,37 @@ describe("EventsService (Unit)", () => {
     });
 
     describe("create", () => {
+        beforeEach(() => mockExistingSlugs());
+
+        it("should derive the slug from the name and suffix it when taken", async () => {
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "t1" });
+            mockEventModel.create.mockResolvedValue({ _id: "e1" });
+            mockExistingSlugs(["debate-final", "debate-final-2"]);
+
+            await service.create({
+                ...mockCreateEventDto,
+                name: "Debate Final",
+            } as any);
+
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "debate-final-3" })
+            );
+        });
+
+        it("should never use a reserved route segment as a bare slug", async () => {
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "t1" });
+            mockEventModel.create.mockResolvedValue({ _id: "e1" });
+
+            await service.create({
+                ...mockCreateEventDto,
+                name: "Create",
+            } as any);
+
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "create-2" })
+            );
+        });
+
         it("should create an event with generated hash and resolved topics", async () => {
             const mainTopic = { _id: "t1", name: "Climate", wikidataId: "Q1" };
             const expectedHash = crypto
@@ -427,6 +467,8 @@ describe("EventsService (Unit)", () => {
     });
 
     describe("participants", () => {
+        beforeEach(() => mockExistingSlugs());
+
         const orgA = "507f1f77bcf86cd799439021";
         const orgB = "507f1f77bcf86cd799439022";
 
@@ -483,6 +525,16 @@ describe("EventsService (Unit)", () => {
                 } as any)
             ).rejects.toThrow(BadRequestException);
             expect(mockEventModel.findByIdAndUpdate).not.toHaveBeenCalled();
+        });
+
+        it("should keep the slug when the event is renamed", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockResolvedValue({ _id: id });
+
+            await service.update(id, { name: "Renamed" } as any);
+
+            const [, update] = mockEventModel.findByIdAndUpdate.mock.calls[0];
+            expect(update.$set).not.toHaveProperty("slug");
         });
 
         it("should not touch participants when the update omits them", async () => {
@@ -556,6 +608,28 @@ describe("EventsService (Unit)", () => {
             expect(result.participants).toEqual([
                 { organization: { _id: "o2" }, order: 1 },
             ]);
+        });
+
+        it("should look up by slug through the same public payload", async () => {
+            mockFindOne({ toObject: () => ({ _id: "e1", participants: [] }) });
+
+            await service.findBySlug("debate");
+
+            expect(mockEventModel.findOne).toHaveBeenCalledWith({
+                slug: "debate",
+            });
+        });
+
+        it("should resolve the slug of a legacy hash", async () => {
+            const exec = vi.fn().mockResolvedValue({ slug: "debate" });
+            mockEventModel.findOne.mockReturnValue({
+                select: () => ({ lean: () => ({ exec }) }),
+            });
+
+            expect(await service.getSlugByHash("hash123")).toBe("debate");
+
+            exec.mockResolvedValue(null);
+            expect(await service.getSlugByHash("missing")).toBeNull();
         });
 
         it("should throw NotFoundException when hash does not exist", async () => {

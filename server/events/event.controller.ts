@@ -35,13 +35,15 @@ import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class EventsController {
-    private getSafeNamespaceRedirect(namespace?: string): string {
-        if (!namespace) {
-            return "/";
-        }
+    /** "/<namespace>" for a well-formed namespace, "" otherwise. */
+    private namespacePrefix(namespace?: string): string {
+        return namespace && /^[a-zA-Z0-9_-]+$/.test(namespace)
+            ? `/${namespace}`
+            : "";
+    }
 
-        const isValid = /^[a-zA-Z0-9_-]+$/.test(namespace);
-        return isValid ? `/${namespace}` : "/";
+    private getSafeNamespaceRedirect(namespace?: string): string {
+        return this.namespacePrefix(namespace) || "/";
     }
 
     private readonly logger = new Logger(EventsController.name);
@@ -136,9 +138,10 @@ export class EventsController {
         await this.viewService.render(req, res, "/event-create", queryObject);
     }
 
+    // Registered after event/create so "create" never resolves as a slug.
     @Public()
     @ApiTags("pages")
-    @Get("event/:data_hash/:event_slug")
+    @Get("event/:slug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async eventViewPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
@@ -149,18 +152,12 @@ export class EventsController {
         }
 
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
         try {
-            const event = await this.eventsService.findByHash(data_hash);
-
-            if (!event) {
-                this.logger.warn(`Event not found for hash: ${data_hash}`);
-                throw new NotFoundException("Event not found");
-            }
+            const event = await this.eventsService.findBySlug(req.params.slug);
 
             const queryObject = Object.assign(parsedUrl.query, {
                 event,
-                namespace: req.params.namespace,
+                nameSpace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 captcha: this.captchaService.getClientConfig(),
             });
@@ -181,5 +178,30 @@ export class EventsController {
             }
             throw error;
         }
+    }
+
+    // Legacy /event/:data_hash/:slug links (already shared publicly) keep
+    // working through a permanent redirect to the slug URL.
+    @Public()
+    @ApiTags("pages")
+    @Get("event/:data_hash/:event_slug")
+    public async legacyEventViewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            return res.redirect(
+                this.getSafeNamespaceRedirect(req.params.namespace)
+            );
+        }
+
+        const slug = await this.eventsService.getSlugByHash(
+            req.params.data_hash
+        );
+        if (!slug) {
+            throw new NotFoundException("Event not found");
+        }
+        const prefix = this.namespacePrefix(req.params.namespace);
+        return res.redirect(301, `${prefix}/event/${encodeURIComponent(slug)}`);
     }
 }

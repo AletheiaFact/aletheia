@@ -35,7 +35,7 @@ export class Event {
     @Prop({ required: true, trim: true })
     name: string;
 
-    @Prop({ required: true, trim: true })
+    @Prop({ required: true, trim: true, unique: true })
     slug: string;
 
     @Prop({ required: true })

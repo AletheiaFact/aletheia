@@ -40,7 +40,7 @@ const EventCard = ({
 
                 <EventCardAction
                     label={openEventLabel}
-                    href={`${eventHref}/${event.data_hash}/${event.slug}`}
+                    href={`${eventHref}/${event.slug}`}
                 />
             </EventCardStyled>
         </CardBase>
