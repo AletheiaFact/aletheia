@@ -236,6 +236,68 @@ and just need exposing.
 5. Is the cross-check skip only for the debate, or the new default? (Today
    it is a manual choice at `reported`; the tools do not force it.)
 
+## Builder findings (2026-10-21, PR #2653)
+
+Facts found in the code while building, that change or sharpen the
+decisions above:
+
+- **The web app never persists `selectReviewer`.** `SELECTED_REVIEW` is a
+  transient UI event (`src/machines/reviewTask/reviewTaskMachine.ts`,
+  `shouldNotUpdateReviewTask`): the web picks the reviewer in the form and
+  saves straight to `submitted`. Confirmed in the browser: clicking "Selecione
+  um revisor" sends no request. So the statement in tool 6 that "both paths
+  feed the same backlog" does not hold: **only MCP's `send_to_review` feeds
+  the backlog**. The web flow is unchanged.
+- **Backlog tasks are invisible in the Kanban.** There is no `selectReviewer`
+  column, and `getQueryMatchForMachineValue("selectReviewer")` builds
+  `machine.value.selectReviewer: {$exists: true}`, which never matches the
+  plain string. Opening the sentence page directly still works (the machine
+  starts in `selectReviewer` and offers "send to review"). Making the Kanban
+  show it is a frontend change, which the non-goals rule out; it is open
+  question 6 below.
+- **`machine.value` shape.** The web persists XState's `state.value`, so
+  `assigned` is stored as `{ assigned: "undraft" | "draft" }`. MCP
+  `start_review_task` and `saveDraft`'s auto-create stored the plain string
+  `"assigned"`, which the Kanban cannot see. Fixed in both, plus migration
+  `20261021130000` for existing documents (maintainer decision).
+- **Notifications are sent by the browser** (`sendReviewNotifications.ts`).
+  MCP transitions now notify server-side through `NotificationService`
+  (maintainer decision): `send_to_review` (other assignees, "reviewSubmit")
+  and `publish_review_task` (assignees, "reviewPublished"). Best-effort, pt
+  messages from `public/locales/pt/notification.json`.
+- **Atomicity needs no retry loop.** Each hand-out is a single
+  `findOneAndUpdate` filtered on the source state and sorted by `_id`; Mongo
+  serializes them, so a caller that "loses" simply matches the next task.
+  An e2e test fires `waiting + 3` concurrent `next_review_task` calls against
+  real Mongo: every task goes to exactly one caller and the extra 3 get
+  `task: null`.
+- **No new index.** The existing
+  `reviewTaskType_1_nameSpace_1_machine.value_1__id_-1` serves all four queue
+  queries as an IXSCAN with index-provided sort (verified with `explain`).
+  `data_hash_1` is unique locally; migration `20261021120000` creates it
+  where missing and logs (does not fail) if duplicates block it.
+- **Queue feed placement (open question 7).** Implemented only in MCP
+  `create_claim`. The web claim form and the live debate editor
+  (`DebateService.addSpeechToDebate`) do not enqueue yet.
+  `start_review_task` now takes an existing `unassigned` task atomically
+  instead of refusing it, so the two entry points coexist.
+- **History/state events parity.** `_createStateEvent` and
+  `_createReviewTaskHistory` only derive the type from object-shaped values,
+  so plain-string states (`reported`, `submitted`, `selectReviewer`) are
+  recorded as type "published" — on the web path as well. MCP mirrors this;
+  fixing it would change the web's audit trail and is left out.
+- **Four-eyes is MCP-only.** The web reviewer picker does not exclude the
+  task's assignees. `claim_review_task` excludes them (including admins), as
+  decided.
+
+Open questions added by the builder:
+
+6. Should backlog (`selectReviewer`, no reviewer) tasks appear in the Kanban?
+   Needs a frontend change (column + query).
+7. Should the web claim form and the debate editor also feed the queue? The
+   recommended place is the service layer (`ClaimService` create and
+   `DebateService.addSpeechToDebate`), so every entry point enqueues once.
+
 ## Left to the builder
 
 - The index for "oldest `unassigned` task" (state + `createdAt`), and
