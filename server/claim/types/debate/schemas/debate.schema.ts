@@ -5,26 +5,53 @@ import { ClaimRevision } from "../../../../claim/claim-revision/mongo/schemas/cl
 
 export type DebateDocument = Debate & mongoose.Document;
 
-// Metadata of a speech appended through the transcript append endpoint.
-// `externalId` is the caller's id of the turn and is used to skip repeats.
-export interface DebateTranscriptTurn {
-    speech: mongoose.Types.ObjectId;
-    externalId?: string;
-    startedAt?: Date;
+export enum TranscriptTurnStatus {
+    Draft = "draft",
+    Approved = "approved",
+    Rejected = "rejected",
 }
 
-const DebateTranscriptTurnSchema = new mongoose.Schema<DebateTranscriptTurn>(
-    {
-        speech: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: "Speech",
-        },
-        externalId: { type: String },
-        startedAt: { type: Date },
+// A turn sent through the transcript append endpoint. Its speech is
+// created as a draft (hidden from public reads) and only joins the debate
+// `content` when a reviewer approves it. `externalId` is the caller's id
+// of the turn and is used to skip repeats, also after a rejection.
+export interface DebateTranscriptTurn {
+    _id: mongoose.Types.ObjectId;
+    speech: mongoose.Types.ObjectId;
+    personality: mongoose.Types.ObjectId;
+    text: string;
+    status: TranscriptTurnStatus;
+    externalId?: string;
+    startedAt?: Date;
+    createdAt: Date;
+    reviewedBy?: mongoose.Types.ObjectId;
+    reviewedAt?: Date;
+}
+
+const DebateTranscriptTurnSchema = new mongoose.Schema<DebateTranscriptTurn>({
+    speech: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Speech",
     },
-    { _id: false }
-);
+    personality: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Personality",
+    },
+    text: { type: String, required: true },
+    status: {
+        type: String,
+        enum: Object.values(TranscriptTurnStatus),
+        required: true,
+        default: TranscriptTurnStatus.Draft,
+    },
+    externalId: { type: String },
+    startedAt: { type: Date },
+    createdAt: { type: Date, default: Date.now },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reviewedAt: { type: Date },
+});
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Debate {

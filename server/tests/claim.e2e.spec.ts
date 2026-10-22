@@ -366,36 +366,50 @@ describe("ClaimController (e2e)", () => {
     });
 
     /**
-     * Test: Append transcript turns to a debate
-     * Purpose: Validates POST /api/claim/debate/:debateId/append
+     * Test: Debate transcript drafts
+     * Purpose: Validates the transcript draft flow of a debate
      * Validates:
-     * - Each turn becomes a speech of the turn's personality, in order
-     * - Turns with an externalId already on the debate are skipped
-     * - Body validation (400), speakers outside the debate (400),
-     *   and unknown debate ids (404)
+     * - POST /api/claim/debate/:debateId/append creates hidden draft speeches
+     * - Drafts stay out of the debate content, speech and sentence reads
+     * - Reviewers list, edit, approve (transcript order) and reject drafts
+     * - Resent externalIds are skipped, also after a rejection
+     * - 400 / 404 / 409 cases
      */
-    describe("/api/claim/debate/:debateId/append (POST)", () => {
+    describe("debate transcript drafts", () => {
         let debateId: string;
-        const appendUrl = () => `/api/claim/debate/${debateId}/append`;
-
+        const turnsUrl = () => `/api/claim/debate/${debateId}/transcript-turns`;
+        const db = () => app.get(getConnectionToken());
         const getDebate = () =>
-            app
-                .get(getConnectionToken())
+            db()
                 .collection("debates")
                 .findOne({ _id: new Types.ObjectId(debateId) });
+        const getSpeech = (speechId: string) =>
+            db()
+                .collection("speeches")
+                .findOne({ _id: new Types.ObjectId(speechId) });
+        const firstSentenceHash = async (speechId: string) => {
+            const speech = await getSpeech(speechId);
+            const paragraph = await db()
+                .collection("paragraphs")
+                .findOne({ _id: speech.content[0] });
+            const sentence = await db()
+                .collection("sentences")
+                .findOne({ _id: paragraph.content[0] });
+            return sentence.data_hash;
+        };
+        const drafts: Record<string, { turnId: string; speechId: string }> = {};
 
         beforeAll(async () => {
             const claimId = debateClaimId.split("/")[2];
-            const revision = await app
-                .get(getConnectionToken())
+            const revision = await db()
                 .collection("claimrevisions")
                 .findOne({ claimId: new Types.ObjectId(claimId) });
             debateId = revision.contentId.toString();
         });
 
-        it("appends each turn as a speech in request order", async () => {
+        it("append creates hidden drafts, not debate content", async () => {
             const response = await request(app.getHttpServer())
-                .post(appendUrl())
+                .post(`/api/claim/debate/${debateId}/append`)
                 .send({
                     turns: [
                         {
@@ -409,6 +423,11 @@ describe("ClaimController (e2e)", () => {
                             text: "That plan was tried before.",
                             externalId: "turn-2",
                         },
+                        {
+                            personality: personalitiesId[0],
+                            text: "Teh plan is new.",
+                            externalId: "turn-3",
+                        },
                     ],
                     isLive: true,
                 });
@@ -416,31 +435,134 @@ describe("ClaimController (e2e)", () => {
             expect(response.status).toBe(201);
             expect(response.body.skipped).toEqual([]);
             expect(response.body.isLive).toBe(true);
-            expect(
-                response.body.appended.map((turn) => turn.externalId)
-            ).toEqual(["turn-1", "turn-2"]);
+            for (const draft of response.body.drafts) {
+                drafts[draft.externalId] = draft;
+            }
+            expect(Object.keys(drafts)).toEqual(["turn-1", "turn-2", "turn-3"]);
 
             const debate = await getDebate();
             expect(debate.isLive).toBe(true);
-            expect(debate.content.map(String)).toEqual(
-                response.body.appended.map((turn) => turn.speechId)
-            );
-            expect(debate.transcriptTurns[0].externalId).toBe("turn-1");
+            expect(debate.content).toHaveLength(0);
+            expect(debate.transcriptTurns.map((t) => t.status)).toEqual([
+                "draft",
+                "draft",
+                "draft",
+            ]);
             expect(debate.transcriptTurns[0].startedAt).toEqual(
                 new Date("2023-11-25T15:00:00.000Z")
             );
 
-            const speech = await app
-                .get(getConnectionToken())
-                .collection("speeches")
-                .findOne({ _id: debate.content[0] });
+            const speech = await getSpeech(drafts["turn-1"].speechId);
+            expect(speech.isDraft).toBe(true);
             expect(speech.personality.toString()).toBe(personalitiesId[0]);
-            expect(speech.content).toHaveLength(1);
         });
 
-        it("skips turns that were already appended", async () => {
+        it("hides draft speeches and sentences from public reads", async () => {
+            const speechResponse = await request(app.getHttpServer()).get(
+                `/api/speech/${drafts["turn-1"].speechId}`
+            );
+            expect(speechResponse.body).toEqual({});
+
+            const hash = await firstSentenceHash(drafts["turn-1"].speechId);
+            const sentenceResponse = await request(app.getHttpServer()).get(
+                `/api/sentence/${hash}`
+            );
+            expect(sentenceResponse.status).toBe(404);
+        });
+
+        it("lists drafts in transcript order with their speeches", async () => {
             const response = await request(app.getHttpServer())
-                .post(appendUrl())
+                .get(turnsUrl())
+                .query({ status: "draft" });
+
+            expect(response.status).toBe(200);
+            expect(response.body.map((t) => t.externalId)).toEqual([
+                "turn-1",
+                "turn-2",
+                "turn-3",
+            ]);
+            expect(response.body[0].speech._id).toBe(drafts["turn-1"].speechId);
+            expect(response.body[0].speech.content.length).toBeGreaterThan(0);
+        });
+
+        it("edits a draft by parsing a new draft speech", async () => {
+            const response = await request(app.getHttpServer())
+                .patch(`${turnsUrl()}/${drafts["turn-3"].turnId}`)
+                .send({ text: "The plan is new." });
+
+            expect(response.status).toBe(200);
+            expect(response.body.text).toBe("The plan is new.");
+            expect(response.body.speechId).not.toBe(drafts["turn-3"].speechId);
+
+            const debate = await getDebate();
+            expect(debate.transcriptTurns[2].text).toBe("The plan is new.");
+            expect(debate.transcriptTurns[2].speech.toString()).toBe(
+                response.body.speechId
+            );
+            drafts["turn-3"].speechId = response.body.speechId;
+        });
+
+        it("approves drafts in transcript order and makes them public", async () => {
+            const response = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/approve`)
+                .send({
+                    turnIds: [drafts["turn-3"].turnId, drafts["turn-1"].turnId],
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body.turns.map((t) => t.status)).toEqual([
+                "approved",
+                "approved",
+            ]);
+
+            const debate = await getDebate();
+            expect(debate.content.map(String)).toEqual([
+                drafts["turn-1"].speechId,
+                drafts["turn-3"].speechId,
+            ]);
+            expect(debate.transcriptTurns[0].reviewedAt).toBeInstanceOf(Date);
+
+            const speechResponse = await request(app.getHttpServer()).get(
+                `/api/speech/${drafts["turn-1"].speechId}`
+            );
+            expect(speechResponse.body._id).toBe(drafts["turn-1"].speechId);
+
+            const hash = await firstSentenceHash(drafts["turn-1"].speechId);
+            const sentenceResponse = await request(app.getHttpServer()).get(
+                `/api/sentence/${hash}`
+            );
+            expect(sentenceResponse.status).toBe(200);
+        });
+
+        it("returns 409 when a turn was already reviewed", async () => {
+            const approveAgain = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/approve`)
+                .send({ turnIds: [drafts["turn-1"].turnId] });
+            expect(approveAgain.status).toBe(409);
+
+            const edit = await request(app.getHttpServer())
+                .patch(`${turnsUrl()}/${drafts["turn-1"].turnId}`)
+                .send({ text: "Changed after approval." });
+            expect(edit.status).toBe(409);
+        });
+
+        it("rejects a draft, keeping it out of the debate", async () => {
+            const response = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/reject`)
+                .send({ turnIds: [drafts["turn-2"].turnId] });
+
+            expect(response.status).toBe(201);
+            const debate = await getDebate();
+            expect(debate.content).toHaveLength(2);
+            expect(debate.transcriptTurns[1].status).toBe("rejected");
+            expect((await getSpeech(drafts["turn-2"].speechId)).isDraft).toBe(
+                true
+            );
+        });
+
+        it("skips resent turns, including rejected ones", async () => {
+            const response = await request(app.getHttpServer())
+                .post(`/api/claim/debate/${debateId}/append`)
                 .send({
                     turns: [
                         {
@@ -451,27 +573,22 @@ describe("ClaimController (e2e)", () => {
                         {
                             personality: personalitiesId[0],
                             text: "Not like this.",
-                            externalId: "turn-3",
+                            externalId: "turn-4",
                         },
                     ],
                 });
 
             expect(response.status).toBe(201);
             expect(response.body.skipped).toEqual(["turn-2"]);
-            expect(
-                response.body.appended.map((turn) => turn.externalId)
-            ).toEqual(["turn-3"]);
-
-            const debate = await getDebate();
-            expect(debate.content).toHaveLength(3);
-            expect(
-                debate.transcriptTurns.map((turn) => turn.externalId)
-            ).toEqual(["turn-1", "turn-2", "turn-3"]);
+            expect(response.body.drafts.map((d) => d.externalId)).toEqual([
+                "turn-4",
+            ]);
+            expect((await getDebate()).transcriptTurns).toHaveLength(4);
         });
 
-        it("returns 400 for an invalid body", async () => {
+        it("returns 400 for an invalid append body", async () => {
             const response = await request(app.getHttpServer())
-                .post(appendUrl())
+                .post(`/api/claim/debate/${debateId}/append`)
                 .send({
                     turns: [{ personality: personalitiesId[0], text: "  " }],
                 });
@@ -481,9 +598,18 @@ describe("ClaimController (e2e)", () => {
             expect(response.body.issues[0].path).toBe("turns.0.text");
         });
 
+        it("returns 400 for an invalid review body", async () => {
+            const response = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/approve`)
+                .send({ turnIds: ["turn-4"] });
+
+            expect(response.status).toBe(400);
+            expect(response.body.issues[0].path).toBe("turnIds.0");
+        });
+
         it("returns 400 for a speaker who is not in the debate", async () => {
             const response = await request(app.getHttpServer())
-                .post(appendUrl())
+                .post(`/api/claim/debate/${debateId}/append`)
                 .send({
                     turns: [
                         {
@@ -494,19 +620,23 @@ describe("ClaimController (e2e)", () => {
                 });
 
             expect(response.status).toBe(400);
-            expect((await getDebate()).content).toHaveLength(3);
+            expect((await getDebate()).transcriptTurns).toHaveLength(4);
         });
 
-        it("returns 404 for an unknown debate", async () => {
-            const response = await request(app.getHttpServer())
+        it("returns 404 for an unknown debate or turn", async () => {
+            const unknownDebate = await request(app.getHttpServer())
                 .post(
                     `/api/claim/debate/${new Types.ObjectId().toString()}/append`
                 )
                 .send({
                     turns: [{ personality: personalitiesId[0], text: "Hi." }],
                 });
+            expect(unknownDebate.status).toBe(404);
 
-            expect(response.status).toBe(404);
+            const unknownTurn = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/approve`)
+                .send({ turnIds: [new Types.ObjectId().toString()] });
+            expect(unknownTurn.status).toBe(404);
         });
     });
 

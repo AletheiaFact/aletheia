@@ -1,8 +1,6 @@
 import { z } from "zod";
 import {
     captchaToken,
-    entityId,
-    isoDateTime,
     legacyQueryFlag,
     nonEmptyText,
     pageQuery,
@@ -72,45 +70,6 @@ export const UpdateDebateSchema = z.strictObject({
     isLive: z.boolean(),
 });
 export type UpdateDebateDto = z.output<typeof UpdateDebateSchema>;
-
-export const DEBATE_APPEND_MAX_TURNS = 50;
-
-const DebateTranscriptTurnSchema = z.strictObject({
-    personality: entityId.meta({
-        description: "Speaker. Must be one of the debate's personalities.",
-    }),
-    text: nonEmptyText(20_000).meta({
-        description: "Transcript text of the turn. Parsed into sentences.",
-    }),
-    externalId: nonEmptyText(200).optional().meta({
-        description:
-            "Caller-side id of the turn. A turn whose externalId is already on the debate is skipped.",
-    }),
-    startedAt: isoDateTime.optional().meta({
-        description: "When the turn started in the source recording.",
-    }),
-});
-
-export const AppendDebateTranscriptSchema = z.strictObject({
-    turns: z
-        .array(DebateTranscriptTurnSchema)
-        .min(1)
-        .max(DEBATE_APPEND_MAX_TURNS)
-        .refine(
-            (turns) => {
-                const ids = turns
-                    .map((turn) => turn.externalId)
-                    .filter((id) => id !== undefined);
-                return new Set(ids).size === ids.length;
-            },
-            { error: "externalId must be unique within a request" }
-        )
-        .meta({ description: "Turns appended to the debate in array order." }),
-    isLive: z.boolean().optional(),
-});
-export type AppendDebateTranscriptDto = z.output<
-    typeof AppendDebateTranscriptSchema
->;
 
 export const UpdateHiddenStatusSchema = z.strictObject({
     isHidden: z.boolean(),

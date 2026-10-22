@@ -1,7 +1,5 @@
 import {
-    AppendDebateTranscriptSchema,
     ClaimCreatePageQuerySchema,
-    DEBATE_APPEND_MAX_TURNS,
     CreateClaimSchema,
     CreateDebateClaimSchema,
     CreateImageClaimSchema,
@@ -176,64 +174,6 @@ describe("claim DTO schemas", () => {
         expect(UpdateDebateSchema.safeParse({ isLive: true }).success).toBe(
             false
         );
-    });
-
-    describe("AppendDebateTranscriptSchema", () => {
-        const turn = { personality: objectId, text: "Hello there." };
-
-        it("accepts a batch of turns with optional metadata", () => {
-            const r = AppendDebateTranscriptSchema.safeParse({
-                turns: [
-                    {
-                        ...turn,
-                        externalId: "seg-1",
-                        startedAt: "2024-01-01T10:00:00.000Z",
-                    },
-                    { ...turn, text: "  Second turn.  " },
-                ],
-                isLive: true,
-            });
-            expect(r.success).toBe(true);
-            expect(r.success && r.data.turns[1].text).toBe("Second turn.");
-        });
-
-        it.each([
-            ["an empty turns array", { turns: [] }],
-            ["a missing turns key", {}],
-            ["a whitespace-only text", { turns: [{ ...turn, text: "   " }] }],
-            [
-                "a malformed personality",
-                { turns: [{ ...turn, personality: "not-an-id" }] },
-            ],
-            [
-                "a non-ISO startedAt",
-                { turns: [{ ...turn, startedAt: "yesterday" }] },
-            ],
-            ["an unknown turn key", { turns: [{ ...turn, speaker: "x" }] }],
-            ["an unknown body key", { turns: [turn], content: "x" }],
-            [
-                "a repeated externalId",
-                {
-                    turns: [
-                        { ...turn, externalId: "a" },
-                        { ...turn, externalId: "a" },
-                    ],
-                },
-            ],
-            [
-                "too many turns",
-                {
-                    turns: Array.from(
-                        { length: DEBATE_APPEND_MAX_TURNS + 1 },
-                        () => turn
-                    ),
-                },
-            ],
-        ])("rejects %s", (_label, body) => {
-            expect(AppendDebateTranscriptSchema.safeParse(body).success).toBe(
-                false
-            );
-        });
     });
 
     it("UpdateHiddenStatusSchema accepts false and rejects a missing recaptcha", () => {

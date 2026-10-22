@@ -18,7 +18,6 @@ import { HistoryService } from "../history/history.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import { M2MOrAbilitiesGuard } from "../auth/decorators/m2m-or-abilities.decorator";
 import { GetByDataHashDto } from "./dto/get-by-datahash.dto";
 
 describe("ClaimController (Unit)", () => {
@@ -57,8 +56,6 @@ describe("ClaimController (Unit)", () => {
             ],
         })
             .overrideGuard(AbilitiesGuard)
-            .useValue({})
-            .overrideGuard(M2MOrAbilitiesGuard)
             .useValue({})
             .compile();
 
