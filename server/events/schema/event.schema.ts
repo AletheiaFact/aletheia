@@ -1,10 +1,30 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Schema as MongooseSchema } from "mongoose";
 import type { TopicDocument } from "../../topic/mongo/schemas/topic.schema";
+import type { OrganizationDocument } from "../../organization/mongo/schemas/organization.schema";
 
 export type EventDocument = Event & Document;
 
-@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true }, timestamps: true })
+@Schema({ _id: false })
+export class EventParticipant {
+    @Prop({
+        type: MongooseSchema.Types.ObjectId,
+        required: true,
+        ref: "Organization",
+    })
+    organization: OrganizationDocument;
+
+    @Prop({ required: true, min: 0 })
+    order: number;
+}
+
+const EventParticipantSchema = SchemaFactory.createForClass(EventParticipant);
+
+@Schema({
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: true,
+})
 export class Event {
     @Prop({ required: true, unique: true })
     data_hash: string;
@@ -42,6 +62,9 @@ export class Event {
         required: false,
     })
     filterTopics: TopicDocument[];
+
+    @Prop({ type: [EventParticipantSchema], default: [] })
+    participants: EventParticipant[];
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

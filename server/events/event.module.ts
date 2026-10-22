@@ -11,6 +11,7 @@ import { AbilityModule } from "../auth/ability/ability.module";
 import { Topic, TopicSchema } from "../topic/mongo/schemas/topic.schema";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { OrganizationModule } from "../organization/organization.module";
 
 const EventModel = MongooseModule.forFeature([
     {
@@ -33,6 +34,7 @@ const EventModel = MongooseModule.forFeature([
         TopicModule.register(),
         FeatureFlagModule,
         CaptchaModule,
+        OrganizationModule,
     ],
     controllers: [EventsController],
     providers: [EventsService],

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { captchaToken, nonEmptyText } from "../../../lib/schemas";
+import { captchaToken, nonEmptyText, objectId } from "../../../lib/schemas";
 
 // The event form sends the wikidata pick ({ label, value, aliases, ... });
 // API clients may send { name }. Normalized so `name` is always set.
@@ -32,6 +32,22 @@ const FilterTopicSchema = z.looseObject({
     language: z.string().optional(),
 });
 
+const ParticipantSchema = z.strictObject({
+    organization: objectId,
+    order: z.number().int().min(0),
+});
+
+const ParticipantsSchema = z
+    .array(ParticipantSchema)
+    .max(50)
+    .refine(
+        (participants) =>
+            new Set(participants.map(({ organization }) => organization))
+                .size === participants.length,
+        { error: "An organization can only participate once" }
+    );
+export type EventParticipantDto = z.output<typeof ParticipantSchema>;
+
 const EventFieldsSchema = z.strictObject({
     nameSpace: z.string().optional(),
     badge: nonEmptyText(100),
@@ -41,6 +57,7 @@ const EventFieldsSchema = z.strictObject({
     startDate: z.coerce.date(),
     endDate: z.coerce.date(),
     mainTopic: MainTopicSchema,
+    participants: ParticipantsSchema.optional(),
     recaptcha: captchaToken.optional(),
 });
 

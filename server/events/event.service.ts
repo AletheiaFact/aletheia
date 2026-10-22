@@ -9,10 +9,15 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
-import { EventDocument, Event } from "./schema/event.schema";
-import { CreateEventDto, UpdateEventDto } from "./dto/event.dto";
+import { EventDocument, Event, EventParticipant } from "./schema/event.schema";
+import {
+    CreateEventDto,
+    EventParticipantDto,
+    UpdateEventDto,
+} from "./dto/event.dto";
 import { FilterEventsQueryDto } from "./dto/filter.dto";
 import type { ITopicService } from "../interfaces/topic.service.interface";
+import type { IOrganizationService } from "../interfaces/organization.service.interface";
 import {
     BuildMetricsParams,
     EventMetricsData,
@@ -41,7 +46,9 @@ export class EventsService {
         @InjectModel(Topic.name) private TopicModel: Model<TopicDocument>,
         private readonly claimReviewService: ClaimReviewService,
         @Inject("TopicService")
-        private readonly topicService: ITopicService
+        private readonly topicService: ITopicService,
+        @Inject("OrganizationService")
+        private readonly organizationService: IOrganizationService
     ) {}
 
     /**
@@ -50,6 +57,9 @@ export class EventsService {
      * @returns A promise that resolves to the created event document.
      */
     async create(createEventDto: CreateEventDto): Promise<EventDocument> {
+        const participants = await this.validateParticipants(
+            createEventDto.participants
+        );
         try {
             this.logger.debug("Creating event", { createEventDto });
 
@@ -70,6 +80,7 @@ export class EventsService {
 
             const newEvent = await this.eventModel.create({
                 ...createEventDto,
+                participants,
                 data_hash,
                 slug: slug,
                 mainTopic: createdTopic._id,
@@ -121,9 +132,18 @@ export class EventsService {
                 throw new BadRequestException(`Invalid event ID format: ${id}`);
             }
 
-            const { mainTopic, filterTopics, ...otherFields } = updateEventDto;
+            const { mainTopic, filterTopics, participants, ...otherFields } =
+                updateEventDto;
 
-            const updateData: Partial<Event> = { ...otherFields };
+            const updateData: Omit<Partial<Event>, "participants"> & {
+                participants?: EventParticipantDto[];
+            } = { ...otherFields };
+
+            if (participants) {
+                updateData.participants = await this.validateParticipants(
+                    participants
+                );
+            }
 
             if (updateEventDto.name) {
                 updateData.slug = slugify(updateEventDto.name, {
@@ -253,13 +273,18 @@ export class EventsService {
      * * @param data_hash - URL identifier hash.
      * @returns Event document.
      */
-    async findByHash(data_hash: string): Promise<EventDocument> {
+    async findByHash(data_hash: string) {
         this.logger.debug(`Fetching public event with hash: ${data_hash}`);
 
         const event = await this.eventModel
             .findOne({ data_hash })
             .populate("mainTopic")
             .populate("filterTopics")
+            .populate({
+                path: "participants.organization",
+                match: { isDeleted: false },
+                populate: { path: "logo" },
+            })
             .exec();
 
         if (!event) {
@@ -269,7 +294,37 @@ export class EventsService {
             throw new NotFoundException(`The requested event was not found.`);
         }
 
-        return event;
+        // Soft-deleted organizations populate as null: hide them.
+        const publicEvent = event.toObject();
+        publicEvent.participants = publicEvent.participants.filter(
+            (participant: EventParticipant) => participant.organization
+        );
+        return publicEvent;
+    }
+
+    /**
+     * Rejects participants pointing to missing or deleted organizations and
+     * returns them sorted by display order.
+     */
+    private async validateParticipants(
+        participants?: EventParticipantDto[]
+    ): Promise<EventParticipantDto[] | undefined> {
+        if (!participants) {
+            return undefined;
+        }
+
+        const ids = participants.map(({ organization }) => organization);
+        const existingIds = new Set(
+            await this.organizationService.findExistingIds(ids)
+        );
+        const unknownIds = ids.filter((id) => !existingIds.has(id));
+        if (unknownIds.length) {
+            throw new BadRequestException(
+                `Unknown organizations: ${unknownIds.join(", ")}`
+            );
+        }
+
+        return [...participants].sort((a, b) => a.order - b.order);
     }
 
     /**
