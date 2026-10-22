@@ -52,7 +52,7 @@ const OrganizationSearch = ({
         const query = value.trim();
         latestQuery.current = query;
         if (query.length >= MIN_SEARCH_LENGTH) {
-            search(query);
+            void search(query);
         } else {
             search.cancel();
             setOptions([]);

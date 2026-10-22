@@ -16,7 +16,9 @@ export interface ParticipantDraft {
     logo: UploadFile[];
 }
 
-const newKey = () => Math.random().toString(36).slice(2);
+// Keys only identify rows for React; a counter is enough.
+let keyCounter = 0;
+const newKey = () => `draft-${++keyCounter}`;
 
 const logoAsUploadFile = (organization: Organization): UploadFile[] =>
     organization.logo?.content

@@ -41,7 +41,7 @@ const CreateEventView = () => {
                 t
             );
             await commitEdits();
-            router.push(`${eventHref}/${event.slug}`);
+            await router.push(`${eventHref}/${event.slug}`);
         } catch (err) {
             // The API helpers already showed an error message.
             console.error("Error creating event:", err);
