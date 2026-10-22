@@ -36,5 +36,8 @@
     "claimsStats": "Discursos",
     "claimToggleOption": "Afirmações",
     "latestRelatedDenuncias": "Últimas denúncias relacionadas",
-    "titleEditEvent": "Edição de evento"
+    "titleEditEvent": "Edição de evento",
+    "createError": "Erro ao criar evento. Tente novamente.",
+    "updateError": "Erro ao atualizar evento. Tente novamente.",
+    "errorInvalidId": "ID de evento inválido."
 }

@@ -10,7 +10,7 @@ export type EventOrder = "asc" | "desc";
 export type EventStatus = "happening" | "upcoming" | "finalized" | "all";
 export interface EventPayload {
     id?: string;
-    nameSpace: NameSpaceEnum,
+    nameSpace: NameSpaceEnum;
     badge: string;
     data_hash?: string;
     name: string;
@@ -21,14 +21,17 @@ export interface EventPayload {
     endDate: Date;
     mainTopic: Topic;
     filterTopics?: Topic[];
-    recaptcha?: string
+    recaptcha?: string;
 }
 
 export interface EventMetrics {
-    verificationRequests: number,
-    claims: number,
-    reviews: number,
+    verificationRequests: number;
+    claims: number;
+    reviews: number;
 }
+
+// Keyed by event data_hash, as returned by GET /api/event.
+export type EventMetricsByHash = Record<string, EventMetrics>;
 export interface ListEventsOptions {
     page?: number;
     pageSize?: number;
@@ -38,7 +41,7 @@ export interface ListEventsOptions {
 
 export interface IData {
     events: EventPayload[];
-    eventMetrics: EventMetrics;
+    eventMetrics: EventMetricsByHash;
     total: number;
 }
 
@@ -50,7 +53,7 @@ export interface IReviewData {
 export interface IVerificationRequestData {
     items: VerificationRequest[];
     total: number;
-    totalPages: number
+    totalPages: number;
 }
 
 export interface EventsState {
@@ -80,6 +83,8 @@ export interface EventsActions {
     setReviewData: Dispatch<SetStateAction<IReviewData>>;
     setReviewQuery: Dispatch<SetStateAction<ListEventsOptions>>;
     setViewMode: Dispatch<SetStateAction<ViewMode>>;
-    setVerificationRequestData: Dispatch<SetStateAction<IVerificationRequestData>>;
+    setVerificationRequestData: Dispatch<
+        SetStateAction<IVerificationRequestData>
+    >;
     setVerificationRequestQuery: Dispatch<SetStateAction<ListEventsOptions>>;
 }

@@ -36,5 +36,8 @@
     "claimsStats": "Claims",
     "claimToggleOption": "Repository",
     "latestRelatedDenuncias": "Latest related reports",
-    "titleEditEvent": "Event edition"
+    "titleEditEvent": "Event edition",
+    "createError": "Error creating event. Please try again.",
+    "updateError": "Error updating event. Please try again.",
+    "errorInvalidId": "Invalid event ID."
 }
