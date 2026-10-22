@@ -121,7 +121,7 @@ NestJS modular architecture. All modules registered in `server/app.module.ts`.
 ## Auth System
 
 ### Guards (applied globally via `SessionGuard`)
-- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it
+- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it. `/api/health` (the k8s probe) skips the Ory lookup entirely. The lookup has a 5s deadline; if Ory is unreachable (DNS/network error, timeout, 5xx), protected `/api` routes return 503 instead of running as anonymous
 - `AbilitiesGuard` — Checks CASL abilities for role-based access
 - `M2MGuard` — Validates M2M (machine-to-machine) OAuth2 tokens
 - `SessionOrM2MGuard` — Accepts either session or M2M auth
