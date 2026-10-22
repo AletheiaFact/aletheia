@@ -1,11 +1,16 @@
-import { Body, Controller, Get, Post, Res } from "@nestjs/common";
+import { Controller, Get, Post, Res } from "@nestjs/common";
 import type { Response } from "express";
+import { z } from "zod";
 import { Public } from "../auth/decorators/auth.decorator";
+import { ZodBody } from "../common/validation";
 import { McpOAuthProxyService } from "./mcp-oauth-proxy.service";
 import {
     MCP_AUTH_SERVER_METADATA_PATH,
     MCP_REGISTER_PATH,
 } from "./mcp.constants";
+
+// RFC 7591 client metadata is open-ended; Hydra validates the fields.
+const ClientRegistrationSchema = z.record(z.string(), z.unknown());
 
 /**
  * OAuth 2.0 Authorization Server Metadata (RFC 8414) and dynamic client
@@ -25,7 +30,8 @@ export class McpOAuthController {
     @Public()
     @Post(MCP_REGISTER_PATH)
     async registerClient(
-        @Body() registration: Record<string, unknown>,
+        @ZodBody(ClientRegistrationSchema)
+        registration: Record<string, unknown>,
         @Res() res: Response
     ) {
         const { status, body } = await this.oauthProxy.register(registration);
