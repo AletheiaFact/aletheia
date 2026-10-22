@@ -1,25 +1,31 @@
 import {
-    Body,
     Controller,
     Get,
     Header,
     Logger,
     NotFoundException,
-    Param,
     Patch,
     Post,
-    Query,
     Req,
     Res,
 } from "@nestjs/common";
-import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
+import {
+    CreateEventDto,
+    CreateEventSchema,
+    UpdateEventDto,
+    UpdateEventSchema,
+} from "./dto/event.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { FilterEventsDTO } from "./dto/filter.dto";
+import {
+    FilterEventsQueryDto,
+    FilterEventsQuerySchema,
+} from "./dto/filter.dto";
 import type { BaseRequest } from "../types";
 import type { Response } from "express";
 import { FactCheckerOnly, Public } from "../auth/decorators/auth.decorator";
 import { parse } from "url";
-import { ObjectIdValidationPipe } from "../ai-task/pipes/objectid-validation.pipe";
+import { objectId } from "../../lib/schemas";
+import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
@@ -51,7 +57,7 @@ export class EventsController {
     @FactCheckerOnly()
     @ApiTags("event")
     @Post("api/event")
-    async create(@Body() newEvent: CreateEventDTO) {
+    async create(@ZodBody(CreateEventSchema) newEvent: CreateEventDto) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
         }
@@ -62,8 +68,8 @@ export class EventsController {
     @ApiTags("event")
     @Patch("api/event/:id")
     async update(
-        @Param("id", ObjectIdValidationPipe) eventId: string,
-        @Body() updatedEvent: UpdateEventDTO
+        @ZodParam("id", objectId) eventId: string,
+        @ZodBody(UpdateEventSchema) updatedEvent: UpdateEventDto
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
@@ -74,7 +80,9 @@ export class EventsController {
     @Public()
     @ApiTags("event")
     @Get("api/event")
-    public async findAll(@Query() query: FilterEventsDTO) {
+    public async findAll(
+        @ZodQuery(FilterEventsQuerySchema) query: FilterEventsQueryDto
+    ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
         }

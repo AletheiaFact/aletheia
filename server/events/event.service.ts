@@ -10,8 +10,8 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
 import { EventDocument, Event } from "./schema/event.schema";
-import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
-import { FilterEventsDTO } from "./dto/filter.dto";
+import { CreateEventDto, UpdateEventDto } from "./dto/event.dto";
+import { FilterEventsQueryDto } from "./dto/filter.dto";
 import type { ITopicService } from "../interfaces/topic.service.interface";
 import {
     BuildMetricsParams,
@@ -49,16 +49,13 @@ export class EventsService {
      * * @param createEventDto - Data transfer object containing event details.
      * @returns A promise that resolves to the created event document.
      */
-    async create(createEventDto: CreateEventDTO): Promise<EventDocument> {
+    async create(createEventDto: CreateEventDto): Promise<EventDocument> {
         try {
             this.logger.debug("Creating event", { createEventDto });
 
-            const topicName = createEventDto.mainTopic.label ?? createEventDto.mainTopic.name;
-
-            const createdTopic = await this.topicService.findOrCreateTopic({
-                ...createEventDto.mainTopic,
-                name: topicName,
-            });
+            const createdTopic = await this.topicService.findOrCreateTopic(
+                createEventDto.mainTopic
+            );
 
             const slug = slugify(createEventDto.name, {
                 lower: true,
@@ -82,16 +79,23 @@ export class EventsService {
             return newEvent;
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Failed to create event: "${err.name}"`, err.stack);
+            this.logger.error(
+                `Failed to create event: "${err.name}"`,
+                err.stack
+            );
 
             if (err.name === "ValidationError" && err.errors) {
                 const fields = Object.keys(err.errors).join(", ");
-                throw new BadRequestException(`Schema validation failed: missing or invalid fields [${fields}]`);
+                throw new BadRequestException(
+                    `Schema validation failed: missing or invalid fields [${fields}]`
+                );
             }
 
             if (err.code === 11000 && err.keyPattern) {
                 const duplicateField = Object.keys(err.keyPattern)[0];
-                throw new ConflictException(`Duplicate entry: an event with this ${duplicateField} already exists`);
+                throw new ConflictException(
+                    `Duplicate entry: an event with this ${duplicateField} already exists`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -108,7 +112,7 @@ export class EventsService {
      */
     async update(
         id: string,
-        updateEventDto: UpdateEventDTO
+        updateEventDto: UpdateEventDto
     ): Promise<EventDocument> {
         try {
             this.logger.debug(`Updating event ${id}`, { updateEventDto });
@@ -125,15 +129,17 @@ export class EventsService {
                 updateData.slug = slugify(updateEventDto.name, {
                     lower: true,
                     strict: true,
-                    trim: true
+                    trim: true,
                 });
             }
 
             if (mainTopic) {
-                const topicName = mainTopic.label ?? mainTopic.name;
                 // Event stays Mongo-only until Phase 7; the Mongo backend
                 // hands back a real TopicDocument.
-                updateData.mainTopic = (await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName })) as TopicDocument;
+                updateData.mainTopic =
+                    (await this.topicService.findOrCreateTopic(
+                        mainTopic
+                    )) as TopicDocument;
             }
 
             if (filterTopics !== undefined) {
@@ -173,7 +179,9 @@ export class EventsService {
             }
 
             if (err.name === "CastError") {
-                throw new BadRequestException(`Invalid format for field: ${err.path}`);
+                throw new BadRequestException(
+                    `Invalid format for field: ${err.path}`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -188,7 +196,7 @@ export class EventsService {
      * @param queryDto - DTO containing pagination and filter parameters.
      * @returns A list of event documents, a dictionary of event metrics, and the total count.
      */
-    async findAll(queryDto: FilterEventsDTO): Promise<FindAllResponse> {
+    async findAll(queryDto: FilterEventsQueryDto): Promise<FindAllResponse> {
         const { page, pageSize, order, status } = queryDto;
         try {
             const query = this.buildStatusQuery(status);
@@ -229,7 +237,8 @@ export class EventsService {
             const stackTrace =
                 error instanceof Error ? error.stack : String(error);
             this.logger.error(
-                `Failed to fetch events list: ${error instanceof Error ? error.message : "Unknown error"
+                `Failed to fetch events list: ${
+                    error instanceof Error ? error.message : "Unknown error"
                 }`,
                 stackTrace
             );
@@ -422,7 +431,9 @@ export class EventsService {
             });
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Metrics fetch failed, using fallback: ${err.message}`);
+            this.logger.error(
+                `Metrics fetch failed, using fallback: ${err.message}`
+            );
 
             return events.reduce((acc, event) => {
                 acc[String(event.data_hash)] = {
