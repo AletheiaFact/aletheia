@@ -11,7 +11,6 @@ interface EventParticipantsProps {
     participants?: EventParticipant[];
 }
 
-/** Logo row of participating organizations, inside the event header card. */
 const EventParticipants = ({ participants = [] }: EventParticipantsProps) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);

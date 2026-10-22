@@ -263,25 +263,14 @@ export class EventsService {
         }
     }
 
-    /**
-     * Public event page payload, looked up by its URL slug.
-     * @returns The event with topics and active participants populated.
-     */
     findBySlug(slug: string) {
         return this.findPublicEvent({ slug });
     }
 
-    /**
-     * Same payload as findBySlug, by the legacy data_hash identifier.
-     */
     findByHash(data_hash: string) {
         return this.findPublicEvent({ data_hash });
     }
 
-    /**
-     * Slug of the event with this data_hash, used to redirect legacy
-     * /event/:data_hash/:slug URLs.
-     */
     async getSlugByHash(data_hash: string): Promise<string | null> {
         const event = await this.eventModel
             .findOne({ data_hash })
@@ -320,10 +309,6 @@ export class EventsService {
         return publicEvent;
     }
 
-    /**
-     * Slug from the name, suffixed (-2, -3, ...) when taken. Reserved words
-     * that collide with sibling routes (/event/create) are never used bare.
-     */
     private async generateUniqueSlug(name: string): Promise<string> {
         const base =
             slugify(name, { lower: true, strict: true, trim: true }) || "event";
@@ -347,10 +332,6 @@ export class EventsService {
         return `${base}-${suffix}`;
     }
 
-    /**
-     * Rejects participants pointing to missing or deleted organizations and
-     * returns them sorted by display order.
-     */
     private async validateParticipants(
         participants?: EventParticipantDto[]
     ): Promise<EventParticipantDto[] | undefined> {

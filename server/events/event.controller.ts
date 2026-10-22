@@ -35,7 +35,6 @@ import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class EventsController {
-    /** "/<namespace>" for a well-formed namespace, "" otherwise. */
     private namespacePrefix(namespace?: string): string {
         return namespace && /^[a-zA-Z0-9_-]+$/.test(namespace)
             ? `/${namespace}`

@@ -1,13 +1,9 @@
 import { Db } from "mongodb";
 
 /**
- * Organizations (event participants) are looked up and deduplicated by slug,
- * derived from the name. The unique index turns a concurrent duplicate create
- * into an E11000, mapped to 409 by MongoOrganizationService.
- *
- * Partial on isDeleted: false so a soft-deleted organization does not block
- * creating a new one with the same name. Mirrors the index declared on
- * OrganizationSchema, for environments where autoIndex is off.
+ * Mirrors the index declared on OrganizationSchema, for environments where
+ * autoIndex is off. Partial on isDeleted: false so a soft-deleted organization
+ * does not block creating a new one with the same name.
  */
 const INDEX_KEY = { slug: 1 } as const;
 

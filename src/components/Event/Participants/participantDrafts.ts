@@ -16,7 +16,6 @@ export interface ParticipantDraft {
     logo: UploadFile[];
 }
 
-// Keys only identify rows for React; a counter is enough.
 let keyCounter = 0;
 const newKey = () => `draft-${++keyCounter}`;
 
@@ -59,7 +58,6 @@ export const draftsFromParticipants = (
 export const newLogoFile = (draft: ParticipantDraft): File | undefined =>
     draft.logo[0]?.originFileObj;
 
-/** True when an existing organization was edited in the form. */
 export const isDraftDirty = (draft: ParticipantDraft): boolean =>
     !!draft.organization &&
     (draft.name.trim() !== draft.organization.name ||

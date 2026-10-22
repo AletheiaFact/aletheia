@@ -14,8 +14,6 @@ const OrganizationModel = MongooseModule.forFeature([
     { name: Organization.name, schema: OrganizationSchema },
 ]);
 
-// Mongo only for now; a Postgres implementation plugs in behind the
-// "OrganizationService" token when events are ported.
 @Module({
     imports: [OrganizationModel, ImageModule, AbilityModule, FeatureFlagModule],
     controllers: [OrganizationController],

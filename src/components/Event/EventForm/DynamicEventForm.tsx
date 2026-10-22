@@ -7,7 +7,6 @@ import lifecycleEventForm from "./CreateEventForm";
 import { ManualTopic } from "../../../types/Topic";
 import { ParticipantDraft } from "../Participants/participantDrafts";
 
-/** Values held by the event form (and used to prefill it when editing). */
 export type EventFormValues = Omit<
     EventPayload,
     "mainTopic" | "participants"

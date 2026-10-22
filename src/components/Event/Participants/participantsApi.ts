@@ -3,7 +3,6 @@ import ImageApi from "../../../api/image";
 import OrganizationApi from "../../../api/organizationApi";
 import type { ParticipantsPersistenceApi } from "./persistParticipants";
 
-/** Binds persistParticipants to the real APIs (same upload flow as badges). */
 export const createParticipantsApi = (
     t: TFunction
 ): ParticipantsPersistenceApi => ({

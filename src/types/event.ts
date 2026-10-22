@@ -31,7 +31,6 @@ export interface EventParticipant {
     order: number;
 }
 
-/** Participant as sent to the API: the organization id and display order. */
 export interface EventParticipantInput {
     organization: string;
     order: number;

@@ -21,7 +21,6 @@ export interface ParticipantsPersistenceApi {
 }
 
 export interface PreparedParticipants {
-    /** Event payload: organization ids in editor order. */
     participants: EventParticipantInput[];
     /**
      * Saves edits to existing organizations. Call it only once the event is
@@ -40,11 +39,6 @@ const organizationInput = (
 };
 
 /**
- * Prepares the participants of an event save:
- * 1. every new logo is uploaded in a single api/image call,
- * 2. new organizations are created,
- * 3. edits to existing organizations are deferred to `commitEdits`.
- *
  * `createdByKey` should live as long as the form (useRef): it remembers the
  * organizations created by a previous attempt, so retrying after a failed
  * event save reuses them instead of hitting 409.

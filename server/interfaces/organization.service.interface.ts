@@ -3,7 +3,6 @@ import type { IOrganization } from "./organization.interface";
 export type OrganizationCreateInput = {
     name: string;
     website?: string;
-    /** Id of an Image document. */
     logo: string;
 };
 
