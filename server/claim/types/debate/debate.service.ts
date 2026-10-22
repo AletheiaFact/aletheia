@@ -32,6 +32,29 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../../../types";
 const md5 = require("md5");
 
+const spokenTime = (
+    turn: Pick<DebateTranscriptTurn, "startedAt" | "createdAt">
+) => new Date(turn.startedAt ?? turn.createdAt ?? 0).getTime();
+
+/**
+ * Sorts transcript turns in spoken order: by `startedAt`, or by arrival
+ * time (`createdAt`) for a turn without one. Ties keep arrival order. A
+ * transcriber sends turns out of spoken order when a live block is only
+ * sent once final, when a relabel or edit is resent, or when several
+ * machines send at once.
+ */
+export function sortBySpokenOrder<
+    T extends Pick<DebateTranscriptTurn, "startedAt" | "createdAt">
+>(turns: T[]): T[] {
+    return turns
+        .map((turn, index) => ({ turn, index }))
+        .sort(
+            (a, b) =>
+                spokenTime(a.turn) - spokenTime(b.turn) || a.index - b.index
+        )
+        .map(({ turn }) => turn);
+}
+
 @Injectable({ scope: Scope.REQUEST })
 export class DebateService {
     constructor(
@@ -178,12 +201,15 @@ export class DebateService {
     }
 
     /**
-     * Lists the debate's transcript turns in transcript order, optionally
-     * filtered by status, each with its speech (paragraphs and sentences).
+     * Lists the debate's transcript turns in spoken order (see
+     * sortBySpokenOrder), optionally filtered by status, each with its
+     * speech (paragraphs and sentences).
      */
     async listTranscriptTurns(debateId: string, status?: TranscriptTurnStatus) {
-        const turns = (await this.getTranscriptTurns(debateId)).filter(
-            (turn) => !status || turn.status === status
+        const turns = sortBySpokenOrder(
+            (await this.getTranscriptTurns(debateId)).filter(
+                (turn) => !status || turn.status === status
+            )
         );
         const speeches = await this.SpeechModel.find({
             _id: { $in: turns.map((turn) => turn.speech) },
@@ -263,9 +289,10 @@ export class DebateService {
 
     /**
      * Approves or rejects draft turns. Approved speeches are appended to the
-     * debate `content` in transcript order (not request order) and their
-     * draft flags are cleared so they become public. The status change is
-     * one atomic write that only matches while every turn is still a draft.
+     * debate `content` in spoken order (see sortBySpokenOrder, not request
+     * order) and their draft flags are cleared so they become public. The
+     * status change is one atomic write that only matches while every turn
+     * is still a draft.
      */
     async reviewDraftTurns(
         debateId: string,
@@ -278,8 +305,10 @@ export class DebateService {
         }
 
         const requested = new Set(turnIds);
-        const turns = (previousDebate.transcriptTurns ?? []).filter((turn) =>
-            requested.has(String(turn._id))
+        const turns = sortBySpokenOrder(
+            (previousDebate.transcriptTurns ?? []).filter((turn) =>
+                requested.has(String(turn._id))
+            )
         );
         if (turns.length !== requested.size) {
             const found = new Set(turns.map((turn) => String(turn._id)));

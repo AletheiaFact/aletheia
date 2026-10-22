@@ -586,6 +586,58 @@ describe("ClaimController (e2e)", () => {
             expect((await getDebate()).transcriptTurns).toHaveLength(4);
         });
 
+        it("lists and approves drafts in spoken order, not arrival order", async () => {
+            // turn-5 is spoken later but arrives first, as with a relabel
+            // or a block that is only sent once final.
+            for (const turn of [
+                {
+                    personality: personalitiesId[0],
+                    text: "Second in the debate.",
+                    externalId: "turn-5",
+                    startedAt: "2023-11-25T15:10:00.000Z",
+                },
+                {
+                    personality: personalitiesId[1],
+                    text: "First in the debate.",
+                    externalId: "turn-6",
+                    startedAt: "2023-11-25T15:05:00.000Z",
+                },
+            ]) {
+                const response = await request(app.getHttpServer())
+                    .post(`/api/claim/debate/${debateId}/append`)
+                    .send({ turns: [turn] });
+                expect(response.status).toBe(201);
+                drafts[turn.externalId] = response.body.drafts[0];
+            }
+
+            const list = await request(app.getHttpServer())
+                .get(turnsUrl())
+                .query({ status: "draft" });
+            // turn-4 has no startedAt, so its arrival time (now) puts it last.
+            expect(list.body.map((t) => t.externalId)).toEqual([
+                "turn-6",
+                "turn-5",
+                "turn-4",
+            ]);
+
+            const approve = await request(app.getHttpServer())
+                .post(`${turnsUrl()}/approve`)
+                .send({
+                    turnIds: [drafts["turn-5"].turnId, drafts["turn-6"].turnId],
+                });
+            expect(approve.status).toBe(201);
+            expect(approve.body.turns.map((t) => t.turnId)).toEqual([
+                drafts["turn-6"].turnId,
+                drafts["turn-5"].turnId,
+            ]);
+
+            const debate = await getDebate();
+            expect(debate.content.map(String).slice(-2)).toEqual([
+                drafts["turn-6"].speechId,
+                drafts["turn-5"].speechId,
+            ]);
+        });
+
         it("returns 400 for an invalid append body", async () => {
             const response = await request(app.getHttpServer())
                 .post(`/api/claim/debate/${debateId}/append`)
@@ -620,7 +672,7 @@ describe("ClaimController (e2e)", () => {
                 });
 
             expect(response.status).toBe(400);
-            expect((await getDebate()).transcriptTurns).toHaveLength(4);
+            expect((await getDebate()).transcriptTurns).toHaveLength(6);
         });
 
         it("returns 404 for an unknown debate or turn", async () => {
