@@ -34,10 +34,6 @@ jobs:
             ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
             ORYCLOUD: "enabled"
             ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
-            # Remote MCP server (server/mcp). Off unless the GitHub environment
-            # sets MCP_ENABLED to "true"; confBase.pkl reads both variables.
-            MCP_ENABLED: ${{ vars.MCP_ENABLED }}
-            MCP_PUBLIC_URL: ${{ vars.MCP_PUBLIC_URL }}
             ALETHEIA_SCHEMA_ID: ${{ secrets.ALETHEIA_SCHEMA_ID }}
             RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
             NOVU_API_KEY: ${{ secrets.NOVU_API_KEY }}

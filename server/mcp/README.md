@@ -17,19 +17,27 @@ mcp:
   public_url: https://aletheiafact.org   # MCP_PUBLIC_URL
 ```
 
-In the deployed environments, set the two values as **GitHub environment
-variables** (Settings → Environments → `development` or `production` →
-Variables). The deploy workflow (`.github/workflows/aws.yml`) passes them to
-`deployment/config/config-file/modules/service/confBase.pkl`. MCP stays off in
-an environment unless it sets `MCP_ENABLED` to `true`.
+For a deployed environment, set `mcp` in that environment's pkl file under
+`deployment/config/config-file/`. CI renders the file into `config.yaml` on
+each deploy. A value set in the pkl file wins over the `MCP_ENABLED` and
+`MCP_PUBLIC_URL` defaults that `modules/service/confBase.pkl` reads.
 
-| Environment | Branch | `MCP_ENABLED` | `MCP_PUBLIC_URL` |
-| --- | --- | --- | --- |
-| `development` | `stage` | `true` | `https://test.aletheiafact.org` |
-| `production` | `master` | unset (off) | — |
+| Environment | pkl file | Branch | `mcp.enabled` | `mcp.public_url` |
+| --- | --- | --- | --- | --- |
+| test | `development.pkl` | `stage` | `true` | `https://test.aletheiafact.org` |
+| production | `production.pkl` | `master` | not set (off) | — |
 
-Set `MCP_PUBLIC_URL` to the environment's own origin. Clients use it to find
-the protected-resource metadata and the authorization server.
+The setting in `development.pkl`:
+
+```pkl
+mcp = new {
+    enabled = true
+    public_url = "https://test.\(appBaseUrl)"
+}
+```
+
+Set `public_url` to the environment's own origin. Clients use it to find the
+protected-resource metadata and the authorization server.
 
 ### Ory Network (one-time, per environment)
 
