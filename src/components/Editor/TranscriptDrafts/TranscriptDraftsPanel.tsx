@@ -84,11 +84,12 @@ const TranscriptDraftsPanel = ({
         if (!debateId) {
             return;
         }
-        fetchDrafts();
+        // fetchDrafts handles its own errors, so the promise never rejects.
+        void fetchDrafts();
         if (!isLive) {
             return;
         }
-        const interval = setInterval(fetchDrafts, POLL_INTERVAL);
+        const interval = setInterval(() => void fetchDrafts(), POLL_INTERVAL);
         return () => clearInterval(interval);
     }, [debateId, isLive, fetchDrafts]);
 
@@ -180,32 +181,46 @@ const TranscriptDraftsPanel = ({
     const handlePublish = (ids: string[]) =>
         runAction(async () => {
             const toPublish = turns.filter((turn) => ids.includes(turn._id));
-            const personalityByTurn = new Map<string, string>();
-            for (const turn of toPublish) {
-                personalityByTurn.set(
-                    turn._id,
-                    isDirty(turn)
-                        ? await saveEdit(turn)
-                        : String(turn.personality)
-                );
-            }
+            // Each edit touches its own turn, so they can be saved together.
+            const personalityByTurn = new Map(
+                await Promise.all(
+                    toPublish.map(
+                        async (turn) =>
+                            [
+                                turn._id,
+                                isDirty(turn)
+                                    ? await saveEdit(turn)
+                                    : String(turn.personality),
+                            ] as const
+                    )
+                )
+            );
 
             const published = [];
             try {
-                for (const batch of chunk(ids, MAX_TURNS_PER_REQUEST)) {
-                    const reviewed = await debateTranscriptApi.reviewTurns(
-                        debateId,
-                        batch,
-                        "approve",
-                        t
-                    );
-                    published.push(
-                        ...reviewed.map(({ turnId, speechId }) => ({
-                            speechId,
-                            personalityId: personalityByTurn.get(turnId),
-                        }))
-                    );
-                }
+                // Batches are approved one after the other: the server
+                // appends each batch to the debate as it arrives, so
+                // parallel requests could mix up the speech order.
+                await chunk(ids, MAX_TURNS_PER_REQUEST).reduce(
+                    (previous, batch) =>
+                        previous.then(async () => {
+                            const reviewed =
+                                await debateTranscriptApi.reviewTurns(
+                                    debateId,
+                                    batch,
+                                    "approve",
+                                    t
+                                );
+                            published.push(
+                                ...reviewed.map(({ turnId, speechId }) => ({
+                                    speechId,
+                                    personalityId:
+                                        personalityByTurn.get(turnId),
+                                }))
+                            );
+                        }),
+                    Promise.resolve()
+                );
             } finally {
                 // A failed batch must not drop the cards of the batches
                 // that were already published.
@@ -231,14 +246,17 @@ const TranscriptDraftsPanel = ({
             return;
         }
         return runAction(async () => {
-            for (const batch of chunk(ids, MAX_TURNS_PER_REQUEST)) {
-                await debateTranscriptApi.reviewTurns(
-                    debateId,
-                    batch,
-                    "reject",
-                    t
-                );
-            }
+            // Rejected turns do not join the debate, so order is irrelevant.
+            await Promise.all(
+                chunk(ids, MAX_TURNS_PER_REQUEST).map((batch) =>
+                    debateTranscriptApi.reviewTurns(
+                        debateId,
+                        batch,
+                        "reject",
+                        t
+                    )
+                )
+            );
             discardEdits(ids);
             setSelected((current) =>
                 current.filter((id) => !ids.includes(id))
