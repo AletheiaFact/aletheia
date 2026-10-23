@@ -180,10 +180,13 @@ export class MongoClaimService implements IClaimService {
             );
 
             await this.historyService.createHistory(history as any);
-            this.stateEventService.createStateEvent(stateEvent as any);
+            await this.stateEventService.createStateEvent(stateEvent as any);
 
             if (claim.group) {
-                this.groupService.updateWithTargetId(claim.group, newClaim._id);
+                await this.groupService.updateWithTargetId(
+                    claim.group,
+                    newClaim._id
+                );
             }
 
             await newClaim.save();
