@@ -1,4 +1,4 @@
-import { ClassificationEnum } from "../../lib/classification";
+export { ClassificationEnum } from "../../lib/classification";
 
 enum Roles {
     Regular = "regular",
@@ -53,7 +53,6 @@ enum VerificationRequestStatus {
 }
 
 export {
-    ClassificationEnum,
     Roles,
     Status,
     ContentModelEnum,

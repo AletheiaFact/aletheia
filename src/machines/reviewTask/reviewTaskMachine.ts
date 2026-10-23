@@ -67,16 +67,13 @@ export const transitionHandler = (state, extraContext) => {
             },
         };
 
-        api.saveDraft(
-            data_hash,
-            draftContext,
-            t,
+        api.saveDraft(data_hash, draftContext, t, {
             reportModel,
             nameSpace,
             reviewTaskType,
             target,
-            classificationMethodology
-        )
+            classificationMethodology,
+        })
             .then(() => {
                 setFormAndEvents(
                     event,

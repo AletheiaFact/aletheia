@@ -176,13 +176,15 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 "List the classification methodologies a review can use, with each option's stored value and pt/en label. A classification label only has meaning within its methodology: always report both.",
             inputSchema: ListClassificationMethodologiesSchema.shape as any,
         },
-        safeTool("list_classification_methodologies", async () =>
-            jsonResult(
-                METHODOLOGY_IDS.map((id) => ({
-                    id,
-                    default: id === DEFAULT_METHODOLOGY,
-                    ...classificationMethodologies[id],
-                }))
+        safeTool("list_classification_methodologies", () =>
+            Promise.resolve(
+                jsonResult(
+                    METHODOLOGY_IDS.map((id) => ({
+                        id,
+                        default: id === DEFAULT_METHODOLOGY,
+                        ...classificationMethodologies[id],
+                    }))
+                )
             )
         )
     );

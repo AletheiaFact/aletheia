@@ -48,10 +48,13 @@ export function assertAllowedClassification(
         return;
     }
     if (!isAllowedClassification(methodology, classification)) {
+        // The value comes from the request body and may not be a string
+        const shown =
+            typeof classification === "string"
+                ? classification
+                : JSON.stringify(classification);
         throw new BadRequestException(
-            `${field} "${String(
-                classification
-            )}" is not an option of the "${resolveMethodologyId(
+            `${field} "${shown}" is not an option of the "${resolveMethodologyId(
                 methodology
             )}" methodology`
         );

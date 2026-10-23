@@ -97,24 +97,25 @@ const autoSaveDraft = (
         });
 };
 
+// Used when the draft save auto-creates the review task
+interface SaveDraftTaskFields {
+    reportModel?: string;
+    nameSpace?: string;
+    reviewTaskType?: string;
+    target?: string;
+    classificationMethodology?: string;
+}
+
 const saveDraft = (
     data_hash: string,
     machine: { context: any },
     t,
-    reportModel?: string,
-    nameSpace?: string,
-    reviewTaskType?: string,
-    target?: string,
-    classificationMethodology?: string
+    taskFields: SaveDraftTaskFields = {}
 ) => {
     return request
         .put(`/save-draft/${data_hash}`, {
             machine,
-            reportModel,
-            nameSpace,
-            reviewTaskType,
-            target,
-            classificationMethodology,
+            ...taskFields,
         })
         .then((response) => {
             MessageManager.showMessage(
