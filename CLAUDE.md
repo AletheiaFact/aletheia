@@ -171,6 +171,16 @@ Active flags:
 - `enable_view_report_preview` — Report preview feature
 - `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
 
+## Rate Limiting
+
+A global `ClientIpThrottlerGuard` (`server/common/throttler/`) limits each
+route per visitor IP (`throttle.ttl` / `throttle.limit` in config; production
+is 100 per 60s). Production sits behind Cloudflare and Traefik, so the guard
+keys on the `CF-Connecting-IP` header and only falls back to `req.ip`.
+Counters live in memory in each pod, so the effective limit grows with the
+replica count. Public read endpoints polled by many viewers at once
+(`GET api/claim/:id`, `GET api/personality/:id`) use `@SkipThrottle()`.
+
 ## Captcha Provider
 
 Captcha verification is pluggable via `server/captcha/`: a `CaptchaProvider`
