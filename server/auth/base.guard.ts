@@ -40,7 +40,10 @@ export abstract class BaseGuard implements CanActivate {
             "/api/user/register",
             "/api/claim", // Allow this route to be public temporarily for testing
             "/signup-invite",
+            // MCP OAuth discovery (server/mcp). Clients read both documents
+            // anonymously, before login, so they must not redirect to /login.
             "/.well-known/oauth-protected-resource",
+            "/.well-known/oauth-authorization-server",
         ].some((route) => url.startsWith(route));
     }
 
