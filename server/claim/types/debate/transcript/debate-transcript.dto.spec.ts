@@ -29,6 +29,36 @@ describe("debate transcript DTO schemas", () => {
             expect(r.success && r.data.turns[1].text).toBe("Second turn.");
         });
 
+        it.each([0, 72, 100])("accepts a checkability of %s", (value) => {
+            const r = AppendDebateTranscriptSchema.safeParse({
+                turns: [{ ...turn, checkability: value }],
+            });
+            expect(r.success && r.data.turns[0].checkability).toBe(value);
+        });
+
+        it("accepts a turn without checkability", () => {
+            const r = AppendDebateTranscriptSchema.safeParse({
+                turns: [turn],
+            });
+            expect(r.success).toBe(true);
+            expect(r.success && "checkability" in r.data.turns[0]).toBe(false);
+        });
+
+        it.each([-1, 101, 7.5, "72", null])(
+            "rejects a checkability of %j",
+            (value) => {
+                const r = AppendDebateTranscriptSchema.safeParse({
+                    turns: [{ ...turn, checkability: value }],
+                });
+                expect(r.success).toBe(false);
+                expect(!r.success && r.error.issues[0].path).toEqual([
+                    "turns",
+                    0,
+                    "checkability",
+                ]);
+            }
+        );
+
         it.each([
             ["an empty turns array", { turns: [] }],
             ["a missing turns key", {}],

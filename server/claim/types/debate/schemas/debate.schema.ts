@@ -15,6 +15,8 @@ export enum TranscriptTurnStatus {
 // created as a draft (hidden from public reads) and only joins the debate
 // `content` when a reviewer approves it. `externalId` is the caller's id
 // of the turn and is used to skip repeats, also after a rejection.
+// `checkability` is the transcriber's 0-100 triage score of the turn, as
+// sent; absent when the transcriber had no score.
 export interface DebateTranscriptTurn {
     _id: mongoose.Types.ObjectId;
     speech: mongoose.Types.ObjectId;
@@ -23,6 +25,7 @@ export interface DebateTranscriptTurn {
     status: TranscriptTurnStatus;
     externalId?: string;
     startedAt?: Date;
+    checkability?: number;
     createdAt: Date;
     reviewedBy?: mongoose.Types.ObjectId;
     reviewedAt?: Date;
@@ -48,6 +51,7 @@ const DebateTranscriptTurnSchema = new mongoose.Schema<DebateTranscriptTurn>({
     },
     externalId: { type: String },
     startedAt: { type: Date },
+    checkability: { type: Number, min: 0, max: 100 },
     createdAt: { type: Date, default: Date.now },
     reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     reviewedAt: { type: Date },

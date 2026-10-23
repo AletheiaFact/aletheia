@@ -65,6 +65,7 @@ export class DebateTranscriptService {
                 startedAt: turn.startedAt
                     ? new Date(turn.startedAt)
                     : undefined,
+                checkability: turn.checkability,
             });
         }
 
