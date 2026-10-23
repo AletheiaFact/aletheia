@@ -5,6 +5,7 @@ import { ReportModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import type { Machine } from "./dto/create-review-task.dto";
 import { ReviewTaskEffectsService } from "./review-task-effects.service";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
+import { toError } from "../util/error-handling";
 
 /**
  * Race-free work-queue primitives over review tasks (used by the MCP task
@@ -96,7 +97,7 @@ export class ReviewTaskQueueService {
             { upsert: true }
         ).catch((error) => {
             // A concurrent upsert lost the unique-index race: the task exists.
-            if (error?.code === 11000) {
+            if (toError(error).code === 11000) {
                 return { upsertedCount: 0 };
             }
             throw error;
@@ -122,7 +123,7 @@ export class ReviewTaskQueueService {
         try {
             created = await this.ReviewTaskModel.create(reviewTask);
         } catch (error) {
-            if (error?.code === 11000) {
+            if (toError(error).code === 11000) {
                 return null;
             }
             throw error;
