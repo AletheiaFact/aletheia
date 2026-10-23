@@ -15,6 +15,10 @@ export class MongoSpeechService {
     }
 
     async getSpeech(id: string) {
-        return await this.SpeechModel.findById(id);
+        // Draft debate transcript speeches are not public until approved.
+        return await this.SpeechModel.findOne({
+            _id: id,
+            isDraft: { $ne: true },
+        });
     }
 }

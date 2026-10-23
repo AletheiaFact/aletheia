@@ -9,6 +9,7 @@ import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
 import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
 import { EditorContent } from "./EditorContent";
+import TranscriptDraftsPanel from "./TranscriptDrafts/TranscriptDraftsPanel";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claimApi";
@@ -140,6 +141,12 @@ const Editor = ({ claim, sitekey, captcha }: IEditorProps) => {
                                     />
                                 ))}
                             </Box>
+                            <TranscriptDraftsPanel
+                                debateId={debate.debateId}
+                                editorReference={claim.editor.reference}
+                                isLive={isLive}
+                                personalities={personalities}
+                            />
                             <EditorContent
                                 reference={claim.editor.reference}
                                 isLive={isLive}
