@@ -131,6 +131,9 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 data_hash={content.data_hash}
                 baseMachine={props.reviewTask?.machine}
                 baseReportModel={props?.reviewTask?.reportModel}
+                baseClassificationMethodology={
+                    props?.reviewTask?.classificationMethodology
+                }
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Claim}
                 claim={claim}

@@ -104,7 +104,8 @@ const saveDraft = (
     reportModel?: string,
     nameSpace?: string,
     reviewTaskType?: string,
-    target?: string
+    target?: string,
+    classificationMethodology?: string
 ) => {
     return request
         .put(`/save-draft/${data_hash}`, {
@@ -113,6 +114,7 @@ const saveDraft = (
             nameSpace,
             reviewTaskType,
             target,
+            classificationMethodology,
         })
         .then((response) => {
             MessageManager.showMessage(
@@ -146,7 +148,7 @@ const getEditorContentObject = (
 
 const addComment = (
     hash: string,
-    comment: NewCommentPayload,
+    comment: NewCommentPayload
 ): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })
@@ -171,7 +173,19 @@ const deleteComment = (hash: string, commentId: string): Promise<unknown> => {
         });
 };
 
+const methodologyRequest = createApiInstance("/api/reviewtask-methodology");
+
+const getClassificationMethodologySettings = (): Promise<{
+    enabled: boolean;
+}> => {
+    return methodologyRequest
+        .get("/")
+        .then((response) => response.data)
+        .catch(() => ({ enabled: false }));
+};
+
 const ReviewTaskApi = {
+    getClassificationMethodologySettings,
     getMachineByDataHash,
     createReviewTask,
     getReviewTasks,

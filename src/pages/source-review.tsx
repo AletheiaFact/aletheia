@@ -107,6 +107,9 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
                 data_hash={source.data_hash}
                 baseMachine={props.reviewTask?.machine}
                 baseReportModel={props?.reviewTask?.reportModel}
+                baseClassificationMethodology={
+                    props?.reviewTask?.classificationMethodology
+                }
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Source}
             >

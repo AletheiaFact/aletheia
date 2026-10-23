@@ -54,6 +54,7 @@ const DynamicReviewTaskForm = ({
     } = useForm();
     const {
         reportModel,
+        classificationMethodology,
         machineService,
         events,
         form,
@@ -161,6 +162,7 @@ const DynamicReviewTaskForm = ({
         const payload = {
             data_hash,
             reportModel,
+            classificationMethodology,
             reviewData: {
                 ...filteredFormData,
                 sources: editorSources || reviewData.sources || [],
