@@ -1,4 +1,12 @@
-import { IsEnum, IsNotEmpty, IsObject, IsString } from "class-validator";
+import {
+    IsEnum,
+    IsIn,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+} from "class-validator";
+import { METHODOLOGY_IDS } from "../../../lib/classification-methodology";
 
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
@@ -81,4 +89,9 @@ export class CreateReviewTaskDTO {
     @IsString()
     @ApiProperty()
     reviewTaskType: string;
+
+    @IsOptional()
+    @IsIn([...METHODOLOGY_IDS])
+    @ApiProperty({ required: false, enum: [...METHODOLOGY_IDS] })
+    classificationMethodology?: string;
 }
