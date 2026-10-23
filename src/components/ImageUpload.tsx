@@ -27,19 +27,21 @@ interface ImageUploadProps {
     onChange: (fileList: UploadFile[]) => void;
     error?: boolean;
     defaultFileList?: UnifiedDefaultValue;
+    dataCy?: string;
 }
 
 const ImageUpload = ({
     onChange,
     error = false,
     defaultFileList,
+    dataCy = "testUploadImage",
 }: ImageUploadProps) => {
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [fileList, setFileList] = useState<UploadFile[]>(() => {
         if (Array.isArray(defaultFileList)) {
-            return (defaultFileList as UploadFile[]).filter(file => file.uid);
+            return (defaultFileList as UploadFile[]).filter((file) => file.uid);
         }
         return [];
     });
@@ -136,7 +138,7 @@ const ImageUpload = ({
 
     const uploadButton = (
         <AletheiaButton
-            data-cy="testUploadImage"
+            data-cy={dataCy}
             startIcon={
                 <FileUploadOutlined style={{ fontSize: 17, marginRight: 5 }} />
             }
@@ -198,6 +200,7 @@ const ImageUpload = ({
                     style={{ display: "none" }}
                     accept="image/*"
                     onChange={handleFileChange}
+                    data-cy={`${dataCy}Input`}
                 />
                 {error && (
                     <Typography variant="body2" color="error" mt={1}>

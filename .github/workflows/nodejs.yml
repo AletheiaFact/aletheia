@@ -108,7 +108,7 @@ jobs:
             - run: cp config/localConfig.example.ts config/localConfig.ts
             - run: yarn build
             - name: Cypress run
-              uses: cypress-io/github-action@v6
+              uses: cypress-io/github-action@v7
               with:
                   start: yarn test:e2e:cy
                   wait-on: "http://127.0.0.1:3000"
@@ -233,7 +233,7 @@ jobs:
             - run: cp config/localConfig.example.ts config/localConfig.ts
             - run: yarn build
             - name: Cypress run with FerretDB
-              uses: cypress-io/github-action@v6
+              uses: cypress-io/github-action@v7
               with:
                   start: yarn test:e2e:cy-ferretdb
                   wait-on: "http://127.0.0.1:3000"

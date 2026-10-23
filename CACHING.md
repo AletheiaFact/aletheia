@@ -43,83 +43,204 @@ Two facts control the size of this risk:
 
 1. The browser TTL of the HTML. A page cached for 5 minutes creates a 5 minute
    window. A page cached for a day creates a one day window.
-2. The Kubernetes rollout. `deployment/app.yml` runs 1 replica and the
-   HorizontalPodAutoscaler allows 3. During a rollout, an old pod and a new pod
-   both serve traffic. Only the old pod holds the old chunks.
+2. The Kubernetes rollout. During a rollout, an old pod and a new pod both
+   serve traffic. Only the old pod holds the old chunks. More replicas make
+   this window longer. The production replica count is
+   `DeploymentOptions.replicas` in `deployment/k8s/production.pkl`. CI
+   generates `deployment/app.yml` from that file, so the committed
+   `deployment/app.yml` is out of date. `hpa.yml` is not applied: it is
+   outside `deployment/`, so the deploy step does not read it.
 
 Do not raise the HTML TTL without a cache purge in the deploy pipeline. See
-"Purge the cache on deploy" below.
+"Purge the cache after a deploy" below.
 
 ## Public and private responses
 
 Cloudflare does not store a response that carries `Cache-Control: private`.
 Every endpoint behind a guard sends `private`. Every endpoint marked `@Public()`
-does not. This split is what makes a broad Cache Rule safe: a rule that matches
-too much still cannot store a guarded response.
+does not. Because of this split, a rule that matches too much still cannot
+store a guarded response.
 
 Keep this rule when you add an endpoint:
 
 - `@Public()` endpoint — use `max-age=...` without `private`.
 - Guarded endpoint — start the header with `private,`.
 
+A `@Public()` response can still change for a signed-in user.
+`getParamsBasedOnUserRole` shows hidden claims and personalities to admins,
+both in the API and in the server-rendered page. For this reason every Cache
+Rule below skips the cache when the request carries an Ory session.
+
 ## Cloudflare Cache Rules
 
-Add these rules in the Cloudflare dashboard, under Rules > Caching > Cache Rules.
-Order matters. Cloudflare applies the first rule that matches.
+The zone `aletheiafact.org` (ID `d18ad38c1d402090a9d26eb19cd09d4a`) is on the
+**Business** plan. The rules are in the zone ruleset
+`3cc722a11a1244b9af8af198dbcbafcc` (phase `http_request_cache_settings`). In
+the dashboard, they are under Caching > Cache Rules. Smart Tiered Cache is on.
 
-### Rule 1 — bypass the API
+### How the rules combine
+
+Cache Rules stack. They are not first-match. Cloudflare applies every rule
+that matches a request. If two matching rules set the same setting, the
+**last** matching rule wins. The three rules below do not overlap, so their
+order has no effect. Keep them disjoint when you add a rule.
+
+### The Business plan cannot key on a cookie
+
+On Free, Pro and Business, a Cache Rule cannot add a cookie, a header or the
+user to the cache key. Those custom cache keys need Enterprise. The server
+renders a different page for `pt` and `en` (`GetLanguageMiddleware` reads the
+`default_language` cookie, and the default is `pt`). We therefore cannot store
+both languages under one URL.
+
+The rules store only the `pt` page. A request without the cookie, or with
+`default_language=pt`, gets the cached `pt` page. A request with
+`default_language=en` skips the cache and goes to the origin. If a third
+language is added, update the cookie conditions below.
+
+### Conditions that every rule uses
+
+- `not http.cookie contains "ory_session_"` — skip the cache for a signed-in
+  browser. Ory Cloud names the session cookie `ory_session_<project>`.
+- `not any(lower(http.request.headers.names[*])[*] eq "x-session-token")` —
+  skip the cache for the native app, which sends an Ory session token in
+  the `X-Session-Token` header. Do not write this as
+  `len(http.request.headers["x-session-token"]) eq 0`. A missing header gives
+  no value, and the rule can then fail to match a normal browser.
+
+### Rule 1 — debate page HTML
 
 Expression:
 
 ```
-starts_with(http.request.uri.path, "/api/")
-```
-
-Setting: Bypass cache.
-
-### Rule 2 — cache public pages
-
-Expression:
-
-```
-http.request.uri.path in {"/" "/about" "/privacy-policy" "/code-of-conduct" "/supportive-materials" "/signup-invite" "/404"}
-or starts_with(http.request.uri.path, "/personality/")
-or starts_with(http.request.uri.path, "/claim/")
-or starts_with(http.request.uri.path, "/source/")
+(http.host in {"aletheiafact.org" "www.aletheiafact.org"}
+ and http.request.method eq "GET"
+ and http.request.uri.path contains "/claim/"
+ and ends_with(http.request.uri.path, "/debate")
+ and not http.cookie contains "ory_session_"
+ and not http.cookie contains "default_language=en")
 ```
 
 Settings:
 
 - Cache eligibility: Eligible for cache
-- Edge TTL: Override origin, 300 seconds
-- Browser TTL: Respect origin
-- Cache key: add the cookie `default_language`
+- Edge TTL: ignore the origin header, 60 seconds
+- Browser TTL: respect the origin (the page sends `max-age=60`)
+- Serve stale content while revalidating: on
 
-The cookie in the cache key is required. `GetLanguageMiddleware` reads
-`default_language` and the server renders a different page for `pt` and for `en`.
-A cache key without this cookie serves the wrong language.
+The page keeps polling for new speeches after it loads, so a page up to 60
+seconds old affects only the first paint. The short TTL also limits the deploy
+risk above.
 
-You do not need to exclude logged-in readers. `_app.tsx` calls `GetUserRole()`
-in the browser, so the HTML is the same for a reader who signed in and a reader
-who did not.
+### Rule 2 — anonymous `whoami`
 
-### Rule 3 — respect the origin for static assets
+Every page load calls `/api/.ory/sessions/whoami`. The origin forwards the
+call to Ory Cloud. A visitor without a session gets the same answer every
+time (today a 500), so this rule stores that answer. Without the rule, a
+traffic peak of anonymous readers also reaches Ory Cloud and its rate limits.
 
 Expression:
 
 ```
-starts_with(http.request.uri.path, "/_next/static/")
+(http.request.uri.path eq "/api/.ory/sessions/whoami"
+ and http.request.method eq "GET"
+ and not http.cookie contains "ory_session_"
+ and not any(lower(http.request.headers.names[*])[*] eq "x-session-token"))
 ```
 
-Settings: Eligible for cache, Edge TTL "Use cache-control header if present".
+Settings:
 
-This rule is optional. Cloudflare already caches these files by extension. The
-rule makes the behaviour explicit and protects it from a later change.
+- Cache eligibility: Eligible for cache
+- Edge TTL: ignore the origin header, 60 seconds. Status code TTL: `500` for
+  60 seconds and `401` for 60 seconds. Cloudflare does not store these status
+  codes without an explicit TTL.
+- Browser TTL: respect the origin (the origin sends no header, so browsers do
+  not store the answer)
 
-## Purge the cache on deploy
+### Rule 3 — anonymous reads polled by the debate page
 
-Run this command after each production deploy. It removes the HTML that names
-the old chunk URLs.
+Expression:
+
+```
+(http.request.method eq "GET"
+ and (starts_with(http.request.uri.path, "/api/claim/")
+      or starts_with(http.request.uri.path, "/api/personality/"))
+ and not http.cookie contains "ory_session_"
+ and not any(lower(http.request.headers.names[*])[*] eq "x-session-token"))
+```
+
+Settings:
+
+- Cache eligibility: Eligible for cache
+- Edge TTL: ignore the origin header, 10 seconds
+- Browser TTL: respect the origin (these endpoints send `max-age=60`)
+- Serve stale content while revalidating: on
+- Cache key: default. The query string stays in the key, so `nameSpace` and
+  `language` give separate entries.
+
+With Tiered Cache, the origin gets about one request per URL every 10 seconds,
+however many people watch. Error answers on these paths (for example a 400)
+are also stored for 10 seconds.
+
+### Pages without a rule
+
+No other HTML page has a rule. Those pages show `DYNAMIC`. To cache more
+pages, add their paths to a rule with the same conditions as Rule 1. Keep the
+TTL short until the deploy pipeline purges the cache.
+
+### Change or inspect the rules from the command line
+
+The `cf` CLI can read and change the rules. With nodenv, it is installed in
+Node 22.14.0, so prefix each command with `NODENV_VERSION=22.14.0`:
+
+```bash
+cf rulesets account-rulesets get 3cc722a11a1244b9af8af198dbcbafcc -z d18ad38c1d402090a9d26eb19cd09d4a
+```
+
+Validate a change before you save it. `--validate-only` checks the
+expressions and saves nothing:
+
+```bash
+cf rulesets account-rulesets update 3cc722a11a1244b9af8af198dbcbafcc -z d18ad38c1d402090a9d26eb19cd09d4a --rules @rules.json --validate-only
+```
+
+## Rate limiting at the edge
+
+The zone rate-limit rule `App rate limiting` (rule
+`bda09dcef8a2416f86fd45ad362b163e` in ruleset
+`1023c168a2884dcb840e83793e0266eb`) blocks an IP for 60 seconds after 1500
+requests in 60 seconds. It counts each IP separately in each Cloudflare data
+center.
+
+Expression:
+
+```
+(starts_with(http.host, "aletheiafact.org")
+ and not starts_with(http.request.uri.path, "/_next/static/"))
+```
+
+The rule counts every request that matches, including requests served from
+the cache. Many mobile users in Brazil share one public IP through their
+carrier. One page load can request about 60 JavaScript chunks. For these
+reasons the static chunks are not counted, and the limit is 1500. Before this
+change, the limit was 400 and the expression was
+`(starts_with(http.host, "aletheiafact.org"))`.
+
+The origin has its own limiter (`ClientIpThrottlerGuard`, see CLAUDE.md).
+
+## Purge the cache after a deploy
+
+The deploy pipeline does not purge the cache. Purge it by hand after each
+production deploy. This removes cached HTML that names the old chunk URLs:
+
+```bash
+NODENV_VERSION=22.14.0 cf cache purge -z d18ad38c1d402090a9d26eb19cd09d4a --body '{"hosts":["aletheiafact.org","www.aletheiafact.org"]}' --force
+```
+
+Use the zone ID, not the domain name, with `-z`. The CLI puts the value
+directly into the API path.
+
+The same purge through the API:
 
 ```bash
 curl -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
@@ -128,22 +249,51 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache
   --data '{"hosts":["aletheiafact.org","www.aletheiafact.org"]}'
 ```
 
-The purge also drops the cached static assets. This cost is small, because the
-new build uses new file names and the old files are no longer requested.
+The purge also removes the cached static assets. This costs little, because
+the new build uses new file names.
+
+## Roll back
+
+To remove all three Cache Rules, delete the ruleset. The site then works as
+before, without edge caching for HTML or the API:
+
+```bash
+NODENV_VERSION=22.14.0 cf rulesets account-rulesets delete 3cc722a11a1244b9af8af198dbcbafcc -z d18ad38c1d402090a9d26eb19cd09d4a
+```
+
+To restore the earlier rate limit (400 requests, every path):
+
+```bash
+NODENV_VERSION=22.14.0 cf rulesets account-rulesets rules update bda09dcef8a2416f86fd45ad362b163e \
+  --ruleset-id 1023c168a2884dcb840e83793e0266eb -z d18ad38c1d402090a9d26eb19cd09d4a \
+  --body '{"action":"block","description":"App rate limiting","enabled":true,"expression":"(starts_with(http.host, \"aletheiafact.org\"))","ratelimit":{"characteristics":["ip.src","cf.colo.id"],"mitigation_timeout":60,"period":60,"requests_per_period":400}}'
+```
 
 ## How to check the result
 
-Use `curl` and read `cf-cache-status`:
+Use `curl` and read `cf-cache-status`. Send each request two times. The second
+answer must be a `HIT`:
 
 ```bash
-curl -sS -o /dev/null -D - https://aletheiafact.org/ | grep -Ei "cache-control|cf-cache-status"
+curl -sS -o /dev/null -D - "https://aletheiafact.org/claim/<CLAIM_ID>/debate" | grep -Ei "cache-control|cf-cache-status|age"
+```
+
+A request that must skip the cache must never show `HIT`:
+
+```bash
+curl -sS -o /dev/null -D - -H "Cookie: default_language=en" "https://aletheiafact.org/claim/<CLAIM_ID>/debate" | grep -Ei "cf-cache-status"
+```
+
+```bash
+curl -sS -o /dev/null -D - -H "Cookie: ory_session_test=1" "https://aletheiafact.org/api/claim/<CLAIM_ID>?nameSpace=main" | grep -Ei "cf-cache-status"
 ```
 
 The values mean:
 
 - `HIT` — Cloudflare served the response from cache. This is the target.
 - `MISS` — Cloudflare stored the response for the next request.
-- `REVALIDATED` — the TTL was too short and Cloudflare asked the origin again.
-- `EXPIRED` — the same, after the copy went stale.
-- `DYNAMIC` — Cloudflare did not cache the response. HTML shows this until you
-  add Rule 2.
+- `REVALIDATED` — the edge TTL ended, and Cloudflare checked the copy with the
+  origin.
+- `EXPIRED` — the copy was too old, and Cloudflare fetched a new one.
+- `DYNAMIC` — no rule made the request eligible for cache. A request that
+  skips a rule (an `en` cookie or an Ory session) shows this.

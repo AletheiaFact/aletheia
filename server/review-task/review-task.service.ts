@@ -17,6 +17,7 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { buildDateQuery } from "../../src/utils/date.utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
 import {
@@ -45,6 +46,8 @@ interface IListAllQuery {
     page: number;
     pageSize: number;
     order: string | number;
+    startDate?: string;
+    endDate?: string;
 }
 
 interface IPostProcess {
@@ -88,9 +91,14 @@ export class ReviewTaskService {
 
     getQueryObject(
         value: string,
-        filterUser: Record<string, boolean | string>
+        filterUser: Record<string, boolean | string>,
+        startDate?: string,
+        endDate?: string
     ): Record<string, any> {
         const query = getQueryMatchForMachineValue(value);
+
+        const dateQuery = buildDateQuery(startDate, endDate);
+        if (dateQuery) query.createdAt = dateQuery;
 
         Object.keys(filterUser).forEach((key) => {
             const filterValue = filterUser[key];
@@ -105,7 +113,12 @@ export class ReviewTaskService {
 
     async listAll(query: IListAllQuery): Promise<IReviewTask[]> {
         const pipeline = buildListPipeline(
-            this.getQueryObject(query.value, query.filterUser),
+            this.getQueryObject(
+                query.value,
+                query.filterUser,
+                query.startDate,
+                query.endDate
+            ),
             query.value,
             query.nameSpace,
             query.reviewTaskType
@@ -590,10 +603,17 @@ export class ReviewTaskService {
         value: string,
         filterUser: Record<string, boolean | string>,
         nameSpace: string,
-        reviewTaskType: ReviewTaskTypeEnum
+        reviewTaskType: ReviewTaskTypeEnum,
+        startDate?: string,
+        endDate?: string
     ): Promise<number> {
         try {
-            const query: any = this.getQueryObject(value, filterUser);
+            const query: any = this.getQueryObject(
+                value,
+                filterUser,
+                startDate,
+                endDate
+            );
 
             const pipeline = buildNotDeletedCountPipeline(
                 query,

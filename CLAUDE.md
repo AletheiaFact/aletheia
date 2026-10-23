@@ -121,7 +121,7 @@ NestJS modular architecture. All modules registered in `server/app.module.ts`.
 ## Auth System
 
 ### Guards (applied globally via `SessionGuard`)
-- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it
+- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it. `/api/health` (the k8s probe) skips the Ory lookup entirely. The lookup has a 5s deadline; if Ory is unreachable (DNS/network error, timeout, 5xx), protected `/api` routes return 503 instead of running as anonymous
 - `AbilitiesGuard` — Checks CASL abilities for role-based access
 - `M2MGuard` — Validates M2M (machine-to-machine) OAuth2 tokens
 - `SessionOrM2MGuard` — Accepts either session or M2M auth
@@ -170,6 +170,16 @@ Active flags:
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
 - `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
+
+## Rate Limiting
+
+A global `ClientIpThrottlerGuard` (`server/common/throttler/`) limits each
+route per visitor IP (`throttle.ttl` / `throttle.limit` in config; production
+is 100 per 60s). Production sits behind Cloudflare and Traefik, so the guard
+keys on the `CF-Connecting-IP` header and only falls back to `req.ip`.
+Counters live in memory in each pod, so the effective limit grows with the
+replica count. Public read endpoints polled by many viewers at once
+(`GET api/claim/:id`, `GET api/personality/:id`) use `@SkipThrottle()`.
 
 ## Captcha Provider
 

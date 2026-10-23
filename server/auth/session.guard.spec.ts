@@ -1,8 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ExecutionContext } from "@nestjs/common";
+import { ExecutionContext, ServiceUnavailableException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
-import { SessionGuard } from "./session.guard";
+import { FrontendApi } from "@ory/client";
+import { ORY_REQUEST_TIMEOUT_MS, SessionGuard } from "./session.guard";
 import { UsersService } from "../users/users.service";
 import { TokenIdentityService } from "./token-identity.service";
 import OryService from "./ory/ory.service";
@@ -17,17 +18,14 @@ import { Roles } from "./ability/ability.factory";
 // declared via vi.hoisted() because vi.mock() is hoisted above all imports
 // during the Vitest transform pipeline. Constructor mocks must use `function`
 // (not arrow functions) so `new Configuration(...)` works under Vitest 4.
-const {
-    mockToSession,
-    mockCreateBrowserLogoutFlow,
-    mockUpdateLogoutFlow,
-} = vi.hoisted(() => ({
-    mockToSession: vi.fn(),
-    mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
-        data: { logout_token: "mock-logout-token" },
-    }),
-    mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
-}));
+const { mockToSession, mockCreateBrowserLogoutFlow, mockUpdateLogoutFlow } =
+    vi.hoisted(() => ({
+        mockToSession: vi.fn(),
+        mockCreateBrowserLogoutFlow: vi.fn().mockResolvedValue({
+            data: { logout_token: "mock-logout-token" },
+        }),
+        mockUpdateLogoutFlow: vi.fn().mockResolvedValue({}),
+    }));
 
 vi.mock("@ory/client", () => ({
     Configuration: vi.fn().mockImplementation(function () {
@@ -41,6 +39,18 @@ vi.mock("@ory/client", () => ({
         };
     }),
 }));
+
+// Error shapes raised by the axios bundled in @ory/client.
+const oryHttpError = (status: number) =>
+    Object.assign(new Error(`Request failed with status code ${status}`), {
+        isAxiosError: true,
+        response: { status },
+    });
+const oryNetworkError = (code: string) =>
+    Object.assign(new Error(`getaddrinfo ${code} auth.example.org`), {
+        isAxiosError: true,
+        code,
+    });
 
 describe("SessionGuard", () => {
     let guard: SessionGuard;
@@ -64,6 +74,9 @@ describe("SessionGuard", () => {
         };
         const response = { redirect: mockRedirect };
         const handler = vi.fn();
+        if (isPublic) {
+            Reflect.defineMetadata("public", true, handler);
+        }
         const context = {
             getHandler: vi.fn().mockReturnValue(handler),
             getClass: vi.fn(),
@@ -186,7 +199,8 @@ describe("SessionGuard", () => {
             expect(mockToSession).toHaveBeenCalledWith(
                 expect.objectContaining({
                     xSessionToken: "ory_st_native-token",
-                })
+                }),
+                expect.anything()
             );
             expect(request.user).toEqual(
                 expect.objectContaining({
@@ -197,9 +211,45 @@ describe("SessionGuard", () => {
         });
     });
 
+    describe("Ory client", () => {
+        it("should reuse one FrontendApi across requests", async () => {
+            setupDefaultUserMock();
+            mockToSession.mockResolvedValue({ data: createMockSession() });
+            configService.get.mockImplementation((key: string) => {
+                const config = {
+                    authentication_type: "ory",
+                    "ory.url": "http://reuse.test",
+                    "ory.access_token": "mock-access-token",
+                    app_affiliation: "aletheia",
+                };
+                return config[key];
+            });
+
+            await guard.canActivate(createMockContext().context);
+            await guard.canActivate(createMockContext().context);
+
+            expect(vi.mocked(FrontendApi)).toHaveBeenCalledTimes(1);
+        });
+
+        it("should bound the session lookup with a timeout signal", async () => {
+            setupDefaultUserMock();
+            mockToSession.mockResolvedValue({ data: createMockSession() });
+            const timeoutSpy = vi.spyOn(AbortSignal, "timeout");
+
+            await guard.canActivate(createMockContext().context);
+
+            expect(timeoutSpy).toHaveBeenCalledWith(ORY_REQUEST_TIMEOUT_MS);
+            expect(mockToSession).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ signal: expect.any(AbortSignal) })
+            );
+            timeoutSpy.mockRestore();
+        });
+    });
+
     describe("invalid session", () => {
         it("should redirect to login when session is expired", async () => {
-            mockToSession.mockRejectedValue(new Error("401 Unauthorized"));
+            mockToSession.mockRejectedValue(oryHttpError(401));
 
             const { context, response } = createMockContext(
                 "ory_session=expired",
@@ -214,7 +264,7 @@ describe("SessionGuard", () => {
         });
 
         it("should allow public API routes even without session", async () => {
-            mockToSession.mockRejectedValue(new Error("401 Unauthorized"));
+            mockToSession.mockRejectedValue(oryHttpError(401));
 
             const { context } = createMockContext(
                 "ory_session=expired",
@@ -225,15 +275,172 @@ describe("SessionGuard", () => {
             const result = await guard.canActivate(context);
             expect(result).toBe(true);
         });
+
+        it("should not log an error for an expected 401", async () => {
+            const errorSpy = vi
+                .spyOn(guard["logger"], "error")
+                .mockImplementation(() => undefined);
+            mockToSession.mockRejectedValue(oryHttpError(401));
+
+            const result = await guard.canActivate(
+                createMockContext("", false, "/api/test").context
+            );
+
+            expect(result).toBe(true);
+            expect(errorSpy).not.toHaveBeenCalled();
+        });
+
+        it("should keep the critical-failure fallback for unexpected errors", async () => {
+            const errorSpy = vi
+                .spyOn(guard["logger"], "error")
+                .mockImplementation(() => undefined);
+            mockToSession.mockRejectedValue(new Error("boom"));
+
+            const { context, response } = createMockContext(
+                "ory_session=abc",
+                false,
+                "/dashboard"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(response.redirect).toHaveBeenCalledWith("/login");
+            expect(result).toBe(false);
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining("Critical failure in AuthGuard"),
+                expect.anything()
+            );
+        });
+    });
+
+    describe("health probe", () => {
+        it.each(["/api/health", "/api/health?probe=readiness"])(
+            "should allow %s without calling Ory",
+            async (url) => {
+                mockToSession.mockRejectedValue(oryNetworkError("EAI_AGAIN"));
+
+                const { context, request } = createMockContext("", false, url);
+
+                const result = await guard.canActivate(context);
+
+                expect(result).toBe(true);
+                expect(mockToSession).not.toHaveBeenCalled();
+                expect(request.user).toBeUndefined();
+            }
+        );
+
+        it("should still look up the session for other /api/health* paths", async () => {
+            vi.spyOn(guard["logger"], "error").mockImplementation(
+                () => undefined
+            );
+            mockToSession.mockRejectedValue(oryHttpError(401));
+
+            await guard.canActivate(
+                createMockContext("", false, "/api/healthcheck").context
+            );
+
+            expect(mockToSession).toHaveBeenCalled();
+        });
+    });
+
+    describe("Ory unreachable", () => {
+        it.each([
+            ["DNS failure", oryNetworkError("EAI_AGAIN")],
+            ["connection refused", oryNetworkError("ECONNREFUSED")],
+            ["timeout", oryNetworkError("ERR_CANCELED")],
+            ["Ory 5xx", oryHttpError(502)],
+        ])(
+            "should return 503 for a protected API route on %s",
+            async (_label, error) => {
+                vi.spyOn(guard["logger"], "error").mockImplementation(
+                    () => undefined
+                );
+                mockToSession.mockRejectedValue(error);
+
+                const { context, request } = createMockContext(
+                    "ory_session=abc",
+                    false,
+                    "/api/test"
+                );
+
+                await expect(guard.canActivate(context)).rejects.toBeInstanceOf(
+                    ServiceUnavailableException
+                );
+                expect(request.user).toBeUndefined();
+            }
+        );
+
+        it("should log the transport error code, not a critical failure", async () => {
+            const errorSpy = vi
+                .spyOn(guard["logger"], "error")
+                .mockImplementation(() => undefined);
+            mockToSession.mockRejectedValue(oryNetworkError("EAI_AGAIN"));
+
+            await expect(
+                guard.canActivate(createMockContext().context)
+            ).rejects.toBeInstanceOf(ServiceUnavailableException);
+
+            expect(errorSpy).toHaveBeenCalledTimes(1);
+            expect(errorSpy.mock.calls[0][0]).toContain("EAI_AGAIN");
+            expect(errorSpy.mock.calls[0][0]).not.toContain("Critical failure");
+        });
+
+        it("should let @Public API routes through anonymously", async () => {
+            vi.spyOn(guard["logger"], "error").mockImplementation(
+                () => undefined
+            );
+            mockToSession.mockRejectedValue(oryNetworkError("EAI_AGAIN"));
+
+            const { context, request } = createMockContext(
+                "ory_session=abc",
+                true,
+                "/api/test"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(result).toBe(true);
+            expect(request.user).toBeUndefined();
+        });
+
+        it("should let allowlisted public API URLs through", async () => {
+            vi.spyOn(guard["logger"], "error").mockImplementation(
+                () => undefined
+            );
+            mockToSession.mockRejectedValue(oryNetworkError("EAI_AGAIN"));
+
+            const result = await guard.canActivate(
+                createMockContext("ory_session=abc", false, "/api/health")
+                    .context
+            );
+
+            expect(result).toBe(true);
+        });
+
+        it("should still redirect protected pages to /login", async () => {
+            vi.spyOn(guard["logger"], "error").mockImplementation(
+                () => undefined
+            );
+            mockToSession.mockRejectedValue(oryNetworkError("EAI_AGAIN"));
+
+            const { context, response } = createMockContext(
+                "ory_session=abc",
+                false,
+                "/dashboard"
+            );
+
+            const result = await guard.canActivate(context);
+
+            expect(response.redirect).toHaveBeenCalledWith("/login");
+            expect(result).toBe(false);
+        });
     });
 
     describe("user not found in DB", () => {
         it("should logout and redirect to signup-invite when user not in MongoDB", async () => {
             const session = createMockSession();
             mockToSession.mockResolvedValue({ data: session });
-            usersService.getById.mockRejectedValue(
-                new Error("User not found")
-            );
+            usersService.getById.mockRejectedValue(new Error("User not found"));
 
             const { context, response } = createMockContext(
                 "ory_session=abc",

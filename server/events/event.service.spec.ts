@@ -14,6 +14,7 @@ import {
     mockEventModel,
     mockClaimReviewService,
     mockTopicService,
+    mockOrganizationService,
     mockRequest,
     mockTopicModel,
 } from "../mocks/EventMock";
@@ -22,6 +23,15 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { REQUEST } from "@nestjs/core";
 import { Types } from "mongoose";
 import { Topic } from "../topic/mongo/schemas/topic.schema";
+
+const mockExistingSlugs = (slugs: string[] = []) =>
+    mockEventModel.find.mockReturnValue({
+        select: () => ({
+            lean: () => ({
+                exec: async () => slugs.map((slug) => ({ slug })),
+            }),
+        }),
+    });
 
 describe("EventsService (Unit)", () => {
     let service: EventsService;
@@ -50,6 +60,10 @@ describe("EventsService (Unit)", () => {
                     provide: "TopicService",
                     useValue: mockTopicService,
                 },
+                {
+                    provide: "OrganizationService",
+                    useValue: mockOrganizationService,
+                },
             ],
         }).compile();
 
@@ -61,11 +75,44 @@ describe("EventsService (Unit)", () => {
     });
 
     describe("create", () => {
+        beforeEach(() => mockExistingSlugs());
+
+        it("should derive the slug from the name and suffix it when taken", async () => {
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "t1" });
+            mockEventModel.create.mockResolvedValue({ _id: "e1" });
+            mockExistingSlugs(["debate-final", "debate-final-2"]);
+
+            await service.create({
+                ...mockCreateEventDto,
+                name: "Debate Final",
+            } as any);
+
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "debate-final-3" })
+            );
+        });
+
+        it("should never use a reserved route segment as a bare slug", async () => {
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "t1" });
+            mockEventModel.create.mockResolvedValue({ _id: "e1" });
+
+            await service.create({
+                ...mockCreateEventDto,
+                name: "Create",
+            } as any);
+
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({ slug: "create-2" })
+            );
+        });
+
         it("should create an event with generated hash and resolved topics", async () => {
             const mainTopic = { _id: "t1", name: "Climate", wikidataId: "Q1" };
             const expectedHash = crypto
                 .createHash("md5")
-                .update(`${mockCreateEventDto.name}-${mockCreateEventDto.startDate}`)
+                .update(
+                    `${mockCreateEventDto.name}-${mockCreateEventDto.startDate}`
+                )
                 .digest("hex");
             const createdEvent = { _id: "e1", data_hash: expectedHash };
 
@@ -95,12 +142,14 @@ describe("EventsService (Unit)", () => {
                 errors: { name: {}, location: {} },
             };
 
-            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockTopicService.findOrCreateTopic.mockResolvedValue({
+                _id: "topic-id",
+            });
             mockEventModel.create.mockRejectedValue(validationError);
 
-            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
-                BadRequestException
-            );
+            await expect(
+                service.create(mockCreateEventDto as any)
+            ).rejects.toThrow(BadRequestException);
         });
 
         it("should throw ConflictException for duplicate key errors", async () => {
@@ -109,29 +158,33 @@ describe("EventsService (Unit)", () => {
                 keyPattern: { name: 1 },
             };
 
-            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockTopicService.findOrCreateTopic.mockResolvedValue({
+                _id: "topic-id",
+            });
             mockEventModel.create.mockRejectedValue(duplicateKeyError);
 
-            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
-                ConflictException
-            );
+            await expect(
+                service.create(mockCreateEventDto as any)
+            ).rejects.toThrow(ConflictException);
         });
 
         it("should throw InternalServerErrorException for unknown errors", async () => {
-            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "topic-id" });
+            mockTopicService.findOrCreateTopic.mockResolvedValue({
+                _id: "topic-id",
+            });
             mockEventModel.create.mockRejectedValue(new Error("unexpected"));
 
-            await expect(service.create(mockCreateEventDto as any)).rejects.toThrow(
-                InternalServerErrorException
-            );
+            await expect(
+                service.create(mockCreateEventDto as any)
+            ).rejects.toThrow(InternalServerErrorException);
         });
     });
 
     describe("update", () => {
         it("should throw BadRequestException when id is invalid", async () => {
-            await expect(service.update("invalid-id", { name: "Updated" } as any)).rejects.toThrow(
-                BadRequestException
-            );
+            await expect(
+                service.update("invalid-id", { name: "Updated" } as any)
+            ).rejects.toThrow(BadRequestException);
 
             expect(mockEventModel.findByIdAndUpdate).not.toHaveBeenCalled();
         });
@@ -180,9 +233,9 @@ describe("EventsService (Unit)", () => {
             const id = "507f1f77bcf86cd799439011";
             mockEventModel.findByIdAndUpdate.mockResolvedValue(null);
 
-            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
-                NotFoundException
-            );
+            await expect(
+                service.update(id, { name: "Updated" } as any)
+            ).rejects.toThrow(NotFoundException);
         });
 
         it("should throw BadRequestException on cast errors", async () => {
@@ -192,18 +245,20 @@ describe("EventsService (Unit)", () => {
                 path: "startDate",
             });
 
-            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
-                BadRequestException
-            );
+            await expect(
+                service.update(id, { name: "Updated" } as any)
+            ).rejects.toThrow(BadRequestException);
         });
 
         it("should throw InternalServerErrorException on unknown failures", async () => {
             const id = "507f1f77bcf86cd799439011";
-            mockEventModel.findByIdAndUpdate.mockRejectedValue(new Error("unexpected"));
-
-            await expect(service.update(id, { name: "Updated" } as any)).rejects.toThrow(
-                InternalServerErrorException
+            mockEventModel.findByIdAndUpdate.mockRejectedValue(
+                new Error("unexpected")
             );
+
+            await expect(
+                service.update(id, { name: "Updated" } as any)
+            ).rejects.toThrow(InternalServerErrorException);
         });
     });
 
@@ -216,13 +271,13 @@ describe("EventsService (Unit)", () => {
                 {
                     data_hash: "mock-hash-1",
                     endDate: "2025-11-20T23:00:00.000+00:00",
-                    mainTopic: { _id: topicId1, name: "Topic A" }
+                    mainTopic: { _id: topicId1, name: "Topic A" },
                 },
                 {
                     data_hash: "mock-hash-2",
                     endDate: "2025-12-15T18:30:00.000+00:00",
-                    mainTopic: { _id: topicId2, name: "Topic B" }
-                }
+                    mainTopic: { _id: topicId2, name: "Topic B" },
+                },
             ];
 
             const exec = vi.fn().mockResolvedValue(eventsResult);
@@ -235,43 +290,56 @@ describe("EventsService (Unit)", () => {
             mockEventModel.find.mockReturnValue({ skip });
 
             const countExec = vi.fn().mockResolvedValue(eventsResult.length);
-            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: countExec });
+            mockEventModel.countDocuments = vi
+                .fn()
+                .mockReturnValue({ exec: countExec });
 
-            mockTopicModel.aggregate = vi.fn().mockResolvedValue([{
-                verificationStats: [
-                    { _id: new Types.ObjectId(topicId1), count: 5 },
-                    { _id: new Types.ObjectId(topicId2), count: 2 }
-                ],
-                sentencesData: [
-                    {
-                        _id: new Types.ObjectId(topicId1),
-                        hashes: ["hash-sent-1"],
-                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439001"), new Types.ObjectId("607f1f77bcf86cd799439002")]
-                    },
-                    {
-                        _id: new Types.ObjectId(topicId2),
-                        hashes: ["hash-sent-2"],
-                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439003")]
-                    }
-                ],
-                imagesData: [
-                    {
-                        _id: new Types.ObjectId(topicId1),
-                        hashes: ["hash-img-1"],
-                        claimRevisionIds: [new Types.ObjectId("607f1f77bcf86cd799439001")]
-                    },
-                    {
-                        _id: new Types.ObjectId(topicId2),
-                        hashes: [],
-                        claimRevisionIds: []
-                    }
-                ]
-            }]);
+            mockTopicModel.aggregate = vi.fn().mockResolvedValue([
+                {
+                    verificationStats: [
+                        { _id: new Types.ObjectId(topicId1), count: 5 },
+                        { _id: new Types.ObjectId(topicId2), count: 2 },
+                    ],
+                    sentencesData: [
+                        {
+                            _id: new Types.ObjectId(topicId1),
+                            hashes: ["hash-sent-1"],
+                            claimRevisionIds: [
+                                new Types.ObjectId("607f1f77bcf86cd799439001"),
+                                new Types.ObjectId("607f1f77bcf86cd799439002"),
+                            ],
+                        },
+                        {
+                            _id: new Types.ObjectId(topicId2),
+                            hashes: ["hash-sent-2"],
+                            claimRevisionIds: [
+                                new Types.ObjectId("607f1f77bcf86cd799439003"),
+                            ],
+                        },
+                    ],
+                    imagesData: [
+                        {
+                            _id: new Types.ObjectId(topicId1),
+                            hashes: ["hash-img-1"],
+                            claimRevisionIds: [
+                                new Types.ObjectId("607f1f77bcf86cd799439001"),
+                            ],
+                        },
+                        {
+                            _id: new Types.ObjectId(topicId2),
+                            hashes: [],
+                            claimRevisionIds: [],
+                        },
+                    ],
+                },
+            ]);
 
-            mockClaimReviewService.getBatchCountsByTopics = vi.fn().mockResolvedValue({
-                [topicId1]: 15,
-                [topicId2]: 0
-            });
+            mockClaimReviewService.getBatchCountsByTopics = vi
+                .fn()
+                .mockResolvedValue({
+                    [topicId1]: 15,
+                    [topicId2]: 0,
+                });
 
             const result = await service.findAll({
                 page: 1,
@@ -292,19 +360,23 @@ describe("EventsService (Unit)", () => {
             expect(populate).toHaveBeenCalledWith("mainTopic");
 
             const expectedTopicIds = [topicId1, topicId2];
-            const expectedObjectIds = expectedTopicIds.map(id => new Types.ObjectId(id));
+            const expectedObjectIds = expectedTopicIds.map(
+                (id) => new Types.ObjectId(id)
+            );
 
             expect(mockTopicModel.aggregate).toHaveBeenCalledWith([
                 { $match: { _id: { $in: expectedObjectIds } } },
-                expect.any(Object)
+                expect.any(Object),
             ]);
 
-            expect(mockClaimReviewService.getBatchCountsByTopics).toHaveBeenCalledWith(
+            expect(
+                mockClaimReviewService.getBatchCountsByTopics
+            ).toHaveBeenCalledWith(
                 expectedTopicIds,
                 expect.objectContaining({ isHidden: false, isDeleted: false }),
                 {
                     [topicId1]: ["hash-sent-1", "hash-img-1"],
-                    [topicId2]: ["hash-sent-2"]
+                    [topicId2]: ["hash-sent-2"],
                 }
             );
 
@@ -312,9 +384,17 @@ describe("EventsService (Unit)", () => {
                 events: eventsResult,
                 total: eventsResult.length,
                 eventMetrics: {
-                    "mock-hash-1": { verificationRequests: 5, reviews: 15, claims: 2 },
-                    "mock-hash-2": { verificationRequests: 2, reviews: 0, claims: 1 },
-                }
+                    "mock-hash-1": {
+                        verificationRequests: 5,
+                        reviews: 15,
+                        claims: 2,
+                    },
+                    "mock-hash-2": {
+                        verificationRequests: 2,
+                        reviews: 0,
+                        claims: 1,
+                    },
+                },
             });
         });
 
@@ -322,8 +402,8 @@ describe("EventsService (Unit)", () => {
             const eventsResult = [
                 {
                     data_hash: "mock-hash-1",
-                    mainTopic: { _id: topicId1 }
-                }
+                    mainTopic: { _id: topicId1 },
+                },
             ];
 
             const exec = vi.fn().mockResolvedValue(eventsResult);
@@ -334,14 +414,27 @@ describe("EventsService (Unit)", () => {
             const skip = vi.fn().mockReturnValue({ limit });
             mockEventModel.find.mockReturnValue({ skip });
 
-            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: vi.fn().mockResolvedValue(1) });
+            mockEventModel.countDocuments = vi
+                .fn()
+                .mockReturnValue({ exec: vi.fn().mockResolvedValue(1) });
 
-            mockTopicModel.aggregate = vi.fn().mockRejectedValue(new Error("DB Timeout"));
+            mockTopicModel.aggregate = vi
+                .fn()
+                .mockRejectedValue(new Error("DB Timeout"));
 
-            const result = await service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.ALL });
+            const result = await service.findAll({
+                page: 0,
+                pageSize: 10,
+                order: "asc",
+                status: EventsStatus.ALL,
+            });
 
             expect(result.eventMetrics).toEqual({
-                "mock-hash-1": { verificationRequests: 0, reviews: 0, claims: 0 }
+                "mock-hash-1": {
+                    verificationRequests: 0,
+                    reviews: 0,
+                    claims: 0,
+                },
             });
         });
 
@@ -356,41 +449,191 @@ describe("EventsService (Unit)", () => {
             mockEventModel.find.mockReturnValue({ skip });
 
             const countExec = vi.fn().mockResolvedValue(0);
-            mockEventModel.countDocuments = vi.fn().mockReturnValue({ exec: countExec });
+            mockEventModel.countDocuments = vi
+                .fn()
+                .mockReturnValue({ exec: countExec });
 
             vi.restoreAllMocks();
 
             await expect(
-                service.findAll({ page: 0, pageSize: 10, order: "asc", status: EventsStatus.UPCOMING })
+                service.findAll({
+                    page: 0,
+                    pageSize: 10,
+                    order: "asc",
+                    status: EventsStatus.UPCOMING,
+                })
             ).rejects.toThrow(InternalServerErrorException);
         });
     });
 
-    describe("findByHash", () => {
-        it("should return event when hash exists", async () => {
-            const event = { _id: "e1", data_hash: "hash123" };
-            const exec = vi.fn().mockResolvedValue(event);
-            const populateFilterTopics = vi.fn().mockReturnValue({ exec });
-            const populateMainTopic = vi
-                .fn()
-                .mockReturnValue({ populate: populateFilterTopics });
+    describe("participants", () => {
+        beforeEach(() => mockExistingSlugs());
 
-            mockEventModel.findOne.mockReturnValue({ populate: populateMainTopic });
+        const orgA = "507f1f77bcf86cd799439021";
+        const orgB = "507f1f77bcf86cd799439022";
+
+        it("should persist participants sorted by order", async () => {
+            mockOrganizationService.findExistingIds.mockResolvedValue([
+                orgA,
+                orgB,
+            ]);
+            mockTopicService.findOrCreateTopic.mockResolvedValue({ _id: "t1" });
+            mockEventModel.create.mockResolvedValue({ _id: "e1" });
+
+            await service.create({
+                ...mockCreateEventDto,
+                participants: [
+                    { organization: orgB, order: 1 },
+                    { organization: orgA, order: 0 },
+                ],
+            } as any);
+
+            expect(
+                mockOrganizationService.findExistingIds
+            ).toHaveBeenCalledWith([orgB, orgA]);
+            expect(mockEventModel.create).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    participants: [
+                        { organization: orgA, order: 0 },
+                        { organization: orgB, order: 1 },
+                    ],
+                })
+            );
+        });
+
+        it("should reject unknown organizations on create without writing", async () => {
+            mockOrganizationService.findExistingIds.mockResolvedValue([orgA]);
+
+            await expect(
+                service.create({
+                    ...mockCreateEventDto,
+                    participants: [
+                        { organization: orgA, order: 0 },
+                        { organization: orgB, order: 1 },
+                    ],
+                } as any)
+            ).rejects.toThrow(BadRequestException);
+            expect(mockEventModel.create).not.toHaveBeenCalled();
+        });
+
+        it("should reject unknown organizations on update without writing", async () => {
+            mockOrganizationService.findExistingIds.mockResolvedValue([]);
+
+            await expect(
+                service.update("507f1f77bcf86cd799439011", {
+                    participants: [{ organization: orgA, order: 0 }],
+                } as any)
+            ).rejects.toThrow(BadRequestException);
+            expect(mockEventModel.findByIdAndUpdate).not.toHaveBeenCalled();
+        });
+
+        it("should keep the slug when the event is renamed", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockResolvedValue({ _id: id });
+
+            await service.update(id, { name: "Renamed" } as any);
+
+            const [, update] = mockEventModel.findByIdAndUpdate.mock.calls[0];
+            expect(update.$set).not.toHaveProperty("slug");
+        });
+
+        it("should not touch participants when the update omits them", async () => {
+            const id = "507f1f77bcf86cd799439011";
+            mockEventModel.findByIdAndUpdate.mockResolvedValue({ _id: id });
+
+            await service.update(id, { name: "Renamed" } as any);
+
+            expect(
+                mockOrganizationService.findExistingIds
+            ).not.toHaveBeenCalled();
+            const [, update] = mockEventModel.findByIdAndUpdate.mock.calls[0];
+            expect(update.$set).not.toHaveProperty("participants");
+        });
+    });
+
+    describe("findByHash", () => {
+        const mockFindOne = (event: unknown) => {
+            const exec = vi.fn().mockResolvedValue(event);
+            const populate = vi.fn();
+            populate
+                .mockReturnValueOnce({ populate })
+                .mockReturnValueOnce({ populate })
+                .mockReturnValueOnce({ exec });
+            mockEventModel.findOne.mockReturnValue({ populate });
+            return populate;
+        };
+
+        it("should return the event with participants populated", async () => {
+            const organization = {
+                _id: "o1",
+                name: "Org",
+                logo: { _id: "i1" },
+            };
+            const event = {
+                toObject: () => ({
+                    _id: "e1",
+                    data_hash: "hash123",
+                    participants: [{ organization, order: 0 }],
+                }),
+            };
+            const populate = mockFindOne(event);
 
             const result = await service.findByHash("hash123");
 
-            expect(mockEventModel.findOne).toHaveBeenCalledWith({ data_hash: "hash123" });
-            expect(result).toEqual(event);
+            expect(mockEventModel.findOne).toHaveBeenCalledWith({
+                data_hash: "hash123",
+            });
+            expect(populate).toHaveBeenCalledWith({
+                path: "participants.organization",
+                match: { isDeleted: false },
+                populate: { path: "logo" },
+            });
+            expect(result.participants).toEqual([{ organization, order: 0 }]);
+        });
+
+        it("should hide participants whose organization was soft deleted", async () => {
+            const event = {
+                toObject: () => ({
+                    _id: "e1",
+                    participants: [
+                        { organization: null, order: 0 },
+                        { organization: { _id: "o2" }, order: 1 },
+                    ],
+                }),
+            };
+            mockFindOne(event);
+
+            const result = await service.findByHash("hash123");
+
+            expect(result.participants).toEqual([
+                { organization: { _id: "o2" }, order: 1 },
+            ]);
+        });
+
+        it("should look up by slug through the same public payload", async () => {
+            mockFindOne({ toObject: () => ({ _id: "e1", participants: [] }) });
+
+            await service.findBySlug("debate");
+
+            expect(mockEventModel.findOne).toHaveBeenCalledWith({
+                slug: "debate",
+            });
+        });
+
+        it("should resolve the slug of a legacy hash", async () => {
+            const exec = vi.fn().mockResolvedValue({ slug: "debate" });
+            mockEventModel.findOne.mockReturnValue({
+                select: () => ({ lean: () => ({ exec }) }),
+            });
+
+            expect(await service.getSlugByHash("hash123")).toBe("debate");
+
+            exec.mockResolvedValue(null);
+            expect(await service.getSlugByHash("missing")).toBeNull();
         });
 
         it("should throw NotFoundException when hash does not exist", async () => {
-            const exec = vi.fn().mockResolvedValue(null);
-            const populateFilterTopics = vi.fn().mockReturnValue({ exec });
-            const populateMainTopic = vi
-                .fn()
-                .mockReturnValue({ populate: populateFilterTopics });
-
-            mockEventModel.findOne.mockReturnValue({ populate: populateMainTopic });
+            mockFindOne(null);
 
             await expect(service.findByHash("missing-hash")).rejects.toThrow(
                 NotFoundException

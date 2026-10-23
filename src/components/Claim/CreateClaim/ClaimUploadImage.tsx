@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Grid } from "@mui/material";
+import { FormControl } from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -7,11 +8,11 @@ import { useRouter } from "next/router";
 import ImageApi from "../../../api/image";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
-import colors from "../../../styles/colors";
-import ImageUpload, { UploadFile } from "../../ImageUpload";
-import Label from "../../Label";
+import { UploadFile } from "../../ImageUpload";
+import ClaimImageDropzone from "./ClaimImageDropzone";
 import BaseClaimForm from "./BaseClaimForm";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { ContentModelEnum } from "../../../types/enums";
 
 const ClaimUploadImage = () => {
     const { t } = useTranslation();
@@ -20,7 +21,7 @@ const ClaimUploadImage = () => {
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const {
-        title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, setIsLoading, errors, setErrors, imageError, setImageError, clearError, validateFields
+        title, setTitle, date, setDate, sources, setSources, recaptcha, setRecaptcha, isLoading, setIsLoading, errors, setErrors, imageError, setImageError, clearError, validateFields, isDirty
     } = useBaseClaimForm({ shouldValidateContent: false });
 
     const handleSubmit = (values: any) => {
@@ -78,57 +79,43 @@ const ClaimUploadImage = () => {
     };
 
     return (
-        <>
-            <div style={{ marginTop: "24px" }}>
-                <h3
-                    style={{
-                        fontSize: "18px",
-                        lineHeight: "24px",
-                        color: colors.blackSecondary,
-                        marginBottom: "8px",
-                        textTransform: "capitalize",
-                    }}
-                >
-                    {t("claimForm:image")}
-                </h3>
-                <p
-                    style={{
-                        fontSize: "14px",
-                        lineHeight: "20px",
-                        color: colors.blackSecondary,
-                        marginBottom: "24px",
-                    }}
-                >
-                    {t("claimForm:uploadImageText")}
-                </p>
-            </div>
-
-            <BaseClaimForm
-                handleSubmit={handleSubmit}
-                isLoading={isLoading}
-                dateExtraText={t("claimForm:dateFieldHelpImage")}
-                errors={errors}
-                clearError={clearError}
-                recaptcha={recaptcha}
-                setRecaptcha={setRecaptcha}
-                setTitle={setTitle}
-                date={date}
-                setDate={setDate}
-                setSources={setSources}
-                title={title}
-                sources={sources}
-                content={
-                    <Grid container style={{ marginBottom: 24 }}>
-                        <Label required>{t("claimForm:fileInputButton")}</Label>
-                        <ImageUpload
-                            onChange={handleFileChange}
-                            error={imageError}
-                            defaultFileList={[]}
-                        />
-                    </Grid>
-                }
-            />
-        </>
+        <BaseClaimForm
+            variant={ContentModelEnum.Image}
+            handleSubmit={handleSubmit}
+            isDirty={isDirty || fileList.length > 0}
+            isLoading={isLoading}
+            errors={errors}
+            clearError={clearError}
+            recaptcha={recaptcha}
+            setRecaptcha={setRecaptcha}
+            setTitle={setTitle}
+            date={date}
+            setDate={setDate}
+            setSources={setSources}
+            title={title}
+            sources={sources}
+            content={
+                <FormControl style={{ width: "100%" }}>
+                    <div className="root-label">
+                        <span className="require-label">*</span>
+                        <p className="form-label">
+                            {t(`claimForm:createForm.${ContentModelEnum.Image}.contentLabel`)}
+                        </p>
+                    </div>
+                    <ClaimImageDropzone
+                        onChange={handleFileChange}
+                        error={imageError}
+                    />
+                    <p
+                        className="extra-label"
+                        style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                    >
+                        <InfoOutlined aria-hidden="true" sx={{ fontSize: 16 }} />
+                        {t(`claimForm:createForm.${ContentModelEnum.Image}.contentHelp`)}
+                    </p>
+                </FormControl>
+            }
+        />
     );
 };
 

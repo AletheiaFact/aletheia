@@ -17,6 +17,28 @@ mcp:
   public_url: https://aletheiafact.org   # MCP_PUBLIC_URL
 ```
 
+For a deployed environment, set `mcp` in that environment's pkl file under
+`deployment/config/config-file/`. CI renders the file into `config.yaml` on
+each deploy. A value set in the pkl file wins over the `MCP_ENABLED` and
+`MCP_PUBLIC_URL` defaults that `modules/service/confBase.pkl` reads.
+
+| Environment | pkl file | Branch | `mcp.enabled` | `mcp.public_url` |
+| --- | --- | --- | --- | --- |
+| test | `development.pkl` | `stage` | `true` | `https://test.aletheiafact.org` |
+| production | `production.pkl` | `master` | not set (off) | — |
+
+The setting in `development.pkl`:
+
+```pkl
+mcp = new {
+    enabled = true
+    public_url = "https://test.\(appBaseUrl)"
+}
+```
+
+Set `public_url` to the environment's own origin. Clients use it to find the
+protected-resource metadata and the authorization server.
+
 ### Ory Network (one-time, per environment)
 
 1. In the Ory Network console for the project, enable **OAuth2** (Hydra).
