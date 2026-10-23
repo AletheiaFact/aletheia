@@ -18,7 +18,8 @@ const ClassificationMethodologySelect = () => {
 
     useEffect(() => {
         let active = true;
-        ReviewTaskApi.getClassificationMethodologySettings().then(
+        // Never rejects: the API call falls back to { enabled: false }
+        void ReviewTaskApi.getClassificationMethodologySettings().then(
             (settings) => active && setEnabled(settings.enabled)
         );
         return () => {

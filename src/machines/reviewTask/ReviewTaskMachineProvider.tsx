@@ -111,7 +111,7 @@ export const ReviewTaskMachineProvider = (
                 : ReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
-        fetchReviewTask(props.data_hash).then(
+        void fetchReviewTask(props.data_hash).then(
             ({ machine, reportModel, classificationMethodology }) => {
                 // The states assigned and reported have compound states
                 // and when we going to save we get "assigned: undraft" as a value.
