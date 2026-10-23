@@ -138,4 +138,28 @@ describe("Test claim review", () => {
         cy.wait("@getReviewTask");
         blockAssignedUserReview();
     });
+
+    // CI cannot turn the Unleash flag on, so the task's methodology is
+    // injected into the review task response instead
+    it("offers only the methodology's options for an rncd-debate task", () => {
+        cy.intercept("GET", "/api/reviewtask/hash/*", (req) => {
+            req.continue((res) => {
+                if (res.body && typeof res.body === "object") {
+                    res.body.classificationMethodology = "rncd-debate";
+                }
+            });
+        }).as("getReviewTask");
+        cy.login();
+        goToClaimReviewPage();
+        cy.wait("@getReviewTask");
+        cy.get(locators.claimReview.INPUT_CLASSIFICATION)
+            .should("exist")
+            .click();
+        cy.get("[data-cy=trustworthy]")
+            .should("be.visible")
+            .invoke("text")
+            .should("match", /^(True|Verdadeiro)\s*$/);
+        cy.get("[data-cy=exaggerated]").should("not.exist");
+        cy.get("body").type("{esc}");
+    });
 });
