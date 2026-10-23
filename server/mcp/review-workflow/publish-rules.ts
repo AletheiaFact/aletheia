@@ -4,8 +4,8 @@ import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.d
 // src/machines/reviewTask/validation.ts).
 const NOT_FACT_CLASSIFICATION = "not-fact";
 
-const CLASSIFICATIONS = Object.keys(ClassificationEnum).filter((key) =>
-    Number.isNaN(Number(key))
+const CLASSIFICATIONS = new Set(
+    Object.keys(ClassificationEnum).filter((key) => Number.isNaN(Number(key)))
 );
 
 /**
@@ -20,7 +20,7 @@ export function missingReportFields(reviewData: any): string[] {
         Array.isArray(value)
             ? value.length === 0
             : typeof value !== "string" || !value.trim();
-    if (!CLASSIFICATIONS.includes(reviewData.classification)) {
+    if (!CLASSIFICATIONS.has(reviewData.classification)) {
         missing.push("classification");
     }
     if (isBlank(reviewData.summary)) missing.push("summary");

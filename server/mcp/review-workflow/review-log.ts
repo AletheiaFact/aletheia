@@ -128,7 +128,7 @@ function indexOutsideMarkup(text: string, needle: string): number {
  * The plain review log → the fields, sources, editor document and HTML the
  * web stores in `reviewData`. Throws when `reviewLogErrors` is not empty.
  */
-export async function toStored(log: ReviewLog) {
+export function toStored(log: ReviewLog) {
     const errors = reviewLogErrors(log);
     if (errors.length) {
         throw new Error(errors.join("; "));
