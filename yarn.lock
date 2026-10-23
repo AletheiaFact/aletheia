@@ -12710,7 +12710,7 @@ __metadata:
     y-webrtc: ^10.2.5
     y-websocket: ^1.5.0
     yjs: ^13.5.23
-    zod: ^4.3.6
+    zod: ^4.6.6
   languageName: unknown
   linkType: soft
 
@@ -30789,10 +30789,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25 || ^4.0, zod@npm:^3.25.76 || ^4, zod@npm:^4.3.6":
+"zod@npm:^3.25 || ^4.0, zod@npm:^3.25.76 || ^4":
   version: 4.6.5
   resolution: "zod@npm:4.6.5"
   checksum: bc73aaee52bc9137bae3f5bf9b49f4475223c24be86d81881856dd26696cb693d1a3f51d9cf5c86c6f9b081316557673806d00ab3a0f244c9576ff39a11ae6ea
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.6.6":
+  version: 4.6.6
+  resolution: "zod@npm:4.6.6"
+  checksum: 9274ef2492f25549ade182f5142dff1093c7a9578152eb91a18d891f0b4a86445ac1b2dde37f457e749c1f8fba32f708a733c39017cf51a3bf18aebf294f5db6
   languageName: node
   linkType: hard
 
