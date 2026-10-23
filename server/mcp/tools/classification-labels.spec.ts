@@ -46,6 +46,27 @@ describe("withClassificationLabels", () => {
         expect(out[2].props.classificationLabel).toBeUndefined();
     });
 
+    it("words combined review stats in the aletheia scale and says so", () => {
+        const out: any = withClassificationLabels({
+            stats: {
+                total: 3,
+                reviews: [
+                    { _id: "trustworthy", percentage: "67", count: 2 },
+                    { _id: ["false"], count: 1 },
+                    { _id: "507f1f77bcf86cd799439011", count: 4 },
+                ],
+            },
+        });
+        const [trustworthy, falseStat, other] = out.stats.reviews;
+        expect(trustworthy.classificationLabel).toEqual({
+            pt: "Confiável",
+            en: "Trustworthy",
+        });
+        expect(trustworthy.labelMethodology).toBe("aletheia");
+        expect(falseStat.classificationLabel.pt).toBe("Falso");
+        expect(other.classificationLabel).toBeUndefined();
+    });
+
     it("passes null through", () => {
         expect(withClassificationLabels(null)).toBeNull();
     });

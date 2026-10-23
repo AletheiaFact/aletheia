@@ -9,6 +9,10 @@ import { ReviewTaskQueueService } from "../../review-task/review-task-queue.serv
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import { isReviewerOrAdmin, toObjectId, WorkflowUser } from "./access";
 import {
+    DEFAULT_METHODOLOGY,
+    MethodologyId,
+} from "../../../lib/classification-methodology";
+import {
     assignTo,
     buildClaimContext,
     collectSentenceHashes,
@@ -63,11 +67,29 @@ export class ReviewQueueService {
         return created;
     }
 
-    /** Takes the oldest `unassigned` task in the namespace and assigns it to the caller. */
-    async nextReviewTask(user: WorkflowUser, nameSpace: string) {
+    /**
+     * Takes the oldest `unassigned` task in the namespace and assigns it to
+     * the caller. A queued task has no classification methodology until work
+     * starts: it gets the given one in the same update, so only tasks
+     * without one, or with the same one, are handed out.
+     */
+    async nextReviewTask(
+        user: WorkflowUser,
+        nameSpace: string,
+        classificationMethodology: MethodologyId = DEFAULT_METHODOLOGY
+    ) {
+        const take = assignTo(user._id);
+        Object.assign(take.$set, { classificationMethodology });
         return this.reviewTaskQueue.transitionAtomically(
-            { ...this.queueScope(nameSpace), "machine.value": "unassigned" },
-            assignTo(user._id)
+            {
+                ...this.queueScope(nameSpace),
+                "machine.value": "unassigned",
+                $or: [
+                    { classificationMethodology: { $exists: false } },
+                    { classificationMethodology },
+                ],
+            },
+            take
         );
     }
 

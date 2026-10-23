@@ -170,12 +170,28 @@ tools that create or change data.
 
 A review stores one of the 9 `ClassificationEnum` keys. Its methodology
 (`aletheia` by default, or `rncd-debate`) decides which keys were offered
-and how they are worded. `get_claim`, `get_claim_review`, `get_review_task`
-and `list_review_tasks` add `classificationMethodology`, `methodologyName`
-and `classificationLabel` (`{ pt, en }`) next to every classification.
-Report the label together with its methodology. `start_review_task` takes
-an optional `classificationMethodology`; a non-default one requires the
-`enable_classification_methodology` flag.
+and how they are worded. `list_classification_methodologies` returns each
+methodology's options and labels.
+
+- **Reading.** Every tool that returns classified data adds
+  `classificationMethodology`, `methodologyName` and `classificationLabel`
+  (`{ pt, en }`) next to each `classification`. This covers `get_claim`,
+  `list_claims`, `search`, `list_sources`, `get_claim_review`,
+  `get_review_task` and `list_review_tasks`, plus the compact task view
+  returned by the queue tools. Report the label together with its
+  methodology. Review stats on personalities (`{ _id, count }`) combine every
+  methodology, so, as on the web, they get the aletheia wording and
+  `labelMethodology: "aletheia"`.
+- **Starting work.** `start_review_task` and `next_review_task` take an
+  optional `classificationMethodology` (default `aletheia`). It is set when
+  work starts, in the same atomic update that assigns the task, and is fixed
+  from then on. `start_review_task` refuses a task that already has another
+  methodology; `next_review_task` only hands out tasks with none yet, or with
+  the requested one. A non-default methodology requires the
+  `enable_classification_methodology` flag.
+- **Publishing.** `publish_review_task` refuses a classification its
+  methodology does not offer (the web publish applies the same rule) and
+  copies the methodology to the published report.
 
 ### Verification requests
 

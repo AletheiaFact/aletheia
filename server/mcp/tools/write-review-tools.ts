@@ -9,10 +9,12 @@ import {
 import {
     AddReviewCommentSchema,
     NamespaceOnlySchema,
+    NextReviewTaskSchema,
     ReviewTaskByHashSchema,
     StartReviewTaskSchema,
 } from "./schemas";
 import { describeTask } from "./review-task-view";
+import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 import type { McpToolDeps } from "../mcp.service";
 
 /**
@@ -49,7 +51,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "start_review_task",
         {
             description:
-                "Claim a claim sentence for fact-checking: creates its review task already assigned to you",
+                "Claim a claim sentence for fact-checking: creates its review task already assigned to you (or takes its queued task). The task gets the requested classification methodology (default aletheia), fixed from then on; a task that already has another one is refused.",
             inputSchema: StartReviewTaskSchema.shape as any,
         },
         safeTool("start_review_task", async (args) => {
@@ -77,14 +79,21 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "next_review_task",
         {
             description:
-                "Get the next fact-checking task: takes the oldest unassigned task in the queue and assigns it to you. Two callers never receive the same task",
-            inputSchema: NamespaceOnlySchema.shape as any,
+                "Get the next fact-checking task: takes the oldest unassigned task in the queue and assigns it to you. Two callers never receive the same task. The task gets the requested classification methodology (default aletheia), fixed from then on; only tasks without one, or with the same one, are handed out." +
+                LABELS_NOTE,
+            inputSchema: NextReviewTaskSchema.shape as any,
         },
         safeTool("next_review_task", async (args) => {
             await authorizeNamespaceWrite(deps, args.nameSpace);
+            // Default, flag and id check, as for a task created on the web
+            const methodology =
+                deps.reviewTaskService.resolveMethodologyForNewTask(
+                    args.classificationMethodology
+                );
             const task = await deps.reviewQueueService.nextReviewTask(
                 deps.request.user as any,
-                args.nameSpace
+                args.nameSpace,
+                methodology
             );
             return jsonResult(
                 task
@@ -98,7 +107,8 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "join_review_task",
         {
             description:
-                "Join a task someone is already working on (assigned or reported) as an extra assignee. Joining twice is a no-op",
+                "Join a task someone is already working on (assigned or reported) as an extra assignee. Joining twice is a no-op." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("join_review_task", async (args) => {
@@ -119,7 +129,8 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "send_to_review",
         {
             description:
-                "Send a reported task to the review backlog (skips cross-checking). Assignees or admins only",
+                "Send a reported task to the review backlog (skips cross-checking). Assignees or admins only." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("send_to_review", async (args) => {
@@ -140,7 +151,8 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "claim_review_task",
         {
             description:
-                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote",
+                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote." +
+                LABELS_NOTE,
             inputSchema: NamespaceOnlySchema.shape as any,
         },
         safeTool("claim_review_task", async (args) => {
@@ -164,7 +176,8 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "publish_review_task",
         {
             description:
-                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled",
+                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled, and the classification must be an option of the task's classification methodology." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("publish_review_task", async (args) => {

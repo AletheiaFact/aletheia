@@ -94,6 +94,22 @@ const reviewTaskDataHash = z
 
 export const NamespaceOnlySchema = z.object({ nameSpace });
 
+// .optional(), not .default(): Zod 4 marks default fields as required in the
+// JSON Schema sent to the model. The default is applied server-side.
+const classificationMethodology = z
+    .enum(METHODOLOGY_IDS)
+    .optional()
+    .describe(
+        `Classification methodology for the task (${METHODOLOGY_IDS.join(
+            ", "
+        )}); defaults to ${DEFAULT_METHODOLOGY}. It is fixed once work starts. Call list_classification_methodologies for each one's options.`
+    );
+
+export const NextReviewTaskSchema = z.object({
+    nameSpace,
+    classificationMethodology,
+});
+
 export const ReviewTaskByHashSchema = z.object({
     dataHash: reviewTaskDataHash,
 });
@@ -154,16 +170,7 @@ export const StartReviewTaskSchema = z.object({
         .regex(/^[a-f0-9]{32}$/i)
         .describe("data_hash of the claim sentence to review"),
     nameSpace,
-    // .optional(), not .default(): Zod 4 marks default fields as required in
-    // the JSON Schema sent to the model. The default is applied server-side.
-    classificationMethodology: z
-        .enum(METHODOLOGY_IDS)
-        .optional()
-        .describe(
-            `Classification methodology for this review (${METHODOLOGY_IDS.join(
-                ", "
-            )}); defaults to ${DEFAULT_METHODOLOGY}. Call list_classification_methodologies for each one's options.`
-        ),
+    classificationMethodology,
 });
 
 export const ListClassificationMethodologiesSchema = z.object({});

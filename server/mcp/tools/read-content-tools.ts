@@ -10,13 +10,18 @@ import {
     ListSourcesSchema,
 } from "./schemas";
 import type { McpToolDeps } from "../mcp.service";
-import { withClassificationLabels } from "./classification-labels";
+import {
+    CLASSIFICATION_LABELS_NOTE as LABELS_NOTE,
+    withClassificationLabels,
+} from "./classification-labels";
 
 export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "list_claims",
         {
-            description: "List claims, optionally filtered by personality",
+            description:
+                "List claims, optionally filtered by personality." +
+                LABELS_NOTE,
             inputSchema: ListClaimsSchema.shape as any,
         },
         safeTool("list_claims", async (args) => {
@@ -44,7 +49,7 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
                 totalClaims: total,
                 totalPages: Math.ceil(total / args.pageSize),
                 page: args.page,
-                claims: data,
+                claims: withClassificationLabels(data),
             });
         })
     );
@@ -53,7 +58,8 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
         "get_claim",
         {
             description:
-                "Get a claim by id, including its latest revision. Classified items include classificationMethodology, methodologyName and classificationLabel: report the label with its methodology.",
+                "Get a claim by id, including its latest revision." +
+                LABELS_NOTE,
             inputSchema: GetClaimSchema.shape as any,
         },
         safeTool("get_claim", async (args) => {
@@ -76,7 +82,7 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "list_personalities",
         {
-            description: "List public figures (personalities)",
+            description: "List public figures (personalities)." + LABELS_NOTE,
             inputSchema: ListPersonalitiesSchema.shape as any,
         },
         safeTool("list_personalities", async (args) => {
@@ -93,13 +99,15 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             return jsonResult(
-                await deps.personalityService.combinedListAll({
-                    page: args.page,
-                    pageSize: args.pageSize,
-                    order: args.order,
-                    language: args.language,
-                    nameSpace: args.nameSpace,
-                })
+                withClassificationLabels(
+                    await deps.personalityService.combinedListAll({
+                        page: args.page,
+                        pageSize: args.pageSize,
+                        order: args.order,
+                        language: args.language,
+                        nameSpace: args.nameSpace,
+                    })
+                )
             );
         })
     );
@@ -107,7 +115,7 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "get_personality",
         {
-            description: "Get a personality by id, with claims",
+            description: "Get a personality by id, with claims." + LABELS_NOTE,
             inputSchema: GetPersonalitySchema.shape as any,
         },
         safeTool("get_personality", async (args) => {
@@ -117,10 +125,12 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             return jsonResult(
-                await deps.personalityService.getById(args.personalityId, {
-                    language: args.language,
-                    nameSpace: args.nameSpace,
-                })
+                withClassificationLabels(
+                    await deps.personalityService.getById(args.personalityId, {
+                        language: args.language,
+                        nameSpace: args.nameSpace,
+                    })
+                )
             );
         })
     );
@@ -128,7 +138,7 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "list_sources",
         {
-            description: "List classified sources (references)",
+            description: "List classified sources (references)." + LABELS_NOTE,
             inputSchema: ListSourcesSchema.shape as any,
         },
         safeTool("list_sources", async (args) => {
@@ -138,12 +148,14 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             return jsonResult(
-                await deps.sourceService.listAll({
-                    page: args.page,
-                    pageSize: String(args.pageSize),
-                    order: args.order,
-                    nameSpace: args.nameSpace,
-                })
+                withClassificationLabels(
+                    await deps.sourceService.listAll({
+                        page: args.page,
+                        pageSize: String(args.pageSize),
+                        order: args.order,
+                        nameSpace: args.nameSpace,
+                    })
+                )
             );
         })
     );

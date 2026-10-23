@@ -20,10 +20,10 @@ import {
     METHODOLOGY_IDS,
     classificationMethodologies,
 } from "../../../lib/classification-methodology";
-import { withClassificationLabels } from "./classification-labels";
-
-const LABELS_NOTE =
-    " Classified items include classificationMethodology, methodologyName and classificationLabel: report the label with its methodology.";
+import {
+    CLASSIFICATION_LABELS_NOTE as LABELS_NOTE,
+    withClassificationLabels,
+} from "./classification-labels";
 
 export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
     // Registered with `.shape` (plain object schema) so tools/list advertises
@@ -97,7 +97,8 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "next_cross_checking",
         {
             description:
-                "Get your oldest cross-checking task (where you are the cross-checker) and how many are waiting",
+                "Get your oldest cross-checking task (where you are the cross-checker) and how many are waiting." +
+                LABELS_NOTE,
             inputSchema: NamespaceOnlySchema.shape as any,
         },
         safeTool("next_cross_checking", async (args) => {
@@ -123,7 +124,8 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "list_my_review_tasks",
         {
             description:
-                "List tasks in review (submitted) where you are the reviewer, oldest first: the reports you need to review to publish",
+                "List tasks in review (submitted) where you are the reviewer, oldest first: the reports you need to review to publish." +
+                LABELS_NOTE,
             inputSchema: ListMyReviewTasksSchema.shape as any,
         },
         safeTool("list_my_review_tasks", async (args) => {

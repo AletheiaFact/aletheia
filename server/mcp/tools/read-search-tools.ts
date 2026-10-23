@@ -2,13 +2,18 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { assertNamespaceAccess, jsonResult, safeTool } from "./tool-helpers";
 import { SearchSchema, SearchTopicsSchema } from "./schemas";
 import type { McpToolDeps } from "../mcp.service";
+import {
+    CLASSIFICATION_LABELS_NOTE as LABELS_NOTE,
+    withClassificationLabels,
+} from "./classification-labels";
 
 export function registerReadSearchTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "search",
         {
             description:
-                "Full-text search across personalities, claim sentences and claim revisions",
+                "Full-text search across personalities, claim sentences and claim revisions." +
+                LABELS_NOTE,
             inputSchema: SearchSchema.shape as any,
         },
         safeTool("search", async (args) => {
@@ -37,18 +42,20 @@ export function registerReadSearchTools(server: McpServer, deps: McpToolDeps) {
                         nameSpace,
                     }),
                 ]);
-                return jsonResult({
-                    personalities: personalities.processedPersonalities,
-                    sentences: sentences.processedSentences,
-                    claims: claims.processedRevisions,
-                });
+                return jsonResult(
+                    withClassificationLabels({
+                        personalities: personalities.processedPersonalities,
+                        sentences: sentences.processedSentences,
+                        claims: claims.processedRevisions,
+                    })
+                );
             }
             const fallback = await deps.personalityService.combinedListAll({
                 name: searchText,
                 pageSize,
                 language,
             });
-            return jsonResult(fallback);
+            return jsonResult(withClassificationLabels(fallback));
         })
     );
 

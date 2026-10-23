@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { getModelToken } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AdminUserMock } from "./utils/AdminUserMock";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import {
     adminUser,
     authState,
@@ -169,6 +170,92 @@ describe("MCP task queue (e2e)", () => {
             dataHash: task.dataHash,
         });
         expect(again.result.isError).toBe(true);
+    });
+
+    it("carries the classification methodology from the queue to the published review", async () => {
+        // Prototype, not app.get(): modules that list FeatureFlagService in
+        // their own providers get separate instances
+        const flag = vi
+            .spyOn(
+                FeatureFlagService.prototype,
+                "isEnableClassificationMethodology"
+            )
+            .mockReturnValue(true);
+        try {
+            await createClaim("Frase para checar na escala RNCD.");
+            let task: any;
+            do {
+                ({ task } = await callOk("next_review_task", {
+                    classificationMethodology: "rncd-debate",
+                }));
+            } while (task && !/escala RNCD/.test(task.sentence ?? ""));
+            expect(task?.classificationMethodology).toBe("rncd-debate");
+
+            // The report itself is written in the web editor; store one
+            // whose classification the RNCD scale does not offer.
+            await reviewTasks().updateOne(
+                { data_hash: task.dataHash },
+                {
+                    $set: {
+                        "machine.value": "reported",
+                        "machine.context.reviewData.classification":
+                            "exaggerated",
+                        "machine.context.reviewData.summary": "Resumo.",
+                        "machine.context.reviewData.report": "Relatório.",
+                        "machine.context.reviewData.verification":
+                            "Verificação.",
+                        "machine.context.reviewData.questions": ["Procede?"],
+                        "machine.context.reviewData.sources": [
+                            { href: "https://example.org/fonte-rncd" },
+                        ],
+                    },
+                }
+            );
+            await callOk("send_to_review", { dataHash: task.dataHash });
+            authState.user = reviewerUser();
+            const claimed = await callOk("claim_review_task");
+            expect(claimed.task.dataHash).toBe(task.dataHash);
+            expect(claimed.task.classificationMethodology).toBe("rncd-debate");
+
+            const refused = await callTool(mcp.app, "publish_review_task", {
+                dataHash: task.dataHash,
+            });
+            expect(refused.result.isError).toBe(true);
+            expect(refused.result.content[0].text).toMatch(/not an option/);
+
+            await reviewTasks().updateOne(
+                { data_hash: task.dataHash },
+                {
+                    $set: {
+                        "machine.context.reviewData.classification":
+                            "trustworthy",
+                    },
+                }
+            );
+            const published = await callOk("publish_review_task", {
+                dataHash: task.dataHash,
+            });
+            expect(published.state).toBe("published");
+            expect(published.classificationLabel.pt).toBe("Verdadeiro");
+
+            // ClaimReview creation is fire-and-forget, as on the web path
+            let review: any = null;
+            for (let i = 0; i < 50 && !review?.report; i++) {
+                review = await callOk("get_claim_review", {
+                    dataHash: task.dataHash,
+                });
+                if (!review?.report)
+                    await new Promise((r) => setTimeout(r, 100));
+            }
+            expect(review.report.classification).toBe("trustworthy");
+            expect(review.report.classificationMethodology).toBe("rncd-debate");
+            expect(review.report.classificationLabel).toEqual({
+                pt: "Verdadeiro",
+                en: "True",
+            });
+        } finally {
+            flag.mockRestore();
+        }
     });
 
     it("join_review_task adds a co-checker once", async () => {

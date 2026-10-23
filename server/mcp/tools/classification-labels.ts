@@ -1,9 +1,14 @@
 import { isClassificationKey } from "../../../lib/classification";
 import {
+    DEFAULT_METHODOLOGY,
     getClassificationLabel,
     getMethodology,
     resolveMethodologyId,
 } from "../../../lib/classification-methodology";
+
+/** Appended to the description of every tool whose result is labelled here. */
+export const CLASSIFICATION_LABELS_NOTE =
+    " Classified items include classificationMethodology, methodologyName and classificationLabel: report the label with its methodology. Review stats combine all methodologies and carry an aletheia-worded classificationLabel (labelMethodology).";
 
 /**
  * MCP results carry stored keys ("trustworthy"), but their wording depends
@@ -12,6 +17,9 @@ import {
  * methodology comes from the same object or the nearest ancestor: a review
  * task keeps it at the top while its classification sits in
  * machine.context.reviewData.
+ *
+ * Review stats entries ({ _id: key, count }) combine every methodology, so,
+ * as on the web, they get the aletheia wording and say so (labelMethodology).
  */
 export function withClassificationLabels<T>(data: T): T {
     if (data === null || data === undefined) {
@@ -20,6 +28,21 @@ export function withClassificationLabels<T>(data: T): T {
     const plain = JSON.parse(JSON.stringify(data));
     annotate(plain, undefined);
     return plain;
+}
+
+const labels = (methodologyId: string, key: string) => ({
+    pt: getClassificationLabel(methodologyId, key, "pt"),
+    en: getClassificationLabel(methodologyId, key, "en"),
+});
+
+// Stats group by the stored key: { _id: "false", count } or, before
+// formatting, { _id: ["false"], count }
+function statsKey(record: Record<string, unknown>): string | undefined {
+    if (typeof record.count !== "number") {
+        return undefined;
+    }
+    const id = Array.isArray(record._id) ? record._id[0] : record._id;
+    return isClassificationKey(id) ? id : undefined;
 }
 
 function annotate(node: unknown, inherited: string | undefined): void {
@@ -40,10 +63,13 @@ function annotate(node: unknown, inherited: string | undefined): void {
         const resolved = resolveMethodologyId(methodologyId);
         record.classificationMethodology = resolved;
         record.methodologyName = { ...getMethodology(resolved).name };
-        record.classificationLabel = {
-            pt: getClassificationLabel(resolved, record.classification, "pt"),
-            en: getClassificationLabel(resolved, record.classification, "en"),
-        };
+        record.classificationLabel = labels(resolved, record.classification);
+    }
+
+    const key = statsKey(record);
+    if (key) {
+        record.classificationLabel = labels(DEFAULT_METHODOLOGY, key);
+        record.labelMethodology = DEFAULT_METHODOLOGY;
     }
 
     Object.values(record).forEach((child) => annotate(child, methodologyId));
