@@ -30,6 +30,14 @@ const chunk = <T,>(items: T[], size: number) =>
         items.slice(index * size, index * size + size)
     );
 
+// Runs `step` on each item one after the other, each after the previous
+// one resolved.
+const runInSequence = <T,>(items: T[], step: (item: T) => Promise<void>) =>
+    items.reduce<Promise<void>>(
+        (previous, item) => previous.then(() => step(item)),
+        Promise.resolve()
+    );
+
 interface ITranscriptDraftsPanelProps {
     debateId: string;
     editorReference: string;
@@ -201,25 +209,22 @@ const TranscriptDraftsPanel = ({
                 // Batches are approved one after the other: the server
                 // appends each batch to the debate as it arrives, so
                 // parallel requests could mix up the speech order.
-                await chunk(ids, MAX_TURNS_PER_REQUEST).reduce(
-                    (previous, batch) =>
-                        previous.then(async () => {
-                            const reviewed =
-                                await debateTranscriptApi.reviewTurns(
-                                    debateId,
-                                    batch,
-                                    "approve",
-                                    t
-                                );
-                            published.push(
-                                ...reviewed.map(({ turnId, speechId }) => ({
-                                    speechId,
-                                    personalityId:
-                                        personalityByTurn.get(turnId),
-                                }))
-                            );
-                        }),
-                    Promise.resolve()
+                await runInSequence(
+                    chunk(ids, MAX_TURNS_PER_REQUEST),
+                    async (batch) => {
+                        const reviewed = await debateTranscriptApi.reviewTurns(
+                            debateId,
+                            batch,
+                            "approve",
+                            t
+                        );
+                        published.push(
+                            ...reviewed.map(({ turnId, speechId }) => ({
+                                speechId,
+                                personalityId: personalityByTurn.get(turnId),
+                            }))
+                        );
+                    }
                 );
             } finally {
                 // A failed batch must not drop the cards of the batches
@@ -241,7 +246,9 @@ const TranscriptDraftsPanel = ({
 
     const handleReject = (ids: string[]) => {
         if (
-            !window.confirm(t("debates:draftsRejectConfirm", { count: ids.length }))
+            !window.confirm(
+                t("debates:draftsRejectConfirm", { count: ids.length })
+            )
         ) {
             return;
         }
@@ -258,9 +265,7 @@ const TranscriptDraftsPanel = ({
                 )
             );
             discardEdits(ids);
-            setSelected((current) =>
-                current.filter((id) => !ids.includes(id))
-            );
+            setSelected((current) => current.filter((id) => !ids.includes(id)));
         });
     };
 
