@@ -69,6 +69,51 @@ describe("claim shared rules", () => {
         expect(out.props).toEqual({ key: "k", classification: "false" });
     });
 
+    it("transformContentObject carries the review's methodology to sentences", () => {
+        const paras = paragraphs();
+        const out = transformContentObject(
+            paras,
+            [
+                {
+                    _id: {
+                        data_hash: "aaa",
+                        classification: ["trustworthy"],
+                        classificationMethodology: "rncd-debate",
+                    },
+                },
+            ],
+            []
+        );
+        expect(out[0].content[0].props).toEqual(
+            expect.objectContaining({
+                classification: "trustworthy",
+                classificationMethodology: "rncd-debate",
+            })
+        );
+    });
+
+    it("transformContentObject carries the review's methodology to an image", () => {
+        const image = { type: "Image", data_hash: "img", props: { key: "k" } };
+        const out = transformContentObject(
+            image,
+            [
+                {
+                    _id: {
+                        data_hash: "img",
+                        classification: ["false"],
+                        classificationMethodology: "rncd-debate",
+                    },
+                },
+            ],
+            []
+        );
+        expect(out.props).toEqual({
+            key: "k",
+            classification: "false",
+            classificationMethodology: "rncd-debate",
+        });
+    });
+
     it("annotateClaimContent maps over every speech of a debate", () => {
         const claim = {
             contentModel: "Debate",

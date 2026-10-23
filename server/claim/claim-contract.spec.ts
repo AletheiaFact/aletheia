@@ -478,6 +478,12 @@ describe.each(backends)(
                 expect(report!.classification).toBe("trustworthy");
                 expect(report!.classificationMethodology).toBe("rncd-debate");
             });
+
+            const sentence = await stack.sentenceService.getByDataHash(hash);
+            expect(sentence.props.classification).toBe("trustworthy");
+            expect(sentence.props.classificationMethodology).toBe(
+                "rncd-debate"
+            );
         });
 
         it("speech and claim-revision reads resolve the content tree and the content id", async () => {
