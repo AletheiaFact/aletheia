@@ -65,6 +65,17 @@ resources: Listing<K8sResource> = new {
         }
         spec {
             replicas = DeploymentOptions.replicas
+            // Start every new pod at once and keep the old ones until the
+            // new ones are ready. The default (25%/25%) rounds to one pod at
+            // a time at 3 replicas, and each pod needs about 2.5–4 min
+            // (image pull + readiness delay), which outlasts the CI wait.
+            strategy {
+                type = "RollingUpdate"
+                rollingUpdate {
+                    maxSurge = "100%"
+                    maxUnavailable = 0
+                }
+            }
             selector {
                 matchLabels {
                     ["app"] = "aletheia"
