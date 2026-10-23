@@ -10,6 +10,7 @@ export interface IReport {
     verification?: string;
     sources: string[];
     classification: string;
+    classificationMethodology?: string;
     createdAt?: Date;
     updatedAt?: Date;
     [key: string]: any;

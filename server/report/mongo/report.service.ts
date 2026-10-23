@@ -48,14 +48,21 @@ export class MongoReportService {
     updateReportSource(
         {
             classification,
+            classificationMethodology,
             summary,
             data_hash,
-        }: { classification: string; summary: string; data_hash: string },
+        }: {
+            classification: string;
+            classificationMethodology?: string;
+            summary: string;
+            data_hash: string;
+        },
         targetId: string
     ) {
         const newSourceBody = {
             props: {
                 classification: classification,
+                ...(classificationMethodology && { classificationMethodology }),
                 summary: summary,
                 date: new Date(),
             },

@@ -457,6 +457,29 @@ describe.each(backends)(
             ).rejects.toBeInstanceOf(NotFoundException);
         });
 
+        it("a report keeps its classification methodology", async () => {
+            const created = await stack.claimService.create(speechBody());
+            const revision = await stack.revisionService.getRevisionById(
+                idOf(created.latestRevision)
+            );
+            const hash = revision!.content[0].content[0].content[0].data_hash;
+
+            await stack.reportService.create({
+                data_hash: hash,
+                reportModel: "Fact-checking",
+                usersId: makeId(),
+                summary: "Checked",
+                sources: ["https://report.test"],
+                classification: "trustworthy",
+                classificationMethodology: "rncd-debate",
+            });
+            await vi.waitFor(async () => {
+                const report = await stack.reportService.findByDataHash(hash);
+                expect(report!.classification).toBe("trustworthy");
+                expect(report!.classificationMethodology).toBe("rncd-debate");
+            });
+        });
+
         it("speech and claim-revision reads resolve the content tree and the content id", async () => {
             const created = await stack.claimService.create(speechBody());
             const revision = await stack.revisionService.getRevisionById(
