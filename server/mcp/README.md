@@ -199,15 +199,6 @@ completeness rules and list what is missing.
 
 Rules (`mcp.task_queue` in `config.yaml`):
 
-- `max_open_per_user` (default 1): tasks a non-admin may hold in `assigned`
-  before `next_review_task` refuses more.
-- `max_releases` (default 2): a task released this many times leaves the
-  queue for a person to triage. A user is never handed a task they released.
-- `require_cross_check` (default true): `send_to_review` needs a cross-check
-  whose label matches the report's.
-- `auto_send_to_review` (default true): a cross-check that agrees with the
-  report's label moves the task straight to the review backlog, so the writer
-  does not need to call `send_to_review`.
 - `max_assignees` (default 10): limit for `join_review_task`.
 
 The four-eyes rule is enforced by account: a cross-checker is never an
