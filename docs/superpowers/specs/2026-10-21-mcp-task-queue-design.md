@@ -310,6 +310,87 @@ Open questions added by the builder:
   (a guarded `findOneAndUpdate` plus the normal update path, or equivalent).
 - Result shapes, pagination, and load-test approach.
 
+## Manual test questions
+
+Questions to ask an MCP client (Claude) to exercise every tool by hand. They
+rely on the local seed (`aletheia seed`; `aletheia seed -f` resets the data
+between runs). Log in as the queue owner (`SEED_QUEUE_EMAIL`, default
+`test@aletheiafact.org`, made a reviewer by the seed). Items marked (write)
+change data, so run them in order.
+
+Seeded queue: 41 `unassigned`, 1 `assigned` (SUS), 2 `reported` (Bolsa Família
+by Ana, STF by me), 2 backlog (Vorcaro, aquecimento global), 3
+`cross-checking` (2 mine: "80% endividadas" and "extrema pobreza"; 1 for
+Bruno), 3 `submitted` (2 mine: Combustíveis and agro; 1 for Bruno).
+
+### Content (read)
+
+1. "Busque por 'Bolsa Família'." -> `search`
+2. "Busque tópicos sobre 'clima'." -> `search_topics`
+3. "Liste as personalidades cadastradas." -> `list_personalities` (4)
+4. "Mostre a personalidade Flávio Bolsonaro com as claims." -> `get_personality`
+5. "Liste as claims do Lula." -> `list_claims` (filtered by personality)
+6. "Mostre a claim 'Lula afirma ser o criador do SUS'." -> `get_claim`
+7. "Liste as fontes classificadas." -> `list_sources`
+8. "Mostre a checagem 'Lula exagera ao dizer que o Brasil já tem 53% de energia renovável'." -> `get_claim_review` (`trustworthy-but`)
+
+### Queue and tasks (read)
+
+9. "Quantas tarefas existem em cada estado?" -> `list_review_tasks`
+   (41 unassigned, 1 assigned, 2 reported, 2 backlog, 3 cross-checking,
+   3 submitted)
+10. "Liste só as minhas tarefas." -> `list_review_tasks` with `mine`
+11. "Mostre os detalhes dessa tarefa" (id from the previous answer) ->
+    `get_review_task`
+12. "Pegue o próximo Cross checking atribuído para mim." ->
+    `next_cross_checking`: "80% das famílias endividadas", 2 waiting. Bruno's
+    task must not appear.
+13. "Pegue as tarefas que preciso revisar para publicar." ->
+    `list_my_review_tasks`: Combustíveis and agro. Bruno's "meio ambiente"
+    must not appear.
+
+### Queue (write)
+
+14. "Pegue a próxima tarefa." -> `next_review_task`: the oldest unassigned task
+    becomes yours; asking again returns a different one.
+15. "Entre na tarefa do SUS." -> `join_review_task`. Repeat: no change. Try it
+    on a `submitted` task: must be refused.
+16. "Entre na tarefa do Bolsa Família." -> `join_review_task` (`reported`)
+17. "Mande a tarefa do STF para revisão." -> `send_to_review`. On the Bolsa
+    Família task (not an assignee): must be refused.
+18. "Pegue a próxima revisão do backlog." -> `claim_review_task`: Vorcaro or
+    aquecimento, never a task you wrote.
+19. "Comente na tarefa dos combustíveis: 'conferir a fonte'." ->
+    `add_review_comment`
+20. "Publique a tarefa dos combustíveis." -> `publish_review_task`
+    (`not-fact`, so summary and sources are enough). Then `get_claim_review`
+    must find it.
+21. "Publique a tarefa do agro." -> refused if it is not yours or fields are
+    missing.
+
+### Content (write)
+
+22. "Crie uma personalidade chamada 'Fulano de Teste'." -> `create_personality`
+23. "Crie uma claim dela: 'O Brasil tem 5 mil municípios'." -> `create_claim`
+    (its task must enter the queue as `unassigned`)
+24. "Registre a fonte https://www.ibge.gov.br." -> `create_source`
+25. "Crie um pedido de verificação com o texto 'vi num grupo que...'." ->
+    `create_verification_request`
+26. "Comece a checar a primeira frase dessa claim." -> `start_review_task`
+    (takes the queued task)
+
+### Verification requests (read)
+
+27. "Liste os pedidos de verificação." -> `list_verification_requests`
+28. "Mostre o pedido que acabei de criar." -> `get_verification_request`
+
+### Must fail
+
+- Another user publishing your task.
+- `claim_review_task` without the Reviewer role.
+- Two sessions asking for the next task at the same time: each gets a
+  different task.
+
 ## Tasks
 
 `[x]` done, `[~]` started, `[ ]` not started. Work lands in draft PR #2653.
