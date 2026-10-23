@@ -17,6 +17,20 @@ mcp:
   public_url: https://aletheiafact.org   # MCP_PUBLIC_URL
 ```
 
+In the deployed environments, set the two values as **GitHub environment
+variables** (Settings → Environments → `development` or `production` →
+Variables). The deploy workflow (`.github/workflows/aws.yml`) passes them to
+`deployment/config/config-file/modules/service/confBase.pkl`. MCP stays off in
+an environment unless it sets `MCP_ENABLED` to `true`.
+
+| Environment | Branch | `MCP_ENABLED` | `MCP_PUBLIC_URL` |
+| --- | --- | --- | --- |
+| `development` | `stage` | `true` | `https://test.aletheiafact.org` |
+| `production` | `master` | unset (off) | — |
+
+Set `MCP_PUBLIC_URL` to the environment's own origin. Clients use it to find
+the protected-resource metadata and the authorization server.
+
 ### Ory Network (one-time, per environment)
 
 1. In the Ory Network console for the project, enable **OAuth2** (Hydra).
