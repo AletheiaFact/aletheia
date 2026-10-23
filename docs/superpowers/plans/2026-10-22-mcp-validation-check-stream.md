@@ -47,7 +47,7 @@ A aprovação pelas lojas de extensões não faz parte da meta de 23/10.
 
 ### MCP e persistência
 
-- [ ] Executar testes da fila MCP existente e registrar falhas antes das mudanças.
+- [x] Executar testes da fila MCP existente e registrar falhas antes das mudanças.
 - [ ] Corrigir o caminho de publicação para só confirmar sucesso após persistir Report e ClaimReview.
 - [ ] Ampliar ferramentas e validações MCP para preparar e avançar Informative News.
 - [ ] Exigir revisor humano autorizado na publicação dos dois modelos; manter Request fora do stream.
