@@ -53,6 +53,7 @@ describe("MCP discovery (e2e)", () => {
                 "get_personality",
                 "get_review_task",
                 "get_verification_request",
+                "list_classification_methodologies",
                 "list_claims",
                 "list_personalities",
                 "list_review_tasks",

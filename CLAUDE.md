@@ -170,6 +170,7 @@ Active flags:
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
 - `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
+- `enable_classification_methodology` — Methodology picker on new fact-checking tasks (off = new tasks use `aletheia`; reviews that already have a methodology are still shown with it)
 
 ## Rate Limiting
 
@@ -214,6 +215,8 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 10. **Postgres migration (in progress)**: MongoDB → Postgres, module by module behind a `DB_TYPE` boot switch. Before touching any `<module>/postgres/`, `server/database/postgres/`, or `migrations-postgres/` code, read `docs/postgres-migration-foundation.md` — it is the single source of truth for the architecture decisions, the per-module porting recipe, and the ship gates. To port a module, invoke the `pg-migrate-module` skill (`.claude/skills/pg-migrate-module/`)
 
 11. **LLM / Embeddings Providers**: AI features (copilot, summarization, verification-request embeddings) use injectable `LLMProvider` / `EmbeddingsProvider` abstractions (`server/llm/`, DI tokens `LLM_PROVIDER` / `EMBEDDINGS_PROVIDER`, bound by the global `LlmModule`). The default implementations target any OpenAI-compatible endpoint. Configure via the `llm` block in `config.yaml` (`api_key`, optional `base_url`, `chat_model`, `temperature`, `embeddings_model`); `api_key` falls back to `openai.api_key` then `OPENAI_API_KEY`. Point `llm.base_url` at a self-hosted/open-weight server (Ollama, vLLM, LocalAI, Azure) to swap providers with no code change; when no key is configured, a placeholder API key is supplied automatically for keyless local servers. Leave `embeddings_model` unset to preserve stored-vector compatibility. See `server/llm/USING-A-LOCAL-PROVIDER.md` for an Ollama setup example.
+
+12. **Classification methodologies**: Stored classifications are always one of the 9 `ClassificationEnum` keys (`lib/classification.ts`). A methodology (`lib/classification-methodology.ts`: `aletheia` default, `rncd-debate`) decides which keys a task offers and how they are worded (pt/en labels live in the registry, not the locale files). It is chosen when a fact-checking task is created, stored on the review task and copied to the report on publish; reads expose it as `props.classificationMethodology` next to `props.classification`. Use `useClassificationLabel` / `ClassificationText` (frontend) or `getClassificationLabel` (server) — never translate a classification key directly. Combined stats keep the aletheia wording.
 
 ## Development Setup
 
