@@ -95,6 +95,18 @@ export const ReviewTaskByHashSchema = z.object({
     dataHash: reviewTaskDataHash,
 });
 
+export const SubmitReportSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    // Optional with the default applied in the handler: Zod 4 marks
+    // .default() fields required in the JSON Schema sent to the model.
+    sendToCrossCheck: z
+        .boolean()
+        .optional()
+        .describe(
+            "Also send the report to the cross-check backlog in the same call (default false)"
+        ),
+});
+
 export const ListMyReviewTasksSchema = z.object({
     page: pagination.page,
     pageSize: pagination.pageSize,

@@ -172,22 +172,22 @@ view gets a conflict, never someone else's task.
 
 | Step | Tool | Access | Who | State change |
 | --- | --- | --- | --- | --- |
-| Take work | `next_review_task` | write | any checker | `unassigned` → `assigned` |
+| Take work | `next_review_task` | write | any checker | `unassigned` → `assigned` (returns the claim context) |
 | Take a given sentence | `start_review_task` | write | any checker | (none or `unassigned`) → `assigned` |
 | Join | `join_review_task` | write | any checker | adds an assignee |
 | Read the form | `get_review_log` | read | anyone | — |
 | Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
-| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` |
+| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`) |
 | Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
 | Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
-| Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` |
+| Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` (returns the claim context, not the writer's label) |
 | My cross-checks | `next_cross_checking` | read | cross-checker | — |
-| Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `reported`; different → `assigned` |
-| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` |
-| Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` |
+| Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `selectReviewer` (or `reported` when `auto_send_to_review` is false); different → `assigned` |
+| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` (only when `auto_send_to_review` is false) |
+| Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` (returns the claim context and the review form) |
 | My reviews | `list_my_review_tasks` | read | reviewer | — |
 | Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
-| Publish | `publish_review_task` | write | reviewer | `submitted` → `published` |
+| Publish | `publish_review_task` | write | reviewer | `submitted` → `published` (returns the ClaimReview) |
 
 `save_review_log` takes the form in plain text — `summary` ("Resumo da
 conclusão"), `questions`, `report` ("Relatório da verificação"),
@@ -205,6 +205,9 @@ Rules (`mcp.task_queue` in `config.yaml`):
   queue for a person to triage. A user is never handed a task they released.
 - `require_cross_check` (default true): `send_to_review` needs a cross-check
   whose label matches the report's.
+- `auto_send_to_review` (default true): a cross-check that agrees with the
+  report's label moves the task straight to the review backlog, so the writer
+  does not need to call `send_to_review`.
 - `max_assignees` (default 10): limit for `join_review_task`.
 
 The four-eyes rule is enforced by account: a cross-checker is never an

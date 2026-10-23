@@ -26,21 +26,23 @@ export function stateName(value: unknown): string {
 
 // Sentences are the leaves of a claim's content tree: paragraphs also carry
 // a data_hash, but their `content` is an array rather than a string.
-export function collectSentenceHashes(
+export function collectSentences(
     node: any,
-    found: string[] = []
-): string[] {
+    found: { dataHash: string; text: string }[] = []
+): { dataHash: string; text: string }[] {
     if (Array.isArray(node)) {
-        node.forEach((child) => collectSentenceHashes(child, found));
+        node.forEach((child) => collectSentences(child, found));
     } else if (node && typeof node === "object") {
         if (node.data_hash && typeof node.content === "string") {
-            found.push(node.data_hash);
+            found.push({ dataHash: node.data_hash, text: node.content });
         }
-        Object.values(node).forEach((child) =>
-            collectSentenceHashes(child, found)
-        );
+        Object.values(node).forEach((child) => collectSentences(child, found));
     }
     return found;
+}
+
+export function collectSentenceHashes(node: any): string[] {
+    return collectSentences(node).map((sentence) => sentence.dataHash);
 }
 
 /** Id of the claim's first personality, as the web form sends it; "" when none. */

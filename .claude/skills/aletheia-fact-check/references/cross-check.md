@@ -20,13 +20,15 @@ comes from reaching a conclusion without being led by the first one.
 1. Get the task: `claim_cross_check` takes the oldest report waiting for a
    cross-check and makes you its cross-checker; `next_cross_checking` lists
    the ones already yours.
-2. Read **only** the sentence and the claim (`get_claim`). Do not read the
-   writer's `summary`, `report` or `classification` yet.
+2. Read **only** the sentence and the `claim` that `claim_cross_check`
+   returned (`get_claim` only if it is missing). Do not read the writer's
+   `summary`, `report` or `classification` yet.
 3. Write your own guiding questions and do a quick independent check
    (`research.md`): find at least the decisive source yourself.
 4. Choose your label with `labels.md`. Note it.
 5. Now read the writer's Review Log (`get_review_log`). Check:
-   - every source opens and says what the report claims;
+   - every source opens and says what the report claims (fetch them in
+     parallel; skip re-fetching one you already read in step 3);
    - every guiding question is answered;
    - calculations are right (10% rule);
    - the label follows the decision order;
@@ -36,7 +38,8 @@ comes from reaching a conclusion without being led by the first one.
 6. Decide:
    - **Same label, report sound** → `submit_cross_check` with the same
      `classification` and a short comment saying what you verified
-     ("Conferi as fontes X e Y e o cálculo; concordo.").
+     ("Conferi as fontes X e Y e o cálculo; concordo."). The task goes
+     straight to the review backlog.
    - **Different label, or a factual error in the report** →
      `submit_cross_check` with **your** label and a comment that names the
      exact problem and the source that shows it ("O relatório usa o dado de

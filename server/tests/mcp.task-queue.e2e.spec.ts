@@ -230,13 +230,9 @@ describe("MCP task queue (e2e)", () => {
             classification: "false",
             comment: "Conferi a base oficial; o número é 100.",
         });
-        expect(checked.state).toBe("reported");
+        // an agreeing cross-check goes straight to the review backlog
+        expect(checked.state).toBe("selectReviewer");
         expect(checked.crossCheck.classification).toBe("false");
-
-        authState.user = writerUser();
-        expect((await callOk("send_to_review", { dataHash })).state).toBe(
-            "selectReviewer"
-        );
 
         // neither the writer nor the cross-checker may review it
         authState.user = { ...checkerUser(), role: { main: "reviewer" } };
@@ -244,14 +240,27 @@ describe("MCP task queue (e2e)", () => {
         expect(byChecker.task?.dataHash).not.toBe(dataHash);
 
         authState.user = reviewerUser();
-        let review: any;
+        let taken: any;
         do {
-            ({ task: review } = await callOk("claim_review_task"));
-        } while (review && review.dataHash !== dataHash);
+            taken = await callOk("claim_review_task");
+        } while (taken.task && taken.task.dataHash !== dataHash);
+        const review = taken.task;
         expect(review.state).toBe("submitted");
+        // the reviewer gets the form and the claim with the task
+        expect(taken.reviewLog).toMatchObject({ ...reviewLog, missing: [] });
+        expect(taken.claim.claimId).toBe(review.claimId);
+        expect(taken.claim.sentences.find((s: any) => s.isTask)?.dataHash).toBe(
+            dataHash
+        );
 
         const published = await callOk("publish_review_task", { dataHash });
         expect(published.state).toBe("published");
+        // and the published ClaimReview comes back with the publish
+        expect(published.claimReview).toMatchObject({
+            isPublished: true,
+            classification: "false",
+        });
+        expect(published.claimReview.report).toContain("<sup>1</sup>");
 
         const claimReview = await claimReviews()
             .findOne({ data_hash: dataHash })
@@ -269,14 +278,25 @@ describe("MCP task queue (e2e)", () => {
             "Frase para discordância do cross-check."
         );
         await callOk("save_review_log", { dataHash, ...reviewLog });
-        await callOk("submit_report", { dataHash });
-        await callOk("send_to_cross_check", { dataHash });
+        // submit and send to cross-check in one call
+        expect(
+            (
+                await callOk("submit_report", {
+                    dataHash,
+                    sendToCrossCheck: true,
+                })
+            ).state
+        ).toBe("selectCrossChecker");
 
         authState.user = checkerUser();
-        let claimed: any;
+        let taken: any;
         do {
-            ({ task: claimed } = await callOk("claim_cross_check"));
-        } while (claimed && claimed.dataHash !== dataHash);
+            taken = await callOk("claim_cross_check");
+        } while (taken.task && taken.task.dataHash !== dataHash);
+        const claimed = taken.task;
+        // the claim comes with the task; the writer's label does not
+        expect(taken.claim.sentences.some((s: any) => s.isTask)).toBe(true);
+        expect(claimed).not.toHaveProperty("classification");
         const checked = await callOk("submit_cross_check", {
             dataHash,
             classification: "misleading",

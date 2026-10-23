@@ -9,10 +9,13 @@ with what must change.
 
 1. Take a review: `claim_review_task` (oldest report waiting for a reviewer),
    or continue one of yours from `list_my_review_tasks`.
-2. Read the claim (`get_claim`) and the full Review Log (`get_review_log`).
+2. Read the `claim` and the `reviewLog` that `claim_review_task` returned
+   (call `get_claim` / `get_review_log` only if one is missing, e.g. for a
+   task taken from `list_my_review_tasks`).
 3. Check, in order:
-   - **Sources.** Open every source. Each one exists and says what the text
-     linked to it claims. Primary sources are used where they exist.
+   - **Sources.** Open every distinct source URL, all in one parallel turn.
+     Each one exists and says what the text linked to it claims. Primary
+     sources are used where they exist.
    - **Questions.** Every guiding question is answered in the report.
    - **Facts.** Every number, date and name in the report and the summary is
      backed by a source; calculations are right (the 10% rule for
@@ -24,7 +27,9 @@ with what must change.
      framing; the same text would be written about anyone.
    - **Language.** Clear Portuguese (pt-BR) a general reader understands.
 4. Decide:
-   - **Everything holds** → `publish_review_task`.
+   - **Everything holds** → `publish_review_task`. Its result includes the
+     published `claimReview` (stored HTML and footnoted sources); check it
+     there, no `get_claim_review` needed.
    - **Something must change** → `reject_review_task` with a
      `rejectionComment` that names each problem and what would fix it
      ("O segundo parágrafo cita 150 sem fonte; incluir o link do IBGE ou

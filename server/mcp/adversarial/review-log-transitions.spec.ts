@@ -268,7 +268,7 @@ describe("MCP adversarial: writing, cross-checking and rejecting", () => {
         });
 
         it.each([
-            ["false", "reported"],
+            ["false", "selectReviewer"],
             ["misleading", { assigned: "draft" }],
         ])(
             "a cross-check labelled %s sends the task to %j",
@@ -297,6 +297,10 @@ describe("MCP adversarial: writing, cross-checking and rejecting", () => {
                         "machine.context.reviewData.crossCheckingClassification"
                     ]
                 ).toBe(label);
+                // an agreeing cross-check enters the review backlog with no reviewer
+                expect(
+                    "machine.context.reviewData.reviewerId" in update.$set
+                ).toBe(target === "selectReviewer");
             }
         );
     });

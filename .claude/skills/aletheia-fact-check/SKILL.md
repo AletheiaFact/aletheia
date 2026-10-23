@@ -65,18 +65,18 @@ The MCP server may be registered under different names (`aletheia`,
 
 | Purpose | Tool | Role |
 | --- | --- | --- |
-| Take the next queued sentence | `next_review_task` | writer |
+| Take the next queued sentence (returns the claim context too) | `next_review_task` | writer |
 | Find your own tasks (incl. returned ones) | `list_review_tasks` with `reviewTaskType: "Claim"`, `mine: "assigned"` | writer |
-| Read the claim around the sentence | `get_claim` | all |
+| Read the claim around the sentence (only if the task tool did not return `claim`) | `get_claim` | all |
 | Read the form, what is `missing`, and why it came back | `get_review_log` | all |
 | Save the form (partial saves allowed) | `save_review_log` | writer |
-| Finish the report | `submit_report` | writer |
+| Finish the report and ask for the cross-check | `submit_report` with `sendToCrossCheck: true` | writer |
 | Give a task back | `release_review_task` | writer |
-| Ask for the cross-check | `send_to_cross_check` | writer |
+| Ask for the cross-check (only after a plain `submit_report`) | `send_to_cross_check` | writer |
 | Take / record a cross-check | `claim_cross_check`, `next_cross_checking`, `submit_cross_check` | cross-checker |
-| Ask for review (after an agreeing cross-check) | `send_to_review` | writer |
-| Take a review / list yours | `claim_review_task`, `list_my_review_tasks` | reviewer |
-| Publish / send back | `publish_review_task`, `reject_review_task` | reviewer |
+| Ask for review (only if an agreeing cross-check left the task in `reported`) | `send_to_review` | writer |
+| Take a review (returns claim and full form) / list yours | `claim_review_task`, `list_my_review_tasks` | reviewer |
+| Publish (returns the ClaimReview) / send back | `publish_review_task`, `reject_review_task` | reviewer |
 | Leave a note | `add_review_comment` | all |
 
 **If `save_review_log` / `submit_report` are not available yet:** do the full
@@ -112,9 +112,10 @@ on the page.
 
 ### 1. Understand the sentence (pré-checagem)
 
-- `get_claim` with the task's `claimId`. Read the sentences around the one
-  you were given: who said it, when (`date`), in what context (title,
-  sources attached to the claim).
+- Read the `claim` that `next_review_task` returned (call `get_claim` with
+  the task's `claimId` only when it is missing): the sentences around the
+  one you were given (`isTask: true`), who said it, when (`date`), in what
+  context (title, sources attached to the claim).
 - Restate the sentence's factual content in one line for yourself.
 
 ### 2. Decide whether it can be checked
@@ -152,8 +153,11 @@ Read `references/research.md`. In short:
   anything decisive.
 - For every source keep: URL, what it shows, and the exact sentence of your
   text it supports.
-- Save as you go with `save_review_log` (partial saves are fine), so work is
-  not lost.
+- Open independent sources in parallel (several fetches in one turn), not
+  one after another.
+- Save once when the form is complete. On long research, one partial
+  `save_review_log` midway is enough insurance; do not save after every
+  source.
 
 ### 5. Write the report and the method
 
@@ -184,12 +188,14 @@ conclusion right.
   anything that fails.
 - `save_review_log` with all fields. Read the returned `missing` list; it must
   be empty.
-- `submit_report`. If it is refused, read the error, fix, resubmit once. If it
-  is refused again, leave the task `assigned`, comment what happened with
-  `add_review_comment`, and tell the user.
-- `send_to_cross_check`. After a cross-checker agrees (the task is back in
-  `reported` with `crossCheck.classification` equal to your label),
-  `send_to_review`.
+- `submit_report` with `sendToCrossCheck: true` (submits and sends to the
+  cross-check backlog in one call). If it is refused, read the error, fix,
+  resubmit once. If it is refused again, leave the task `assigned`, comment
+  what happened with `add_review_comment`, and tell the user.
+- Nothing else to do: an agreeing cross-check moves the task to the review
+  backlog by itself. Only if a task of yours sits in `reported` with
+  `crossCheck.classification` equal to your label (auto-send disabled on the
+  server), call `send_to_review`.
 - If the person checked should be asked for an official statement (manual:
   after classification, when specific people are involved), add a review
   comment: "Pedido de posicionamento pendente: <quem>". You do not contact
@@ -220,9 +226,22 @@ cross-checked.
 
 ## Running the whole flow
 
-For one claim end to end: writer subagent (check, submit,
-`send_to_cross_check`) → cross-checker subagent (`claim_cross_check`,
-independent check, `submit_cross_check`) → writer (`send_to_review`, or
-rework if the labels differ) → reviewer subagent (`claim_review_task`,
-review, `publish_review_task` or `reject_review_task`). Report each hand-off
-to the user in one line.
+For one claim end to end: writer subagent (check, `submit_report` with
+`sendToCrossCheck: true`) → cross-checker subagent (`claim_cross_check`,
+independent check, `submit_cross_check`; agreement sends it to review) →
+reviewer subagent (`claim_review_task`, review, `publish_review_task` or
+`reject_review_task`). The writer comes back only to rework a disagreement
+or a rejection. Report each hand-off to the user in one line.
+
+For several claims, pipeline them: once a writer has submitted claim N, it
+can take claim N+1 (a submitted task no longer counts as held) while the
+cross-checker works on N, and the reviewer on N−1.
+
+Each role loads only its own tools in one ToolSearch call (replace
+`aletheia-x` with the server entry for that role):
+
+- Writer: `select:mcp__aletheia-x__next_review_task,mcp__aletheia-x__list_review_tasks,mcp__aletheia-x__get_review_log,mcp__aletheia-x__save_review_log,mcp__aletheia-x__submit_report,mcp__aletheia-x__release_review_task,mcp__aletheia-x__add_review_comment,mcp__aletheia-x__search`
+- Cross-checker: `select:mcp__aletheia-x__claim_cross_check,mcp__aletheia-x__next_cross_checking,mcp__aletheia-x__get_review_log,mcp__aletheia-x__submit_cross_check`
+- Reviewer: `select:mcp__aletheia-x__claim_review_task,mcp__aletheia-x__list_my_review_tasks,mcp__aletheia-x__publish_review_task,mcp__aletheia-x__reject_review_task,mcp__aletheia-x__add_review_comment`
+
+Load WebFetch/WebSearch in the same call when the role will open sources.

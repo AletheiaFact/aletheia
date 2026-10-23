@@ -353,9 +353,11 @@ export class ReviewWorkflowService {
 
     /**
      * Records the cross-check: the cross-checker's own label and comment.
-     * Same label as the report → back to `reported`, ready for review;
-     * different label → back to the writers (`assigned`, draft) to rework,
-     * as the web's submitComment does.
+     * Same label as the report → straight to the review backlog
+     * (`selectReviewer`), the step send_to_review would take, unless
+     * `mcp.task_queue.auto_send_to_review` is false (then back to
+     * `reported`); different label → back to the writers (`assigned`,
+     * draft) to rework, as the web's submitComment does.
      */
     async submitCrossCheck(
         user: WorkflowUser,
@@ -370,6 +372,7 @@ export class ReviewWorkflowService {
             );
         }
         const agrees = reviewData.classification === classification;
+        const toReview = agrees && this.autoSendToReview();
         const done = await this.reviewTaskQueue.transitionAtomically(
             {
                 _id: task._id,
@@ -378,12 +381,17 @@ export class ReviewWorkflowService {
             },
             {
                 $set: {
-                    "machine.value": agrees
+                    "machine.value": toReview
+                        ? "selectReviewer"
+                        : agrees
                         ? "reported"
                         : { assigned: "draft" },
                     [`${REVIEW_DATA}.crossCheckingClassification`]:
                         classification,
                     [`${REVIEW_DATA}.crossCheckingComment`]: comment,
+                    ...(toReview
+                        ? { [`${REVIEW_DATA}.reviewerId`]: null }
+                        : {}),
                 },
             }
         );
@@ -570,6 +578,13 @@ export class ReviewWorkflowService {
     private requireCrossCheck(): boolean {
         return (
             this.configService?.get("mcp.task_queue.require_cross_check") !==
+            false
+        );
+    }
+
+    private autoSendToReview(): boolean {
+        return (
+            this.configService?.get("mcp.task_queue.auto_send_to_review") !==
             false
         );
     }

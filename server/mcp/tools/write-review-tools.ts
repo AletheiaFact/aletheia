@@ -15,9 +15,12 @@ import {
     SaveReviewLogSchema,
     StartReviewTaskSchema,
     SubmitCrossCheckSchema,
+    SubmitReportSchema,
 } from "./schemas";
 import {
+    describeClaimContext,
     describeComment,
+    describePublishedReview,
     describeTask,
     describeTaskBlind,
 } from "./review-task-view";
@@ -104,7 +107,10 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
             );
             return jsonResult(
                 task
-                    ? { task: await describeTask(deps, task) }
+                    ? {
+                          task: await describeTask(deps, task),
+                          claim: await describeClaimContext(deps, task),
+                      }
                     : { task: null, message: "No task available in the queue" }
             );
         })
@@ -158,18 +164,25 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "submit_report",
         {
             description:
-                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled",
-            inputSchema: ReviewTaskByHashSchema.shape as any,
+                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled. With sendToCrossCheck: true it also sends the report to the cross-check backlog (reported → selectCrossChecker), saving a send_to_cross_check call",
+            inputSchema: SubmitReportSchema.shape as any,
         },
         safeTool("submit_report", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
+            const user = deps.request.user as any;
+            const reported = await deps.reviewWorkflowService.submitReport(
+                user,
+                task
+            );
             return jsonResult(
                 await describeTask(
                     deps,
-                    await deps.reviewWorkflowService.submitReport(
-                        deps.request.user as any,
-                        task
-                    )
+                    args.sendToCrossCheck === true
+                        ? await deps.reviewWorkflowService.sendToCrossCheck(
+                              user,
+                              reported
+                          )
+                        : reported
                 )
             );
         })
@@ -223,7 +236,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "claim_cross_check",
         {
             description:
-                "Take the oldest task waiting for a cross-check and become its cross-checker. Never a task you wrote. The writer's label and summary are left out so you check independently first; read them afterwards with get_review_log",
+                "Take the oldest task waiting for a cross-check and become its cross-checker. Never a task you wrote. Returns the claim around the sentence (no get_claim needed). The writer's label and summary are left out so you check independently first; read them afterwards with get_review_log",
             inputSchema: NamespaceOnlySchema.shape as any,
         },
         safeTool("claim_cross_check", async (args) => {
@@ -234,7 +247,10 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
             );
             return jsonResult(
                 task
-                    ? { task: await describeTaskBlind(deps, task) }
+                    ? {
+                          task: await describeTaskBlind(deps, task),
+                          claim: await describeClaimContext(deps, task),
+                      }
                     : {
                           task: null,
                           message: "No task waiting for a cross-check",
@@ -247,7 +263,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "submit_cross_check",
         {
             description:
-                "Submit your cross-check of a task where you are the cross-checker: your own label and a comment. Same label as the report → the task goes back to reported, ready for review; different label → it goes back to its writers to rework",
+                "Submit your cross-check of a task where you are the cross-checker: your own label and a comment. Same label as the report → the task goes straight to the review backlog (selectReviewer; no send_to_review needed unless disabled in config); different label → it goes back to its writers to rework",
             inputSchema: SubmitCrossCheckSchema.shape as any,
         },
         safeTool("submit_cross_check", async (args) => {
@@ -270,7 +286,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "send_to_review",
         {
             description:
-                "Send a reported task to the review backlog. Needs a cross-check that agreed with the report's label (unless disabled in config). Assignees or admins only",
+                "Send a reported task to the review backlog. Usually not needed: an agreeing submit_cross_check already does it. Needs a cross-check that agreed with the report's label (unless disabled in config). Assignees or admins only",
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("send_to_review", async (args) => {
@@ -291,7 +307,7 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "claim_review_task",
         {
             description:
-                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote or cross-checked",
+                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote or cross-checked. Returns the task, the claim around the sentence and the full review form (no get_claim or get_review_log needed)",
             inputSchema: NamespaceOnlySchema.shape as any,
         },
         safeTool("claim_review_task", async (args) => {
@@ -302,7 +318,10 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
             );
             return jsonResult(
                 task
-                    ? { task: await describeTask(deps, task) }
+                    ? {
+                          ...(await describeWithLog(deps, task)),
+                          claim: await describeClaimContext(deps, task),
+                      }
                     : {
                           task: null,
                           message: "No task waiting for a reviewer",
@@ -337,20 +356,20 @@ export function registerWriteReviewTools(server: McpServer, deps: McpToolDeps) {
         "publish_review_task",
         {
             description:
-                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled",
+                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled. Returns the task and the published ClaimReview (stored HTML and footnoted sources), so no get_claim_review call is needed",
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("publish_review_task", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
-            return jsonResult(
-                await describeTask(
-                    deps,
-                    await deps.reviewWorkflowService.publishReviewTask(
-                        deps.request.user as any,
-                        task
-                    )
-                )
-            );
+            const published =
+                await deps.reviewWorkflowService.publishReviewTask(
+                    deps.request.user as any,
+                    task
+                );
+            return jsonResult({
+                ...(await describeTask(deps, published)),
+                claimReview: await describePublishedReview(deps, published),
+            });
         })
     );
 
