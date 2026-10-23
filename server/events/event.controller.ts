@@ -1,25 +1,35 @@
 import {
-    Body,
     Controller,
     Get,
     Header,
     Logger,
     NotFoundException,
-    Param,
     Patch,
     Post,
-    Query,
     Req,
     Res,
 } from "@nestjs/common";
-import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
+import {
+    CreateEventDto,
+    CreateEventSchema,
+    UpdateEventDto,
+    UpdateEventSchema,
+} from "./dto/event.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { FilterEventsDTO } from "./dto/filter.dto";
+import {
+    FilterEventsQueryDto,
+    FilterEventsQuerySchema,
+} from "./dto/filter.dto";
 import type { BaseRequest } from "../types";
 import type { Response } from "express";
-import { FactCheckerOnly, Public } from "../auth/decorators/auth.decorator";
+import {
+    AdminOnly,
+    FactCheckerOnly,
+    Public,
+} from "../auth/decorators/auth.decorator";
 import { parse } from "url";
-import { ObjectIdValidationPipe } from "../ai-task/pipes/objectid-validation.pipe";
+import { objectId } from "../../lib/schemas";
+import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { EventsService } from "./event.service";
@@ -29,13 +39,14 @@ import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class EventsController {
-    private getSafeNamespaceRedirect(namespace?: string): string {
-        if (!namespace) {
-            return "/";
-        }
+    private namespacePrefix(namespace?: string): string {
+        return namespace && /^[a-zA-Z0-9_-]+$/.test(namespace)
+            ? `/${namespace}`
+            : "";
+    }
 
-        const isValid = /^[a-zA-Z0-9_-]+$/.test(namespace);
-        return isValid ? `/${namespace}` : "/";
+    private getSafeNamespaceRedirect(namespace?: string): string {
+        return this.namespacePrefix(namespace) || "/";
     }
 
     private readonly logger = new Logger(EventsController.name);
@@ -51,19 +62,19 @@ export class EventsController {
     @FactCheckerOnly()
     @ApiTags("event")
     @Post("api/event")
-    async create(@Body() newEvent: CreateEventDTO) {
+    async create(@ZodBody(CreateEventSchema) newEvent: CreateEventDto) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
         }
         return this.eventsService.create(newEvent);
     }
 
-    @FactCheckerOnly()
+    @AdminOnly()
     @ApiTags("event")
     @Patch("api/event/:id")
     async update(
-        @Param("id", ObjectIdValidationPipe) eventId: string,
-        @Body() updatedEvent: UpdateEventDTO
+        @ZodParam("id", objectId) eventId: string,
+        @ZodBody(UpdateEventSchema) updatedEvent: UpdateEventDto
     ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
@@ -74,7 +85,9 @@ export class EventsController {
     @Public()
     @ApiTags("event")
     @Get("api/event")
-    public async findAll(@Query() query: FilterEventsDTO) {
+    public async findAll(
+        @ZodQuery(FilterEventsQuerySchema) query: FilterEventsQueryDto
+    ) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
             throw new NotFoundException("Endpoint disabled");
         }
@@ -128,9 +141,10 @@ export class EventsController {
         await this.viewService.render(req, res, "/event-create", queryObject);
     }
 
+    // Registered after event/create so "create" never resolves as a slug.
     @Public()
     @ApiTags("pages")
-    @Get("event/:data_hash/:event_slug")
+    @Get("event/:slug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async eventViewPage(@Req() req: BaseRequest, @Res() res: Response) {
         if (!this.featureFlagService.isEnableEventsFeature()) {
@@ -141,18 +155,12 @@ export class EventsController {
         }
 
         const parsedUrl = parse(req.url, true);
-        const { data_hash } = req.params;
         try {
-            const event = await this.eventsService.findByHash(data_hash);
-
-            if (!event) {
-                this.logger.warn(`Event not found for hash: ${data_hash}`);
-                throw new NotFoundException("Event not found");
-            }
+            const event = await this.eventsService.findBySlug(req.params.slug);
 
             const queryObject = Object.assign(parsedUrl.query, {
                 event,
-                namespace: req.params.namespace,
+                nameSpace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 captcha: this.captchaService.getClientConfig(),
             });
@@ -173,5 +181,30 @@ export class EventsController {
             }
             throw error;
         }
+    }
+
+    // Legacy /event/:data_hash/:slug links (already shared publicly) keep
+    // working through a permanent redirect to the slug URL.
+    @Public()
+    @ApiTags("pages")
+    @Get("event/:data_hash/:event_slug")
+    public async legacyEventViewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        if (!this.featureFlagService.isEnableEventsFeature()) {
+            return res.redirect(
+                this.getSafeNamespaceRedirect(req.params.namespace)
+            );
+        }
+
+        const slug = await this.eventsService.getSlugByHash(
+            req.params.data_hash
+        );
+        if (!slug) {
+            throw new NotFoundException("Event not found");
+        }
+        const prefix = this.namespacePrefix(req.params.namespace);
+        return res.redirect(301, `${prefix}/event/${encodeURIComponent(slug)}`);
     }
 }

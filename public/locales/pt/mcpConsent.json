@@ -1,0 +1,7 @@
+{
+    "title": "Permitir que {{client}} acesse sua conta da Aletheia?",
+    "scopesIntro": "Este aplicativo está solicitando as seguintes permissões:",
+    "allow": "Permitir",
+    "deny": "Negar",
+    "failedMessage": "Esta solicitação de autorização é inválida ou expirou. Volte ao aplicativo e tente novamente."
+}

@@ -57,6 +57,10 @@ export class ImageService {
         return newImage;
     }
 
+    getById(id: string): Promise<ImageDocument | null> {
+        return this.ImageModel.findById(id).exec();
+    }
+
     async getByDataHash(data_hash: string) {
         const validatedParams = GetByDataHashDto.safeParse({ data_hash });
 

@@ -18,7 +18,8 @@ import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { ClientIpThrottlerGuard } from "./common/throttler/client-ip-throttler.guard";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim/claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
@@ -68,9 +69,11 @@ import { AiTaskModule } from "./ai-task/ai-task.module";
 import { CommitteeInterestModule } from "./committee-interest/committee-interest.module";
 import { TrackingModule } from "./tracking/tracking.module";
 import { EventsModule } from "./events/event.module";
+import { OrganizationModule } from "./organization/organization.module";
 import { ManagementModule } from "./management/management.module";
 import { PostgresModule } from "./database/postgres/postgres.module";
 import dbConfig from "./config/db.config";
+import { McpModule } from "./mcp/mcp.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -138,6 +141,7 @@ export class AppModule implements NestModule {
                 HistoryModule,
                 TrackingModule,
                 EventsModule,
+                OrganizationModule,
                 ManagementModule,
                 StateEventModule,
                 SourceModule.register(),
@@ -174,6 +178,7 @@ export class AppModule implements NestModule {
                 GroupModule.register(),
                 AiTaskModule,
                 CommitteeInterestModule,
+                ...(options?.mcp?.enabled ? [McpModule] : []),
                 HomeModule, // Home module must be the last imported module because it contains the root endpoint, may causing some endpoints to be confused as namespace parameters
             ],
             controllers: [RootController],
@@ -188,7 +193,7 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: ThrottlerGuard,
+                    useClass: ClientIpThrottlerGuard,
                 },
                 {
                     provide: APP_GUARD,

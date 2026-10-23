@@ -26,7 +26,6 @@ import {
     BadRequestException,
     Injectable,
     Inject,
-    forwardRef,
     Logger,
     NotFoundException,
     Scope,
@@ -70,8 +69,6 @@ export class MongoVerificationRequestService
         @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(VerificationRequest.name)
         private readonly VerificationRequestModel: Model<VerificationRequestDocument>,
-        @Inject(forwardRef(() => VerificationRequestStateMachineService))
-        private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         @Inject("SourceService")
         private readonly sourceService: ISourceService,
         @Inject("GroupService") private readonly groupService: IGroupService,
@@ -653,6 +650,13 @@ export class MongoVerificationRequestService
         }
     }
 
+    // Built on demand rather than injected: the state machine already depends
+    // on this service, and injecting it back made a request-scoped DI cycle in
+    // which Nest handed out an unconstructed placeholder of this service.
+    protected createStateMachine(): VerificationRequestStateMachineService {
+        return new VerificationRequestStateMachineService(this);
+    }
+
     /**
      * Triggers the state machine to execute a specific missing state
      */
@@ -674,7 +678,7 @@ export class MongoVerificationRequestService
 
         try {
             // Trigger the state machine with the appropriate event
-            await (this.verificationRequestStateService as any)[event](
+            await (this.createStateMachine() as any)[event](
                 verificationRequest.id
             );
         } catch (error) {

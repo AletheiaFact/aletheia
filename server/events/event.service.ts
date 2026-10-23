@@ -9,10 +9,15 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, isValidObjectId, Model, Types } from "mongoose";
-import { EventDocument, Event } from "./schema/event.schema";
-import { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
-import { FilterEventsDTO } from "./dto/filter.dto";
+import { EventDocument, Event, EventParticipant } from "./schema/event.schema";
+import {
+    CreateEventDto,
+    EventParticipantDto,
+    UpdateEventDto,
+} from "./dto/event.dto";
+import { FilterEventsQueryDto } from "./dto/filter.dto";
 import type { ITopicService } from "../interfaces/topic.service.interface";
+import type { IOrganizationService } from "../interfaces/organization.service.interface";
 import {
     BuildMetricsParams,
     EventMetricsData,
@@ -21,7 +26,6 @@ import {
     TopicDataAggregation,
 } from "./types/event.interfaces";
 import * as crypto from "crypto";
-import slugify from "slugify";
 import { EventsStatus } from "../types/enums";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
@@ -30,6 +34,10 @@ import { REQUEST } from "@nestjs/core";
 import { Topic, TopicDocument } from "../topic/mongo/schemas/topic.schema";
 import { toError } from "../util/error-handling";
 import { mapAggregateToRecord } from "../util/mongo-utils";
+import { firstFreeSlug, slugVariantsFilter, toSlug } from "../util/slug.util";
+
+// Path segments under /event/ that belong to other pages.
+const RESERVED_EVENT_SLUGS = ["create"];
 
 @Injectable()
 export class EventsService {
@@ -41,7 +49,9 @@ export class EventsService {
         @InjectModel(Topic.name) private TopicModel: Model<TopicDocument>,
         private readonly claimReviewService: ClaimReviewService,
         @Inject("TopicService")
-        private readonly topicService: ITopicService
+        private readonly topicService: ITopicService,
+        @Inject("OrganizationService")
+        private readonly organizationService: IOrganizationService
     ) {}
 
     /**
@@ -49,22 +59,18 @@ export class EventsService {
      * * @param createEventDto - Data transfer object containing event details.
      * @returns A promise that resolves to the created event document.
      */
-    async create(createEventDto: CreateEventDTO): Promise<EventDocument> {
+    async create(createEventDto: CreateEventDto): Promise<EventDocument> {
+        const participants = await this.validateParticipants(
+            createEventDto.participants
+        );
         try {
             this.logger.debug("Creating event", { createEventDto });
 
-            const topicName = createEventDto.mainTopic.label ?? createEventDto.mainTopic.name;
+            const createdTopic = await this.topicService.findOrCreateTopic(
+                createEventDto.mainTopic
+            );
 
-            const createdTopic = await this.topicService.findOrCreateTopic({
-                ...createEventDto.mainTopic,
-                name: topicName,
-            });
-
-            const slug = slugify(createEventDto.name, {
-                lower: true,
-                strict: true,
-                trim: true,
-            });
+            const slug = await this.generateUniqueSlug(createEventDto.name);
 
             const data_hash = crypto
                 .createHash("md5")
@@ -73,8 +79,9 @@ export class EventsService {
 
             const newEvent = await this.eventModel.create({
                 ...createEventDto,
+                participants,
                 data_hash,
-                slug: slug,
+                slug,
                 mainTopic: createdTopic._id,
             });
 
@@ -82,16 +89,23 @@ export class EventsService {
             return newEvent;
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Failed to create event: "${err.name}"`, err.stack);
+            this.logger.error(
+                `Failed to create event: "${err.name}"`,
+                err.stack
+            );
 
             if (err.name === "ValidationError" && err.errors) {
                 const fields = Object.keys(err.errors).join(", ");
-                throw new BadRequestException(`Schema validation failed: missing or invalid fields [${fields}]`);
+                throw new BadRequestException(
+                    `Schema validation failed: missing or invalid fields [${fields}]`
+                );
             }
 
             if (err.code === 11000 && err.keyPattern) {
                 const duplicateField = Object.keys(err.keyPattern)[0];
-                throw new ConflictException(`Duplicate entry: an event with this ${duplicateField} already exists`);
+                throw new ConflictException(
+                    `Duplicate entry: an event with this ${duplicateField} already exists`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -108,7 +122,7 @@ export class EventsService {
      */
     async update(
         id: string,
-        updateEventDto: UpdateEventDTO
+        updateEventDto: UpdateEventDto
     ): Promise<EventDocument> {
         try {
             this.logger.debug(`Updating event ${id}`, { updateEventDto });
@@ -117,23 +131,29 @@ export class EventsService {
                 throw new BadRequestException(`Invalid event ID format: ${id}`);
             }
 
-            const { mainTopic, filterTopics, ...otherFields } = updateEventDto;
+            const { mainTopic, filterTopics, participants, ...otherFields } =
+                updateEventDto;
 
-            const updateData: Partial<Event> = { ...otherFields };
+            const updateData: Omit<Partial<Event>, "participants"> & {
+                participants?: EventParticipantDto[];
+            } = { ...otherFields };
 
-            if (updateEventDto.name) {
-                updateData.slug = slugify(updateEventDto.name, {
-                    lower: true,
-                    strict: true,
-                    trim: true
-                });
+            if (participants) {
+                updateData.participants = await this.validateParticipants(
+                    participants
+                );
             }
 
+            // The slug is fixed at creation: it is the public URL, so a
+            // rename must not break links that were already shared.
+
             if (mainTopic) {
-                const topicName = mainTopic.label ?? mainTopic.name;
                 // Event stays Mongo-only until Phase 7; the Mongo backend
                 // hands back a real TopicDocument.
-                updateData.mainTopic = (await this.topicService.findOrCreateTopic({ ...mainTopic, name: topicName })) as TopicDocument;
+                updateData.mainTopic =
+                    (await this.topicService.findOrCreateTopic(
+                        mainTopic
+                    )) as TopicDocument;
             }
 
             if (filterTopics !== undefined) {
@@ -173,7 +193,9 @@ export class EventsService {
             }
 
             if (err.name === "CastError") {
-                throw new BadRequestException(`Invalid format for field: ${err.path}`);
+                throw new BadRequestException(
+                    `Invalid format for field: ${err.path}`
+                );
             }
 
             throw new InternalServerErrorException(
@@ -188,7 +210,7 @@ export class EventsService {
      * @param queryDto - DTO containing pagination and filter parameters.
      * @returns A list of event documents, a dictionary of event metrics, and the total count.
      */
-    async findAll(queryDto: FilterEventsDTO): Promise<FindAllResponse> {
+    async findAll(queryDto: FilterEventsQueryDto): Promise<FindAllResponse> {
         const { page, pageSize, order, status } = queryDto;
         try {
             const query = this.buildStatusQuery(status);
@@ -229,7 +251,8 @@ export class EventsService {
             const stackTrace =
                 error instanceof Error ? error.stack : String(error);
             this.logger.error(
-                `Failed to fetch events list: ${error instanceof Error ? error.message : "Unknown error"
+                `Failed to fetch events list: ${
+                    error instanceof Error ? error.message : "Unknown error"
                 }`,
                 stackTrace
             );
@@ -239,28 +262,87 @@ export class EventsService {
         }
     }
 
-    /**
-     * Searches for an event by its hash.
-     * * @param data_hash - URL identifier hash.
-     * @returns Event document.
-     */
-    async findByHash(data_hash: string): Promise<EventDocument> {
-        this.logger.debug(`Fetching public event with hash: ${data_hash}`);
+    findBySlug(slug: string) {
+        return this.findPublicEvent({ slug });
+    }
 
+    findByHash(data_hash: string) {
+        return this.findPublicEvent({ data_hash });
+    }
+
+    async getSlugByHash(data_hash: string): Promise<string | null> {
         const event = await this.eventModel
             .findOne({ data_hash })
+            .select("slug")
+            .lean<Pick<Event, "slug">>()
+            .exec();
+        return event?.slug ?? null;
+    }
+
+    private async findPublicEvent(filter: FilterQuery<Event>) {
+        this.logger.debug(`Fetching public event: ${JSON.stringify(filter)}`);
+
+        const event = await this.eventModel
+            .findOne(filter)
             .populate("mainTopic")
             .populate("filterTopics")
+            .populate({
+                path: "participants.organization",
+                match: { isDeleted: false },
+                populate: { path: "logo" },
+            })
             .exec();
 
         if (!event) {
             this.logger.warn(
-                `Public access attempt failed - Hash not found: ${data_hash}`
+                `Public event not found: ${JSON.stringify(filter)}`
             );
             throw new NotFoundException(`The requested event was not found.`);
         }
 
-        return event;
+        // Soft-deleted organizations populate as null: hide them.
+        const publicEvent = event.toObject();
+        publicEvent.participants = publicEvent.participants.filter(
+            (participant: EventParticipant) => participant.organization
+        );
+        return publicEvent;
+    }
+
+    private async generateUniqueSlug(name: string): Promise<string> {
+        const base = toSlug(name) || "event";
+        const existing = await this.eventModel
+            .find(slugVariantsFilter(base))
+            .select("slug")
+            .lean<Pick<Event, "slug">[]>()
+            .exec();
+        return firstFreeSlug(
+            base,
+            new Set([
+                ...RESERVED_EVENT_SLUGS,
+                ...existing.map(({ slug }) => slug),
+            ])
+        );
+    }
+
+    private async validateParticipants(
+        participants?: EventParticipantDto[]
+    ): Promise<EventParticipantDto[] | undefined> {
+        if (!participants) {
+            return undefined;
+        }
+
+        const ids = participants.map(({ organization }) => organization);
+        const existingIds = new Set(
+            await this.organizationService.findExistingIds(ids)
+        );
+        const unknownIds = ids.filter((id) => !existingIds.has(id));
+        if (unknownIds.length) {
+            throw new BadRequestException(
+                `Unknown organizations: ${unknownIds.join(", ")}`
+            );
+        }
+
+        return [...participants].sort((a, b) => a.order - b.order);
     }
 
     /**
@@ -422,7 +504,9 @@ export class EventsService {
             });
         } catch (error) {
             const err = toError(error);
-            this.logger.error(`Metrics fetch failed, using fallback: ${err.message}`);
+            this.logger.error(
+                `Metrics fetch failed, using fallback: ${err.message}`
+            );
 
             return events.reduce((acc, event) => {
                 acc[String(event.data_hash)] = {
