@@ -31,6 +31,9 @@ const ClaimContentDisplay: React.FC<ClaimContentDisplayProps> = ({
                     imageUrl={imageUrl}
                     title={title}
                     classification={claimContent?.props?.classification}
+                    classificationMethodology={
+                        claimContent?.props?.classificationMethodology
+                    }
                     dataHash={claimContent?.data_hash}
                 />
             ) : (

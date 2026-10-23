@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { ArrowDownwardOutlined, ArrowUpwardOutlined } from "@mui/icons-material";
+import {
+    ArrowDownwardOutlined,
+    ArrowUpwardOutlined,
+} from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ReviewProgress from "./ReviewProgress";
 import AletheiaTitle from "../AletheiaTitle";
+import colors from "../../styles/colors";
 
 const ReviewStats = (props) => {
     const { t } = useTranslation();
@@ -20,6 +24,19 @@ const ReviewStats = (props) => {
             )}
             {reviews && showAllReviews && (
                 <ReviewProgress reviews={remainingReviews} statsProps={props} />
+            )}
+            {reviews && reviews.length > 0 && (
+                <span
+                    data-cy="testMethodologyStatsNote"
+                    style={{
+                        display: "block",
+                        fontSize: 10,
+                        color: colors.blackSecondary,
+                        marginTop: 8,
+                    }}
+                >
+                    {t("claimReviewForm:methodologyStatsNote")}
+                </span>
             )}
             {reviews && reviews?.length > 3 && props.type === "line" && (
                 <div

@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material"
+import { Grid, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
@@ -98,23 +98,23 @@ const ClaimCard = ({
                         />
                     ) : (
                         <ClaimSpeechBody
-                            handleSentenceClick={
-                                dispatchPersonalityAndClaim
-                            }
+                            handleSentenceClick={dispatchPersonalityAndClaim}
                             paragraphs={paragraphs}
                             showHighlights="left"
                         />
                     )}
                 </ClaimSummary>
             </Grid>
-            <Grid container
+            <Grid
+                container
                 style={{
-                    justifyContent:"space-between",
+                    justifyContent: "space-between",
                     padding: "4px 15px 0 0",
                     width: "100%",
                 }}
             >
-                <Grid item
+                <Grid
+                    item
                     xs={8}
                     style={{
                         display: "flex",
@@ -149,17 +149,25 @@ const ClaimCard = ({
                         {review && (
                             <span style={{ margin: 0 }}>
                                 {t("claim:cardOverallReviewPrefix")}
-                                <span
-                                    style={{
-                                        color:
-                                            ReviewColors[review?._id] || colors.black,
-                                        fontWeight: 900,
-                                        textTransform: "uppercase",
-                                        margin: "0px 3px",
-                                    }}
+                                {/* The card is too small for a footnote line */}
+                                <Tooltip
+                                    title={t(
+                                        "claimReviewForm:methodologyStatsNote"
+                                    )}
                                 >
-                                    {t(`claimReviewForm:${review?._id}`)}
-                                </span>
+                                    <span
+                                        style={{
+                                            color:
+                                                ReviewColors[review?._id] ||
+                                                colors.black,
+                                            fontWeight: 900,
+                                            textTransform: "uppercase",
+                                            margin: "0px 3px",
+                                        }}
+                                    >
+                                        {t(`claimReviewForm:${review?._id}`)}
+                                    </span>
+                                </Tooltip>
                                 ({review?.count})
                             </span>
                         )}

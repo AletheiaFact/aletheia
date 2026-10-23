@@ -14,7 +14,7 @@ import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { ClassificationEnum } from "../types/enums";
+import { buildReviewRating } from "../utils/buildReviewRating";
 import JsonLd from "../components/JsonLd";
 import { CaptchaClientConfig } from "../types/Captcha";
 
@@ -35,7 +35,7 @@ export interface SourceReviewPageProps {
 }
 
 const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
@@ -83,15 +83,13 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
             ],
         },
         originalMediaLink: source.href,
-        reviewRating: {
-            "@type": "Rating",
-            ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
-            bestRating: 8,
-            worstRating: 1,
-            alternateName: claimReview?.isHidden
-                ? t("claimReviewForm:notReviewed")
-                : t(`claimReviewForm:${review}`),
-        },
+        reviewRating: buildReviewRating({
+            classification: review,
+            classificationMethodology: source?.props?.classificationMethodology,
+            isHidden: claimReview?.isHidden,
+            language: i18n.language,
+            t,
+        }),
         itemReviewed: {
             "@type": "CreativeWork",
             isBasedOnUrl: source.href,
