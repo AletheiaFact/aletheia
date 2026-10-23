@@ -9,5 +9,21 @@
     "seeDebate": "Acompanhe as checagens do debate",
     "finishDebateButtonLabel": "Encerrar debate",
     "reopenDebateButtonLabel": "Reabrir debate",
-    "openEditDebateMode": "Abrir modo de edição"
+    "openEditDebateMode": "Abrir modo de edição",
+    "draftsTitle": "Rascunhos pendentes ({{count}})",
+    "draftsSelectAll": "Selecionar todos",
+    "draftsPublishSelected": "Publicar selecionados",
+    "draftsRejectSelected": "Rejeitar selecionados",
+    "draftsRejectConfirm": "Rejeitar {{count}} rascunho(s)? Eles não serão publicados.",
+    "draftsPublished": "Discursos publicados: {{count}}",
+    "draftSpeakerLabel": "Orador",
+    "draftUnsavedLabel": "Edição não salva",
+    "draftPublish": "Publicar",
+    "draftSaveAndPublish": "Salvar e publicar",
+    "draftSaveEdit": "Salvar edição",
+    "draftDiscardEdit": "Descartar edição",
+    "draftReject": "Rejeitar",
+    "draftEditError": "Não foi possível salvar a edição do rascunho",
+    "draftReviewError": "Não foi possível revisar os rascunhos",
+    "draftsFetchError": "Não foi possível carregar os rascunhos"
 }
