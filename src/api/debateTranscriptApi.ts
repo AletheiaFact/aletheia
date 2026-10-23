@@ -13,6 +13,8 @@ export interface TranscriptTurn {
     status: TranscriptTurnStatus;
     externalId?: string;
     startedAt?: string;
+    // Transcriber's 0-100 triage score; absent when it sent none.
+    checkability?: number | null;
     createdAt: string;
 }
 

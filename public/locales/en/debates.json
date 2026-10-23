@@ -25,5 +25,7 @@
     "draftReject": "Reject",
     "draftEditError": "Could not save the draft edit",
     "draftReviewError": "Could not review the drafts",
-    "draftsFetchError": "Could not load the drafts"
+    "draftsFetchError": "Could not load the drafts",
+    "draftCheckabilityLabel": "Checkability: {{value}}%",
+    "draftCheckabilityTooltip": "How checkable the transcriber thinks this turn is (0-100). A triage signal, not a verdict."
 }

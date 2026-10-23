@@ -25,5 +25,7 @@
     "draftReject": "Rejeitar",
     "draftEditError": "Não foi possível salvar a edição do rascunho",
     "draftReviewError": "Não foi possível revisar os rascunhos",
-    "draftsFetchError": "Não foi possível carregar os rascunhos"
+    "draftsFetchError": "Não foi possível carregar os rascunhos",
+    "draftCheckabilityLabel": "Checabilidade: {{value}}%",
+    "draftCheckabilityTooltip": "Quanto o transcritor considera este trecho checável (0 a 100). É um sinal de triagem, não um veredito."
 }

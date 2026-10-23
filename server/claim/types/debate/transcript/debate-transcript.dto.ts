@@ -30,6 +30,10 @@ const DebateTranscriptTurnSchema = z.strictObject({
     startedAt: isoDateTime.optional().meta({
         description: "When the turn started in the source recording.",
     }),
+    checkability: z.number().int().min(0).max(100).optional().meta({
+        description:
+            "Transcriber's 0-100 score of how checkable the turn is for a fact-checker. A triage signal, not a verdict. Omit when there is no score.",
+    }),
 });
 
 export const AppendDebateTranscriptSchema = z.strictObject({

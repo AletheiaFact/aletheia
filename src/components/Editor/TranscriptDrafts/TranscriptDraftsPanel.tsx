@@ -18,6 +18,7 @@ import { MessageManager } from "../../Messages";
 import colors from "../../../styles/colors";
 import AletheiaButton, { ButtonType } from "../../AletheiaButton";
 import { getEditorClaimCardContentHtml } from "../EditorClaimCard/EditorClaimCard";
+import CheckabilityBadge from "./CheckabilityBadge";
 
 const POLL_INTERVAL = 5000;
 // Server limit of turnIds per approve/reject request.
@@ -367,28 +368,40 @@ const TranscriptDraftsPanel = ({
                                 gap: "8px",
                             }}
                         >
-                            <TextField
-                                select
-                                size="small"
-                                label={t("debates:draftSpeakerLabel")}
-                                value={edit.personality}
-                                onChange={(event) =>
-                                    setEdit(turn, {
-                                        personality: event.target.value,
-                                    })
-                                }
-                                disabled={isBusy}
-                                sx={{ maxWidth: "300px" }}
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                }}
                             >
-                                {personalities.map((personality) => (
-                                    <MenuItem
-                                        key={personality._id}
-                                        value={personality._id}
-                                    >
-                                        {personality.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                                <TextField
+                                    select
+                                    size="small"
+                                    label={t("debates:draftSpeakerLabel")}
+                                    value={edit.personality}
+                                    onChange={(event) =>
+                                        setEdit(turn, {
+                                            personality: event.target.value,
+                                        })
+                                    }
+                                    disabled={isBusy}
+                                    sx={{ flex: "1 1 200px", maxWidth: "300px" }}
+                                >
+                                    {personalities.map((personality) => (
+                                        <MenuItem
+                                            key={personality._id}
+                                            value={personality._id}
+                                        >
+                                            {personality.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <CheckabilityBadge
+                                    checkability={turn.checkability}
+                                />
+                            </Box>
                             <TextField
                                 multiline
                                 minRows={2}

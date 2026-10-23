@@ -66,6 +66,7 @@ describe("DebateTranscriptService", () => {
                         text: "First.",
                         externalId: "t1",
                         startedAt: "2024-01-01T10:00:00.000Z",
+                        checkability: 72,
                     },
                     { personality: speakerB, text: "Second." },
                 ],
@@ -98,6 +99,7 @@ describe("DebateTranscriptService", () => {
                     text: turn.text,
                     externalId: turn.externalId,
                     startedAt: turn.startedAt,
+                    checkability: turn.checkability,
                 }))
             ).toEqual([
                 {
@@ -106,6 +108,7 @@ describe("DebateTranscriptService", () => {
                     text: "First.",
                     externalId: "t1",
                     startedAt: new Date("2024-01-01T10:00:00.000Z"),
+                    checkability: 72,
                 },
                 {
                     speech: "000000000000000000000002",
@@ -113,6 +116,7 @@ describe("DebateTranscriptService", () => {
                     text: "Second.",
                     externalId: undefined,
                     startedAt: undefined,
+                    checkability: undefined,
                 },
             ]);
 

@@ -417,11 +417,13 @@ describe("ClaimController (e2e)", () => {
                             text: "We will lower taxes. Everyone benefits.",
                             externalId: "turn-1",
                             startedAt: "2023-11-25T15:00:00.000Z",
+                            checkability: 72,
                         },
                         {
                             personality: personalitiesId[1],
                             text: "That plan was tried before.",
                             externalId: "turn-2",
+                            checkability: 0,
                         },
                         {
                             personality: personalitiesId[0],
@@ -450,6 +452,12 @@ describe("ClaimController (e2e)", () => {
             ]);
             expect(debate.transcriptTurns[0].startedAt).toEqual(
                 new Date("2023-11-25T15:00:00.000Z")
+            );
+            expect(
+                debate.transcriptTurns.map((t) => t.checkability ?? null)
+            ).toEqual([72, 0, null]);
+            expect(debate.transcriptTurns[2]).not.toHaveProperty(
+                "checkability"
             );
 
             const speech = await getSpeech(drafts["turn-1"].speechId);
@@ -483,6 +491,9 @@ describe("ClaimController (e2e)", () => {
             ]);
             expect(response.body[0].speech._id).toBe(drafts["turn-1"].speechId);
             expect(response.body[0].speech.content.length).toBeGreaterThan(0);
+            expect(
+                response.body.map((t) => t.checkability ?? null)
+            ).toEqual([72, 0, null]);
         });
 
         it("edits a draft by parsing a new draft speech", async () => {
@@ -521,6 +532,7 @@ describe("ClaimController (e2e)", () => {
                 drafts["turn-3"].speechId,
             ]);
             expect(debate.transcriptTurns[0].reviewedAt).toBeInstanceOf(Date);
+            expect(debate.transcriptTurns[0].checkability).toBe(72);
 
             const speechResponse = await request(app.getHttpServer()).get(
                 `/api/speech/${drafts["turn-1"].speechId}`
@@ -569,6 +581,7 @@ describe("ClaimController (e2e)", () => {
                             personality: personalitiesId[1],
                             text: "That plan was tried before.",
                             externalId: "turn-2",
+                            checkability: 90,
                         },
                         {
                             personality: personalitiesId[0],
@@ -583,7 +596,9 @@ describe("ClaimController (e2e)", () => {
             expect(response.body.drafts.map((d) => d.externalId)).toEqual([
                 "turn-4",
             ]);
-            expect((await getDebate()).transcriptTurns).toHaveLength(4);
+            const debate = await getDebate();
+            expect(debate.transcriptTurns).toHaveLength(4);
+            expect(debate.transcriptTurns[1].checkability).toBe(0);
         });
 
         it("lists and approves drafts in spoken order, not arrival order", async () => {
@@ -648,6 +663,24 @@ describe("ClaimController (e2e)", () => {
             expect(response.status).toBe(400);
             expect(response.body.message).toBe("Validation failed");
             expect(response.body.issues[0].path).toBe("turns.0.text");
+        });
+
+        it("returns 400 for a checkability out of range", async () => {
+            const response = await request(app.getHttpServer())
+                .post(`/api/claim/debate/${debateId}/append`)
+                .send({
+                    turns: [
+                        {
+                            personality: personalitiesId[0],
+                            text: "Too checkable.",
+                            externalId: "turn-out-of-range",
+                            checkability: 101,
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(response.body.issues[0].path).toBe("turns.0.checkability");
         });
 
         it("returns 400 for an invalid review body", async () => {
