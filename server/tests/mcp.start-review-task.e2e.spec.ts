@@ -72,7 +72,7 @@ describe("MCP start_review_task (e2e)", () => {
         expect(task.target).toBe(claimId);
         expect(task.reviewTaskType).toBe("Claim");
         expect(task.reportModel).toBe("Fact-checking");
-        expect(task.machine.value).toBe("assigned");
+        expect(task.machine.value).toEqual({ assigned: "undraft" });
         expect(task.machine.context.reviewData.usersId).toEqual([
             AdminUserMock._id.toString(),
         ]);

@@ -35,17 +35,39 @@ export function registerWriteContentTools(
                 deps.request.user,
                 args.nameSpace
             );
-            return jsonResult(
-                await deps.claimService.create({
-                    title: args.title,
-                    content: args.content,
-                    date: args.date,
-                    contentModel: ContentModelEnum.Speech,
-                    personalities: [args.personalityId],
-                    sources: args.sources,
-                    nameSpace: args.nameSpace,
-                })
-            );
+            const claim: any = await deps.claimService.create({
+                title: args.title,
+                content: args.content,
+                date: args.date,
+                contentModel: ContentModelEnum.Speech,
+                personalities: [args.personalityId],
+                sources: args.sources,
+                nameSpace: args.nameSpace,
+            });
+            // Queue feed: each sentence gets an `unassigned` review task for
+            // next_review_task. The claim stands even if enqueueing fails.
+            let queuedReviewTasks: number | { error: string } = 0;
+            if (claim?._id) {
+                try {
+                    queuedReviewTasks =
+                        await deps.reviewQueueService.enqueueClaimSentences(
+                            claim._id.toString(),
+                            args.nameSpace
+                        );
+                } catch (error) {
+                    queuedReviewTasks = {
+                        error:
+                            error instanceof Error
+                                ? error.message
+                                : String(error),
+                    };
+                }
+            }
+            const body =
+                typeof claim?.toObject === "function"
+                    ? claim.toObject()
+                    : claim;
+            return jsonResult({ ...body, queuedReviewTasks });
         })
     );
 

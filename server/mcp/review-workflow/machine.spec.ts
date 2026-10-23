@@ -1,6 +1,6 @@
-import { getInitialContext } from "../../src/machines/reviewTask/context";
-import { ReviewTaskTypeEnum } from "../../src/machines/reviewTask/enums";
-import { buildClaimContext } from "./review-workflow.service";
+import { getInitialContext } from "../../../src/machines/reviewTask/context";
+import { ReviewTaskTypeEnum } from "../../../src/machines/reviewTask/enums";
+import { buildClaimContext } from "./machine";
 
 describe("buildClaimContext", () => {
     it("matches the frontend initial context for a Claim task", () => {
@@ -8,7 +8,7 @@ describe("buildClaimContext", () => {
             usersId: ["user-1"],
         });
 
-        const server = buildClaimContext("user-1", "claim-1");
+        const server = buildClaimContext(["user-1"], "claim-1");
 
         expect(server.reviewData).toEqual(front.reviewData);
         // The server additionally pins the task to its claim; every other

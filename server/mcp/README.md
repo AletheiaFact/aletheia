@@ -118,8 +118,7 @@ opencode mcp auth aletheia
 opencode mcp list
 ```
 
-Without `--global` the server is written to the project config only. Flags must
-come before the server name.
+Without `--global` the server is written to the project config only. Flags must come before the server name.
 
 ## Tools
 
