@@ -1,5 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { ReviewTaskService } from "./review-task.service";
+import { ReviewTaskEffectsService } from "./review-task-effects.service";
 
 class FakeReviewTaskModel {
     save = vi.fn(async () => this);
@@ -14,13 +15,21 @@ const build = (flagEnabled = true) => {
     };
     const claimReviewService = { create: vi.fn(async () => ({})) };
     const req = { user: { _id: "u1", role: { main: "admin" } } };
-    const service = new ReviewTaskService(
+    // Real effects so the report built on publish is checked; history and
+    // state events are out of scope here
+    const effects = new ReviewTaskEffectsService(
         req as any,
-        FakeReviewTaskModel as any,
         claimReviewService as any,
         reportService as any,
         {} as any,
-        {} as any,
+        {} as any
+    );
+    vi.spyOn(effects, "recordHistory").mockResolvedValue(undefined);
+    vi.spyOn(effects, "recordStateEvent").mockReturnValue(undefined);
+    const service = new ReviewTaskService(
+        req as any,
+        FakeReviewTaskModel as any,
+        effects,
         {} as any,
         {} as any,
         {} as any,
@@ -28,11 +37,7 @@ const build = (flagEnabled = true) => {
         { isEnableClassificationMethodology: () => flagEnabled } as any
     );
     vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(null as any);
-    vi.spyOn(service as any, "_createReviewTaskHistory").mockResolvedValue(
-        undefined
-    );
-    vi.spyOn(service as any, "_createStateEvent").mockReturnValue(undefined);
-    return { service, reportService };
+    return { service, reportService, effects };
 };
 
 const createBody = (overrides: Record<string, unknown> = {}) => ({

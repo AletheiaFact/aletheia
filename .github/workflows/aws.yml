@@ -9,6 +9,11 @@ on:
     # For future
     # release:
     #   types: [created]
+# Each branch deploys to one environment. Only one run per branch can deploy
+# at a time, so a failed run cannot roll back a newer run's revision.
+concurrency:
+    group: deploy-${{ github.ref_name }}
+    cancel-in-progress: false
 env:
     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
@@ -144,7 +149,7 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: "us-east-1"
                   cluster-name: "production"
-                  command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=360s
+                  command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=900s
               if: success()
 
             - name: Rollback

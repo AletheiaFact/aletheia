@@ -25,5 +25,6 @@
         "./**/*.spec.ts",
         "./**/*.example.ts",
         "./tests/utils/McpTestHelper.ts",
+        "./mcp/adversarial/harness.ts",
     ]
 }

@@ -6,6 +6,7 @@ import OryModule from "../auth/ory/ory.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 import { ClaimModule } from "../claim/claim.module";
+import { NotificationModule } from "../notifications/notifications.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { ReviewTaskModule } from "../review-task/review-task.module";
@@ -21,7 +22,9 @@ import { McpOAuthController } from "./mcp-oauth.controller";
 import { McpWellKnownController } from "./mcp-well-known.controller";
 import { McpController } from "./mcp.controller";
 import { McpService } from "./mcp.service";
-import { ReviewWorkflowService } from "./review-workflow.service";
+import { ReviewNotifierService } from "./review-workflow/review-notifier.service";
+import { ReviewQueueService } from "./review-workflow/review-queue.service";
+import { ReviewWorkflowService } from "./review-workflow/review-workflow.service";
 
 @Module({
     imports: [
@@ -39,6 +42,7 @@ import { ReviewWorkflowService } from "./review-workflow.service";
         NameSpaceModule,
         ConfigModule,
         ViewModule,
+        NotificationModule,
     ],
     controllers: [
         McpController,
@@ -50,6 +54,8 @@ import { ReviewWorkflowService } from "./review-workflow.service";
         McpService,
         McpAuthGuard,
         ReviewWorkflowService,
+        ReviewQueueService,
+        ReviewNotifierService,
         McpOAuthProxyService,
         McpOAuthProviderService,
     ],
