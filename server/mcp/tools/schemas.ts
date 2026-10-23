@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { ReviewTaskTypeEnum } from "../../types/enums";
+import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
+import { dataHash, nonEmptyText } from "../../../lib/schemas";
 import { PersonalitySchema } from "../../interfaces/personality.interface";
 import { SourceZodSchema } from "../../source/schemas/source.zod";
 import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
@@ -83,10 +85,9 @@ export const ListReviewTasksSchema = z.object({
     nameSpace,
 });
 
-const reviewTaskDataHash = z
-    .string()
-    .regex(/^[a-f0-9]{32}$/i)
-    .describe("data_hash of the review task (its claim sentence)");
+const reviewTaskDataHash = dataHash.describe(
+    "data_hash of the review task (its claim sentence)"
+);
 
 export const NamespaceOnlySchema = z.object({ nameSpace });
 
@@ -128,7 +129,7 @@ export const CreateVerificationRequestSchema =
     VerificationRequestCreateZodSchema;
 
 export const AddReviewCommentSchema = z.object({
-    dataHash: z.string().describe("The review task's data_hash"),
+    dataHash: reviewTaskDataHash,
     comment: z.string().min(1).describe("Comment rich-text/plain content"),
     text: z.string().min(1).describe("Plain-text version of the comment"),
 });
@@ -145,10 +146,7 @@ export const CreateClaimSchema = ClaimCreateZodSchema.pick({
 
 export const StartReviewTaskSchema = z.object({
     claimId: z.string().describe("Claim Mongo ObjectId"),
-    dataHash: z
-        .string()
-        .regex(/^[a-f0-9]{32}$/i)
-        .describe("data_hash of the claim sentence to review"),
+    dataHash: dataHash.describe("data_hash of the claim sentence to review"),
     nameSpace,
 });
 
@@ -164,4 +162,88 @@ export const CreateSourceSchema = SourceZodSchema.pick({
     href: true,
     targetId: true,
     nameSpace: true,
+});
+
+// ClassificationEnum is numeric; the stored label is its key ("false",
+// "trustworthy-but", ...).
+const classification = z.enum(
+    Object.keys(ClassificationEnum).filter((key) =>
+        Number.isNaN(Number(key))
+    ) as [string, ...string[]]
+);
+
+// Review Log (the review form). Text fields map to the web form:
+// summary = "Resumo da conclusão", questions = "Quais perguntas a verificação
+// deverá responder?", report = "Relatório da verificação", verification =
+// "Como verificamos?". Every field is optional so drafts can be saved in
+// parts; submit_report checks completeness.
+export const REVIEW_LOG_SOURCE_FIELDS = [
+    "summary",
+    "report",
+    "verification",
+] as const;
+
+const reviewLogSource = z.object({
+    href: z
+        .url({ protocol: /^https?$/ })
+        .describe("Source URL (http or https)"),
+    field: z
+        .enum(REVIEW_LOG_SOURCE_FIELDS)
+        .optional()
+        .describe("Form field the source supports; required with quotedText"),
+    quotedText: nonEmptyText(300)
+        .optional()
+        .describe(
+            "Exact words from that field that this source backs; they become the link. Omit to add the source at the end of the field"
+        ),
+});
+
+export const SaveReviewLogSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    classification: classification.optional().describe("Label (etiqueta)"),
+    summary: nonEmptyText(3000)
+        .optional()
+        .describe("Resumo da conclusão: 2-3 sentences"),
+    questions: z
+        .array(nonEmptyText(500))
+        .min(1)
+        .max(10)
+        .optional()
+        .describe(
+            "Guiding questions (perguntas norteadoras); replaces the list"
+        ),
+    report: nonEmptyText(20000)
+        .optional()
+        .describe("Relatório da verificação; paragraphs separated by \n"),
+    verification: nonEmptyText(5000)
+        .optional()
+        .describe("Como verificamos? (method)"),
+    sources: z
+        .array(reviewLogSource)
+        .max(30)
+        .optional()
+        .describe("Sources; replaces the whole list"),
+});
+
+export const ReleaseReviewTaskSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    reason: z
+        .enum(["not-checkable", "needs-human", "duplicate", "other"])
+        .describe("Why the task is given back"),
+    note: nonEmptyText(1000).optional().describe("Short explanation"),
+});
+
+export const SubmitCrossCheckSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    classification: classification.describe("Your own label after re-checking"),
+    comment: nonEmptyText(5000).describe(
+        "What you verified; on disagreement, the exact problem and the source that shows it"
+    ),
+});
+
+export const RejectReviewTaskSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    rejectionComment: nonEmptyText(5000).describe(
+        "What must change before the review can be published"
+    ),
 });

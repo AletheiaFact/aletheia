@@ -73,6 +73,12 @@ export const publishableReport = {
     sources: [{ href: "https://example.org" }],
 };
 
+// A report whose cross-check agreed with its label: ready for review.
+export const agreedCrossCheck = {
+    classification: "false",
+    crossCheckingClassification: "false",
+};
+
 const claimTree = {
     _id: "claim-1",
     content: [
@@ -108,6 +114,15 @@ function buildDeps(user: any) {
                 .fn()
                 .mockResolvedValue(storedTask("published", publishableReport)),
             enqueueUnassigned: vi.fn().mockResolvedValue(true),
+            createAssigned: vi
+                .fn()
+                .mockResolvedValue(storedTask({ assigned: "undraft" })),
+            updateAtomically: vi
+                .fn()
+                .mockResolvedValue(storedTask({ assigned: "draft" })),
+            _createCrossCheckingComment: vi
+                .fn()
+                .mockResolvedValue({ _id: "6ad9aa0000000000000000cc" }),
         },
         claimReviewService: {
             getById: vi.fn().mockResolvedValue(null),
@@ -219,6 +234,17 @@ export const validArgs: Record<string, Record<string, unknown>> = {
     send_to_review: { dataHash: HASH_A },
     claim_review_task: {},
     publish_review_task: { dataHash: HASH_A },
+    save_review_log: { dataHash: HASH_A, summary: "Resumo." },
+    submit_report: { dataHash: HASH_A },
+    release_review_task: { dataHash: HASH_A, reason: "not-checkable" },
+    send_to_cross_check: { dataHash: HASH_A },
+    claim_cross_check: {},
+    submit_cross_check: {
+        dataHash: HASH_A,
+        classification: "false",
+        comment: "Conferi as fontes.",
+    },
+    reject_review_task: { dataHash: HASH_A, rejectionComment: "Falta fonte." },
 };
 
 // Stored task each data_hash tool needs for its happy path, and the role
@@ -229,15 +255,45 @@ export const happyPath: Record<string, { task?: unknown; user: unknown }> = {
         task: storedTask({ assigned: "draft" }, { usersId: [OTHER_USER_ID] }),
         user: factChecker,
     },
-    send_to_review: { task: storedTask("reported"), user: factChecker },
+    send_to_review: {
+        task: storedTask("reported", agreedCrossCheck),
+        user: factChecker,
+    },
     publish_review_task: {
         task: storedTask("submitted", publishableReport),
         user: factChecker,
     },
     claim_review_task: { user: reviewer },
+    save_review_log: {
+        task: storedTask({ assigned: "draft" }),
+        user: factChecker,
+    },
+    submit_report: {
+        task: storedTask({ assigned: "draft" }, publishableReport),
+        user: factChecker,
+    },
+    release_review_task: {
+        task: storedTask({ assigned: "draft" }),
+        user: factChecker,
+    },
+    send_to_cross_check: { task: storedTask("reported"), user: factChecker },
+    claim_cross_check: { user: factChecker },
+    submit_cross_check: {
+        task: storedTask("cross-checking", {
+            ...publishableReport,
+            usersId: [OTHER_USER_ID],
+            crossCheckerId: USER_ID,
+        }),
+        user: factChecker,
+    },
+    reject_review_task: {
+        task: storedTask("submitted", publishableReport),
+        user: reviewer,
+    },
 };
 
 export const READ_TOOLS = [
+    "get_review_log",
     "next_cross_checking",
     "list_my_review_tasks",
     "search",

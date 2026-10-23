@@ -28,6 +28,8 @@ describe("MCP adversarial: positive control", () => {
             validArgs.start_review_task
         );
         expect(res.isError).toBe(false);
-        expect(session.mocks.reviewTaskService.create).toHaveBeenCalledTimes(1);
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).toHaveBeenCalledTimes(1);
     });
 });

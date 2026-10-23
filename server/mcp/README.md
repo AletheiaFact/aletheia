@@ -162,8 +162,57 @@ tools that create or change data.
 | `get_claim_review`   | read   | Get a published fact-check review by id or `data_hash`                          |
 | `list_review_tasks`  | read   | List review tasks by workflow state (unassigned, assigned, reported, published) |
 | `get_review_task`    | read   | Get a review task by id                                                         |
-| `start_review_task`  | write  | Claim a claim sentence for fact-checking; the task is created already assigned to you |
 | `add_review_comment` | write  | Add a comment to a review task (by `data_hash`)                                 |
+
+### Fact-checking workflow
+
+A task moves through the same states as in the web app, so either side can
+continue it. Each step is a guarded atomic update: a caller acting on a stale
+view gets a conflict, never someone else's task.
+
+| Step | Tool | Access | Who | State change |
+| --- | --- | --- | --- | --- |
+| Take work | `next_review_task` | write | any checker | `unassigned` → `assigned` |
+| Take a given sentence | `start_review_task` | write | any checker | (none or `unassigned`) → `assigned` |
+| Join | `join_review_task` | write | any checker | adds an assignee |
+| Read the form | `get_review_log` | read | anyone | — |
+| Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
+| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` |
+| Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
+| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
+| Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` |
+| My cross-checks | `next_cross_checking` | read | cross-checker | — |
+| Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `reported`; different → `assigned` |
+| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` |
+| Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` |
+| My reviews | `list_my_review_tasks` | read | reviewer | — |
+| Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
+| Publish | `publish_review_task` | write | reviewer | `submitted` → `published` |
+
+`save_review_log` takes the form in plain text — `summary` ("Resumo da
+conclusão"), `questions`, `report` ("Relatório da verificação"),
+`verification` ("Como verificamos?"), `classification` and `sources`
+(`{ href, field, quotedText }`, where `quotedText` is copied from the field
+and becomes the link) — and stores the same fields, editor document and HTML
+the web form saves. `submit_report` and `publish_review_task` apply the web's
+completeness rules and list what is missing.
+
+Rules (`mcp.task_queue` in `config.yaml`):
+
+- `max_open_per_user` (default 1): tasks a non-admin may hold in `assigned`
+  before `next_review_task` refuses more.
+- `max_releases` (default 2): a task released this many times leaves the
+  queue for a person to triage. A user is never handed a task they released.
+- `require_cross_check` (default true): `send_to_review` needs a cross-check
+  whose label matches the report's.
+- `max_assignees` (default 10): limit for `join_review_task`.
+
+The four-eyes rule is enforced by account: a cross-checker is never an
+assignee, and a reviewer is never an assignee or the cross-checker. An agent
+doing the whole flow therefore needs three accounts (two checkers and one
+with the reviewer role). The `aletheia-fact-check` skill
+(`.claude/skills/aletheia-fact-check/`) drives the flow following the
+*Manual de Checagem*.
 
 ### Verification requests
 
@@ -172,11 +221,6 @@ tools that create or change data.
 | `list_verification_requests`  | read   | List verification requests (fact-check intake)                |
 | `get_verification_request`    | read   | Get a verification request by id                              |
 | `create_verification_request` | write  | Submit content for fact-checking (enters the triage pipeline) |
-
-`start_review_task` claims a claim sentence (by `claimId` + sentence
-`dataHash`) for fact-checking: it creates the review task already `assigned`
-to the caller. In the web app "no task" already means unassigned, so there is
-no separate enqueue step.
 
 ## Development
 

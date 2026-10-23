@@ -62,6 +62,21 @@ export class ReviewTaskQueueService {
     }
 
     /**
+     * Guarded update that is not a workflow transition (a draft save, a
+     * comment link): applies `update` only if `filter` still matches, with
+     * no history or state event, like the web's draft endpoint. Returns the
+     * updated task, or `null` when the filter no longer matches.
+     */
+    updateAtomically(
+        filter: Record<string, any>,
+        update: Record<string, any>
+    ): Promise<ReviewTaskDocument | null> {
+        return this.ReviewTaskModel.findOneAndUpdate(filter, update, {
+            new: true,
+        }).exec();
+    }
+
+    /**
      * Inserts an `unassigned` task unless one already exists for the
      * data_hash. Relies on the unique data_hash index, so concurrent
      * enqueues of the same sentence yield one task. Returns whether a task
@@ -89,6 +104,41 @@ export class ReviewTaskQueueService {
         return result.upsertedCount > 0;
     }
 
+    /**
+     * Inserts a task that is already assigned. Unlike ReviewTaskService.create
+     * (the web path, which saves without awaiting), the insert is awaited, so
+     * a caller that loses the unique data_hash race gets `null` instead of a
+     * task it does not own.
+     */
+    async createAssigned(reviewTask: {
+        data_hash: string;
+        reportModel: ReportModelEnum;
+        reviewTaskType: ReviewTaskTypeEnum;
+        nameSpace: string;
+        target: string;
+        machine: Machine;
+    }): Promise<ReviewTaskDocument | null> {
+        let created: ReviewTaskDocument;
+        try {
+            created = await this.ReviewTaskModel.create(reviewTask);
+        } catch (error) {
+            if (error?.code === 11000) {
+                return null;
+            }
+            throw error;
+        }
+        try {
+            await this.effects.recordHistory(created.toObject());
+            this.effects.recordStateEvent(created.toObject());
+        } catch (error) {
+            this.logger.error(
+                `[ReviewTask] Created data_hash=${created.data_hash} ` +
+                    `but history/state event failed: ${error}`
+            );
+        }
+        return created;
+    }
+
     findOldest(
         filter: Record<string, any>,
         page = 0,
@@ -109,6 +159,8 @@ export class ReviewTaskQueueService {
      * Publishes a `submitted` task the way the web publish event does:
      * creates the Report and ClaimReview and records history and the state
      * event. The state flip is guarded so a task is published at most once.
+     * If the Report or ClaimReview cannot be created, the task goes back to
+     * `submitted` so the publish can be retried.
      */
     async publishSubmitted(
         reviewTaskId: string
@@ -123,14 +175,26 @@ export class ReviewTaskQueueService {
         if (!published) {
             return null;
         }
-        await this.effects.createReportAndClaimReview(
-            published.data_hash,
-            published.toObject().machine,
-            published.reportModel,
-            published.nameSpace,
-            published.target,
-            published.reviewTaskType
-        );
+        try {
+            await this.effects.createReportAndClaimReview(
+                published.data_hash,
+                published.toObject().machine,
+                published.reportModel,
+                published.nameSpace,
+                published.target,
+                published.reviewTaskType
+            );
+        } catch (error) {
+            await this.ReviewTaskModel.updateOne(
+                { _id: published._id, "machine.value": "published" },
+                { $set: { "machine.value": "submitted" } }
+            );
+            this.logger.error(
+                `[ReviewTask] Publish of data_hash=${published.data_hash} ` +
+                    `reverted to submitted: ${error}`
+            );
+            throw error;
+        }
         return published;
     }
 }
