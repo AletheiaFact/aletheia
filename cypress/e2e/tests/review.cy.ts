@@ -81,6 +81,42 @@ describe("Test claim review", () => {
         assignUser();
     });
 
+    // Runs while the task is still `assigned`: once the report is finished
+    // the form is read-only and the classification select opens no menu.
+    // CI cannot turn the Unleash flag on, so the task's methodology is
+    // injected into the review task response instead. Nothing is saved.
+    it("offers only the methodology's options for an rncd-debate task", () => {
+        cy.login();
+        cy.intercept("GET", "/api/reviewtask/hash/*", (req) => {
+            req.continue((res) => {
+                if (res.body && typeof res.body === "object") {
+                    res.body.classificationMethodology = "rncd-debate";
+                }
+            });
+        }).as("getReviewTask");
+        cy.intercept("GET", "/api/reviewtask/editor-content/*", (req) => {
+            req.reply({
+                statusCode: 200,
+                body: review.editorContent,
+                headers: {
+                    "content-type": "application/json",
+                },
+            });
+        }).as("getEditorContent");
+        goToClaimReviewPage();
+        cy.wait("@getReviewTask");
+        cy.wait("@getEditorContent");
+        cy.get(locators.claimReview.INPUT_CLASSIFICATION)
+            .should("exist")
+            .click();
+        cy.get("[data-cy=trustworthy]")
+            .should("be.visible")
+            .invoke("text")
+            .should("match", /^(True|Verdadeiro)\s*$/);
+        cy.get("[data-cy=exaggerated]").should("not.exist");
+        cy.get("body").type("{esc}");
+    });
+
     it("should be able to submit full review fields", () => {
         cy.login();
         cy.intercept("GET", "/api/reviewtask/editor-content/*", (req) => {
@@ -137,29 +173,5 @@ describe("Test claim review", () => {
         goToClaimReviewPage();
         cy.wait("@getReviewTask");
         blockAssignedUserReview();
-    });
-
-    // CI cannot turn the Unleash flag on, so the task's methodology is
-    // injected into the review task response instead
-    it("offers only the methodology's options for an rncd-debate task", () => {
-        cy.intercept("GET", "/api/reviewtask/hash/*", (req) => {
-            req.continue((res) => {
-                if (res.body && typeof res.body === "object") {
-                    res.body.classificationMethodology = "rncd-debate";
-                }
-            });
-        }).as("getReviewTask");
-        cy.login();
-        goToClaimReviewPage();
-        cy.wait("@getReviewTask");
-        cy.get(locators.claimReview.INPUT_CLASSIFICATION)
-            .should("exist")
-            .click();
-        cy.get("[data-cy=trustworthy]")
-            .should("be.visible")
-            .invoke("text")
-            .should("match", /^(True|Verdadeiro)\s*$/);
-        cy.get("[data-cy=exaggerated]").should("not.exist");
-        cy.get("body").type("{esc}");
     });
 });
