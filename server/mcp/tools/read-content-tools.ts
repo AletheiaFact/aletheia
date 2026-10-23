@@ -10,6 +10,7 @@ import {
     ListSourcesSchema,
 } from "./schemas";
 import type { McpToolDeps } from "../mcp.service";
+import { withClassificationLabels } from "./classification-labels";
 
 export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
@@ -51,7 +52,8 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "get_claim",
         {
-            description: "Get a claim by id, including its latest revision",
+            description:
+                "Get a claim by id, including its latest revision. Classified items include classificationMethodology, methodologyName and classificationLabel: report the label with its methodology.",
             inputSchema: GetClaimSchema.shape as any,
         },
         safeTool("get_claim", async (args) => {
@@ -61,7 +63,12 @@ export function registerReadContentTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             return jsonResult(
-                await deps.claimService.getById(args.claimId, args.nameSpace)
+                withClassificationLabels(
+                    await deps.claimService.getById(
+                        args.claimId,
+                        args.nameSpace
+                    )
+                )
             );
         })
     );

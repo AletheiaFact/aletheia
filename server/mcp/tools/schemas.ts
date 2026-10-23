@@ -5,6 +5,10 @@ import { PersonalitySchema } from "../../interfaces/personality.interface";
 import { SourceZodSchema } from "../../source/schemas/source.zod";
 import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
 import { VerificationRequestCreateZodSchema } from "../../verification-request/schemas/verification-request.zod";
+import {
+    DEFAULT_METHODOLOGY,
+    METHODOLOGY_IDS,
+} from "../../../lib/classification-methodology";
 
 // Entity-shaped create inputs below are derived (.pick/.extend) from the
 // canonical Zod schema colocated with each module (personality, source,
@@ -127,7 +131,19 @@ export const StartReviewTaskSchema = z.object({
         .regex(/^[a-f0-9]{32}$/i)
         .describe("data_hash of the claim sentence to review"),
     nameSpace,
+    // .optional(), not .default(): Zod 4 marks default fields as required in
+    // the JSON Schema sent to the model. The default is applied server-side.
+    classificationMethodology: z
+        .enum(METHODOLOGY_IDS)
+        .optional()
+        .describe(
+            `Classification methodology for this review (${METHODOLOGY_IDS.join(
+                ", "
+            )}); defaults to ${DEFAULT_METHODOLOGY}. Call list_classification_methodologies for each one's options.`
+        ),
 });
+
+export const ListClassificationMethodologiesSchema = z.object({});
 
 export const CreatePersonalitySchema = PersonalitySchema.pick({
     name: true,

@@ -165,6 +165,18 @@ tools that create or change data.
 | `get_review_task`    | read   | Get a review task by id                                                         |
 | `start_review_task`  | write  | Claim a claim sentence for fact-checking; the task is created already assigned to you |
 | `add_review_comment` | write  | Add a comment to a review task (by `data_hash`)                                 |
+| `list_classification_methodologies` | read | List classification methodologies and their labels                    |
+
+#### Classification methodologies
+
+A review stores one of the 9 `ClassificationEnum` keys. Its methodology
+(`aletheia` by default, or `rncd-debate`) decides which keys were offered
+and how they are worded. `get_claim`, `get_claim_review`, `get_review_task`
+and `list_review_tasks` add `classificationMethodology`, `methodologyName`
+and `classificationLabel` (`{ pt, en }`) next to every classification.
+Report the label together with its methodology. `start_review_task` takes
+an optional `classificationMethodology`; a non-default one requires the
+`enable_classification_methodology` flag.
 
 ### Verification requests
 

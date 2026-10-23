@@ -12,6 +12,7 @@ export interface StartReviewTaskInput {
     claimId: string;
     dataHash: string;
     nameSpace: string;
+    classificationMethodology?: string;
 }
 
 // Sentences are the leaves of a claim's content tree: paragraphs also carry
@@ -80,7 +81,12 @@ export class ReviewWorkflowService {
      */
     async startReviewTask(
         user: { _id: string },
-        { claimId, dataHash, nameSpace }: StartReviewTaskInput
+        {
+            claimId,
+            dataHash,
+            nameSpace,
+            classificationMethodology,
+        }: StartReviewTaskInput
     ): Promise<unknown> {
         const claim: any = await this.claimService.getById(claimId, nameSpace);
         if (!claim) {
@@ -104,6 +110,9 @@ export class ReviewWorkflowService {
         return this.reviewTaskService.create({
             data_hash: dataHash,
             reportModel: ReportModelEnum.FactChecking,
+            // ReviewTaskService.create applies the default, the flag and
+            // the id check
+            classificationMethodology,
             reviewTaskType: ReviewTaskTypeEnum.Claim,
             nameSpace,
             target: claimId,

@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { AdminUserMock } from "./utils/AdminUserMock";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import {
     authState,
     callTool,
@@ -26,6 +27,8 @@ const findSentenceHashes = (node: any, found: string[] = []) => {
 describe("MCP start_review_task (e2e)", () => {
     const mcp = useMcpTestHelper();
 
+    afterEach(() => vi.restoreAllMocks());
+
     // Setup calls must succeed; surface the tool error instead of a
     // confusing JSON.parse failure when they don't.
     const callOk = async (name: string, args: any) => {
@@ -46,7 +49,9 @@ describe("MCP start_review_task (e2e)", () => {
         });
         const claim = await callOk("create_claim", {
             title: `Workflow claim ${stamp}`,
-            content: "Nós criamos o Pronetac.",
+            // Unique per claim: the sentence data_hash depends on its text,
+            // and each test needs a sentence with no review task yet
+            content: `Nós criamos o Pronetac ${stamp}.`,
             date: new Date().toISOString(),
             sources: [`https://example.org/workflow-${stamp}`],
             personalityId: personality._id,
@@ -80,7 +85,14 @@ describe("MCP start_review_task (e2e)", () => {
 
     it("refuses a sentence that already has a task", async () => {
         const { claimId, dataHash } = await createClaim();
-        await callTool(mcp.app, "start_review_task", { claimId, dataHash });
+        const first = await callOk("start_review_task", { claimId, dataHash });
+        // ReviewTaskService.create saves without awaiting: wait until stored
+        await vi.waitFor(async () => {
+            const read = await callTool(mcp.app, "get_review_task", {
+                reviewTaskId: first._id,
+            });
+            expect(JSON.parse(read.result.content[0].text)).not.toBeNull();
+        });
 
         const body = await callTool(mcp.app, "start_review_task", {
             claimId,
@@ -101,6 +113,83 @@ describe("MCP start_review_task (e2e)", () => {
 
         expect(body.result.isError).toBe(true);
         expect(body.result.content[0].text).toMatch(/sentence/i);
+    });
+
+    it("defaults a new task to the aletheia methodology", async () => {
+        const { claimId, dataHash } = await createClaim();
+        const body = await callTool(mcp.app, "start_review_task", {
+            claimId,
+            dataHash,
+        });
+        const task = JSON.parse(body.result.content[0].text);
+        expect(task.classificationMethodology).toBe("aletheia");
+    });
+
+    it("stores rncd-debate when the methodology flag is on", async () => {
+        // Prototype, not app.get(): modules that list FeatureFlagService in
+        // their own providers get separate instances
+        vi.spyOn(
+            FeatureFlagService.prototype,
+            "isEnableClassificationMethodology"
+        ).mockReturnValue(true);
+        const { claimId, dataHash } = await createClaim();
+
+        const body = await callTool(mcp.app, "start_review_task", {
+            claimId,
+            dataHash,
+            classificationMethodology: "rncd-debate",
+        });
+
+        expect(body.result.isError).toBeFalsy();
+        const task = JSON.parse(body.result.content[0].text);
+        expect(task.classificationMethodology).toBe("rncd-debate");
+
+        // ReviewTaskService.create saves without awaiting: poll the read
+        await vi.waitFor(async () => {
+            const read = await callTool(mcp.app, "get_review_task", {
+                reviewTaskId: task._id,
+            });
+            expect(
+                JSON.parse(read.result.content[0].text)
+                    ?.classificationMethodology
+            ).toBe("rncd-debate");
+        });
+    });
+
+    it("refuses rncd-debate while the methodology flag is off", async () => {
+        const { claimId, dataHash } = await createClaim();
+        const body = await callTool(mcp.app, "start_review_task", {
+            claimId,
+            dataHash,
+            classificationMethodology: "rncd-debate",
+        });
+        expect(body.result.isError).toBe(true);
+        expect(body.result.content[0].text).toMatch(/disabled/i);
+    });
+
+    it("rejects an unknown methodology", async () => {
+        const { claimId, dataHash } = await createClaim();
+        const body = await callTool(mcp.app, "start_review_task", {
+            claimId,
+            dataHash,
+            classificationMethodology: "nope",
+        });
+        expect(body.result?.isError || body.error).toBeTruthy();
+    });
+
+    it("lists the classification methodologies", async () => {
+        const body = await callTool(
+            mcp.app,
+            "list_classification_methodologies",
+            {}
+        );
+        const list = JSON.parse(body.result.content[0].text);
+        expect(list.map((m: any) => m.id)).toEqual(["aletheia", "rncd-debate"]);
+        expect(
+            list
+                .find((m: any) => m.id === "rncd-debate")
+                .options.map((o: any) => o.label.pt)
+        ).toEqual(["Falso", "Enganosa", "Verdadeiro"]);
     });
 
     it("blocks a Regular (read-only) user", async () => {

@@ -164,6 +164,8 @@ const READ_TOOLS = [
     "get_claim_review",
     "list_review_tasks",
     "get_review_task",
+    // Static registry only: no namespace, user or database access
+    "list_classification_methodologies",
     "list_verification_requests",
     "get_verification_request",
     "search_topics",

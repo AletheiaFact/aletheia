@@ -3,9 +3,19 @@ import { assertNamespaceAccess, jsonResult, safeTool } from "./tool-helpers";
 import {
     GetClaimReviewSchema,
     GetReviewTaskSchema,
+    ListClassificationMethodologiesSchema,
     ListReviewTasksSchema,
 } from "./schemas";
 import type { McpToolDeps } from "../mcp.service";
+import {
+    DEFAULT_METHODOLOGY,
+    METHODOLOGY_IDS,
+    classificationMethodologies,
+} from "../../../lib/classification-methodology";
+import { withClassificationLabels } from "./classification-labels";
+
+const LABELS_NOTE =
+    " Classified items include classificationMethodology, methodologyName and classificationLabel: report the label with its methodology.";
 
 export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
     // Registered with `.shape` (plain object schema) so tools/list advertises
@@ -13,7 +23,9 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "get_claim_review",
         {
-            description: "Get a published fact-check review by id or data_hash",
+            description:
+                "Get a published fact-check review by id or data_hash." +
+                LABELS_NOTE,
             inputSchema: GetClaimReviewSchema.shape as any,
         },
         safeTool("get_claim_review", async (args: any) => {
@@ -32,7 +44,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                     review.nameSpace
                 );
             }
-            return jsonResult(review);
+            return jsonResult(withClassificationLabels(review));
         })
     );
 
@@ -40,7 +52,8 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "list_review_tasks",
         {
             description:
-                "List fact-checking review tasks by workflow state (unassigned, assigned, reported, published)",
+                "List fact-checking review tasks by workflow state (unassigned, assigned, reported, published)." +
+                LABELS_NOTE,
             inputSchema: ListReviewTasksSchema.shape as any,
         },
         safeTool("list_review_tasks", async (args) => {
@@ -50,19 +63,21 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 args.nameSpace
             );
             return jsonResult(
-                await deps.reviewTaskService.listAll({
-                    value: args.value,
-                    filterUser: {
-                        assigned: false,
-                        crossChecked: false,
-                        reviewed: false,
-                    },
-                    nameSpace: args.nameSpace,
-                    reviewTaskType: args.reviewTaskType,
-                    page: args.page,
-                    pageSize: args.pageSize,
-                    order: args.order,
-                })
+                withClassificationLabels(
+                    await deps.reviewTaskService.listAll({
+                        value: args.value,
+                        filterUser: {
+                            assigned: false,
+                            crossChecked: false,
+                            reviewed: false,
+                        },
+                        nameSpace: args.nameSpace,
+                        reviewTaskType: args.reviewTaskType,
+                        page: args.page,
+                        pageSize: args.pageSize,
+                        order: args.order,
+                    })
+                )
             );
         })
     );
@@ -70,7 +85,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
     server.registerTool(
         "get_review_task",
         {
-            description: "Get a review task by id",
+            description: "Get a review task by id." + LABELS_NOTE,
             inputSchema: GetReviewTaskSchema.shape as any,
         },
         safeTool("get_review_task", async (args) => {
@@ -84,7 +99,25 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                     task.nameSpace
                 );
             }
-            return jsonResult(task);
+            return jsonResult(withClassificationLabels(task));
         })
+    );
+
+    server.registerTool(
+        "list_classification_methodologies",
+        {
+            description:
+                "List the classification methodologies a review can use, with each option's stored value and pt/en label. A classification label only has meaning within its methodology: always report both.",
+            inputSchema: ListClassificationMethodologiesSchema.shape as any,
+        },
+        safeTool("list_classification_methodologies", async () =>
+            jsonResult(
+                METHODOLOGY_IDS.map((id) => ({
+                    id,
+                    default: id === DEFAULT_METHODOLOGY,
+                    ...classificationMethodologies[id],
+                }))
+            )
+        )
     );
 }
