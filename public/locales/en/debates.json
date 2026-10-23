@@ -9,5 +9,21 @@
     "seeDebate": "Watch the debate reviews",
     "finishDebateButtonLabel": "Finish debate",
     "reopenDebateButtonLabel": "Reopen debate",
-    "openEditDebateMode": "Open edit debate mode"
+    "openEditDebateMode": "Open edit debate mode",
+    "draftsTitle": "Pending drafts ({{count}})",
+    "draftsSelectAll": "Select all",
+    "draftsPublishSelected": "Publish selected",
+    "draftsRejectSelected": "Reject selected",
+    "draftsRejectConfirm": "Reject {{count}} draft(s)? They will not be published.",
+    "draftsPublished": "Speeches published: {{count}}",
+    "draftSpeakerLabel": "Speaker",
+    "draftUnsavedLabel": "Unsaved edit",
+    "draftPublish": "Publish",
+    "draftSaveAndPublish": "Save and publish",
+    "draftSaveEdit": "Save edit",
+    "draftDiscardEdit": "Discard edit",
+    "draftReject": "Reject",
+    "draftEditError": "Could not save the draft edit",
+    "draftReviewError": "Could not review the drafts",
+    "draftsFetchError": "Could not load the drafts"
 }
