@@ -88,7 +88,13 @@ describe("Test claim review", () => {
     it("offers only the methodology's options for an rncd-debate task", () => {
         cy.login();
         cy.intercept("GET", "/api/reviewtask/hash/*", (req) => {
+            // The endpoint is `no-cache` with an ETag: without these, the
+            // browser caches the rewritten body and later tests revalidate
+            // (304) straight back into rncd-debate
+            delete req.headers["if-none-match"];
             req.continue((res) => {
+                res.headers["cache-control"] = "no-store";
+                delete res.headers["etag"];
                 if (res.body && typeof res.body === "object") {
                     res.body.classificationMethodology = "rncd-debate";
                 }
