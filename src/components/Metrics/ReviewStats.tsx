@@ -30,6 +30,10 @@ const ReviewStats = (props) => {
                     data-cy="testMethodologyStatsNote"
                     style={{
                         display: "block",
+                        // The circle layout is a wrapping flex row: take a
+                        // line of its own under the circles
+                        flexBasis: "100%",
+                        textAlign: props.type === "circle" ? "center" : "left",
                         fontSize: 10,
                         color: colors.blackSecondary,
                         marginTop: 8,
