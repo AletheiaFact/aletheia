@@ -120,9 +120,15 @@ export class ReviewStages {
      * Moves a `reported` task to the review backlog (`selectReviewer` with
      * no reviewer), where any reviewer can claim it. Assignees or admins
      * only. Unless `mcp.task_queue.require_cross_check` is false, the report
-     * must first have a cross-check that agreed with its label.
+     * must first have a cross-check that agreed with its label; with
+     * `skipCrossCheck` (submit_report_to_review) that requirement is waived
+     * for this call.
      */
-    async sendToReview(user: WorkflowUser, task: any) {
+    async sendToReview(
+        user: WorkflowUser,
+        task: any,
+        { skipCrossCheck = false }: { skipCrossCheck?: boolean } = {}
+    ) {
         if (!isAssignee(task, user) && !isAdmin(user, task.nameSpace)) {
             throw new ForbiddenException(
                 "Only an assignee of the task or an admin can send it to review"
@@ -133,7 +139,11 @@ export class ReviewStages {
             !!reviewData.crossCheckingClassification &&
             reviewData.crossCheckingClassification ===
                 reviewData.classification;
-        if (this.config.requireCrossCheck() && !crossCheckAgreed) {
+        if (
+            this.config.requireCrossCheck() &&
+            !crossCheckAgreed &&
+            !skipCrossCheck
+        ) {
             throw new ConflictException(
                 "The report needs a cross-check that agrees with its label before review; use send_to_cross_check first"
             );
