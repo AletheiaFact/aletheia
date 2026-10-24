@@ -71,7 +71,7 @@ export class McpOAuthProviderService {
             acceptOAuth2LoginRequest: {
                 subject,
                 remember: !request.skip,
-                remember_for: 3600,
+                remember_for: 2592000,
             },
         });
         return data.redirect_to;
@@ -121,7 +121,7 @@ export class McpOAuthProviderService {
                 grant_access_token_audience:
                     request.requested_access_token_audience,
                 remember: true,
-                remember_for: 3600,
+                remember_for: 2592000,
             },
         });
         return data.redirect_to;
