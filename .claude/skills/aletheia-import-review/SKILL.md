@@ -41,6 +41,25 @@ into the conversation.
 Reuse `../aletheia-fact-check/references/` (`labels.md`, `review-log.md`,
 `research.md`); read the first two before the first row.
 
+## Sheet status and board
+
+Column G of `VALIDAÇÃO` is the import status (dropdown: `Iniciado`, `Rascunho`,
+`Em Revisão`, `Publicado`, `Dúvida`, `Faltam Fontes`, `Problema`). Every spreadsheet edit goes through
+`codex exec -m gpt-6-luna -c model_reasoning_effort=low --dangerously-bypass-approvals-and-sandbox "<prompt>"`
+and the prompt ends with "Responda apenas Y ou N." To find a row, say "Busque
+de A7:A78 o valor <ID>"; never ask for more than the cells you need.
+
+As soon as you start a row: set G to `Iniciado`, then add the row to
+`board/board.json` (a `groups` entry plus one card per covered sentence, each
+with its `hash` so `poll.mjs` tracks it) and keep the poller running to watch
+the tasks. Move G to `Rascunho` once the drafts are saved, `Em Revisão` after
+submit, `Publicado` when a human publishes. If sentence mapping, ownership, or
+the sheet's label needs a human decision, set G to `Dúvida`. If the cited
+material is missing or does not support the required facts, set G to
+`Faltam Fontes`. Reserve `Problema` for other blockers. Keep the board group
+for each started row and display its current status there, even when no card
+could be created.
+
 ## One row, N sentences
 
 A row is one declaration with one conclusion, and it can cover several
@@ -79,10 +98,25 @@ so the conclusion is written to **every covered sentence**.
 If a page comes back empty (government sites such as `pesquisa.apps.tcu.gov.br`
 render in JS and load slowly), open it with Playwright (`browser_navigate`,
 wait for the text, `browser_evaluate` to read it) and never mark it
-"unverified" for that reason. Each number in column D must be backed by a source. If the listed
-ones do not show it, find the primary source yourself (official site first),
-open it and add it to `sources` under "Informação complementar:". Only if you
-cannot find any, list the row in "needs a person".
+"unverified" for that reason.
+
+Build a table first: one line per number or date in column D, with the
+source that shows it. A number with no source gets a search for the primary
+source, and it needs the **official** link (the issuing body's own site, not
+a news site or a mirror; use a copy only if no official link exists, and
+record that as "not found"). Sources you open often cite other documents
+(acórdãos, reports, dashboards) that hold the numbers: open those too and
+cite them. Do not stop at the first page that shows the number. Add what you
+find to `sources` under "Informação complementar:". Only if you cannot find
+any, list the row in "needs a person".
+
+Look in this order and stop at the first source that shows the number: (1) the
+sources already in column D; (2) the issuing body's news pages and dashboards;
+(3) its search portal, opened in a browser (e.g. TCU `pesquisa.apps.tcu.gov.br`
+loads in a few seconds); (4) other official pages; and only then (5) PDFs.
+A PDF is the last resort: it is slow and large. When you need one, download it
+in the background, extract the text, and grep for the exact numbers instead of
+reading it. Never block the run waiting for a download.
 Each source's `quotedText` must be the trecho that source really backs. Do
 not save a draft with unopened sources. You may add supporting
 sources or omitted data (period, universe, limits) under "Informação
