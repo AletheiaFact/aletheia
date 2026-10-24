@@ -44,6 +44,8 @@ describe("MCP discovery (e2e)", () => {
         expect(names).toEqual(
             [
                 "add_review_comment",
+                "claim_cross_check",
+                "claim_review_task",
                 "create_claim",
                 "create_personality",
                 "create_source",
@@ -51,16 +53,29 @@ describe("MCP discovery (e2e)", () => {
                 "get_claim",
                 "get_claim_review",
                 "get_personality",
+                "get_review_log",
                 "get_review_task",
                 "get_verification_request",
+                "join_review_task",
                 "list_claims",
+                "list_my_review_tasks",
                 "list_personalities",
                 "list_review_tasks",
                 "list_sources",
                 "list_verification_requests",
+                "next_cross_checking",
+                "next_review_task",
+                "publish_review_task",
+                "reject_review_task",
+                "release_review_task",
+                "save_review_log",
                 "search",
                 "search_topics",
+                "send_to_cross_check",
+                "send_to_review",
                 "start_review_task",
+                "submit_cross_check",
+                "submit_report",
             ].sort()
         );
     });

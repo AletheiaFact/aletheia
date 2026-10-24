@@ -1,6 +1,8 @@
 import { Module, forwardRef } from "@nestjs/common";
 import { ReviewTask, ReviewTaskSchema } from "./schemas/review-task.schema";
 import { ReviewTaskService } from "./review-task.service";
+import { ReviewTaskEffectsService } from "./review-task-effects.service";
+import { ReviewTaskQueueService } from "./review-task-queue.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ReviewTaskController } from "./review-task.controller";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
@@ -41,8 +43,12 @@ export const ReviewTaskModel = MongooseModule.forFeature([
         FeatureFlagModule,
         GroupModule.register(),
     ],
-    providers: [ReviewTaskService],
-    exports: [ReviewTaskService],
+    providers: [
+        ReviewTaskService,
+        ReviewTaskEffectsService,
+        ReviewTaskQueueService,
+    ],
+    exports: [ReviewTaskService, ReviewTaskQueueService],
     controllers: [ReviewTaskController],
 })
 export class ReviewTaskModule {}

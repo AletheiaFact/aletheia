@@ -19,9 +19,10 @@ export class EditorService {
     }
 
     async updateByReference(reference: string, editorContentObject: any) {
-        const editor = await this.EditorModel.findByIdAndUpdate(
+        const editor = await this.EditorModel.findOneAndUpdate(
             { reference: new Types.ObjectId(reference) },
-            { $set: { editorContentObject } }
+            { $set: { editorContentObject } },
+            { new: true }
         );
         return editor;
     }

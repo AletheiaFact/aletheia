@@ -32,8 +32,11 @@ export class ParserService {
         content: string,
         claimRevisionId: string | object,
         personality: string | null = null,
-        contentModel = ContentModelEnum.Speech
+        contentModel = ContentModelEnum.Speech,
+        { isDraft = false }: { isDraft?: boolean } = {}
     ): Promise<ISpeech | IUnattributed> {
+        // Only set the flag on drafts so other content keeps its shape.
+        const draftProps = isDraft ? { isDraft: true } : {};
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result: Promise<any>[] = [];
@@ -63,7 +66,8 @@ export class ParserService {
                             this.parseSentence(
                                 sentence,
                                 paragraphDataHash,
-                                claimRevisionId
+                                claimRevisionId,
+                                draftProps
                             )
                         ),
                     })
@@ -83,6 +87,7 @@ export class ParserService {
                     content: object,
                     claimRevisionId: claimRevisionId,
                     personality: personality || null,
+                    ...draftProps,
                 });
             }
         );
@@ -110,7 +115,8 @@ export class ParserService {
     parseSentence(
         sentenceContent: string,
         paragraphDataHash: string,
-        claimRevisionId: string | object
+        claimRevisionId: string | object,
+        draftProps: { isDraft?: boolean } = {}
     ) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = this.hashService.computeSentenceHash(
@@ -126,6 +132,7 @@ export class ParserService {
             },
             content: sentenceContent,
             claimRevisionId: claimRevisionId,
+            ...draftProps,
         });
     }
 

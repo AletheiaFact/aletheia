@@ -41,6 +41,11 @@ export class Speech {
         ref: "ClaimRevision",
     })
     claimRevisionId: ClaimRevision;
+
+    // Set on content parsed from a debate transcript turn that is not
+    // approved yet. Public reads skip documents with isDraft: true.
+    @Prop({ type: Boolean, required: false })
+    isDraft?: boolean;
 }
 
 const SpeechSchemaRaw = SchemaFactory.createForClass(Speech);

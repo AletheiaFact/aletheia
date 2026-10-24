@@ -47,6 +47,7 @@ export class MongoSentenceService {
         const report = await this.reportService.findByDataHash(data_hash);
         const sentence = await this.SentenceModel.findOne({
             data_hash: { $eq: data_hash },
+            isDraft: { $ne: true },
         });
         if (sentence) {
             sentence.props = {
@@ -110,6 +111,9 @@ export class MongoSentenceService {
                 },
             });
         }
+
+        // Draft debate transcript sentences are not public until approved.
+        pipeline.push({ $match: { isDraft: { $ne: true } } });
 
         if (filter) {
             pipeline.push({
@@ -211,7 +215,10 @@ export class MongoSentenceService {
         this.logger.debug(`Fetching sentence hashes for topic: ${topicId}`);
         try {
             const sentences = await this.SentenceModel.find(
-                { "topics.id": { $eq: new Types.ObjectId(topicId) } },
+                {
+                    "topics.id": { $eq: new Types.ObjectId(topicId) },
+                    isDraft: { $ne: true },
+                },
                 { data_hash: 1 }
             ).lean();
 
