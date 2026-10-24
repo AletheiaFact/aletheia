@@ -27,7 +27,7 @@ describe("MCP adversarial: privilege escalation from a read-only role", () => {
             expect(m.claimService.create).not.toHaveBeenCalled();
             expect(m.personalityService.create).not.toHaveBeenCalled();
             expect(m.sourceService.create).not.toHaveBeenCalled();
-            expect(m.reviewTaskService.create).not.toHaveBeenCalled();
+            expect(m.reviewTaskService.createAssigned).not.toHaveBeenCalled();
             expect(m.reviewTaskService.addComment).not.toHaveBeenCalled();
             expect(
                 m.verificationRequestStateMachineService.request
@@ -44,6 +44,8 @@ describe("MCP adversarial: privilege escalation from a read-only role", () => {
             user: { _id: USER_ID, role: { main: "admin" } },
         });
         expect(res.isError).toBe(true);
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 });

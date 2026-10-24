@@ -26,27 +26,41 @@ export function stateName(value: unknown): string {
 
 // Sentences are the leaves of a claim's content tree: paragraphs also carry
 // a data_hash, but their `content` is an array rather than a string.
-export function collectSentenceHashes(
+export function collectSentences(
     node: any,
-    found: string[] = []
-): string[] {
+    found: { dataHash: string; text: string }[] = []
+): { dataHash: string; text: string }[] {
     if (Array.isArray(node)) {
-        node.forEach((child) => collectSentenceHashes(child, found));
+        node.forEach((child) => collectSentences(child, found));
     } else if (node && typeof node === "object") {
         if (node.data_hash && typeof node.content === "string") {
-            found.push(node.data_hash);
+            found.push({ dataHash: node.data_hash, text: node.content });
         }
-        Object.values(node).forEach((child) =>
-            collectSentenceHashes(child, found)
-        );
+        Object.values(node).forEach((child) => collectSentences(child, found));
     }
     return found;
 }
 
+export function collectSentenceHashes(node: any): string[] {
+    return collectSentences(node).map((sentence) => sentence.dataHash);
+}
+
+/** Id of the claim's first personality, as the web form sends it; "" when none. */
+export function claimPersonalityId(claim: any): string {
+    const personality = claim?.personalities?.[0];
+    const id = personality?._id ?? personality;
+    return id ? id.toString() : "";
+}
+
 // Mirrors getInitialContext(ReviewTaskTypeEnum.Claim, { usersId }) from
 // src/machines/reviewTask/context.ts, which the frontend uses to hydrate its
-// XState machine. A parity spec keeps the two in sync.
-export function buildClaimContext(usersId: string[], claimId: string) {
+// XState machine. A parity spec keeps the two in sync. The web form also sets
+// `review.personality`; the ClaimReview created on publish copies it.
+export function buildClaimContext(
+    usersId: unknown[],
+    claimId: string,
+    personality = ""
+) {
     return {
         reviewData: {
             usersId,
@@ -63,7 +77,7 @@ export function buildClaimContext(usersId: string[], claimId: string) {
             sources: [],
         },
         review: {
-            personality: "",
+            personality,
             usersId: "",
             targetId: claimId,
             target: claimId,

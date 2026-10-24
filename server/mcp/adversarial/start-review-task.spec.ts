@@ -26,7 +26,8 @@ describe("MCP adversarial: workflow forgery via start_review_task", () => {
             crossCheckerId: USER_ID,
         });
         expect(res.isError).toBe(false);
-        const created = session.mocks.reviewTaskService.create.mock.calls[0][0];
+        const created =
+            session.mocks.reviewTaskService.createAssigned.mock.calls[0][0];
         // the web app's persisted shape for the compound `assigned` state
         expect(created.machine.value).toEqual({ assigned: "undraft" });
         expect(created.machine.context.reviewData).toMatchObject({
@@ -45,7 +46,9 @@ describe("MCP adversarial: workflow forgery via start_review_task", () => {
         });
         expect(res.isError).toBe(true);
         expect(res.text).toMatch(/not a sentence/);
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 
     it("rejects a hash that does not belong to the claim", async () => {
@@ -55,7 +58,9 @@ describe("MCP adversarial: workflow forgery via start_review_task", () => {
             dataHash: "c".repeat(32),
         });
         expect(res.isError).toBe(true);
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 
     it("rejects taking a sentence that already has a task", async () => {
@@ -69,7 +74,9 @@ describe("MCP adversarial: workflow forgery via start_review_task", () => {
         );
         expect(res.isError).toBe(true);
         expect(res.text).toMatch(/already exists/);
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 
     it("takes a queued (unassigned) task atomically instead of refusing it", async () => {
@@ -87,25 +94,23 @@ describe("MCP adversarial: workflow forgery via start_review_task", () => {
         expect(
             update.$set["machine.context.reviewData.usersId"].map(String)
         ).toEqual([USER_ID]);
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 
-    // KNOWN GAP: duplicate check is read-then-create and review_tasks has
-    // no unique index on data_hash, so two concurrent calls both pass.
-    // `it.fails` flips to a red test the day the gap is closed, so the
-    // marker gets removed with the fix.
-    it.fails(
-        "two concurrent claims of the same sentence yield one task",
-        async () => {
-            session = await connect(factChecker);
-            const results = await Promise.all([
-                session.call("start_review_task", validArgs.start_review_task),
-                session.call("start_review_task", validArgs.start_review_task),
-            ]);
-            expect(results.filter((r) => !r.isError)).toHaveLength(1);
-            expect(
-                session.mocks.reviewTaskService.create
-            ).toHaveBeenCalledTimes(1);
-        }
-    );
+    // Both calls pass the read-then-create check; the unique data_hash index
+    // makes the second insert fail, which createAssigned reports as `null`.
+    it("two concurrent claims of the same sentence yield one task", async () => {
+        session = await connect(factChecker);
+        session.mocks.reviewTaskService.createAssigned
+            .mockResolvedValueOnce(storedTask({ assigned: "undraft" }))
+            .mockResolvedValueOnce(null);
+        const results = await Promise.all([
+            session.call("start_review_task", validArgs.start_review_task),
+            session.call("start_review_task", validArgs.start_review_task),
+        ]);
+        expect(results.filter((r) => !r.isError)).toHaveLength(1);
+        expect(results.find((r) => r.isError)?.text).toMatch(/already exists/);
+    });
 });

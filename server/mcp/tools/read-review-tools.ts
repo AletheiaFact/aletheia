@@ -12,8 +12,13 @@ import {
     ListMyReviewTasksSchema,
     ListReviewTasksSchema,
     NamespaceOnlySchema,
+    ReviewTaskByHashSchema,
 } from "./schemas";
-import { describeTask } from "./review-task-view";
+import {
+    describeReviewLog,
+    describeTask,
+    describeTaskBlind,
+} from "./review-task-view";
 import type { McpToolDeps } from "../mcp.service";
 import {
     DEFAULT_METHODOLOGY,
@@ -114,7 +119,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                     args.nameSpace
                 );
             return jsonResult({
-                task: await describeTask(deps, task),
+                task: await describeTaskBlind(deps, task),
                 waiting,
             });
         })
@@ -146,6 +151,35 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
                 tasks: await Promise.all(
                     result.tasks.map((task) => describeTask(deps, task))
                 ),
+            });
+        })
+    );
+
+    server.registerTool(
+        "get_review_log",
+        {
+            description:
+                "Get a task's review form in plain text (summary, questions, report, verification, sources, classification), what submit_report still needs (`missing`), and why the task came back if it did (crossCheck, rejectionComment). The form carries the task's classificationMethodology: the label is one of its options." +
+                LABELS_NOTE,
+            inputSchema: ReviewTaskByHashSchema.shape as any,
+        },
+        safeTool("get_review_log", async (args) => {
+            const task = await deps.reviewTaskService.getReviewTaskByDataHash(
+                args.dataHash
+            );
+            if (!task) {
+                throw new Error(
+                    `Review task not found for data_hash ${args.dataHash}`
+                );
+            }
+            await assertNamespaceAccess(
+                deps.nameSpaceService,
+                deps.request.user,
+                task.nameSpace
+            );
+            return jsonResult({
+                task: await describeTask(deps, task),
+                reviewLog: describeReviewLog(deps, task),
             });
         })
     );

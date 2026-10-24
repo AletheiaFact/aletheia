@@ -52,6 +52,7 @@
     "lib/**/*.spec.ts",
     "server/**/*.example.ts",
     "server/tests/utils/McpTestHelper.ts",
+    "server/tests/utils/McpQueueHelper.ts",
     "server/mcp/adversarial/harness.ts"
   ]
 }

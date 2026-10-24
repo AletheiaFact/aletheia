@@ -162,7 +162,6 @@ tools that create or change data.
 | `get_claim_review`   | read   | Get a published fact-check review by id or `data_hash`                          |
 | `list_review_tasks`  | read   | List review tasks by workflow state (unassigned, assigned, reported, published) |
 | `get_review_task`    | read   | Get a review task by id                                                         |
-| `start_review_task`  | write  | Claim a claim sentence for fact-checking; the task is created already assigned to you |
 | `add_review_comment` | write  | Add a comment to a review task (by `data_hash`)                                 |
 | `list_classification_methodologies` | read | List classification methodologies and their labels                    |
 
@@ -177,21 +176,70 @@ methodology's options and labels.
   `classificationMethodology`, `methodologyName` and `classificationLabel`
   (`{ pt, en }`) next to each `classification`. This covers `get_claim`,
   `list_claims`, `search`, `list_sources`, `get_claim_review`,
-  `get_review_task` and `list_review_tasks`, plus the compact task view
-  returned by the queue tools. Report the label together with its
-  methodology. Review stats on personalities (`{ _id, count }`) combine every
+  `get_review_task`, `list_review_tasks` and `get_review_log`, plus the task
+  view, review form, claim context and published review the queue and
+  workflow tools return. Report the label together with its methodology.
+  Review stats on personalities (`{ _id, count }`) combine every
   methodology, so, as on the web, they get the aletheia wording and
-  `labelMethodology: "aletheia"`.
+  `labelMethodology: "aletheia"`. The blind view `claim_cross_check` returns
+  keeps the methodology (the cross-check label must be one of its options)
+  but drops the writer's `classification` and `classificationLabel`.
 - **Starting work.** `start_review_task` and `next_review_task` take an
   optional `classificationMethodology` (default `aletheia`). It is set when
   work starts, in the same atomic update that assigns the task, and is fixed
-  from then on. `start_review_task` refuses a task that already has another
-  methodology; `next_review_task` only hands out tasks with none yet, or with
-  the requested one. A non-default methodology requires the
-  `enable_classification_methodology` flag.
-- **Publishing.** `publish_review_task` refuses a classification its
-  methodology does not offer (the web publish applies the same rule) and
-  copies the methodology to the published report.
+  from then on; a released task keeps it. `start_review_task` refuses a task
+  that already has another methodology; `next_review_task` only hands out
+  tasks with none yet, or with the requested one. A non-default methodology
+  requires the `enable_classification_methodology` flag.
+- **Writing, cross-checking, publishing.** `save_review_log`,
+  `submit_report`, `submit_cross_check` and `publish_review_task` refuse a
+  classification the task's methodology does not offer (the web form and
+  publish apply the same rule). Publishing copies the methodology to the
+  report.
+
+### Fact-checking workflow
+
+A task moves through the same states as in the web app, so either side can
+continue it. Each step is a guarded atomic update: a caller acting on a stale
+view gets a conflict, never someone else's task.
+
+| Step | Tool | Access | Who | State change |
+| --- | --- | --- | --- | --- |
+| Take work | `next_review_task` | write | any checker | `unassigned` → `assigned` (returns the claim context) |
+| Take a given sentence | `start_review_task` | write | any checker | (none or `unassigned`) → `assigned` |
+| Join | `join_review_task` | write | any checker | adds an assignee |
+| Read the form | `get_review_log` | read | anyone | — |
+| Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
+| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`) |
+| Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
+| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
+| Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` (returns the claim context, not the writer's label) |
+| My cross-checks | `next_cross_checking` | read | cross-checker | — |
+| Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `selectReviewer` (or `reported` when `auto_send_to_review` is false); different → `assigned` |
+| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` (only when `auto_send_to_review` is false) |
+| Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` (returns the claim context and the review form) |
+| My reviews | `list_my_review_tasks` | read | reviewer | — |
+| Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
+| Publish | `publish_review_task` | write | reviewer | `submitted` → `published` (returns the ClaimReview) |
+
+`save_review_log` takes the form in plain text — `summary` ("Resumo da
+conclusão"), `questions`, `report` ("Relatório da verificação"),
+`verification` ("Como verificamos?"), `classification` and `sources`
+(`{ href, field, quotedText }`, where `quotedText` is copied from the field
+and becomes the link) — and stores the same fields, editor document and HTML
+the web form saves. `submit_report` and `publish_review_task` apply the web's
+completeness rules and list what is missing.
+
+Rules (`mcp.task_queue` in `config.yaml`):
+
+- `max_assignees` (default 10): limit for `join_review_task`.
+
+The four-eyes rule is enforced by account: a cross-checker is never an
+assignee, and a reviewer is never an assignee or the cross-checker. An agent
+doing the whole flow therefore needs three accounts (two checkers and one
+with the reviewer role). The `aletheia-fact-check` skill
+(`.claude/skills/aletheia-fact-check/`) drives the flow following the
+*Manual de Checagem*.
 
 ### Verification requests
 
@@ -200,11 +248,6 @@ methodology's options and labels.
 | `list_verification_requests`  | read   | List verification requests (fact-check intake)                |
 | `get_verification_request`    | read   | Get a verification request by id                              |
 | `create_verification_request` | write  | Submit content for fact-checking (enters the triage pipeline) |
-
-`start_review_task` claims a claim sentence (by `claimId` + sentence
-`dataHash`) for fact-checking: it creates the review task already `assigned`
-to the caller. In the web app "no task" already means unassigned, so there is
-no separate enqueue step.
 
 ## Development
 

@@ -106,7 +106,7 @@ export class ReviewTaskEffectsService {
 
         const report = await this.reportService.create(newReport);
 
-        void this.claimReviewService.create(
+        await this.claimReviewService.create(
             {
                 ...reviewData,
                 report,

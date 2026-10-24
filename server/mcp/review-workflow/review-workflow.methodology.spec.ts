@@ -31,6 +31,7 @@ const build = () => {
     };
     const reviewTaskQueue = {
         transitionAtomically: vi.fn(async () => ({ _id: "t1" })),
+        createAssigned: vi.fn(async (body: any) => body),
         publishSubmitted: vi.fn(async () => ({
             machine: { context: { reviewData: { usersId: [] } } },
         })),
@@ -55,14 +56,14 @@ const submittedTask = (classification: string, methodology?: string) => ({
 
 describe("ReviewWorkflowService classification methodology", () => {
     it("passes the requested methodology to the new task", async () => {
-        const { service, reviewTaskService } = build();
+        const { service, reviewTaskQueue } = build();
         await service.startReviewTask(USER, {
             claimId: "claim-1",
             dataHash: DATA_HASH,
             nameSpace: "main",
             classificationMethodology: "rncd-debate",
         });
-        expect(reviewTaskService.create).toHaveBeenCalledWith(
+        expect(reviewTaskQueue.createAssigned).toHaveBeenCalledWith(
             expect.objectContaining({
                 classificationMethodology: "rncd-debate",
             })
