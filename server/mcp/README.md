@@ -25,7 +25,7 @@ each deploy. A value set in the pkl file wins over the `MCP_ENABLED` and
 | Environment | pkl file | Branch | `mcp.enabled` | `mcp.public_url` |
 | --- | --- | --- | --- | --- |
 | test | `development.pkl` | `stage` | `true` | `https://test.aletheiafact.org` |
-| production | `production.pkl` | `master` | not set (off) | — |
+| production | `production.pkl` | `master` | `true` | `https://aletheiafact.org` |
 
 The setting in `development.pkl`:
 
