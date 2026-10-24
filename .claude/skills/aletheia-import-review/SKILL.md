@@ -86,9 +86,6 @@ text, and post on each covered task with `add_review_comment`:
 2. `submit_report_to_review` (submits and sends to the review backlog, no cross-check). On error, fix and retry once; then leave the task `assigned`, comment, and list the row.
 3. A row is done when all its sentences are submitted.
 
-`submit_report_to_review` does not exist on the server yet. Until it does, stop
-after `save_review_log` and tell the user.
-
 ## Report
 
 One row at a time, fresh each time. At the end list: imported rows (ID,
