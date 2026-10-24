@@ -1,6 +1,5 @@
 import {
     ConflictException,
-    ForbiddenException,
     Inject,
     Injectable,
     NotFoundException,
@@ -11,30 +10,28 @@ import type { IClaimService } from "../../interfaces/claim.service.interface";
 import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReviewTaskService } from "../../review-task/review-task.service";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
-import {
-    idsEqual,
-    isAdmin,
-    isAssignee,
-    toObjectId,
-    WorkflowUser,
-} from "./access";
+import { isAssignee, toObjectId, WorkflowUser } from "./access";
 import {
     ASSIGNED_VALUE,
     assignTo,
     buildClaimContext,
+    claimPersonalityId,
     collectSentenceHashes,
     stateName,
 } from "./machine";
-import { missingPublishFields } from "./publish-rules";
+import { ReviewLog } from "./review-log";
 import { ReviewNotifierService } from "./review-notifier.service";
+import { ReviewStages } from "./review-stages";
+import { ReleaseReason, ReviewWriting } from "./review-writing";
+import { WorkflowConfig } from "./workflow-guards";
+
+export type { ReleaseReason } from "./review-writing";
 
 export interface StartReviewTaskInput {
     claimId: string;
     dataHash: string;
     nameSpace: string;
 }
-
-const DEFAULT_MAX_ASSIGNEES = 10;
 
 /**
  * Review-task workflow driven from MCP, one task at a time. The state machine
@@ -44,16 +41,37 @@ const DEFAULT_MAX_ASSIGNEES = 10;
  * writes them through ReviewTaskService so history, state events and
  * publishing stay intact. Handing out work from the queue is
  * ReviewQueueService.
+ *
+ * It owns taking a task (start, join) and fronts the two stages that follow:
+ * `ReviewWriting` (save, submit, release) and `ReviewStages` (cross-check,
+ * review, reject, publish).
+ *
+ * Every write is guarded on the state (and, where it matters, the caller's
+ * role on the task) inside the update itself, so a stale caller gets a
+ * conflict instead of overwriting someone else's change.
  */
 @Injectable()
 export class ReviewWorkflowService {
+    private readonly config: WorkflowConfig;
+    private readonly writing: ReviewWriting;
+    private readonly stages: ReviewStages;
+
     constructor(
         @Inject("ClaimService") private readonly claimService: IClaimService,
         private readonly reviewTaskService: ReviewTaskService,
         private readonly reviewTaskQueue: ReviewTaskQueueService,
-        @Optional() private readonly configService?: ConfigService,
-        @Optional() private readonly notifier?: ReviewNotifierService
-    ) {}
+        @Optional() configService?: ConfigService,
+        @Optional() notifier?: ReviewNotifierService
+    ) {
+        this.config = new WorkflowConfig(configService);
+        this.writing = new ReviewWriting(reviewTaskQueue);
+        this.stages = new ReviewStages(
+            reviewTaskService,
+            reviewTaskQueue,
+            this.config,
+            notifier
+        );
+    }
 
     /**
      * Claims a claim sentence for review: the web app treats "no task" as
@@ -99,18 +117,28 @@ export class ReviewWorkflowService {
             return taken;
         }
 
-        return this.reviewTaskService.create({
+        const created = await this.reviewTaskQueue.createAssigned({
             data_hash: dataHash,
             reportModel: ReportModelEnum.FactChecking,
             reviewTaskType: ReviewTaskTypeEnum.Claim,
             nameSpace,
             target: claimId,
-            recaptcha: "",
             machine: {
                 value: ASSIGNED_VALUE,
-                context: buildClaimContext([user._id], claimId),
-            },
-        } as any);
+                context: buildClaimContext(
+                    [toObjectId(user._id)],
+                    claimId,
+                    claimPersonalityId(claim)
+                ),
+            } as any,
+        });
+        if (!created) {
+            // Someone created it between the lookup and the insert.
+            throw new ConflictException(
+                "A review task already exists for this sentence"
+            );
+        }
+        return created;
     }
 
     /**
@@ -128,7 +156,7 @@ export class ReviewWorkflowService {
                 `Cannot join a task in state "${state}"; only assigned or reported tasks can be joined`
             );
         }
-        const maxAssignees = this.maxAssignees();
+        const maxAssignees = this.config.maxAssignees();
         const assignees = task.machine?.context?.reviewData?.usersId ?? [];
         if (assignees.length >= maxAssignees) {
             throw new ConflictException(
@@ -161,85 +189,55 @@ export class ReviewWorkflowService {
         return joined;
     }
 
-    /**
-     * Moves a `reported` task to the review backlog (`selectReviewer` with
-     * no reviewer), where any reviewer can claim it. Assignees or admins only.
-     */
-    async sendToReview(user: WorkflowUser, task: any) {
-        if (!isAssignee(task, user) && !isAdmin(user, task.nameSpace)) {
-            throw new ForbiddenException(
-                "Only an assignee of the task or an admin can send it to review"
-            );
-        }
-        const sent = await this.reviewTaskQueue.transitionAtomically(
-            { _id: task._id, "machine.value": "reported" },
-            {
-                $set: {
-                    "machine.value": "selectReviewer",
-                    "machine.context.reviewData.reviewerId": null,
-                },
-            }
-        );
-        if (!sent) {
-            throw new ConflictException(
-                `Only reported tasks can be sent to review (task is "${stateName(
-                    task.machine?.value
-                )}")`
-            );
-        }
-        const otherAssignees = (
-            sent.machine.context.reviewData.usersId ?? []
-        ).filter((id: unknown) => !idsEqual(id, user._id));
-        this.notifier?.notify(sent, "reviewSubmit", otherAssignees);
-        return sent;
+    /** The task's review form in plain text, plus what submit still needs. */
+    reviewLog(task: any) {
+        return this.writing.reviewLog(task);
     }
 
-    /**
-     * Publishes a `submitted` task with the web publish rules: only its
-     * reviewer (or an admin) may publish, and the report must be complete.
-     */
-    async publishReviewTask(user: WorkflowUser, task: any) {
-        const reviewData = task.machine?.context?.reviewData ?? {};
-        const isReviewer = idsEqual(reviewData.reviewerId, user._id);
-        if (!isReviewer && !isAdmin(user, task.nameSpace)) {
-            throw new ForbiddenException(
-                "Only the task's reviewer or an admin can publish it"
-            );
-        }
-        const state = stateName(task.machine?.value);
-        if (state !== "submitted") {
-            throw new ConflictException(
-                `Only tasks in review (submitted) can be published (task is "${state}")`
-            );
-        }
-        const missing = missingPublishFields(reviewData);
-        if (missing.length) {
-            throw new ConflictException(
-                `Cannot publish: missing ${missing.join(", ")}`
-            );
-        }
-        const published = await this.reviewTaskQueue.publishSubmitted(
-            task._id.toString()
-        );
-        if (!published) {
-            throw new ConflictException(
-                "The task was published or moved by someone else"
-            );
-        }
-        this.notifier?.notify(
-            published,
-            "reviewPublished",
-            published.machine.context.reviewData.usersId ?? []
-        );
-        return published;
+    saveReviewLog(user: WorkflowUser, task: any, input: ReviewLog) {
+        return this.writing.saveReviewLog(user, task, input);
     }
 
-    private maxAssignees(): number {
-        const configured = Number(
-            this.configService?.get("mcp.task_queue.max_assignees")
+    submitReport(user: WorkflowUser, task: any) {
+        return this.writing.submitReport(user, task);
+    }
+
+    releaseTask(
+        user: WorkflowUser,
+        task: any,
+        reason: ReleaseReason,
+        note?: string
+    ) {
+        return this.writing.releaseTask(user, task, reason, note);
+    }
+
+    sendToCrossCheck(user: WorkflowUser, task: any) {
+        return this.stages.sendToCrossCheck(user, task);
+    }
+
+    submitCrossCheck(
+        user: WorkflowUser,
+        task: any,
+        classification: string,
+        comment: string
+    ) {
+        return this.stages.submitCrossCheck(
+            user,
+            task,
+            classification,
+            comment
         );
-        return Number.isInteger(configured) && configured > 0
-            ? configured
-            : DEFAULT_MAX_ASSIGNEES;
+    }
+
+    sendToReview(user: WorkflowUser, task: any) {
+        return this.stages.sendToReview(user, task);
+    }
+
+    rejectReviewTask(user: WorkflowUser, task: any, rejectionComment: string) {
+        return this.stages.rejectReviewTask(user, task, rejectionComment);
+    }
+
+    publishReviewTask(user: WorkflowUser, task: any) {
+        return this.stages.publishReviewTask(user, task);
     }
 }

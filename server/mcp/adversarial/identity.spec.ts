@@ -47,8 +47,11 @@ describe("MCP adversarial: M2M tokens and impersonation", () => {
             user: { _id: "victim" },
         });
         expect(res.isError).toBe(false);
-        const created = session.mocks.reviewTaskService.create.mock.calls[0][0];
-        expect(created.machine.context.reviewData.usersId).toEqual([USER_ID]);
+        const created =
+            session.mocks.reviewTaskService.createAssigned.mock.calls[0][0];
+        expect(created.machine.context.reviewData.usersId.map(String)).toEqual([
+            USER_ID,
+        ]);
     });
 
     it("add_review_comment attributes the comment to the caller, not to args", async () => {
