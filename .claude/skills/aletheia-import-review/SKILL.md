@@ -63,17 +63,14 @@ so the conclusion is written to **every covered sentence**.
 | `sources` | Every URL in column D, with `field` and exact `quotedText` |
 | `classification` | Column C mapped below |
 
-### Label mapping (proposed, team to confirm)
+### Label mapping (fixed, never pick another label)
 
-| Marker | `value` | Alternative when column D says so |
-| --- | --- | --- |
-| `VERDADEIRO` | `trustworthy` | |
-| `FALSO` | `false` | `misleading`: real figure without essential context |
-| `IMPRECISO` | `trustworthy-but` | `exaggerated`: distortion of 10% or more in the speaker's favor |
-| `EVIDÊNCIAS INSUFICIENTES` | `unsustainable` | `unverifiable`: no record or database exists |
-
-If column D does not settle it, use the default and comment the doubt. Never
-use `arguable` or `in-progress`.
+| Marker | `value` |
+| --- | --- |
+| `VERDADEIRO` | `trustworthy` |
+| `FALSO` | `false` |
+| `IMPRECISO` | `trustworthy-but` |
+| `EVIDÊNCIAS INSUFICIENTES` | `unverifiable` |
 
 ## Extra research and contradictions
 
