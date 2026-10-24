@@ -1,7 +1,10 @@
 import { collectSentences, stateName } from "../review-workflow/machine";
 import { stripSourceMarkup } from "../review-workflow/review-log";
 import type { McpToolDeps } from "../mcp.service";
-import { resolveMethodologyId } from "../../../lib/classification-methodology";
+import {
+    getMethodology,
+    resolveMethodologyId,
+} from "../../../lib/classification-methodology";
 import { withClassificationLabels } from "./classification-labels";
 
 /**
@@ -85,10 +88,23 @@ export function describeComment(comment: any) {
  * first (manual: an independent re-check). get_review_log shows them after.
  */
 export async function describeTaskBlind(deps: McpToolDeps, task: any) {
-    const view = await describeTask(deps, task);
+    const view: any = await describeTask(deps, task);
     if (!view) return null;
-    const { classification: _label, summary: _summary, ...blind } = view;
-    return blind;
+    // classificationLabel is the writer's label in words: drop it too. The
+    // methodology stays, since the cross-check label must be one of its
+    // options.
+    const {
+        classification: _label,
+        classificationLabel: _labelText,
+        summary: _summary,
+        ...blind
+    } = view;
+    return {
+        ...blind,
+        methodologyName: {
+            ...getMethodology(view.classificationMethodology).name,
+        },
+    };
 }
 
 // Sentences shown on each side of the task's own sentence: enough context
@@ -115,7 +131,7 @@ export async function describeClaimContext(deps: McpToolDeps, task: any) {
             (sentence) => sentence.dataHash === doc.data_hash
         );
         const from = Math.max(0, at - CONTEXT_SENTENCES);
-        return {
+        return withClassificationLabels({
             claimId: String(claim._id ?? doc.target),
             title: claim.title ?? null,
             date: claim.date ?? null,
@@ -139,7 +155,7 @@ export async function describeClaimContext(deps: McpToolDeps, task: any) {
                 ...sentence,
                 isTask: sentence.dataHash === doc.data_hash,
             })),
-        };
+        });
     } catch {
         return null;
     }
@@ -158,9 +174,12 @@ export async function describePublishedReview(deps: McpToolDeps, task: any) {
         );
         if (!review) return null;
         const report = review.report ?? {};
-        return {
+        return withClassificationLabels({
             claimReviewId: String(review._id),
             isPublished: !!review.isPublished,
+            classificationMethodology: resolveMethodologyId(
+                report.classificationMethodology
+            ),
             classification: report.classification ?? null,
             summary: report.summary ?? null,
             report: report.report ?? null,
@@ -172,8 +191,22 @@ export async function describePublishedReview(deps: McpToolDeps, task: any) {
                 targetText: source?.props?.targetText ?? null,
                 sup: source?.props?.sup ?? null,
             })),
-        };
+        });
     } catch {
         return null;
     }
+}
+
+/**
+ * The task's review form (plain text, plus what submit still needs) with
+ * the task's methodology, so the label is read, and written, on its scale.
+ */
+export function describeReviewLog(deps: McpToolDeps, task: any) {
+    const doc = typeof task?.toObject === "function" ? task.toObject() : task;
+    return withClassificationLabels({
+        classificationMethodology: resolveMethodologyId(
+            doc?.classificationMethodology
+        ),
+        ...deps.reviewWorkflowService.reviewLog(task),
+    });
 }

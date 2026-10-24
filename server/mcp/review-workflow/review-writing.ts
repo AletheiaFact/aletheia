@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException } from "@nestjs/common";
 import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { idsEqual, isAdmin, toObjectId, WorkflowUser } from "./access";
 import { missingReportFields } from "./publish-rules";
+import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 import { fromStored, ReviewLog, reviewLogErrors, toStored } from "./review-log";
 import {
     assertAssigned,
@@ -51,6 +52,13 @@ export class ReviewWriting {
         if (errors.length) {
             throw new BadRequestException(errors.join("; "));
         }
+        // Only the labels of the task's methodology can be saved, as the web
+        // form only offers those
+        assertAllowedClassification(
+            task.classificationMethodology,
+            merged.classification,
+            "classification"
+        );
         const stored = toStored(merged);
 
         const saved = await this.reviewTaskQueue.updateAtomically(
@@ -92,6 +100,11 @@ export class ReviewWriting {
                 `Cannot submit: missing ${missing.join(", ")}`
             );
         }
+        assertAllowedClassification(
+            task.classificationMethodology,
+            task.machine.context.reviewData?.classification,
+            "classification"
+        );
         const reported = await this.reviewTaskQueue.transitionAtomically(
             writerFilter(user, task),
             {

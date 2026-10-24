@@ -1,4 +1,4 @@
-import { authState, callTool } from "./utils/McpTestHelper";
+import { adminUser, authState, callTool } from "./utils/McpTestHelper";
 import {
     CHECKER_ID,
     checkerUser,
@@ -8,10 +8,122 @@ import {
     WRITER_ID,
     writerUser,
 } from "./utils/McpQueueHelper";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 describe("MCP task queue: write, cross-check, review (e2e)", () => {
-    const { mcp, reviewTasks, claimReviews, callOk, startWriting } =
-        useMcpQueueHelper();
+    const {
+        mcp,
+        reviewTasks,
+        claimReviews,
+        callOk,
+        createClaim,
+        startWriting,
+    } = useMcpQueueHelper();
+
+    it("keeps an rncd-debate task on its own labels from writing to publish", async () => {
+        // Prototype, not app.get(): modules that list FeatureFlagService in
+        // their own providers get separate instances
+        const flag = vi
+            .spyOn(
+                FeatureFlagService.prototype,
+                "isEnableClassificationMethodology"
+            )
+            .mockReturnValue(true);
+        try {
+            authState.user = adminUser();
+            const claim = await createClaim(
+                "Frase para checar na escala RNCD."
+            );
+            const [queued] = await reviewTasks()
+                .find({ target: claim._id })
+                .lean();
+            const dataHash = queued.data_hash as string;
+
+            authState.user = writerUser();
+            const started = await callOk("start_review_task", {
+                claimId: claim._id,
+                dataHash,
+                classificationMethodology: "rncd-debate",
+            });
+            expect(started.classificationMethodology).toBe("rncd-debate");
+
+            // a label the RNCD scale does not offer cannot be saved
+            const offScale = await callTool(mcp.app, "save_review_log", {
+                dataHash,
+                ...reviewLog,
+                classification: "exaggerated",
+            });
+            expect(offScale.result.isError).toBe(true);
+            expect(offScale.result.content[0].text).toMatch(/not an option/);
+
+            const saved = await callOk("save_review_log", {
+                dataHash,
+                ...reviewLog,
+                classification: "trustworthy",
+            });
+            expect(saved.reviewLog).toMatchObject({
+                classification: "trustworthy",
+                classificationMethodology: "rncd-debate",
+                classificationLabel: { pt: "Verdadeiro", en: "True" },
+                missing: [],
+            });
+            await callOk("submit_report", {
+                dataHash,
+                sendToCrossCheck: true,
+            });
+
+            authState.user = checkerUser();
+            let claimed: any;
+            do {
+                ({ task: claimed } = await callOk("claim_cross_check"));
+            } while (claimed && claimed.dataHash !== dataHash);
+            // the cross-checker learns the scale, not the writer's label
+            expect(claimed.classificationMethodology).toBe("rncd-debate");
+            expect(claimed.methodologyName.pt).toBe("RNCD Debate");
+            expect(claimed).not.toHaveProperty("classification");
+            expect(claimed).not.toHaveProperty("classificationLabel");
+
+            const offScaleCheck = await callTool(
+                mcp.app,
+                "submit_cross_check",
+                {
+                    dataHash,
+                    classification: "exaggerated",
+                    comment: "Conferi a base oficial.",
+                }
+            );
+            expect(offScaleCheck.result.isError).toBe(true);
+
+            const checked = await callOk("submit_cross_check", {
+                dataHash,
+                classification: "trustworthy",
+                comment: "Conferi a base oficial.",
+            });
+            expect(checked.state).toBe("selectReviewer");
+            expect(checked.crossCheck.classificationLabel.pt).toBe(
+                "Verdadeiro"
+            );
+
+            authState.user = reviewerUser();
+            let taken: any;
+            do {
+                taken = await callOk("claim_review_task");
+            } while (taken.task && taken.task.dataHash !== dataHash);
+            expect(taken.reviewLog.classificationLabel.pt).toBe("Verdadeiro");
+
+            const published = await callOk("publish_review_task", {
+                dataHash,
+            });
+            expect(published.state).toBe("published");
+            expect(published.claimReview).toMatchObject({
+                classification: "trustworthy",
+                classificationMethodology: "rncd-debate",
+                classificationLabel: { pt: "Verdadeiro", en: "True" },
+            });
+        } finally {
+            flag.mockRestore();
+        }
+    });
 
     it("runs a task through write, cross-check, review and publish", async () => {
         const dataHash = await startWriting(
@@ -157,6 +269,10 @@ describe("MCP task queue: write, cross-check, review (e2e)", () => {
             classificationMethodology: "aletheia",
             methodologyName: { pt: "Aletheia", en: "Aletheia" },
             comment: "O número de 150 aparece em outra série; é enganoso.",
+            // worded on the task's (default) methodology
+            classificationMethodology: "aletheia",
+            methodologyName: { pt: "Aletheia", en: "Aletheia" },
+            classificationLabel: { pt: "Enganoso", en: "Misleading" },
         });
         expect(log.classification).toBe("false");
 

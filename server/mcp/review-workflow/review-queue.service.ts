@@ -75,12 +75,14 @@ export class ReviewQueueService {
 
     /**
      * Takes the oldest `unassigned` task in the namespace and assigns it to
-     * the caller. A queued task has no classification methodology until work
-     * starts: it gets the given one in the same update, so only tasks
-     * without one, or with the same one, are handed out. Non-admins may hold
-     * at most `mcp.task_queue.max_open_per_user` tasks being written at once
-     * (a soft cap: checked before the hand-out). Tasks the caller gave back,
-     * and tasks given back `mcp.task_queue.max_releases` times, are skipped.
+     * the caller. Non-admins may hold at most `mcp.task_queue.max_open_per_user`
+     * tasks being written at once (a soft cap: checked before the hand-out).
+     * Tasks the caller gave back, and tasks given back
+     * `mcp.task_queue.max_releases` times, are skipped.
+     *
+     * A queued task has no classification methodology until work starts: it
+     * gets the given one in the same update, so only tasks without one, or
+     * with the same one, are handed out. A task given back keeps it.
      */
     async nextReviewTask(
         user: WorkflowUser,
@@ -114,14 +116,14 @@ export class ReviewQueueService {
             {
                 ...this.queueScope(nameSpace),
                 "machine.value": "unassigned",
-                $or: [
-                    { classificationMethodology: { $exists: false } },
-                    { classificationMethodology },
-                ],
                 "machine.context.reviewData.releases.userId": { $ne: userId },
                 [`machine.context.reviewData.releases.${maxReleases - 1}`]: {
                     $exists: false,
                 },
+                $or: [
+                    { classificationMethodology: { $exists: false } },
+                    { classificationMethodology },
+                ],
             },
             take
         );

@@ -14,7 +14,11 @@ import {
     NamespaceOnlySchema,
     ReviewTaskByHashSchema,
 } from "./schemas";
-import { describeTask, describeTaskBlind } from "./review-task-view";
+import {
+    describeReviewLog,
+    describeTask,
+    describeTaskBlind,
+} from "./review-task-view";
 import type { McpToolDeps } from "../mcp.service";
 import {
     DEFAULT_METHODOLOGY,
@@ -155,7 +159,8 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "get_review_log",
         {
             description:
-                "Get a task's review form in plain text (summary, questions, report, verification, sources, classification), what submit_report still needs (`missing`), and why the task came back if it did (crossCheck, rejectionComment)",
+                "Get a task's review form in plain text (summary, questions, report, verification, sources, classification), what submit_report still needs (`missing`), and why the task came back if it did (crossCheck, rejectionComment). The form carries the task's classificationMethodology: the label is one of its options." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("get_review_log", async (args) => {
@@ -174,7 +179,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
             );
             return jsonResult({
                 task: await describeTask(deps, task),
-                reviewLog: deps.reviewWorkflowService.reviewLog(task),
+                reviewLog: describeReviewLog(deps, task),
             });
         })
     );

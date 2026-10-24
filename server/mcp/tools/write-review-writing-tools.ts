@@ -22,6 +22,7 @@ import {
 } from "./write-review-helpers";
 import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 import type { McpToolDeps } from "../mcp.service";
+import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 
 /** Taking a task and writing it: start, next, join, save, submit, release. */
 export function registerWriteReviewWritingTools(
@@ -113,7 +114,8 @@ export function registerWriteReviewWritingTools(
         "save_review_log",
         {
             description:
-                "Save the review form of a task you are writing (partial saves allowed; only the fields you send change). summary = 'Resumo da conclusão', questions = guiding questions, report = 'Relatório da verificação' (paragraphs separated by \\n), verification = 'Como verificamos?', sources = links (quotedText must be copied exactly from its field), classification = label. Returns the saved form and `missing`: what submit_report still needs",
+                "Save the review form of a task you are writing (partial saves allowed; only the fields you send change). summary = 'Resumo da conclusão', questions = guiding questions, report = 'Relatório da verificação' (paragraphs separated by \\n), verification = 'Como verificamos?', sources = links (quotedText must be copied exactly from its field), classification = label, which must be an option of the task's classificationMethodology (list_classification_methodologies). Returns the saved form and `missing`: what submit_report still needs." +
+                LABELS_NOTE,
             inputSchema: SaveReviewLogSchema.shape as any,
         },
         safeTool("save_review_log", async (args) => {
@@ -136,7 +138,8 @@ export function registerWriteReviewWritingTools(
         "submit_report",
         {
             description:
-                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled. With sendToCrossCheck: true it also sends the report to the cross-check backlog (reported → selectCrossChecker), saving a send_to_cross_check call",
+                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled. With sendToCrossCheck: true it also sends the report to the cross-check backlog (reported → selectCrossChecker), saving a send_to_cross_check call. The classification must be an option of the task's classification methodology." +
+                LABELS_NOTE,
             inputSchema: SubmitReportSchema.shape as any,
         },
         safeTool("submit_report", async (args) => {
@@ -164,7 +167,8 @@ export function registerWriteReviewWritingTools(
         "release_review_task",
         {
             description:
-                "Give back a task you are writing: you leave it and, if nobody else is on it, it returns to the queue. The queue will not hand it to you again. Use for sentences that cannot be checked (bylines, fragments), duplicates, or checks that need a person",
+                "Give back a task you are writing: you leave it and, if nobody else is on it, it returns to the queue. The queue will not hand it to you again. Use for sentences that cannot be checked (bylines, fragments), duplicates, or checks that need a person. The task keeps its classification methodology." +
+                LABELS_NOTE,
             inputSchema: ReleaseReviewTaskSchema.shape as any,
         },
         safeTool("release_review_task", async (args) => {

@@ -176,21 +176,26 @@ methodology's options and labels.
   `classificationMethodology`, `methodologyName` and `classificationLabel`
   (`{ pt, en }`) next to each `classification`. This covers `get_claim`,
   `list_claims`, `search`, `list_sources`, `get_claim_review`,
-  `get_review_task` and `list_review_tasks`, plus the compact task view
-  returned by the queue tools. Report the label together with its
-  methodology. Review stats on personalities (`{ _id, count }`) combine every
+  `get_review_task`, `list_review_tasks` and `get_review_log`, plus the task
+  view, review form, claim context and published review the queue and
+  workflow tools return. Report the label together with its methodology.
+  Review stats on personalities (`{ _id, count }`) combine every
   methodology, so, as on the web, they get the aletheia wording and
-  `labelMethodology: "aletheia"`.
+  `labelMethodology: "aletheia"`. The blind view `claim_cross_check` returns
+  keeps the methodology (the cross-check label must be one of its options)
+  but drops the writer's `classification` and `classificationLabel`.
 - **Starting work.** `start_review_task` and `next_review_task` take an
   optional `classificationMethodology` (default `aletheia`). It is set when
   work starts, in the same atomic update that assigns the task, and is fixed
-  from then on. `start_review_task` refuses a task that already has another
-  methodology; `next_review_task` only hands out tasks with none yet, or with
-  the requested one. A non-default methodology requires the
-  `enable_classification_methodology` flag.
-- **Publishing.** `publish_review_task` refuses a classification its
-  methodology does not offer (the web publish applies the same rule) and
-  copies the methodology to the published report.
+  from then on; a released task keeps it. `start_review_task` refuses a task
+  that already has another methodology; `next_review_task` only hands out
+  tasks with none yet, or with the requested one. A non-default methodology
+  requires the `enable_classification_methodology` flag.
+- **Writing, cross-checking, publishing.** `save_review_log`,
+  `submit_report`, `submit_cross_check` and `publish_review_task` refuse a
+  classification the task's methodology does not offer (the web form and
+  publish apply the same rule). Publishing copies the methodology to the
+  report.
 
 ### Fact-checking workflow
 

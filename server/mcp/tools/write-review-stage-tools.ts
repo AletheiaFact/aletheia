@@ -17,8 +17,8 @@ import {
     authorizeStoredTask,
     describeWithLog,
 } from "./write-review-helpers";
-import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 import type { McpToolDeps } from "../mcp.service";
+import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 
 /** The review stage: send, claim, reject, publish, plus task comments. */
 export function registerWriteReviewStageTools(
@@ -51,7 +51,7 @@ export function registerWriteReviewStageTools(
         "claim_review_task",
         {
             description:
-                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote or cross-checked. Returns the task, the claim around the sentence and the full review form (no get_claim or get_review_log needed)" +
+                "Take the oldest task waiting in the review backlog and become its reviewer. Reviewers and admins only; never a task you wrote or cross-checked. Returns the task, the claim around the sentence and the full review form (no get_claim or get_review_log needed)." +
                 LABELS_NOTE,
             inputSchema: NamespaceOnlySchema.shape as any,
         },
@@ -79,7 +79,8 @@ export function registerWriteReviewStageTools(
         "reject_review_task",
         {
             description:
-                "Send a task you are reviewing back to its writers with what must change. The task's reviewer or an admin only",
+                "Send a task you are reviewing back to its writers with what must change. The task's reviewer or an admin only." +
+                LABELS_NOTE,
             inputSchema: RejectReviewTaskSchema.shape as any,
         },
         safeTool("reject_review_task", async (args) => {
@@ -101,7 +102,8 @@ export function registerWriteReviewStageTools(
         "publish_review_task",
         {
             description:
-                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled, and the classification must be an option of the task's classification methodology. Returns the task and the published ClaimReview (stored HTML and footnoted sources), so no get_claim_review call is needed",
+                "Publish a task in review: creates its fact-check (ClaimReview). Only the task's reviewer or an admin; classification, summary, report and sources must be filled, and the classification must be an option of the task's classification methodology. Returns the task and the published ClaimReview (stored HTML and footnoted sources), so no get_claim_review call is needed." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("publish_review_task", async (args) => {

@@ -235,7 +235,11 @@ const reviewLogSource = z.object({
 
 export const SaveReviewLogSchema = z.object({
     dataHash: reviewTaskDataHash,
-    classification: classification.optional().describe("Label (etiqueta)"),
+    classification: classification
+        .optional()
+        .describe(
+            "Label (etiqueta): a stored key that must be an option of the task's classificationMethodology (list_classification_methodologies shows each methodology's options and wording)"
+        ),
     summary: nonEmptyText(3000)
         .optional()
         .describe("Resumo da conclusão: 2-3 sentences"),
@@ -270,7 +274,9 @@ export const ReleaseReviewTaskSchema = z.object({
 
 export const SubmitCrossCheckSchema = z.object({
     dataHash: reviewTaskDataHash,
-    classification: classification.describe("Your own label after re-checking"),
+    classification: classification.describe(
+        "Your own label after re-checking: a stored key that must be an option of the task's classificationMethodology"
+    ),
     comment: nonEmptyText(5000).describe(
         "What you verified; on disagreement, the exact problem and the source that shows it"
     ),

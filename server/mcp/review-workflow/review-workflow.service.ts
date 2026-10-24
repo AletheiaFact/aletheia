@@ -148,7 +148,7 @@ export class ReviewWorkflowService {
         const created = await this.reviewTaskQueue.createAssigned({
             data_hash: dataHash,
             reportModel: ReportModelEnum.FactChecking,
-            // Default, flag and id check, as ReviewTaskService.create does
+            // Default, flag and id check, as for a task created on the web
             classificationMethodology:
                 this.reviewTaskService.resolveMethodologyForNewTask(
                     classificationMethodology
