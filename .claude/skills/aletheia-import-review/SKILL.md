@@ -44,10 +44,7 @@ Reuse `../aletheia-fact-check/references/` (`labels.md`, `review-log.md`,
 ## Sheet status and board
 
 Column G of `VALIDAÇÃO` is the import status (dropdown: `Iniciado`, `Rascunho`,
-`Em Revisão`, `Publicado`, `Dúvida`, `Faltam Fontes`, `Problema`). Every spreadsheet edit goes through
-`codex exec -m gpt-6-luna -c model_reasoning_effort=low --dangerously-bypass-approvals-and-sandbox "<prompt>"`
-and the prompt ends with "Responda apenas Y ou N." To find a row, say "Busque
-de A7:A78 o valor <ID>"; never ask for more than the cells you need.
+`Em Revisão`, `Publicado`, `Dúvida`, `Faltam Fontes`, `Problema`).
 
 As soon as you start a row: set G to `Iniciado`, then add the row to
 `board/board.json` (a `groups` entry plus one card per covered sentence, each
