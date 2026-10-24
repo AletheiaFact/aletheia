@@ -5,9 +5,11 @@ import {
     IsBoolean,
     IsString,
     IsArray,
+    IsIn,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { ReviewTaskMachineContextReviewData } from "./create-review-task.dto";
+import { METHODOLOGY_IDS } from "../../../lib/classification-methodology";
 
 class SaveDraftReview {
     @IsOptional()
@@ -75,4 +77,9 @@ export class SaveDraftDTO {
     @IsString()
     @ApiProperty()
     target?: string;
+
+    @IsOptional()
+    @IsIn([...METHODOLOGY_IDS])
+    @ApiProperty({ required: false, enum: [...METHODOLOGY_IDS] })
+    classificationMethodology?: string;
 }

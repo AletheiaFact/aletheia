@@ -5,12 +5,12 @@ import CommentCardHeader from "./CommentCardHeader";
 import CommentReplyList from "./CommentReplyList";
 import { Box, Typography } from "@mui/material";
 import reviewColors from "../../../constants/reviewColors";
-import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
 import { usePluginReady } from "../utils/usePluginReady";
 import { Comment } from "../../../types/Comment";
 import { User } from "../../../types/User";
+import { useClassificationLabel } from "../../../hooks/useClassificationMethodology";
 
 interface CommentCardContentProps {
     user: User | null;
@@ -40,7 +40,9 @@ const CommentCardContent = ({
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { t } = useTranslation();
+    const crossCheckingLabel = useClassificationLabel(
+        content?.type === CommentEnum.crossChecking ? content?.text : undefined
+    );
     const { from } = useCurrentSelection();
     const { getAnnotationsAt } = useHelpers();
 
@@ -75,7 +77,8 @@ const CommentCardContent = ({
                 setIsResolved={setIsResolved}
             />
 
-            {isRootComment && !enableEditorAnnotations &&
+            {isRootComment &&
+                !enableEditorAnnotations &&
                 content.type === CommentEnum.review && (
                     <Typography
                         variant="body1"
@@ -91,7 +94,7 @@ const CommentCardContent = ({
                     className="comment-card-classification-text "
                     sx={{ color: reviewColors[content.text] }}
                 >
-                    {t(`claimReviewForm:${content?.text}`)}
+                    {crossCheckingLabel}
                 </Typography>
             )}
 

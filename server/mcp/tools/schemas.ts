@@ -7,6 +7,10 @@ import { PersonalitySchema } from "../../interfaces/personality.interface";
 import { SourceZodSchema } from "../../source/schemas/source.zod";
 import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
 import { VerificationRequestCreateZodSchema } from "../../verification-request/schemas/verification-request.zod";
+import {
+    DEFAULT_METHODOLOGY,
+    METHODOLOGY_IDS,
+} from "../../../lib/classification-methodology";
 
 // Entity-shaped create inputs below are derived (.pick/.extend) from the
 // canonical Zod schema colocated with each module (personality, source,
@@ -91,6 +95,22 @@ const reviewTaskDataHash = dataHash.describe(
 
 export const NamespaceOnlySchema = z.object({ nameSpace });
 
+// .optional(), not .default(): Zod 4 marks default fields as required in the
+// JSON Schema sent to the model. The default is applied server-side.
+const classificationMethodology = z
+    .enum(METHODOLOGY_IDS)
+    .optional()
+    .describe(
+        `Classification methodology for the task (${METHODOLOGY_IDS.join(
+            ", "
+        )}); defaults to ${DEFAULT_METHODOLOGY}. It is fixed once work starts. Call list_classification_methodologies for each one's options.`
+    );
+
+export const NextReviewTaskSchema = z.object({
+    nameSpace,
+    classificationMethodology,
+});
+
 export const ReviewTaskByHashSchema = z.object({
     dataHash: reviewTaskDataHash,
 });
@@ -160,7 +180,10 @@ export const StartReviewTaskSchema = z.object({
     claimId: z.string().describe("Claim Mongo ObjectId"),
     dataHash: dataHash.describe("data_hash of the claim sentence to review"),
     nameSpace,
+    classificationMethodology,
 });
+
+export const ListClassificationMethodologiesSchema = z.object({});
 
 export const CreatePersonalitySchema = PersonalitySchema.pick({
     name: true,
@@ -212,7 +235,11 @@ const reviewLogSource = z.object({
 
 export const SaveReviewLogSchema = z.object({
     dataHash: reviewTaskDataHash,
-    classification: classification.optional().describe("Label (etiqueta)"),
+    classification: classification
+        .optional()
+        .describe(
+            "Label (etiqueta): a stored key that must be an option of the task's classificationMethodology (list_classification_methodologies shows each methodology's options and wording)"
+        ),
     summary: nonEmptyText(3000)
         .optional()
         .describe("Resumo da conclusão: 2-3 sentences"),
@@ -247,7 +274,9 @@ export const ReleaseReviewTaskSchema = z.object({
 
 export const SubmitCrossCheckSchema = z.object({
     dataHash: reviewTaskDataHash,
-    classification: classification.describe("Your own label after re-checking"),
+    classification: classification.describe(
+        "Your own label after re-checking: a stored key that must be an option of the task's classificationMethodology"
+    ),
     comment: nonEmptyText(5000).describe(
         "What you verified; on disagreement, the exact problem and the source that shows it"
     ),

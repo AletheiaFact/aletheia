@@ -2,8 +2,12 @@ import { Box, Chip, Tooltip } from "@mui/material";
 import React, { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import userApi from "../../api/userApi";
-import { ReviewTaskStates } from "../../machines/reviewTask/enums";
+import {
+    ReportModelEnum,
+    ReviewTaskStates,
+} from "../../machines/reviewTask/enums";
 import WorkflowProgress from "./WorkflowProgress";
+import MethodologyDisclaimer from "../ClaimReview/MethodologyDisclaimer";
 
 interface SentenceReportHeaderProps {
     context: any;
@@ -187,6 +191,10 @@ const SentenceReportHeader = ({
                         }}
                     />
                 </Tooltip>
+            )}
+
+            {reportModel === ReportModelEnum.FactChecking && (
+                <MethodologyDisclaimer />
             )}
 
             {/* Workflow progress bar */}

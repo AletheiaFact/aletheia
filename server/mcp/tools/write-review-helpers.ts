@@ -3,7 +3,7 @@ import {
     assertNamespaceAccess,
     assertUserSession,
 } from "./tool-helpers";
-import { describeTask } from "./review-task-view";
+import { describeReviewLog, describeTask } from "./review-task-view";
 import type { McpToolDeps } from "../mcp.service";
 
 /**
@@ -42,6 +42,6 @@ export async function authorizeNamespaceWrite(
 export async function describeWithLog(deps: McpToolDeps, task: any) {
     return {
         task: await describeTask(deps, task),
-        reviewLog: deps.reviewWorkflowService.reviewLog(task),
+        reviewLog: describeReviewLog(deps, task),
     };
 }

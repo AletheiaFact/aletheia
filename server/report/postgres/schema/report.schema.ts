@@ -31,6 +31,7 @@ export const report = pgTable(
             .notNull()
             .default(sql`'{}'::text[]`),
         classification: text("classification").notNull(),
+        classificationMethodology: text("classification_methodology"),
         isDeleted: boolean("is_deleted").notNull().default(false),
         deletedAt: timestamp("deleted_at", { withTimezone: true }),
         createdAt: timestamp("created_at", { withTimezone: true })

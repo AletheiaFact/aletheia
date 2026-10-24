@@ -22,6 +22,7 @@ const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
                     <ReviewClassification
                         label={t("claimReview:titleClaimReview")}
                         classification={sentence?.props?.classification}
+                        methodology={sentence?.props?.classificationMethodology}
                     />
                 </>
             )}

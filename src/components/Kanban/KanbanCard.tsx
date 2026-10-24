@@ -16,6 +16,8 @@ import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import colors from "../../styles/colors";
 import reviewColors from "../../constants/reviewColors";
+import { useClassificationLabel } from "../../hooks/useClassificationMethodology";
+import MethodologyDisclaimer from "../ClaimReview/MethodologyDisclaimer";
 import { Content } from "../../types/Content";
 
 interface IKanbanCardProps {
@@ -34,6 +36,10 @@ interface IKanbanCardProps {
 
 const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
     const { t } = useTranslation();
+    const classificationLabel = useClassificationLabel(
+        reviewTask.content?.props?.classification,
+        reviewTask.content?.props?.classificationMethodology
+    );
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     const apiCallFunctions = {
@@ -86,7 +92,7 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                     borderRadius: 4,
                     marginBottom: 0,
                     boxShadow: `0px 1px 1px ${colors.shadow}`,
-                    cursor: "pointer"
+                    cursor: "pointer",
                 }}
             >
                 <Grid container style={{ width: "100%", padding: "10px" }}>
@@ -124,26 +130,33 @@ const KanbanCard = ({ reviewTask, reviewTaskType }: IKanbanCardProps) => {
                         </Typography>
                         {reviewTask.value === "published" &&
                             reviewTask.content?.props?.classification && (
-                                <Chip
-                                    data-cy="testKanbanClassificationChip"
-                                    label={t(
-                                        `claimReviewForm:${reviewTask.content.props.classification}`
-                                    ).toUpperCase()}
-                                    size="small"
-                                    style={{
-                                        fontSize: 10,
-                                        color: colors.white,
-                                        fontWeight: 700,
-                                        padding: "4px 13px",
-                                        marginBottom: 8,
-                                        alignSelf: "flex-start",
-                                        backgroundColor:
-                                            reviewColors[
+                                <>
+                                    <Chip
+                                        data-cy="testKanbanClassificationChip"
+                                        label={classificationLabel.toUpperCase()}
+                                        size="small"
+                                        style={{
+                                            fontSize: 10,
+                                            color: colors.white,
+                                            fontWeight: 700,
+                                            padding: "4px 13px",
+                                            marginBottom: 8,
+                                            alignSelf: "flex-start",
+                                            backgroundColor:
+                                                reviewColors[
+                                                    reviewTask.content.props
+                                                        .classification
+                                                ],
+                                        }}
+                                    />
+                                    <MethodologyDisclaimer
+                                        methodology={
                                             reviewTask.content.props
-                                                .classification
-                                            ],
-                                    }}
-                                />
+                                                .classificationMethodology
+                                        }
+                                        style={{ marginBottom: 8 }}
+                                    />
+                                </>
                             )}
                     </Grid>
                     <Grid

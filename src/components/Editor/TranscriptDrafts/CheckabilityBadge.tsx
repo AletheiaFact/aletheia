@@ -2,10 +2,7 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 import { Chip, Tooltip } from "@mui/material";
 
-import {
-    CHECKABILITY_BAND_COLORS,
-    getCheckabilityBand,
-} from "./checkability";
+import { CHECKABILITY_BAND_COLORS, getCheckabilityBand } from "./checkability";
 
 /**
  * Transcriber checkability score of a draft turn, as a percentage colored

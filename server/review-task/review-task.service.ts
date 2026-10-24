@@ -32,7 +32,13 @@ import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
 import type { ISentence } from "../interfaces/claim-content.interface";
 import { Source } from "../source/mongo/schemas/source.schema";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import {
+    assertAllowedClassification,
+    resolveNewTaskMethodology,
+} from "./classification-methodology.rules";
 import { ReviewTaskEffectsService } from "./review-task-effects.service";
+import type { MethodologyId } from "../../lib/classification-methodology";
 import {
     buildListPipeline,
     buildNotDeletedCountPipeline,
@@ -80,7 +86,8 @@ export class ReviewTaskService {
         @Inject("SentenceService") private sentenceService: ISentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
-        private commentService: CommentService
+        private commentService: CommentService,
+        private featureFlagService: FeatureFlagService
     ) {
         this.fieldMap = {
             assigned: "machine.context.reviewData.usersId",
@@ -207,6 +214,32 @@ export class ReviewTaskService {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
     }
 
+    /**
+     * Methodology for a fact-checking task whose work is starting (created,
+     * or taken from the MCP queue): default, flag and id check.
+     */
+    resolveMethodologyForNewTask(requested?: string | null): MethodologyId {
+        return resolveNewTaskMethodology(
+            requested,
+            this.featureFlagService.isEnableClassificationMethodology()
+        );
+    }
+
+    // The methodology is fixed when a task is created: update() only $sets
+    // the machine, so later requests cannot change it.
+    private _applyNewTaskMethodology(body: {
+        reportModel?: string;
+        classificationMethodology?: string;
+    }): void {
+        if (body.reportModel === ReportModelEnum.FactChecking) {
+            body.classificationMethodology = this.resolveMethodologyForNewTask(
+                body.classificationMethodology
+            );
+        } else {
+            delete body.classificationMethodology;
+        }
+    }
+
     _returnObjectId(data: any): any {
         if (Array.isArray(data)) {
             return data.map((item: any) =>
@@ -239,6 +272,10 @@ export class ReviewTaskService {
         const reviewTask = await this.getReviewTaskByDataHash(
             reviewTaskBody.data_hash
         );
+
+        if (!reviewTask) {
+            this._applyNewTaskMethodology(reviewTaskBody);
+        }
 
         const createCrossCheckingComment =
             reviewTask?.machine?.value === "addCommentCrossChecking" &&
@@ -276,6 +313,11 @@ export class ReviewTaskService {
         }
 
         if (createCrossCheckingComment) {
+            assertAllowedClassification(
+                reviewTask!.classificationMethodology,
+                reviewDataBody.crossCheckingClassification,
+                "crossCheckingClassification"
+            );
             const crossCheckingComment = await this._createCrossCheckingComment(
                 reviewDataBody.crossCheckingComment!,
                 reviewDataBody.crossCheckingClassification!,
@@ -401,9 +443,12 @@ export class ReviewTaskService {
         // before first submission), create a minimal document for the draft
         if (!reviewTask && saveDraftBody.reportModel && saveDraftBody.target) {
             const loggedInUserId = this.req.user._id;
+            this._applyNewTaskMethodology(saveDraftBody);
             const newReviewTask = new this.ReviewTaskModel({
                 data_hash,
                 reportModel: saveDraftBody.reportModel,
+                classificationMethodology:
+                    saveDraftBody.classificationMethodology,
                 nameSpace: saveDraftBody.nameSpace || "main",
                 reviewTaskType: saveDraftBody.reviewTaskType || "Claim",
                 target: saveDraftBody.target,
@@ -742,13 +787,19 @@ export class ReviewTaskService {
                 `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
                     `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
             );
+            assertAllowedClassification(
+                reviewTaskMachine.classificationMethodology,
+                reviewTaskMachine.machine?.context?.reviewData?.classification,
+                "classification"
+            );
             void this.effects.createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,
                 reportModel,
                 nameSpace,
                 reviewTaskMachine.target,
-                reviewTaskMachine.reviewTaskType
+                reviewTaskMachine.reviewTaskType,
+                reviewTaskMachine.classificationMethodology
             );
         }
     }

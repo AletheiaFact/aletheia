@@ -1,10 +1,17 @@
 import { ConflictException, ForbiddenException } from "@nestjs/common";
 import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReviewTaskService } from "../../review-task/review-task.service";
-import { idsEqual, isAdmin, isAssignee, toObjectId, WorkflowUser } from "./access";
+import {
+    idsEqual,
+    isAdmin,
+    isAssignee,
+    toObjectId,
+    WorkflowUser,
+} from "./access";
 import { CROSS_CHECKING_VALUES, stateName } from "./machine";
 import { missingReportFields } from "./publish-rules";
 import { ReviewNotifierService } from "./review-notifier.service";
+import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 import { assertWriter, REVIEW_DATA, WorkflowConfig } from "./workflow-guards";
 
 /**
@@ -68,6 +75,12 @@ export class ReviewStages {
                 "Only the task's cross-checker can submit the cross-check"
             );
         }
+        // Same rule as a cross-check submitted on the web
+        assertAllowedClassification(
+            task.classificationMethodology,
+            classification,
+            "crossCheckingClassification"
+        );
         const agrees = reviewData.classification === classification;
         const toReview = agrees && this.config.autoSendToReview();
         const done = await this.reviewTaskQueue.transitionAtomically(
@@ -228,6 +241,12 @@ export class ReviewStages {
                 `Cannot publish: missing ${missing.join(", ")}`
             );
         }
+        // Same rule as the web publish in ReviewTaskService
+        assertAllowedClassification(
+            task.classificationMethodology,
+            reviewData.classification,
+            "classification"
+        );
         const published = await this.reviewTaskQueue.publishSubmitted(
             task._id.toString()
         );

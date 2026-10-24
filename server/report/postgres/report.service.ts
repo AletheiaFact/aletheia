@@ -20,10 +20,19 @@ import { report } from "./schema/report.schema";
 import type { ReportRow } from "./schema/report.schema";
 
 export function toReportEntity(row: ReportRow): IReport {
-    const { dataHash, userId, legacyObjectId, isDeleted, deletedAt, ...rest } =
-        row;
+    const {
+        dataHash,
+        userId,
+        legacyObjectId,
+        isDeleted,
+        deletedAt,
+        classificationMethodology,
+        ...rest
+    } = row;
     return {
         ...rest,
+        // Mongo omits an absent methodology; keep the same shape for null
+        ...(classificationMethodology ? { classificationMethodology } : {}),
         _id: row.id,
         data_hash: dataHash,
         usersId: userId ?? undefined,
@@ -59,6 +68,8 @@ export class PostgresReportService implements IReportService {
                     typeof s === "string" ? s : s.href
                 ),
                 classification: input.classification,
+                classificationMethodology:
+                    input.classificationMethodology ?? null,
             })
             .returning();
 
@@ -83,13 +94,24 @@ export class PostgresReportService implements IReportService {
     updateReportSource(
         {
             classification,
+            classificationMethodology,
             summary,
             data_hash,
-        }: { classification: string; summary: string; data_hash: string },
+        }: {
+            classification: string;
+            classificationMethodology?: string;
+            summary: string;
+            data_hash: string;
+        },
         targetId: string
     ): Promise<ISource> {
         return this.sourceService.update(data_hash, {
-            props: { classification, summary, date: new Date() },
+            props: {
+                classification,
+                ...(classificationMethodology && { classificationMethodology }),
+                summary,
+                date: new Date(),
+            },
             targetId,
         } as any);
     }

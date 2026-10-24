@@ -9,11 +9,13 @@ import { useAppSelector } from "../../store/store";
 import ReviewedImage from "../ReviewedImage";
 import { ClassificationEnum } from "../../types/enums";
 import AletheiaButton from "../AletheiaButton";
+import MethodologyDisclaimer from "../ClaimReview/MethodologyDisclaimer";
 
 interface ClaimImageBodyProps {
     imageUrl: string;
     title: string;
     classification?: keyof typeof ClassificationEnum;
+    classificationMethodology?: string;
     dataHash: string;
 }
 
@@ -21,6 +23,7 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
     imageUrl,
     title,
     classification,
+    classificationMethodology,
     dataHash,
 }) => {
     const dispatch = useDispatch();
@@ -70,6 +73,12 @@ const ClaimImageBody: React.FC<ClaimImageBodyProps> = ({
                     classification={classification}
                 />
             </Box>
+            {classification && (
+                <MethodologyDisclaimer
+                    methodology={classificationMethodology}
+                    style={{ textAlign: "center", marginTop: 8 }}
+                />
+            )}
             <Box
                 sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
             >

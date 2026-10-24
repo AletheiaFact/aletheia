@@ -50,6 +50,13 @@
       "when": 1791599016714,
       "tag": "0006_claim",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792793206918,
+      "tag": "0007_report_classification_methodology",
+      "breakpoints": true
     }
   ]
 }

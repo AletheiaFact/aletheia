@@ -9,6 +9,10 @@ import { LLM_PROVIDER, EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
 import type { LLMProvider, EmbeddingsProvider } from "../llm/llm.types";
 import colors from "../../src/styles/colors";
 import {
+    getClassificationLabel,
+    getMethodology,
+} from "../../lib/classification-methodology";
+import {
     ChatPromptTemplate,
     MessagesPlaceholder,
 } from "@langchain/core/prompts";
@@ -32,12 +36,16 @@ export class SummarizationCrawlerService {
                     const classification =
                         review?.report?.classification ||
                         review?.props?.classification;
+                    const classificationMethodology =
+                        review?.report?.classificationMethodology ||
+                        review?.props?.classificationMethodology;
                     const summary = await this.bulletPoints(
                         review?.report?.summary || review?.props.summary
                     );
                     return {
                         summary,
                         classification,
+                        classificationMethodology,
                         href,
                     };
                 })
@@ -49,18 +57,6 @@ export class SummarizationCrawlerService {
     }
 
     generateHTMLReport(summarizedReviews: any[], nameSpace: string): string {
-        const classificationTranslations: Record<string, string> = {
-            "not-fact": "Não é fato",
-            trustworthy: "Confiável",
-            "trustworthy-but": "Confiável, mas",
-            arguable: "Discutível",
-            misleading: "Enganoso",
-            false: "Falso",
-            unsustainable: "Insustentável",
-            exaggerated: "Exagerado",
-            unverifiable: "Inverificável",
-        };
-
         const reportContent =
             summarizedReviews.length > 0
                 ? summarizedReviews
@@ -68,8 +64,15 @@ export class SummarizationCrawlerService {
                           (review) => `
                 <div class="claim-review">
                     <p><span class="classification ${review.classification}">${
-                              classificationTranslations[review.classification]
-                          }</span> | ${review.summary}</p>
+                              getClassificationLabel(
+                                  review.classificationMethodology,
+                                  review.classification,
+                                  "pt"
+                              ) ?? review.classification
+                          }</span> (${
+                              getMethodology(review.classificationMethodology)
+                                  .name.pt
+                          }) | ${review.summary}</p>
                     <p><a href="${review.href}">Link para Checagem</a></p>
                 </div>
             `

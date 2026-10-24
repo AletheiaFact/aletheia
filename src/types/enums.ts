@@ -1,14 +1,4 @@
-enum ClassificationEnum {
-    "not-fact" = 0,
-    "false",
-    "misleading",
-    "unsustainable",
-    "unverifiable",
-    "exaggerated",
-    "arguable",
-    "trustworthy-but",
-    "trustworthy",
-}
+export { ClassificationEnum } from "../../lib/classification";
 
 enum Roles {
     Regular = "regular",
@@ -53,7 +43,7 @@ enum SenderEnum {
 
 enum M2MSubject {
     Chatbot = "chatbot-service",
-} 
+}
 
 enum VerificationRequestStatus {
     PRE_TRIAGE = "Pre Triage",
@@ -63,7 +53,6 @@ enum VerificationRequestStatus {
 }
 
 export {
-    ClassificationEnum,
     Roles,
     Status,
     ContentModelEnum,
