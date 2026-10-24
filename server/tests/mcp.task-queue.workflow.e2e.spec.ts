@@ -265,9 +265,6 @@ describe("MCP task queue: write, cross-check, review (e2e)", () => {
         });
         expect(task.crossCheck).toEqual({
             classification: "misleading",
-            classificationLabel: { pt: "Enganoso", en: "Misleading" },
-            classificationMethodology: "aletheia",
-            methodologyName: { pt: "Aletheia", en: "Aletheia" },
             comment: "O número de 150 aparece em outra série; é enganoso.",
             // worded on the task's (default) methodology
             classificationMethodology: "aletheia",

@@ -1,5 +1,4 @@
 import { ConflictException, ForbiddenException } from "@nestjs/common";
-import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReviewTaskService } from "../../review-task/review-task.service";
 import {

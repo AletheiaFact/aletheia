@@ -20,7 +20,6 @@ import {
     authorizeStoredTask,
     describeWithLog,
 } from "./write-review-helpers";
-import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 import type { McpToolDeps } from "../mcp.service";
 import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 

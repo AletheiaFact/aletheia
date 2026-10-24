@@ -30,7 +30,6 @@ const build = () => {
         ),
     };
     const reviewTaskQueue = {
-        createAssigned: vi.fn(async (body: any) => body),
         transitionAtomically: vi.fn(async () => ({ _id: "t1" })),
         createAssigned: vi.fn(async (body: any) => body),
         publishSubmitted: vi.fn(async () => ({
