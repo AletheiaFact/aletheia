@@ -74,7 +74,17 @@ so the conclusion is written to **every covered sentence**.
 
 ## Extra research and contradictions
 
-Open every source in column D (parallel fetches). You may add supporting
+**Before the first `save_review_log` of a row**, open every source in column D
+(parallel fetches) and confirm each number and date in column D against it.
+If a page comes back empty (government sites such as `pesquisa.apps.tcu.gov.br`
+render in JS and load slowly), open it with Playwright (`browser_navigate`,
+wait for the text, `browser_evaluate` to read it) and never mark it
+"unverified" for that reason. Each number in column D must be backed by a source. If the listed
+ones do not show it, find the primary source yourself (official site first),
+open it and add it to `sources` under "Informação complementar:". Only if you
+cannot find any, list the row in "needs a person".
+Each source's `quotedText` must be the trecho that source really backs. Do
+not save a draft with unopened sources. You may add supporting
 sources or omitted data (period, universe, limits) under "Informação
 complementar:". If your research contradicts column D, keep the label and
 text, and post on each covered task with `add_review_comment`:
@@ -89,5 +99,7 @@ text, and post on each covered task with `add_review_comment`:
 ## Report
 
 One row at a time, fresh each time. At the end list: imported rows (ID,
-sentences, label), "needs a person" rows (ID, reason), and rows with a
-contradiction comment. Stop if the same tool error happens twice in a row.
+sentences, label), "needs a person" rows (ID, reason), rows with a
+contradiction comment, and "not found" items (a number, source or page you
+searched for and could not find or open, with what you tried). Before listing
+anything as not found, search the web and open the page in a browser. Stop if the same tool error happens twice in a row.
