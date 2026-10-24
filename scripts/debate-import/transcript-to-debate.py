@@ -8,15 +8,18 @@ Only rows whose status is "Enviado para checagem" are sent by default;
 "Ignorado" rows are never sent, "Novo" rows only with --include-new.
 
 Dry run by default: prints the turns it would send. With --send it POSTs them
-to /api/claim/debate/<debateId>/append, authenticated with the bearer token in
-the ALETHEIA_TOKEN environment variable (an M2M token or a fact-checker
-session token). The turns arrive as drafts; a person approves them in the
+to /api/claim/debate/<debateId>/append, authenticated as a person with your
+browser session cookie (ALETHEIA_COOKIE, the `ory_session_...=...` cookie of a
+fact-checker logged in on the site) or with a bearer token (ALETHEIA_TOKEN,
+e.g. an M2M token). The turns arrive as drafts; a person approves them in the
 debate's transcript drafts panel.
 
 Usage:
   python3 transcript-to-debate.py                 # dry run, prints the turns
+  ALETHEIA_COOKIE='ory_session_...=...' python3 transcript-to-debate.py --send --limit 1
   ALETHEIA_TOKEN=... python3 transcript-to-debate.py --send
 Options:
+  --limit N           only the first N turns (e.g. --limit 1 to test one row)
   --include-new       also send rows with status "Novo" (not triaged yet)
   --recording-start   ISO datetime of the recording's 00:00:00, to send each
                       turn's startedAt (e.g. 2026-10-22T22:00:00Z)
@@ -85,11 +88,22 @@ def to_turn(row, recording_start):
     return turn
 
 
-def post(base, debate, token, turns):
+def auth_headers():
+    cookie = os.environ.get("ALETHEIA_COOKIE")
+    token = os.environ.get("ALETHEIA_TOKEN")
+    if cookie:
+        # A person's browser session; the endpoint checks the session first.
+        return {"Cookie": cookie}
+    if token:
+        return {"Authorization": f"Bearer {token}"}
+    sys.exit("Set ALETHEIA_COOKIE (your browser session) or ALETHEIA_TOKEN to send")
+
+
+def post(base, debate, headers, turns):
     request = urllib.request.Request(
         f"{base}/api/claim/debate/{debate}/append",
         data=json.dumps({"turns": turns}).encode("utf-8"),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+        headers={"Content-Type": "application/json", **headers},
         method="POST",
     )
     with urllib.request.urlopen(request) as response:
@@ -99,6 +113,7 @@ def post(base, debate, token, turns):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--send", action="store_true")
+    parser.add_argument("--limit", type=int, help="only the first N turns")
     parser.add_argument("--include-new", action="store_true")
     parser.add_argument("--recording-start")
     parser.add_argument("--base", default="https://aletheiafact.org")
@@ -119,6 +134,9 @@ def main():
         key=lambda r: offset(r["Início"]),
     )
     turns = [to_turn(r, recording_start) for r in selected]
+    if args.limit is not None:
+        turns = turns[: args.limit]
+        selected = selected[: args.limit]
     print(
         f"{len(rows)} rows, sending {len(turns)} "
         f"({sum(r['Candidato'] == 'Lula' for r in selected)} Lula, "
@@ -130,11 +148,9 @@ def main():
     if not args.send:
         print(json.dumps(turns, ensure_ascii=False, indent=2))
         return
-    token = os.environ.get("ALETHEIA_TOKEN")
-    if not token:
-        sys.exit("Set ALETHEIA_TOKEN to send")
+    headers = auth_headers()
     for start in range(0, len(turns), BATCH):
-        status, body = post(args.base, args.debate, token, turns[start:start + BATCH])
+        status, body = post(args.base, args.debate, headers, turns[start:start + BATCH])
         print(f"batch {start // BATCH + 1}: HTTP {status} {body[:300]}")
 
 

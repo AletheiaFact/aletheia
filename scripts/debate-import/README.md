@@ -11,11 +11,18 @@ that can be fact-checked.
   `6adbd57988c1214b039c28ea`), not the claim id (`6adbd57988c1214b039c28e8`);
   the claim id gets a 404.
 - Needs only Python 3 (standard library). Both sheets must stay link-readable.
-- The token is read from `ALETHEIA_TOKEN` only; never commit it.
+- Login, one of:
+  - `ALETHEIA_COOKIE`: your own browser session, as a fact-checker. Log in on
+    aletheiafact.org, open DevTools → Application → Cookies → `https://aletheiafact.org`,
+    and copy the cookie whose name starts with `ory_session_` as `name=value`.
+  - `ALETHEIA_TOKEN`: a bearer token (e.g. an M2M integration token).
+
+  Never commit either; the session cookie is your login until it expires.
 - The personality ids in the scripts are production's; change them (and
   pass `--base`/`--debate`) for another environment.
 
-Both scripts are dry runs unless given `--send`, send in batches of 50 (the
+Both scripts are dry runs unless given `--send`, accept `--limit N` to send
+only the first N turns (`--limit 1` to test a single row), send in batches of 50 (the
 endpoint's limit) and set an `externalId` on every turn. The endpoint skips
 turns whose `externalId` is already on the debate, so re-running is safe.
 
@@ -36,7 +43,8 @@ Turns are sent in recording order (by Início).
 
 ```bash
 python3 scripts/debate-import/transcript-to-debate.py            # dry run
-ALETHEIA_TOKEN='<token>' python3 scripts/debate-import/transcript-to-debate.py --send
+ALETHEIA_COOKIE='ory_session_xxx=...' python3 scripts/debate-import/transcript-to-debate.py --send --limit 1   # one row
+ALETHEIA_COOKIE='ory_session_xxx=...' python3 scripts/debate-import/transcript-to-debate.py --send             # all
 ```
 
 Options: `--include-new`; `--recording-start 2026-10-22T22:00:00Z` (the
