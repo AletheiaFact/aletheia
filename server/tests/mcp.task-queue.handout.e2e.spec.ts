@@ -1,60 +1,16 @@
-import { randomUUID } from "crypto";
-import { getModelToken } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { AdminUserMock } from "./utils/AdminUserMock";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { callTool, authState } from "./utils/McpTestHelper";
 import {
-    adminUser,
-    authState,
-    callTool,
-    useMcpTestHelper,
-} from "./utils/McpTestHelper";
+    REVIEWER_ID,
+    reviewerUser,
+    useMcpQueueHelper,
+    writerUser,
+} from "./utils/McpQueueHelper";
 
-// A reviewer who did not write the report (four-eyes).
-const REVIEWER_ID = "62585756d665dc7bf4b14ab9";
-const reviewerUser = () => ({
-    ...adminUser(),
-    _id: REVIEWER_ID,
-    id: REVIEWER_ID,
-    role: { main: "reviewer" },
-});
-
-describe("MCP task queue (e2e)", () => {
-    const mcp = useMcpTestHelper();
-    // supertest opens a new ephemeral listener per request unless the server
-    // is already listening; dozens of concurrent listeners reset connections.
-    beforeAll(async () => {
-        await mcp.app.listen(0);
-    });
-    const reviewTasks = () =>
-        mcp.app.get(getModelToken("ReviewTask")) as Model<any>;
-    const claimReviews = () =>
-        mcp.app.get(getModelToken("ClaimReview")) as Model<any>;
-
-    const callOk = async (name: string, args: any = {}) => {
-        const body = await callTool(mcp.app, name, args);
-        const text = body.result?.content?.[0]?.text ?? JSON.stringify(body);
-        if (body.result?.isError || body.error) {
-            throw new Error(`${name} failed: ${text}`);
-        }
-        return JSON.parse(text);
-    };
-
-    const createClaim = async (content: string) => {
-        const stamp = randomUUID();
-        const personality = await callOk("create_personality", {
-            name: `Queue Person ${stamp}`,
-            description: "Queue e2e",
-            wikidata: `Q-queue-${stamp}`,
-        });
-        return callOk("create_claim", {
-            title: `Queue claim ${stamp}`,
-            content,
-            date: new Date().toISOString(),
-            sources: [`https://example.org/queue-${stamp}`],
-            personalityId: personality._id,
-        });
-    };
+describe("MCP task queue: hand-out (e2e)", () => {
+    const { mcp, reviewTasks, callOk, createClaim, startWriting } =
+        useMcpQueueHelper();
 
     it("create_claim feeds the queue with one unassigned task per sentence", async () => {
         const claim = await createClaim(
@@ -103,73 +59,42 @@ describe("MCP task queue (e2e)", () => {
         }
     });
 
-    it("runs a task from the queue to a published ClaimReview, skipping cross-checking", async () => {
-        await createClaim("Frase para publicar no fluxo completo.");
-        // drain anything older so this test gets its own sentence
-        let task: any;
-        do {
-            ({ task } = await callOk("next_review_task"));
-        } while (task && !/publicar/.test(task.sentence ?? ""));
-        expect(task?.sentence).toMatch(/publicar/);
-
-        // The report itself is written in the web editor; store a finished one.
-        await reviewTasks().updateOne(
-            { data_hash: task.dataHash },
-            {
-                $set: {
-                    "machine.value": "reported",
-                    "machine.context.reviewData.classification": "false",
-                    "machine.context.reviewData.summary": "Resumo.",
-                    "machine.context.reviewData.report": "Relatório.",
-                    "machine.context.reviewData.verification": "Verificação.",
-                    "machine.context.reviewData.questions": ["Procede?"],
-                    "machine.context.reviewData.sources": [
-                        { href: "https://example.org/fonte" },
-                    ],
-                },
-            }
+    it("lets a writer hold one task at a time and give it back", async () => {
+        // a writer with no other open task
+        const soloWriter = () => ({
+            ...writerUser(),
+            _id: "62585756d665dc7bf4b14ac3",
+            id: "62585756d665dc7bf4b14ac3",
+        });
+        const dataHash = await startWriting(
+            "Frase para devolver à fila.",
+            soloWriter
         );
 
-        const sent = await callOk("send_to_review", {
-            dataHash: task.dataHash,
+        const refused = await callTool(mcp.app, "next_review_task", {});
+        expect(refused.result.isError).toBe(true);
+
+        const released = await callOk("release_review_task", {
+            dataHash,
+            reason: "not-checkable",
+            note: "Não é uma afirmação.",
         });
-        expect(sent.state).toBe("selectReviewer");
-        expect(sent.reviewerId).toBeNull();
+        expect(released.state).toBe("unassigned");
 
-        // the author cannot review their own report
-        authState.user = { ...adminUser(), role: { main: "reviewer" } };
-        const own = await callOk("claim_review_task");
-        expect(own.task?.dataHash).not.toBe(task.dataHash);
-
-        authState.user = reviewerUser();
-        const claimed = await callOk("claim_review_task");
-        expect(claimed.task.dataHash).toBe(task.dataHash);
-        expect(claimed.task.state).toBe("submitted");
-        expect(claimed.task.reviewerId).toBe(REVIEWER_ID);
-
-        const mine = await callOk("list_my_review_tasks");
-        expect(mine.tasks.map((t: any) => t.dataHash)).toContain(task.dataHash);
-
-        const published = await callOk("publish_review_task", {
-            dataHash: task.dataHash,
-        });
-        expect(published.state).toBe("published");
-
-        // ClaimReview creation is fire-and-forget, as on the web path
-        let review: any = null;
-        for (let i = 0; i < 50 && !review; i++) {
-            review = await claimReviews()
-                .findOne({ data_hash: task.dataHash })
-                .lean();
-            if (!review) await new Promise((r) => setTimeout(r, 100));
-        }
-        expect(review).toBeTruthy();
-        expect(review.isPublished).toBe(true);
-
-        const again = await callTool(mcp.app, "publish_review_task", {
-            dataHash: task.dataHash,
-        });
-        expect(again.result.isError).toBe(true);
+        // the queue does not hand it back to the same writer
+        let next: any;
+        const seen: string[] = [];
+        do {
+            ({ task: next } = await callOk("next_review_task"));
+            if (next) {
+                seen.push(next.dataHash);
+                await callOk("release_review_task", {
+                    dataHash: next.dataHash,
+                    reason: "other",
+                });
+            }
+        } while (next);
+        expect(seen).not.toContain(dataHash);
     });
 
     it("carries the classification methodology from the queue to the published review", async () => {
@@ -197,7 +122,7 @@ describe("MCP task queue (e2e)", () => {
                 { data_hash: task.dataHash },
                 {
                     $set: {
-                        "machine.value": "reported",
+                        "machine.value": "selectReviewer",
                         "machine.context.reviewData.classification":
                             "exaggerated",
                         "machine.context.reviewData.summary": "Resumo.",
@@ -211,7 +136,6 @@ describe("MCP task queue (e2e)", () => {
                     },
                 }
             );
-            await callOk("send_to_review", { dataHash: task.dataHash });
             authState.user = reviewerUser();
             const claimed = await callOk("claim_review_task");
             expect(claimed.task.dataHash).toBe(task.dataHash);

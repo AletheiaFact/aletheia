@@ -10,9 +10,11 @@ import { Db } from "mongodb";
  * whose collection predates the declaration, may lack it. This migration
  * creates it when missing.
  *
- * If duplicate data_hash values already exist the unique index cannot be
- * built. Rather than block the deploy, the migration logs the duplicates and
- * skips; they must be resolved by hand and the migration re-run.
+ * If duplicate data_hash values already exist, or a non-unique data_hash
+ * index is in the way, the migration fails: migrate-mongo would otherwise
+ * record it as applied and never run it again, leaving the queue without the
+ * index it relies on. Resolve the duplicates (or drop the non-unique index)
+ * and run `yarn migrate` again.
  */
 const INDEX_KEY = { data_hash: 1 } as const;
 
@@ -29,11 +31,10 @@ export async function up(db: Db) {
         return;
     }
     if (existing) {
-        console.warn(
-            `  - reviewtasks: ${existing.name} exists but is NOT unique; ` +
-                `drop it and re-run this migration to enforce uniqueness`
+        throw new Error(
+            `reviewtasks: ${existing.name} exists but is NOT unique; ` +
+                `drop it and run the migration again to enforce uniqueness`
         );
-        return;
     }
 
     const duplicates = await collection
@@ -44,12 +45,11 @@ export async function up(db: Db) {
         ])
         .toArray();
     if (duplicates.length) {
-        console.warn(
-            `  - reviewtasks: cannot create unique ${INDEX_NAME}, ` +
+        throw new Error(
+            `reviewtasks: cannot create unique ${INDEX_NAME}, ` +
                 `duplicate data_hash values (first ${duplicates.length}): ` +
                 duplicates.map((d) => `${d._id} x${d.count}`).join(", ")
         );
-        return;
     }
 
     await collection.createIndex(INDEX_KEY, {

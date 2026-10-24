@@ -1,5 +1,6 @@
 import {
     admin,
+    agreedCrossCheck,
     connect,
     factChecker,
     firstTransition,
@@ -29,10 +30,31 @@ describe("MCP adversarial: send to review and publish", () => {
         ).not.toHaveBeenCalled();
     });
 
+    it("send_to_review is refused until a cross-check agreed with the label", async () => {
+        session = await connect(admin);
+        session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+            storedTask("reported", {
+                classification: "false",
+                crossCheckingClassification: "misleading",
+            })
+        );
+        const res = await session.call("send_to_review", {
+            dataHash: HASH_A,
+        });
+        expect(res.isError).toBe(true);
+        expect(res.text).toMatch(/needs a cross-check/);
+        expect(
+            session.mocks.reviewTaskService.transitionAtomically
+        ).not.toHaveBeenCalled();
+    });
+
     it("send_to_review guards the source state and clears the reviewer", async () => {
         session = await connect(admin);
         session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
-            storedTask("reported", { usersId: [OTHER_USER_ID] })
+            storedTask("reported", {
+                usersId: [OTHER_USER_ID],
+                ...agreedCrossCheck,
+            })
         );
         const res = await session.call("send_to_review", {
             dataHash: HASH_A,
@@ -49,7 +71,7 @@ describe("MCP adversarial: send to review and publish", () => {
     it("send_to_review fails cleanly when the task is no longer reported", async () => {
         session = await connect(factChecker);
         session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
-            storedTask("submitted")
+            storedTask("submitted", agreedCrossCheck)
         );
         session.mocks.reviewTaskService.transitionAtomically.mockResolvedValue(
             null

@@ -28,7 +28,7 @@ describe("MCP adversarial: input smuggling", () => {
         const res = await session.call(tool, { ...base, ...bad });
         expect(res.isError).toBe(true);
         const m = session.mocks;
-        expect(m.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(m.reviewTaskService.createAssigned).not.toHaveBeenCalled();
         expect(m.reviewTaskService.transitionAtomically).not.toHaveBeenCalled();
         expect(
             m.reviewTaskService.getReviewTaskByDataHash

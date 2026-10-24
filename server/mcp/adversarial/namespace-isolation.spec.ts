@@ -97,6 +97,8 @@ describe("MCP adversarial: namespace isolation", () => {
             "claim-1",
             "main"
         );
-        expect(session.mocks.reviewTaskService.create).not.toHaveBeenCalled();
+        expect(
+            session.mocks.reviewTaskService.createAssigned
+        ).not.toHaveBeenCalled();
     });
 });
