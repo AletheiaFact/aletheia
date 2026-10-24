@@ -14,7 +14,8 @@ Usage:
 Options:
   --all        include paraphrased rows too (default: only rows that quote the plan)
   --base URL   default https://aletheiafact.org
-  --debate ID  default 6adbd57988c1214b039c28e8
+  --debate ID  debate content id (the claim's contentId, not the claim id);
+               default 6adbd57988c1214b039c28ea
 """
 import argparse
 import csv
@@ -78,7 +79,9 @@ def main():
     parser.add_argument("--send", action="store_true")
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--base", default="https://aletheiafact.org")
-    parser.add_argument("--debate", default="6adbd57988c1214b039c28e8")
+    # The endpoint takes the debate content id (claim.contentId), not the
+    # claim id: claim 6adbd57988c1214b039c28e8 has content 6adbd57988c1214b039c28ea.
+    parser.add_argument("--debate", default="6adbd57988c1214b039c28ea")
     args = parser.parse_args()
 
     rows = [r for r in load_rows() if r["Tipo de registro"] not in SKIP_TYPES]

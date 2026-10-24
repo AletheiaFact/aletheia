@@ -6,7 +6,10 @@ debate's transcript drafts panel; only approved turns become public sentences
 that can be fact-checked.
 
 - Debate: https://aletheiafact.org/claim/6adbd57988c1214b039c28e8/debate
-- Endpoint: `POST /api/claim/debate/:debateId/append` (fact-checker session or M2M token)
+- Endpoint: `POST /api/claim/debate/:debateId/append` (fact-checker session or M2M token).
+  `:debateId` is the debate **content id** (the claim's `contentId`,
+  `6adbd57988c1214b039c28ea`), not the claim id (`6adbd57988c1214b039c28e8`);
+  the claim id gets a 404.
 - Needs only Python 3 (standard library). Both sheets must stay link-readable.
 - The token is read from `ALETHEIA_TOKEN` only; never commit it.
 - The personality ids in the scripts are production's; change them (and

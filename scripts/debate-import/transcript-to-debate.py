@@ -21,7 +21,8 @@ Options:
   --recording-start   ISO datetime of the recording's 00:00:00, to send each
                       turn's startedAt (e.g. 2026-10-22T22:00:00Z)
   --base URL          default https://aletheiafact.org
-  --debate ID         default 6adbd57988c1214b039c28e8
+  --debate ID         debate content id (the claim's contentId, not the claim
+                      id); default 6adbd57988c1214b039c28ea
 """
 import argparse
 import csv
@@ -101,7 +102,9 @@ def main():
     parser.add_argument("--include-new", action="store_true")
     parser.add_argument("--recording-start")
     parser.add_argument("--base", default="https://aletheiafact.org")
-    parser.add_argument("--debate", default="6adbd57988c1214b039c28e8")
+    # The endpoint takes the debate content id (claim.contentId), not the
+    # claim id: claim 6adbd57988c1214b039c28e8 has content 6adbd57988c1214b039c28ea.
+    parser.add_argument("--debate", default="6adbd57988c1214b039c28ea")
     args = parser.parse_args()
 
     recording_start = (
