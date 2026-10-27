@@ -25,15 +25,12 @@ IngressOptions {
 
 DeploymentOptions {
     // The Node process is CPU-bound and single-threaded: capacity scales by pods.
-    replicas = 3
+    // Two replicas keep one pod per node (see topologySpreadConstraints in
+    // app.pkl), so a node failure does not take the site down.
+    replicas = 2
     containers  {
         (newAletheia.pod.container) {
             name = "aletheia"
-            resources {
-                limits {
-                    ["cpu"] = "1000m"
-                }
-            }
         }
     }
 }
