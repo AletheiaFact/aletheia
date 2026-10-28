@@ -44,123 +44,50 @@ class MyDocument extends Document {
         return (
             <Html lang={language}>
                 <Head>
+                    {/* Preload only the woff2 faces used above the fold. Do not
+                        preload the .woff fallbacks (legacy browsers) or add more
+                        preload links: every preload is downloaded unconditionally.
+                        See src/styles/fontfaces.ts for the @font-face rules. */}
                     <link
-                        href="/fonts/Noticia_Text/noticiatext-regular-webfont.woff2"
+                        href="/fonts/Noticia_Text/noticiatext-regular-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
                         crossOrigin="anonymous"
                     />
                     <link
-                        href="/fonts/Noticia_Text/noticiatext-bold-webfont.woff2"
+                        href="/fonts/Noticia_Text/noticiatext-bold-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
                         crossOrigin="anonymous"
                     />
                     <link
-                        href="/fonts/Open_Sans/opensans-regular-webfont-webfont.woff2"
+                        href="/fonts/Open_Sans/opensans-regular-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
                         crossOrigin="anonymous"
                     />
                     <link
-                        href="/fonts/Open_Sans/opensans-bold-webfont-webfont.woff2"
+                        href="/fonts/Open_Sans/opensans-semibold-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
                         crossOrigin="anonymous"
                     />
                     <link
-                        href="/fonts/Open_Sans/opensans-semibold-webfont-webfont.woff2"
+                        href="/fonts/Open_Sans/opensans-bold-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
                         crossOrigin="anonymous"
                     />
                     <link
-                        href="/fonts/Open_Sans/opensans-extrabold-webfont-webfont.woff2"
+                        href="/fonts/Open_Sans/opensans-extrabold-latin.woff2"
                         rel="preload"
                         as="font"
                         type="font/woff2"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Noticia_Text/noticiatext-regular-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Noticia_Text/noticiatext-bold-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/opensans-regular-webfont-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/opensans-bold-webfont-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/opensans-semibold-webfont-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/opensans-extrabold-webfont-webfont.woff"
-                        rel="preload"
-                        as="font"
-                        type="font/woff"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Noticia_Text/NoticiaText-Regular.ttf"
-                        rel="preload"
-                        as="font"
-                        type="font/ttf"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Noticia_Text/NoticiaText-Bold.ttf"
-                        rel="preload"
-                        as="font"
-                        type="font/ttf"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/OpenSans-Regular.ttf"
-                        rel="preload"
-                        as="font"
-                        type="font/ttf"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/OpenSans-SemiBold.ttf"
-                        rel="preload"
-                        as="font"
-                        type="font/ttf"
-                        crossOrigin="anonymous"
-                    />
-                    <link
-                        href="/fonts/Open_Sans/OpenSans-Bold.ttf"
-                        rel="preload"
-                        as="font"
-                        type="font/ttf"
                         crossOrigin="anonymous"
                     />
                 </Head>
