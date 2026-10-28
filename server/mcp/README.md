@@ -178,6 +178,7 @@ view gets a conflict, never someone else's task.
 | Read the form | `get_review_log` | read | anyone | — |
 | Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
 | Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`) |
+| Finish and send to review | `submit_report_to_review` | write | assignee | `assigned` → `reported` → `selectReviewer`, no cross-check (for conclusions already validated by people; a different user reviews) |
 | Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
 | Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
 | Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` (returns the claim context, not the writer's label) |
