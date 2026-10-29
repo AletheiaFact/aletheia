@@ -69,7 +69,7 @@ const TopicForm = ({
 
     return (
         <form onSubmit={handleSubmit(handleOnSubmit)}>
-            <Grid item style={{ display: "flex" }}>
+            <Grid item style={{ display: "flex", alignItems: "flex-start" }}>
                 <Controller
                     control={control}
                     name="topics"
@@ -79,6 +79,7 @@ const TopicForm = ({
                     render={({ field: { onChange, value } }) => (
                         <MultiSelectAutocomplete
                             placeholder={t("topics:placeholder")}
+                            helperText={t("topics:addTopicsInstruction")}
                             onChange={onChange}
                             setIsLoading={setIsLoading}
                             isLoading={isLoading}
