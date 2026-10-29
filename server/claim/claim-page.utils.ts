@@ -2,6 +2,12 @@ import slugify from "slugify";
 import type { Response } from "express";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
+const SAFE_SEGMENT_REGEX = /^[a-zA-Z0-9_-]+$/;
+
+function isSafeSegment(value: string): boolean {
+    return SAFE_SEGMENT_REGEX.test(value);
+}
+
 export function redirectBasedOnPersonality(
     res: Response,
     claim: any,
@@ -18,14 +24,24 @@ export function redirectBasedOnPersonality(
         strict: true,
     });
 
-    // Encode every user-controlled segment so a decoded "//host" in the
-    // namespace or hash can never produce a protocol-relative redirect.
-    const segments =
-        namespace !== NameSpaceEnum.Main ? [encodeURIComponent(namespace)] : [];
-    segments.push("personality", personalitySlug, "claim", slug);
-    if (data_hash) {
-        segments.push("sentence", encodeURIComponent(data_hash));
+    const allowedNamespaces = new Set<string>(Object.values(NameSpaceEnum));
+    const safeNamespace =
+        allowedNamespaces.has(namespace) && namespace !== NameSpaceEnum.Main
+            ? namespace
+            : null;
+
+    const safeClaimSlug = isSafeSegment(String(slug)) ? String(slug) : null;
+    if (!safeClaimSlug) {
+        return;
     }
+
+    const segments = safeNamespace ? [safeNamespace] : [];
+    segments.push("personality", personalitySlug, "claim", safeClaimSlug);
+
+    if (data_hash && isSafeSegment(data_hash)) {
+        segments.push("sentence", data_hash);
+    }
+
     const redirectUrl = `/${segments.join("/")}`;
 
     return res.redirect(redirectUrl);
