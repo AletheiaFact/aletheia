@@ -18,14 +18,15 @@ export function redirectBasedOnPersonality(
         strict: true,
     });
 
-    let redirectUrl =
-        namespace !== NameSpaceEnum.Main
-            ? `/${namespace}/personality/${personalitySlug}/claim/${slug}`
-            : `/personality/${personalitySlug}/claim/${slug}`;
-
+    // Encode every user-controlled segment so a decoded "//host" in the
+    // namespace or hash can never produce a protocol-relative redirect.
+    const segments =
+        namespace !== NameSpaceEnum.Main ? [encodeURIComponent(namespace)] : [];
+    segments.push("personality", personalitySlug, "claim", slug);
     if (data_hash) {
-        redirectUrl += `/sentence/${data_hash}`;
+        segments.push("sentence", encodeURIComponent(data_hash));
     }
+    const redirectUrl = `/${segments.join("/")}`;
 
     return res.redirect(redirectUrl);
 }
