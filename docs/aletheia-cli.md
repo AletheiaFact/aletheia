@@ -1,10 +1,28 @@
 # `aletheia` CLI
 
-From the repository root, install the command and check it:
+This is the CLI script that helps users to self host aletheia on their infrastructure.
+
+## Install (WIP)
 
 ```sh
+# WIP
+curl https://get.aletheiafact.org | sh
+```
+
+## Local Install
+
+You just need to exec this one time, then `aletheia` bin become available globally:
+```sh
 ./aletheia
-aletheia
+```
+
+## Usage
+
+```sh
+aletheia -v
+# aletheia 1.2.1
+
+aletheia install
 ```
 
 The first run links the [script](../aletheia) in `~/.local/bin` (or `~/bin`) and prints its path and version. Later runs print only the version. If that directory is missing from `PATH`, the first run warns you.
