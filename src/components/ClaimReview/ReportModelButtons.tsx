@@ -12,6 +12,7 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
+import ClassificationMethodologySelect from "./ClassificationMethodologySelect";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
     const { t } = useTranslation();
@@ -81,18 +82,22 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                         "claimReviewForm:addFactCheckingReviewButton"
                                     )}
                                 </AletheiaButton>
+                                <ClassificationMethodologySelect />
                             </>
                         )}
                         {isSource && (
-                            <AletheiaButton
-                                type={ButtonType.primary}
-                                onClick={toggleFormCollapse}
-                                data-cy={"testAddFactCheckReviewButton"}
-                                id={ReportModelEnum.FactChecking}
-                                startIcon={<AddIcon />}
-                            >
-                                {t("claimReviewForm:addSourceReviewButton")}
-                            </AletheiaButton>
+                            <>
+                                <AletheiaButton
+                                    type={ButtonType.primary}
+                                    onClick={toggleFormCollapse}
+                                    data-cy={"testAddFactCheckReviewButton"}
+                                    id={ReportModelEnum.FactChecking}
+                                    startIcon={<AddIcon />}
+                                >
+                                    {t("claimReviewForm:addSourceReviewButton")}
+                                </AletheiaButton>
+                                <ClassificationMethodologySelect />
+                            </>
                         )}
                         {isVerificationRequest && (
                             <AletheiaButton

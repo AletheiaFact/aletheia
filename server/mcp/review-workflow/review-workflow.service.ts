@@ -31,6 +31,7 @@ export interface StartReviewTaskInput {
     claimId: string;
     dataHash: string;
     nameSpace: string;
+    classificationMethodology?: string;
 }
 
 /**
@@ -80,7 +81,12 @@ export class ReviewWorkflowService {
      */
     async startReviewTask(
         user: { _id: string },
-        { claimId, dataHash, nameSpace }: StartReviewTaskInput
+        {
+            claimId,
+            dataHash,
+            nameSpace,
+            classificationMethodology,
+        }: StartReviewTaskInput
     ): Promise<unknown> {
         const claim: any = await this.claimService.getById(claimId, nameSpace);
         if (!claim) {
@@ -96,6 +102,28 @@ export class ReviewWorkflowService {
             dataHash
         );
         if (existing) {
+            // A queued task has no methodology until work starts: it is set
+            // when the task is taken and fixed from then on, so a task that
+            // already has one cannot be switched to another
+            const stored = existing.classificationMethodology;
+            if (
+                stored &&
+                classificationMethodology &&
+                classificationMethodology !== stored
+            ) {
+                throw new ConflictException(
+                    `This sentence's review task uses the "${stored}" classification methodology`
+                );
+            }
+            const take = assignTo(user._id);
+            if (!stored) {
+                Object.assign(take.$set, {
+                    classificationMethodology:
+                        this.reviewTaskService.resolveMethodologyForNewTask(
+                            classificationMethodology
+                        ),
+                });
+            }
             // A queued (`unassigned`) task is taken, atomically, the same way
             // next_review_task takes it; anything further along is someone
             // else's work.
@@ -106,7 +134,7 @@ export class ReviewWorkflowService {
                               _id: existing._id,
                               "machine.value": "unassigned",
                           },
-                          assignTo(user._id)
+                          take
                       )
                     : null;
             if (!taken) {
@@ -120,6 +148,11 @@ export class ReviewWorkflowService {
         const created = await this.reviewTaskQueue.createAssigned({
             data_hash: dataHash,
             reportModel: ReportModelEnum.FactChecking,
+            // Default, flag and id check, as for a task created on the web
+            classificationMethodology:
+                this.reviewTaskService.resolveMethodologyForNewTask(
+                    classificationMethodology
+                ),
             reviewTaskType: ReviewTaskTypeEnum.Claim,
             nameSpace,
             target: claimId,

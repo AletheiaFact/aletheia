@@ -93,13 +93,15 @@ export class ReviewTaskEffectsService {
         reportModel: string,
         nameSpace: string,
         target: any,
-        targetModel: string
+        targetModel: string,
+        classificationMethodology?: string
     ) {
         const reviewData = machine.context.review;
 
         const newReport = Object.assign(machine.context.reviewData, {
             data_hash,
             reportModel,
+            ...(classificationMethodology && { classificationMethodology }),
         });
 
         const report = await this.reportService.create(newReport);

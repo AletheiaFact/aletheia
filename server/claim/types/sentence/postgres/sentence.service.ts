@@ -71,6 +71,8 @@ export class PostgresSentenceService implements ISentenceService {
         const entity = toSentenceEntity(row);
         entity.props = {
             classification: report?.classification,
+            classificationMethodology:
+                report?.classificationMethodology ?? undefined,
             ...entity.props,
         };
         return entity;

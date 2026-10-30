@@ -12,6 +12,10 @@ import { ReviewTaskQueueService } from "../../review-task/review-task-queue.serv
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import { isAdmin, isReviewerOrAdmin, toObjectId, WorkflowUser } from "./access";
 import {
+    DEFAULT_METHODOLOGY,
+    MethodologyId,
+} from "../../../lib/classification-methodology";
+import {
     assignTo,
     buildClaimContext,
     claimPersonalityId,
@@ -75,8 +79,16 @@ export class ReviewQueueService {
      * tasks being written at once (a soft cap: checked before the hand-out).
      * Tasks the caller gave back, and tasks given back
      * `mcp.task_queue.max_releases` times, are skipped.
+     *
+     * A queued task has no classification methodology until work starts: it
+     * gets the given one in the same update, so only tasks without one, or
+     * with the same one, are handed out. A task given back keeps it.
      */
-    async nextReviewTask(user: WorkflowUser, nameSpace: string) {
+    async nextReviewTask(
+        user: WorkflowUser,
+        nameSpace: string,
+        classificationMethodology: MethodologyId = DEFAULT_METHODOLOGY
+    ) {
         const userId = toObjectId(user._id);
         if (!isAdmin(user, nameSpace)) {
             const maxOpen = this.configNumber(
@@ -98,6 +110,8 @@ export class ReviewQueueService {
             "max_releases",
             DEFAULT_MAX_RELEASES
         );
+        const take = assignTo(user._id);
+        Object.assign(take.$set, { classificationMethodology });
         return this.reviewTaskQueue.transitionAtomically(
             {
                 ...this.queueScope(nameSpace),
@@ -106,8 +120,12 @@ export class ReviewQueueService {
                 [`machine.context.reviewData.releases.${maxReleases - 1}`]: {
                     $exists: false,
                 },
+                $or: [
+                    { classificationMethodology: { $exists: false } },
+                    { classificationMethodology },
+                ],
             },
-            assignTo(user._id)
+            take
         );
     }
 

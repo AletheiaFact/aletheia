@@ -491,9 +491,11 @@ describe("ClaimController (e2e)", () => {
             ]);
             expect(response.body[0].speech._id).toBe(drafts["turn-1"].speechId);
             expect(response.body[0].speech.content.length).toBeGreaterThan(0);
-            expect(
-                response.body.map((t) => t.checkability ?? null)
-            ).toEqual([72, 0, null]);
+            expect(response.body.map((t) => t.checkability ?? null)).toEqual([
+                72,
+                0,
+                null,
+            ]);
         });
 
         it("edits a draft by parsing a new draft speech", async () => {

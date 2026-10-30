@@ -387,7 +387,10 @@ const TranscriptDraftsPanel = ({
                                         })
                                     }
                                     disabled={isBusy}
-                                    sx={{ flex: "1 1 200px", maxWidth: "300px" }}
+                                    sx={{
+                                        flex: "1 1 200px",
+                                        maxWidth: "300px",
+                                    }}
                                 >
                                     {personalities.map((personality) => (
                                         <MenuItem

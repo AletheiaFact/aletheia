@@ -21,6 +21,8 @@ interface ContextType {
     form?: FormField[];
     events?: ReviewTaskEvents[];
     reportModel?: string;
+    classificationMethodology?: string;
+    setClassificationMethodology?: (methodology: string) => void;
     recreateMachine?: (reportModel: string) => void;
     claim?: any;
     sentenceContent?: any;
@@ -39,6 +41,7 @@ interface ReviewTaskMachineProviderProps {
     children: React.ReactNode;
     baseMachine?: any;
     baseReportModel?: any;
+    baseClassificationMethodology?: string;
     publishedReview?: { review: any };
     claim?: any;
     personality?: any;
@@ -84,48 +87,60 @@ export const ReviewTaskMachineProvider = (
     const [reportModel, setReportModel] = useState<ReportModelEnum | null>(
         props.baseReportModel
     );
+    const [classificationMethodology, setClassificationMethodology] = useState<
+        string | undefined
+    >(props.baseClassificationMethodology);
     const { t } = useTranslation();
     const preloadedOptions =
         globalMachineService?.state?.context?.preloadedOptions;
 
     const extraContext = {
         personality: props.personality,
-        claim: props.claim
+        claim: props.claim,
     };
 
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
                 ? Promise.resolve({
-                    machine: props.baseMachine,
-                    reportModel: props.baseReportModel,
-                })
+                      machine: props.baseMachine,
+                      reportModel: props.baseReportModel,
+                      classificationMethodology:
+                          props.baseClassificationMethodology,
+                  })
                 : ReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
-        fetchReviewTask(props.data_hash).then(({ machine, reportModel }) => {
-            // The states assigned and reported have compound states
-            // and when we going to save we get "assigned: undraft" as a value.
-            // The machine doesn't recognize when we try to persist state the initial value
-            // 'cause the value it's an object. So for these states, we get only the key value
-            if (machine) {
-                machine.value =
-                    typeof machine.value !== "string"
-                        ? Object.keys(machine.value)[0]
-                        : machine.value;
-            }
-            const newMachine =
-                machine ||
-                getMachineInitialState(props.reviewTaskType)[
-                ReportModelEnum.FactChecking
-                ];
+        void fetchReviewTask(props.data_hash).then(
+            ({ machine, reportModel, classificationMethodology }) => {
+                // The states assigned and reported have compound states
+                // and when we going to save we get "assigned: undraft" as a value.
+                // The machine doesn't recognize when we try to persist state the initial value
+                // 'cause the value it's an object. So for these states, we get only the key value
+                if (machine) {
+                    machine.value =
+                        typeof machine.value !== "string"
+                            ? Object.keys(machine.value)[0]
+                            : machine.value;
+                }
+                const newMachine =
+                    machine ||
+                    getMachineInitialState(props.reviewTaskType)[
+                        ReportModelEnum.FactChecking
+                    ];
 
-            setReportModel(reportModel);
-            setGlobalMachineService(
-                createNewMachineService(newMachine, reportModel, extraContext)
-            );
-            setLoading(false);
-        });
+                setReportModel(reportModel);
+                setClassificationMethodology(classificationMethodology);
+                setGlobalMachineService(
+                    createNewMachineService(
+                        newMachine,
+                        reportModel,
+                        extraContext
+                    )
+                );
+                setLoading(false);
+            }
+        );
         if (!props.publishedReview) {
             ClaimReviewApi.getClaimReviewByHash(props.data_hash).then(
                 (claimReview) => {
@@ -190,6 +205,8 @@ export const ReviewTaskMachineProvider = (
                 reviewTaskType: props.reviewTaskType,
                 setFormAndEvents,
                 reportModel,
+                classificationMethodology,
+                setClassificationMethodology,
                 form,
                 events,
                 recreateMachine: createMachineBasedOnReportModel,

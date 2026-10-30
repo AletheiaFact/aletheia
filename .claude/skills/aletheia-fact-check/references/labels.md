@@ -3,6 +3,27 @@
 Source: *Manual de Checagem*, Pós-Checagem → A) Etiquetagem (pp. 21–22).
 The `value` column is what goes in `classification`.
 
+## Check the task's methodology first
+
+Every task view has a `classificationMethodology`. The table below is the
+**`aletheia`** scale, the default. A task on another methodology accepts only
+that methodology's options: `save_review_log`, `submit_report`,
+`submit_cross_check` and `publish_review_task` refuse any other `value`.
+`list_classification_methodologies` gives the current list; today:
+
+| Methodology | Options (`value` → label) |
+| --- | --- |
+| `aletheia` | the 9 below |
+| `rncd-debate` | `false` → Falso, `misleading` → Enganosa, `trustworthy` → Verdadeiro |
+
+On a narrower scale, still walk the decision order below, then pick among
+the methodology's options only. When none of them fits (for example the
+sentence is an opinion and the scale has no `not-fact`), do not force one:
+give the task back with `release_review_task`, reason `needs-human`. When
+you report the result, use the label in the task's methodology
+(`classificationLabel`), e.g. "Verdadeiro (RNCD Debate)", not the `aletheia`
+word for the same `value`.
+
 | Etiqueta | `value` | Manual definition |
 | --- | --- | --- |
 | Confiável | `trustworthy` | As informações e os dados mencionados estão corretos e são incontestáveis. |
