@@ -76,6 +76,7 @@ describe("MCP discovery (e2e)", () => {
                 "start_review_task",
                 "submit_cross_check",
                 "submit_report",
+                "submit_report_to_review",
             ].sort()
         );
     });
