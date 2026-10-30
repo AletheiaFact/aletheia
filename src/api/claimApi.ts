@@ -57,7 +57,7 @@ const getById = (
     params = {}
 ): Promise<Claim | void> => {
     return request
-        .get(`/${id}`, { params })
+        .get(`/${encodeURIComponent(id)}`, { params })
         .then((response) => {
             return response.data;
         })

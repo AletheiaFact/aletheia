@@ -50,7 +50,7 @@ const getReviewTasks = (
 
 const getMachineByDataHash = (params: string): Promise<unknown> => {
     return request
-        .get(`/hash/${params}`)
+        .get(`/hash/${encodeURIComponent(params)}`)
         .then((response) => {
             return response.data;
         })
@@ -84,7 +84,7 @@ const autoSaveDraft = (
     t: TranslationFn
 ): Promise<unknown> => {
     return request
-        .put(`/${params.data_hash}`, { ...params })
+        .put(`/${encodeURIComponent(params.data_hash)}`, { ...params })
         .then((response) => {
             MessageManager.showMessage(
                 "success",
@@ -135,7 +135,7 @@ const getEditorContentObject = (
     params: Record<string, unknown>
 ): Promise<unknown> => {
     return request
-        .get(`/editor-content/${data_hash}`, { params })
+        .get(`/editor-content/${encodeURIComponent(data_hash)}`, { params })
         .then((response) => {
             return response.data;
         })
@@ -149,7 +149,7 @@ const addComment = (
     comment: NewCommentPayload,
 ): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
-        .put(`/add-comment/${hash}`, { comment })
+        .put(`/add-comment/${encodeURIComponent(hash)}`, { comment })
         .then((response) => {
             return response.data;
         })

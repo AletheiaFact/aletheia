@@ -69,7 +69,7 @@ const getPersonality = (
     t: TranslationFn
 ): Promise<Personality | void> => {
     return request
-        .get(`/${id}`, {
+        .get(`/${encodeURIComponent(id)}`, {
             params,
         })
         .then((response) => {
