@@ -28,9 +28,13 @@ const SourceList: React.FC<SourceListProps> = ({ sources, t, id }) => {
                             : ""
                     }
                     value={
-                        <Link href={source.href} passHref>
-                            {truncateUrl(source.href)}
-                        </Link>
+                        /^https?:\/\//i.test(source.href) ? (
+                            <Link href={source.href} passHref>
+                                {truncateUrl(source.href)}
+                            </Link>
+                        ) : (
+                            truncateUrl(source.href)
+                        )
                     }
                 />
             ))}

@@ -18,6 +18,7 @@ export class SitemapController {
     }
 
     @Get("submit-sitemap")
+    @Header("Content-Type", "text/plain")
     async submitSitemap(@Request() req: any) {
         return this.sitemapService.submitSitemap(
             req.protocol + "://" + req.get("host")

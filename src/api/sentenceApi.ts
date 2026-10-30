@@ -5,7 +5,7 @@ const request = createApiInstance("/api/sentence");
 
 const getSentenceTopicsByDatahash = (data_hash) => {
     return request
-        .get(`/${data_hash}`)
+        .get(`/${encodeURIComponent(data_hash)}`)
         .then((response) => {
             return response.data;
         })
