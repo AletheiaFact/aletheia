@@ -233,6 +233,21 @@ export class ReviewWorkflowService {
         return this.stages.sendToReview(user, task);
     }
 
+    /**
+     * Submits the report and sends it to the review backlog in one call,
+     * without a cross-check. A task already `reported` skips the submit, so a
+     * retry after a failed send works.
+     */
+    async submitReportToReview(user: WorkflowUser, task: any) {
+        const reported =
+            stateName(task.machine?.value) === "reported"
+                ? task
+                : await this.writing.submitReport(user, task);
+        return this.stages.sendToReview(user, reported, {
+            skipCrossCheck: true,
+        });
+    }
+
     rejectReviewTask(user: WorkflowUser, task: any, rejectionComment: string) {
         return this.stages.rejectReviewTask(user, task, rejectionComment);
     }
