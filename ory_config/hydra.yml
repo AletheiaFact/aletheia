@@ -27,7 +27,7 @@ strategies:
     access_token: opaque
 
 ttl:
-    access_token: 1h
+    access_token: 24h
     refresh_token: 720h
 
 oauth2:
