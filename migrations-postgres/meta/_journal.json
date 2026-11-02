@@ -50,6 +50,13 @@
       "when": 1791599016714,
       "tag": "0006_claim",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793644733515,
+      "tag": "0007_verification_request_field_provenance",
+      "breakpoints": true
     }
   ]
 }

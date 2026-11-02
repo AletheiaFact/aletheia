@@ -70,10 +70,15 @@ export class AiTaskService {
             updateDto.state === AiTaskState.SUCCEEDED &&
             updateDto.result !== undefined
         ) {
+            const model = (task.content as { model?: unknown })?.model;
             await this.dispatcher.dispatch(
                 task.callbackRoute,
                 task.callbackParams,
-                updateDto.result
+                updateDto.result,
+                {
+                    taskId: task._id.toString(),
+                    model: typeof model === "string" ? model : undefined,
+                }
             );
         }
 

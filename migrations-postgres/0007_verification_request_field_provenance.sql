@@ -1,0 +1,1 @@
+ALTER TABLE "verification_request" ADD COLUMN "field_provenance" jsonb DEFAULT '{}'::jsonb NOT NULL;

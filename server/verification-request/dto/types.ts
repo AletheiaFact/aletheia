@@ -84,6 +84,41 @@ export const EXPECTED_STATES = [
     "impactArea",
     "severity",
 ];
+
+// Triage fields whose origin (AI or human) is recorded in fieldProvenance,
+// so the AI triage quality can be measured against human decisions.
+export enum TriageField {
+    IMPACT_AREA = "impactArea",
+    SEVERITY = "severity",
+    TOPICS = "topics",
+    IDENTIFIED_DATA = "identifiedData",
+}
+
+export enum ProvenanceOrigin {
+    AI = "ai",
+    HUMAN = "human",
+    AI_EDITED_BY_HUMAN = "ai_edited_by_human",
+    // Sent with the request by the person reporting it (public form)
+    REPORTER = "reporter",
+    // Sent with the request by an M2M integration (chatbot, monitoring)
+    INTEGRATION = "integration",
+}
+
+export interface FieldProvenance {
+    origin: ProvenanceOrigin;
+    // Value sent with the request, kept after the AI triage replaces it
+    reporterValue?: any;
+    // Last value the AI answered, kept even after a human changes the field
+    aiValue?: any;
+    aiTaskId?: string;
+    aiModel?: string;
+    aiAt?: Date | string;
+    humanUserId?: string;
+    humanAt?: Date | string;
+}
+
+export type FieldProvenanceMap = Partial<Record<TriageField, FieldProvenance>>;
+
 export interface TimeStamps {
     createdAt: Date;
     updatedAt: Date;

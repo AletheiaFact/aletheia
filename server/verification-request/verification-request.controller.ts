@@ -345,6 +345,7 @@ export class VerificationRequestController {
     @Put("api/verification-request/:verificationRequestId")
     @AdminOnly()
     async updateVerificationRequest(
+        @Req() req: BaseRequest,
         @ZodParam("verificationRequestId", VerificationRequestIdParam)
         verificationRequestId: string,
         @ZodBody(UpdateVerificationRequestSchema)
@@ -352,20 +353,24 @@ export class VerificationRequestController {
     ) {
         return this.verificationRequestService.update(
             verificationRequestId,
-            updateVerificationRequestDto
+            updateVerificationRequestDto,
+            true,
+            req.user?._id
         );
     }
 
     @ApiTags("verification-request")
     @Put("api/verification-request/:data_hash/topics")
     async updateVerificationRequestWithTopics(
+        @Req() req: BaseRequest,
         @ZodParam("data_hash", DataHashParam) data_hash: string,
         @ZodBody(VerificationRequestTopicsSchema)
         topics: VerificationRequestTopicsDto
     ) {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,
-            data_hash
+            data_hash,
+            req.user?._id
         );
     }
 
