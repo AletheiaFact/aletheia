@@ -1,9 +1,61 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Speech } from "../../speech/schemas/speech.schema";
+import { Speech } from "../../speech/mongo/schemas/speech.schema";
 import * as mongoose from "mongoose";
-import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/mongo/schemas/claim-revision.schema";
 
 export type DebateDocument = Debate & mongoose.Document;
+
+export enum TranscriptTurnStatus {
+    Draft = "draft",
+    Approved = "approved",
+    Rejected = "rejected",
+}
+
+// A turn sent through the transcript append endpoint. Its speech is
+// created as a draft (hidden from public reads) and only joins the debate
+// `content` when a reviewer approves it. `externalId` is the caller's id
+// of the turn and is used to skip repeats, also after a rejection.
+// `checkability` is the transcriber's 0-100 triage score of the turn, as
+// sent; absent when the transcriber had no score.
+export interface DebateTranscriptTurn {
+    _id: mongoose.Types.ObjectId;
+    speech: mongoose.Types.ObjectId;
+    personality: mongoose.Types.ObjectId;
+    text: string;
+    status: TranscriptTurnStatus;
+    externalId?: string;
+    startedAt?: Date;
+    checkability?: number;
+    createdAt: Date;
+    reviewedBy?: mongoose.Types.ObjectId;
+    reviewedAt?: Date;
+}
+
+const DebateTranscriptTurnSchema = new mongoose.Schema<DebateTranscriptTurn>({
+    speech: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Speech",
+    },
+    personality: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Personality",
+    },
+    text: { type: String, required: true },
+    status: {
+        type: String,
+        enum: Object.values(TranscriptTurnStatus),
+        required: true,
+        default: TranscriptTurnStatus.Draft,
+    },
+    externalId: { type: String },
+    startedAt: { type: Date },
+    checkability: { type: Number, min: 0, max: 100 },
+    createdAt: { type: Date, default: Date.now },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reviewedAt: { type: Date },
+});
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Debate {
@@ -26,6 +78,9 @@ export class Debate {
         ],
     })
     content: Speech[];
+
+    @Prop({ type: [DebateTranscriptTurnSchema], default: [] })
+    transcriptTurns: DebateTranscriptTurn[];
 
     // TODO: move this to the prop object and formalize the claim specification
     @Prop({ type: Boolean, default: false, required: true })

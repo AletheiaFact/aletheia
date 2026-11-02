@@ -17,7 +17,7 @@ import {
     HistoryType,
 } from "../../../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
-import { ReportService } from "../../../report/report.service";
+import type { IReportService } from "../../../interfaces/report.service.interface";
 import type { BaseRequest } from "../../../types";
 import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
 
@@ -30,7 +30,7 @@ export class ImageService {
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
         private historyService: HistoryService,
-        private reportService: ReportService
+        @Inject("ReportService") private reportService: IReportService
     ) {}
 
     async create(image: Record<string, any>, claimRevisionId: any = null) {
@@ -55,6 +55,10 @@ export class ImageService {
         );
         await this.historyService.createHistory(history as any);
         return newImage;
+    }
+
+    getById(id: string): Promise<ImageDocument | null> {
+        return this.ImageModel.findById(id).exec();
     }
 
     async getByDataHash(data_hash: string) {

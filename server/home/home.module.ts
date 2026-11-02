@@ -15,7 +15,7 @@ import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
         StatsModule,
         ViewModule,
         DebateModule,
-        ClaimRevisionModule,
+        ClaimRevisionModule.register(),
         ClaimReviewModule,
         EventsModule,
         FeatureFlagModule,

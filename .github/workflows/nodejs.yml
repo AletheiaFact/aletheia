@@ -99,16 +99,19 @@ jobs:
               with:
                   name: aletheia-dist
                   path: dist
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20.18.0
             - run: |
                   echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
                   yarn install
             - run: cp config/localConfig.example.ts config/localConfig.ts
             - run: yarn build
             - name: Cypress run
-              uses: cypress-io/github-action@v6
+              uses: cypress-io/github-action@v7
               with:
                   start: yarn test:e2e:cy
-                  wait-on: "http://localhost:3000"
+                  wait-on: "http://127.0.0.1:3000"
               env:
                   CI: true
                   CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
@@ -221,16 +224,19 @@ jobs:
               with:
                   name: aletheia-dist
                   path: dist
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20.18.0
             - run: |
                   echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
                   yarn install
             - run: cp config/localConfig.example.ts config/localConfig.ts
             - run: yarn build
             - name: Cypress run with FerretDB
-              uses: cypress-io/github-action@v6
+              uses: cypress-io/github-action@v7
               with:
                   start: yarn test:e2e:cy-ferretdb
-                  wait-on: "http://localhost:3000"
+                  wait-on: "http://127.0.0.1:3000"
               env:
                   CI: true
                   CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"

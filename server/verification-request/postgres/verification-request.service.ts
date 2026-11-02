@@ -1,6 +1,5 @@
 import {
     BadRequestException,
-    forwardRef,
     Inject,
     Injectable,
     Logger,
@@ -159,8 +158,6 @@ export class PostgresVerificationRequestService
 
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
-        @Inject(forwardRef(() => VerificationRequestStateMachineService))
-        private readonly verificationRequestStateService: VerificationRequestStateMachineService,
         @Inject("SourceService")
         private readonly sourceService: ISourceService,
         @Inject("GroupService")
@@ -931,6 +928,14 @@ export class PostgresVerificationRequestService
         await this.triggerStateMachineForMissingState(vr, state);
     }
 
+
+    // Built on demand rather than injected: the state machine already depends
+    // on this service, and injecting it back made a request-scoped DI cycle in
+    // which Nest handed out an unconstructed placeholder of this service.
+    protected createStateMachine(): VerificationRequestStateMachineService {
+        return new VerificationRequestStateMachineService(this);
+    }
+
     async triggerStateMachineForMissingState(
         vr: IVerificationRequest,
         missingState: string
@@ -943,7 +948,7 @@ export class PostgresVerificationRequestService
             return;
         }
         try {
-            await (this.verificationRequestStateService as any)[event](
+            await (this.createStateMachine() as any)[event](
                 idOf(vr)
             );
         } catch (error) {

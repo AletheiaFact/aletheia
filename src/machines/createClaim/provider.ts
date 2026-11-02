@@ -25,6 +25,7 @@ const machineConfig = atom((get) => {
             contentModel: null,
             nameSpace,
         },
+        initialPersonalities: personalities,
     };
 
     return { value, context };

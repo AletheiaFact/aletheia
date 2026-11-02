@@ -13,16 +13,11 @@ import { InjectModel } from "@nestjs/mongoose";
 import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
 import { SaveDraftDTO } from "./dto/save-draft.dto";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ReportService } from "../report/report.service";
-import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { HistoryService } from "../history/history.service";
-import { StateEventService } from "../state-event/state-event.service";
-import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { buildDateQuery } from "../../src/utils/date.utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
 import {
@@ -35,8 +30,13 @@ import { CommentService } from "./comment/comment.service";
 import { CommentEnum } from "./comment/schema/comment.schema";
 import { User } from "../users/schemas/user.schema";
 import { Image } from "../claim/types/image/schemas/image.schema";
-import { Sentence } from "../claim/types/sentence/schemas/sentence.schema";
+import type { ISentence } from "../interfaces/claim-content.interface";
 import { Source } from "../source/mongo/schemas/source.schema";
+import { ReviewTaskEffectsService } from "./review-task-effects.service";
+import {
+    buildListPipeline,
+    buildNotDeletedCountPipeline,
+} from "./review-task.pipelines";
 
 interface IListAllQuery {
     value: any;
@@ -46,6 +46,8 @@ interface IListAllQuery {
     page: number;
     pageSize: number;
     order: string | number;
+    startDate?: string;
+    endDate?: string;
 }
 
 interface IPostProcess {
@@ -56,7 +58,7 @@ interface IPostProcess {
 }
 
 export interface IReviewTask {
-    content: Source | Sentence | Image;
+    content: Source | ISentence | Image;
     usersName: string[];
     value: string;
     personalityName?: string;
@@ -74,11 +76,8 @@ export class ReviewTaskService {
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ReviewTask.name)
         private ReviewTaskModel: Model<ReviewTaskDocument>,
-        private claimReviewService: ClaimReviewService,
-        private reportService: ReportService,
-        private historyService: HistoryService,
-        private stateEventService: StateEventService,
-        private sentenceService: SentenceService,
+        private effects: ReviewTaskEffectsService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private commentService: CommentService
@@ -92,9 +91,14 @@ export class ReviewTaskService {
 
     getQueryObject(
         value: string,
-        filterUser: Record<string, boolean | string>
+        filterUser: Record<string, boolean | string>,
+        startDate?: string,
+        endDate?: string
     ): Record<string, any> {
         const query = getQueryMatchForMachineValue(value);
+
+        const dateQuery = buildDateQuery(startDate, endDate);
+        if (dateQuery) query.createdAt = dateQuery;
 
         Object.keys(filterUser).forEach((key) => {
             const filterValue = filterUser[key];
@@ -107,203 +111,18 @@ export class ReviewTaskService {
         return query;
     }
 
-    _verifyMachineValueAndAddMatchPipeline(
-        pipeline: any[],
-        value: string,
-        reviewTaskType: ReviewTaskTypeEnum
-    ): number {
-        if (
-            value === "published" &&
-            reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
-        ) {
-            return pipeline.push(
-                {
-                    $lookup: {
-                        from: "claimreviews",
-                        localField: "data_hash",
-                        foreignField: "data_hash",
-                        as: "machine.context.claimReview.claimReview",
-                    },
-                },
-                { $unwind: "$machine.context.claimReview.claimReview" },
-                {
-                    $match: {
-                        "machine.context.claimReview.claimReview.isDeleted":
-                            false,
-                        $or: [
-                            { "target.isDeleted": false },
-                            { "target.isDeleted": { $exists: false } },
-                        ],
-                    },
-                }
-            );
-        }
-
-        return pipeline.push({
-            $match: {
-                $or: [
-                    { "target.isDeleted": false },
-                    { "target.isDeleted": { $exists: false } },
-                ],
-            },
-        });
-    }
-
-    buildLookupPipeline(reviewTaskType: ReviewTaskTypeEnum) {
-        let pipeline: any[] = [
-            {
-                $match: {
-                    $expr: {
-                        $and: [
-                            { $ne: ["$$targetId", null] },
-                            { $eq: ["$_id", "$$targetId"] },
-                        ],
-                    },
-                },
-            },
-        ];
-
-        if (reviewTaskType === ReviewTaskTypeEnum.Claim) {
-            pipeline.push(
-                {
-                    $lookup: {
-                        from: "claimrevisions",
-                        localField: "latestRevision",
-                        foreignField: "_id",
-                        as: "latestRevision",
-                    },
-                },
-                { $unwind: "$latestRevision" }
-            );
-        }
-
-        return pipeline;
-    }
-
-    _buildPipeline({
-        value,
-        filterUser,
-        nameSpace,
-        reviewTaskType,
-    }: IListAllQuery): any[] {
-        const pipeline: any[] = [];
-        const query = this.getQueryObject(value, filterUser);
-
-        pipeline.push(
-            { $match: { ...query, reviewTaskType, nameSpace } },
-            {
-                $lookup: {
-                    from: "users",
-                    let: { usersId: "$machine.context.reviewData.usersId" },
-                    pipeline: [
-                        { $match: { $expr: { $in: ["$_id", "$$usersId"] } } },
-                        { $project: { name: 1 } },
-                    ],
-                    as: "machine.context.reviewData.usersId",
-                },
-            },
-            {
-                $lookup: {
-                    from: "personalities",
-                    let: {
-                        personalityId: {
-                            $let: {
-                                vars: {
-                                    personalityValue:
-                                        "$machine.context.review.personality",
-                                },
-                                in: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                {
-                                                    $ne: [
-                                                        "$$personalityValue",
-                                                        null,
-                                                    ],
-                                                },
-                                                {
-                                                    $ne: [
-                                                        "$$personalityValue",
-                                                        "",
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        { $toObjectId: "$$personalityValue" },
-                                        null,
-                                    ],
-                                },
-                            },
-                        },
-                    },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $ne: ["$$personalityId", null] },
-                                        { $eq: ["$_id", "$$personalityId"] },
-                                    ],
-                                },
-                            },
-                        },
-                        { $project: { slug: 1, name: 1, _id: 1 } },
-                    ],
-                    as: "machine.context.review.personality",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$machine.context.review.personality",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $lookup: {
-                    from: `${reviewTaskType.toLowerCase()}s`,
-                    let: {
-                        targetId: {
-                            $let: {
-                                vars: { targetValue: "$target" },
-                                in: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                {
-                                                    $ne: [
-                                                        "$$targetValue",
-                                                        null,
-                                                    ],
-                                                },
-                                                { $ne: ["$$targetValue", ""] },
-                                            ],
-                                        },
-                                        { $toObjectId: "$$targetValue" },
-                                        null,
-                                    ],
-                                },
-                            },
-                        },
-                    },
-                    pipeline: this.buildLookupPipeline(reviewTaskType),
-                    as: "target",
-                },
-            },
-            { $unwind: { path: "$target", preserveNullAndEmptyArrays: true } }
-        );
-
-        this._verifyMachineValueAndAddMatchPipeline(
-            pipeline,
-            value,
-            reviewTaskType
-        );
-
-        return pipeline;
-    }
-
     async listAll(query: IListAllQuery): Promise<IReviewTask[]> {
-        const pipeline = this._buildPipeline(query);
+        const pipeline = buildListPipeline(
+            this.getQueryObject(
+                query.value,
+                query.filterUser,
+                query.startDate,
+                query.endDate
+            ),
+            query.value,
+            query.nameSpace,
+            query.reviewTaskType
+        );
         pipeline.push(
             { $sort: { _id: query.order === "asc" ? 1 : -1 } },
             { $skip: query.page * query.pageSize },
@@ -348,7 +167,7 @@ export class ReviewTaskService {
         const claimTitle = latestRevision?.title;
         const isContentImage = contentModel === ContentModelEnum.Image;
 
-        let content: Source | Sentence | Image = target;
+        let content: Source | ISentence | Image = target;
 
         if (reviewTaskType === ReviewTaskTypeEnum.Claim && latestRevision) {
             if (isContentImage) {
@@ -386,100 +205,6 @@ export class ReviewTaskService {
 
     getById(reviewTaskId: string): Promise<ReviewTaskDocument | null> {
         return this.ReviewTaskModel.findById(reviewTaskId).exec();
-    }
-
-    async _createReviewTaskHistory(
-        newReviewTask: any,
-        previousReviewTask: any = null
-    ) {
-        let historyType: HistoryType | string | undefined;
-
-        if (typeof newReviewTask.machine.value === "object") {
-            historyType =
-                newReviewTask.machine.value?.[
-                    Object.keys(newReviewTask.machine.value)[0]
-                ] === "draft"
-                    ? HistoryType.Draft
-                    : Object.keys(newReviewTask.machine.value)[0];
-        }
-
-        const user = this.req.user?._id;
-
-        const history = this.historyService.getHistoryParams(
-            newReviewTask._id,
-            TargetModel.ReviewTask,
-            user,
-            (historyType || HistoryType.Published) as HistoryType,
-            {
-                ...newReviewTask.machine.context.reviewData,
-                ...newReviewTask.machine.context.review.target,
-                value: newReviewTask.machine.value,
-            },
-            previousReviewTask && {
-                ...previousReviewTask.machine.context.reviewData,
-                ...previousReviewTask.machine.context.review.target,
-                value: previousReviewTask.machine.value,
-            }
-        );
-
-        await this.historyService.createHistory(history as any);
-    }
-
-    _createStateEvent(newReviewTask: any) {
-        let typeModel: string | undefined;
-        let draft = false;
-
-        if (typeof newReviewTask.machine.value === "object") {
-            draft =
-                newReviewTask.machine.value?.[
-                    Object.keys(newReviewTask.machine.value)[0]
-                ] === "draft"
-                    ? true
-                    : false;
-
-            typeModel = Object.keys(newReviewTask.machine.value)[0];
-        }
-
-        const stateEvent = this.stateEventService.getStateEventParams(
-            new Types.ObjectId(
-                newReviewTask.machine.context.review.target
-            ) as any,
-            typeModel || TypeModel.Published,
-            draft,
-            newReviewTask._id
-        );
-
-        void this.stateEventService.createStateEvent(stateEvent as any);
-    }
-
-    async _createReportAndClaimReview(
-        data_hash: string,
-        machine: Machine,
-        reportModel: string,
-        nameSpace: string,
-        target: any,
-        targetModel: string
-    ) {
-        const reviewData = machine.context.review;
-
-        const newReport = Object.assign(machine.context.reviewData, {
-            data_hash,
-            reportModel,
-        });
-
-        const report = await this.reportService.create(newReport);
-
-        void this.claimReviewService.create(
-            {
-                ...reviewData,
-                report,
-                nameSpace,
-                target,
-                targetModel,
-            },
-            data_hash,
-            reportModel
-        );
     }
 
     _returnObjectId(data: any): any {
@@ -582,8 +307,8 @@ export class ReviewTaskService {
             );
             const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
             void newReviewTask.save();
-            void this._createReviewTaskHistory(newReviewTask);
-            this._createStateEvent(newReviewTask);
+            void this.effects.recordHistory(newReviewTask);
+            this.effects.recordStateEvent(newReviewTask);
             return newReviewTask;
         }
     }
@@ -622,8 +347,8 @@ export class ReviewTaskService {
         );
 
         if (history) {
-            void this._createReviewTaskHistory(newReviewTask, reviewTask);
-            this._createStateEvent(newReviewTask);
+            void this.effects.recordHistory(newReviewTask, reviewTask);
+            this.effects.recordStateEvent(newReviewTask);
         }
 
         const updated = await this.ReviewTaskModel.findByIdAndUpdate(
@@ -692,7 +417,9 @@ export class ReviewTaskService {
                             isPartialReview: true,
                         },
                     },
-                    value: "assigned",
+                    // XState's persisted shape for the compound `assigned`
+                    // state; a plain string is invisible to the Kanban query.
+                    value: { assigned: "draft" },
                 },
             });
             await newReviewTask.save();
@@ -876,52 +603,23 @@ export class ReviewTaskService {
         value: string,
         filterUser: Record<string, boolean | string>,
         nameSpace: string,
-        reviewTaskType: ReviewTaskTypeEnum
+        reviewTaskType: ReviewTaskTypeEnum,
+        startDate?: string,
+        endDate?: string
     ): Promise<number> {
         try {
-            const query: any = this.getQueryObject(value, filterUser);
+            const query: any = this.getQueryObject(
+                value,
+                filterUser,
+                startDate,
+                endDate
+            );
 
-            const pipeline: any[] = [
-                { $match: { ...query, nameSpace, reviewTaskType } },
-                {
-                    $lookup: {
-                        from: "claimreviews",
-                        localField: "data_hash",
-                        foreignField: "data_hash",
-                        as: "machine.context.review.claimReview",
-                    },
-                },
-                {
-                    $lookup: {
-                        from:
-                            reviewTaskType === ReviewTaskTypeEnum.Claim
-                                ? "claims"
-                                : "sources",
-                        let: { targetId: { $toObjectId: "$target" } },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$_id", "$$targetId"] },
-                                },
-                            },
-                            { $project: { isDeleted: 1 } },
-                        ],
-                        as: "target",
-                    },
-                },
-                {
-                    $match: {
-                        "machine.context.review.claimReview.isDeleted": {
-                            $ne: true,
-                        },
-                        $or: [
-                            { "target.isDeleted": false },
-                            { "target.isDeleted": { $exists: false } },
-                        ],
-                    },
-                },
-                { $count: "count" },
-            ];
+            const pipeline = buildNotDeletedCountPipeline(
+                query,
+                nameSpace,
+                reviewTaskType
+            );
 
             const result = await this.ReviewTaskModel.aggregate(
                 pipeline
@@ -1044,7 +742,7 @@ export class ReviewTaskService {
                 `[ReviewTask] Publishing report: data_hash=${data_hash}, ` +
                     `reportModel=${reportModel}, publishedBy=${loggedInUser._id}`
             );
-            void this._createReportAndClaimReview(
+            void this.effects.createReportAndClaimReview(
                 data_hash,
                 reviewTaskMachine.machine,
                 reportModel,

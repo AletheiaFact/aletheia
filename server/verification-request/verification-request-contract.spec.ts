@@ -178,15 +178,21 @@ const backends: Array<{
             const stubs = buildStubs(seed, randomUUID);
             const service = new PostgresVerificationRequestService(
                 db,
-                stateMachineStub as any,
                 stubs.sourceService as any,
                 new PostgresGroupService(db),
                 stubs.aiTaskService as any,
                 stubs.topicService as any,
                 stubs.personalityService as any,
                 embeddingsStub as any
-            ) as unknown as IVerificationRequestService;
-            return { service, seed, stubs };
+            );
+            vi.spyOn(service as any, "createStateMachine").mockReturnValue(
+                stateMachineStub
+            );
+            return {
+                service: service as unknown as IVerificationRequestService,
+                seed,
+                stubs,
+            };
         },
     },
     {
@@ -240,7 +246,6 @@ const backends: Array<{
             const service = new MongoVerificationRequestService(
                 { user: { _id: new Types.ObjectId() } } as any,
                 model as any,
-                stateMachineStub as any,
                 stubs.sourceService as any,
                 new MongoGroupService(groupModel as any),
                 stubs.historyService as any,
@@ -248,8 +253,15 @@ const backends: Array<{
                 stubs.topicService as any,
                 stubs.personalityService as any,
                 embeddingsStub as any
-            ) as unknown as IVerificationRequestService;
-            return { service, seed, stubs };
+            );
+            vi.spyOn(service as any, "createStateMachine").mockReturnValue(
+                stateMachineStub
+            );
+            return {
+                service: service as unknown as IVerificationRequestService,
+                seed,
+                stubs,
+            };
         },
     },
 ];

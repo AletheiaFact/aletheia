@@ -1,0 +1,400 @@
+#!/bin/bash
+
+# aletheia - local development CLI for the Aletheia repository.
+# Keep docs/aletheia-cli.md in sync when changing CLI flags or behavior.
+#
+# Running this file (./aletheia) symlinks it into a PATH directory such as
+# ~/.local/bin, so `aletheia` becomes available from anywhere.
+#
+# Usage: aletheia [command] [options]
+#
+#   (none)                    Print the version from package.json
+#   -v, --version             Print the version from package.json
+#   -i, --install, install    Install the local environment: containers,
+#                             dependencies, migrations and seed
+#   -f, --force, force,
+#   --fresh, fresh            With install or seed: reset local data first
+#   -r, --run, -s, --start,
+#   run, start                Bring the containers up and run `yarn dev`
+#                             (combine with install: aletheia -i -f -r)
+#   -u, --up, up              Bring the containers up and wait until ready
+#                             (no `yarn dev`)
+#   --seed, seed              Bring the containers up and run `yarn seed`
+#                             (users, personalities, claims and reviews)
+#   -d, --down, down,
+#   --stop, stop              Stop `yarn dev` and bring all containers down
+#   -q, --quiet, quiet,
+#   --silent, silent          Quiet mode for any command: only [aletheia] status
+#                             lines are printed. Output of docker/yarn is shown
+#                             only when a step fails. With run, `yarn dev` goes
+#                             to the background and logs to
+#                             ~/.local/state/aletheia/dev.log
+#   -h, --help                Show the help
+#
+# Layout:
+#   1. Configuration
+#   2. Internal helpers  (not meant to be called from the command line)
+#   3. Commands          (one function per CLI command)
+#   4. Argument parsing and dispatch
+#
+# Requires: bash, docker compose, curl, jq, lsof, yarn.
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# 1. Configuration
+# ---------------------------------------------------------------------------
+
+# Absolute path of this script with symlinks resolved, and the repo root it lives in.
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+ROOT="$(dirname "$SELF")"
+BIN_NAME="aletheia"
+
+# Set by -q/--quiet: see run_step.
+QUIET=false
+
+# Compose services this stack needs. Skipped on purpose: consent (optional),
+# ferretdb/postgres-documentdb (optional Mongo alternative).
+SERVICES=(mongodb kratos-migrate kratos kratos-selfservice-ui-node mailslurper localstack hydra-migrate hydra)
+
+# ---------------------------------------------------------------------------
+# 2. Internal helpers
+# ---------------------------------------------------------------------------
+
+# log <message>: print the Aletheia label in RGB(17, 39, 58).
+log() {
+  printf '\033[38;2;17;39;58m[aletheia]\033[0m %s\n' "$*"
+}
+
+# usage: print the help text (the header's usage section).
+usage() {
+  cat <<USAGE
+Usage: aletheia [command] [options]
+
+  (none)                  Print the version
+  -v, --version           Print the version
+  -i, --install, install  Install the local environment
+  -f, --force, force,
+  --fresh, fresh          With install or seed: reset local data first
+  -r, --run, -s, --start,
+  run, start              Start the services and run 'yarn dev'
+                          (combine with install: aletheia -i -f -r)
+  -u, --up, up            Bring the containers up and wait until they are ready
+                          (no 'yarn dev')
+  --seed, seed            Bring the containers up and run 'yarn seed'
+                          (users, personalities, claims and reviews)
+                          With force/fresh: erase local database and S3 data,
+                          migrate, then reseed
+  -d, --down, down,
+  --stop, stop            Stop 'yarn dev' and bring all containers down
+  -q, --quiet, quiet,
+  --silent, silent        Print only status lines; docker/yarn output is shown
+                          only when a step fails. With run, 'yarn dev' goes to
+                          the background and logs to
+                          ~/.local/state/aletheia/dev.log
+  -h, --help              Show this help
+USAGE
+}
+
+# link_cli: symlink this script into the first writable PATH directory
+# (~/.local/bin, then ~/bin). Show installation/PATH guidance only when the
+# link is created or updated. No-op when it already points at this script.
+link_cli() {
+  local dir target
+  for dir in "$HOME/.local/bin" "$HOME/bin"; do
+    case ":$PATH:" in *":$dir:"*) ;; *) continue ;; esac
+    [ -d "$dir" ] && [ -w "$dir" ] && { target="$dir/$BIN_NAME"; break; }
+  done
+  if [ -z "${target:-}" ]; then
+    mkdir -p "$HOME/.local/bin"
+    target="$HOME/.local/bin/$BIN_NAME"
+  fi
+
+  [ "$(readlink -f "$target" 2>/dev/null || true)" = "$SELF" ] && return 0
+  ln -sf "$SELF" "$target"
+  log "Installed $target. Run 'aletheia' to check."
+  case ":$PATH:" in
+    *":$(dirname "$target"):"*) ;;
+    *) log "Warning: add $(dirname "$target") to PATH to use 'aletheia'." ;;
+  esac
+}
+
+# run_step <command...>: run a command. In quiet mode its output goes to a
+# temporary log that is printed (last 40 lines) only if the command fails.
+# Returns the command's exit status.
+run_step() {
+  if [ "$QUIET" != true ]; then
+    "$@"
+    return
+  fi
+  local out status=0
+  out="$(mktemp)"
+  "$@" >"$out" 2>&1 || status=$?
+  if [ "$status" -ne 0 ]; then
+    log "Failed (exit $status): $*" >&2
+    tail -n 40 "$out" >&2
+  fi
+  rm -f "$out"
+  return "$status"
+}
+
+# wait_until <label> <command...>: retry the command once per second until it
+# succeeds, printing what is being waited for (unless quiet).
+wait_until() {
+  local label=$1; shift
+  [ "$QUIET" = true ] || log "Waiting for $label..."
+  until "$@" 2>/dev/null; do sleep 1; done
+}
+
+# mongo_healthy: succeed when every mongodb container reports healthy.
+mongo_healthy() {
+  [ "$(docker compose ps mongodb --format json | jq -s -r 'map(.Health) | unique | join(",")')" = "healthy" ]
+}
+
+# localstack_bucket: succeed once the `aletheia` S3 bucket exists in LocalStack,
+# creating it when missing.
+localstack_bucket() {
+  docker compose exec -T localstack awslocal s3 mb s3://aletheia >/dev/null 2>&1 ||
+    docker compose exec -T localstack awslocal s3 ls s3://aletheia >/dev/null 2>&1
+}
+
+# wait_for_infra: block until Mongo, Kratos, Hydra and the S3 bucket are ready.
+wait_for_infra() {
+  wait_until "mongodb to be healthy" mongo_healthy
+  wait_until "Kratos" curl -fsS -o /dev/null http://localhost:4433/health/ready
+  wait_until "Hydra" curl -fsS -o /dev/null http://localhost:4445/health/ready
+  wait_until "localstack S3 bucket" localstack_bucket
+}
+
+# env_value <name> <default>: value of a variable from the environment, else
+# from .env (the same precedence docker compose uses), else the default.
+env_value() {
+  local name=$1 default=$2 value
+  value="${!name:-}"
+  [ -n "$value" ] || value="$(sed -n "s/^$name=//p" "$ROOT/.env" 2>/dev/null | head -n 1)"
+  echo "${value:-$default}"
+}
+
+# wipe_data_dirs: empty the host directories bind-mounted by the stack (Mongo,
+# Postgres/DocumentDB, LocalStack). `docker compose down --volumes` does not
+# touch bind mounts, so the data would survive a force install. The files are
+# owned by the container users, so they are removed from inside a container
+# instead of needing sudo. The directories themselves are kept.
+wipe_data_dirs() {
+  local data_path dir
+  data_path="$(env_value DATA_PATH "$ROOT/..")"
+  for dir in \
+    "$(cd "$ROOT" && realpath -m "$data_path/mongodb")" \
+    "$(cd "$ROOT" && realpath -m "$data_path/postgres-documentdb")" \
+    "$(realpath -m "$(env_value DATA_DIR /data/localstack)")"; do
+    # Never wipe a root-ish path if a variable resolved to something odd
+    case "$dir" in ""|/|"$HOME"|/p|/p/forks) die "refusing to wipe '$dir'" ;; esac
+    [ -d "$dir" ] || continue
+    log "Wiping $dir"
+    run_step docker run --rm -v "$dir:/target" busybox sh -c 'rm -rf /target/* /target/.[!.]* /target/..?*'
+  done
+}
+
+# kill_dev_watchers: stop this repo's `yarn dev` stack (concurrently, nodemon,
+# tsc). Killing only the port listener is not enough: nodemon survives and
+# restarts main.js.
+kill_dev_watchers() {
+  local watchers="$ROOT/node_modules/(concurrently|nodemon|typescript/bin/tsc)"
+  if pgrep -f "$watchers" >/dev/null; then
+    log "Stopping dev watchers..."
+    pkill -f "$watchers" || true
+    sleep 1
+  fi
+}
+
+# free_ports: kill whatever still listens on the app (3000) and storybook
+# (6006) ports, escalating to SIGKILL if SIGTERM was not enough.
+free_ports() {
+  local port pids
+  for port in 3000 6006; do
+    pids="$(lsof -ti "tcp:$port" -sTCP:LISTEN 2>/dev/null || true)"
+    [ -n "$pids" ] || continue
+    log "Port $port in use by pid(s) $pids; killing..."
+    kill $pids 2>/dev/null || true
+    sleep 1
+    pids="$(lsof -ti "tcp:$port" -sTCP:LISTEN 2>/dev/null || true)"
+    [ -z "$pids" ] || kill -9 $pids 2>/dev/null || true
+  done
+}
+
+# die <message>: print an error to stderr and exit 1.
+die() {
+  log "$*" >&2
+  exit 1
+}
+
+# ---------------------------------------------------------------------------
+# 3. Commands
+# ---------------------------------------------------------------------------
+
+# cmd_version: print the CLI name and version from package.json.
+cmd_version() {
+  local version
+  version="$(sed -n 's/^[[:space:]]*"version":[[:space:]]*"\([^"]*\)".*/\1/p' "$ROOT/package.json" | head -n 1)"
+  printf '\033[38;2;17;39;58maletheia\033[0m %s\n' "$version"
+}
+
+# cmd_up: start the compose services and wait until they are ready.
+# Does not start the app. With -q, docker compose output is captured by
+# run_step and only shown (last 40 lines) if it fails.
+cmd_up() {
+  cd "$ROOT"
+  run_step docker compose up -d "${SERVICES[@]}"
+  wait_for_infra
+  log "Containers are up."
+}
+
+# cmd_install <force>: install the local environment. Creates the gitignored
+# local config files, starts the services, then runs yarn install, migrate and
+# seed. With force=true it first removes dist folders, containers, images,
+# networks, volumes and the bind-mounted data directories (databases, S3).
+# Does not start the app.
+cmd_install() {
+  local force=$1
+  cd "$ROOT"
+
+  if [ "$force" = true ]; then
+    log "Force install: removing dist folders, containers, images, networks, volumes and data..."
+    rm -rf dist .next
+    run_step docker compose down --timeout=0 --rmi all --volumes --remove-orphans
+    wipe_data_dirs
+  fi
+
+  # Gitignored local files. config.yaml, config.seed.yaml and migrate-mongo-config.ts are edited by hand.
+  [ -f .env ] || cp .env.example .env
+  [ -f config/localConfig.ts ] || cp config/localConfig.example.ts config/localConfig.ts
+
+  run_step docker compose down --timeout=0
+  run_step docker compose up -d "${SERVICES[@]}"
+  wait_for_infra
+
+  log "Installing dependencies, migrating and seeding..."
+  run_step yarn install
+  # Legacy migrations don't pass the root tsconfig (noImplicitAny/strictNullChecks); skip type-check
+  TS_NODE_TRANSPILE_ONLY=true run_step yarn migrate
+  run_step yarn seed || log "seed failed or users already exist; continuing"
+
+  log "Install done."
+}
+
+# cmd_seed <force>: run `yarn seed`. With force, reset the local stack's
+# database and S3 data, then rerun migrations before seeding.
+cmd_seed() {
+  local force=$1
+  cd "$ROOT"
+  if [ "$force" = true ]; then
+    kill_dev_watchers
+    log "Fresh seed: erasing local database and S3 data..."
+    run_step docker compose down --timeout=0 --volumes --remove-orphans
+    wipe_data_dirs
+  fi
+  run_step docker compose up -d "${SERVICES[@]}"
+  wait_for_infra
+  if [ "$force" = true ]; then
+    TS_NODE_TRANSPILE_ONLY=true run_step yarn migrate
+  fi
+  log "Seeding..."
+  run_step yarn seed
+  log "Seed done."
+}
+
+# cmd_down: stop `yarn dev` for this repo, free ports 3000/6006 and bring all
+# compose containers down. Images and volumes are kept. With -q, the
+# docker compose down output is captured by run_step and only shown (last 40
+# lines) if it fails.
+cmd_down() {
+  cd "$ROOT"
+  kill_dev_watchers
+  free_ports
+  log "Bringing containers down..."
+  run_step docker compose down --timeout=0 --remove-orphans
+}
+
+# cmd_run: bring the services up and replace this process with `yarn dev`
+# in the foreground. In quiet mode `yarn dev` runs detached instead, logging
+# to ~/.local/state/aletheia/dev.log; stop it with `aletheia down`.
+cmd_run() {
+  cd "$ROOT"
+  run_step docker compose up -d "${SERVICES[@]}"
+  if [ "$QUIET" = true ]; then
+    local logfile="${XDG_STATE_HOME:-$HOME/.local/state}/aletheia/dev.log"
+    mkdir -p "$(dirname "$logfile")"
+    setsid nohup yarn dev >"$logfile" 2>&1 &
+    log "yarn dev running in the background on http://localhost:3000 (log: $logfile; stop with: aletheia down)"
+    return 0
+  fi
+  log "Starting yarn dev..."
+  exec yarn dev
+}
+
+# ---------------------------------------------------------------------------
+# 4. Argument parsing and dispatch
+# ---------------------------------------------------------------------------
+
+# main <args...>: link the CLI, parse flags, reject invalid combinations and
+# run the selected command. Combinations: install (+ force) (+ run), run,
+# up and down; up and down cannot be combined with anything else.
+main() {
+  link_cli
+
+  local install_mode=false run_mode=false down_mode=false up_mode=false seed_mode=false force=false arg
+  for arg in "$@"; do
+    case "$arg" in
+      -v|--version|version) cmd_version; exit 0 ;;
+      -i|--install|install) install_mode=true ;;
+      -r|--run|run|-s|--start|start) run_mode=true ;;
+      -u|--up|up) up_mode=true ;;
+      --seed|seed) seed_mode=true ;;
+      -d|--down|down|--stop|stop) down_mode=true ;;
+      -f|--force|force|--fresh|fresh) force=true ;;
+      -q|--quiet|quiet|--silent|silent) QUIET=true ;;
+      -h|--help) usage; exit 0 ;;
+      *) usage >&2; die "unknown option '$arg'" ;;
+    esac
+  done
+
+  if [ "$force" = true ] && [ "$install_mode" = false ] && [ "$seed_mode" = false ]; then
+    die "force/fresh only applies to install or seed"
+  fi
+
+  if [ "$seed_mode" = true ]; then
+    if [ "$up_mode" = true ] || [ "$down_mode" = true ] || [ "$install_mode" = true ] || [ "$run_mode" = true ]; then
+      die "seed cannot be combined with install/run/up/down"
+    fi
+    cmd_seed "$force"
+    exit 0
+  fi
+
+  if [ "$up_mode" = true ]; then
+    if [ "$down_mode" = true ] || [ "$install_mode" = true ] || [ "$run_mode" = true ] || [ "$force" = true ]; then
+      die "up cannot be combined with install/run/down/force"
+    fi
+    cmd_up
+    exit 0
+  fi
+
+  if [ "$down_mode" = true ]; then
+    if [ "$install_mode" = true ] || [ "$run_mode" = true ] || [ "$force" = true ]; then
+      die "down cannot be combined with install/run/force"
+    fi
+    cmd_down
+    exit 0
+  fi
+
+  if [ "$install_mode" = true ]; then
+    cmd_install "$force"
+  fi
+
+  if [ "$run_mode" = true ]; then
+    cmd_run
+  elif [ "$install_mode" = false ]; then
+    cmd_version
+  fi
+}
+
+main "$@"

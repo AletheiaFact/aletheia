@@ -26,6 +26,10 @@ authentication_type = "ory"
 override_public_routes = false
 db = (mongoDbConfig) {}
 ory = (oryConfig) {}
+mcp = new {
+    enabled = read?("env:MCP_ENABLED") == "true"
+    public_url = read?("env:MCP_PUBLIC_URL")
+}
 feature_flag = (featureFlagConfig) {}
 aws = (s3Config) {}
 novu = (novuConfig) {}

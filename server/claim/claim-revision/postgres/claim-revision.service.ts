@@ -1,0 +1,275 @@
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { randomUUID } from "node:crypto";
+import { and, asc, eq, inArray, sql, SQL } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
+import type {
+    ClaimContentRef,
+    IClaimRevisionService,
+} from "../../../interfaces/claim-revision.service.interface";
+import type { IClaimRevision } from "../../../interfaces/claim-revision.interface";
+import type { IFindAllOptions } from "../../../interfaces/personality.interface";
+import type { ISourceService } from "../../../interfaces/source.service.interface";
+import { DRIZZLE } from "../../../database/postgres/postgres.provider";
+import type { DrizzleClient } from "../../../database/postgres/connection";
+import { NotImplementedError } from "../../../database/errors";
+import { isInvalidUuidError } from "../../../database/postgres/invalid-uuid";
+import { orderedBy } from "../../../database/postgres/ordered-by";
+import { ContentModelEnum } from "../../../types/enums";
+import { ParserService } from "../../parser/parser.service";
+import { claimRevision } from "./schema/claim-revision.schema";
+import type { ClaimRevisionRow } from "./schema/claim-revision.schema";
+import { claim } from "../../postgres/schema/claim.schema";
+import { personality } from "../../../personality/postgres/schema/personality.schema";
+import { toPersonalityEntity } from "../../../personality/postgres/personality.service";
+import { loadContentTree } from "../../postgres/content-tree";
+import {
+    attachPersonalitySummaries,
+    fuzzyThreshold,
+    setSimilarityThreshold,
+    visibleRevisionConditions,
+} from "../../postgres/search";
+
+export function toClaimRevisionEntity(
+    row: ClaimRevisionRow,
+    populated: { personalities?: any[]; content?: any[] } = {}
+): IClaimRevision {
+    const { personalityIds, legacyObjectId, isDeleted, deletedAt, ...rest } =
+        row;
+    return {
+        ...rest,
+        _id: row.id,
+        personalities: populated.personalities ?? personalityIds,
+        ...(populated.content !== undefined
+            ? { content: populated.content }
+            : {}),
+    } as IClaimRevision;
+}
+
+const MATCH_COLUMNS: Record<string, PgColumn | undefined> = {
+    _id: claimRevision.id,
+    claimId: claimRevision.claimId,
+    contentId: claimRevision.contentId,
+};
+
+@Injectable()
+export class PostgresClaimRevisionService implements IClaimRevisionService {
+    private readonly logger = new Logger(PostgresClaimRevisionService.name);
+
+    constructor(
+        @Inject(DRIZZLE) private readonly db: DrizzleClient,
+        @Inject("SourceService") private readonly sourceService: ISourceService,
+        private readonly parserService: ParserService,
+        private readonly configService: ConfigService
+    ) {}
+
+    async getRevision(
+        match: Record<string, any>
+    ): Promise<IClaimRevision | null> {
+        const conditions: SQL[] = [];
+        for (const [key, value] of Object.entries(match)) {
+            const column = MATCH_COLUMNS[key];
+            if (!column) {
+                throw new NotImplementedError(
+                    "postgres",
+                    `getRevision(match.${key})`
+                );
+            }
+            conditions.push(eq(column, String(value)));
+        }
+        let row: ClaimRevisionRow | undefined;
+        try {
+            [row] = await this.db
+                .select()
+                .from(claimRevision)
+                .where(and(...conditions))
+                .limit(1);
+        } catch (error) {
+            if (isInvalidUuidError(error)) throw new NotFoundException();
+            throw error;
+        }
+        return row ? this.populate(row) : null;
+    }
+
+    getRevisionById(id: string): Promise<IClaimRevision | null> {
+        return this.getRevision({ _id: id });
+    }
+
+    async create(
+        claimId: any,
+        input: Record<string, any>
+    ): Promise<IClaimRevision> {
+        const revisionId = randomUUID();
+        this.logger.debug(
+            `Creating claim revision — claimId=${claimId} revisionId=${revisionId} contentModel=${input.contentModel}`
+        );
+        try {
+            if (!input.date) {
+                throw new BadRequestException("date is required");
+            }
+            const contentId = await this.createContentModel(input, revisionId);
+            await this.createSources(input.sources, claimId);
+            const [row] = await this.db
+                .insert(claimRevision)
+                .values({
+                    id: revisionId,
+                    title: input.title,
+                    slug: input.slug,
+                    contentId,
+                    contentModel: input.contentModel,
+                    date: new Date(input.date),
+                    claimId: String(claimId),
+                    personalityIds: (input.personalities ?? []).map(String),
+                })
+                .returning();
+            this.logger.log(
+                `Claim revision saved — claimId=${claimId} revisionId=${row.id} contentId=${row.contentId}`
+            );
+            return toClaimRevisionEntity(row);
+        } catch (error) {
+            const err = error as Error;
+            this.logger.error(
+                `Failed to create claim revision — claimId=${claimId} contentModel=${input.contentModel}: ${err.message}`,
+                err.stack
+            );
+            throw error;
+        }
+    }
+
+    async findAll({
+        searchText,
+        pageSize,
+        skippedDocuments,
+        nameSpace,
+    }: IFindAllOptions): Promise<{
+        totalRows: number;
+        processedRevisions: any[];
+    }> {
+        const where = and(
+            eq(claimRevision.isDeleted, false),
+            ...visibleRevisionConditions(nameSpace),
+            sql`${claimRevision.title} % ${searchText}`
+        );
+
+        const { rows, totalRows } = await this.db.transaction(async (tx) => {
+            await setSimilarityThreshold(
+                tx,
+                fuzzyThreshold(this.configService)
+            );
+            const rows = await tx
+                .select({
+                    _id: claimRevision.id,
+                    title: claimRevision.title,
+                    contentModel: claimRevision.contentModel,
+                    slug: claimRevision.slug,
+                    date: claimRevision.date,
+                    personalityIds: claimRevision.personalityIds,
+                })
+                .from(claimRevision)
+                .innerJoin(claim, eq(claim.id, claimRevision.claimId))
+                .where(where)
+                .orderBy(
+                    sql`similarity(${claimRevision.title}, ${searchText}) DESC`,
+                    asc(claimRevision.id)
+                )
+                .offset(skippedDocuments ?? 0)
+                .limit(pageSize);
+            const [{ c: totalRows }] = await tx
+                .select({ c: sql<number>`count(*)::int` })
+                .from(claimRevision)
+                .innerJoin(claim, eq(claim.id, claimRevision.claimId))
+                .where(where);
+            return { rows, totalRows };
+        });
+
+        return {
+            totalRows,
+            processedRevisions: await attachPersonalitySummaries(this.db, rows),
+        };
+    }
+
+    async getByContentId(
+        contentId: ClaimContentRef
+    ): Promise<IClaimRevision | null> {
+        const [row] = await this.db
+            .select()
+            .from(claimRevision)
+            .where(eq(claimRevision.contentId, String(contentId)))
+            .limit(1);
+        return row ? toClaimRevisionEntity(row) : null;
+    }
+
+    private async populate(row: ClaimRevisionRow): Promise<IClaimRevision> {
+        const [personalities, content] = await Promise.all([
+            row.personalityIds.length > 0
+                ? this.db
+                      .select()
+                      .from(personality)
+                      .where(inArray(personality.id, row.personalityIds))
+                : Promise.resolve([]),
+            loadContentTree(this.db, row.contentModel, row.contentId),
+        ]);
+        return toClaimRevisionEntity(row, {
+            personalities: orderedBy(personalities, row.personalityIds).map(
+                toPersonalityEntity
+            ),
+            content,
+        });
+    }
+
+    private async createContentModel(
+        input: Record<string, any>,
+        revisionId: string
+    ): Promise<string> {
+        switch (input.contentModel) {
+            case ContentModelEnum.Speech:
+            case ContentModelEnum.Unattributed: {
+                const content = await this.parserService.parse(
+                    input.content,
+                    revisionId,
+                    null,
+                    input.contentModel
+                );
+                return String(content._id);
+            }
+            case ContentModelEnum.Image:
+            case ContentModelEnum.Debate:
+                throw new NotImplementedError(
+                    "postgres",
+                    `create(contentModel=${input.contentModel})`
+                );
+            default:
+                throw new BadRequestException(
+                    `${input.contentModel} is not a valid claim type.`
+                );
+        }
+    }
+
+    private async createSources(sources: string[] | undefined, claimId: any) {
+        if (!Array.isArray(sources)) return;
+        await sources.reduce(
+            (previous, href) =>
+                previous.then(() => this.createSource(href, claimId)),
+            Promise.resolve()
+        );
+    }
+
+    private async createSource(href: string, claimId: any) {
+        const existing = await this.sourceService.getSourceByHref(href);
+        if (existing) {
+            await this.sourceService.updateTargetId(existing._id, claimId);
+        } else {
+            await this.sourceService.create({
+                href,
+                targetId: claimId,
+                targetModel: "Claim",
+            });
+        }
+    }
+}

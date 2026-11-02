@@ -41,7 +41,8 @@ const backends: Array<{
             const db = await getTestDrizzle();
             return new PostgresTopicService(
                 db,
-                wikidataStub as any
+                wikidataStub as any,
+                {} as any
             ) as unknown as ITopicService;
         },
     },

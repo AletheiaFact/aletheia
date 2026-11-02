@@ -19,7 +19,8 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
 import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
-import { GetTasksDTO } from "./dto/get-tasks.dto";
+import { GetTasksQuerySchema, GetTasksQueryDto } from "./dto/get-tasks.dto";
+import { ZodQuery } from "../common/validation";
 import { ConfigService } from "@nestjs/config";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -40,7 +41,9 @@ export class ReviewTaskController {
     @ApiTags("review-task")
     @Get("api/reviewtask")
     @Header("Cache-Control", "private, no-cache")
-    public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
+    public async getByMachineValue(
+        @ZodQuery(GetTasksQuerySchema) getTasksDTO: GetTasksQueryDto
+    ) {
         const {
             page = 0,
             pageSize = 10,
@@ -49,6 +52,8 @@ export class ReviewTaskController {
             filterUser,
             reviewTaskType,
             nameSpace = NameSpaceEnum.Main,
+            startDate,
+            endDate,
         } = getTasksDTO;
         return Promise.all([
             this.reviewTaskService.listAll({
@@ -63,6 +68,8 @@ export class ReviewTaskController {
                 },
                 nameSpace,
                 reviewTaskType,
+                startDate,
+                endDate,
             }),
             this.reviewTaskService.countReviewTasksNotDeleted(
                 value,
@@ -72,7 +79,9 @@ export class ReviewTaskController {
                     reviewed: false,
                 },
                 nameSpace,
-                reviewTaskType
+                reviewTaskType,
+                startDate,
+                endDate
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);

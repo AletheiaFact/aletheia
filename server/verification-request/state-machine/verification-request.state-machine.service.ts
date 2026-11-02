@@ -1,6 +1,5 @@
 import {
     Injectable,
-    forwardRef,
     Inject,
     Logger,
     NotFoundException,
@@ -21,7 +20,7 @@ export class VerificationRequestStateMachineService {
     private verificationRequestStateMachine: VerificationRequestStateMachine;
 
     constructor(
-        @Inject(forwardRef(() => "VerificationRequestService"))
+        @Inject("VerificationRequestService")
         private readonly verificationRequestService: IVerificationRequestService
     ) {
         this.verificationRequestStateMachine =

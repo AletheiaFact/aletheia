@@ -60,4 +60,12 @@ export class FeatureFlagService {
             ? this.unleash.isEnabled("enable_informative_news")
             : false;
     }
+
+    isEnableInstagramChatBot() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_instagram_chatbot")
+            : false;
+    }
 }

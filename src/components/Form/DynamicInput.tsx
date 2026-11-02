@@ -18,10 +18,17 @@ import InputExtraSourcesList from "../VerificationRequest/verificationRequestFor
 import { Topic } from "../../types/Topic";
 import { SourceType } from "../../types/Source";
 import ImageUpload, { UploadFile } from "../ImageUpload";
+import ParticipantsInput from "../Event/Participants/ParticipantsInput";
+import { ParticipantDraft } from "../Event/Participants/participantDrafts";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
-export type UnifiedDefaultValue = Topic | SourceType[] | UploadFile[] | string;
+export type UnifiedDefaultValue =
+    | Topic
+    | SourceType[]
+    | UploadFile[]
+    | ParticipantDraft[]
+    | string;
 
 interface DynamicInputProps {
     fieldName: string;
@@ -146,6 +153,15 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     placeholder={t(props.placeholder)}
                     isDisabled={props.disabled}
+                    dataCy={props["data-cy"]}
+                />
+            );
+        case "participantsList":
+            return (
+                <ParticipantsInput
+                    defaultValue={props.defaultValue as ParticipantDraft[]}
+                    onChange={(value) => props.onChange(value)}
+                    disabled={props.disabled}
                     dataCy={props["data-cy"]}
                 />
             );

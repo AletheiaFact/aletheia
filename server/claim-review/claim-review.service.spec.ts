@@ -5,7 +5,6 @@ import { ClaimReviewService } from "./claim-review.service";
 import { ClaimReview } from "./schemas/claim-review.schema";
 import { HistoryService } from "../history/history.service";
 import { UtilService } from "../util";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ImageService } from "../claim/types/image/image.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -73,7 +72,7 @@ describe("ClaimReviewService (Unit)", () => {
                 },
                 { provide: HistoryService, useValue: mockHistoryService },
                 { provide: UtilService, useValue: mockUtilService },
-                { provide: SentenceService, useValue: mockSentenceService },
+                { provide: "SentenceService", useValue: mockSentenceService },
                 { provide: ImageService, useValue: mockImageService },
                 {
                     provide: EditorParseService,
@@ -205,10 +204,9 @@ describe("ClaimReviewService (Unit)", () => {
 
             mockClaimReviewModel.find.mockResolvedValue(mockReviews);
 
-            const result =
-                await service.getReviewClassificationCountsByClaimId(
-                    "507f1f77bcf86cd799439011"
-                );
+            const result = await service.getReviewClassificationCountsByClaimId(
+                "507f1f77bcf86cd799439011"
+            );
 
             expect(result).toHaveLength(2);
 
@@ -226,7 +224,9 @@ describe("ClaimReviewService (Unit)", () => {
         it("should filter by namespace, isDeleted, isPublished, isHidden", async () => {
             mockClaimReviewModel.find.mockResolvedValue([]);
 
-            await service.getReviewClassificationCountsByClaimId("507f1f77bcf86cd799439011");
+            await service.getReviewClassificationCountsByClaimId(
+                "507f1f77bcf86cd799439011"
+            );
 
             expect(mockClaimReviewModel.find).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -247,8 +247,9 @@ describe("ClaimReviewService (Unit)", () => {
                 lean: vi.fn().mockResolvedValue(mockReviews),
             });
 
-            const result =
-                await service.findAllReviewsForCascadeDelete("507f1f77bcf86cd799439011");
+            const result = await service.findAllReviewsForCascadeDelete(
+                "507f1f77bcf86cd799439011"
+            );
 
             expect(result).toEqual(mockReviews);
             expect(mockClaimReviewModel.find).toHaveBeenCalledWith(
@@ -272,7 +273,9 @@ describe("ClaimReviewService (Unit)", () => {
                 false: 1,
             });
 
-            const result = await service.getReviewStatsByClaimId("507f1f77bcf86cd799439011");
+            const result = await service.getReviewStatsByClaimId(
+                "507f1f77bcf86cd799439011"
+            );
 
             expect(mockClaimReviewModel.find).toHaveBeenCalledWith(
                 expect.objectContaining({

@@ -3,7 +3,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { MongoVerificationRequestService } from "./mongo/verification-request.service";
 import { VerificationRequestDocument } from "./mongo/schemas/verification-request.schema";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
 
 import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
@@ -38,10 +37,6 @@ describe("MongoVerificationRequestService (Unit)", () => {
                 {
                     provide: "REQUEST",
                     useValue: { user: { id: "test-user" } },
-                },
-                {
-                    provide: VerificationRequestStateMachineService,
-                    useValue: {},
                 },
                 { provide: "SourceService", useValue: mockSourceService },
                 { provide: "GroupService", useValue: {} },

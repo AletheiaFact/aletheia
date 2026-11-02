@@ -1,6 +1,7 @@
 import {
     Controller,
     HttpStatus,
+    Inject,
     NotFoundException,
     Post,
     UseInterceptors,
@@ -10,7 +11,7 @@ import {
     UploadedFiles,
 } from "@nestjs/common/decorators/http/route-params.decorator";
 import { FilesInterceptor } from "@nestjs/platform-express/multer";
-import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { FileManagementService } from "./file-management.service";
 import { ImageService } from "../claim/types/image/image.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -21,7 +22,8 @@ export class FileManagementController {
     constructor(
         private fileManagementService: FileManagementService,
         private imageService: ImageService,
-        private claimRevisionService: ClaimRevisionService
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService
     ) {}
 
     @ApiTags("file-management")

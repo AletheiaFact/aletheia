@@ -66,14 +66,19 @@ container: PodSpec.Container = new {
         timeoutSeconds = 10
         failureThreshold = 10
     }
+    // ephemeral-storage covers the container's writable layer and logs, not
+    // the image. Measured use is under 20 MiB; the request lets the scheduler
+    // count it, and the limit evicts a runaway pod before it fills the node.
     resources {
         requests {
             ["cpu"] = "300m"
             ["memory"] = 512.mib
+            ["ephemeral-storage"] = 512.mib
         }
         limits {
             ["cpu"] = "400m"
             ["memory"] = 1024.mib
+            ["ephemeral-storage"] = 2.gib
         }
     }
 }

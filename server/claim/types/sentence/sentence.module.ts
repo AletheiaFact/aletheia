@@ -1,10 +1,13 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { Sentence, SentenceSchema } from "./mongo/schemas/sentence.schema";
+import { MongoSentenceService } from "./mongo/sentence.service";
+import { PostgresSentenceService } from "./postgres/sentence.service";
+import { sentenceServiceProvider } from "./sentence.provider";
 import { ReportModule } from "../../../report/report.module";
-import { Sentence, SentenceSchema } from "./schemas/sentence.schema";
 import { SentenceController } from "./sentence.controller";
-import { SentenceService } from "./sentence.service";
 import { UtilService } from "../../../util";
+import dbConfig from "../../../config/db.config";
 
 const SentenceModel = MongooseModule.forFeature([
     {
@@ -13,10 +16,21 @@ const SentenceModel = MongooseModule.forFeature([
     },
 ]);
 
+// Static on purpose: claim-review and review-task forwardRef this module, and
+// Nest 9 cannot forwardRef a dynamic module from another dynamic module.
 @Module({
-    imports: [SentenceModel, ReportModule],
+    imports: [
+        ...(dbConfig.type === "mongodb" ? [SentenceModel] : []),
+        ReportModule,
+    ],
     controllers: [SentenceController],
-    providers: [UtilService, SentenceService],
-    exports: [SentenceService],
+    providers: [
+        sentenceServiceProvider,
+        UtilService,
+        dbConfig.type === "postgres"
+            ? PostgresSentenceService
+            : MongoSentenceService,
+    ],
+    exports: ["SentenceService"],
 })
 export class SentenceModule {}

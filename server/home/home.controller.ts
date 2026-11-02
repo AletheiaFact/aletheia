@@ -14,7 +14,7 @@ import { StatsService } from "../stats/stats.service";
 import { Public } from "../auth/decorators/auth.decorator";
 import type { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
-import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
@@ -32,7 +32,8 @@ export class HomeController {
         private readonly personalityService: IPersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
-        private claimRevisionService: ClaimRevisionService,
+        @Inject("ClaimRevisionService")
+        private claimRevisionService: IClaimRevisionService,
         private claimReviewService: ClaimReviewService,
         private readonly eventsService: EventsService,
         private featureFlagService: FeatureFlagService
@@ -98,19 +99,16 @@ export class HomeController {
                     return { title: "", claimId: null, personalities: [] };
                 }
                 const personalities = await Promise.all(
-                    debateRevision.personalities.map((personality) => {
-                        if (personality) {
-                            return this.personalityService.getById(
-                                personality,
-                                {
-                                    language: req.language,
-                                    nameSpace:
-                                        req.params.namespace ||
-                                        NameSpaceEnum.Main,
-                                }
-                            );
-                        }
-                    })
+                    (debateRevision.personalities ?? []).map((personality) =>
+                        personality
+                            ? this.personalityService.getById(personality, {
+                                  language: req.language,
+                                  nameSpace:
+                                      req.params.namespace ||
+                                      NameSpaceEnum.Main,
+                              })
+                            : Promise.resolve(undefined)
+                    )
                 );
                 return {
                     title: debateRevision.title,

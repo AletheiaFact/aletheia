@@ -6,7 +6,7 @@ import { FileManagementService } from "./file-management.service";
 import { ConfigModule } from "@nestjs/config";
 
 @Module({
-    imports: [ClaimRevisionModule, ImageModule, ConfigModule],
+    imports: [ClaimRevisionModule.register(), ImageModule, ConfigModule],
     exports: [FileManagementService],
     providers: [FileManagementService],
     controllers: [FileManagementController],

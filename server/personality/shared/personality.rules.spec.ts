@@ -1,4 +1,8 @@
-import { deriveSlug, defaultDescription } from "./personality.rules";
+import {
+    deriveSlug,
+    defaultDescription,
+    extractClaimWithTextSummary,
+} from "./personality.rules";
 
 describe("personality shared rules", () => {
     describe("deriveSlug", () => {
@@ -24,6 +28,17 @@ describe("personality shared rules", () => {
             );
             expect(defaultDescription("Ada", null)).toBe("Personality: Ada");
             expect(defaultDescription("Ada", "")).toBe("Personality: Ada");
+        });
+    });
+
+    describe("extractClaimWithTextSummary", () => {
+        it("replaces parsed content with its text and wraps a single claim", () => {
+            expect(
+                extractClaimWithTextSummary({ content: { text: "t" } })
+            ).toEqual([{ content: "t" }]);
+            expect(extractClaimWithTextSummary([{ title: "x" }])).toEqual([
+                { title: "x" },
+            ]);
         });
     });
 });

@@ -15,6 +15,7 @@ import {
 } from "@nestjs/common";
 import { parse } from "url";
 import type { Request, Response } from "express";
+import { SkipThrottle } from "@nestjs/throttler";
 import { ViewService } from "../view/view.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonalityDTO } from "./dto/create-personality.dto";
@@ -74,6 +75,9 @@ export class PersonalityController {
     }
 
     @Public()
+    // The debate page fetches one personality per speech; visitors behind
+    // CGNAT share an IP.
+    @SkipThrottle()
     @ApiTags("personality")
     @Get("api/personality/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")

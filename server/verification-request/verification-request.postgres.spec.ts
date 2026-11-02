@@ -35,7 +35,6 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             service = new PostgresVerificationRequestService(
                 db,
                 {} as any,
-                {} as any,
                 new PostgresGroupService(db),
                 {} as any,
                 topicService as any,

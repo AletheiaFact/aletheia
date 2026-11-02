@@ -14,7 +14,11 @@ export const getQueryMatchForMachineValue = (
         : { [`machine.value.${value}`]: { $exists: true } };
 };
 
+// States the machine stores as a plain string (not a compound object).
 const plainValues = [
+    "unassigned",
+    "selectCrossChecker",
+    "selectReviewer",
     "published",
     "submitted",
     "reported",

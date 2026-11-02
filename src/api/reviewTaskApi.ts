@@ -14,6 +14,8 @@ interface ReviewTaskOptions {
     filterUser?: string;
     reviewTaskType?: string;
     nameSpace?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 const getReviewTasks = (
@@ -27,6 +29,8 @@ const getReviewTasks = (
         filterUser: options.filterUser,
         reviewTaskType: options.reviewTaskType,
         nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
+        startDate: options.startDate || undefined,
+        endDate: options.endDate || undefined,
     };
     return request
         .get(`/`, { params })

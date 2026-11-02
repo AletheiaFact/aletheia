@@ -14,8 +14,12 @@ const EventBox = styled(Box)`
         padding: 56px 0 72px;
     }
 
-    .mainContent{
-        background-image: linear-gradient(135deg, ${colors.primary} 0%, #002C4D 100%);
+    .mainContent {
+        background-image: linear-gradient(
+            135deg,
+            ${colors.primary} 0%,
+            #002c4d 100%
+        );
         position: relative;
     }
 
@@ -26,7 +30,7 @@ const EventBox = styled(Box)`
         align-items: flex-start;
     }
 
-    .eventTopBar{
+    .eventTopBar {
         display: flex;
         justify-content: space-between;
         align-content: center;
@@ -34,20 +38,20 @@ const EventBox = styled(Box)`
     }
 
     .edit-icon {
-       color: ${colors.white};
-       border-radius: 100%;
-       padding: clamp(6px, 1vw, 10px);
-       font-size: clamp(1.8rem, 2.5vw, 2.2rem);
-       background-color: transparent;
-       transition: background-color 0.2s ease-in-out;
-       cursor: pointer;
+        color: ${colors.white};
+        border-radius: 100%;
+        padding: clamp(6px, 1vw, 10px);
+        font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+        background-color: transparent;
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
     }
 
     .edit-icon:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
-    .eventSectionInfo{
+    .eventSectionInfo {
         padding: clamp(20px, 2.5vw, 32px) clamp(16px, 2vw, 24px);
         gap: 10px;
         position: relative;
@@ -63,12 +67,16 @@ const EventBox = styled(Box)`
     }
 
     .eventSectionInfo:hover {
-        background-color: color-mix(in srgb, ${colors.whiteLow}, transparent 30%);
+        background-color: color-mix(
+            in srgb,
+            ${colors.whiteLow},
+            transparent 30%
+        );
         transform: translateY(-2px);
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .eventSectionHeader{
+    .eventSectionHeader {
         display: flex;
         align-items: center;
         gap: clamp(8px, 1.5vw, 12px);
@@ -85,14 +93,14 @@ const EventBox = styled(Box)`
             to bottom,
             transparent 0%,
             rgba(255, 255, 255, 0) 60%,
-          rgba(255, 255, 255, 0.5) 85%,
+            rgba(255, 255, 255, 0.5) 85%,
             ${colors.white} 100%
         );
         pointer-events: none;
         z-index: 1;
     }
 
-    .eventChipText{
+    .eventChipText {
         font-size: clamp(12px, 1vw, 14px);
         color: ${colors.white};
         font-weight: 700;
@@ -124,9 +132,108 @@ const EventBox = styled(Box)`
         margin: 0;
     }
 
+    .eventParticipants {
+        width: 100%;
+        margin-top: 8px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .eventParticipantsHeader {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .eventParticipantsTitle {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: ${colors.tertiary};
+    }
+
+    .eventParticipantsCount {
+        font-size: 13px;
+        color: ${colors.tertiary};
+    }
+
+    .eventParticipantsList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .eventParticipantTile {
+        width: 152px;
+        height: 72px;
+        box-sizing: border-box;
+        padding: 6px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: ${colors.whiteLow};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s ease, background-color 0.15s ease,
+            border-color 0.15s ease;
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+    }
+
+    .eventParticipantTile:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    a.eventParticipantTile:hover {
+        transform: translateY(-2px);
+    }
+
+    .eventParticipantTile:focus-visible {
+        outline: 3px solid ${colors.lightSecondary};
+        outline-offset: 2px;
+    }
+
+    .eventParticipantsToggle {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: ${colors.whiteLow};
+        color: ${colors.white};
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
     @media ${queries.sm} {
         .eventSection {
             gap: clamp(8px, 2vw, 12px);
+        }
+
+        .eventParticipantsList {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .eventParticipantTile {
+            width: 100%;
+            height: 56px;
+            padding: 4px;
         }
     }
 `;
