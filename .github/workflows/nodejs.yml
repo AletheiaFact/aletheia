@@ -35,8 +35,8 @@ jobs:
     test-docker:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: dorny/paths-filter@v3
+            - uses: actions/checkout@v7
+            - uses: dorny/paths-filter@v4
               id: changes
               with:
                   filters: |
@@ -56,12 +56,12 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
             - run: yarn build
             # dist/.next is a hidden folder: without include-hidden-files the
-            # artifact had no Next build, so every e2e job rebuilt the app.
-            - uses: actions/upload-artifact@v4
+            # artifact has no Next build, and every e2e job would rebuild the app.
+            - uses: actions/upload-artifact@v7
               with:
                   name: aletheia-dist
                   include-hidden-files: true
@@ -73,7 +73,7 @@ jobs:
     test-lint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 0 # Sonar needs history for blame and new-code detection
             - name: Fail if .yarn/cache is committed
@@ -97,11 +97,11 @@ jobs:
         needs: build
         runs-on: ubuntu-22.04
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
               with:
                   cypress-binary: "true"
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: aletheia-dist
                   path: dist
@@ -117,7 +117,7 @@ jobs:
               env:
                   CI: true
                   CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7
               if: failure()
               with:
                   name: cypress-screenshots-mongo
@@ -127,7 +127,7 @@ jobs:
     cypress-run-component:
         runs-on: ubuntu-22.04
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
               with:
                   cypress-binary: "true"
@@ -139,10 +139,8 @@ jobs:
     vitest-postgres:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
-              with:
-                  node-version: 22
             - name: Run unit tests with DB_TYPE=postgres (pglite)
               env:
                   DB_TYPE: postgres
@@ -170,10 +168,8 @@ jobs:
                     --health-timeout 5s
                     --health-retries 10
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
-              with:
-                  node-version: 22
             - name: Apply the Drizzle migrations on a real Postgres
               env:
                   POSTGRES_URL: postgres://aletheia:aletheia@localhost:5432/aletheia
@@ -208,11 +204,11 @@ jobs:
                 ports:
                     - 27018:27017
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
               with:
                   cypress-binary: "true"
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: aletheia-dist
                   path: dist
@@ -228,7 +224,7 @@ jobs:
               env:
                   CI: true
                   CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7
               if: failure()
               with:
                   name: cypress-screenshots-ferretdb
