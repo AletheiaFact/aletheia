@@ -24,6 +24,7 @@ import { ReviewNotifierService } from "./review-notifier.service";
 import { ReviewStages } from "./review-stages";
 import { ReleaseReason, ReviewWriting } from "./review-writing";
 import { WorkflowConfig } from "./workflow-guards";
+import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 
 export type { ReleaseReason } from "./review-writing";
 
@@ -272,10 +273,19 @@ export class ReviewWorkflowService {
      * retry after a failed send works.
      */
     async submitReportToReview(user: WorkflowUser, task: any) {
-        const reported =
-            stateName(task.machine?.value) === "reported"
-                ? task
-                : await this.writing.submitReport(user, task);
+        const alreadyReported = stateName(task.machine?.value) === "reported";
+        if (alreadyReported) {
+            // submitReport checks the label against the task's methodology;
+            // a retry that skips it must not skip that check
+            assertAllowedClassification(
+                task.classificationMethodology,
+                task.machine?.context?.reviewData?.classification,
+                "classification"
+            );
+        }
+        const reported = alreadyReported
+            ? task
+            : await this.writing.submitReport(user, task);
         return this.stages.sendToReview(user, reported, {
             skipCrossCheck: true,
         });

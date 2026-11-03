@@ -192,10 +192,11 @@ methodology's options and labels.
   tasks with none yet, or with the requested one. A non-default methodology
   requires the `enable_classification_methodology` flag.
 - **Writing, cross-checking, publishing.** `save_review_log`,
-  `submit_report`, `submit_cross_check` and `publish_review_task` refuse a
-  classification the task's methodology does not offer (the web form and
-  publish apply the same rule). Publishing copies the methodology to the
-  report.
+  `submit_report`, `submit_report_to_review` (including its retry on an
+  already reported task), `submit_cross_check` and `publish_review_task`
+  refuse a classification the task's methodology does not offer (the web
+  form and publish apply the same rule). Publishing copies the methodology
+  to the report.
 
 ### Fact-checking workflow
 

@@ -166,7 +166,8 @@ export function registerWriteReviewWritingTools(
         "submit_report_to_review",
         {
             description:
-                "Finish the report of a task you are writing and send it straight to the review backlog, skipping the cross-check (assigned → reported → selectReviewer). Same completeness rules as submit_report. For conclusions already validated by people, such as imports from the validation spreadsheet. Assignees or admins only; a different user must review it",
+                "Finish the report of a task you are writing and send it straight to the review backlog, skipping the cross-check (assigned → reported → selectReviewer). Same completeness rules as submit_report. For conclusions already validated by people, such as imports from the validation spreadsheet. Assignees or admins only; a different user must review it. The classification must be an option of the task's classification methodology." +
+                LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },
         safeTool("submit_report_to_review", async (args) => {

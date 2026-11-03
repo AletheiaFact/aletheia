@@ -152,6 +152,43 @@ describe("ReviewWorkflowService classification methodology", () => {
         expect(reviewTaskQueue.publishSubmitted).not.toHaveBeenCalled();
     });
 
+    const reportTask = (
+        value: unknown,
+        classification: string,
+        methodology?: string
+    ) => ({
+        _id: "t1",
+        nameSpace: "main",
+        classificationMethodology: methodology,
+        machine: {
+            value,
+            context: {
+                reviewData: {
+                    ...publishableReport,
+                    classification,
+                    usersId: [USER._id],
+                },
+            },
+        },
+    });
+
+    it.each([
+        ["an already reported task (retry)", "reported"],
+        ["a task still being written", { assigned: "draft" }],
+    ])(
+        "submit_report_to_review refuses an off-scale label on %s",
+        async (_case, value) => {
+            const { service, reviewTaskQueue } = build();
+            await expect(
+                service.submitReportToReview(
+                    USER,
+                    reportTask(value, "exaggerated", "rncd-debate")
+                )
+            ).rejects.toBeInstanceOf(BadRequestException);
+            expect(reviewTaskQueue.transitionAtomically).not.toHaveBeenCalled();
+        }
+    );
+
     it("publishes an allowed classification", async () => {
         const { service, reviewTaskQueue } = build();
         await service.publishReviewTask(
