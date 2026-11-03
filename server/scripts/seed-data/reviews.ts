@@ -1,0 +1,285 @@
+// Source: https://aletheiafact.org/personality/<pslug>/claim/<claim slug>
+// Published fact-checks; `claimTitle` and `sentence` match seed-data/claims.ts.
+export const seedReviews = [
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle: "Discurso na assembléia geral da ONU",
+        sentence: "O ano de 2024 foi o mais quente já registrado.",
+        cls: "trustworthy",
+        reportModel: "Fact-checking",
+        date: "2025-10-01T14:17:29.209Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy",
+            sources: [
+                "https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level",
+                "https://climate.copernicus.eu/global-climate-highlights-2024",
+                "http://web.archive.org/web/20250908022420/https://www.metoffice.gov.uk/about-us/news-and-media/media-centre/weather-and-climate-news/2025/2024-record-breaking-watershed-year-for-global-climate",
+                "http://web.archive.org/web/20250910164614/https://climate.copernicus.eu/copernicus-2024-first-year-exceed-15degc-above-pre-industrial-level",
+                "https://wmo.int/sites/default/files/2025-03/WMO-1368-2024_en.pdf",
+            ],
+            verification:
+                "<div><p>Foram acessados os relatórios do World Meteorological Organization e do Observatório Copernicus, além do site do Met Office UK, onde foram encontrados os dados sobre média de temperatura global em 2024.</p></div>",
+            report: "<div><p>O ano de 2024 foi <a href='#o primeiro' rel='noopener noreferrer nofollow'>o primeiro<sup>1</sup></a> a registrar uma temperatura média maior que 1,5ºC desde o período pré-revolução industrial (1850-1900). Os <a href='#conjuntos de dados' rel='noopener noreferrer nofollow'>conjuntos de dados<sup>2</sup></a> são do Centro Europeu de Previsões Meteorológicas de Médio Prazo (ECMWF), da Agência Meteorológica do Japão, da NASA, da Administração Oceânica e Atmosférica Nacional dos EUA (NOAA), do <a href='#Met Office do Reino Unido' rel='noopener noreferrer nofollow'>Met Office do Reino Unido<sup>3</sup></a> em colaboração com a Unidade de Pesquisa Climática da Universidade de East Anglia (HadCRUT) e da Berkeley Earth.</p><p>Um <a href='#novo recorde' rel='noopener noreferrer nofollow'>novo recorde<sup>4</sup></a> para a temperatura média global diária foi alcançado em 22 de julho de 2024, com 17,16°C, essa temperatura se manteve acima da média durante 11 meses do ano, superando em todos os meses de 2023. Ele se soma aos 10 anos anteriores que estiveram TODOS entre os mais quentes da história, confirmando a <a href='#tendência de aquecimento' rel='noopener noreferrer nofollow'>tendência de aquecimento<sup>5</sup></a> acelerado da atmosfera do planeta, apesar disso não significar que as metas do Acordo de Paris tenham sido ultrapassadas permanentemente.</p></div>",
+            questions: ["2024 foi o ano mais quente da história?"],
+            summary:
+                "<div><p>É fato que 2024 foi o ano mais quente desde que se tem registro, ultrapassando a meta de 1,5ºC acima dos níveis pré-industriais. A informação foi confirmada por uma série de centros de pesquisa atmosférica independentes entre si, com todos os gráficos e dados detalhados disponíveis online, se tratando de um consenso científico consolidado e não uma opinião política do Presidente Lula.</p></div>",
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle: "Cenário dos Minerais no Brasil",
+        sentence:
+            "Apesar de termos só 30% da riqueza mineral devidamente mapeada;",
+        cls: "trustworthy",
+        reportModel: "Fact-checking",
+        date: "2025-11-06T14:13:40.093Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy",
+            sources: [
+                "http://web.archive.org/web/20250405110306/https://rigeo.sgb.gov.br/bitstream/doc/24990/3/plangeo_2025_2034.pdf",
+                "https://www.sgb.gov.br/w/mapeamentos-geologicos-do-sgb-fornecem-informacoes-que-ajudam-a-desenvolver-o-pais",
+            ],
+            verification:
+                "<div><p>1. Consultamos o Plano Decenal de Mapeamento Geológico Básico (PLANGEO 2025-2034), desenvolvido pelo Serviço Geológico do Brasil para identificar o o percentual de mapeamento dos minerais no Brasil; <br><br>2. Para compreensão das escalas, consultou-se uma <a href='#matéria' rel='noopener noreferrer nofollow'>matéria<sup>2</sup></a> do site oficial do governo, publicado pelos Serviços Geológicos do Brasil, que menciona as diferenças. <br><br>As ferramentas de Inteligência Artificial Google Gemini e Claude foram utilizadas para localizar em quais documentos essas informações poderiam ser encontradas.</p></div>",
+            report: "<div><p>De acordo com o <a href='#Plano Decenal de Mapeamento Geológico Básico' rel='noopener noreferrer nofollow'>Plano Decenal de Mapeamento Geológico Básico<sup>1</sup></a> (PLANGEO 2025-2034), desenvolvido pelo Serviço Geológico do Brasil, \"o balanço da cobertura de mapeamento, executado entre 1969 e 2023, demonstra que cerca de 27% do território continental brasileiro está mapeado na escala 1:100.000\". A escala 1:100.000 é compatível para a primeira avaliação de potencial mineral de determinada área de interesse, ou seja, adequada para avaliar o potencial mineral do Brasil e correspondente a informação dada por Lula. A diferença do dado encontrado para o dado apresentado pelo presidente é de 3%, ou seja, é pouco expressiva. <br><br>Vale destacar que 49% do território brasileiro está mapeado na escala 1:250.000. Contudo, essa escala fornece apenas conhecimento geológico regional, insuficiente para avaliar o potencial mineral de forma detalhada e, por isso, não corresponde ao discurso.</p></div>",
+            questions: [
+                "Qual a porcentagem de riqueza mineral mapeada no Brasil?",
+            ],
+            summary:
+                "<div><p>Confiável. Cerca de 27% do território continental brasileiro está mapeado na escala 1:100.000, compatível para a primeira avaliação de potencial mineral de determinada área de interesse. A diferença percentual apontada por Lula é pouco expressiva, de apenas 3% e, portanto, a informação está correta.</p></div>",
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle: "Cenário dos Minerais no Brasil",
+        sentence:
+            "já contamos com 10% das reservas mundiais de minerais críticos, essenciais para a transição energética.",
+        cls: "unverifiable",
+        reportModel: "Fact-checking",
+        date: "2025-11-11T11:33:10.421Z",
+        isPartial: false,
+        report: {
+            classification: "unverifiable",
+            sources: [
+                "http://web.archive.org/web/20250810021014/https://www.deloitte.com/br/pt/Industries/mining-metals/analysis/minerais-criticos.html",
+                "http://web.archive.org/web/20250514100550/https://www.epe.gov.br/sites-pt/publicacoes-dados-abertos/publicacoes/PublicacoesArquivos/publicacao-804/topico-758/PDE2034_Aprovado.pdf",
+                "http://web.archive.org/web/20250426031856/https://www.gov.br/mme/pt-br/assuntos/noticias/mme-avanca-na-implementacao-da-politica-pro-minerais-estrategicos/Resoluon02SGM.pdf",
+                "https://file:///C:/Users/Amanda/Downloads/Portaria%20MME%20n%20825-2025.pdf",
+                "https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/sumario-mineral/sumario-mineral-brasileiro-2025/sumario-2025.pdf",
+                "https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/anuario-mineral/anuario-mineral-brasileiro/anuario-mineral-brasileiro-principais-substancias-metalicas-2024",
+            ],
+            verification:
+                "<div><p>Com o auxílio das ferramentas de Inteligência Artificial e Google Gemini, foi possível tratar os dados identificados e compreender a complexidade da checagem da afirmação de Lula, uma vez que envolve um cálculo de média ponderada, com base em valor econômico e estratégico e não em médias simples. As mesmas ferramentas também foram utilizadas para localizar os documentos necessários para o processo investigativo.   <br><br>1. Identificou-se o que são os minerais críticos, com base no Plano Decenal de Expansão de Energia 2034, coordenado pelo Ministério de Minas e Energia (MME) e elaborado pela Empresa de Pesquisa Energética (EPE);  <br>2. Encontrou-se a Resolução nº 2, de 18 de junho de 2021, publicada no Diário Oficial da União,  que define as relações dos minerais estratégicos para o Brasil. Além disso, a portaria MME Nº 825, de 22 de janeiro de 2025, identifica minerais estratégicos para a transição energética, embasando a indicação do Inciso II do Anexo como aquele que contem os minerais críticos. <br>3. A participação percentual do Brasil nas reservas de cada um dos minerais foi encontrada no Sumário Mineral 2025 (Ano-base 2024);  <br>4. As diferenças de valores econômicos foram verificadas por meio do Anuário Mineral Brasileiro de 2024, feito pela Agência Nacional de Mineração (ANM), nas páginas 6 e 7.   <br>5. Por fim, com ajuda de IA, procuramos por outros documentos que pudessem conter o cálculo dessa informação e encontramos os dados fornecidos pela Deloitte, que são correspondentes a afirmação de Lula.  </p></div>",
+            report: "<div><p>Por meio de um estudo da Deloitte, intitulado \"<a href='#Minerais Críticos do futuro e o papel estratégico do Brasil na transição para uma economia de baixo carbono\"' rel='noopener noreferrer nofollow'>Minerais Críticos do futuro e o papel estratégico do Brasil na transição para uma economia de baixo carbono\"<sup>1</sup></a>, é possível verificar que \"o Brasil possui cerca de 10% das reservas globais de minerais críticos, incluindo a maior reserva mundial de nióbio, a segunda maior de grafite e a terceira maior de terras raras e níquel\". A informação aparece no Sumário executivo. O estudo está disponível no site deles para download.  Contudo, a Deloitte não é uma fonte primária da informação, ou seja, aquela que realizou a pesquisa e análise dos dados, uma vez que se trata de uma empresa de auditoria,  ainda que tenha embasamento científico (em estudos e pesquisas da área).  <br><br>Além disso, não é possível verificar a informação mencionada por Lula por meio de cálculos, considerando que ela exige dados que não são públicos. Entenda:  <br><br>O que são Minerais críticos?  <br>Os minerais críticos, de acordo com o <a href='#Plano Decenal de Expansão de Energia 2034' rel='noopener noreferrer nofollow'>Plano Decenal de Expansão de Energia 2034<sup>2</sup></a>, elaborado pela Empresa de Pesquisa Energética (EPE), são definidos como \"um mineral essencial ou recurso de base mineral necessário para uma determinada atividade econômica, cuja supressão de fornecimento possa gerar consequências prejudiciais sob um ponto de vista comercial, bem como para o bem-estar econômico, ambiental, de segurança e social de um país, região econômica comum ou região específica\".   <br>Quais são os minerais críticos?  <br>A <a href='#Resolução nº 2, de 18 de junho de 2021' rel='noopener noreferrer nofollow'>Resolução nº 2, de 18 de junho de 2021<sup>3</sup></a>, publicada no Diário Oficial da União, define as relações dos minerais estratégicos para o Brasil. O Anexo, inciso II, contém os \"bens minerais que têm importância pela sua aplicação em produtos e processos de alta tecnologia\", ou seja, de acordo com a definição citada anteriormente, correspondem aos minerais críticos do país. São eles: cobalto, Cobre, Estanho, Grafita, Platina, Lítio, Nióbio, Níquel, Silício, Tálio, Tântalo, Terras Raras, Titânio, Tungstênio, Urânio e Vanádio.      <br>Além disso, a <a href='#portaria MME Nº 825' rel='noopener noreferrer nofollow'>portaria MME Nº 825<sup>4</sup></a>, de 22 de janeiro de 2025, identifica o cobalto, o cobre, o lítio, o níquel e os elementos de terras raras como estratégicos para a transição energética. O inciso II é o único que contém todos eles, ou seja, comprova o fato de que os minerais mencionados neste inciso são importantes para processos de \"alta tecnologia\"e se encaixam como minerais críticos.    <br><br>Qual é a participação percentual do Brasil nas reservas de cada um dos minerais?   <br>De acordo com o <a href='#Sumário Mineral 2025' rel='noopener noreferrer nofollow'>Sumário Mineral 2025<sup>5</sup></a> (Ano-Base 2024):  Cobre: 7,7% / Estanho: 17,5% / Grafita: 48% / Lítio: 2,1% / Nióbio: 88,6% / Níquel: 6,9% / Terras Raras: 13,9% / Titânio: 6,8% / Vanádio: 1,5%.      <br><br>Os minerais que não aparecem na lista não foram encontrados no Sumário ou tiveram participação pouco expressiva do Brasil nas reservas (como é o caso do Cobalto).      <br><br>Qual é a participação percentual total do Brasil nas reservas mundiais minerais?  <br>Ao calcular a média aritmética simples dos 9 minerais encontrados (totalizando 193% / 9), o resultado é 21.4%, resultado distante do valor apresentado por Lula. Porém, os minerais possuem pesos econômicos e estratégicos diferentes. O valor da produção comercializada de Nióbio é avaliado em bilhões de reais por ano, enquanto o vanádio é avaliado em milhões de reais, por exemplo. É possível identificar essa diferença por meio do <a href='#Anuário Mineral Brasileiro de 2024' rel='noopener noreferrer nofollow'>Anuário Mineral Brasileiro de 2024<sup>6</sup></a>, feito pela Agência Nacional de Mineração (ANM), nas páginas 6 e 7. Logo, a média simples não é suficiente para analisar essa afirmação. O valor apontado por Lula é, possivelmente, uma média ponderada, calculada com base no valor econômico (em dólares) das reservas. A investigação não pode calcular a média ponderada de forma independente, pois exige dados sobre o valor econômico total das reservas mundiais de cada mineral, uma informação proprietária e complexa que não é pública.  </p></div>",
+            questions: [
+                "Qual a participação percentual do Brasil nas reservas mundiais de minerais críticos?",
+            ],
+            summary:
+                "<div><p>Inverificável. O dado citado aparece em relatório da Deloitte, mas a empresa não é uma fonte primária da informação. Além disso, a média ponderada das reservas também não é passível de cálculo independente. Logo, a informação não pôde ser confirmada por fontes primárias ou metodologia pública e, por isso, é considerada inverificável.</p></div>",
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle: "Fundo de Florestas Tropicais Para Sempre (TFFF) e COP 30",
+        sentence:
+            "angariou num só dia 5,5 bilhões de dólares em anúncio do investimento.",
+        cls: "trustworthy",
+        reportModel: "Fact-checking",
+        date: "2025-11-19T15:33:57.560Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy",
+            sources: [
+                "https://businessmirror.com.ph/2025/11/07/brazil-launches-5-5-billion-fund-to-preserve-tropical-forests-ahead-of-un-climate-summit/?utm_source=chatgpt.com",
+                "https://www.gov.br/mre/en/subjects/cop-30/over-usd-5-5-billion-announced-for-tropical-forest-forever-facility-as-53-countries-endorse-the-historic-tfff-launch-declaration?utm_source=chatgpt.com",
+            ],
+            verification:
+                "<div><p>Procuramos o quanto cada país prometeu ao TFFF durante a Cúpula dos Líderes e somamos a quantidade.</p></div>",
+            report: "<div><p>O Fundo de Florestas Tropicais Para Sempre (TFFF) é uma reserva financeira feita para a preservação do bioma em todo o mundo. Até novembro de 2025, 34 países com esse tipo de vegetação adotaram o acordo, totalizando 90% das florestas. O capital é fruto de investimentos e não de doações. Até o momento, os anúncios de verba destinada são: US$3 bilhões da Noruega, US$1 bilhão da Indonésia, US$500 milhões da França, US$5 milhões da Holanda e US$1 milhão de Portugal. Além disso, o Brasil anunciou US$1 bilhão para iniciar o fundo. Somando 5,5 bilhões de dólares. Esses valores foram prometidos durante a Cúpula dos Líderes da COP 30 em 6 de novembro de 2025.<br><br></p></div>",
+            questions: ["Quantos bilhões de dólares foi arrecadado pelo TFFF?"],
+            summary:
+                "<div><p>Confiável. O dado é verdadeiro porque juntando os valores que a Noruega, França, Holanda, Indonésia e Portugal arrecadaram, juntamente com o US$1 bilhão do Brasil para iniciar o TFFF resultam em US$5,5 bilhões. </p></div>",
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle:
+            "Presidente Lula afirma índices econômicos históricos no país",
+        sentence: "Tudo isso e o menor desemprego da história do Brasil.",
+        cls: "trustworthy-but",
+        reportModel: "Fact-checking",
+        date: "2026-05-08T11:46:47.094Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy-but",
+            sources: [
+                "https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/2013-agencia-de-noticias/releases/45759-pnad-continua-em-2025-taxa-anual-de-desocupacao-foi-de-5-6-enquanto-taxa-de-subutilizacao-foi-14-5",
+                "https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/2013-agencia-de-noticias/releases/45758-pnad-continua-taxa-de-desocupacao-e-de-5-1-e-taxa-de-subutilizacao-e-de-13-4-no-trimestre-encerrado-em-dezembro",
+                "https://agenciagov.ebc.com.br/noticias/202601/desocupacao-cai-para-5-1-em-dezembro-e-2025-tem-melhores-resultados-da-serie-historica",
+                "https://www.ipea.gov.br/cartadeconjuntura/index.php/tag/pnad-continua/",
+                "https://institutomillenium.org.br/queda-desemprego/",
+            ],
+            verification:
+                '<div><p>A verificação iniciou-se com a identificação da fonte primária da afirmação. Recorreu-se ao portal da Agência de Notícias do IBGE, onde foi consultada a divulgação oficial da Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD Contínua) referente ao quarto trimestre de 2025, publicada em 30 de janeiro de 2026. A leitura do documento permitiu delimitar com precisão o alcance técnico da afirmação: a taxa anual de desocupação de 5,6% registrada em 2025 é o menor índice da série histórica iniciada em 2012. Para compreender por que a série se inicia em 2012, recorreu-se ao portal institucional do IBGE dedicado à história da Pesquisa Mensal de Emprego (PME), instrumento que antecedeu a PNAD Contínua. <br><br>A consulta revelou que a PNAD Contínua foi implantada em janeiro de 2012 para substituir a PME, atendendo à demanda por informações conjunturais sobre a força de trabalho com abrangência nacional. A verificação concluiu que a afirmação é substantivamente correta dentro dos limites da série disponível, mas imprecisa na formulação: a expressão "menor desemprego da história do Brasil" extrapola o que os dados oficiais permitem afirmar. O enunciado tecnicamente sustentável, conforme o próprio IBGE, é que se trata do menor desemprego desde o início da PNAD Contínua, em 2012. A análise visual da trajetória permitiu identificar, que a taxa de desocupação havia atingido um piso de 5,1% no trimestre encerrado em dezembro de 2025, valor amplamente noticiado em janeiro como recorde histórico. Com essa informação, uma primeira conclusão se impôs de imediato: a taxa de 6,1% de hoje não supera, em magnitude, o piso de 5,1% registrado há apenas três meses.</p></div>',
+            report: '<div><p>Em um recorte publicado em seu Instagram, o presidente Lula (PT) fez uma série de afirmações a respeito de índices macroeconômicos no Brasil. Entre eles, de que atualmente, o país se encontra com o menor índice de desemprego de toda a sua história. Primeiro, é preciso entender como esse índice é obtido. Antes de 2012 o principal instrumento de medição do desemprego no Brasil era a PME (Pesquisa Mensal de Emprego), conduzida pelo IBGE desde 1980. O problema da PME era estrutural: ela cobria apenas seis regiões metropolitanas (São Paulo, Rio de Janeiro, Belo Horizonte, Porto Alegre, Salvador e Recife). Isso significava que o Brasil rural, as cidades médias e regiões inteiras como o Centro-Oeste e o Norte ficavam completamente fora da medição. <br><br>Mas o Brasil estava em processo de mudança, motivado pelo crescimento econômico, a urbanização acelerada e pela formalização do trabalho. Regiões que a PME simplesmente não enxergava agora faziam parte significativa do PIB. Havia uma demanda crescente por um retrato mais fiel e abrangente do mercado de trabalho nacional. <br><br>O IBGE então desenvolveu a PNAD Contínua, a Pesquisa Nacional por Amostra de Domicílios Contínua, que estabeleceu as seguintes diferenças: <br><br>1- Cobertura nacional, incluindo área rural e municípios menores <br>2- Coleta trimestral (e também em trimestres móveis mensais), em vez de mensal pontual. <br>3- Amostra muito maior (cerca de 211 mil domicílios por trimestre, em 3.500 municípios) <br>4- Metodologia alinhada aos padrões da OIT, o que facilita comparações internacionais <br><br>O que dizem os dados mais recentes do PNAD? O IBGE divulgou no dia 30/04/2026 os dados do trimestre móvel encerrado em março de 2026 (janeiro-fevereiro-março). A taxa de desocupação (desemprego) foi de 6,1%. <br><br>Até então, a série do último trimestre (out-nov-dez de 2025) fechada em 5,1% representava o menor índice de desemprego desde que o Brasil adotou o método PNAD Continua em 2012. Contudo, com os dados mais atualizados, a desocupação cresceu 1 ponto percentual, o que representa em números aproximados 1 milhão e cem mil pessoas. <br><br>Há uma ressalva importante: embora não seja a menor taxa da série histórica geral, os 6,1% representam a menor taxa já registrada para um trimestre encerrado em março desde o início da pesquisa em 2012. No mesmo período do ano passado (jan-fev-mar 2025), a taxa era de 7,0%, portanto, houve uma queda de 0,9 ponto percentual na comparação anual. <br><br>Mas há uma ambiguidade: se a afirmação original for interpretada como “menor desemprego para este período do ano desde a utilização PNAD”, ela seria tecnicamente verdadeira. Mas a frase genérica “menor desemprego da história do Brasil” é imprecisa, tanto com base nos dados mais recentes quanto a partir de outra questão. <br><br>Como as duas pesquisas (PNAD e PME) têm metodologias e coberturas diferentes, elas não são diretamente comparáveis. Não é possível pegar a taxa de desemprego de 1998 medida pela PME e compará-la com a de 2025 medida pela PNAD Contínua como se fossem a mesma régua. <br><br>Um exemplo, a PME registrou média anual de 5,4% em 2013, então considerada a menor taxa média anual da história segundo aquela pesquisa. Esse número, porém, refletia apenas seis regiões metropolitanas. Pesquisadores que compararam as duas metodologias constataram que a PNAD, para as mesmas regiões metropolitanas cobertas pela PME, registrava taxas aproximadamente 2 pontos percentuais mais altas e que a forte queda do desemprego verificada no período foi um fenômeno essencialmente metropolitano, não se repetindo com a mesma intensidade no restante do país. <br><br>Dessa forma, a afirmação de Luis Inácio Lula da Silva é confiável, mas requer mais detalhamentos e ciência de contextos específicios. O dado central da afirmação é verdadeiro e verificável: a taxa anual de desocupação foi de 5,6% em 2025, o menor índice da série histórica iniciada em 2012. Agora, o problema está na expressão "da história do Brasil", que é tecnicamente imprecisa. Não se trata de uma afirmação falsa, os dados existem e são públicos. Mas ela é jogada de forma absoluta, omitindo o limite metodológico que a torna precisamente verificável apenas a partir de 2012. O enunciado correto seria "o menor desemprego desde o início da série da PNAD Contínua".</p></div>',
+            questions: [
+                "Qual a fonte dos dados?",
+                "Desde quando existem séries históricas comparáveis para o Brasil?",
+                "Qual é a taxa de desemprego atual?",
+            ],
+            summary:
+                '<div><p>Em publicação nas redes sociais, o presidente Lula afirmou que o Brasil registra o menor índice de desemprego de toda a sua história. A afirmação é confiável, mas requer contextualização: o dado central é verdadeiro dentro dos limites da PNAD Contínua, pesquisa do IBGE que mede o desemprego em âmbito nacional desde 2012. Contudo, a expressão "da história do Brasil" é tecnicamente imprecisa, pois antes de 2012 a medição era feita pela PME, pesquisa de metodologia e cobertura distintas, o que torna as duas séries incomparáveis. Além disso, é importante mencionar que a afirmação estaria correta dentro do limite temporal da fala, mas, com os dados mais recentes divulgados 5 dias após o discurso de Lula, a PNAD já aponta uma alta de 6,1% no desemprego brasileiro.</p></div>',
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle:
+            "Lula exagera ao dizer que Brasil já tem 53% de energia renovável",
+        sentence:
+            "O presidente Luiz Inácio Lula da Silva afirmou, em entrevista ao programa Calma Urgente!, em 25 de abril de 2026, que “o Brasil já tem, em 2025, 53% da energia renovável e na parte elétrica são 90% renovável”.",
+        cls: "trustworthy-but",
+        reportModel: "Fact-checking",
+        date: "2026-06-30T13:28:49.746Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy-but",
+            sources: [
+                "https://www.epe.gov.br/sites-pt/publicacoes-dados-abertos/publicacoes/PublicacoesArquivos/publicacao-885/topico-767/BEN_S%C3%ADntese_2025_PT.pdf",
+                "https://www.gov.br/mme/pt-br/assuntos/noticias/brasil-avanca-na-renovabilidade-das-matrizes-em-2024-aponta-balanco-energetico-nacional",
+            ],
+            verification:
+                "<div><p>A verificação foi feita com base no Relatório Síntese do Balanço Energético Nacional (BEN 2025), publicado pela Empresa de Pesquisa Energética (EPE) e pelo Ministério de Minas e Energia.</p></div>",
+            report: "<div><p>Durante participação no podcast Calma Urgente!, em 25 de abril de 2026, o presidente Luiz Inácio Lula da Silva afirmou que “o Brasil já tem, em 2025, 53% da energia renovável e na parte elétrica são 90% renovável”.</p><p>A declaração foi verificada com base em dados oficiais do Balanço Energético Nacional (BEN 2025), produzido pela Empresa de Pesquisa Energética (EPE) e divulgado pelo Ministério de Minas e Energia.</p><p>O relatório aponta que a matriz energética brasileira atingiu 50% de participação de fontes renováveis em 2024. O percentual é inferior aos 53% mencionados por Lula.</p><p>Já a matriz elétrica brasileira, que considera apenas a geração de energia elétrica, registrou 88,2% de fontes renováveis. O número é próximo dos 90% citados pelo presidente e está dentro da margem de arredondamento frequentemente usada em discursos públicos.</p><p>Os dados oficiais confirmam que o Brasil possui uma das matrizes elétricas mais limpas do mundo, impulsionada principalmente por hidrelétricas, biomassa, energia eólica e solar.</p><p>Dessa forma, a fala do presidente mistura um dado compatível com as estatísticas oficiais sobre a matriz elétrica com um percentual acima do registrado oficialmente para a matriz energética total do país.</p></div>",
+            questions: [
+                "O Brasil já tem 53% de energia renovável, como afirmou Lula?",
+                "A matriz elétrica brasileira é 90% renovável?",
+                "O que dizem os dados oficiais do Balanço Energético Nacional (BEN 2025)?",
+                "Qual a diferença entre matriz energética e matriz elétrica?",
+            ],
+            summary:
+                "<div><p>Lula acerta ao afirmar que a matriz elétrica brasileira é majoritariamente renovável, mas exagera ao dizer que o Brasil já atingiu 53% de energia renovável na matriz energética total.</p></div>",
+        },
+    },
+    {
+        pslug: "luiz-inacio-lula-da-silva",
+        claimTitle:
+            "Na abertura da COP 30, o presidente Lula anunciou que o Fundo Florestas Tropicais para Sempre recebeu 5,5 bilhões de dólares em anúncios de investimento.",
+        sentence:
+            "Lançamos o Fundo de Florestas Tropicais para Sempre, um mecanismo inovador que angariou, num só dia, 5,5 bilhões de dólares em anúncios de investimento.",
+        cls: "trustworthy-but",
+        reportModel: "Fact-checking",
+        date: "2026-07-06T19:09:31.934Z",
+        isPartial: false,
+        report: {
+            classification: "trustworthy-but",
+            sources: [
+                "https://www.gov.br/mre/pt-br/centrais-de-conteudo/publicacoes/declaracoes/mais-de-us-5-5-bilhoes-sao-anunciados-para-o-fundo-florestas-tropicais-para-sempre-com-53-paises-endossando-sua-declaracao-de-lancamento",
+                "https://www.regjeringen.no/en/whats-new/norwegian-government-to-provide-nok-30-billion-to-new-fund-to-preserve-tropical-forests/id3137591/",
+                "https://tfff.earth/feedback/",
+                "https://tfffwatch.org/investment-tracker/Norway",
+                "https://tfff.earth/wp-content/uploads/2025/09/190725-TFFF-Executive-Summary-PT.pdf",
+                "https://www.gov.br/mre/pt-br/canais_atendimento/imprensa/notas-a-imprensa/declaracao-sobre-o-fundo-florestas-tropicais-para-sempre-tfff-belem-6-de-novembro-de-2025",
+            ],
+            verification:
+                '<div><p>Em primeiro lugar, enviei um requerimento para o portal de Lei de Acesso a Informação para buscar entender se era um investimento liquidado ou apenas anúncios de compromisso diplomáticos.<br><br>Após obter uma resposta da LAI, inclusive com a indicação do site oficial da Noruega sobre o acordo, vasculhei outras informações dentro do próprio site do Fundo para encontrar informações sobre os valores, o documento de endosso dos países e entender a gestão do fundo. <br><br>Após a análise de todos os documentos e informações encontradas, classifiquei com a etiqueta "Confiável, mas" onde já justifiquei no relatório de verificação.</p></div>',
+            report: '<div><p>O evento político de lançamento do Fundo de Florestas Tropicais para Sempre (TFFF) ocorreu em 6 de novembro de 2025, durante a Cúpula de Líderes em Belém, no Pará. Esse ato foi formalizado por meio do endosso mútuo de 53 países à Launch Declaration, o que torna a data e o envolvimento diplomático do Brasil  comprovados por registros oficiais.<br><br>O valor do anúncio também se mostra correto quando analisados os compromissos individuais. A soma das intenções de aporte declaradas pelas nações doadoras no primeiro dia atinge exatamente a cifra divulgada de 5,5 bilhões de dólares. Esse montante é composto pelo compromisso de até 3 bilhões de dólares da Noruega, 1 bilhão de dólares do Brasil, 1 bilhão de dólares da Indonésia e aproximadamente 500 milhões de dólares (equivalentes a 500 milhões de euros) da França. Por se tratar de um fundo internacional, todas as cifras estão indicadas em doláres, moeda norte americana. A veracidade dos valores pode ser encontrada no site Investment Tracker, site oficial do TFFF onde é possível encontrar gráficos com os valores. <br><br>O equívoco da declaração consiste na falta de contextualização técnica e financeira ao classificar esse montante como "anúncios de investimento". O valor inicial divulgado não provém de investidores privados, aportes de mercado ou dinheiro liquidado em caixa de forma imediata. Trata-se, na realidade, de compromissos de capital público soberano, estruturados sob a forma de empréstimos e subsídios governamentais, que estão sujeitos a condições contratuais de liquidação futura, dependendo do cumprimento de metas financeiras e ambientais. <br><br>No caso da Noruega, por exemplo, segundo um comunicado oficial do governo norueguês deixa claro que esse montante não é uma doação imediata, mas sim um empréstimo de longo prazo a ser desembolsado gradualmente até 2035 e totalmente reembolsado até 2075.<br><br>A natureza diplomática do fundo foi confirmada após o envio de um pedido formal baseado na Lei de Acesso à Informação (LAI) ao Ministério do Meio Ambiente e Mudança do Clima (MMA), que solicitava o balanço detalhado e as planilhas dos valores aportados por cada nação. O órgão respondeu informando que o detalhamento de como cada país pretende doar para o TFFF não está sob a alçada do governo brasileiro e, portanto, não pode ser divulgado pelo Brasil. <br><br>Essa ausência de planilhas sobre fluxo financeiro pode ser explicada por conta de como o Fundo é gerido e de que os valores são intenções de investimento. Ainda segundo o próprio MMA, as únicas funções que o Banco Mundial aceitou exercer em relação ao TFFF, até o presente momento, são as de trustee, ou seja, administrador fiduciário responsável por custodiar ativos em benefício de terceiros, e de anfitrião (host) do secretariado. <br><br>Dessa forma, nem o governo brasileiro possui livre movimentação sobre esses bilhões, nem o Banco Mundial é o proprietário dos montantes, o que caracteriza o TFFF como um mecanismo multilateral descentralizado e independente dos caixas brasileiros.<br><br>Diante da análise feita, a declaração recebe a etiqueta "Confiável, mas...". Essa etiquetagem se justifica porque a informação é verdadeira, visto que o evento aconteceu, o fundo foi lançado e a soma de 5,5 bilhões de dólares foi de fato anunciada com o apoio dos países. O "mas" diz respeito de que o termo "investimento" foi utilizado de forma ambígua. O Presidente Lula omitiu em sua afirmação que esses bilhões se tratam de empréstimos multilaterais condicionados a metas de longo prazo, sem qualquer liquidez imediata no orçamento do governo brasileiro. Também omitiu a real função do Banco Mundial.  <br><br>A narrativa política confunde anúncios de intenção diplomática com dinheiro real em caixa.</p></div>',
+            questions: [
+                "O evento político de lançamento do Fundo de Florestas Tropicais para Sempre (TFFF) ocorreu na data e quais nações se comprometeram com esse valor iniciou?",
+                "A soma dos anúncios efetuados pelos países doadores totalizou exatamente o valor de 5,5 bilhões de dólares?",
+                "O valor divulgado constitui um investimento financeiro liquidado ou apenas intenções de compromisso?",
+                "Qual foi o resultado do pedido via Lei de Acesso à Informação (LAI) ao Ministério do Meio Ambiente (MMA) sobre estes aportes?",
+                "Qual é a governança financeira e o papel do Brasil nos recursos anunciados?",
+            ],
+            summary:
+                '<div><p>A afirmação do Presidente da República, Lula, é confiável mas existe uma contextualização do termo "anúncios de investimento" a partir do ponto de vista técnico e financeiro. Embora o lançamento do fundo e a soma de 5,5 bilhões de dólares sejam fatos verdadeiros, o montante não se trata de dinheiro em caixa ou investimento privado imediato. A apuração via LAI revelou que os recursos tratam de em compromissos soberanos e empréstimos de longo prazo administrados externamente pelo Banco Mundial, que atua apenas como trustee e secretariado.</p></div>',
+        },
+    },
+    {
+        pslug: "fernando-haddad",
+        claimTitle: "Discurso de Fernando Haddad sobre organizações criminosas",
+        sentence:
+            '"Em geral, quem fica preso é o personagem menos importante da estrutura criminosa.',
+        cls: "not-fact",
+        reportModel: "Fact-checking",
+        date: "2025-09-29T13:20:50.471Z",
+        isPartial: false,
+        report: {
+            classification: "not-fact",
+            sources: [
+                "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12850.htm",
+                "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+                "https://www.gov.br/senappen/pt-br/servicos/sisdepen/relatorios/relipen/relipen-2o-semestre-de-2024.pdf",
+                "https://buscatextual.cnpq.br/buscatextual/visualizacv.do;jsessionid=7554AF721D97072495DC88BB5ABC08EF.buscatextual_0",
+            ],
+            verification:
+                "<div><p>Para realizar a checagem, acessamos normativas jurídicas que dispõem sobre o crime organizado: a Lei 12.850/13,que define o conceito de organização criminosa para o Estado brasileiro, e o Código Penal, que criminaliza a atividade pelo Artigo 288. O Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024, divulgado pelo Departamento Penitenciário Nacional (Depen) foi utilizado para obter dados sobre as prisões sobre essa tipificação penal. Por se tratar de uma checagem qualitativa, tornou-se necessário consultar fontes especialistas sobre o tema. Por meio do buscador do Google Acadêmico, mapeamos as publicações a partir de 2024 sobre as palavras-chave “crime organizado”, “operações”, “prisões”. Com base nas publicações, mapeou-se três possíveis autores especialistas para se consultar na checagem. O retorno que obtivemos durante o período investigativo foi o de Sergio Senna Pires. A entrevista foi realizada por uma troca de emails no dia 17 de setembro de 2025, no qual se investigou a compreensão do profissional sobre o discurso verificado.</p></div>",
+            report: "<div><p>A fala do deputado se refere à estrutura do crime organizado. A<a href='# Lei Nº 12.850, de 2 de agosto de 2013' rel='noopener noreferrer nofollow'> Lei Nº 12.850, de 2 de agosto de 2013<sup>1</sup></a> dispõe que: “§ 1º Considera-se organização criminosa a associação de 4 (quatro) ou mais pessoas estruturalmente ordenada e caracterizada pela divisão de tarefas, ainda que informalmente, com objetivo de obter, direta ou indiretamente, vantagem de qualquer natureza, mediante a prática de infrações penais cujas penas máximas sejam superiores a 4 (quatro) anos, ou que sejam de caráter transnacional.” O art. 288 do <a href='#Código Penal (CP),' rel='noopener noreferrer nofollow'>Código Penal (CP),<sup>2</sup></a> “Quadrilha ou Bando”, tipifica o crime de associação criminosa: “TÍTULO IX - DOS CRIMES CONTRA A PAZ PÚBLICA [...] Associação Criminosa - Art. 288. Associarem-se 3 (três) ou mais pessoas, para o fim específico de cometer crimes (Redação dada pela Lei nº 12.850, de 2013)”. Deve-se pontuar que a fala do ministro não especifica quais organizações criminosas, ou operações da PF, a afirmação se refere. Os estudos científicos recentes não apresentam uma definição oficial da hierarquia das organizações criminosas no Brasil. O <a href='#Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024' rel='noopener noreferrer nofollow'>Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024<sup>3</sup></a> aponta que 13.361 presos no país se enquadram no art. 288 do CP. Entretanto, os dados não confirmam a fala do ministro, já que não há registros que certos cargos das organizações são mais encarcerados que outros. Além disso, eventos históricos como as prisões de Marcola, do PCC, e Marcinho VP, do CV, mostram que lideranças do crime organizado são encarceradas. Segundo <a href='#Sergio Senna Pires, Consultor Legislativo de Segurança Pública na Câmara dos Deputados,' rel='noopener noreferrer nofollow'>Sergio Senna Pires, Consultor Legislativo de Segurança Pública na Câmara dos Deputados,<sup>4</sup></a> o discurso é muito genérico para ser compreendido como um fato. “Me parece uma afirmação retórica, cuja generalidade é proposital para parecer lógica e induzir o leitor à concordância no senso comum, mas carece dos detalhes que nos dariam elementos para defini-la como verdadeira ou falsa”, afirmou em contato com a equipe Aletheia Fact em 17 de setembro de 2025.</p></div>",
+            questions: [
+                "Qual o nível hierárquico das pessoas presas em operações contra o crime organizado?",
+            ],
+            summary:
+                "<div><p>O discurso do ministro se trata de uma opinião e não há dados que o sustentem. Ele carece de embasamento teórico, não detalha quais organizações criminosas se refere, o que define um personagem “menos” importante na estrutura criminosa. A fala não possui evidências e as informações obtidas pela checagem, como o número de presos por associação criminosa no Brasil, contrariam sua generalização.</p></div>",
+        },
+    },
+    {
+        pslug: "flavio-bolsonaro",
+        claimTitle: "Discurso de Flávio Bolsonaro nos EUA",
+        sentence:
+            'O resultado: o Brasil está vivendo outra crise econômica devastadora, uma crise de segurança pública com enorme expansão de cartéis narcoterroristas e múltiplos escândalos de corrupção envolvendo até membros da família de Lula"',
+        cls: "false",
+        reportModel: "Fact-checking",
+        date: "2026-06-30T12:55:40.615Z",
+        isPartial: false,
+        report: {
+            classification: "false",
+            sources: [
+                "https://www.imf.org/en/publications/weo/issues/2026/04/14/world-economic-outlook-april-2026?cid=ca-com-homepage-sm26-WEOEA2026001#Gdp",
+                "https://www.ibge.gov.br/explica/inflacao.php?utm_source=copilot.com",
+                "https://www.bcb.gov.br/publicacoes/focus",
+                "https://www.pdffiller.com/s/88W9jx5CtY",
+                "https://www12.senado.leg.br/noticias/materias/2026/02/26/sob-protestos-cpmi-aprova-quebra-de-sigilos-de-lulinha",
+            ],
+            verification:
+                '<div><p>Foram identificadas as principais alegações presentes no discurso político. Para verificar a situação econômica do país, foram consultados os indicadores oficiais do Instituto Brasileiro de Geografia e Estatística (IBGE), o relatório Focus do Banco Central do Brasil e do Fundo Monetário Internacional (FMI), incluindo dados sobre PIB, inflação e projeções de crescimento econômico.  Quanto à alegação de que existem "múltiplos escândalos de corrupção envolvendo membros da família de Lula", foram consultados o Requerimento nº 2939/2026 da CPMI do INSS e os registros oficiais do Senado Federal. Os documentos mostram que houve a aprovação de requerimento para quebra dos sigilos bancário e fiscal de Fábio Luís Lula da Silva no âmbito da CPMI do INSS, com o objetivo de subsidiar uma investigação em andamento. Contudo, os documentos oficiais não apontam condenação ou responsabilização definitiva de familiares do presidente, como insinuou Flávio Bolsonaro.</p></div>',
+            report: '<div><p>Os dados oficiais do IBGE, do Banco Central e do FMI indicam que a economia brasileira apresentou crescimento moderado e projeções positivas, não havendo evidências que sustentem a afirmação de que o país vive uma "crise econômica devastadora". Embora existam desafios econômicos, está distante de um cenário de colapso.<br><br>Quanto à fala de que há "múltiplos escândalos de corrupção envolvendo membros da família de Lula", a consulta aos registros oficiais mostrou que existem investigações em andamento, mas não foram encontradas condenações ou comprovações que sustentem a existência de múltiplos escândalos envolvendo familiares do presidente. Dessa forma, a afirmação apresenta como fato situações que ainda não foram comprovadas.</p></div>',
+            questions: [
+                "O Brasil está vivendo uma crise econômica devastadora?",
+                "Há múltiplos escândalos de corrupção envolvem até membros da família do presidente da república?",
+            ],
+            summary:
+                '<div><p>Durante discurso político, foi afirmado que o Brasil vive uma "crise econômica devastadora". Para verificar essa alegação, utilizei dados oficiais do Fundo Monetário Internacional (FMI) e do IBGE.<br> PIB (Produto Interno Bruto) PIB acumulado em 2025: R$ 12,7 trilhões (IBGE).<br>Crescimento em 2025: 2,3% (IBGE – Contas Nacionais Trimestrais).<br>Projeção para 2026: 1,9% de expansão (FMI – World Economic Outlook, abril 2026).<br>Posição global: O Brasil deve retornar ao Top 10 das maiores economias do mundo em 2026 (FMI).<br>Inflação (IPCA) Março de 2026: 0,88% (IBGE).<br>Acumulado em 12 meses: 4,14% (IBGE).<br>Projeção para 2026: 4,71% (Banco Central – Boletim Focus, abril 2026).<br><br>Estes dados mostram que o Brasil apresenta crescimento moderado, mas consistente. Não há evidência de colapso econômico.<br><br>No discurso, Flávio Bolsonaro também afirma que existem “múltiplos escândalos de corrupção envolvendo até membros da própria família de Lula”. Essa alegação não se sustenta em dados oficiais. O que há, até abril de 2026, são investigações em andamento, especialmente sobre o filho do presidente, Fábio Luís Lula da Silva, conhecido como Lulinha. A CPMI do INSS aprovou em fevereiro de 2026 a quebra de sigilo bancário e fiscal de Lulinha para apurar um esquema bilionário de fraudes em aposentadorias e empréstimos consignados (Poder360, 2026). No entanto, até o momento, não há provas de ligação financeira direta entre ele e o esquema, apenas suspeitas de proximidade com operadores investigados, como o “Careca do INSS” (Folha de S.Paulo, 2026).<br><br>Além disso, não existem registros de condenações ou escândalos comprovados envolvendo familiares de Lula. O próprio presidente declarou publicamente que "não haverá proteção a familiares caso surjam evidências concretas:  "Se tiver filho meu envolvido em fraude, será investigado. Quem estiver envolvido vai pagar o preço” (CNN Brasil, 2026).<br><br>A afirmação de que há “múltiplos escândalos de corrupção envolvendo a família de Lula” é enganosa.</p></div>',
+        },
+    },
+    {
+        pslug: "flavio-bolsonaro",
+        claimTitle: "Discurso de Flávio nos EUA.",
+        sentence:
+            "Tudo isso sob uma enxurrada de dinheiro da Usaid e interferência massiva do governo Biden.",
+        cls: "misleading",
+        reportModel: "Fact-checking",
+        date: "2026-06-30T13:55:39.253Z",
+        isPartial: false,
+        report: {
+            classification: "misleading",
+            sources: [
+                "https://www.estadao.com.br/estadao-verifica/usaid-financiou-durante-eleicoes-brasil-2022-entenda/",
+                "https://foreignassistance.gov/cd/brazil/2022/obligations/0",
+                "https://www.tse.jus.br/legislacao/compilada/res/2019/resolucao-no-23-607-de-17-de-dezembro-de-2019",
+            ],
+            verification:
+                "<div><p>Através de uma matéria do Estadão e da tradução que engloba dados públicos da USAID.</p></div>",
+            report: "<div><p>A declaração do senador Flávio Bolsonaro de que a campanha presidencial de Luiz Inácio Lula da Silva teria recebido uma “enxurrada de dinheiro” da USAID foi verificada a partir da análise de documentos públicos, bases oficiais de repasses internacionais, legislação eleitoral brasileira e reportagens de checagem produzidas por veículos jornalísticos.<br><br>Para realizar a verificação, foi consultado o portal oficial ForeignAssistance.gov, plataforma do governo dos Estados Unidos que reúne informações sobre recursos enviados por órgãos federais norte-americanos para outros países, incluindo a USAID. A análise concentrou-se nos repasses feitos ao Brasil durante o período fiscal de 2022, ano das eleições presidenciais brasileiras. O objetivo era identificar possíveis transferências destinadas a partidos políticos, campanhas eleitorais, candidatos ou organizações diretamente ligadas ao processo eleitoral.<br><br>Os dados encontrados mostram que aproximadamente US$ 29,2 milhões enviados pela USAID ao Brasil naquele período foram destinados principalmente a programas de saúde pública, assistência humanitária, preservação ambiental e apoio social. Entre os principais repasses identificados estavam recursos voltados ao combate ao HIV/AIDS, fortalecimento de serviços de saúde, acolhimento de migrantes venezuelanos por meio do UNICEF, além de iniciativas relacionadas à conservação da Amazônia e combate ao crime organizado.<br><br><br>Os dados referentes foram encontrados através de uma matério do Estadão</p></div>",
+            questions: [
+                "Há provas de que a USAID financiou a campanha de Lula nas eleições de 2022?",
+                "Existem registros oficiais de repasses da USAID para partidos políticos ou campanhas eleitorais no Brasil?",
+                "Os recursos enviados pela USAID tinham relação com o processo eleitoral brasileiro?",
+                "A legislação brasileira permite financiamento estrangeiro de campanhas eleitorais?",
+                "Há evidências de interferência da USAID no resultado das eleições presidenciais de 2022?",
+            ],
+            summary:
+                "<div><p>A afirmação feita por Flávio Bolsonaro de que a eleição do presidente Luiz Inácio Lula da Silva teria contado com uma “enxurrada de dinheiro” da USAID é infundada e não possui comprovação documental.<br><br>A análise de registros públicos de repasses internacionais, contratos e dados oficiais disponíveis no portal ForeignAssistance.gov (Via matéria do Estadão) não encontrou qualquer evidência de financiamento eleitoral, repasses para campanhas políticas ou transferências destinadas ao Partido dos Trabalhadores (PT) ou à campanha presidencial de Lula em 2022.<br><br>Levantamento realizado pelo Estadão mostrou que os recursos enviados pela USAID ao Brasil durante o período fiscal de 2022, aproximadamente US$ 29,2 milhões. Foram destinados principalmente a programas de saúde pública, assistência humanitária, acolhimento de migrantes venezuelanos, preservação ambiental na Amazônia, pesquisa agrícola e combate ao crime organizado.<br><br>Entre os principais repasses identificados estão:<br><br>US$ 8 milhões para ações de combate ao HIV/AIDS; US$ 7,5 milhões para fortalecimento de serviços de saúde; US$ 5 milhões destinados ao Unicef para apoio humanitário relacionado à crise migratória venezuelana; recursos voltados à conservação ambiental e gestão sustentável na Amazônia.<br><br>A checagem também analisou contratos ativos entre 2018 e 2023 e igualmente não encontrou projetos relacionados às eleições brasileiras ou apoio político-partidário.<br><br>Além disso, a legislação eleitoral brasileira proíbe financiamento estrangeiro de campanhas. A Resolução nº 23.607/2019 do Tribunal Superior Eleitoral (TSE) veta doações provenientes do exterior para candidatos e partidos políticos.<br><br>Não há provas públicas que sustentem a alegação de que a USAID financiou a campanha de Lula ou interferiu nas eleições presidenciais de 2022. As evidências disponíveis indicam que os recursos da agência foram direcionados a programas sociais, ambientais e humanitários sem relação com o processo eleitoral brasileiro. Ou seja, Flávio fez uma afirmação falsa.</p></div>",
+        },
+    },
+];

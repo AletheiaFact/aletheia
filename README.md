@@ -77,6 +77,16 @@ cp config/localConfig.example.ts config/localConfig.ts
   yarn seed
   ```
 
+  By default it only seeds the users from `config.seed.yaml`. Set
+  `SEED_SAMPLE_DATA=true` to also seed sample personalities, claims,
+  published fact-checks and a review-task queue for the MCP tools
+  (`server/scripts/seed-sample-data.ts`). Re-runs skip what already exists.
+  `SEED_QUEUE_EMAIL` picks the queue owner (defaults to the first seed user).
+
+  ``` sh
+  SEED_SAMPLE_DATA=true yarn seed
+  ```
+
 - Run the command below to update the users' affiliations:
 
   ``` sh
