@@ -5,7 +5,8 @@ name: Aletheia CI
 
 on:
     push:
-        branches: [stage, develop]
+        # master and ufpb-labcheck run CI only to gate their deploys.
+        branches: [stage, develop, master, ufpb-labcheck]
     pull_request:
         branches: [stage, develop]
 
@@ -240,3 +241,20 @@ jobs:
               env:
                   CI: true
                   CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"
+
+    # Deploys only after every check passed on a push to a deploy branch.
+    # Called as a reusable workflow so it keeps the pushed ref, which the
+    # environment branch policies check.
+    deploy:
+        if: github.event_name == 'push' && contains(fromJSON('["master", "stage", "ufpb-labcheck"]'), github.ref_name)
+        needs:
+            - test-docker
+            - build
+            - test-lint
+            - cypress-run
+            - cypress-run-component
+            - vitest-postgres
+            - vitest-postgres-real
+            - cypress-run-ferretdb
+        uses: ./.github/workflows/aws.yml
+        secrets: inherit
