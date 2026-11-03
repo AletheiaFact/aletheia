@@ -9,18 +9,9 @@ import {
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { Claim } from "../../claim/mongo/schemas/claim.schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { ClassificationEnum } from "../../../lib/classification";
 
-export enum ClassificationEnum {
-    "not-fact" = 0,
-    "false",
-    "misleading",
-    "unsustainable",
-    "unverifiable",
-    "exaggerated",
-    "arguable",
-    "trustworthy-but",
-    "trustworthy",
-}
+export { ClassificationEnum };
 
 export class CreateClaimReview {
     @IsNotEmpty()

@@ -221,6 +221,38 @@ describe("ClaimReviewService (Unit)", () => {
             expect(falseCount.count).toBe(1);
         });
 
+        it("keeps reviews of different methodologies apart", async () => {
+            mockClaimReviewModel.find.mockResolvedValue([
+                {
+                    data_hash: "hash-1",
+                    report: {
+                        classification: "trustworthy",
+                        classificationMethodology: "rncd-debate",
+                    },
+                },
+                {
+                    data_hash: "hash-1",
+                    report: { classification: "trustworthy" },
+                },
+            ]);
+
+            const result = await service.getReviewClassificationCountsByClaimId(
+                "507f1f77bcf86cd799439011"
+            );
+
+            expect(result).toHaveLength(2);
+            expect(
+                result.find(
+                    (r) => r._id.classificationMethodology === "rncd-debate"
+                )?.count
+            ).toBe(1);
+            expect(
+                result.find(
+                    (r) => r._id.classificationMethodology === undefined
+                )?.count
+            ).toBe(1);
+        });
+
         it("should filter by namespace, isDeleted, isPublished, isHidden", async () => {
             mockClaimReviewModel.find.mockResolvedValue([]);
 

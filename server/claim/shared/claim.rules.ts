@@ -24,11 +24,16 @@ export function transformContentObject(
         return claimContent;
     }
 
-    const processReview = (sentence: any, classification: any) => ({
+    const processReview = (
+        sentence: any,
+        classification: any,
+        classificationMethodology?: string
+    ) => ({
         ...sentence,
         props: {
             ...sentence.props,
             classification,
+            ...(classificationMethodology && { classificationMethodology }),
         },
     });
 
@@ -40,6 +45,10 @@ export function transformContentObject(
             claimContent.props = {
                 ...claimContent.props,
                 classification: claimReview._id.classification[0],
+                ...(claimReview._id.classificationMethodology && {
+                    classificationMethodology:
+                        claimReview._id.classificationMethodology,
+                }),
             };
         }
     } else {
@@ -53,7 +62,8 @@ export function transformContentObject(
                     if (claimReview) {
                         return processReview(
                             sentence,
-                            claimReview._id.classification[0]
+                            claimReview._id.classification[0],
+                            claimReview._id.classificationMethodology
                         );
                     }
                     const inProgress = reviewTasks.some(

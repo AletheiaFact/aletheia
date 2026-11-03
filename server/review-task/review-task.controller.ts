@@ -97,6 +97,16 @@ export class ReviewTaskController {
     }
 
     @ApiTags("review-task")
+    @Get("api/reviewtask-methodology")
+    @Header("Cache-Control", "private, no-cache")
+    getClassificationMethodologySettings() {
+        return {
+            enabled:
+                this.featureFlagService.isEnableClassificationMethodology(),
+        };
+    }
+
+    @ApiTags("review-task")
     @Get("api/reviewtask/:id")
     @Header("Cache-Control", "private, no-cache")
     async getById(@Param("id") id: string) {
