@@ -1,0 +1,1 @@
+ALTER TABLE "report" ADD COLUMN "classification_methodology" text;
