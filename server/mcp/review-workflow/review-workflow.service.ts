@@ -107,69 +107,11 @@ export class ReviewWorkflowService {
             dataHash
         );
         if (existing) {
-            // The methodology is set when a queued task is taken, as on the
-            // web assignment: a task given back can be taken on another one,
-            // which clears the labels it no longer offers and the cross-check.
-            // A task being worked on keeps its own.
-            const queued = stateName(existing.machine?.value) === "unassigned";
-            const stored = existing.classificationMethodology;
-            if (
-                !queued &&
-                stored &&
-                classificationMethodology &&
-                classificationMethodology !== stored
-            ) {
-                throw new ConflictException(
-                    `This sentence's review task uses the "${stored}" classification methodology`
-                );
-            }
-            const take = assignTo(user._id);
-            if (
-                !stored ||
-                (classificationMethodology &&
-                    classificationMethodology !== stored)
-            ) {
-                const methodology =
-                    this.reviewTaskService.resolveMethodologyForNewTask(
-                        classificationMethodology
-                    );
-                Object.assign(take.$set, {
-                    classificationMethodology: methodology,
-                });
-                if (methodology !== resolveMethodologyId(stored)) {
-                    const reset = methodologySwitchReset(
-                        methodology,
-                        existing.machine?.context?.reviewData
-                    );
-                    Object.assign(
-                        take.$set,
-                        Object.fromEntries(
-                            Object.entries(reset).map(([field, value]) => [
-                                `${REVIEW_DATA}.${field}`,
-                                value,
-                            ])
-                        )
-                    );
-                }
-            }
-            // A queued (`unassigned`) task is taken, atomically, the same way
-            // next_review_task takes it; anything further along is someone
-            // else's work.
-            const taken = queued
-                ? await this.reviewTaskQueue.transitionAtomically(
-                      {
-                          _id: existing._id,
-                          "machine.value": "unassigned",
-                      },
-                      take
-                  )
-                : null;
-            if (!taken) {
-                throw new ConflictException(
-                    "A review task already exists for this sentence"
-                );
-            }
-            return taken;
+            return this.takeExistingTask(
+                user,
+                existing,
+                classificationMethodology
+            );
         }
 
         const created = await this.reviewTaskQueue.createAssigned({
@@ -199,6 +141,86 @@ export class ReviewWorkflowService {
             );
         }
         return created;
+    }
+
+    /**
+     * The methodology is set when a queued task is taken, as on the web
+     * assignment: a task given back can be taken on another one, which
+     * clears the labels it no longer offers and the cross-check. A task
+     * being worked on keeps its own.
+     */
+    private async takeExistingTask(
+        user: { _id: string },
+        existing: any,
+        classificationMethodology?: string
+    ) {
+        const queued = stateName(existing.machine?.value) === "unassigned";
+        const stored = existing.classificationMethodology;
+        if (
+            !queued &&
+            stored &&
+            classificationMethodology &&
+            classificationMethodology !== stored
+        ) {
+            throw new ConflictException(
+                `This sentence's review task uses the "${stored}" classification methodology`
+            );
+        }
+        const take = assignTo(user._id);
+        Object.assign(
+            take.$set,
+            this.methodologyOnTake(existing, classificationMethodology)
+        );
+        // A queued (`unassigned`) task is taken, atomically, the same way
+        // next_review_task takes it; anything further along is someone
+        // else's work.
+        const taken = queued
+            ? await this.reviewTaskQueue.transitionAtomically(
+                  {
+                      _id: existing._id,
+                      "machine.value": "unassigned",
+                  },
+                  take
+              )
+            : null;
+        if (!taken) {
+            throw new ConflictException(
+                "A review task already exists for this sentence"
+            );
+        }
+        return taken;
+    }
+
+    /**
+     * The `$set` fields that give a taken task its methodology: none when it
+     * keeps the stored one, plus the review data reset when it switches.
+     */
+    private methodologyOnTake(
+        existing: any,
+        requested?: string
+    ): Record<string, unknown> {
+        const stored = existing.classificationMethodology;
+        if (stored && (!requested || requested === stored)) {
+            return {};
+        }
+        const methodology =
+            this.reviewTaskService.resolveMethodologyForNewTask(requested);
+        if (methodology === resolveMethodologyId(stored)) {
+            return { classificationMethodology: methodology };
+        }
+        const reset = methodologySwitchReset(
+            methodology,
+            existing.machine?.context?.reviewData
+        );
+        return {
+            classificationMethodology: methodology,
+            ...Object.fromEntries(
+                Object.entries(reset).map(([field, value]) => [
+                    `${REVIEW_DATA}.${field}`,
+                    value,
+                ])
+            ),
+        };
     }
 
     /**
