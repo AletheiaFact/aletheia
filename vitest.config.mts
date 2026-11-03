@@ -23,6 +23,9 @@ export default defineConfig({
                 extends: true,
                 test: {
                     name: "unit",
+                    // threads: ~15% faster and ~35% less memory than forks.
+                    // vmThreads is faster still but breaks on next's require-hook.
+                    pool: "threads",
                     include: [
                         "server/**/*.spec.ts",
                         "src/**/*.spec.ts",
