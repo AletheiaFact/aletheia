@@ -80,10 +80,28 @@ describe("classification methodologies", () => {
         ).toEqual([
             ["false", "Falso", "False"],
             ["trustworthy-but", "Impreciso", "Imprecise"],
-            ["unverifiable", "Evidências insuficientes", "Insufficient evidence"],
+            [
+                "unverifiable",
+                "Evidências insuficientes",
+                "Insufficient evidence",
+            ],
             ["trustworthy", "Verdadeiro", "True"],
         ]);
     });
+
+    // The description is what the picker tooltip, the methodology note and
+    // list_classification_methodologies show: it must name every option
+    it.each(["pt", "en"] as const)(
+        "the rncd-debate %s description names each of its options",
+        (lang) => {
+            const methodology = getMethodology("rncd-debate");
+            methodology.options.forEach((option) =>
+                expect(methodology.description[lang]).toContain(
+                    option.label[lang]
+                )
+            );
+        }
+    );
 
     it("falls back to aletheia for missing or unknown ids", () => {
         expect(resolveMethodologyId(undefined)).toBe("aletheia");

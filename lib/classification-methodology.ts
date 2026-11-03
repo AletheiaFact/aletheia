@@ -63,8 +63,8 @@ export const classificationMethodologies: Record<
     "rncd-debate": {
         name: { pt: "RNCD Debate", en: "RNCD Debate" },
         description: {
-            pt: "Escala de 3 classificações da RNCD: Falso, Enganosa e Verdadeiro.",
-            en: "RNCD's 3-label scale: False, Misleading and True.",
+            pt: "Escala de 4 classificações da RNCD: Falso, Impreciso, Evidências insuficientes e Verdadeiro.",
+            en: "RNCD's 4-label scale: False, Imprecise, Insufficient evidence and True.",
         },
         options: [
             { value: "false", label: { pt: "Falso", en: "False" } },
