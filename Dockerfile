@@ -19,13 +19,17 @@ WORKDIR /app
 
 # Copy Yarn configuration first for better caching
 COPY .yarnrc.yml ./
-COPY .yarn/ ./.yarn/
+COPY .yarn/releases ./.yarn/releases
+COPY .yarn/plugins ./.yarn/plugins
 
 # Copy package files for dependency resolution
 COPY ./package.json ./yarn.lock ./
 
-# Install dependencies (cached when package.json/yarn.lock unchanged)
-RUN yarn install --frozen-lockfile
+# Install dependencies (cached when package.json/yarn.lock unchanged).
+# The Cypress binary is only needed by CI test jobs, not by the image.
+ENV CYPRESS_INSTALL_BINARY=0
+RUN --mount=type=cache,target=/app/.yarn/cache \
+    yarn install --immutable
 
 # Copy configuration files
 COPY config.$ENVIRONMENT.yaml ./config.yaml

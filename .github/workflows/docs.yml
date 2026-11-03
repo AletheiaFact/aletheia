@@ -17,13 +17,7 @@ jobs:
             REGION: eu-north-1
 
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Use Node.js 20.18.0
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.18.0
+            - uses: actions/checkout@v4
 
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v1
@@ -32,14 +26,10 @@ jobs:
                   aws-secret-access-key: ${{ secrets.ALETHEIA_DOCS_AWS_SECRET_ACCESS_KEY }}
                   aws-region: ${{ env.REGION }}
 
-            - name: Install Dependencies
-              run: |
-                  node --version
-                  yarn install
+            - uses: ./.github/actions/setup-deps
 
             - name: Build Static Website
               run: |
-                  cp config/localConfig.example.ts config/localConfig.ts
                   yarn run build-storybook
                   npx compodoc -p tsconfig.json -d ./docs/compodoc
 
