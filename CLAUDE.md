@@ -13,6 +13,8 @@ Aletheia is a crowd-sourced fact-checking platform for analyzing public figure s
 
 ## Essential Commands
 
+When changing the root `aletheia` script, check and update `docs/aletheia-cli.md` for changed flags, combinations, or behavior.
+
 ### Development
 ```bash
 yarn install              # Install dependencies

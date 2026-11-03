@@ -89,6 +89,26 @@ resources: Listing<K8sResource> = new {
                 }
                 spec {
                     containers = DeploymentOptions.containers
+                    // Spread replicas across nodes so one node failure does
+                    // not take every pod down. matchLabelKeys scopes the skew
+                    // to one revision, so old pods do not count during a
+                    // rollout. ScheduleAnyway keeps a deploy from blocking
+                    // when a node is full or out of service.
+                    topologySpreadConstraints {
+                        new {
+                            maxSkew = 1
+                            topologyKey = "kubernetes.io/hostname"
+                            whenUnsatisfiable = "ScheduleAnyway"
+                            labelSelector {
+                                matchLabels {
+                                    ["app"] = "aletheia"
+                                }
+                            }
+                            matchLabelKeys {
+                                "pod-template-hash"
+                            }
+                        }
+                    }
                 }
             }
         }
