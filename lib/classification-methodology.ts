@@ -69,8 +69,15 @@ export const classificationMethodologies: Record<
         options: [
             { value: "false", label: { pt: "Falso", en: "False" } },
             {
-                value: "misleading",
-                label: { pt: "Enganosa", en: "Misleading" },
+                value: "trustworthy-but",
+                label: { pt: "Impreciso", en: "Imprecise" },
+            },
+            {
+                value: "unverifiable",
+                label: {
+                    pt: "Evidências insuficientes",
+                    en: "Insufficient evidence",
+                },
             },
             { value: "trustworthy", label: { pt: "Verdadeiro", en: "True" } },
         ],

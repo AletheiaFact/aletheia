@@ -141,16 +141,19 @@ describe("ReviewWorkflowService classification methodology", () => {
         );
     });
 
-    it("refuses to publish a classification outside the methodology", async () => {
-        const { service, reviewTaskQueue } = build();
-        await expect(
-            service.publishReviewTask(
-                USER,
-                submittedTask("exaggerated", "rncd-debate")
-            )
-        ).rejects.toBeInstanceOf(BadRequestException);
-        expect(reviewTaskQueue.publishSubmitted).not.toHaveBeenCalled();
-    });
+    it.each(["exaggerated", "misleading"])(
+        "refuses to publish %s, a classification outside the methodology",
+        async (value) => {
+            const { service, reviewTaskQueue } = build();
+            await expect(
+                service.publishReviewTask(
+                    USER,
+                    submittedTask(value, "rncd-debate")
+                )
+            ).rejects.toBeInstanceOf(BadRequestException);
+            expect(reviewTaskQueue.publishSubmitted).not.toHaveBeenCalled();
+        }
+    );
 
     const reportTask = (
         value: unknown,
@@ -189,14 +192,19 @@ describe("ReviewWorkflowService classification methodology", () => {
         }
     );
 
-    it("publishes an allowed classification", async () => {
-        const { service, reviewTaskQueue } = build();
-        await service.publishReviewTask(
-            USER,
-            submittedTask("trustworthy", "rncd-debate")
-        );
-        expect(reviewTaskQueue.publishSubmitted).toHaveBeenCalledWith("t1");
-    });
+    it.each(["false", "trustworthy-but", "unverifiable", "trustworthy"])(
+        "publishes %s, an allowed classification",
+        async (value) => {
+            const { service, reviewTaskQueue } = build();
+            await service.publishReviewTask(
+                USER,
+                submittedTask(value, "rncd-debate")
+            );
+            expect(reviewTaskQueue.publishSubmitted).toHaveBeenCalledWith(
+                "t1"
+            );
+        }
+    );
 });
 
 describe("ReviewTaskQueueService.publishSubmitted", () => {

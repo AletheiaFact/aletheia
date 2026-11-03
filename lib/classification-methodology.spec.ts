@@ -70,7 +70,7 @@ describe("classification methodologies", () => {
         }
     );
 
-    it("rncd-debate maps Falso, Enganosa and Verdadeiro", () => {
+    it("rncd-debate maps Falso, Impreciso, Evidências insuficientes and Verdadeiro", () => {
         expect(
             getMethodology("rncd-debate").options.map((o) => [
                 o.value,
@@ -79,7 +79,8 @@ describe("classification methodologies", () => {
             ])
         ).toEqual([
             ["false", "Falso", "False"],
-            ["misleading", "Enganosa", "Misleading"],
+            ["trustworthy-but", "Impreciso", "Imprecise"],
+            ["unverifiable", "Evidências insuficientes", "Insufficient evidence"],
             ["trustworthy", "Verdadeiro", "True"],
         ]);
     });
@@ -98,6 +99,9 @@ describe("classification methodologies", () => {
             true
         );
         expect(isAllowedClassification("rncd-debate", "exaggerated")).toBe(
+            false
+        );
+        expect(isAllowedClassification("rncd-debate", "misleading")).toBe(
             false
         );
         expect(isAllowedClassification(undefined, "exaggerated")).toBe(true);

@@ -23,11 +23,11 @@ describe("withClassificationLabels", () => {
         const out: any = withClassificationLabels({
             classificationMethodology: "rncd-debate",
             machine: {
-                context: { reviewData: { classification: "misleading" } },
+                context: { reviewData: { classification: "unverifiable" } },
             },
         });
         expect(out.machine.context.reviewData.classificationLabel.pt).toBe(
-            "Enganosa"
+            "Evidências insuficientes"
         );
         expect(out.machine.context.reviewData.classificationMethodology).toBe(
             "rncd-debate"

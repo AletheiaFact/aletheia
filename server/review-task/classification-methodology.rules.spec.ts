@@ -31,25 +31,31 @@ describe("resolveNewTaskMethodology", () => {
 });
 
 describe("assertAllowedClassification", () => {
-    it("allows an option of the methodology", () => {
-        expect(() =>
-            assertAllowedClassification(
-                "rncd-debate",
-                "trustworthy",
-                "classification"
-            )
-        ).not.toThrow();
-    });
+    it.each(["false", "trustworthy-but", "unverifiable", "trustworthy"])(
+        "allows %s, an option of the methodology",
+        (value) => {
+            expect(() =>
+                assertAllowedClassification(
+                    "rncd-debate",
+                    value,
+                    "classification"
+                )
+            ).not.toThrow();
+        }
+    );
 
-    it("rejects a value outside the methodology", () => {
-        expect(() =>
-            assertAllowedClassification(
-                "rncd-debate",
-                "exaggerated",
-                "classification"
-            )
-        ).toThrow(BadRequestException);
-    });
+    it.each(["exaggerated", "misleading"])(
+        "rejects %s, a value outside the methodology",
+        (value) => {
+            expect(() =>
+                assertAllowedClassification(
+                    "rncd-debate",
+                    value,
+                    "classification"
+                )
+            ).toThrow(BadRequestException);
+        }
+    );
 
     it("treats a missing methodology as aletheia", () => {
         expect(() =>

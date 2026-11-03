@@ -99,20 +99,23 @@ describe("ReviewTaskService classification methodology", () => {
         expect(created.classificationMethodology).toBeUndefined();
     });
 
-    it("refuses to publish a classification outside the methodology", () => {
-        const { service, reportService } = build();
-        const task = publishedTask("exaggerated", "rncd-debate");
-        expect(() =>
-            (service as any)._publishReviewTask(
-                task,
-                "main",
-                task.machine,
-                "hash",
-                "Fact-checking"
-            )
-        ).toThrow(BadRequestException);
-        expect(reportService.create).not.toHaveBeenCalled();
-    });
+    it.each(["exaggerated", "misleading"])(
+        "refuses to publish %s, a classification outside the methodology",
+        (value) => {
+            const { service, reportService } = build();
+            const task = publishedTask(value, "rncd-debate");
+            expect(() =>
+                (service as any)._publishReviewTask(
+                    task,
+                    "main",
+                    task.machine,
+                    "hash",
+                    "Fact-checking"
+                )
+            ).toThrow(BadRequestException);
+            expect(reportService.create).not.toHaveBeenCalled();
+        }
+    );
 
     it("copies the methodology to the report on publish", async () => {
         const { service, reportService } = build();

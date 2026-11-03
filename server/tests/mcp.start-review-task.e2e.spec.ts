@@ -189,7 +189,12 @@ describe("MCP start_review_task (e2e)", () => {
             list
                 .find((m: any) => m.id === "rncd-debate")
                 .options.map((o: any) => o.label.pt)
-        ).toEqual(["Falso", "Enganosa", "Verdadeiro"]);
+        ).toEqual([
+            "Falso",
+            "Impreciso",
+            "Evidências insuficientes",
+            "Verdadeiro",
+        ]);
     });
 
     it("blocks a Regular (read-only) user", async () => {

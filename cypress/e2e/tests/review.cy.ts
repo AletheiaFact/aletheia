@@ -115,10 +115,23 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_CLASSIFICATION)
             .should("exist")
             .click();
-        cy.get("[data-cy=trustworthy]")
-            .should("be.visible")
-            .invoke("text")
-            .should("match", /^(True|Verdadeiro)\s*$/);
+        const expected = [
+            ["false", /^(False|Falso)\s*$/],
+            ["trustworthy-but", /^(Imprecise|Impreciso)\s*$/],
+            [
+                "unverifiable",
+                /^(Insufficient evidence|Evidências insuficientes)\s*$/,
+            ],
+            ["trustworthy", /^(True|Verdadeiro)\s*$/],
+        ] as const;
+        cy.get("[role=listbox] [role=option] [data-cy]")
+            .should("have.length", expected.length)
+            .each(($label, index) => {
+                const [value, text] = expected[index];
+                expect($label.attr("data-cy")).to.equal(value);
+                expect($label.text()).to.match(text);
+            });
+        cy.get("[data-cy=misleading]").should("not.exist");
         cy.get("[data-cy=exaggerated]").should("not.exist");
         cy.get("body").type("{esc}");
     });

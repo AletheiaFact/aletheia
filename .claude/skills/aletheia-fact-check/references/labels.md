@@ -14,7 +14,7 @@ that methodology's options: `save_review_log`, `submit_report`,
 | Methodology | Options (`value` → label) |
 | --- | --- |
 | `aletheia` | the 9 below |
-| `rncd-debate` | `false` → Falso, `misleading` → Enganosa, `trustworthy` → Verdadeiro |
+| `rncd-debate` | `false` → Falso, `trustworthy-but` → Impreciso, `unverifiable` → Evidências insuficientes, `trustworthy` → Verdadeiro |
 
 On a narrower scale, still walk the decision order below, then pick among
 the methodology's options only. When none of them fits (for example the
