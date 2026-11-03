@@ -9,7 +9,7 @@
 ## Why it was deferred
 
 | Fact | Measured | Consequence |
-|---|---|---|
+| --- | --- | --- |
 | GitLab group plan | `aletheiafact` is on **GitLab Free**: 400 compute min/month, `saas-linux-small` = 2 vCPU / 8 GB | Not enough for any full pipeline |
 | GitLab for Open Source program | Not applied | No 50k minutes, no pull mirroring, no protected-environment approvals |
 | CI volume | 171 `nodejs.yml` runs in 30 days, ~50 runner-min each (~8,500 min) | 20x the free quota; above Premium's 10,000 too |
@@ -92,7 +92,7 @@ flowchart LR
 ```
 
 | Cache | Key | Paths | Writer |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | node_modules | `nm-node20-<hash(yarn.lock, .yarnrc.yml)>` | `node_modules/`, `.yarn/install-state.gz` | `deps:install` |
 | yarn zips | `yarn-zips-v1` | `.yarn/cache/` | `deps:install` |
 | Cypress binary | `cypress-<version>` | `.cache/Cypress/` | `deps:install` |
@@ -117,9 +117,12 @@ Other decisions worth keeping:
 - Project settings as code (`gitlab_project`, branch protection, environments,
   variables, schedules) with values only from sensitive inputs.
 
-## Open decisions (unchanged)
+## Open decisions
 
 - Gate deploys on tests (today a red `stage` still deploys). This applies to
   GitHub too: `aws.yml` could use `workflow_run` on a successful `Aletheia CI`.
-- Node 22 vs 20 for the Postgres jobs (`35a945df` doesn't say why 22).
-- Docs hosting: S3 (`docs.yml`) or GitLab Pages.
+
+## Resolved
+
+- Node version: every job uses `.node-version` (20.18.0, the production
+  image) since `b35907e8`; the Node 22 pin from `35a945df` is gone.
