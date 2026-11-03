@@ -33,7 +33,7 @@ env:
     MONGOMS_DOWNLOAD_DIR: /home/runner/.cache/mongodb-binaries
 jobs:
     test-docker:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v7
             - uses: dorny/paths-filter@v4
@@ -54,7 +54,7 @@ jobs:
                     --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
 
     build:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
@@ -71,7 +71,7 @@ jobs:
                       !dist/.next/cache/
 
     test-lint:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v7
               with:
@@ -95,7 +95,7 @@ jobs:
 
     cypress-run:
         needs: build
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
@@ -125,7 +125,7 @@ jobs:
                   retention-days: 7
 
     cypress-run-component:
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-deps
@@ -184,7 +184,7 @@ jobs:
 
     cypress-run-ferretdb:
         needs: build
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         services:
             postgres:
                 image: ghcr.io/ferretdb/postgres-documentdb:17-0.102.0-ferretdb-2.1.0
