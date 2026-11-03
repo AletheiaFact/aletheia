@@ -16,6 +16,7 @@ import {
     ClaimReviewDocument,
 } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
+import { targetIdFilter } from "../common/target-id-filter";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -672,7 +673,11 @@ export class ClaimReviewService {
         session: mongoose.ClientSession
     ): Promise<number> {
         const result = await this.ClaimReviewModel.updateMany(
-            { data_hash: oldHash, target: claimId, targetModel: "Claim" },
+            {
+                data_hash: oldHash,
+                target: targetIdFilter(claimId),
+                targetModel: "Claim",
+            },
             { $set: { data_hash: newHash } },
             { session }
         );
