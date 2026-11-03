@@ -13,6 +13,13 @@
   cd aletheia
   ```
 
+- Install the local CLI, then check it. The first run prints the install path and version; later runs print only the version. See the [CLI guide](docs/aletheia-cli.md) for flags and examples.
+
+  ```sh
+  ./aletheia
+  aletheia
+  ```
+
 - Startup Mongo DB via Docker and Ory Kratos:
 
   ``` sh

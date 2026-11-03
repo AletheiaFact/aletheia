@@ -3,6 +3,7 @@ import { ClassificationEnum } from "../../../claim-review/dto/create-claim-revie
 import * as mongoose from "mongoose";
 import { User } from "../../../users/schemas/user.schema";
 import { ReportModelEnum } from "../../../types/enums";
+import { METHODOLOGY_IDS } from "../../../../lib/classification-methodology";
 
 export type ReportDocument = Report & mongoose.Document;
 
@@ -58,6 +59,13 @@ export class Report {
         enum: ClassificationEnum,
     })
     classification: string;
+
+    @Prop({
+        type: String,
+        required: false,
+        enum: [...METHODOLOGY_IDS],
+    })
+    classificationMethodology?: string;
 }
 
 const ReportSchemaRaw = SchemaFactory.createForClass(Report);

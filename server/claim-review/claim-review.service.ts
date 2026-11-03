@@ -308,14 +308,21 @@ export class ClaimReviewService {
             const key = JSON.stringify({
                 data_hash: review.data_hash,
                 classification: review.report.classification,
+                classificationMethodology:
+                    review.report.classificationMethodology,
             });
             classificationCounts[key] = (classificationCounts[key] || 0) + 1;
         });
 
         return Object.entries(classificationCounts).map(([key, count]) => {
-            const { data_hash, classification } = JSON.parse(key);
+            const { data_hash, classification, classificationMethodology } =
+                JSON.parse(key);
             return {
-                _id: { data_hash, classification: [classification] },
+                _id: {
+                    data_hash,
+                    classification: [classification],
+                    classificationMethodology,
+                },
                 count: count as number,
             };
         });
