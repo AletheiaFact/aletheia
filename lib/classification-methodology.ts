@@ -107,6 +107,25 @@ export function isAllowedClassification(
     return getMethodology(id).options.some((option) => option.value === value);
 }
 
+/**
+ * Review data to clear when a task moves to another methodology: the label
+ * if the new one does not offer it, and the cross-check, which was judged
+ * on the old scale.
+ */
+export function methodologySwitchReset(
+    id: string | null | undefined,
+    reviewData?: { classification?: unknown } | null
+): Record<string, string> {
+    const classification = reviewData?.classification;
+    return {
+        ...(classification && !isAllowedClassification(id, classification)
+            ? { classification: "" }
+            : {}),
+        crossCheckingClassification: "",
+        crossCheckingComment: "",
+    };
+}
+
 export function toMethodologyLanguage(
     language?: string | null
 ): MethodologyLanguage {

@@ -32,7 +32,7 @@ export function registerWriteReviewWritingTools(
         "start_review_task",
         {
             description:
-                "Claim a claim sentence for fact-checking: creates its review task already assigned to you (or takes its queued task). The task gets the requested classification methodology (default aletheia), fixed from then on; a task that already has another one is refused.",
+                "Claim a claim sentence for fact-checking: creates its review task already assigned to you (or takes its queued task). The task gets the requested classification methodology (default aletheia). A queued task can be taken on another methodology, which clears the label it does not offer and any cross-check; a task already being worked on keeps its own.",
             inputSchema: StartReviewTaskSchema.shape as any,
         },
         safeTool("start_review_task", async (args) => {

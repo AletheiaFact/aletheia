@@ -106,12 +106,43 @@ describe("ReviewWorkflowService classification methodology", () => {
         );
     });
 
-    it("refuses to switch a queued task that already has a methodology", async () => {
+    it("switches a queued task to the requested methodology, clearing what it does not offer", async () => {
         const { service, reviewTaskService, reviewTaskQueue } = build();
         reviewTaskService.getReviewTaskByDataHash.mockResolvedValue({
             _id: "t1",
             classificationMethodology: "aletheia",
-            machine: { value: "unassigned" },
+            machine: {
+                value: "unassigned",
+                context: {
+                    reviewData: {
+                        classification: "exaggerated",
+                        crossCheckingClassification: "exaggerated",
+                    },
+                },
+            },
+        });
+        await service.startReviewTask(USER, {
+            claimId: "claim-1",
+            dataHash: DATA_HASH,
+            nameSpace: "main",
+            classificationMethodology: "rncd-debate",
+        });
+        expect(takeUpdate(reviewTaskQueue)).toEqual(
+            expect.objectContaining({
+                classificationMethodology: "rncd-debate",
+                "machine.context.reviewData.classification": "",
+                "machine.context.reviewData.crossCheckingClassification": "",
+                "machine.context.reviewData.crossCheckingComment": "",
+            })
+        );
+    });
+
+    it("refuses another methodology on a task already being worked on", async () => {
+        const { service, reviewTaskService, reviewTaskQueue } = build();
+        reviewTaskService.getReviewTaskByDataHash.mockResolvedValue({
+            _id: "t1",
+            classificationMethodology: "aletheia",
+            machine: { value: { assigned: "draft" } },
         });
         await expect(
             service.startReviewTask(USER, {
@@ -200,9 +231,7 @@ describe("ReviewWorkflowService classification methodology", () => {
                 USER,
                 submittedTask(value, "rncd-debate")
             );
-            expect(reviewTaskQueue.publishSubmitted).toHaveBeenCalledWith(
-                "t1"
-            );
+            expect(reviewTaskQueue.publishSubmitted).toHaveBeenCalledWith("t1");
         }
     );
 });

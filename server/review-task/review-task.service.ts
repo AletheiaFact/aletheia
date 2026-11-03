@@ -35,10 +35,14 @@ import { Source } from "../source/mongo/schemas/source.schema";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import {
     assertAllowedClassification,
+    resolveMethodologySwitch,
     resolveNewTaskMethodology,
 } from "./classification-methodology.rules";
 import { ReviewTaskEffectsService } from "./review-task-effects.service";
-import type { MethodologyId } from "../../lib/classification-methodology";
+import {
+    methodologySwitchReset,
+    MethodologyId,
+} from "../../lib/classification-methodology";
 import {
     buildListPipeline,
     buildNotDeletedCountPipeline,
@@ -225,8 +229,8 @@ export class ReviewTaskService {
         );
     }
 
-    // The methodology is fixed when a task is created: update() only $sets
-    // the machine, so later requests cannot change it.
+    // The methodology is set when a task is created. Afterwards it only
+    // changes on a (re)assignment, see _applyMethodologySwitch.
     private _applyNewTaskMethodology(body: {
         reportModel?: string;
         classificationMethodology?: string;
@@ -238,6 +242,44 @@ export class ReviewTaskService {
         } else {
             delete body.classificationMethodology;
         }
+    }
+
+    /**
+     * Methodology an existing fact-checking task moves to on this save, or
+     * undefined. The labels it no longer offers and the cross-check are
+     * cleared from the body.
+     */
+    private _applyMethodologySwitch(
+        reviewTask: ReviewTaskDocument,
+        body: CreateReviewTaskDTO
+    ): MethodologyId | undefined {
+        if (reviewTask.reportModel !== ReportModelEnum.FactChecking) {
+            return undefined;
+        }
+        const stateOf = (value: unknown) =>
+            value && typeof value === "object"
+                ? Object.keys(value)[0]
+                : (value as string | undefined);
+        const userRole = (this.req.user?.role as Record<string, Roles>)?.[
+            reviewTask.nameSpace
+        ];
+        const switchTo = resolveMethodologySwitch({
+            stored: reviewTask.classificationMethodology,
+            requested: body.classificationMethodology,
+            fromState: stateOf(reviewTask.machine?.value),
+            toState: stateOf(body.machine?.value),
+            isAdmin: userRole === Roles.Admin || userRole === Roles.SuperAdmin,
+            enabled:
+                this.featureFlagService.isEnableClassificationMethodology(),
+        });
+        if (switchTo) {
+            const reviewData = body.machine.context.reviewData;
+            Object.assign(
+                reviewData,
+                methodologySwitchReset(switchTo, reviewData)
+            );
+        }
+        return switchTo;
     }
 
     _returnObjectId(data: any): any {
@@ -273,6 +315,9 @@ export class ReviewTaskService {
             reviewTaskBody.data_hash
         );
 
+        const methodologySwitch = reviewTask
+            ? this._applyMethodologySwitch(reviewTask, reviewTaskBody)
+            : undefined;
         if (!reviewTask) {
             this._applyNewTaskMethodology(reviewTaskBody);
         }
@@ -338,7 +383,9 @@ export class ReviewTaskService {
                 reviewTaskBody.data_hash,
                 reviewTaskBody,
                 reviewTaskBody.nameSpace,
-                reviewTask.reportModel
+                reviewTask.reportModel,
+                true,
+                methodologySwitch
             );
         } else {
             this.logger.log(
@@ -360,7 +407,9 @@ export class ReviewTaskService {
         { machine }: UpdateReviewTaskDTO,
         nameSpace: string,
         reportModel: string,
-        history: boolean = true
+        history: boolean = true,
+        // Only create() passes it, on a (re)assignment that changes it
+        classificationMethodology?: MethodologyId
     ): Promise<ReviewTaskDocument> {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
@@ -378,6 +427,7 @@ export class ReviewTaskService {
         const newReviewTask = {
             ...reviewTask.toObject(),
             machine: newReviewTaskMachine,
+            ...(classificationMethodology && { classificationMethodology }),
         };
 
         this._publishReviewTask(
@@ -396,7 +446,12 @@ export class ReviewTaskService {
         const updated = await this.ReviewTaskModel.findByIdAndUpdate(
             reviewTask._id,
             {
-                $set: { machine: newReviewTaskMachine },
+                $set: {
+                    machine: newReviewTaskMachine,
+                    ...(classificationMethodology && {
+                        classificationMethodology,
+                    }),
+                },
             }
         );
         if (!updated) {

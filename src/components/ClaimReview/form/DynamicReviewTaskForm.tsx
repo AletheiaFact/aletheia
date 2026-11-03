@@ -10,7 +10,11 @@ import {
 
 import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
-import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import {
+    ReportModelEnum,
+    ReviewTaskEvents,
+    ReviewTaskStates,
+} from "../../../machines/reviewTask/enums";
 import {
     validateFormSubmission,
     ValidationError,
@@ -35,6 +39,11 @@ import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 import { useReviewTaskPermissions } from "../../../machines/reviewTask/usePermissions";
 import ActionToolbar, { CAPTCHA_EXEMPT_EVENTS } from "./ActionToolbar";
+import ClassificationMethodologySelect from "../ClassificationMethodologySelect";
+import {
+    methodologySwitchReset,
+    resolveMethodologyId,
+} from "../../../../lib/classification-methodology";
 
 const DynamicReviewTaskForm = ({
     data_hash,
@@ -55,6 +64,8 @@ const DynamicReviewTaskForm = ({
     const {
         reportModel,
         classificationMethodology,
+        savedClassificationMethodology,
+        setSavedClassificationMethodology,
         machineService,
         events,
         form,
@@ -158,6 +169,23 @@ const DynamicReviewTaskForm = ({
                   )
               )
             : formData;
+
+        // The methodology only changes on (re)assignment; the server clears
+        // the same fields, this keeps the form in step without a reload
+        const switchesMethodology =
+            eventName === ReviewTaskEvents.assignUser &&
+            resolveMethodologyId(classificationMethodology) !==
+                resolveMethodologyId(savedClassificationMethodology);
+        if (switchesMethodology) {
+            Object.assign(
+                filteredFormData,
+                methodologySwitchReset(classificationMethodology, {
+                    ...reviewData,
+                    ...filteredFormData,
+                })
+            );
+            setSavedClassificationMethodology?.(classificationMethodology);
+        }
 
         const payload = {
             data_hash,
@@ -432,6 +460,13 @@ const DynamicReviewTaskForm = ({
                             />
                         </div>
                     )}
+                    {currentState === ReviewTaskStates.unassigned &&
+                        reportModel === ReportModelEnum.FactChecking &&
+                        showButtons && (
+                            <div style={{ margin: "0 0 16px" }}>
+                                <ClassificationMethodologySelect />
+                            </div>
+                        )}
                     <DynamicForm
                         currentForm={form}
                         machineValues={reviewData}

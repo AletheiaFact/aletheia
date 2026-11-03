@@ -186,11 +186,14 @@ methodology's options and labels.
   but drops the writer's `classification` and `classificationLabel`.
 - **Starting work.** `start_review_task` and `next_review_task` take an
   optional `classificationMethodology` (default `aletheia`). It is set when
-  work starts, in the same atomic update that assigns the task, and is fixed
-  from then on; a released task keeps it. `start_review_task` refuses a task
-  that already has another methodology; `next_review_task` only hands out
-  tasks with none yet, or with the requested one. A non-default methodology
-  requires the `enable_classification_methodology` flag.
+  the task is assigned, in the same atomic update, as on the web, where it
+  only changes on assignment (or an admin's reassignment). A released task
+  keeps it until it is taken again: `start_review_task` can take a queued
+  task on another methodology, which clears the label the new one does not
+  offer and any cross-check, and refuses another methodology on a task
+  already being worked on. `next_review_task` only hands out tasks with none
+  yet, or with the requested one. A non-default methodology requires the
+  `enable_classification_methodology` flag.
 - **Writing, cross-checking, publishing.** `save_review_log`,
   `submit_report`, `submit_report_to_review` (including its retry on an
   already reported task), `submit_cross_check` and `publish_review_task`

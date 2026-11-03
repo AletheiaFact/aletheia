@@ -7,6 +7,7 @@ import {
     getClassificationLabel,
     getMethodology,
     isAllowedClassification,
+    methodologySwitchReset,
     isMethodologyId,
     resolveMethodologyId,
     toMethodologyLanguage,
@@ -143,6 +144,28 @@ describe("classification methodologies", () => {
         expect(
             getClassificationLabel("rncd-debate", "in-progress", "pt")
         ).toBeUndefined();
+    });
+
+    it("methodologySwitchReset clears an off-scale label and the cross-check", () => {
+        expect(
+            methodologySwitchReset("rncd-debate", {
+                classification: "exaggerated",
+            })
+        ).toEqual({
+            classification: "",
+            crossCheckingClassification: "",
+            crossCheckingComment: "",
+        });
+        expect(
+            methodologySwitchReset("rncd-debate", { classification: "false" })
+        ).toEqual({
+            crossCheckingClassification: "",
+            crossCheckingComment: "",
+        });
+        expect(methodologySwitchReset("aletheia", undefined)).toEqual({
+            crossCheckingClassification: "",
+            crossCheckingComment: "",
+        });
     });
 
     it("toMethodologyLanguage maps any pt locale to pt and the rest to en", () => {

@@ -103,7 +103,7 @@ const classificationMethodology = z
     .describe(
         `Classification methodology for the task (${METHODOLOGY_IDS.join(
             ", "
-        )}); defaults to ${DEFAULT_METHODOLOGY}. It is fixed once work starts. Call list_classification_methodologies for each one's options.`
+        )}); defaults to ${DEFAULT_METHODOLOGY}. It is set when the task is taken; a task given back to the queue can be taken on another one. Call list_classification_methodologies for each one's options.`
     );
 
 export const NextReviewTaskSchema = z.object({

@@ -23,7 +23,11 @@ import { ReviewLog } from "./review-log";
 import { ReviewNotifierService } from "./review-notifier.service";
 import { ReviewStages } from "./review-stages";
 import { ReleaseReason, ReviewWriting } from "./review-writing";
-import { WorkflowConfig } from "./workflow-guards";
+import { REVIEW_DATA, WorkflowConfig } from "./workflow-guards";
+import {
+    methodologySwitchReset,
+    resolveMethodologyId,
+} from "../../../lib/classification-methodology";
 import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 
 export type { ReleaseReason } from "./review-writing";
@@ -103,11 +107,14 @@ export class ReviewWorkflowService {
             dataHash
         );
         if (existing) {
-            // A queued task has no methodology until work starts: it is set
-            // when the task is taken and fixed from then on, so a task that
-            // already has one cannot be switched to another
+            // The methodology is set when a queued task is taken, as on the
+            // web assignment: a task given back can be taken on another one,
+            // which clears the labels it no longer offers and the cross-check.
+            // A task being worked on keeps its own.
+            const queued = stateName(existing.machine?.value) === "unassigned";
             const stored = existing.classificationMethodology;
             if (
+                !queued &&
                 stored &&
                 classificationMethodology &&
                 classificationMethodology !== stored
@@ -117,27 +124,46 @@ export class ReviewWorkflowService {
                 );
             }
             const take = assignTo(user._id);
-            if (!stored) {
+            if (
+                !stored ||
+                (classificationMethodology &&
+                    classificationMethodology !== stored)
+            ) {
+                const methodology =
+                    this.reviewTaskService.resolveMethodologyForNewTask(
+                        classificationMethodology
+                    );
                 Object.assign(take.$set, {
-                    classificationMethodology:
-                        this.reviewTaskService.resolveMethodologyForNewTask(
-                            classificationMethodology
-                        ),
+                    classificationMethodology: methodology,
                 });
+                if (methodology !== resolveMethodologyId(stored)) {
+                    const reset = methodologySwitchReset(
+                        methodology,
+                        existing.machine?.context?.reviewData
+                    );
+                    Object.assign(
+                        take.$set,
+                        Object.fromEntries(
+                            Object.entries(reset).map(([field, value]) => [
+                                `${REVIEW_DATA}.${field}`,
+                                value,
+                            ])
+                        )
+                    );
+                }
             }
             // A queued (`unassigned`) task is taken, atomically, the same way
             // next_review_task takes it; anything further along is someone
             // else's work.
-            const taken =
-                stateName(existing.machine?.value) === "unassigned"
-                    ? await this.reviewTaskQueue.transitionAtomically(
-                          {
-                              _id: existing._id,
-                              "machine.value": "unassigned",
-                          },
-                          take
-                      )
-                    : null;
+            const taken = queued
+                ? await this.reviewTaskQueue.transitionAtomically(
+                      {
+                          _id: existing._id,
+                          "machine.value": "unassigned",
+                      },
+                      take
+                  )
+                : null;
             if (!taken) {
                 throw new ConflictException(
                     "A review task already exists for this sentence"

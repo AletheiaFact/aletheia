@@ -23,6 +23,9 @@ interface ContextType {
     reportModel?: string;
     classificationMethodology?: string;
     setClassificationMethodology?: (methodology: string) => void;
+    // The task's methodology as last saved, to tell when the picker changed it
+    savedClassificationMethodology?: string;
+    setSavedClassificationMethodology?: (methodology: string) => void;
     recreateMachine?: (reportModel: string) => void;
     claim?: any;
     sentenceContent?: any;
@@ -90,6 +93,8 @@ export const ReviewTaskMachineProvider = (
     const [classificationMethodology, setClassificationMethodology] = useState<
         string | undefined
     >(props.baseClassificationMethodology);
+    const [savedClassificationMethodology, setSavedClassificationMethodology] =
+        useState<string | undefined>(props.baseClassificationMethodology);
     const { t } = useTranslation();
     const preloadedOptions =
         globalMachineService?.state?.context?.preloadedOptions;
@@ -131,6 +136,7 @@ export const ReviewTaskMachineProvider = (
 
                 setReportModel(reportModel);
                 setClassificationMethodology(classificationMethodology);
+                setSavedClassificationMethodology(classificationMethodology);
                 setGlobalMachineService(
                     createNewMachineService(
                         newMachine,
@@ -207,6 +213,8 @@ export const ReviewTaskMachineProvider = (
                 reportModel,
                 classificationMethodology,
                 setClassificationMethodology,
+                savedClassificationMethodology,
+                setSavedClassificationMethodology,
                 form,
                 events,
                 recreateMachine: createMachineBasedOnReportModel,

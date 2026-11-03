@@ -1,20 +1,21 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException } from "@nestjs/common";
 import { ReviewTaskService } from "./review-task.service";
 import { ReviewTaskEffectsService } from "./review-task-effects.service";
 
 class FakeReviewTaskModel {
+    static findByIdAndUpdate = vi.fn(async () => ({}));
     save = vi.fn(async () => this);
     constructor(body: Record<string, unknown>) {
         Object.assign(this, body);
     }
 }
 
-const build = (flagEnabled = true) => {
+const build = (flagEnabled = true, role = "admin") => {
     const reportService = {
         create: vi.fn(async (report: any) => ({ ...report, _id: "r1" })),
     };
     const claimReviewService = { create: vi.fn(async () => ({})) };
-    const req = { user: { _id: "u1", role: { main: "admin" } } };
+    const req = { user: { _id: "u1", role: { main: role } } };
     // Real effects so the report built on publish is checked; history and
     // state events are out of scope here
     const effects = new ReviewTaskEffectsService(
@@ -151,5 +152,120 @@ describe("ReviewTaskService classification methodology", () => {
         expect(reportService.create.mock.calls[0][0]).not.toHaveProperty(
             "classificationMethodology"
         );
+    });
+
+    describe("on an existing task", () => {
+        const storedTask = (state: unknown, reviewData = {}) => ({
+            _id: "task-1",
+            reportModel: "Fact-checking",
+            nameSpace: "main",
+            classificationMethodology: "aletheia",
+            machine: { value: state, context: { reviewData, review: {} } },
+            toObject() {
+                return { ...this };
+            },
+        });
+        const assignBody = (reviewData = {}) =>
+            createBody({
+                classificationMethodology: "rncd-debate",
+                machine: {
+                    value: { assigned: "draft" },
+                    context: { reviewData: { usersId: [], ...reviewData } },
+                },
+            }) as any;
+        const savedSet = () =>
+            (FakeReviewTaskModel.findByIdAndUpdate.mock.calls.at(-1) as any)[1]
+                .$set;
+
+        beforeEach(() => FakeReviewTaskModel.findByIdAndUpdate.mockClear());
+
+        it("switches the methodology when an admin reassigns the task", async () => {
+            const { service } = build(true, "admin");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask("reported") as any
+            );
+            await service.create(
+                assignBody({
+                    classification: "exaggerated",
+                    crossCheckingClassification: "exaggerated",
+                    crossCheckingComment: "ok",
+                })
+            );
+            const set = savedSet();
+            expect(set.classificationMethodology).toBe("rncd-debate");
+            expect(set.machine.context.reviewData).toEqual(
+                expect.objectContaining({
+                    classification: "",
+                    crossCheckingClassification: "",
+                    crossCheckingComment: "",
+                })
+            );
+        });
+
+        it("keeps a label the new methodology also offers", async () => {
+            const { service } = build(true, "admin");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask("reported") as any
+            );
+            await service.create(assignBody({ classification: "false" }));
+            expect(savedSet().machine.context.reviewData.classification).toBe(
+                "false"
+            );
+        });
+
+        it("lets anyone set it when taking a queued task", async () => {
+            const { service } = build(true, "fact-checker");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask("unassigned") as any
+            );
+            await service.create(assignBody());
+            expect(savedSet().classificationMethodology).toBe("rncd-debate");
+        });
+
+        it("refuses a non-admin reassignment that changes it", async () => {
+            const { service } = build(true, "fact-checker");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask("reported") as any
+            );
+            await expect(service.create(assignBody())).rejects.toBeInstanceOf(
+                ForbiddenException
+            );
+            expect(
+                FakeReviewTaskModel.findByIdAndUpdate
+            ).not.toHaveBeenCalled();
+        });
+
+        it("ignores a different methodology on saves that are not an assignment", async () => {
+            const { service } = build(true, "admin");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask({ assigned: "draft" }) as any
+            );
+            await service.create(
+                createBody({
+                    classificationMethodology: "rncd-debate",
+                    machine: {
+                        value: "reported",
+                        context: {
+                            reviewData: { classification: "exaggerated" },
+                        },
+                    },
+                }) as any
+            );
+            const set = savedSet();
+            expect(set).not.toHaveProperty("classificationMethodology");
+            expect(set.machine.context.reviewData.classification).toBe(
+                "exaggerated"
+            );
+        });
+
+        it("refuses a non-default methodology on reassignment while the flag is off", async () => {
+            const { service } = build(false, "admin");
+            vi.spyOn(service, "getReviewTaskByDataHash").mockResolvedValue(
+                storedTask("reported") as any
+            );
+            await expect(service.create(assignBody())).rejects.toBeInstanceOf(
+                BadRequestException
+            );
+        });
     });
 });

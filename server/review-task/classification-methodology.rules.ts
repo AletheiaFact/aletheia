@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException } from "@nestjs/common";
 import {
     DEFAULT_METHODOLOGY,
     MethodologyId,
@@ -59,4 +59,45 @@ export function assertAllowedClassification(
             )}" methodology`
         );
     }
+}
+
+/**
+ * Methodology an existing task moves to, or undefined when it keeps its
+ * own. It can only change when the task is (re)assigned: anyone taking a
+ * queued task, or an admin reassigning one already in progress. Any other
+ * save keeps the stored methodology, whatever the request says.
+ */
+export function resolveMethodologySwitch({
+    stored,
+    requested,
+    fromState,
+    toState,
+    isAdmin,
+    enabled,
+}: {
+    stored: string | undefined | null;
+    requested: string | undefined | null;
+    fromState: string | undefined;
+    toState: string | undefined;
+    isAdmin: boolean;
+    enabled: boolean;
+}): MethodologyId | undefined {
+    if (
+        !requested ||
+        toState !== "assigned" ||
+        fromState === "published" ||
+        requested === resolveMethodologyId(stored)
+    ) {
+        return undefined;
+    }
+    const next = resolveNewTaskMethodology(requested, enabled);
+    if (next === resolveMethodologyId(stored)) {
+        return undefined;
+    }
+    if (fromState !== "unassigned" && !isAdmin) {
+        throw new ForbiddenException(
+            "Only an admin can change the classification methodology when reassigning a task"
+        );
+    }
+    return next;
 }

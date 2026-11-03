@@ -75,6 +75,26 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
     });
 
+    // Runs before any task exists for the sentence. CI cannot turn the
+    // Unleash flag on, so the flag endpoint is stubbed. Nothing is saved.
+    it("offers the methodology on the assignment form only", () => {
+        cy.login();
+        cy.intercept("GET", "/api/reviewtask-methodology", {
+            statusCode: 200,
+            body: { enabled: true },
+        });
+        goToClaimReviewPage();
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist");
+        cy.get("[data-cy=testClassificationMethodologySelect]").should(
+            "not.exist"
+        );
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).click();
+        cy.get(locators.claimReview.INPUT_USER).should("exist");
+        cy.get("[data-cy=testClassificationMethodologySelect]").should(
+            "be.visible"
+        );
+    });
+
     it("should be able to assign a user", () => {
         cy.login();
         goToClaimReviewPage();

@@ -1,6 +1,7 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException } from "@nestjs/common";
 import {
     assertAllowedClassification,
+    resolveMethodologySwitch,
     resolveNewTaskMethodology,
 } from "./classification-methodology.rules";
 
@@ -78,5 +79,70 @@ describe("assertAllowedClassification", () => {
                 "classification"
             )
         ).not.toThrow();
+    });
+});
+
+describe("resolveMethodologySwitch", () => {
+    const input = (overrides = {}) => ({
+        stored: "aletheia",
+        requested: "rncd-debate",
+        fromState: "reported",
+        toState: "assigned",
+        isAdmin: true,
+        enabled: true,
+        ...overrides,
+    });
+
+    it("switches when an admin reassigns", () => {
+        expect(resolveMethodologySwitch(input())).toBe("rncd-debate");
+    });
+
+    it("switches for anyone taking a queued task", () => {
+        expect(
+            resolveMethodologySwitch(
+                input({ fromState: "unassigned", isAdmin: false })
+            )
+        ).toBe("rncd-debate");
+    });
+
+    it("refuses a non-admin reassignment", () => {
+        expect(() =>
+            resolveMethodologySwitch(input({ isAdmin: false }))
+        ).toThrow(ForbiddenException);
+    });
+
+    it.each([
+        ["no request", { requested: undefined }],
+        ["the same methodology", { requested: "aletheia" }],
+        ["a save that is not an assignment", { toState: "reported" }],
+        ["a published task", { fromState: "published" }],
+    ])("keeps the stored one for %s", (_case, overrides) => {
+        expect(resolveMethodologySwitch(input(overrides))).toBeUndefined();
+    });
+
+    it("treats a task without one as aletheia", () => {
+        expect(
+            resolveMethodologySwitch(
+                input({ stored: undefined, requested: "aletheia" })
+            )
+        ).toBeUndefined();
+    });
+
+    it("keeps an unchanged non-default methodology after the flag is off", () => {
+        expect(
+            resolveMethodologySwitch(
+                input({
+                    stored: "rncd-debate",
+                    requested: "rncd-debate",
+                    enabled: false,
+                })
+            )
+        ).toBeUndefined();
+    });
+
+    it("refuses switching to a non-default methodology while the flag is off", () => {
+        expect(() =>
+            resolveMethodologySwitch(input({ enabled: false }))
+        ).toThrow(BadRequestException);
     });
 });
