@@ -5,6 +5,7 @@
   "placeholder": "Adicione tópicos à sentença",
   "getTopicsFailed": "Erro ao buscar tópicos",
   "addTopicsButton": "Adicionar tópicos",
+  "addTopicsInstruction": "Selecione um tópico e clique em Adicionar tópicos para salvá-lo.",
   "inputRule": "Campo obrigatório",
   "noTopics": "Tópicos não adicionados",
   "deleteTopics": "Tópico deletado com sucesso",

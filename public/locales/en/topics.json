@@ -5,6 +5,7 @@
   "placeholder": "Add sentence topics",
   "getTopicsFailed": "Error while fetching topics",
   "addTopicsButton": "Add topics",
+  "addTopicsInstruction": "Select a topic, then click Add topics to save it.",
   "inputRule": "Required field",
   "noTopics": "No topics added",
   "deleteTopics": "Topic deleted successfully",

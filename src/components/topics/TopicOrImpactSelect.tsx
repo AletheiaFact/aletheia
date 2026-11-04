@@ -16,6 +16,7 @@ const MultiSelectAutocomplete = ({
     onChange,
     isLoading,
     placeholder,
+    helperText,
     setSelectedTags,
     setIsLoading,
     isDisabled,
@@ -97,6 +98,7 @@ const MultiSelectAutocomplete = ({
                     <TextField
                         {...params}
                         placeholder={placeholder}
+                        helperText={helperText}
                         data-cy={dataCy}
                         InputProps={{
                             ...params.InputProps,

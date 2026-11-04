@@ -72,6 +72,7 @@ export interface IMultiSelectAutocomplete {
     onChange: (value: ManualTopic[] | ManualTopic) => void;
     isLoading: boolean;
     placeholder: string;
+    helperText?: string;
     setSelectedTags: React.Dispatch<React.SetStateAction<ManualTopic[] | ManualTopic>>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     isDisabled?: boolean;

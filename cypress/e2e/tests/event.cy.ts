@@ -13,6 +13,8 @@ import {
     participantOrganizations,
 } from "../../fixtures/event";
 import { Dayjs } from "dayjs";
+import enTopics from "../../../public/locales/en/topics.json";
+import ptTopics from "../../../public/locales/pt/topics.json";
 
 let createdEventUrl = "";
 let legacyEventUrl = "";
@@ -97,6 +99,18 @@ const addTopicFlow = (aliasType: string, labelToClick: string) => {
     cy.get(locators.topic.ADD_TOPIC_ICON).click();
     cy.get(locators.topic.TYPE_TOPIC_INPUT).should("be.visible").click();
     cy.get(locators.topic.TYPE_TOPIC_INPUT).find("input").should("have.focus");
+    cy.get(locators.topic.TYPE_TOPIC_INPUT)
+        .find("input")
+        .should("have.attr", "aria-describedby")
+        .then((id) => {
+            cy.get(`[id="${id}"]`)
+                .should("be.visible")
+                .invoke("text")
+                .should("be.oneOf", [
+                    enTopics.addTopicsInstruction,
+                    ptTopics.addTopicsInstruction,
+                ]);
+        });
 
     cy.get(locators.topic.TYPE_TOPIC_INPUT)
         .clear()
