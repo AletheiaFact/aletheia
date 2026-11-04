@@ -2,7 +2,7 @@ import { createApiInstance } from "./apiFactory";
 
 const request = createApiInstance("");
 
-export type SentenceOpIntent = "noop" | "edit";
+export type SentenceOpIntent = "noop" | "edit" | "delete";
 
 export interface SentenceOp {
     intent: SentenceOpIntent;
@@ -28,6 +28,7 @@ export interface AdminClaimEditableView {
     nameSpace: string;
     personalitySlug?: string;
     baseRevisionId: string;
+    contentModel: string;
     metadata: {
         title: string;
         date: string;
@@ -39,6 +40,10 @@ export interface AdminClaimEditableView {
         dataHash: string;
         text: string;
         position: number;
+        reviewStatus?: "in-progress" | "published";
+        // Set for debates: the speech (turn) the sentence belongs to.
+        speechId?: string;
+        personalityId?: string;
     }>;
 }
 
