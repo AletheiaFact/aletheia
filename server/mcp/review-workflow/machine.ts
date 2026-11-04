@@ -52,6 +52,34 @@ export function claimPersonalityId(claim: any): string {
     return id ? id.toString() : "";
 }
 
+// A debate's content is a list of speeches, each by its own personality, so
+// the claim's first personality is only right for single-speaker claims.
+function findSpeechPersonality(node: any, dataHash: string): unknown {
+    if (Array.isArray(node)) {
+        for (const child of node) {
+            const found = findSpeechPersonality(child, dataHash);
+            if (found) return found;
+        }
+    } else if (node && typeof node === "object") {
+        if (
+            node.type === "speech" &&
+            node.personality &&
+            collectSentenceHashes(node.content).includes(dataHash)
+        ) {
+            return node.personality;
+        }
+        return findSpeechPersonality(node.content, dataHash);
+    }
+    return undefined;
+}
+
+/** Id of the personality who said the sentence, as the web form sends it; "" when none. */
+export function sentencePersonalityId(claim: any, dataHash: string): string {
+    const personality = findSpeechPersonality(claim?.content, dataHash) as any;
+    const id = personality?._id ?? personality;
+    return id ? id.toString() : claimPersonalityId(claim);
+}
+
 // Mirrors getInitialContext(ReviewTaskTypeEnum.Claim, { usersId }) from
 // src/machines/reviewTask/context.ts, which the frontend uses to hydrate its
 // XState machine. A parity spec keeps the two in sync. The web form also sets
