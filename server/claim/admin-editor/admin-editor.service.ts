@@ -38,6 +38,11 @@ import {
     Speech,
     SpeechDocument,
 } from "../types/speech/mongo/schemas/speech.schema";
+import {
+    Debate,
+    DebateDocument,
+    TranscriptTurnStatus,
+} from "../types/debate/schemas/debate.schema";
 import { HistoryService } from "../../history/history.service";
 import { HistoryType, TargetModel } from "../../history/schema/history.schema";
 import type { BaseRequest } from "../../types";
@@ -51,13 +56,34 @@ import {
     SentenceViewDto,
 } from "./dto/claim-edit-response.dto";
 
+interface LoadedSentence extends PreviousSentenceSnapshot {
+    speechId: string;
+    paragraphId: string;
+    personalityId?: string;
+    props: object;
+    topics?: unknown[];
+}
+
 interface LoadedStructure {
     claim: ClaimDocument;
     revision: ClaimRevisionDocument;
     speech: SpeechDocument | null;
+    debate: DebateDocument | null;
     paragraphs: ParagraphDocument[];
-    sentences: PreviousSentenceSnapshot[];
+    sentences: LoadedSentence[];
 }
+
+const refId = (ref: any): string => (ref?._id ?? ref).toString();
+
+// Strips trailing spaces and tabs, but not newlines. A loop instead of
+// /[ \t]+$/, which backtracks on long runs of blanks.
+const trimTrailingBlanks = (text: string): string => {
+    let end = text.length;
+    while (end > 0 && (text[end - 1] === " " || text[end - 1] === "\t")) {
+        end -= 1;
+    }
+    return text.slice(0, end);
+};
 
 @Injectable({ scope: Scope.REQUEST })
 export class AdminEditorService {
@@ -75,6 +101,8 @@ export class AdminEditorService {
         private readonly ParagraphModel: Model<ParagraphDocument>,
         @InjectModel(Speech.name)
         private readonly SpeechModel: Model<SpeechDocument>,
+        @InjectModel(Debate.name)
+        private readonly DebateModel: Model<DebateDocument>,
         private readonly txn: TransactionHelper,
         private readonly diffValidator: DiffValidatorService,
         private readonly cascade: CascadeService,
@@ -84,6 +112,20 @@ export class AdminEditorService {
 
     async view(claimId: string): Promise<ClaimEditableViewDto> {
         const loaded = await this.loadStructure(claimId);
+        const hashes = loaded.sentences.map((s) => s.dataHash);
+        const [publishedHashes, reviewTaskHashes] = await Promise.all([
+            this.cascade.findPublishedHashes(hashes, loaded.claim._id),
+            this.cascade.findReviewTaskHashes(hashes, loaded.claim._id),
+        ]);
+        const published = new Set(publishedHashes);
+        const withTask = new Set(reviewTaskHashes);
+        const reviewStatusOf = (
+            dataHash: string
+        ): Pick<SentenceViewDto, "reviewStatus"> => {
+            if (published.has(dataHash)) return { reviewStatus: "published" };
+            if (withTask.has(dataHash)) return { reviewStatus: "in-progress" };
+            return {};
+        };
         const personalities = (loaded.claim.personalities ??
             []) as unknown as Array<{
             _id: any;
@@ -97,6 +139,7 @@ export class AdminEditorService {
             nameSpace: loaded.claim.nameSpace,
             personalitySlug: firstPersonalitySlug,
             baseRevisionId: loaded.revision._id.toString(),
+            contentModel: loaded.revision.contentModel,
             metadata: {
                 title: loaded.revision.title,
                 date:
@@ -115,6 +158,11 @@ export class AdminEditorService {
                 dataHash: s.dataHash,
                 text: s.text,
                 position: s.position,
+                ...reviewStatusOf(s.dataHash),
+                ...(loaded.debate && {
+                    speechId: s.speechId,
+                    personalityId: s.personalityId,
+                }),
             })),
         };
     }
@@ -134,6 +182,15 @@ export class AdminEditorService {
                 const loaded = await this.loadStructure(claimId, session);
                 this.assertBaseRevision(loaded.claim, payload.baseRevisionId);
 
+                if (loaded.debate) {
+                    return await this.commitDebate(
+                        loaded,
+                        loaded.debate,
+                        payload,
+                        session
+                    );
+                }
+
                 const metadataChanges = this.diffMetadata(
                     loaded.revision,
                     payload
@@ -145,6 +202,7 @@ export class AdminEditorService {
                 const hasSentenceChange = classified.some(
                     (c) => c.intent !== "noop"
                 );
+                await this.assertDeletable(loaded, classified, session);
 
                 if (metadataChanges.length === 0 && !hasSentenceChange) {
                     throw new BadRequestException({
@@ -212,6 +270,7 @@ export class AdminEditorService {
                     cascadeSummary: {
                         reviewTasksUpdated: cascadeCounts.reviewTasksUpdated,
                         claimReviewsUpdated: cascadeCounts.claimReviewsUpdated,
+                        reportsUpdated: cascadeCounts.reportsUpdated,
                         verificationRequestsUpdated:
                             cascadeCounts.verificationRequestsUpdated,
                         commentsUpdated: cascadeCounts.commentsUpdated,
@@ -262,85 +321,142 @@ export class AdminEditorService {
             throw new NotFoundException("Claim revision not found");
         }
 
-        if (revision.contentModel !== ContentModelEnum.Speech) {
+        const empty: LoadedStructure = {
+            claim,
+            revision,
+            speech: null,
+            debate: null,
+            paragraphs: [],
+            sentences: [],
+        };
+
+        if (revision.contentModel === ContentModelEnum.Debate) {
+            const debateQuery = this.DebateModel.findById(revision.contentId);
+            if (session) debateQuery.session(session);
+            const debate = await debateQuery.exec();
+            if (!debate) return empty;
+
+            // Only speeches in `content` are approved and public; draft
+            // transcript turns are edited through the transcript endpoints.
+            const speechIds = (debate.content ?? []).map(refId);
+            const speechesQuery = this.SpeechModel.find({
+                _id: { $in: speechIds },
+            });
+            if (session) speechesQuery.session(session);
+            const speechesById = new Map<string, SpeechDocument>();
+            for (const s of await speechesQuery.exec()) {
+                speechesById.set(s._id.toString(), s);
+            }
+            const speeches = speechIds
+                .map((id) => speechesById.get(id))
+                .filter((s): s is SpeechDocument => !!s);
+
             return {
-                claim,
-                revision,
-                speech: null,
-                paragraphs: [],
-                sentences: [],
+                ...empty,
+                debate,
+                ...(await this.loadSpeechSentences(speeches, session)),
             };
+        }
+
+        if (revision.contentModel !== ContentModelEnum.Speech) {
+            return empty;
         }
 
         const speechQuery = this.SpeechModel.findById(revision.contentId);
         if (session) speechQuery.session(session);
         const speech = await speechQuery.exec();
-        if (!speech) {
-            return {
-                claim,
-                revision,
-                speech: null,
-                paragraphs: [],
-                sentences: [],
-            };
-        }
+        if (!speech) return empty;
 
-        const paragraphIds = (speech.content ?? []).map(
-            (p: any) => p?._id ?? p
+        return {
+            ...empty,
+            speech,
+            ...(await this.loadSpeechSentences([speech], session)),
+        };
+    }
+
+    // Loads the paragraphs and sentences of the given speeches, in order,
+    // with one query per collection regardless of the number of speeches.
+    private async loadSpeechSentences(
+        speeches: SpeechDocument[],
+        session?: ClientSession
+    ): Promise<{
+        paragraphs: ParagraphDocument[];
+        sentences: LoadedSentence[];
+    }> {
+        const paragraphIds = speeches.flatMap((speech) =>
+            (speech.content ?? []).map(refId)
         );
         const paragraphsQuery = this.ParagraphModel.find({
             _id: { $in: paragraphIds },
         });
         if (session) paragraphsQuery.session(session);
-        const paragraphs = await paragraphsQuery.exec();
         const paragraphsById = new Map<string, ParagraphDocument>();
-        for (const p of paragraphs) paragraphsById.set(p._id.toString(), p);
-        const orderedParagraphs = paragraphIds
-            .map((id: any) => paragraphsById.get(id.toString()))
-            .filter((p): p is ParagraphDocument => !!p);
-
-        const sentenceIds: Types.ObjectId[] = [];
-        for (const p of orderedParagraphs) {
-            for (const s of p.content as any[]) {
-                sentenceIds.push(s?._id ?? s);
-            }
+        for (const p of await paragraphsQuery.exec()) {
+            paragraphsById.set(p._id.toString(), p);
         }
+
+        const sentenceIds = [...paragraphsById.values()].flatMap((p) =>
+            (p.content as any[]).map(refId)
+        );
         const sentencesQuery = this.SentenceModel.find({
             _id: { $in: sentenceIds },
         });
         if (session) sentencesQuery.session(session);
-        const sentenceDocs = await sentencesQuery.exec();
         const sentencesById = new Map<string, SentenceDocument>();
-        for (const s of sentenceDocs) sentencesById.set(s._id.toString(), s);
+        for (const s of await sentencesQuery.exec()) {
+            sentencesById.set(s._id.toString(), s);
+        }
 
-        const snapshots: PreviousSentenceSnapshot[] = [];
+        return this.orderSpeechSentences(
+            speeches,
+            paragraphsById,
+            sentencesById
+        );
+    }
+
+    private orderSpeechSentences(
+        speeches: SpeechDocument[],
+        paragraphsById: Map<string, ParagraphDocument>,
+        sentencesById: Map<string, SentenceDocument>
+    ): {
+        paragraphs: ParagraphDocument[];
+        sentences: LoadedSentence[];
+    } {
+        const orderedParagraphs: ParagraphDocument[] = [];
+        const snapshots: LoadedSentence[] = [];
         let position = 0;
-        for (const p of orderedParagraphs) {
-            let sequence = 0;
-            for (const sRef of p.content as any[]) {
-                const sId = (sRef?._id ?? sRef).toString();
-                const sDoc = sentencesById.get(sId);
-                if (!sDoc) continue;
-                sequence += 1;
-                snapshots.push({
-                    sentenceId: sDoc._id.toString(),
-                    dataHash: sDoc.data_hash,
-                    text: sDoc.content,
-                    position,
-                    paragraphDataHash: p.data_hash,
-                    sentenceSequence: sequence,
-                });
-                position += 1;
+        for (const speech of speeches) {
+            const personalityId = speech.personality
+                ? refId(speech.personality)
+                : undefined;
+            for (const pRef of speech.content ?? []) {
+                const p = paragraphsById.get(refId(pRef));
+                if (!p) continue;
+                orderedParagraphs.push(p);
+                let sequence = 0;
+                for (const sRef of p.content as any[]) {
+                    const sDoc = sentencesById.get(refId(sRef));
+                    if (!sDoc) continue;
+                    sequence += 1;
+                    snapshots.push({
+                        sentenceId: sDoc._id.toString(),
+                        dataHash: sDoc.data_hash,
+                        text: sDoc.content,
+                        position,
+                        paragraphDataHash: p.data_hash,
+                        sentenceSequence: sequence,
+                        speechId: speech._id.toString(),
+                        paragraphId: p._id.toString(),
+                        personalityId,
+                        props: sDoc.props,
+                        topics: sDoc.topics,
+                    });
+                    position += 1;
+                }
             }
         }
 
-        return {
-            claim,
-            revision,
-            speech,
-            paragraphs: orderedParagraphs,
-            sentences: snapshots,
-        };
+        return { paragraphs: orderedParagraphs, sentences: snapshots };
     }
 
     private async buildNewContent(
@@ -363,6 +479,11 @@ export class AdminEditorService {
             });
         }
 
+        const deleteIds = new Set(
+            classified
+                .filter((c) => c.intent === "delete")
+                .map((c) => c.sourceSentenceIds[0])
+        );
         const editById = new Map<
             string,
             { newText: string; oldDataHash: string }
@@ -405,6 +526,15 @@ export class AdminEditorService {
             for (const oldSentenceId of oldSentenceRefs) {
                 const snapshot = sentenceIdToSnapshot.get(oldSentenceId);
                 if (!snapshot) continue;
+                if (deleteIds.has(oldSentenceId)) {
+                    sentenceDiff.push({
+                        op: "delete",
+                        paragraphPosition,
+                        oldHash: snapshot.dataHash,
+                        oldLength: snapshot.text.length,
+                    });
+                    continue;
+                }
                 const edit = editById.get(oldSentenceId);
 
                 if (edit) {
@@ -416,7 +546,7 @@ export class AdminEditorService {
                     if (newHash === edit.oldDataHash) {
                         throw new BadRequestException({
                             statusCode: 400,
-                            message: `Edit on sentence ${oldSentenceId} produced identical hash`,
+                            message: "An edit produced an identical hash",
                             errorCode: "intent-mismatch",
                         });
                     }
@@ -453,6 +583,9 @@ export class AdminEditorService {
                     newSentenceIds.push(new Types.ObjectId(oldSentenceId));
                 }
             }
+
+            // A paragraph whose sentences were all deleted is dropped.
+            if (newSentenceIds.length === 0) continue;
 
             const newParagraphId = new Types.ObjectId();
             paragraphDocsToInsert.push({
@@ -494,6 +627,371 @@ export class AdminEditorService {
             sentenceTargetRemaps,
             sentenceDiff,
         };
+    }
+
+    // A debate is edited in place instead of cloned into a new revision:
+    // the transcriber, the collaborative editor and `getByContentId` all
+    // address the debate by its id, so it must keep its revision and its
+    // speeches. Each edited sentence becomes a new Sentence doc swapped into
+    // its paragraph and each deleted one is pulled from it; old docs are
+    // kept for audit, as in the Speech flow.
+    private async commitDebate(
+        loaded: LoadedStructure,
+        debate: DebateDocument,
+        payload: ClaimEditCommitRequestDto,
+        session: ClientSession
+    ): Promise<ClaimEditCommitResponseDto> {
+        if (this.diffMetadata(loaded.revision, payload).length > 0) {
+            throw new BadRequestException({
+                statusCode: 400,
+                message: "Metadata editing is not supported for debates",
+                errorCode: "content-type-not-supported",
+            });
+        }
+
+        const classified = this.diffValidator.classifyForEditOnly(
+            loaded.sentences,
+            payload.sentenceOps ?? []
+        );
+        const changes = classified.filter((c) => c.intent !== "noop");
+        if (changes.length === 0) {
+            throw new BadRequestException({
+                statusCode: 400,
+                message: "No changes detected",
+                errorCode: "no-op",
+            });
+        }
+
+        await this.assertDeletable(loaded, classified, session);
+
+        // New text per changed sentence; null marks a deletion.
+        const newTextById = new Map<string, string | null>(
+            changes.map((c) => [
+                c.sourceSentenceIds[0],
+                c.intent === "delete" ? null : c.newTexts[0],
+            ])
+        );
+        const deletions: LoadedSentence[] = [];
+        const swaps: Array<{
+            snapshot: LoadedSentence;
+            newSentenceId: Types.ObjectId;
+        }> = [];
+        const hashRemaps: SentenceHashRemap[] = [];
+        const sentenceTargetRemaps: SentenceTargetRemap[] = [];
+        const sentenceDiff: Array<Record<string, unknown>> = [];
+        const sentenceDocsToInsert: any[] = [];
+
+        for (const snapshot of loaded.sentences) {
+            const newText = newTextById.get(snapshot.sentenceId);
+            if (newText === undefined) continue;
+            if (newText === null) {
+                deletions.push(snapshot);
+                sentenceDiff.push({
+                    op: "delete",
+                    speechId: snapshot.speechId,
+                    oldHash: snapshot.dataHash,
+                    oldLength: snapshot.text.length,
+                });
+                continue;
+            }
+            const newHash = this.hash.computeSentenceHash(
+                snapshot.paragraphDataHash,
+                snapshot.sentenceSequence,
+                newText
+            );
+            if (newHash === snapshot.dataHash) {
+                throw new BadRequestException({
+                    statusCode: 400,
+                    message: "An edit produced an identical hash",
+                    errorCode: "intent-mismatch",
+                });
+            }
+            const newSentenceId = new Types.ObjectId();
+            sentenceDocsToInsert.push({
+                _id: newSentenceId,
+                type: "sentence",
+                data_hash: newHash,
+                props: snapshot.props,
+                content: newText,
+                topics: snapshot.topics,
+                claimRevisionId: loaded.revision._id,
+            });
+            swaps.push({ snapshot, newSentenceId });
+            hashRemaps.push({
+                oldDataHash: snapshot.dataHash,
+                newDataHash: newHash,
+            });
+            sentenceTargetRemaps.push({
+                oldSentenceId: snapshot.sentenceId,
+                newSentenceId,
+            });
+            // Redacted diff, no plaintext: see buildNewContent.
+            sentenceDiff.push({
+                op: "edit",
+                speechId: snapshot.speechId,
+                oldHash: snapshot.dataHash,
+                newHash,
+                oldLength: snapshot.text.length,
+                newLength: newText.length,
+            });
+        }
+
+        if (sentenceDocsToInsert.length > 0) {
+            await this.SentenceModel.insertMany(sentenceDocsToInsert, {
+                session,
+            });
+        }
+
+        // Matches only while the paragraph still holds the old sentence, so
+        // a concurrent change of the same sentence aborts the transaction.
+        for (const { snapshot, newSentenceId } of swaps) {
+            const result = await this.ParagraphModel.updateOne(
+                {
+                    _id: new Types.ObjectId(snapshot.paragraphId),
+                    content: new Types.ObjectId(snapshot.sentenceId),
+                },
+                { $set: { "content.$": newSentenceId } },
+                { session }
+            );
+            if (result.matchedCount === 0) {
+                throw this.sentenceConflict(loaded);
+            }
+        }
+        await this.pullDeletedSentences(loaded, deletions, session);
+
+        await this.updateTranscriptTurnTexts(
+            loaded,
+            debate,
+            newTextById,
+            session
+        );
+
+        const claimId = loaded.claim._id as Types.ObjectId;
+        const cascadeCounts = await this.cascade.applyOneToOneRemaps(
+            hashRemaps,
+            sentenceTargetRemaps,
+            claimId,
+            session
+        );
+
+        const historyEntry = await this.writeHistory(
+            claimId.toString(),
+            loaded.revision,
+            loaded.revision,
+            [],
+            sentenceDiff,
+            session
+        );
+
+        this.logger.log(
+            `Debate commit success — claimId=${claimId} ` +
+                `sentenceHashRemaps=${hashRemaps.length} ` +
+                `reviewTasksUpdated=${cascadeCounts.reviewTasksUpdated} ` +
+                `claimReviewsUpdated=${cascadeCounts.claimReviewsUpdated} ` +
+                `commentsUpdated=${cascadeCounts.commentsUpdated}`
+        );
+
+        return {
+            newRevisionId: loaded.revision._id.toString(),
+            newSlug: loaded.claim.slug,
+            historyEntryId: historyEntry._id.toString(),
+            sentenceHashMap: hashRemaps,
+            cascadeSummary: cascadeCounts,
+        };
+    }
+
+    // Keeps the text of the approved transcript turn behind each edited
+    // speech in sync. The edited sentence is replaced where it appears in
+    // the turn text; when it is not found verbatim (the parser normalizes
+    // whitespace), the text is rebuilt from the speech's sentences.
+    private async updateTranscriptTurnTexts(
+        loaded: LoadedStructure,
+        debate: DebateDocument,
+        newTextById: Map<string, string | null>,
+        session: ClientSession
+    ) {
+        const editedSpeechIds = new Set(
+            loaded.sentences
+                .filter((s) => newTextById.has(s.sentenceId))
+                .map((s) => s.speechId)
+        );
+
+        for (const turn of debate.transcriptTurns ?? []) {
+            const speechId = turn.speech.toString();
+            if (
+                turn.status !== TranscriptTurnStatus.Approved ||
+                !editedSpeechIds.has(speechId)
+            ) {
+                continue;
+            }
+            const speechSentences = loaded.sentences.filter(
+                (s) => s.speechId === speechId
+            );
+            const text =
+                this.patchTurnText(turn.text, speechSentences, newTextById) ??
+                this.joinSentences(speechSentences, newTextById);
+
+            await this.DebateModel.updateOne(
+                { _id: debate._id, "transcriptTurns._id": turn._id },
+                { $set: { "transcriptTurns.$.text": text } },
+                { session }
+            );
+        }
+    }
+
+    // Replaces or drops each edited sentence in the turn text. Sentences are
+    // in spoken order, so each one is searched for after the previous match.
+    // Returns null when an edited sentence is not found verbatim.
+    private patchTurnText(
+        turnText: string,
+        speechSentences: LoadedSentence[],
+        newTextById: Map<string, string | null>
+    ): string | null {
+        let text = turnText;
+        let cursor = 0;
+        for (const s of speechSentences) {
+            const index = text.indexOf(s.text, cursor);
+            const newText = newTextById.get(s.sentenceId);
+            if (newText === undefined) {
+                if (index !== -1) cursor = index + s.text.length;
+                continue;
+            }
+            if (index === -1) return null;
+            if (newText === null) {
+                // Drops the sentence with the spaces that followed it.
+                const after = text
+                    .slice(index + s.text.length)
+                    .replace(/^[ \t]+/, "");
+                let before = text.slice(0, index);
+                if (after === "" || after.startsWith("\n")) {
+                    before = trimTrailingBlanks(before);
+                }
+                text = before + after;
+                cursor = before.length;
+                continue;
+            }
+            text =
+                text.slice(0, index) +
+                newText +
+                text.slice(index + s.text.length);
+            cursor = index + newText.length;
+        }
+        return text;
+    }
+
+    private joinSentences(
+        sentences: LoadedSentence[],
+        newTextById: Map<string, string | null>
+    ): string {
+        const paragraphs: string[][] = [];
+        let lastParagraphId: string | undefined;
+        for (const s of sentences) {
+            const newText = newTextById.get(s.sentenceId);
+            if (newText === null) continue;
+            if (s.paragraphId !== lastParagraphId) paragraphs.push([]);
+            lastParagraphId = s.paragraphId;
+            paragraphs[paragraphs.length - 1].push(newText ?? s.text);
+        }
+        return paragraphs.map((p) => p.join(" ")).join("\n\n");
+    }
+
+    // Pulls deleted sentences from their paragraphs, and paragraphs left
+    // empty from their speech. assertDeletable keeps every speech non-empty.
+    private async pullDeletedSentences(
+        loaded: LoadedStructure,
+        deletions: LoadedSentence[],
+        session: ClientSession
+    ) {
+        const deletedIds = new Set(deletions.map((s) => s.sentenceId));
+        const emptiedParagraphs = new Map<string, string>();
+        for (const snapshot of deletions) {
+            const result = await this.ParagraphModel.updateOne(
+                {
+                    _id: new Types.ObjectId(snapshot.paragraphId),
+                    content: new Types.ObjectId(snapshot.sentenceId),
+                },
+                {
+                    $pull: {
+                        content: new Types.ObjectId(snapshot.sentenceId),
+                    },
+                },
+                { session }
+            );
+            if (result.matchedCount === 0) {
+                throw this.sentenceConflict(loaded);
+            }
+            const paragraphEmptied = loaded.sentences.every(
+                (s) =>
+                    s.paragraphId !== snapshot.paragraphId ||
+                    deletedIds.has(s.sentenceId)
+            );
+            if (paragraphEmptied) {
+                emptiedParagraphs.set(snapshot.paragraphId, snapshot.speechId);
+            }
+        }
+        for (const [paragraphId, speechId] of emptiedParagraphs) {
+            await this.SpeechModel.updateOne(
+                { _id: new Types.ObjectId(speechId) },
+                { $pull: { content: new Types.ObjectId(paragraphId) } },
+                { session }
+            );
+        }
+    }
+
+    // Refuses deletions that would leave a speech without sentences or a
+    // published review pointing at a sentence that is gone.
+    private async assertDeletable(
+        loaded: LoadedStructure,
+        classified: ReturnType<DiffValidatorService["classifyForEditOnly"]>,
+        session: ClientSession
+    ) {
+        const deletedIds = new Set(
+            classified
+                .filter((c) => c.intent === "delete")
+                .map((c) => c.sourceSentenceIds[0])
+        );
+        if (deletedIds.size === 0) return;
+
+        const remainingBySpeech = new Map<string, number>();
+        for (const s of loaded.sentences) {
+            const kept = deletedIds.has(s.sentenceId) ? 0 : 1;
+            remainingBySpeech.set(
+                s.speechId,
+                (remainingBySpeech.get(s.speechId) ?? 0) + kept
+            );
+        }
+        if ([...remainingBySpeech.values()].includes(0)) {
+            throw new BadRequestException({
+                statusCode: 400,
+                message: "A speech must keep at least one sentence",
+                errorCode: "speech-would-be-empty",
+            });
+        }
+
+        const deletedHashes = loaded.sentences
+            .filter((s) => deletedIds.has(s.sentenceId))
+            .map((s) => s.dataHash);
+        const published = await this.cascade.findPublishedHashes(
+            deletedHashes,
+            loaded.claim._id as Types.ObjectId,
+            session
+        );
+        if (published.length > 0) {
+            throw new BadRequestException({
+                statusCode: 400,
+                message:
+                    "Sentences with a published review cannot be deleted",
+                errorCode: "sentence-has-review",
+            });
+        }
+    }
+
+    private sentenceConflict(loaded: LoadedStructure) {
+        return new ConflictException({
+            statusCode: 409,
+            message: "Sentence has been modified by another user",
+            currentRevisionId: loaded.revision._id.toString(),
+        });
     }
 
     private assertBaseRevision(claim: ClaimDocument, submittedBase: string) {

@@ -15,7 +15,7 @@ import {
     ASSIGNED_VALUE,
     assignTo,
     buildClaimContext,
-    claimPersonalityId,
+    sentencePersonalityId,
     collectSentenceHashes,
     stateName,
 } from "./machine";
@@ -130,7 +130,7 @@ export class ReviewWorkflowService {
                 context: buildClaimContext(
                     [toObjectId(user._id)],
                     claimId,
-                    claimPersonalityId(claim)
+                    sentencePersonalityId(claim, dataHash)
                 ),
             } as any,
         });

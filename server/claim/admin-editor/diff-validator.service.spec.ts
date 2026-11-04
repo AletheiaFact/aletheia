@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ConflictException } from "@nestjs/common";
 import {
     DiffValidatorService,
     PreviousSentenceSnapshot,
@@ -59,13 +59,45 @@ describe("DiffValidatorService (Unit)", () => {
             ]);
         });
 
-        it("throws when source sentence id not found", () => {
-            expect(() =>
+        it("classifies delete op without text", () => {
+            const snaps = [makeSnapshot("s1", "original")];
+            const result = service.classifyForEditOnly(snaps, [
+                { intent: "delete", sourceSentenceId: "s1" },
+            ]);
+            expect(result).toEqual([
+                {
+                    intent: "delete",
+                    sourceSentenceIds: ["s1"],
+                    sourceDataHashes: ["hash-s1"],
+                    newTexts: [],
+                },
+            ]);
+        });
+
+        it("rejects a delete op with text at the Zod boundary", async () => {
+            const { SentenceOpSchema } = await import("./dto/sentence-op.dto");
+            expect(
+                SentenceOpSchema.safeParse({
+                    intent: "remove",
+                    sourceSentenceId: "s1",
+                }).success
+            ).toBe(false);
+            expect(
+                SentenceOpSchema.safeParse({
+                    intent: "delete",
+                    sourceSentenceId: "",
+                }).success
+            ).toBe(false);
+        });
+
+        it("throws Conflict without the id when the sentence is gone", () => {
+            const call = () =>
                 service.classifyForEditOnly(
                     [],
                     [{ intent: "noop", sourceSentenceId: "missing" } as any]
-                )
-            ).toThrow(BadRequestException);
+                );
+            expect(call).toThrow(ConflictException);
+            expect(call).not.toThrow(/missing/);
         });
 
         it("throws when same source sentence referenced twice", () => {
