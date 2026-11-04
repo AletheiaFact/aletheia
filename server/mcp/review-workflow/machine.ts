@@ -12,44 +12,72 @@ import { toObjectId } from "./access";
 export const ASSIGNED_VALUE = { assigned: "undraft" };
 
 export const CROSS_CHECKING_VALUES = [
-    "cross-checking",
-    "addCommentCrossChecking",
+  "cross-checking",
+  "addCommentCrossChecking",
 ];
 
 /** Human-readable workflow state, flattening compound values like `{assigned: "draft"}`. */
 export function stateName(value: unknown): string {
-    if (value && typeof value === "object") {
-        return Object.keys(value)[0];
-    }
-    return String(value);
+  if (value && typeof value === "object") {
+    return Object.keys(value)[0];
+  }
+  return String(value);
 }
 
 // Sentences are the leaves of a claim's content tree: paragraphs also carry
 // a data_hash, but their `content` is an array rather than a string.
 export function collectSentences(
-    node: any,
-    found: { dataHash: string; text: string }[] = []
+  node: any,
+  found: { dataHash: string; text: string }[] = []
 ): { dataHash: string; text: string }[] {
-    if (Array.isArray(node)) {
-        node.forEach((child) => collectSentences(child, found));
-    } else if (node && typeof node === "object") {
-        if (node.data_hash && typeof node.content === "string") {
-            found.push({ dataHash: node.data_hash, text: node.content });
-        }
-        Object.values(node).forEach((child) => collectSentences(child, found));
+  if (Array.isArray(node)) {
+    node.forEach((child) => collectSentences(child, found));
+  } else if (node && typeof node === "object") {
+    if (node.data_hash && typeof node.content === "string") {
+      found.push({ dataHash: node.data_hash, text: node.content });
     }
-    return found;
+    Object.values(node).forEach((child) => collectSentences(child, found));
+  }
+  return found;
 }
 
 export function collectSentenceHashes(node: any): string[] {
-    return collectSentences(node).map((sentence) => sentence.dataHash);
+  return collectSentences(node).map((sentence) => sentence.dataHash);
 }
 
 /** Id of the claim's first personality, as the web form sends it; "" when none. */
 export function claimPersonalityId(claim: any): string {
-    const personality = claim?.personalities?.[0];
-    const id = personality?._id ?? personality;
-    return id ? id.toString() : "";
+  const personality = claim?.personalities?.[0];
+  const id = personality?._id ?? personality;
+  return id ? id.toString() : "";
+}
+
+// A debate's content is a list of speeches, each by its own personality, so
+// the claim's first personality is only right for single-speaker claims.
+function findSpeechPersonality(node: any, dataHash: string): unknown {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const found = findSpeechPersonality(child, dataHash);
+      if (found) return found;
+    }
+  } else if (node && typeof node === "object") {
+    if (
+      node.type === "speech" &&
+      node.personality &&
+      collectSentenceHashes(node.content).includes(dataHash)
+    ) {
+      return node.personality;
+    }
+    return findSpeechPersonality(node.content, dataHash);
+  }
+  return undefined;
+}
+
+/** Id of the personality who said the sentence, as the web form sends it; "" when none. */
+export function sentencePersonalityId(claim: any, dataHash: string): string {
+  const personality = findSpeechPersonality(claim?.content, dataHash) as any;
+  const id = personality?._id ?? personality;
+  return id ? id.toString() : claimPersonalityId(claim);
 }
 
 // Mirrors getInitialContext(ReviewTaskTypeEnum.Claim, { usersId }) from
@@ -57,41 +85,41 @@ export function claimPersonalityId(claim: any): string {
 // XState machine. A parity spec keeps the two in sync. The web form also sets
 // `review.personality`; the ClaimReview created on publish copies it.
 export function buildClaimContext(
-    usersId: unknown[],
-    claimId: string,
-    personality = ""
+  usersId: unknown[],
+  claimId: string,
+  personality = ""
 ) {
-    return {
-        reviewData: {
-            usersId,
-            summary: "",
-            classification: "",
-            reviewerId: null,
-            crossCheckerId: null,
-            crossCheckingComments: [],
-            crossCheckingComment: "",
-            crossCheckingClassification: "",
-            questions: [],
-            report: "",
-            verification: "",
-            sources: [],
-        },
-        review: {
-            personality,
-            usersId: "",
-            targetId: claimId,
-            target: claimId,
-            isPartialReview: false,
-        },
-    };
+  return {
+    reviewData: {
+      usersId,
+      summary: "",
+      classification: "",
+      reviewerId: null,
+      crossCheckerId: null,
+      crossCheckingComments: [],
+      crossCheckingComment: "",
+      crossCheckingClassification: "",
+      questions: [],
+      report: "",
+      verification: "",
+      sources: [],
+    },
+    review: {
+      personality,
+      usersId: "",
+      targetId: claimId,
+      target: claimId,
+      isPartialReview: false,
+    },
+  };
 }
 
 /** Update that moves a task to `assigned` with the user as its only assignee. */
 export function assignTo(userId: string) {
-    return {
-        $set: {
-            "machine.value": ASSIGNED_VALUE,
-            "machine.context.reviewData.usersId": [toObjectId(userId)],
-        },
-    };
+  return {
+    $set: {
+      "machine.value": ASSIGNED_VALUE,
+      "machine.context.reviewData.usersId": [toObjectId(userId)],
+    },
+  };
 }
