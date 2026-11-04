@@ -7,7 +7,10 @@ interface ImageClaimProps {
     title?: string;
 }
 
+const SAFE_IMAGE_SRC = /^(https?:\/\/|blob:|data:image\/|\/(?!\/))/i;
+
 const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
+    const safeSrc = SAFE_IMAGE_SRC.test(src?.trim() ?? "") ? src.trim() : "";
     return (
         <Box
             sx={{
@@ -25,7 +28,7 @@ const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
             }}
         >
             <img
-                src={src}
+                src={safeSrc}
                 alt={`${title} claim`}
                 loading="lazy"
                 style={{

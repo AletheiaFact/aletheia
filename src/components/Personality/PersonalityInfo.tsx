@@ -16,6 +16,11 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
     const { t } = useTranslation();
     const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
+    const wikipediaHref =
+        typeof personality.wikipedia === "string" &&
+        /^https:\/\/([a-z0-9-]+\.)*wikipedia\.org(\/|$)/i.test(personality.wikipedia)
+            ? personality.wikipedia
+            : undefined;
     return (
         <Grid item
             xs={componentStyle.titleSpan}
@@ -82,7 +87,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         </b>
                     </Typography>
                 )}
-            {!summarized && personality.wikipedia && (
+            {!summarized && wikipediaHref && (
                 <a
                     style={{
                         fontWeight: "bold",
@@ -92,7 +97,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         textDecoration: "underline",
                     }}
                     target="_blank"
-                    href={personality.wikipedia}
+                    href={wikipediaHref}
                     rel="noreferrer"
                 >
                     {t("personality:wikipediaPage")}

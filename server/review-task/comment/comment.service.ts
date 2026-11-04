@@ -66,8 +66,8 @@ export class CommentService {
                 );
             }
 
-            const updatedComment = await this.CommentModel.findByIdAndUpdate(
-                id,
+            const updatedComment = await this.CommentModel.findOneAndUpdate(
+                { _id: { $eq: id } },
                 { $set: updateData },
                 { new: true, runValidators: true }
             ).populate("user", "name");

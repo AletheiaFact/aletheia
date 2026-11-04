@@ -12,7 +12,11 @@ const ClaimSourceListItem = ({ source, index }) => {
                     <span style={{ marginRight: 4 }}>
                         {source?.props?.sup || source?.sup || index}.
                     </span>
-                    <a href={href} target="_blank" rel="noopener noreferrer">
+                    <a
+                        href={/^https?:\/\//i.test(href) ? href : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {href}
                     </a>
                 </ListItem>
@@ -20,7 +24,11 @@ const ClaimSourceListItem = ({ source, index }) => {
                 <ListItem id={source}>
                     {/* TODO: Remove this ternary when source migration is done */}
                     {index}.{" "}
-                    <a href={source} target="_blank" rel="noopener noreferrer">
+                    <a
+                        href={/^https?:\/\//i.test(source) ? source : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {source}
                     </a>
                 </ListItem>
