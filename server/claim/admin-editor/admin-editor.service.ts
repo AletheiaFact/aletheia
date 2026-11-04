@@ -75,6 +75,16 @@ interface LoadedStructure {
 
 const refId = (ref: any): string => (ref?._id ?? ref).toString();
 
+// Strips trailing spaces and tabs, but not newlines. A loop instead of
+// /[ \t]+$/, which backtracks on long runs of blanks.
+const trimTrailingBlanks = (text: string): string => {
+    let end = text.length;
+    while (end > 0 && (text[end - 1] === " " || text[end - 1] === "\t")) {
+        end -= 1;
+    }
+    return text.slice(0, end);
+};
+
 @Injectable({ scope: Scope.REQUEST })
 export class AdminEditorService {
     private readonly logger = new Logger(AdminEditorService.name);
@@ -109,6 +119,13 @@ export class AdminEditorService {
         ]);
         const published = new Set(publishedHashes);
         const withTask = new Set(reviewTaskHashes);
+        const reviewStatusOf = (
+            dataHash: string
+        ): Pick<SentenceViewDto, "reviewStatus"> => {
+            if (published.has(dataHash)) return { reviewStatus: "published" };
+            if (withTask.has(dataHash)) return { reviewStatus: "in-progress" };
+            return {};
+        };
         const personalities = (loaded.claim.personalities ??
             []) as unknown as Array<{
             _id: any;
@@ -141,11 +158,7 @@ export class AdminEditorService {
                 dataHash: s.dataHash,
                 text: s.text,
                 position: s.position,
-                ...(published.has(s.dataHash)
-                    ? { reviewStatus: "published" as const }
-                    : withTask.has(s.dataHash)
-                    ? { reviewStatus: "in-progress" as const }
-                    : {}),
+                ...reviewStatusOf(s.dataHash),
                 ...(loaded.debate && {
                     speechId: s.speechId,
                     personalityId: s.personalityId,
@@ -394,10 +407,28 @@ export class AdminEditorService {
             sentencesById.set(s._id.toString(), s);
         }
 
+        return this.orderSpeechSentences(
+            speeches,
+            paragraphsById,
+            sentencesById
+        );
+    }
+
+    private orderSpeechSentences(
+        speeches: SpeechDocument[],
+        paragraphsById: Map<string, ParagraphDocument>,
+        sentencesById: Map<string, SentenceDocument>
+    ): {
+        paragraphs: ParagraphDocument[];
+        sentences: LoadedSentence[];
+    } {
         const orderedParagraphs: ParagraphDocument[] = [];
         const snapshots: LoadedSentence[] = [];
         let position = 0;
         for (const speech of speeches) {
+            const personalityId = speech.personality
+                ? refId(speech.personality)
+                : undefined;
             for (const pRef of speech.content ?? []) {
                 const p = paragraphsById.get(refId(pRef));
                 if (!p) continue;
@@ -416,9 +447,7 @@ export class AdminEditorService {
                         sentenceSequence: sequence,
                         speechId: speech._id.toString(),
                         paragraphId: p._id.toString(),
-                        personalityId: speech.personality
-                            ? refId(speech.personality)
-                            : undefined,
+                        personalityId,
                         props: sDoc.props,
                         topics: sDoc.topics,
                     });
@@ -798,45 +827,9 @@ export class AdminEditorService {
             const speechSentences = loaded.sentences.filter(
                 (s) => s.speechId === speechId
             );
-
-            // Sentences are in spoken order, so each one is searched for
-            // after the previous match.
-            let text = turn.text;
-            let cursor = 0;
-            let rebuild = false;
-            for (const s of speechSentences) {
-                const index = text.indexOf(s.text, cursor);
-                const newText = newTextById.get(s.sentenceId);
-                if (newText === undefined) {
-                    if (index !== -1) cursor = index + s.text.length;
-                    continue;
-                }
-                if (index === -1) {
-                    rebuild = true;
-                    break;
-                }
-                if (newText === null) {
-                    // Drops the sentence with the spaces that followed it.
-                    const after = text
-                        .slice(index + s.text.length)
-                        .replace(/^[ \t]+/, "");
-                    let before = text.slice(0, index);
-                    if (after === "" || after.startsWith("\n")) {
-                        before = before.replace(/[ \t]+$/, "");
-                    }
-                    text = before + after;
-                    cursor = before.length;
-                    continue;
-                }
-                text =
-                    text.slice(0, index) +
-                    newText +
-                    text.slice(index + s.text.length);
-                cursor = index + newText.length;
-            }
-            if (rebuild) {
-                text = this.joinSentences(speechSentences, newTextById);
-            }
+            const text =
+                this.patchTurnText(turn.text, speechSentences, newTextById) ??
+                this.joinSentences(speechSentences, newTextById);
 
             await this.DebateModel.updateOne(
                 { _id: debate._id, "transcriptTurns._id": turn._id },
@@ -844,6 +837,46 @@ export class AdminEditorService {
                 { session }
             );
         }
+    }
+
+    // Replaces or drops each edited sentence in the turn text. Sentences are
+    // in spoken order, so each one is searched for after the previous match.
+    // Returns null when an edited sentence is not found verbatim.
+    private patchTurnText(
+        turnText: string,
+        speechSentences: LoadedSentence[],
+        newTextById: Map<string, string | null>
+    ): string | null {
+        let text = turnText;
+        let cursor = 0;
+        for (const s of speechSentences) {
+            const index = text.indexOf(s.text, cursor);
+            const newText = newTextById.get(s.sentenceId);
+            if (newText === undefined) {
+                if (index !== -1) cursor = index + s.text.length;
+                continue;
+            }
+            if (index === -1) return null;
+            if (newText === null) {
+                // Drops the sentence with the spaces that followed it.
+                const after = text
+                    .slice(index + s.text.length)
+                    .replace(/^[ \t]+/, "");
+                let before = text.slice(0, index);
+                if (after === "" || after.startsWith("\n")) {
+                    before = trimTrailingBlanks(before);
+                }
+                text = before + after;
+                cursor = before.length;
+                continue;
+            }
+            text =
+                text.slice(0, index) +
+                newText +
+                text.slice(index + s.text.length);
+            cursor = index + newText.length;
+        }
+        return text;
     }
 
     private joinSentences(
@@ -927,7 +960,7 @@ export class AdminEditorService {
                 (remainingBySpeech.get(s.speechId) ?? 0) + kept
             );
         }
-        if ([...remainingBySpeech.values()].some((n) => n === 0)) {
+        if ([...remainingBySpeech.values()].includes(0)) {
             throw new BadRequestException({
                 statusCode: 400,
                 message: "A speech must keep at least one sentence",
