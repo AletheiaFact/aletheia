@@ -46,12 +46,18 @@ jobs:
                           - package.json
                           - yarn.lock
                           - .yarnrc.yml
-            - name: Test docker image build before merge
+            # Only the install stage: `yarn build` is already covered by the build job.
+            - uses: docker/setup-buildx-action@v3
               if: steps.changes.outputs.docker == 'true'
-              run: |
-                  docker build --build-arg ENVIRONMENT=development \
-                    --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-                    --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
+            - name: Test docker image dependency install before merge
+              if: steps.changes.outputs.docker == 'true'
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  target: deps
+                  push: false
+                  cache-from: type=gha,scope=docker-deps
+                  cache-to: type=gha,scope=docker-deps,mode=max
 
     build:
         runs-on: ubuntu-24.04

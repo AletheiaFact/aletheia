@@ -1,12 +1,5 @@
-FROM node:20.18.0-alpine AS package
+FROM node:20.18.0-alpine AS deps
 
-ARG NEXT_PUBLIC_UMAMI_SITE_ID
-ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
-ARG NEXT_PUBLIC_ENVIRONMENT
-ARG NEXT_PUBLIC_ORY_SDK_URL
-ARG NEXT_PUBLIC_ORYCLOUD
-ARG ENVIRONMENT
-ARG NEXT_PUBLIC_ENABLE_BANNER_DONATION
 ENV PARCEL_WORKERS=1
 
 # Install system dependencies
@@ -30,6 +23,17 @@ COPY ./package.json ./yarn.lock ./
 ENV CYPRESS_INSTALL_BINARY=0
 RUN --mount=type=cache,target=/app/.yarn/cache \
     yarn install --immutable
+
+# Build stage. CI builds only the `deps` target to validate the install.
+FROM deps AS package
+
+ARG NEXT_PUBLIC_UMAMI_SITE_ID
+ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
+ARG NEXT_PUBLIC_ENVIRONMENT
+ARG NEXT_PUBLIC_ORY_SDK_URL
+ARG NEXT_PUBLIC_ORYCLOUD
+ARG ENVIRONMENT
+ARG NEXT_PUBLIC_ENABLE_BANNER_DONATION
 
 # Copy configuration files
 COPY config.$ENVIRONMENT.yaml ./config.yaml
