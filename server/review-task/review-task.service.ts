@@ -10,6 +10,7 @@ import {
 import { ClientSession, Model, Types, UpdateWriteOpResult } from "mongoose";
 import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
+import { targetIdFilter } from "../common/target-id-filter";
 import { CreateReviewTaskDTO, Machine } from "./dto/create-review-task.dto";
 import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
 import { SaveDraftDTO } from "./dto/save-draft.dto";
@@ -866,7 +867,11 @@ export class ReviewTaskService {
         session: ClientSession
     ): Promise<number> {
         const result = await this.ReviewTaskModel.updateMany(
-            { data_hash: oldHash, target: claimId, onModel: "Claim" },
+            {
+                data_hash: oldHash,
+                target: targetIdFilter(claimId),
+                reviewTaskType: ReviewTaskTypeEnum.Claim,
+            },
             { $set: { data_hash: newHash } },
             { session }
         );

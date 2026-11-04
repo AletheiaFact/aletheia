@@ -18,7 +18,7 @@ import {
 import {
     assignTo,
     buildClaimContext,
-    claimPersonalityId,
+    sentencePersonalityId,
     collectSentenceHashes,
     CROSS_CHECKING_VALUES,
 } from "./machine";
@@ -56,10 +56,13 @@ export class ReviewQueueService {
         if (!claim) {
             throw new NotFoundException(`Claim ${claimId} not found`);
         }
-        const personality = claimPersonalityId(claim);
         let created = 0;
         for (const dataHash of collectSentenceHashes(claim)) {
-            const context = buildClaimContext([], claimId, personality);
+            const context = buildClaimContext(
+                [],
+                claimId,
+                sentencePersonalityId(claim, dataHash)
+            );
             const inserted = await this.reviewTaskQueue.enqueueUnassigned({
                 data_hash: dataHash,
                 reportModel: ReportModelEnum.FactChecking,

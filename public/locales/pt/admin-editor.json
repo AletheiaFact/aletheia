@@ -1,7 +1,10 @@
 {
     "page": {
         "title": "Editar discurso",
-        "subtitle": "Edite os metadados e sentenças deste discurso"
+        "subtitle": "Edite os metadados e sentenças deste discurso",
+        "debateTitle": "Editar fala do debate",
+        "debateSubtitle": "Edite as sentenças desta fala do debate \"{{title}}\"",
+        "debateSpeaker": "Fala de {{name}}"
     },
     "status": {
         "unsaved": "Alterações não salvas",
@@ -19,18 +22,26 @@
     "actions": {
         "submit": "Salvar alterações",
         "discard": "Descartar",
-        "editClaim": "Editar metadados"
+        "editClaim": "Editar metadados",
+        "editSpeech": "Editar sentenças desta fala"
     },
     "load": {
         "error": "Falha ao carregar o discurso"
     },
     "commit": {
         "success": "Discurso atualizado",
-        "error": "Falha ao salvar"
+        "error": "Falha ao salvar",
+        "errors": {
+            "sentence-has-review": "Não é possível excluir sentenças com checagem publicada.",
+            "speech-would-be-empty": "Cada fala precisa manter pelo menos uma sentença.",
+            "content-type-not-supported": "Esta alteração não é suportada para este tipo de conteúdo.",
+            "intent-mismatch": "Não foi possível aplicar as alterações. Recarregue a página e tente novamente.",
+            "no-op": "Nenhuma alteração para salvar."
+        }
     },
     "conflict": {
-        "title": "Discurso modificado",
-        "body": "Outro administrador modificou este discurso enquanto você editava. Atualize para ver a versão mais recente e reaplique suas alterações.",
+        "title": "Conteúdo modificado",
+        "body": "Outro administrador modificou este conteúdo enquanto você editava. Atualize para ver a versão mais recente e reaplique suas alterações.",
         "refresh": "Atualizar",
         "discard": "Descartar minhas alterações"
     },
@@ -50,6 +61,15 @@
         "editedBadge": "Editada",
         "editingLabel": "Editando...",
         "saveEdit": "Salvar",
-        "cancelEdit": "Cancelar"
+        "cancelEdit": "Cancelar",
+        "deleteTooltip": "Excluir esta sentença",
+        "deletedBadge": "Será excluída",
+        "deletePublishedTooltip": "Sentenças com checagem publicada não podem ser excluídas"
+    },
+    "deleteSentence": {
+        "title": "Excluir sentença com checagem em andamento?",
+        "body": "Esta sentença tem uma checagem em andamento. Se ela for excluída, o relatório em andamento ficará sem a sentença no texto. A exclusão só é aplicada quando você salvar as alterações.",
+        "confirm": "Excluir mesmo assim",
+        "cancel": "Cancelar"
     }
 }
