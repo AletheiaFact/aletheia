@@ -1,14 +1,9 @@
 name: Deploy to AWS EKS
 
+# Called by the deploy job in nodejs.yml once CI passes on a push to
+# master, stage or ufpb-labcheck, so a red build never deploys.
 on:
-    push:
-        branches:
-            - master
-            - stage
-            - ufpb-labcheck
-    # For future
-    # release:
-    #   types: [created]
+    workflow_call:
 # Each branch deploys to one environment. Only one run per branch can deploy
 # at a time, so a failed run cannot roll back a newer run's revision.
 concurrency:
