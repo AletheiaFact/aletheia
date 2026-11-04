@@ -18,6 +18,7 @@ import {
     AiTaskType,
     CallbackRoute,
     DEFAULT_EMBEDDING_MODEL,
+    JEV_TRIAGE_MODEL,
     OPENAI_IDENTIFY_DATA,
 } from "../../ai-task/constants/ai-task.constants";
 
@@ -125,7 +126,7 @@ const getStateInvokeSrc = (
                     type: AiTaskType.DEFINING_IMPACT_AREA,
                     content: {
                         text: context.verificationRequest.content,
-                        model: OPENAI_IDENTIFY_DATA,
+                        model: JEV_TRIAGE_MODEL,
                         // The worker must answer with one of these names
                         options: IMPACT_AREAS.map((area) => area.name),
                     },
@@ -178,7 +179,7 @@ const getStateInvokeSrc = (
                         topics,
                         personalities,
                         text: context.verificationRequest.content,
-                        model: OPENAI_IDENTIFY_DATA,
+                        model: JEV_TRIAGE_MODEL,
                     },
                     callbackRoute:
                         CallbackRoute.VERIFICATION_UPDATE_DEFINING_SEVERITY,
