@@ -1,17 +1,40 @@
-// ***********************************************************
-// This example plugins/index.js can be used to load plugins
-//
-// You can change the location of this file or turn off loading
-// the plugins file with the 'pluginsFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/plugins-guide
-// ***********************************************************
+import { MongoClient } from "mongodb";
+import { oprahWikidataId, wikidataCacheProps } from "../fixtures/wikidata";
 
+// Seeds the server's wikidata cache (WikidataCache schema) so personality
+// pages render without the server calling wikidata.org.
+const seedWikidataCache = async (): Promise<null> => {
+    const uri = process.env.CI_MONGODB_URI;
+    if (!uri) {
+        throw new Error("CI_MONGODB_URI is required to seed the wikidata cache");
+    }
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        const cache = client.db().collection("wikidatacaches");
+        const now = new Date();
+        await Promise.all(
+            Object.entries(wikidataCacheProps).map(([language, props]) =>
+                cache.updateOne(
+                    { wikidataId: oprahWikidataId, language },
+                    {
+                        $set: { props },
+                        $setOnInsert: { createdAt: now },
+                        $currentDate: { updatedAt: true },
+                    },
+                    { upsert: true }
+                )
+            )
+        );
+        return null;
+    } finally {
+        await client.close();
+    }
+};
 
- const plugin = (on, config) => {
+const plugin = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) => {
+    on("task", { seedWikidataCache });
+    return config;
+};
 
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
-export default plugin
+export default plugin;

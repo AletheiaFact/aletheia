@@ -53,6 +53,9 @@ services:
         public_url: MCP_PUBLIC_URL
         # Optional override; defaults to ory.url
         authorization_server:
+        # Optional; max assignees join_review_task allows per task (default 10)
+        # task_queue:
+        #   max_assignees: 10
       feature_flag:
         url: GITLAB_FEATURE_FLAG_URL
         appName: ENV

@@ -49,7 +49,7 @@ Docs:     server/mcp/README.md
 
 **Files:** Modify: `package.json`
 
-- [ ] **Step 1: Create the work branch off `stage`**
+- [x] **Step 1: Create the work branch off `stage`**
 
 ```bash
 git stash --include-untracked --message "pre-mcp WIP"   # only if the tree is dirty with unrelated work
@@ -57,7 +57,7 @@ git checkout stage && git pull
 git checkout -b feat/remote-mcp-server
 ```
 
-- [ ] **Step 2: Add the MCP SDK and align Zod**
+- [x] **Step 2: Add the MCP SDK and align Zod**
 
 The MCP SDK depends on `zod@^3.23.x`; the repo has `^3.21.4`. Two zod instances break the SDK's schema handling, so bump the root dep (minor-version bump within v3, backward compatible).
 
@@ -66,11 +66,11 @@ yarn add @modelcontextprotocol/sdk
 yarn add zod@^3.23.8
 ```
 
-- [ ] **Step 3: Verify nothing broke**
+- [x] **Step 3: Verify nothing broke**
 
 Run: `yarn build-ts` → expect exit 0. Run: `yarn test:unit` → expect same pass/fail set as before the change (run it on `stage` first if unsure).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add package.json yarn.lock
@@ -85,7 +85,7 @@ git commit -m "chore(mcp): add @modelcontextprotocol/sdk, align zod version"
 - Modify: `server/auth/ory/ory.service.ts`
 - Test: `server/auth/ory/ory.service.spec.ts` (new)
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 `OryService` builds `this.adminUrl = \`${admin_url}/${admin_endpoint}\`` from `configService.get("ory")` in its constructor and uses raw `fetch` (see `ory.service.ts:12-17`). Mock global fetch.
 
@@ -162,12 +162,12 @@ describe("OryService.getIdentity", () => {
 
 Note: use `module.resolve(...)` (not `get`) if `OryService` turns out to be request-scoped; with plain `@Injectable()` both work.
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `yarn env-cmd --silent vitest run --project unit server/auth/ory/ory.service.spec.ts`
 Expected: FAIL — `oryService.getIdentity is not a function`
 
-- [ ] **Step 3: Implement `getIdentity`**
+- [x] **Step 3: Implement `getIdentity`**
 
 Add to `server/auth/ory/ory.service.ts`, following the existing raw-fetch style of `whoAmI`/`updateIdentity`:
 
@@ -190,12 +190,12 @@ Add to `server/auth/ory/ory.service.ts`, following the existing raw-fetch style 
     }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `yarn env-cmd --silent vitest run --project unit server/auth/ory/ory.service.spec.ts`
 Expected: PASS (2 tests)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/auth/ory/ory.service.ts server/auth/ory/ory.service.spec.ts
@@ -210,7 +210,7 @@ git commit -m "feat(auth): add OryService.getIdentity for admin identity lookup"
 - Create: `server/mcp/mcp-auth.guard.ts`
 - Test: `server/mcp/mcp-auth.guard.spec.ts`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Model the `@ory/client` mock on `server/auth/m2m.guard.spec.ts` (hoisted mock fn, `function`-style constructor mocks).
 
@@ -382,12 +382,12 @@ describe("McpAuthGuard", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `yarn env-cmd --silent vitest run --project unit server/mcp/mcp-auth.guard.spec.ts`
 Expected: FAIL — cannot resolve `./mcp-auth.guard`
 
-- [ ] **Step 3: Implement the guard**
+- [x] **Step 3: Implement the guard**
 
 ```typescript
 import {
@@ -539,12 +539,12 @@ export class McpAuthGuard extends BaseGuard {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `yarn env-cmd --silent vitest run --project unit server/mcp/mcp-auth.guard.spec.ts`
 Expected: PASS (6 tests). Also run `yarn build-ts` → exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/mcp/mcp-auth.guard.ts server/mcp/mcp-auth.guard.spec.ts
@@ -561,7 +561,7 @@ The global `SessionOrM2MGuard` runs before controller guards. For anonymous requ
 
 Note: for requests WITH a bearer token, the global `M2MGuard` will introspect and pass them with `role: integration`; that's harmless because `McpAuthGuard` (controller-level, runs after) overwrites `request.user` with the correctly resolved user.
 
-- [ ] **Step 1: Add the URLs**
+- [x] **Step 1: Add the URLs**
 
 In `server/auth/base.guard.ts`, extend the `publicUrls` array (currently `/login`, `/unauthorized`, `/_next`, `/api/.ory`, `/api/health`, `/sign-up`, `/api/user/register`, `/api/claim`, `/signup-invite`):
 
@@ -570,12 +570,12 @@ In `server/auth/base.guard.ts`, extend the `publicUrls` array (currently `/login
             "/.well-known/oauth-protected-resource",
 ```
 
-- [ ] **Step 2: Verify existing guard tests still pass**
+- [x] **Step 2: Verify existing guard tests still pass**
 
 Run: `yarn env-cmd --silent vitest run --project unit server/auth`
 Expected: PASS, same count as before.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add server/auth/base.guard.ts
@@ -589,7 +589,7 @@ git commit -m "feat(mcp): allow MCP and well-known routes through session redire
 **Files:**
 - Create: `server/mcp/mcp-well-known.controller.ts`
 
-- [ ] **Step 1: Create the controller**
+- [x] **Step 1: Create the controller**
 
 ```typescript
 import { Controller, Get } from "@nestjs/common";
@@ -623,11 +623,11 @@ export class McpWellKnownController {
 
 (No unit test here — this is covered end-to-end in Task 8.)
 
-- [ ] **Step 2: Type check**
+- [x] **Step 2: Type check**
 
 Run: `yarn build-ts` → exit 0.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add server/mcp/mcp-well-known.controller.ts
@@ -648,7 +648,7 @@ git commit -m "feat(mcp): serve RFC 9728 protected resource metadata"
 - Create: `server/mcp/mcp.module.ts`
 - Test (written FIRST): `server/tests/mcp.e2e.spec.ts`
 
-- [ ] **Step 1: Write the failing e2e test (protocol handshake + tool listing + auth)**
+- [x] **Step 1: Write the failing e2e test (protocol handshake + tool listing + auth)**
 
 Pattern copied from `server/tests/source.e2e.spec.ts` (config construction lines 71-77, guard overrides lines 82-92). `McpAuthGuard` is overridden with a mock that injects the seeded admin user; the Streamable HTTP transport requires the dual `Accept` header.
 
@@ -826,12 +826,12 @@ describe("MCP server (e2e)", () => {
 });
 ```
 
-- [ ] **Step 2: Run the e2e test to verify it fails**
+- [x] **Step 2: Run the e2e test to verify it fails**
 
 Run: `yarn env-cmd --silent vitest run --project e2e server/tests/mcp.e2e.spec.ts`
 Expected: FAIL — cannot resolve `../mcp/mcp-auth.guard` (module doesn't exist yet in app wiring; later failures will be 404s until Task 7 wires the module).
 
-- [ ] **Step 3: Create `server/mcp/tools/tool-helpers.ts`**
+- [x] **Step 3: Create `server/mcp/tools/tool-helpers.ts`**
 
 ```typescript
 import { Logger } from "@nestjs/common";
@@ -871,7 +871,7 @@ export function safeTool<Args>(
 }
 ```
 
-- [ ] **Step 4: Create `server/mcp/tools/schemas.ts`**
+- [x] **Step 4: Create `server/mcp/tools/schemas.ts`**
 
 ```typescript
 import { z } from "zod";
@@ -1009,7 +1009,7 @@ export const CreateSourceSchema = z.object({
 });
 ```
 
-- [ ] **Step 5: Create `server/mcp/tools/read-tools.ts`**
+- [x] **Step 5: Create `server/mcp/tools/read-tools.ts`**
 
 `McpToolDeps` is defined in `mcp.service.ts` (Step 7) — it carries the injected domain services plus the raw request.
 
@@ -1281,7 +1281,7 @@ export function registerReadTools(server: McpServer, deps: McpToolDeps) {
 }
 ```
 
-- [ ] **Step 6: Create `server/mcp/tools/write-tools.ts`**
+- [x] **Step 6: Create `server/mcp/tools/write-tools.ts`**
 
 Captcha note: the REST controllers validate `recaptcha` before calling services; MCP calls are already authenticated via OAuth, so tools call the services/state machine directly (same trust level as the M2M integration path, which also skips captcha).
 
@@ -1397,7 +1397,7 @@ export function registerWriteTools(server: McpServer, deps: McpToolDeps) {
 }
 ```
 
-- [ ] **Step 7: Create `server/mcp/mcp.service.ts`**
+- [x] **Step 7: Create `server/mcp/mcp.service.ts`**
 
 ```typescript
 import { Inject, Injectable, Scope } from "@nestjs/common";
@@ -1475,7 +1475,7 @@ export class McpService {
 }
 ```
 
-- [ ] **Step 8: Create `server/mcp/mcp.controller.ts`**
+- [x] **Step 8: Create `server/mcp/mcp.controller.ts`**
 
 Stateless Streamable HTTP: a fresh server+transport pair per POST; GET/DELETE answer 405 (no SSE streams, no sessions). `JsonBodyMiddleware` already parses JSON for all routes, so `req.body` is available.
 
@@ -1539,7 +1539,7 @@ export class McpController {
 }
 ```
 
-- [ ] **Step 9: Create `server/mcp/mcp.module.ts`**
+- [x] **Step 9: Create `server/mcp/mcp.module.ts`**
 
 ```typescript
 import { Module } from "@nestjs/common";
@@ -1579,11 +1579,11 @@ export class McpModule {}
 
 Check the actual import style of each module before finalizing: `PersonalityModule` is dynamic (`.register()` — see how `app.module.ts` imports it and copy that call exactly); `OryModule` may export `OryService` under a different module name — find where `OryService` is provided (`server/auth/ory/ory.module.ts`) and confirm it exports the service; if it doesn't, add `exports: [OryService]` there.
 
-- [ ] **Step 10: Type check**
+- [x] **Step 10: Type check**
 
 Run: `yarn build-ts` → exit 0. Fix any signature drift between tools and services by adjusting the tool code (services are the source of truth — do NOT change domain services to fit the tools).
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 git add server/mcp server/tests/mcp.e2e.spec.ts
@@ -1599,7 +1599,7 @@ git commit -m "feat(mcp): add MCP module with streamable HTTP endpoint and v1 to
 - Modify: `config.example.yaml`
 - Modify: `deployment/config/config-file/modules/service/confBase.pkl`
 
-- [ ] **Step 1: Register `McpModule` conditionally**
+- [x] **Step 1: Register `McpModule` conditionally**
 
 In `server/app.module.ts` `register(options)`, follow the existing conditional-module pattern (see `NotificationModule` around line 102) and add to the `imports` array **before** `HomeModule` (which must stay last):
 
@@ -1613,7 +1613,7 @@ with the import at the top:
 import { McpModule } from "./mcp/mcp.module";
 ```
 
-- [ ] **Step 2: Add config keys**
+- [x] **Step 2: Add config keys**
 
 In `config.example.yaml`, at the same nesting level as the `ory:` block:
 
@@ -1635,17 +1635,17 @@ mcp = new {
 }
 ```
 
-- [ ] **Step 3: Run the e2e suite from Task 6**
+- [x] **Step 3: Run the e2e suite from Task 6**
 
 Run: `yarn env-cmd --silent vitest run --project e2e server/tests/mcp.e2e.spec.ts`
 Expected: PASS (metadata, initialize, 405, tools/list, list_claims). Debug in this order if not: module import errors → check Step 9 of Task 6; 404 → module not registered / `mcp.enabled` missing from test config; 406 → missing `Accept` header.
 
-- [ ] **Step 4: Run the full test suite**
+- [x] **Step 4: Run the full test suite**
 
 Run: `yarn test`
 Expected: everything green (same failures as `stage` baseline, if any pre-existed).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/app.module.ts config.example.yaml deployment/config/config-file/modules/service/confBase.pkl
@@ -1658,7 +1658,7 @@ git commit -m "feat(mcp): wire MCP module behind mcp.enabled config flag"
 
 **Files:** Modify: `server/tests/mcp.e2e.spec.ts`
 
-- [ ] **Step 1: Add failing tests for write tools**
+- [x] **Step 1: Add failing tests for write tools**
 
 Append to the describe block. The verification-request state machine drives an AI pipeline (OpenAI etc.), so it is replaced with a spy; personality/source creation runs for real against the per-worker Mongo.
 
@@ -1718,12 +1718,12 @@ New tests:
     });
 ```
 
-- [ ] **Step 2: Run to verify the new tests fail/pass appropriately**
+- [x] **Step 2: Run to verify the new tests fail/pass appropriately**
 
 Run: `yarn env-cmd --silent vitest run --project e2e server/tests/mcp.e2e.spec.ts`
 Expected: all tests PASS (fix tool↔service signature mismatches in the tool files if not — the e2e suite is the contract check for the code written blind in Task 6).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add server/tests/mcp.e2e.spec.ts
@@ -1737,7 +1737,7 @@ git commit -m "test(mcp): cover write tools and tool-error handling end to end"
 **Files:**
 - Create: `server/mcp/README.md`
 
-- [ ] **Step 1: Write the README**
+- [x] **Step 1: Write the README**
 
 ```markdown
 # Aletheia MCP Server
@@ -1800,7 +1800,7 @@ schema in `schemas.ts` + registration in `read-tools.ts`/`write-tools.ts`.
 
 (Remove the zero-width escapes around the inner code fences when writing the file.)
 
-- [ ] **Step 2: Manual verification with MCP Inspector (local)**
+- [x] **Step 2: Manual verification with MCP Inspector (local)**
 
 With local dev running (`yarn dev`) and `mcp.enabled: true` + `mcp.public_url: http://localhost:3000` in `config.yaml`:
 
@@ -1819,7 +1819,7 @@ curl -s http://localhost:3000/.well-known/oauth-protected-resource/server/mcp
 # Expect: JSON with resource + authorization_servers
 ```
 
-- [ ] **Step 3: Final checks and commit**
+- [x] **Step 3: Final checks and commit**
 
 Run: `yarn build-ts && yarn lint && yarn test` → all green.
 
@@ -1828,7 +1828,7 @@ git add server/mcp/README.md
 git commit -m "docs(mcp): add MCP server setup and connection guide"
 ```
 
-- [ ] **Step 4: Open the PR**
+- [x] **Step 4: Open the PR**
 
 Target branch `stage` (repo convention). Use the finishing-a-development-branch skill. PR body should call out: the new `mcp.enabled` flag (default off), the Ory Network console prerequisites (OAuth2 + DCR + hosted consent) that must be done on stage before enabling, and that `McpAuthGuard` fixes user-bearer-token role resolution only for the MCP route (global M2M behavior unchanged).
 

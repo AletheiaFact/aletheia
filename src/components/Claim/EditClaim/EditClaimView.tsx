@@ -19,9 +19,11 @@ import colors from "../../../styles/colors";
 interface Props {
     claimId: string;
     nameSpace?: string;
+    // For debates: only the sentences of this speech (turn) are shown.
+    speechId?: string;
 }
 
-const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
+const EditClaimView: React.FC<Props> = ({ claimId, nameSpace, speechId }) => {
     const { t } = useTranslation("admin-editor");
     const router = useRouter();
     const [view, setView] = useState<AdminClaimEditableView | null>(null);
@@ -43,13 +45,16 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
             send({ type: "SET_TITLE", value: v.metadata.title });
             send({ type: "SET_DATE", value: v.metadata.date });
             setSentenceDrafts(
-                v.sentences.map((s) => ({
-                    sentenceId: s.sentenceId,
-                    dataHash: s.dataHash,
-                    originalText: s.text,
-                    text: s.text,
-                    intent: "noop",
-                }))
+                v.sentences
+                    .filter((s) => !speechId || s.speechId === speechId)
+                    .map((s) => ({
+                        sentenceId: s.sentenceId,
+                        dataHash: s.dataHash,
+                        originalText: s.text,
+                        text: s.text,
+                        intent: "noop",
+                        reviewStatus: s.reviewStatus,
+                    }))
             );
         } catch (e: any) {
             MessageManager.showMessage("error", t("load.error"));
@@ -63,27 +68,34 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [claimId]);
 
+    const isDebate = view?.contentModel === "Debate";
+
     const buildClaimUrl = (v: AdminClaimEditableView): string => {
         const nsPrefix =
             v.nameSpace && v.nameSpace !== "main" ? `/${v.nameSpace}` : "";
+        if (v.contentModel === "Debate") {
+            return `${nsPrefix}/claim/${v.claimId}/debate`;
+        }
         const path = v.personalitySlug
             ? `/personality/${v.personalitySlug}/claim/${v.claimSlug}`
             : `/claim/${v.claimSlug}`;
         return `${nsPrefix}${path}`;
     };
 
+    const isChanged = (d: SentenceDraft) =>
+        d.intent === "delete" ||
+        (d.intent === "edit" && d.text.trim() !== d.originalText.trim());
+
     const buildSentenceOps = (): SentenceOp[] =>
-        sentenceDrafts
-            .filter(
-                (d) =>
-                    d.intent === "edit" &&
-                    d.text.trim() !== d.originalText.trim()
-            )
-            .map((d) => ({
-                intent: "edit" as const,
-                sourceSentenceId: d.sentenceId,
-                newText: d.text.trim(),
-            }));
+        sentenceDrafts.filter(isChanged).map((d) =>
+            d.intent === "delete"
+                ? { intent: "delete" as const, sourceSentenceId: d.sentenceId }
+                : {
+                      intent: "edit" as const,
+                      sourceSentenceId: d.sentenceId,
+                      newText: d.text.trim(),
+                  }
+        );
 
     const normalizeToMinute = (iso: string | undefined): string => {
         if (!iso) return "";
@@ -101,18 +113,21 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
         ) {
             return true;
         }
-        return sentenceDrafts.some(
-            (d) =>
-                d.intent === "edit" && d.text.trim() !== d.originalText.trim()
-        );
+        return sentenceDrafts.some(isChanged);
     }, [view, state.context.title, state.context.date, sentenceDrafts]);
 
     const submit = async () => {
         if (!view) return;
         const sentenceOps = buildSentenceOps();
+        // Debate metadata is not editable, so it is not sent.
         const payload = {
             baseRevisionId: view.baseRevisionId,
-            metadata: { title: state.context.title, date: state.context.date },
+            ...(!isDebate && {
+                metadata: {
+                    title: state.context.title,
+                    date: state.context.date,
+                },
+            }),
             sentenceOps,
         };
         try {
@@ -136,7 +151,15 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
                 });
                 return;
             }
-            const msg = e?.response?.data?.message ?? t("commit.error");
+            // The exception filter nests the service's error body (with
+            // its errorCode) under `message`. Only translated text is shown,
+            // never the raw server message.
+            const errorCode = e?.response?.data?.message?.errorCode;
+            const msg = errorCode
+                ? t(`commit.errors.${errorCode}`, {
+                      defaultValue: t("commit.error"),
+                  })
+                : t("commit.error");
             send({ type: "COMMIT_FAIL", error: String(msg) });
             MessageManager.showMessage("error", String(msg));
         }
@@ -152,6 +175,12 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
     if (!view) return null;
 
     const committing = state.matches("committing");
+    const speechPersonalityId = view.sentences.find(
+        (s) => s.speechId === speechId
+    )?.personalityId;
+    const speechPersonality = view.metadata.personalities.find(
+        (p) => p._id === speechPersonalityId
+    );
 
     return (
         <Box sx={{ pb: 10 }}>
@@ -172,7 +201,7 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
                             color: colors.blackTertiary,
                         }}
                     >
-                        {t("page.title")}
+                        {t(isDebate ? "page.debateTitle" : "page.title")}
                     </Typography>
                     {hasChanges && (
                         <Chip
@@ -187,18 +216,35 @@ const EditClaimView: React.FC<Props> = ({ claimId, nameSpace }) => {
                     )}
                 </Stack>
                 <Typography variant="body2" color="text.secondary">
-                    {t("page.subtitle")}
+                    {isDebate
+                        ? t("page.debateSubtitle", {
+                              title: view.metadata.title,
+                          })
+                        : t("page.subtitle")}
                 </Typography>
+                {isDebate && speechPersonality && (
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        {t("page.debateSpeaker", {
+                            name: speechPersonality.name,
+                        })}
+                    </Typography>
+                )}
             </Box>
 
             <Box sx={{ px: { xs: 2, md: 3 } }}>
-                <MetadataPanel
-                    title={state.context.title}
-                    date={state.context.date}
-                    personalities={view.metadata.personalities}
-                    onTitleChange={(v) => send({ type: "SET_TITLE", value: v })}
-                    onDateChange={(v) => send({ type: "SET_DATE", value: v })}
-                />
+                {!isDebate && (
+                    <MetadataPanel
+                        title={state.context.title}
+                        date={state.context.date}
+                        personalities={view.metadata.personalities}
+                        onTitleChange={(v) =>
+                            send({ type: "SET_TITLE", value: v })
+                        }
+                        onDateChange={(v) =>
+                            send({ type: "SET_DATE", value: v })
+                        }
+                    />
+                )}
                 <SentenceEditor
                     sentences={sentenceDrafts}
                     onTextChange={(id, text) =>

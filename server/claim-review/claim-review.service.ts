@@ -16,6 +16,7 @@ import {
     ClaimReviewDocument,
 } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
+import { targetIdFilter } from "../common/target-id-filter";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -308,14 +309,21 @@ export class ClaimReviewService {
             const key = JSON.stringify({
                 data_hash: review.data_hash,
                 classification: review.report.classification,
+                classificationMethodology:
+                    review.report.classificationMethodology,
             });
             classificationCounts[key] = (classificationCounts[key] || 0) + 1;
         });
 
         return Object.entries(classificationCounts).map(([key, count]) => {
-            const { data_hash, classification } = JSON.parse(key);
+            const { data_hash, classification, classificationMethodology } =
+                JSON.parse(key);
             return {
-                _id: { data_hash, classification: [classification] },
+                _id: {
+                    data_hash,
+                    classification: [classification],
+                    classificationMethodology,
+                },
                 count: count as number,
             };
         });
@@ -672,7 +680,11 @@ export class ClaimReviewService {
         session: mongoose.ClientSession
     ): Promise<number> {
         const result = await this.ClaimReviewModel.updateMany(
-            { data_hash: oldHash, target: claimId, targetModel: "Claim" },
+            {
+                data_hash: oldHash,
+                target: targetIdFilter(claimId),
+                targetModel: "Claim",
+            },
             { $set: { data_hash: newHash } },
             { session }
         );

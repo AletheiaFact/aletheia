@@ -192,7 +192,7 @@ export const getEditorClaimCardContentHtml = ({
     <div
         card-id="${uniqueId()}"
         data-personality-id="${personalityId}"
-        ${() => speechId && `data-speech-id="${speechId}"`}
+        ${speechId ? `data-speech-id="${speechId}"` : ""}
     >
         <p></p>
     </div>`;

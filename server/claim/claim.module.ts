@@ -25,6 +25,8 @@ import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { GroupModule } from "../group/group.module";
 import { AdminEditorModule } from "./admin-editor/admin-editor.module";
 import dbConfig from "../config/db.config";
+import { DebateTranscriptController } from "./types/debate/transcript/debate-transcript.controller";
+import { DebateTranscriptService } from "./types/debate/transcript/debate-transcript.service";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -37,7 +39,11 @@ const ClaimModel = MongooseModule.forFeature([
 export class ClaimModule {
     static register(): DynamicModule {
         const imports: any[] = [];
-        const providers: any[] = [claimServiceProvider, UtilService];
+        const providers: any[] = [
+            claimServiceProvider,
+            UtilService,
+            DebateTranscriptService,
+        ];
 
         if (dbConfig.type === "mongodb") {
             imports.push(ClaimModel);
@@ -73,7 +79,7 @@ export class ClaimModule {
             ],
             exports: ["ClaimService"],
             providers,
-            controllers: [ClaimController],
+            controllers: [ClaimController, DebateTranscriptController],
         };
     }
 }

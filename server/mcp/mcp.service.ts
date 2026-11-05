@@ -15,7 +15,8 @@ import type { IVerificationRequestService } from "../interfaces/verification-req
 import { ReviewTaskService } from "../review-task/review-task.service";
 import type { BaseRequest } from "../types";
 import { VerificationRequestStateMachineService } from "../verification-request/state-machine/verification-request.state-machine.service";
-import { ReviewWorkflowService } from "./review-workflow.service";
+import { ReviewQueueService } from "./review-workflow/review-queue.service";
+import { ReviewWorkflowService } from "./review-workflow/review-workflow.service";
 import { registerReadTools } from "./tools/read-tools";
 import { registerWriteTools } from "./tools/write-tools";
 
@@ -35,6 +36,7 @@ export interface McpToolDeps {
     abilityFactory: AbilityFactory;
     nameSpaceService: NameSpaceService;
     reviewWorkflowService: ReviewWorkflowService;
+    reviewQueueService: ReviewQueueService;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -61,7 +63,8 @@ export class McpService {
         private readonly topicService: ITopicService,
         private readonly abilityFactory: AbilityFactory,
         private readonly nameSpaceService: NameSpaceService,
-        private readonly reviewWorkflowService: ReviewWorkflowService
+        private readonly reviewWorkflowService: ReviewWorkflowService,
+        private readonly reviewQueueService: ReviewQueueService
     ) {}
 
     buildServer(): McpServer {
@@ -83,6 +86,7 @@ export class McpService {
             abilityFactory: this.abilityFactory,
             nameSpaceService: this.nameSpaceService,
             reviewWorkflowService: this.reviewWorkflowService,
+            reviewQueueService: this.reviewQueueService,
         };
         registerReadTools(server, deps);
         registerWriteTools(server, deps);

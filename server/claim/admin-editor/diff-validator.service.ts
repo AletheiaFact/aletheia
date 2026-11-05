@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+} from "@nestjs/common";
 import { SentenceOpDto } from "./dto/sentence-op.dto";
 
 export interface PreviousSentenceSnapshot {
@@ -11,7 +15,7 @@ export interface PreviousSentenceSnapshot {
 }
 
 export interface ClassifiedSentenceOp {
-    intent: "edit" | "noop";
+    intent: "edit" | "noop" | "delete";
     sourceSentenceIds: string[];
     sourceDataHashes: string[];
     newTexts: string[];
@@ -21,7 +25,8 @@ export interface ClassifiedSentenceOp {
 // structure. Zod handles shape + per-variant required fields at the
 // controller boundary; this service enforces semantic rules that depend on
 // existing data: source sentence must exist, edit text must actually differ,
-// no sentence referenced by multiple ops.
+// no sentence referenced by multiple ops. Whether a sentence may be deleted
+// depends on its reviews and its speech, so AdminEditorService checks that.
 @Injectable()
 export class DiffValidatorService {
     classifyForEditOnly(
@@ -37,24 +42,27 @@ export class DiffValidatorService {
         for (const op of sentenceOps) {
             const snap = byId.get(op.sourceSentenceId);
             if (!snap) {
-                throw new BadRequestException({
-                    statusCode: 400,
-                    message: `Sentence ${op.sourceSentenceId} not found in claim`,
-                    errorCode: "intent-mismatch",
+                // The editor's view is stale: another user replaced or
+                // deleted this sentence (a debate keeps its revision, so the
+                // baseRevisionId check does not catch it).
+                throw new ConflictException({
+                    statusCode: 409,
+                    message: "Sentence no longer exists in the claim",
+                    errorCode: "sentence-not-found",
                 });
             }
             if (claimedIds.has(op.sourceSentenceId)) {
                 throw new BadRequestException({
                     statusCode: 400,
-                    message: `Sentence ${op.sourceSentenceId} referenced by multiple operations`,
+                    message: "A sentence is referenced by multiple operations",
                     errorCode: "intent-mismatch",
                 });
             }
             claimedIds.add(op.sourceSentenceId);
 
-            if (op.intent === "noop") {
+            if (op.intent === "noop" || op.intent === "delete") {
                 result.push({
-                    intent: "noop",
+                    intent: op.intent,
                     sourceSentenceIds: [op.sourceSentenceId],
                     sourceDataHashes: [snap.dataHash],
                     newTexts: [],
@@ -66,7 +74,7 @@ export class DiffValidatorService {
             if (trimmed === snap.text.trim()) {
                 throw new BadRequestException({
                     statusCode: 400,
-                    message: `edit op for sentence ${op.sourceSentenceId} has identical text`,
+                    message: "An edit op has identical text",
                     errorCode: "intent-mismatch",
                 });
             }
