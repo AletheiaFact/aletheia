@@ -52,6 +52,8 @@ export class MongoSentenceService {
         if (sentence) {
             sentence.props = {
                 classification: report?.classification,
+                classificationMethodology:
+                    report?.classificationMethodology ?? undefined,
                 ...sentence.props,
             };
             return sentence;

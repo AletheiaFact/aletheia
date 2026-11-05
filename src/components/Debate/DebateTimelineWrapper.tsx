@@ -1,14 +1,34 @@
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, timelineItemClasses } from "@mui/lab";
+import { IconButton, Tooltip } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 import DebateClaimCardWrapper from "./DebateClaimCardWrapper";
 import { useAtom } from "jotai";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
-const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
+const DebateTimelineWrapper = ({
+    speeches,
+    isLive = false,
+    claimId = undefined,
+    canEditSpeeches = false,
+}) => {
     const [timelineData, setTimelineData] = useState(speeches);
     const [state] = useAtom(callbackTimerAtom);
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
+
+    const speechEditHref = (speechId: string) => {
+        const ns =
+            nameSpace && nameSpace !== NameSpaceEnum.Main
+                ? `&namespace=${encodeURIComponent(nameSpace)}`
+                : "";
+        return `/admin/claim-edit?claimId=${encodeURIComponent(
+            claimId
+        )}&speechId=${encodeURIComponent(speechId)}${ns}`;
+    };
 
     useLayoutEffect(() => {
         const claim = state?.context?.callbackResult;
@@ -59,6 +79,18 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
                                     <TimelineConnector />
                                 </TimelineSeparator>
                                 <TimelineContent>
+                                    {canEditSpeeches && claimId && (
+                                        <Tooltip title={t("admin-editor:actions.editSpeech")}>
+                                            <IconButton
+                                                size="small"
+                                                href={speechEditHref(speechId)}
+                                                aria-label={t("admin-editor:actions.editSpeech")}
+                                                style={{ float: "right" }}
+                                            >
+                                                <Edit fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                    )}
                                     <DebateClaimCardWrapper personalityId={personality} speech={timelineItem} />
                                 </TimelineContent>
                             </TimelineItem>

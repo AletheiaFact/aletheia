@@ -6,6 +6,8 @@ import ClassificationText from "../ClassificationText";
 import ClassificationModal from "./ClassificationModal";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import { MenuItem, Select, FormControl } from "@mui/material";
+import { useClassificationMethodology } from "../../hooks/useClassificationMethodology";
+import { getMethodology } from "../../../lib/classification-methodology";
 
 export const SelectInput = styled(Select)`
     background: ${colors.white};
@@ -54,6 +56,8 @@ const ClaimReviewSelect = ({
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(defaultValue || "");
     const { editorConfiguration } = useContext(VisualEditorContext);
+    const methodology = useClassificationMethodology();
+    const { options } = getMethodology(methodology);
 
     const onChangeSelect = (e) => {
         setValue(e.target.value);
@@ -103,63 +107,22 @@ const ClaimReviewSelect = ({
                     <MenuItem value="" disabled>
                         {placeholder}
                     </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="not-fact"
-                    >
-                        <ClassificationText classification="not-fact" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="trustworthy"
-                    >
-                        <ClassificationText classification="trustworthy" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="trustworthy-but"
-                    >
-                        <ClassificationText classification="trustworthy-but" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="arguable"
-                    >
-                        <ClassificationText classification="arguable" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="misleading"
-                    >
-                        <ClassificationText classification="misleading" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="false"
-                    >
-                        <ClassificationText classification="false" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="unsustainable"
-                    >
-                        <ClassificationText classification="unsustainable" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="exaggerated"
-                    >
-                        <ClassificationText classification="exaggerated" />
-                    </MenuItem>
-                    <MenuItem
-                        sx={{ fontFamily: "open-sans, sans-serif" }}
-                        value="unverifiable"
-                    >
-                        <ClassificationText classification="unverifiable" />
-                    </MenuItem>
+                    {options.map(({ value: optionValue }) => (
+                        <MenuItem
+                            key={optionValue}
+                            sx={{ fontFamily: "open-sans, sans-serif" }}
+                            value={optionValue}
+                        >
+                            <ClassificationText
+                                classification={optionValue}
+                                methodology={methodology}
+                            />
+                        </MenuItem>
+                    ))}
                 </SelectInput>
             </FormControl>
             <ClassificationModal
+                methodology={methodology}
                 open={open}
                 value={value}
                 setValue={setValue}

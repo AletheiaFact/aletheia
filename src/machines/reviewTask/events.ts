@@ -1,16 +1,7 @@
 import { ProsemirrorNode } from "remirror";
+import { ClassificationEnum } from "../../../lib/classification";
 
-export enum ClassificationEnum {
-    "not-fact" = 0,
-    "false",
-    "misleading",
-    "unsustainable",
-    "unverifiable",
-    "exaggerated",
-    "arguable",
-    "trustworthy-but",
-    "trustworthy",
-}
+export { ClassificationEnum };
 
 type FactCheckingReviewData = {
     usersId: string[];

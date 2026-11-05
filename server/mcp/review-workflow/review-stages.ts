@@ -1,10 +1,17 @@
 import { ConflictException, ForbiddenException } from "@nestjs/common";
 import { ReviewTaskQueueService } from "../../review-task/review-task-queue.service";
 import { ReviewTaskService } from "../../review-task/review-task.service";
-import { idsEqual, isAdmin, isAssignee, toObjectId, WorkflowUser } from "./access";
+import {
+    idsEqual,
+    isAdmin,
+    isAssignee,
+    toObjectId,
+    WorkflowUser,
+} from "./access";
 import { CROSS_CHECKING_VALUES, stateName } from "./machine";
 import { missingReportFields } from "./publish-rules";
 import { ReviewNotifierService } from "./review-notifier.service";
+import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 import { assertWriter, REVIEW_DATA, WorkflowConfig } from "./workflow-guards";
 
 /**
@@ -68,6 +75,12 @@ export class ReviewStages {
                 "Only the task's cross-checker can submit the cross-check"
             );
         }
+        // Same rule as a cross-check submitted on the web
+        assertAllowedClassification(
+            task.classificationMethodology,
+            classification,
+            "crossCheckingClassification"
+        );
         const agrees = reviewData.classification === classification;
         const toReview = agrees && this.config.autoSendToReview();
         const done = await this.reviewTaskQueue.transitionAtomically(
@@ -120,9 +133,15 @@ export class ReviewStages {
      * Moves a `reported` task to the review backlog (`selectReviewer` with
      * no reviewer), where any reviewer can claim it. Assignees or admins
      * only. Unless `mcp.task_queue.require_cross_check` is false, the report
-     * must first have a cross-check that agreed with its label.
+     * must first have a cross-check that agreed with its label; with
+     * `skipCrossCheck` (submit_report_to_review) that requirement is waived
+     * for this call.
      */
-    async sendToReview(user: WorkflowUser, task: any) {
+    async sendToReview(
+        user: WorkflowUser,
+        task: any,
+        { skipCrossCheck = false }: { skipCrossCheck?: boolean } = {}
+    ) {
         if (!isAssignee(task, user) && !isAdmin(user, task.nameSpace)) {
             throw new ForbiddenException(
                 "Only an assignee of the task or an admin can send it to review"
@@ -133,7 +152,11 @@ export class ReviewStages {
             !!reviewData.crossCheckingClassification &&
             reviewData.crossCheckingClassification ===
                 reviewData.classification;
-        if (this.config.requireCrossCheck() && !crossCheckAgreed) {
+        if (
+            this.config.requireCrossCheck() &&
+            !crossCheckAgreed &&
+            !skipCrossCheck
+        ) {
             throw new ConflictException(
                 "The report needs a cross-check that agrees with its label before review; use send_to_cross_check first"
             );
@@ -228,6 +251,12 @@ export class ReviewStages {
                 `Cannot publish: missing ${missing.join(", ")}`
             );
         }
+        // Same rule as the web publish in ReviewTaskService
+        assertAllowedClassification(
+            task.classificationMethodology,
+            reviewData.classification,
+            "classification"
+        );
         const published = await this.reviewTaskQueue.publishSubmitted(
             task._id.toString()
         );

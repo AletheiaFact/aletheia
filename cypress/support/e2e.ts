@@ -1,4 +1,5 @@
 import "./commands";
+import "./wikidata";
 
 // eslint-disable-next-line no-undef
 Cypress.SelectorPlayground.defaults({

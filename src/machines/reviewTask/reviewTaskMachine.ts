@@ -27,6 +27,7 @@ export const transitionHandler = (state, extraContext) => {
     const {
         data_hash,
         reportModel,
+        classificationMethodology,
         t,
         recaptchaString,
         setFormAndEvents,
@@ -66,15 +67,13 @@ export const transitionHandler = (state, extraContext) => {
             },
         };
 
-        api.saveDraft(
-            data_hash,
-            draftContext,
-            t,
+        api.saveDraft(data_hash, draftContext, t, {
             reportModel,
             nameSpace,
             reviewTaskType,
-            target
-        )
+            target,
+            classificationMethodology,
+        })
             .then(() => {
                 setFormAndEvents(
                     event,
@@ -91,6 +90,7 @@ export const transitionHandler = (state, extraContext) => {
     const reviewTask = {
         data_hash,
         reportModel,
+        classificationMethodology,
         machine: {
             context: {
                 reviewData,
@@ -116,9 +116,9 @@ export const transitionHandler = (state, extraContext) => {
             return event === Events.goback
                 ? setFormAndEvents(nextState)
                 : setFormAndEvents(
-                    event,
-                    isSameLabel(state.context, state.event)
-                );
+                      event,
+                      isSameLabel(state.context, state.event)
+                  );
         })
         .catch((e) => {
             console.error("[ReviewTask] Create review task failed:", e);

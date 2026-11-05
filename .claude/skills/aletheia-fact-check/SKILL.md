@@ -25,7 +25,8 @@ https://aletheiafact-supportive-materials.s3.amazonaws.com/Manual+de+Checagem.pd
 Reference files (read when the step tells you to):
 
 - `references/labels.md` — the 9 labels, their exact definitions and a
-  decision order. Read before choosing a label, every time.
+  decision order, and which of them the task's `classificationMethodology`
+  allows. Read before choosing a label, every time.
 - `references/research.md` — source types, where to look, how to search,
   images and videos.
 - `references/review-log.md` — how to write each form field, a full worked

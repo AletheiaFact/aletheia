@@ -1,12 +1,5 @@
-FROM node:20.18.0-alpine AS package
+FROM node:20.18.0-alpine AS deps
 
-ARG NEXT_PUBLIC_UMAMI_SITE_ID
-ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
-ARG NEXT_PUBLIC_ENVIRONMENT
-ARG NEXT_PUBLIC_ORY_SDK_URL
-ARG NEXT_PUBLIC_ORYCLOUD
-ARG ENVIRONMENT
-ARG NEXT_PUBLIC_ENABLE_BANNER_DONATION
 ENV PARCEL_WORKERS=1
 
 # Install system dependencies
@@ -19,13 +12,28 @@ WORKDIR /app
 
 # Copy Yarn configuration first for better caching
 COPY .yarnrc.yml ./
-COPY .yarn/ ./.yarn/
+COPY .yarn/releases ./.yarn/releases
+COPY .yarn/plugins ./.yarn/plugins
 
 # Copy package files for dependency resolution
 COPY ./package.json ./yarn.lock ./
 
-# Install dependencies (cached when package.json/yarn.lock unchanged)
-RUN yarn install --frozen-lockfile
+# Install dependencies (cached when package.json/yarn.lock unchanged).
+# The Cypress binary is only needed by CI test jobs, not by the image.
+ENV CYPRESS_INSTALL_BINARY=0
+RUN --mount=type=cache,target=/app/.yarn/cache \
+    yarn install --immutable
+
+# Build stage. CI builds only the `deps` target to validate the install.
+FROM deps AS package
+
+ARG NEXT_PUBLIC_UMAMI_SITE_ID
+ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
+ARG NEXT_PUBLIC_ENVIRONMENT
+ARG NEXT_PUBLIC_ORY_SDK_URL
+ARG NEXT_PUBLIC_ORYCLOUD
+ARG ENVIRONMENT
+ARG NEXT_PUBLIC_ENABLE_BANNER_DONATION
 
 # Copy configuration files
 COPY config.$ENVIRONMENT.yaml ./config.yaml

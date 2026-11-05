@@ -5,9 +5,15 @@ name: Aletheia CI
 
 on:
     push:
-        branches: [stage, develop]
+        # master and ufpb-labcheck run CI only to gate their deploys.
+        branches: [stage, develop, master, ufpb-labcheck]
     pull_request:
         branches: [stage, develop]
+
+# Superseded PR runs are cancelled; stage/develop pushes always finish.
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
     UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
@@ -25,64 +31,69 @@ env:
     GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
     GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
     MONGOMS_VERSION: 6.0.17
+    MONGOMS_DOWNLOAD_DIR: /home/runner/.cache/mongodb-binaries
 jobs:
     test-docker:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20.18.0]
+        runs-on: ubuntu-24.04
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Test docker image build before merge
-              run: |
-                  docker build --build-arg ENVIRONMENT=development \
-                    --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-                    --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
+            - uses: actions/checkout@v7
+            - uses: dorny/paths-filter@v4
+              id: changes
+              with:
+                  filters: |
+                      docker:
+                          - Dockerfile
+                          - .dockerignore
+                          - package.json
+                          - yarn.lock
+                          - .yarnrc.yml
+            # Only the install stage: `yarn build` is already covered by the build job.
+            - uses: docker/setup-buildx-action@v3
+              if: steps.changes.outputs.docker == 'true'
+            - name: Test docker image dependency install before merge
+              if: steps.changes.outputs.docker == 'true'
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  target: deps
+                  push: false
+                  cache-from: type=gha,scope=docker-deps
+                  cache-to: type=gha,scope=docker-deps,mode=max
+
     build:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20.18.0]
+        runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
             - run: yarn build
-            - uses: actions/upload-artifact@v4
+            # dist/.next is a hidden folder: without include-hidden-files the
+            # artifact has no Next build, and every e2e job would rebuild the app.
+            - uses: actions/upload-artifact@v7
               with:
                   name: aletheia-dist
-                  path: dist/
+                  include-hidden-files: true
+                  retention-days: 3
+                  path: |
+                      dist/
+                      !dist/.next/cache/
+
     test-lint:
-        needs: build
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20.18.0]
+        runs-on: ubuntu-24.04
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - uses: actions/download-artifact@v4
+            - uses: actions/checkout@v7
               with:
-                  name: aletheia-dist
-                  path: dist
-            - run: yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
+                  fetch-depth: 0 # Sonar needs history for blame and new-code detection
+            - name: Fail if .yarn/cache is committed
+              run: |
+                  if [ -n "$(git ls-files .yarn/cache)" ]; then
+                    echo "::error::.yarn/cache must not be committed"; exit 1
+                  fi
+            - uses: ./.github/actions/setup-deps
             - run: yarn lint
-            - run: yarn test
+            - run: yarn test:coverage
               env:
                   NODE_OPTIONS: "--max_old_space_size=4096"
                   CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
-            # sonarcloud:
-            #   runs-on: ubuntu-latest
-            #   strategy:
-            #     matrix:
-            #       node-version: [18.19.1]
-            #   steps:
             - name: SonarCloud Scan
               uses: SonarSource/sonarcloud-github-action@master
               env:
@@ -91,64 +102,52 @@ jobs:
 
     cypress-run:
         needs: build
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - uses: actions/download-artifact@v4
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
+              with:
+                  cypress-binary: "true"
+            - uses: actions/download-artifact@v8
               with:
                   name: aletheia-dist
                   path: dist
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20.18.0
             - run: |
                   echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
-                  yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
-            - run: yarn build
             - name: Cypress run
               uses: cypress-io/github-action@v7
               with:
+                  install: false
                   start: yarn test:e2e:cy
                   wait-on: "http://127.0.0.1:3000"
+                  wait-on-timeout: 300
               env:
                   CI: true
                   CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
-    cypress-run-component:
-        needs: build
-        runs-on: ubuntu-22.04
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - uses: actions/download-artifact@v4
+            - uses: actions/upload-artifact@v7
+              if: failure()
               with:
-                  name: aletheia-dist
-                  path: dist
-            - run: |
-                  echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
-                  yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
-            - run: yarn build
+                  name: cypress-screenshots-mongo
+                  path: cypress/screenshots
+                  retention-days: 7
+
+    cypress-run-component:
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
+              with:
+                  cypress-binary: "true"
             - name: Run Cypress Component Tests
               run: yarn cypress run --component
               env:
                   CI: true
 
     vitest-postgres:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [22]
+        runs-on: ubuntu-24.04
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
             - name: Run unit tests with DB_TYPE=postgres (pglite)
               env:
                   DB_TYPE: postgres
@@ -160,7 +159,7 @@ jobs:
               run: yarn test:unit
 
     vitest-postgres-real:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         services:
             postgres:
                 image: pgvector/pgvector:pg16
@@ -176,14 +175,8 @@ jobs:
                     --health-timeout 5s
                     --health-retries 10
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Use Node.js 22
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-            - run: yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
             - name: Apply the Drizzle migrations on a real Postgres
               env:
                   POSTGRES_URL: postgres://aletheia:aletheia@localhost:5432/aletheia
@@ -198,7 +191,7 @@ jobs:
 
     cypress-run-ferretdb:
         needs: build
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         services:
             postgres:
                 image: ghcr.io/ferretdb/postgres-documentdb:17-0.102.0-ferretdb-2.1.0
@@ -218,25 +211,46 @@ jobs:
                 ports:
                     - 27018:27017
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - uses: actions/download-artifact@v4
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup-deps
+              with:
+                  cypress-binary: "true"
+            - uses: actions/download-artifact@v8
               with:
                   name: aletheia-dist
                   path: dist
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20.18.0
             - run: |
                   echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
-                  yarn install
-            - run: cp config/localConfig.example.ts config/localConfig.ts
-            - run: yarn build
             - name: Cypress run with FerretDB
               uses: cypress-io/github-action@v7
               with:
+                  install: false
                   start: yarn test:e2e:cy-ferretdb
                   wait-on: "http://127.0.0.1:3000"
+                  wait-on-timeout: 300
               env:
                   CI: true
                   CI_MONGODB_URI: "mongodb://ferretdb:ferretdb@127.0.0.1:27018/Aletheia"
+            - uses: actions/upload-artifact@v7
+              if: failure()
+              with:
+                  name: cypress-screenshots-ferretdb
+                  path: cypress/screenshots
+                  retention-days: 7
+
+    # Deploys only after every check passed on a push to a deploy branch.
+    # Called as a reusable workflow so it keeps the pushed ref, which the
+    # environment branch policies check.
+    deploy:
+        if: github.event_name == 'push' && contains(fromJSON('["master", "stage", "ufpb-labcheck"]'), github.ref_name)
+        needs:
+            - test-docker
+            - build
+            - test-lint
+            - cypress-run
+            - cypress-run-component
+            - vitest-postgres
+            - vitest-postgres-real
+            - cypress-run-ferretdb
+        uses: ./.github/workflows/aws.yml
+        secrets: inherit

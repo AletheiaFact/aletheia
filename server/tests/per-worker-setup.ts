@@ -1,7 +1,7 @@
 import { inject } from "vitest";
 
 /**
- * Per-worker test setup file (referenced from `vitest.config.ts` e2e project).
+ * Per-worker test setup file (referenced from `vitest.config.mts` e2e project).
  *
  * Each Vitest worker process runs this file once before its test files. It
  * reads the shared MongoMemoryServer base URI provided by `globalSetup.ts`
