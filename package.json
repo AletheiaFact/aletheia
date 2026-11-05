@@ -282,6 +282,11 @@
         "cheerio": "1.0.0-rc.12",
         "@langchain/core/ansi-styles": "5.2.0"
     },
+    "dependenciesMeta": {
+        "sharp@0.32.6": {
+            "built": false
+        }
+    },
     "packageManager": "yarn@3.6.3",
     "engines": {
         "node": ">=20.18.0"

@@ -12711,6 +12711,9 @@ __metadata:
     y-websocket: ^1.5.0
     yjs: ^13.5.23
     zod: ^4.3.6
+  dependenciesMeta:
+    sharp@0.32.6:
+      built: false
   languageName: unknown
   linkType: soft
 
