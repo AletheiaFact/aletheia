@@ -1,0 +1,45 @@
+name: Setup Node dependencies
+description: Install Node, restore the Yarn/Cypress/MongoDB caches, run yarn install and create the local config.
+
+inputs:
+    node-version:
+        description: Node version. Defaults to .node-version.
+        required: false
+        default: ""
+    cypress-binary:
+        description: Restore and install the Cypress binary ("true" for Cypress jobs only).
+        required: false
+        default: "false"
+
+runs:
+    using: composite
+    steps:
+        - uses: actions/setup-node@v7
+          with:
+              node-version: ${{ inputs.node-version }}
+              node-version-file: ${{ inputs.node-version == '' && '.node-version' || '' }}
+              cache: yarn
+
+        - name: Restore Cypress binary
+          if: inputs.cypress-binary == 'true'
+          uses: actions/cache@v6
+          with:
+              path: ~/.cache/Cypress
+              key: cypress-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+              restore-keys: cypress-${{ runner.os }}-
+
+        - name: Restore MongoDB binaries
+          uses: actions/cache@v6
+          with:
+              path: ~/.cache/mongodb-binaries
+              key: mongoms-${{ runner.os }}-${{ env.MONGOMS_VERSION }}
+
+        - name: Install dependencies
+          shell: bash
+          run: yarn install --immutable
+          env:
+              CYPRESS_INSTALL_BINARY: ${{ inputs.cypress-binary != 'true' && '0' || '' }}
+
+        - name: Create local config
+          shell: bash
+          run: cp config/localConfig.example.ts config/localConfig.ts

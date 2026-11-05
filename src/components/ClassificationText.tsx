@@ -1,13 +1,17 @@
 import ReviewColors from "../constants/reviewColors";
 import React from "react";
-import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
+import { useClassificationLabel } from "../hooks/useClassificationMethodology";
 
 const ClassificationText = (props: {
     classification: string;
+    methodology?: string;
     style?: object;
 }) => {
-    const { t } = useTranslation();
+    const label = useClassificationLabel(
+        props.classification,
+        props.methodology
+    );
 
     return (
         <span
@@ -19,7 +23,7 @@ const ClassificationText = (props: {
             }}
             data-cy={props.classification}
         >
-            {t(`claimReviewForm:${props.classification}`)}{" "}
+            {label}{" "}
         </span>
     );
 };

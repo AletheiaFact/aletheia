@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import type { Machine } from "../dto/create-review-task.dto";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { METHODOLOGY_IDS } from "../../../lib/classification-methodology";
 
 export type ReviewTaskDocument = ReviewTask &
     mongoose.Document & { content: any };
@@ -33,6 +34,13 @@ export class ReviewTask {
             `${tag} is not a valid report type.`,
     })
     reportModel: ReportModelEnum;
+
+    @Prop({
+        type: String,
+        required: false,
+        enum: [...METHODOLOGY_IDS],
+    })
+    classificationMethodology?: string;
 
     @Prop({ default: NameSpaceEnum.Main, required: true })
     nameSpace: string;

@@ -118,6 +118,7 @@ export class ReviewTaskQueueService {
         nameSpace: string;
         target: string;
         machine: Machine;
+        classificationMethodology?: string;
     }): Promise<ReviewTaskDocument | null> {
         let created: ReviewTaskDocument;
         try {
@@ -183,7 +184,8 @@ export class ReviewTaskQueueService {
                 published.reportModel,
                 published.nameSpace,
                 published.target,
-                published.reviewTaskType
+                published.reviewTaskType,
+                published.classificationMethodology
             );
         } catch (error) {
             await this.ReviewTaskModel.updateOne(

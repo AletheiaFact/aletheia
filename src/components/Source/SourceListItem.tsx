@@ -49,6 +49,7 @@ const SourceListItem = ({ source }) => {
                     <ReviewClassification
                         label={t("sources:sourceReview")}
                         classification={source.props.classification}
+                        methodology={source.props.classificationMethodology}
                     />
                     <AletheiaButton
                         href={source.href}

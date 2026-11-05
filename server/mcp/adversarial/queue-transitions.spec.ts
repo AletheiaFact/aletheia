@@ -83,6 +83,89 @@ describe("MCP adversarial: send to review and publish", () => {
         expect(res.text).toMatch(/Only reported tasks/);
     });
 
+    describe("submit_report_to_review", () => {
+        const transitions = (s: Session) =>
+            s.mocks.reviewTaskService.transitionAtomically.mock.calls as [
+                Record<string, any>,
+                Record<string, any>
+            ][];
+
+        it("is refused to a fact-checker who is not an assignee", async () => {
+            session = await connect(factChecker);
+            session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+                storedTask({ assigned: "draft" }, { usersId: [OTHER_USER_ID] })
+            );
+            const res = await session.call("submit_report_to_review", {
+                dataHash: HASH_A,
+            });
+            expect(res.isError).toBe(true);
+            expect(
+                session.mocks.reviewTaskService.transitionAtomically
+            ).not.toHaveBeenCalled();
+        });
+
+        it("refuses an incomplete report before sending anything to review", async () => {
+            session = await connect(factChecker);
+            session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+                storedTask({ assigned: "draft" }, { classification: "false" })
+            );
+            const res = await session.call("submit_report_to_review", {
+                dataHash: HASH_A,
+            });
+            expect(res.isError).toBe(true);
+            expect(res.text).toMatch(/missing summary/);
+            expect(
+                session.mocks.reviewTaskService.transitionAtomically
+            ).not.toHaveBeenCalled();
+        });
+
+        it("reports the task and sends it to review without a cross-check", async () => {
+            session = await connect(factChecker);
+            session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+                storedTask({ assigned: "draft" }, publishableReport)
+            );
+            const res = await session.call("submit_report_to_review", {
+                dataHash: HASH_A,
+            });
+            expect(res.isError).toBe(false);
+            const [submit, send] = transitions(session);
+            expect(submit[1].$set).toMatchObject({
+                "machine.value": "reported",
+            });
+            expect(send[0]["machine.value"]).toBe("reported");
+            expect(send[1].$set).toEqual({
+                "machine.value": "selectReviewer",
+                "machine.context.reviewData.reviewerId": null,
+            });
+        });
+
+        it("only sends a task that is already reported, so a retry works", async () => {
+            session = await connect(factChecker);
+            session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+                storedTask("reported", publishableReport)
+            );
+            const res = await session.call("submit_report_to_review", {
+                dataHash: HASH_A,
+            });
+            expect(res.isError).toBe(false);
+            const calls = transitions(session);
+            expect(calls).toHaveLength(1);
+            expect(calls[0][1].$set["machine.value"]).toBe("selectReviewer");
+        });
+
+        it("still refuses the plain send_to_review without a cross-check", async () => {
+            session = await connect(factChecker);
+            session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(
+                storedTask("reported", publishableReport)
+            );
+            const res = await session.call("send_to_review", {
+                dataHash: HASH_A,
+            });
+            expect(res.isError).toBe(true);
+            expect(res.text).toMatch(/needs a cross-check/);
+        });
+    });
+
     it("publish_review_task is refused to anyone but the reviewer or an admin", async () => {
         session = await connect(reviewer);
         session.mocks.reviewTaskService.getReviewTaskByDataHash.mockResolvedValue(

@@ -3,9 +3,12 @@ import { defineConfig } from "cypress";
 export default defineConfig({
     chromeWebSecurity: false,
     video: false,
-    screenshotOnRunFailure: false,
-    pageLoadTimeout: 480000,
-    defaultCommandTimeout: 65000,
+    screenshotOnRunFailure: true,
+    // Fail fast: a missing element used to wait 65s per assertion, so one
+    // broken spec could add 10+ minutes. Raise per command when needed.
+    pageLoadTimeout: 60000,
+    defaultCommandTimeout: 20000,
+    retries: { runMode: 1, openMode: 0 },
 
     e2e: {
         baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",

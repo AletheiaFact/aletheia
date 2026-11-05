@@ -12,6 +12,7 @@ import {
 import {
     Check,
     Close,
+    DeleteOutline,
     DescriptionOutlined,
     Edit,
     Undo,
@@ -19,19 +20,22 @@ import {
 import { useTranslation } from "next-i18next";
 import CardBase from "../../CardBase";
 import colors from "../../../styles/colors";
+import { SentenceOpIntent } from "../../../api/adminClaimEditorApi";
+import DeleteSentenceDialog from "./DeleteSentenceDialog";
 
 export interface SentenceDraft {
     sentenceId: string;
     dataHash: string;
     originalText: string;
     text: string;
-    intent: "noop" | "edit";
+    intent: SentenceOpIntent;
+    reviewStatus?: "in-progress" | "published";
 }
 
 interface Props {
     sentences: SentenceDraft[];
     onTextChange: (sentenceId: string, newText: string) => void;
-    onIntentChange: (sentenceId: string, intent: "noop" | "edit") => void;
+    onIntentChange: (sentenceId: string, intent: SentenceOpIntent) => void;
 }
 
 const SentenceEditor: React.FC<Props> = ({
@@ -42,6 +46,9 @@ const SentenceEditor: React.FC<Props> = ({
     const { t } = useTranslation("admin-editor");
     const [openEditId, setOpenEditId] = useState<string | null>(null);
     const [workingText, setWorkingText] = useState("");
+    const [pendingDelete, setPendingDelete] = useState<SentenceDraft | null>(
+        null
+    );
 
     const openEdit = (s: SentenceDraft) => {
         setOpenEditId(s.sentenceId);
@@ -65,6 +72,21 @@ const SentenceEditor: React.FC<Props> = ({
     const revertToOriginal = (s: SentenceDraft) => {
         onTextChange(s.sentenceId, s.originalText);
         onIntentChange(s.sentenceId, "noop");
+    };
+
+    // Marks the sentence for deletion; it is only removed on submit.
+    const markDeleted = (s: SentenceDraft) => {
+        onTextChange(s.sentenceId, s.originalText);
+        onIntentChange(s.sentenceId, "delete");
+    };
+
+    // A review in progress would be left without its sentence, so ask first.
+    const requestDelete = (s: SentenceDraft) => {
+        if (s.reviewStatus === "in-progress") {
+            setPendingDelete(s);
+        } else {
+            markDeleted(s);
+        }
     };
 
     return (
@@ -111,6 +133,7 @@ const SentenceEditor: React.FC<Props> = ({
                         const isEdited =
                             s.intent === "edit" &&
                             s.text.trim() !== s.originalText.trim();
+                        const isDeleted = s.intent === "delete";
                         return (
                             <Box
                                 key={s.sentenceId}
@@ -126,6 +149,7 @@ const SentenceEditor: React.FC<Props> = ({
                                         : "none",
                                     borderRadius: "8px",
                                     background: colors.white,
+                                    opacity: isDeleted ? 0.6 : 1,
                                     transition:
                                         "border-color 0.15s, box-shadow 0.15s",
                                     "&:hover .sentence-actions": {
@@ -228,6 +252,17 @@ const SentenceEditor: React.FC<Props> = ({
                                                 variant="outlined"
                                                 sx={{ fontWeight: 500 }}
                                             />
+                                            {isDeleted && (
+                                                <Chip
+                                                    label={t(
+                                                        "sentences.deletedBadge"
+                                                    )}
+                                                    size="small"
+                                                    color="error"
+                                                    variant="outlined"
+                                                    sx={{ fontWeight: 500 }}
+                                                />
+                                            )}
                                             {isEdited && (
                                                 <Chip
                                                     label={t(
@@ -249,6 +284,9 @@ const SentenceEditor: React.FC<Props> = ({
                                                 flexGrow: 1,
                                                 lineHeight: 1.6,
                                                 color: colors.blackTertiary,
+                                                textDecoration: isDeleted
+                                                    ? "line-through"
+                                                    : "none",
                                             }}
                                         >
                                             {s.text || (
@@ -273,7 +311,7 @@ const SentenceEditor: React.FC<Props> = ({
                                                 gap: 0.5,
                                             }}
                                         >
-                                            {isEdited && (
+                                            {(isEdited || isDeleted) && (
                                                 <Tooltip
                                                     title={t(
                                                         "sentences.revertTooltip"
@@ -292,21 +330,54 @@ const SentenceEditor: React.FC<Props> = ({
                                                     </IconButton>
                                                 </Tooltip>
                                             )}
-                                            <Tooltip
-                                                title={t(
-                                                    "sentences.editTooltip"
-                                                )}
-                                            >
-                                                <IconButton
-                                                    size="small"
-                                                    aria-label={t(
+                                            {!isDeleted && (
+                                                <Tooltip
+                                                    title={t(
                                                         "sentences.editTooltip"
                                                     )}
-                                                    onClick={() => openEdit(s)}
                                                 >
-                                                    <Edit fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
+                                                    <IconButton
+                                                        size="small"
+                                                        aria-label={t(
+                                                            "sentences.editTooltip"
+                                                        )}
+                                                        onClick={() =>
+                                                            openEdit(s)
+                                                        }
+                                                    >
+                                                        <Edit fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                            {!isDeleted && (
+                                                <Tooltip
+                                                    title={t(
+                                                        s.reviewStatus ===
+                                                            "published"
+                                                            ? "sentences.deletePublishedTooltip"
+                                                            : "sentences.deleteTooltip"
+                                                    )}
+                                                >
+                                                    {/* span keeps the tooltip on a disabled button */}
+                                                    <span>
+                                                        <IconButton
+                                                            size="small"
+                                                            aria-label={t(
+                                                                "sentences.deleteTooltip"
+                                                            )}
+                                                            disabled={
+                                                                s.reviewStatus ===
+                                                                "published"
+                                                            }
+                                                            onClick={() =>
+                                                                requestDelete(s)
+                                                            }
+                                                        >
+                                                            <DeleteOutline fontSize="small" />
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                            )}
                                         </Box>
                                     </Stack>
                                 )}
@@ -339,6 +410,15 @@ const SentenceEditor: React.FC<Props> = ({
                     )}
                 </Stack>
             </Box>
+            <DeleteSentenceDialog
+                open={pendingDelete !== null}
+                sentenceText={pendingDelete?.originalText}
+                onCancel={() => setPendingDelete(null)}
+                onConfirm={() => {
+                    if (pendingDelete) markDeleted(pendingDelete);
+                    setPendingDelete(null);
+                }}
+            />
         </CardBase>
     );
 };
