@@ -12,53 +12,15 @@ import {
     buildClaimContext,
     collectSentences,
 } from "../mcp/review-workflow/machine";
-import {
-    ReviewLog,
-    ReviewLogField,
-    toStored,
-} from "../mcp/review-workflow/review-log";
+import { ReviewLog, toStored } from "../mcp/review-workflow/review-log";
 import { ReviewTaskQueueService } from "../review-task/review-task-queue.service";
+import {
+    ReviewTask,
+    ReviewTaskDocument,
+} from "../review-task/schemas/review-task.schema";
 import { isValidSourceHref } from "../source/shared/source.rules";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { seedReviews } from "./seed-data/reviews";
-
-type SeedReport = typeof seedReviews[number]["report"];
-
-const FIELDS: ReviewLogField[] = ["summary", "report", "verification"];
-
-// A linked source as schema2html renders it (lib/editor-parser.ts).
-const SOURCE_LINK =
-    /<a href='#[^']*' rel='noopener noreferrer nofollow'>([^<]*)<sup>(\d+)<\/sup><\/a>/g;
-
-/**
- * The published report HTML (as aletheiafact.org serves it) back to the
- * plain review log the MCP tools write, so toStored() rebuilds the stored
- * text, source links and editor document the web would have saved.
- */
-export function reportToReviewLog(report: SeedReport): ReviewLog {
-    const linked = new Map<
-        number,
-        { field: ReviewLogField; quotedText: string }
-    >();
-    const log: ReviewLog = {
-        classification: report.classification,
-        questions: report.questions,
-    };
-    for (const field of FIELDS) {
-        log[field] = report[field]
-            .replace(SOURCE_LINK, (_, quotedText: string, sup: string) => {
-                linked.set(Number(sup), { field, quotedText });
-                return quotedText;
-            })
-            .replace(/<br>|<\/p><p>/g, "\n")
-            .replace(/<\/?(div|p)>/g, "");
-    }
-    log.sources = report.sources.map((href, index) => ({
-        href,
-        ...linked.get(index + 1),
-    }));
-    return log;
-}
 
 // Quotes and sentence splits differ between the site and the local parser:
 // match the exact text first, then a sentence that contains it.
@@ -83,7 +45,7 @@ interface SeedReviewsDeps {
 }
 
 /**
- * Publishes the fact-checks in seed-data/reviews.ts through the work-queue
+ * Publishes the fact-checks in seed-data/reviews/ through the work-queue
  * publish (ReviewTaskQueueService.publishSubmitted), which creates the
  * published review task, Report and ClaimReview like the web publish does.
  * Idempotent: sentences that already have a ClaimReview are skipped.
@@ -95,6 +57,10 @@ export async function seedPublishedReviews(deps: SeedReviewsDeps) {
     });
     const claimReviewModel = app.get<Model<ClaimReviewDocument>>(
         getModelToken(ClaimReview.name),
+        { strict: false }
+    );
+    const taskModel = app.get<Model<ReviewTaskDocument>>(
+        getModelToken(ReviewTask.name),
         { strict: false }
     );
     const author = new Types.ObjectId(deps.authorId);
@@ -122,32 +88,40 @@ export async function seedPublishedReviews(deps: SeedReviewsDeps) {
         );
         context.review.isPartialReview = review.isPartial;
         // The publish rejects hrefs that older reviews were saved with.
-        const reviewLog = reportToReviewLog(review.report);
-        reviewLog.sources = (reviewLog.sources ?? []).filter((source) => {
+        const sources = review.sources.filter((source) => {
             const valid = isValidSourceHref(source.href);
             if (!valid) log(`Source dropped, invalid URL: ${source.href}`);
             return valid;
         });
         Object.assign(context.reviewData, {
-            ...toStored(reviewLog),
-            classification: review.cls,
+            ...toStored({ ...review, sources } as ReviewLog),
+            classification: review.classification,
             reviewerId: author,
         });
-        const task = await queue.createAssigned({
-            data_hash: dataHash,
-            reportModel: review.reportModel as ReportModelEnum,
-            reviewTaskType: ReviewTaskTypeEnum.Claim,
-            nameSpace: NameSpaceEnum.Main,
-            target: claim.claimId,
-            machine: { value: "submitted", context } as any,
-        });
+        // A task left `submitted` by a failed publish is retried here.
+        const task =
+            (await queue.createAssigned({
+                data_hash: dataHash,
+                reportModel: review.reportModel as ReportModelEnum,
+                reviewTaskType: ReviewTaskTypeEnum.Claim,
+                nameSpace: NameSpaceEnum.Main,
+                target: claim.claimId,
+                machine: { value: "submitted", context } as any,
+            })) ??
+            (await taskModel.findOne({
+                data_hash: dataHash,
+                "machine.value": "submitted",
+            }));
         if (!task) {
             log(
                 `Review skipped, sentence already has a task: "${review.sentence}"`
             );
             continue;
         }
-        await queue.publishSubmitted(String(task._id));
+        if (!(await queue.publishSubmitted(String(task._id)))) {
+            log(`Publish failed: "${review.sentence}"`);
+            continue;
+        }
         // Keep the original publication date instead of "now".
         await claimReviewModel.updateOne(
             { data_hash: dataHash },

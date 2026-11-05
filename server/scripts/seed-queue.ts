@@ -1,5 +1,6 @@
 import type { INestApplication } from "@nestjs/common";
 import { getModelToken } from "@nestjs/mongoose";
+import { randomBytes } from "crypto";
 import { Model, Types } from "mongoose";
 import { Roles } from "../auth/ability/ability.factory";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
@@ -19,11 +20,27 @@ import { deriveClaimSlug } from "../claim/shared/claim.rules";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import type { UsersService } from "../users/users.service";
 import { seedClaims } from "./seed-data/claims";
-import {
-    QueueActor,
-    queueScenarios,
-    queueUsers,
-} from "./seed-data/queue";
+import queueData from "./seed-data/queue.json";
+
+type QueueActor = "me" | "ana" | "bruno";
+interface QueueScenario {
+    // Title of a claim in seed-data/claims/; its first unreviewed sentence is used.
+    claimTitle: string;
+    state: string;
+    assignees: QueueActor[];
+    crossChecker?: QueueActor;
+    reviewer?: QueueActor;
+    classification?: string;
+    // The tool call this task is there to exercise.
+    covers: string;
+}
+const queueUsers = queueData.users as Array<{
+    key: "ana" | "bruno";
+    name: string;
+    email: string;
+    role: string;
+}>;
+const queueScenarios = queueData.scenarios as QueueScenario[];
 
 interface SeedQueueDeps {
     app: INestApplication;
@@ -77,10 +94,15 @@ export async function seedReviewQueue(deps: SeedQueueDeps) {
         return;
     }
 
-    // Reviewer is the smallest role that can use every queue tool.
+    // Reviewer is the smallest role that can use every queue tool. Only raise
+    // lower roles, never replace Admin, SuperAdmin or Integration.
     const ownerRole: Record<string, string> = (owner.role as any) ?? {};
     const mainRole = ownerRole[NameSpaceEnum.Main];
-    if (mainRole !== Roles.Reviewer && mainRole !== Roles.Admin) {
+    if (
+        !mainRole ||
+        mainRole === Roles.Regular ||
+        mainRole === Roles.FactChecker
+    ) {
         try {
             await userService.updateUser(owner._id, {
                 role: { ...ownerRole, [NameSpaceEnum.Main]: Roles.Reviewer },
@@ -101,7 +123,8 @@ export async function seedReviewQueue(deps: SeedQueueDeps) {
                 user = await userService.register({
                     name: persona.name,
                     email: persona.email,
-                    password: deps.seedUsers[0].password,
+                    // Helper accounts are never logged into: random password.
+                    password: randomBytes(24).toString("hex"),
                     role: { [NameSpaceEnum.Main]: persona.role },
                     sendAuthDetails: false,
                 });
@@ -134,11 +157,11 @@ export async function seedReviewQueue(deps: SeedQueueDeps) {
             NameSpaceEnum.Main
         );
         const hashes = collectSentenceHashes(claim);
-        sentenceOf.set(title, hashes[0]);
         for (const dataHash of hashes) {
             if (await deps.claimReviewService.getReviewByDataHash(dataHash)) {
                 continue;
             }
+            if (!sentenceOf.has(title)) sentenceOf.set(title, dataHash);
             const context = buildClaimContext([], claimId);
             context.review.personality = personalityId;
             const inserted = await queue.enqueueUnassigned({
@@ -172,11 +195,16 @@ export async function seedReviewQueue(deps: SeedQueueDeps) {
         context.reviewData.crossCheckerId = toId(scenario.crossChecker);
         if (scenario.state !== "assigned") {
             const source = seedClaims.find(
-                (c) => deriveClaimSlug(c.title) === deriveClaimSlug(scenario.claimTitle)
+                (c) =>
+                    deriveClaimSlug(c.title) ===
+                    deriveClaimSlug(scenario.claimTitle)
             )?.sources[0];
             Object.assign(
                 context.reviewData,
-                draftReviewData(scenario.classification ?? "unverifiable", source!)
+                draftReviewData(
+                    scenario.classification ?? "unverifiable",
+                    source!
+                )
             );
         }
         const value =
@@ -187,7 +215,9 @@ export async function seedReviewQueue(deps: SeedQueueDeps) {
         );
         if (result.modifiedCount) {
             moved++;
-            log(`Task "${scenario.claimTitle}" -> ${scenario.state} (${scenario.covers})`);
+            log(
+                `Task "${scenario.claimTitle}" -> ${scenario.state} (${scenario.covers})`
+            );
         }
     }
     log(`${moved} review tasks moved out of unassigned`);

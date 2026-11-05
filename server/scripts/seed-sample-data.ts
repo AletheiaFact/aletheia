@@ -1,4 +1,4 @@
-import type { INestApplication } from "@nestjs/common";
+import { INestApplication, NotFoundException } from "@nestjs/common";
 import { ContextIdFactory } from "@nestjs/core";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -9,7 +9,7 @@ import type { IPersonalityService } from "../interfaces/personality.service.inte
 import { ContentModelEnum } from "../types/enums";
 import { UsersService } from "../users/users.service";
 import { seedClaims } from "./seed-data/claims";
-import { seedPersonalities } from "./seed-data/personalities";
+import seedPersonalities from "./seed-data/personalities.json";
 import { seedReviewQueue } from "./seed-queue";
 import { seedPublishedReviews } from "./seed-reviews";
 
@@ -26,6 +26,10 @@ export async function seedSampleData(
     seedUsers: Array<{ email: string; password: string }>,
     log: (message: string) => void
 ) {
+    if (process.env.NODE_ENV === "production") {
+        log("Sample data skipped: refusing to seed in production");
+        return;
+    }
     // Request-scoped services read the acting user from the request.
     const req: Record<string, any> = { params: {}, query: {}, headers: {} };
     const contextId = ContextIdFactory.create();
@@ -81,7 +85,10 @@ export async function seedSampleData(
                 undefined,
                 false
             )
-            .catch((): null => null);
+            .catch((e) => {
+                if (e instanceof NotFoundException) return null;
+                throw e;
+            });
         if (!claim) {
             const parsed = SeedClaimSchema.safeParse({
                 ...seedClaim,
