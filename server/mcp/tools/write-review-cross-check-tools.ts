@@ -26,7 +26,7 @@ export function registerWriteReviewCrossCheckTools(
         "send_to_cross_check",
         {
             description:
-                "Send a reported task to the cross-check backlog, where another checker claims it with claim_cross_check. Assignees or admins only." +
+                "Send a reported task to the cross-check backlog, where another checker claims it with claim_cross_check. Also moves a task waiting in the review backlog that no reviewer took yet. A task already in the cross-check backlog (e.g. after submit_report with sendToCrossCheck: true) is returned unchanged. Any assignee of the task (fact-checkers included) or an admin." +
                 LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },

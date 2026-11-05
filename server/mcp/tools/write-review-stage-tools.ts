@@ -29,7 +29,7 @@ export function registerWriteReviewStageTools(
         "send_to_review",
         {
             description:
-                "Send a reported task to the review backlog. Usually not needed: an agreeing submit_cross_check already does it. Needs a cross-check that agreed with the report's label (unless disabled in config). Assignees or admins only." +
+                "Send a reported task to the review backlog after an agreeing cross-check. Usually not needed: an agreeing submit_cross_check already does it. Without such a cross-check it is refused; to send the report to review without one, use submit_report_to_review. A task already in the review backlog is returned unchanged. Any assignee of the task (fact-checkers included) or an admin." +
                 LABELS_NOTE,
             inputSchema: ReviewTaskByHashSchema.shape as any,
         },

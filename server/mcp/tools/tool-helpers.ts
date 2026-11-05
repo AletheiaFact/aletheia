@@ -1,4 +1,8 @@
-import { Logger } from "@nestjs/common";
+import {
+    ConflictException,
+    ForbiddenException,
+    Logger,
+} from "@nestjs/common";
 import { AbilityFactory, Action } from "../../auth/ability/ability.factory";
 import { NameSpaceService } from "../../auth/name-space/name-space.service";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
@@ -50,7 +54,9 @@ export async function assertNamespaceAccess(
             return candidateId?.toString() === userId;
         });
     if (!isMember) {
-        throw new Error(`Not authorized for namespace "${nameSpace}"`);
+        throw new ForbiddenException(
+            `Not authorized for namespace "${nameSpace}"`
+        );
     }
 }
 
@@ -65,7 +71,9 @@ export function assertCanWrite(
 ): void {
     const ability = abilityFactory.defineAbility(user as any, nameSpace);
     if (!ability.can(Action.Create, "all")) {
-        throw new Error(`Not authorized to write in namespace "${nameSpace}"`);
+        throw new ForbiddenException(
+            `Not authorized to write in namespace "${nameSpace}"`
+        );
     }
 }
 
@@ -94,6 +102,21 @@ export function jsonResult(data: unknown): ToolResult {
     };
 }
 
+/**
+ * Tells an agent whether a refusal is about who it is or about where the
+ * task is, so a state conflict is not reported to the user as a missing
+ * permission (issue #2708).
+ */
+function refusalKind(error: unknown): string {
+    if (error instanceof ForbiddenException) {
+        return " (not allowed for this account)";
+    }
+    if (error instanceof ConflictException) {
+        return " (the task's current state does not allow it; this is not a permission problem)";
+    }
+    return "";
+}
+
 /** Wraps a tool handler so failures become readable MCP errors, not crashes. */
 export function safeTool<Args>(
     name: string,
@@ -108,7 +131,12 @@ export function safeTool<Args>(
             logger.error(`Tool ${name} failed: ${message}`);
             return {
                 isError: true,
-                content: [{ type: "text", text: `${name} failed: ${message}` }],
+                content: [
+                    {
+                        type: "text",
+                        text: `${name} failed${refusalKind(error)}: ${message}`,
+                    },
+                ],
             };
         }
     };

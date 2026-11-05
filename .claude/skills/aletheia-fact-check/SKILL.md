@@ -76,6 +76,7 @@ The MCP server may be registered under different names (`aletheia`,
 | Ask for the cross-check (only after a plain `submit_report`) | `send_to_cross_check` | writer |
 | Take / record a cross-check | `claim_cross_check`, `next_cross_checking`, `submit_cross_check` | cross-checker |
 | Ask for review (only if an agreeing cross-check left the task in `reported`) | `send_to_review` | writer |
+| Send to review without a cross-check (only when the user asks for it) | `submit_report_to_review` | writer |
 | Take a review (returns claim and full form) / list yours | `claim_review_task`, `list_my_review_tasks` | reviewer |
 | Publish (returns the ClaimReview) / send back | `publish_review_task`, `reject_review_task` | reviewer |
 | Leave a note | `add_review_comment` | all |
@@ -104,6 +105,12 @@ sources or wording from a previous claim into the next one.
 
 Stop the loop and tell the user when: the queue is empty; the same tool error
 happens twice in a row; or a rule above would have to be broken.
+
+**Read refusals before reporting them.** A refusal marked `(not allowed for
+this account)` is a permission problem. One marked `(the task's current
+state does not allow it; …)` is not: the task is somewhere else in the flow,
+and the message says the next step. Follow it, or tell the user where the
+task is. Never tell the user you lack permission for a state refusal.
 
 ## The check (one sentence)
 
@@ -197,6 +204,12 @@ conclusion right.
   backlog by itself. Only if a task of yours sits in `reported` with
   `crossCheck.classification` equal to your label (auto-send disabled on the
   server), call `send_to_review`.
+- If the user asks to send the report to cross-checking or to review
+  yourself: as the task's assignee you may. `send_to_cross_check` asks for
+  the cross-check (a task already waiting for one is left as is).
+  `send_to_review` needs an agreeing cross-check; to skip the cross-check
+  because the user asked, use `submit_report_to_review` (it also takes a task
+  already reported or waiting for a cross-checker nobody took).
 - If the person checked should be asked for an official statement (manual:
   after classification, when specific people are involved), add a review
   comment: "Pedido de posicionamento pendente: <quem>". You do not contact
@@ -241,7 +254,7 @@ cross-checker works on N, and the reviewer on N−1.
 Each role loads only its own tools in one ToolSearch call (replace
 `aletheia-x` with the server entry for that role):
 
-- Writer: `select:mcp__aletheia-x__next_review_task,mcp__aletheia-x__list_review_tasks,mcp__aletheia-x__get_review_log,mcp__aletheia-x__save_review_log,mcp__aletheia-x__submit_report,mcp__aletheia-x__release_review_task,mcp__aletheia-x__add_review_comment,mcp__aletheia-x__search`
+- Writer: `select:mcp__aletheia-x__next_review_task,mcp__aletheia-x__list_review_tasks,mcp__aletheia-x__get_review_log,mcp__aletheia-x__save_review_log,mcp__aletheia-x__submit_report,mcp__aletheia-x__send_to_cross_check,mcp__aletheia-x__send_to_review,mcp__aletheia-x__submit_report_to_review,mcp__aletheia-x__release_review_task,mcp__aletheia-x__add_review_comment,mcp__aletheia-x__search`
 - Cross-checker: `select:mcp__aletheia-x__claim_cross_check,mcp__aletheia-x__next_cross_checking,mcp__aletheia-x__get_review_log,mcp__aletheia-x__submit_cross_check`
 - Reviewer: `select:mcp__aletheia-x__claim_review_task,mcp__aletheia-x__list_my_review_tasks,mcp__aletheia-x__publish_review_task,mcp__aletheia-x__reject_review_task,mcp__aletheia-x__add_review_comment`
 

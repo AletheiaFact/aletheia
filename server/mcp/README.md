@@ -215,13 +215,13 @@ view gets a conflict, never someone else's task.
 | Read the form | `get_review_log` | read | anyone | — |
 | Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
 | Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`) |
-| Finish and send to review | `submit_report_to_review` | write | assignee | `assigned` → `reported` → `selectReviewer`, no cross-check (for conclusions already validated by people; a different user reviews) |
+| Send to review without a cross-check | `submit_report_to_review` | write | assignee | `assigned` → `reported` → `selectReviewer`; also from `reported` or from a cross-check backlog nobody took (`selectCrossChecker`). For when the user asks to skip the cross-check, or conclusions already validated by people; a different user reviews |
 | Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
-| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
+| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` (or a review backlog nobody took) → `selectCrossChecker`; already there → unchanged |
 | Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` (returns the claim context, not the writer's label) |
 | My cross-checks | `next_cross_checking` | read | cross-checker | — |
 | Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `selectReviewer` (or `reported` when `auto_send_to_review` is false); different → `assigned` |
-| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` (only when `auto_send_to_review` is false) |
+| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer`, needs an agreeing cross-check (only when `auto_send_to_review` is false); already there → unchanged |
 | Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` (returns the claim context and the review form) |
 | My reviews | `list_my_review_tasks` | read | reviewer | — |
 | Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
@@ -238,6 +238,17 @@ completeness rules and list what is missing.
 Rules (`mcp.task_queue` in `config.yaml`):
 
 - `max_assignees` (default 10): limit for `join_review_task`.
+- `require_cross_check` (default true): `send_to_review` needs a cross-check
+  that agreed with the report's label. `submit_report_to_review` always skips
+  it.
+- `auto_send_to_review` (default true): an agreeing `submit_cross_check`
+  sends the task to the review backlog by itself.
+
+Refusals say which kind they are, so an agent does not report a state
+conflict as a missing permission: `<tool> failed (not allowed for this
+account): …` when the caller may not act on the task, and `<tool> failed
+(the task's current state does not allow it; …): …` with the next step when
+the task is somewhere else in the flow.
 
 The four-eyes rule is enforced by account: a cross-checker is never an
 assignee, and a reviewer is never an assignee or the cross-checker. An agent

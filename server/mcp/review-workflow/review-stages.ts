@@ -4,7 +4,6 @@ import { ReviewTaskService } from "../../review-task/review-task.service";
 import {
     idsEqual,
     isAdmin,
-    isAssignee,
     toObjectId,
     WorkflowUser,
 } from "./access";
@@ -13,6 +12,83 @@ import { missingReportFields } from "./publish-rules";
 import { ReviewNotifierService } from "./review-notifier.service";
 import { assertAllowedClassification } from "../../review-task/classification-methodology.rules";
 import { assertWriter, REVIEW_DATA, WorkflowConfig } from "./workflow-guards";
+
+const MOVED_BY_SOMEONE_ELSE =
+    "The task was moved by someone else meanwhile; read it again with get_review_task";
+
+/** The field naming who took the task out of each backlog. */
+const BACKLOG_TAKER = {
+    selectCrossChecker: "crossCheckerId",
+    selectReviewer: "reviewerId",
+} as const;
+type Backlog = keyof typeof BACKLOG_TAKER;
+
+/** The task waits in `backlog` and nobody has taken it yet. */
+function inBacklog(task: any, backlog: Backlog): boolean {
+    return (
+        stateName(task.machine?.value) === backlog &&
+        !task.machine?.context?.reviewData?.[BACKLOG_TAKER[backlog]]
+    );
+}
+
+/** Atomic-write filter for {@link inBacklog} (`null` also matches a missing field). */
+function backlogFilter(backlog: Backlog) {
+    return {
+        "machine.value": backlog,
+        [`${REVIEW_DATA}.${BACKLOG_TAKER[backlog]}`]: null,
+    };
+}
+
+/**
+ * The refusal when a send found the task in none of the states it moves
+ * from: where the task is and what to do instead, or a race message when
+ * the stored copy was sendable and someone moved the task meanwhile.
+ */
+function notSent(
+    task: any,
+    target: "cross-checking" | "review",
+    fromBacklogs: Backlog[]
+): ConflictException {
+    const state = stateName(task.machine?.value);
+    const sendable =
+        state === "reported" || fromBacklogs.some((b) => inBacklog(task, b));
+    if (sendable) {
+        return new ConflictException(MOVED_BY_SOMEONE_ELSE);
+    }
+    const skipHint =
+        target === "review" && inBacklog(task, "selectCrossChecker")
+            ? " To send it to review without the cross-check, use submit_report_to_review."
+            : "";
+    return new ConflictException(
+        `Only reported tasks can be sent to ${target} (task is "${state}"). ${afterReportHint(
+            state
+        )}${skipHint}`.trim()
+    );
+}
+
+/**
+ * What a writer can do with a task in `state` when it cannot be sent on,
+ * so an agent is told the way forward instead of guessing (issue #2708).
+ */
+export function afterReportHint(state: string): string {
+    switch (state) {
+        case "assigned":
+            return "Finish the report with submit_report first (with sendToCrossCheck: true it also asks for the cross-check), or use submit_report_to_review to skip the cross-check.";
+        case "unassigned":
+            return "Nobody is writing it yet.";
+        case "selectCrossChecker":
+        case "cross-checking":
+        case "addCommentCrossChecking":
+            return "A cross-checker is on it; an agreeing cross-check sends it to review by itself.";
+        case "selectReviewer":
+        case "submitted":
+            return "A reviewer is on it already.";
+        case "published":
+            return "It is already published.";
+        default:
+            return "";
+    }
+}
 
 /**
  * The stages after writing: cross-check, review, rejection and publishing.
@@ -30,12 +106,24 @@ export class ReviewStages {
     /**
      * Moves a `reported` task to the cross-check backlog
      * (`selectCrossChecker` with no cross-checker), where another checker
-     * can claim it. Assignees or admins only.
+     * can claim it. A task waiting for a reviewer that nobody took yet can
+     * be moved too, as the web's "back" from the reviewer selection does.
+     * Already in the cross-check backlog: returned as is. Assignees or
+     * admins only.
      */
     async sendToCrossCheck(user: WorkflowUser, task: any) {
         assertWriter(user, task, "send it to cross-checking");
+        if (inBacklog(task, "selectCrossChecker")) {
+            return task;
+        }
         const sent = await this.reviewTaskQueue.transitionAtomically(
-            { _id: task._id, "machine.value": "reported" },
+            {
+                _id: task._id,
+                $or: [
+                    { "machine.value": "reported" },
+                    backlogFilter("selectReviewer"),
+                ],
+            },
             {
                 $set: {
                     "machine.value": "selectCrossChecker",
@@ -46,11 +134,7 @@ export class ReviewStages {
             }
         );
         if (!sent) {
-            throw new ConflictException(
-                `Only reported tasks can be sent to cross-checking (task is "${stateName(
-                    task.machine?.value
-                )}")`
-            );
+            throw notSent(task, "cross-checking", ["selectReviewer"]);
         }
         return sent;
     }
@@ -135,17 +219,19 @@ export class ReviewStages {
      * only. Unless `mcp.task_queue.require_cross_check` is false, the report
      * must first have a cross-check that agreed with its label; with
      * `skipCrossCheck` (submit_report_to_review) that requirement is waived
-     * for this call.
+     * for this call, and a task still waiting for a cross-checker nobody
+     * took can be moved too, as the web's "back" from the cross-checker
+     * selection does. Already in the review backlog: returned as is.
      */
     async sendToReview(
         user: WorkflowUser,
         task: any,
         { skipCrossCheck = false }: { skipCrossCheck?: boolean } = {}
     ) {
-        if (!isAssignee(task, user) && !isAdmin(user, task.nameSpace)) {
-            throw new ForbiddenException(
-                "Only an assignee of the task or an admin can send it to review"
-            );
+        assertWriter(user, task, "send it to review");
+        const state = stateName(task.machine?.value);
+        if (inBacklog(task, "selectReviewer")) {
+            return task;
         }
         const reviewData = task.machine?.context?.reviewData ?? {};
         const crossCheckAgreed =
@@ -157,12 +243,24 @@ export class ReviewStages {
             !crossCheckAgreed &&
             !skipCrossCheck
         ) {
-            throw new ConflictException(
-                "The report needs a cross-check that agrees with its label before review; use send_to_cross_check first"
-            );
+            // A task elsewhere in the flow is told where it is instead
+            throw state === "reported"
+                ? new ConflictException(
+                      "The report has no cross-check that agrees with its label yet, which review requires. To ask for one, use send_to_cross_check; to send it to review without a cross-check, use submit_report_to_review"
+                  )
+                : notSent(task, "review", []);
         }
+        const fromBacklogs: Backlog[] = skipCrossCheck
+            ? ["selectCrossChecker"]
+            : [];
         const sent = await this.reviewTaskQueue.transitionAtomically(
-            { _id: task._id, "machine.value": "reported" },
+            {
+                _id: task._id,
+                $or: [
+                    { "machine.value": "reported" },
+                    ...fromBacklogs.map(backlogFilter),
+                ],
+            },
             {
                 $set: {
                     "machine.value": "selectReviewer",
@@ -171,11 +269,7 @@ export class ReviewStages {
             }
         );
         if (!sent) {
-            throw new ConflictException(
-                `Only reported tasks can be sent to review (task is "${stateName(
-                    task.machine?.value
-                )}")`
-            );
+            throw notSent(task, "review", fromBacklogs);
         }
         const otherAssignees = (
             sent.machine.context.reviewData.usersId ?? []

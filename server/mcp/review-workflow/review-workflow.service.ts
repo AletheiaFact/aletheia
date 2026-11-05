@@ -317,11 +317,17 @@ export class ReviewWorkflowService {
 
     /**
      * Submits the report and sends it to the review backlog in one call,
-     * without a cross-check. A task already `reported` skips the submit, so a
-     * retry after a failed send works.
+     * without a cross-check. A task already submitted (`reported`, or still
+     * waiting in the cross-check or review backlog) skips the submit, so a
+     * retry after a failed send works and a writer can drop a requested
+     * cross-check nobody took yet.
      */
     async submitReportToReview(user: WorkflowUser, task: any) {
-        const alreadyReported = stateName(task.machine?.value) === "reported";
+        const alreadyReported = [
+            "reported",
+            "selectCrossChecker",
+            "selectReviewer",
+        ].includes(stateName(task.machine?.value));
         if (alreadyReported) {
             // submitReport checks the label against the task's methodology;
             // a retry that skips it must not skip that check
