@@ -5,6 +5,9 @@ import { MongoClaimService } from "./mongo/claim.service";
 import { PostgresClaimService } from "./postgres/claim.service";
 import { claimServiceProvider } from "./claim.provider";
 import { ClaimController } from "./claim.controller";
+import { ClaimPageController } from "./claim-page.controller";
+import { ClaimReviewPageController } from "./claim-review-page.controller";
+import { ClaimSourcesHistoryPageController } from "./claim-sources-history-page.controller";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ParserModule } from "./parser/parser.module";
 import { PersonalityModule } from "../personality/personality.module";
@@ -79,7 +82,13 @@ export class ClaimModule {
             ],
             exports: ["ClaimService"],
             providers,
-            controllers: [ClaimController, DebateTranscriptController],
+            controllers: [
+                ClaimController,
+                ClaimPageController,
+                ClaimReviewPageController,
+                ClaimSourcesHistoryPageController,
+                DebateTranscriptController,
+            ],
         };
     }
 }
