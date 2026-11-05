@@ -1,14 +1,74 @@
 {
-    "browserslist": [
-        ">0.2%",
-        "not dead",
-        "not ie <= 11",
-        "not op_mini all"
+    "name": "aletheia",
+    "version": "1.2.1",
+    "description": "Crowd-sourced fact-checking platform for the website AletheiaFact.org.",
+    "license": "GPL-3.0",
+    "main": "./dist/server/main.js",
+    "scripts": {
+        "prepare": "husky",
+        "start": "node dist/server/main.js",
+        "seed": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.yaml",
+        "seed:ci": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
+        "seed:ci:prebuilt": "node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
+        "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
+        "test": "env-cmd --silent vitest run",
+        "test:unit": "env-cmd --silent vitest run --project unit",
+        "test:pg": "DB_TYPE=postgres CI_EXPECT_DB_TYPE=postgres env-cmd --silent vitest run --project unit",
+        "test:e2e": "env-cmd --silent vitest run --project e2e",
+        "test:watch": "env-cmd --silent vitest",
+        "test:coverage": "env-cmd --silent vitest run --coverage",
+        "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn build-next",
+        "build-ts": "tsc",
+        "build-nest": "nest build -p ./server/tsconfig.json",
+        "build-next": "next build",
+        "watch-ts": "tsc --project ./server/tsconfig.json -w",
+        "debug": "yarn build && yarn watch-debug",
+        "lint": "tsc --noEmit && yarn lint:check",
+        "lint:check": "eslint \"**/*.{js,ts,tsx}\"",
+        "lint:fix": "tsc --noEmit && eslint \"**/*.{js,ts,tsx}\" --quiet --fix",
+        "copy-static-assets": "ts-node scripts/copyStaticAssets.ts",
+        "watch-debug": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn serve-debug\"",
+        "watch-node": "nodemon dist/server/main.js --signal SIGTERM",
+        "serve-debug": "nodemon --inspect dist/server/main.js  --signal SIGTERM",
+        "clean": "rimraf **/{node_modules,dist}",
+        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build -o ./docs/storybook",
+        "migrate:create": "env-cmd sh -c 'ts-node node_modules/.bin/migrate-mongo-ts create $0 -f migrate-mongo-config.ts' ",
+        "migrate:status": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts status -f migrate-mongo-config.ts",
+        "migrate:pg": "env-cmd --silent drizzle-kit migrate",
+        "migrate:pg:create": "env-cmd --silent drizzle-kit generate",
+        "migrate:pg:status": "env-cmd --silent drizzle-kit check",
+        "parity:diff": "ts-node scripts/parity/diff.ts",
+        "migrate:undo-last": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts down -f migrate-mongo-config.ts && npm run migrate:status",
+        "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
+        "cypress-open": "cypress open",
+        "cypress-run": "cypress run",
+        "ory-kratos:cy": "docker compose up -d --build --force-recreate kratos kratos-migrate",
+        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
+        "test:e2e:cy-ferretdb": "env-cmd --silent concurrently -p \"[{name}]\" -n \"Ory,Server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:27018 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
+        "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
+        "test:e2e:app-server": "yarn seed:ci:prebuilt && yarn start -c config.test.ci.yaml",
+        "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts"
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "test/**/*",
+            "src/**/*",
+            "docs/**/*"
+        ]
+    },
+    "keywords": [
+        "aletheia",
+        "REST",
+        "API",
+        "react",
+        "fact-checking"
     ],
     "contributors": [
         {
-            "email": "mateusbatistasantos@gmail.com",
             "name": "Mateus Santos",
+            "email": "mateusbatistasantos@gmail.com",
             "url": "https://github.com/mateusbs17"
         }
     ],
@@ -132,12 +192,6 @@
         "yjs": "^13.5.23",
         "zod": "^4.6.6"
     },
-    "dependenciesMeta": {
-        "sharp@0.32.6": {
-            "built": false
-        }
-    },
-    "description": "Crowd-sourced fact-checking platform for the website AletheiaFact.org.",
     "devDependencies": {
         "@babel/core": "^7.29.6",
         "@babel/preset-env": "^7.22.20",
@@ -197,98 +251,44 @@
         "vitest": "^4.1.11",
         "wait-on": "9.0.3"
     },
-    "engines": {
-        "node": ">=20.18.0"
-    },
-    "keywords": [
-        "aletheia",
-        "REST",
-        "API",
-        "react",
-        "fact-checking"
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
     ],
-    "license": "GPL-3.0",
     "lint-staged": {
         "*.(ts|js|tsx)": [
             "prettier --write",
             "eslint --fix"
         ]
     },
-    "main": "./dist/server/main.js",
-    "name": "aletheia",
-    "nodemonConfig": {
-        "ignore": [
-            "test/**/*",
-            "src/**/*",
-            "docs/**/*"
-        ]
-    },
-    "packageManager": "yarn@3.6.3",
     "resolutions": {
-        "@compodoc/compodoc": "1.1.21",
-        "@grpc/grpc-js": "1.10.9",
-        "@langchain/core/ansi-styles": "5.2.0",
         "@types/mime": "3.0.4",
-        "@types/react": "^18.3.1",
-        "@types/react-dom": "^18.3.0",
-        "braces": "3.0.3",
-        "cheerio": "1.0.0-rc.12",
-        "ejs": "3.1.10",
         "es5-ext": "0.10.64",
         "follow-redirects": "1.15.6",
-        "glob": "^9.0.0",
+        "webpack-dev-middleware": "6.1.3",
         "ip": "1.1.9",
         "tar": "6.2.1",
+        "@types/react": "^18.3.1",
+        "@types/react-dom": "^18.3.0",
+        "ejs": "3.1.10",
+        "@grpc/grpc-js": "1.10.9",
+        "braces": "3.0.3",
+        "ws": "8.17.1",
+        "glob": "^9.0.0",
         "tldjs": "2.3.1",
-        "webpack-dev-middleware": "6.1.3",
-        "ws": "8.17.1"
+        "@compodoc/compodoc": "1.1.21",
+        "cheerio": "1.0.0-rc.12",
+        "@langchain/core/ansi-styles": "5.2.0"
     },
-    "scripts": {
-        "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn build-next",
-        "build-nest": "nest build -p ./server/tsconfig.json",
-        "build-next": "next build",
-        "build-storybook": "storybook build -o ./docs/storybook",
-        "build-ts": "tsc",
-        "clean": "rimraf **/{node_modules,dist}",
-        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
-        "copy-static-assets": "ts-node scripts/copyStaticAssets.ts",
-        "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts",
-        "cypress-open": "cypress open",
-        "cypress-run": "cypress run",
-        "debug": "yarn build && yarn watch-debug",
-        "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-        "lint": "tsc --noEmit && yarn lint:check",
-        "lint:check": "eslint \"**/*.{js,ts,tsx}\"",
-        "lint:fix": "tsc --noEmit && eslint \"**/*.{js,ts,tsx}\" --quiet --fix",
-        "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
-        "migrate:create": "env-cmd sh -c 'ts-node node_modules/.bin/migrate-mongo-ts create $0 -f migrate-mongo-config.ts' ",
-        "migrate:pg": "env-cmd --silent drizzle-kit migrate",
-        "migrate:pg:create": "env-cmd --silent drizzle-kit generate",
-        "migrate:pg:status": "env-cmd --silent drizzle-kit check",
-        "migrate:status": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts status -f migrate-mongo-config.ts",
-        "migrate:undo-last": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts down -f migrate-mongo-config.ts && npm run migrate:status",
-        "ory-kratos:cy": "docker compose up -d --build --force-recreate kratos kratos-migrate",
-        "parity:diff": "ts-node scripts/parity/diff.ts",
-        "prepare": "husky",
-        "seed": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.yaml",
-        "seed:ci": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
-        "seed:ci:prebuilt": "node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
-        "serve-debug": "nodemon --inspect dist/server/main.js  --signal SIGTERM",
-        "start": "node dist/server/main.js",
-        "storybook": "storybook dev -p 6006",
-        "test": "env-cmd --silent vitest run",
-        "test:coverage": "env-cmd --silent vitest run --coverage",
-        "test:e2e": "env-cmd --silent vitest run --project e2e",
-        "test:e2e:app-server": "yarn seed:ci:prebuilt && yarn start -c config.test.ci.yaml",
-        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
-        "test:e2e:cy-ferretdb": "env-cmd --silent concurrently -p \"[{name}]\" -n \"Ory,Server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:27018 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
-        "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
-        "test:pg": "DB_TYPE=postgres CI_EXPECT_DB_TYPE=postgres env-cmd --silent vitest run --project unit",
-        "test:unit": "env-cmd --silent vitest run --project unit",
-        "test:watch": "env-cmd --silent vitest",
-        "watch-debug": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn serve-debug\"",
-        "watch-node": "nodemon dist/server/main.js --signal SIGTERM",
-        "watch-ts": "tsc --project ./server/tsconfig.json -w"
+    "dependenciesMeta": {
+        "sharp@0.32.6": {
+            "built": false
+        }
     },
-    "version": "1.2.1"
+    "packageManager": "yarn@3.6.3",
+    "engines": {
+        "node": ">=20.18.0"
+    }
 }
