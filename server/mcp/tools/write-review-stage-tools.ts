@@ -2,9 +2,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { jsonResult, safeTool } from "./tool-helpers";
 import {
     AddReviewCommentSchema,
+    ListAssignableUsersSchema,
     NamespaceOnlySchema,
     RejectReviewTaskSchema,
     ReviewTaskByHashSchema,
+    SendToReviewSchema,
 } from "./schemas";
 import {
     describeClaimContext,
@@ -13,34 +15,60 @@ import {
     describeTask,
 } from "./review-task-view";
 import {
+    assertPickedUser,
     authorizeNamespaceWrite,
     authorizeStoredTask,
     describeWithLog,
+    listAssignableUsers,
 } from "./write-review-helpers";
 import type { McpToolDeps } from "../mcp.service";
 import { CLASSIFICATION_LABELS_NOTE as LABELS_NOTE } from "./classification-labels";
 
-/** The review stage: send, claim, reject, publish, plus task comments. */
+/** The review stage: pick, send, claim, reject, publish, plus task comments. */
 export function registerWriteReviewStageTools(
     server: McpServer,
     deps: McpToolDeps
 ) {
     server.registerTool(
+        "list_assignable_users",
+        {
+            description:
+                "List who the writer can pick as a task's cross-checker (for: crossCheck) or reviewer (for: review), as the web's user picker does: namespace members with a role that can take the step, minus the people already on the task. Filter by part of the name with name. Pass the chosen id to send_to_cross_check / submit_report (crossCheckerId) or submit_report_to_review / send_to_review (reviewerId). If a name matches several users, ask which one. The task's assignees or an admin only.",
+            inputSchema: ListAssignableUsersSchema.shape as any,
+        },
+        safeTool("list_assignable_users", async (args) => {
+            const task = await authorizeStoredTask(deps, args.dataHash);
+            return jsonResult(
+                await listAssignableUsers(deps, task, args.for, args.name)
+            );
+        })
+    );
+
+    server.registerTool(
         "send_to_review",
         {
             description:
-                "Send a reported task to the review backlog after an agreeing cross-check. Usually not needed: an agreeing submit_cross_check already does it. Without such a cross-check it is refused; to send the report to review without one, use submit_report_to_review. A task already in the review backlog is returned unchanged. Any assignee of the task (fact-checkers included) or an admin." +
+                "Send a task to review after an agreeing cross-check (an agreeing submit_cross_check already puts it in the review backlog). With reviewerId (from list_assignable_users, for: review) that user becomes its reviewer right away (state submitted), as picking one on the web does, also for a task already waiting in the review backlog; use it when the user names who reviews. Without it the task goes to the review backlog, and one already there is returned unchanged. A report without an agreeing cross-check is refused; to send it to review without one, use submit_report_to_review. Any assignee of the task (fact-checkers included) or an admin." +
                 LABELS_NOTE,
-            inputSchema: ReviewTaskByHashSchema.shape as any,
+            inputSchema: SendToReviewSchema.shape as any,
         },
         safeTool("send_to_review", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
+            if (args.reviewerId) {
+                await assertPickedUser(
+                    deps,
+                    task,
+                    args.reviewerId,
+                    "review"
+                );
+            }
             return jsonResult(
                 await describeTask(
                     deps,
                     await deps.reviewWorkflowService.sendToReview(
                         deps.request.user as any,
-                        task
+                        task,
+                        args.reviewerId
                     )
                 )
             );

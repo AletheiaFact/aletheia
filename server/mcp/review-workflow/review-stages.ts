@@ -66,6 +66,13 @@ function notSent(
     );
 }
 
+/** The task's writers other than `user`, who are told it moved on. */
+function otherAssignees(task: any, user: WorkflowUser): unknown[] {
+    return (task.machine.context.reviewData.usersId ?? []).filter(
+        (id: unknown) => !idsEqual(id, user._id)
+    );
+}
+
 /**
  * What a writer can do with a task in `state` when it cannot be sent on,
  * so an agent is told the way forward instead of guessing (issue #2708).
@@ -77,10 +84,12 @@ export function afterReportHint(state: string): string {
         case "unassigned":
             return "Nobody is writing it yet.";
         case "selectCrossChecker":
+            return "It is waiting for a cross-checker; an agreeing cross-check sends it to review by itself.";
         case "cross-checking":
         case "addCommentCrossChecking":
             return "A cross-checker is on it; an agreeing cross-check sends it to review by itself.";
         case "selectReviewer":
+            return "It is waiting for a reviewer already.";
         case "submitted":
             return "A reviewer is on it already.";
         case "published":
@@ -109,10 +118,19 @@ export class ReviewStages {
      * can claim it. A task waiting for a reviewer that nobody took yet can
      * be moved too, as the web's "back" from the reviewer selection does.
      * Already in the cross-check backlog: returned as is. Assignees or
-     * admins only.
+     * admins only. With `crossCheckerId` (checked by the caller with
+     * assertAssignable) the task goes straight to that user's
+     * cross-checking, as picking one on the web does.
      */
-    async sendToCrossCheck(user: WorkflowUser, task: any) {
+    async sendToCrossCheck(
+        user: WorkflowUser,
+        task: any,
+        crossCheckerId?: string
+    ) {
         assertWriter(user, task, "send it to cross-checking");
+        if (crossCheckerId) {
+            return this.assignCrossChecker(user, task, crossCheckerId);
+        }
         if (inBacklog(task, "selectCrossChecker")) {
             return task;
         }
@@ -136,6 +154,57 @@ export class ReviewStages {
         if (!sent) {
             throw notSent(task, "cross-checking", ["selectReviewer"]);
         }
+        return sent;
+    }
+
+    /**
+     * Makes `crossCheckerId` the task's cross-checker (`cross-checking`)
+     * from `reported` or either backlog nobody took. Picking the same
+     * cross-checker again is a no-op.
+     */
+    private async assignCrossChecker(
+        user: WorkflowUser,
+        task: any,
+        crossCheckerId: string
+    ) {
+        const reviewData = task.machine?.context?.reviewData ?? {};
+        if (
+            CROSS_CHECKING_VALUES.includes(stateName(task.machine?.value)) &&
+            idsEqual(reviewData.crossCheckerId, crossCheckerId)
+        ) {
+            return task;
+        }
+        const fromBacklogs: Backlog[] = ["selectCrossChecker", "selectReviewer"];
+        const sent = await this.reviewTaskQueue.transitionAtomically(
+            {
+                _id: task._id,
+                $or: [
+                    { "machine.value": "reported" },
+                    ...fromBacklogs.map(backlogFilter),
+                ],
+                [`${REVIEW_DATA}.usersId`]: { $ne: toObjectId(crossCheckerId) },
+            },
+            {
+                $set: {
+                    "machine.value": "cross-checking",
+                    [`${REVIEW_DATA}.crossCheckerId`]:
+                        toObjectId(crossCheckerId),
+                    [`${REVIEW_DATA}.reviewerId`]: null,
+                    [`${REVIEW_DATA}.crossCheckingClassification`]: "",
+                    [`${REVIEW_DATA}.crossCheckingComment`]: "",
+                },
+            }
+        );
+        if (!sent) {
+            throw notSent(task, "cross-checking", fromBacklogs);
+        }
+        // The web's sendToCrossChecking notifications
+        this.notifier?.notify(sent, "crossChecker", [crossCheckerId]);
+        this.notifier?.notify(
+            sent,
+            "crossCheckingSubmit",
+            otherAssignees(sent, user)
+        );
         return sent;
     }
 
@@ -222,18 +291,33 @@ export class ReviewStages {
      * for this call, and a task still waiting for a cross-checker nobody
      * took can be moved too, as the web's "back" from the cross-checker
      * selection does. Already in the review backlog: returned as is.
+     * With `reviewerId` (checked by the caller with assertAssignable) the
+     * task goes straight to that user's review (`submitted`), as picking a
+     * reviewer on the web does; a task already in the review backlog passed
+     * the cross-check rule on its way in.
      */
     async sendToReview(
         user: WorkflowUser,
         task: any,
-        { skipCrossCheck = false }: { skipCrossCheck?: boolean } = {}
+        {
+            skipCrossCheck = false,
+            reviewerId,
+        }: { skipCrossCheck?: boolean; reviewerId?: string } = {}
     ) {
         assertWriter(user, task, "send it to review");
         const state = stateName(task.machine?.value);
-        if (inBacklog(task, "selectReviewer")) {
+        const reviewData = task.machine?.context?.reviewData ?? {};
+        if (reviewerId) {
+            if (
+                state === "submitted" &&
+                idsEqual(reviewData.reviewerId, reviewerId)
+            ) {
+                return task;
+            }
+        } else if (inBacklog(task, "selectReviewer")) {
             return task;
         }
-        const reviewData = task.machine?.context?.reviewData ?? {};
+        const inReviewBacklog = inBacklog(task, "selectReviewer");
         const crossCheckAgreed =
             !!reviewData.crossCheckingClassification &&
             reviewData.crossCheckingClassification ===
@@ -241,7 +325,8 @@ export class ReviewStages {
         if (
             this.config.requireCrossCheck() &&
             !crossCheckAgreed &&
-            !skipCrossCheck
+            !skipCrossCheck &&
+            !inReviewBacklog
         ) {
             // A task elsewhere in the flow is told where it is instead
             throw state === "reported"
@@ -250,9 +335,11 @@ export class ReviewStages {
                   )
                 : notSent(task, "review", []);
         }
-        const fromBacklogs: Backlog[] = skipCrossCheck
-            ? ["selectCrossChecker"]
-            : [];
+        const fromBacklogs: Backlog[] = [
+            ...(skipCrossCheck ? (["selectCrossChecker"] as const) : []),
+            ...(reviewerId ? (["selectReviewer"] as const) : []),
+        ];
+        const reviewer = reviewerId ? toObjectId(reviewerId) : null;
         const sent = await this.reviewTaskQueue.transitionAtomically(
             {
                 _id: task._id,
@@ -260,21 +347,28 @@ export class ReviewStages {
                     { "machine.value": "reported" },
                     ...fromBacklogs.map(backlogFilter),
                 ],
+                ...(reviewer
+                    ? {
+                          [`${REVIEW_DATA}.usersId`]: { $ne: reviewer },
+                          [`${REVIEW_DATA}.crossCheckerId`]: { $ne: reviewer },
+                      }
+                    : {}),
             },
             {
                 $set: {
-                    "machine.value": "selectReviewer",
-                    "machine.context.reviewData.reviewerId": null,
+                    "machine.value": reviewer ? "submitted" : "selectReviewer",
+                    "machine.context.reviewData.reviewerId": reviewer,
                 },
             }
         );
         if (!sent) {
             throw notSent(task, "review", fromBacklogs);
         }
-        const otherAssignees = (
-            sent.machine.context.reviewData.usersId ?? []
-        ).filter((id: unknown) => !idsEqual(id, user._id));
-        this.notifier?.notify(sent, "reviewSubmit", otherAssignees);
+        // The web's sendToReview notifications
+        this.notifier?.notify(sent, "reviewSubmit", otherAssignees(sent, user));
+        if (reviewerId) {
+            this.notifier?.notify(sent, "reviewer", [reviewerId]);
+        }
         return sent;
     }
 

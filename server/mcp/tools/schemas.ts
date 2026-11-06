@@ -2,7 +2,7 @@ import { z } from "zod";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { ReviewTaskTypeEnum } from "../../types/enums";
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
-import { dataHash, nonEmptyText } from "../../../lib/schemas";
+import { dataHash, nonEmptyText, objectId } from "../../../lib/schemas";
 import { PersonalitySchema } from "../../interfaces/personality.interface";
 import { SourceZodSchema } from "../../source/schemas/source.zod";
 import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
@@ -115,6 +115,18 @@ export const ReviewTaskByHashSchema = z.object({
     dataHash: reviewTaskDataHash,
 });
 
+// A user the writer picks for the next step, from list_assignable_users.
+const crossCheckerId = objectId
+    .optional()
+    .describe(
+        "Id of the user who will cross-check it, from list_assignable_users (for: crossCheck). Omit to leave it in the cross-check backlog for anyone to claim"
+    );
+const reviewerId = objectId
+    .optional()
+    .describe(
+        "Id of the user who will review it, from list_assignable_users (for: review). Omit to leave it in the review backlog for any reviewer to claim"
+    );
+
 export const SubmitReportSchema = z.object({
     dataHash: reviewTaskDataHash,
     // Optional with the default applied in the handler: Zod 4 marks
@@ -125,6 +137,31 @@ export const SubmitReportSchema = z.object({
         .describe(
             "Also send the report to the cross-check backlog in the same call (default false)"
         ),
+    crossCheckerId: crossCheckerId.describe(
+        "Also send the report to this user's cross-check in the same call (implies sendToCrossCheck); id from list_assignable_users (for: crossCheck)"
+    ),
+});
+
+export const SendToCrossCheckSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    crossCheckerId,
+});
+
+export const SendToReviewSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    reviewerId,
+});
+
+export const ListAssignableUsersSchema = z.object({
+    dataHash: reviewTaskDataHash,
+    for: z
+        .enum(["crossCheck", "review"])
+        .describe("The step the user is picked for"),
+    name: z
+        .string()
+        .max(100)
+        .optional()
+        .describe("Part of the user's name, case-insensitive"),
 });
 
 export const ListMyReviewTasksSchema = z.object({

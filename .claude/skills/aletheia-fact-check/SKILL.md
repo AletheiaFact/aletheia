@@ -74,6 +74,7 @@ The MCP server may be registered under different names (`aletheia`,
 | Finish the report and ask for the cross-check | `submit_report` with `sendToCrossCheck: true` | writer |
 | Give a task back | `release_review_task` | writer |
 | Ask for the cross-check (only after a plain `submit_report`) | `send_to_cross_check` | writer |
+| Find the user someone named as cross-checker or reviewer | `list_assignable_users` | writer |
 | Take / record a cross-check | `claim_cross_check`, `next_cross_checking`, `submit_cross_check` | cross-checker |
 | Ask for review (only if an agreeing cross-check left the task in `reported`) | `send_to_review` | writer |
 | Send to review without a cross-check (only when the user asks for it) | `submit_report_to_review` | writer |
@@ -210,6 +211,13 @@ conclusion right.
   `send_to_review` needs an agreeing cross-check; to skip the cross-check
   because the user asked, use `submit_report_to_review` (it also takes a task
   already reported or waiting for a cross-checker nobody took).
+- If the user names who cross-checks or reviews ("associe a Ana como
+  cross-checker"), or asks who can: `list_assignable_users` (`for:
+  crossCheck` or `review`, `name` when they gave one). One match: pass its
+  id as `crossCheckerId` to `send_to_cross_check` (or `submit_report`), or as
+  `reviewerId` to `submit_report_to_review` (or `send_to_review` after an
+  agreeing cross-check). Several or none: show the list and ask. Never pick
+  someone the user did not name.
 - If the person checked should be asked for an official statement (manual:
   after classification, when specific people are involved), add a review
   comment: "Pedido de posicionamento pendente: <quem>". You do not contact
@@ -254,7 +262,7 @@ cross-checker works on N, and the reviewer on N−1.
 Each role loads only its own tools in one ToolSearch call (replace
 `aletheia-x` with the server entry for that role):
 
-- Writer: `select:mcp__aletheia-x__next_review_task,mcp__aletheia-x__list_review_tasks,mcp__aletheia-x__get_review_log,mcp__aletheia-x__save_review_log,mcp__aletheia-x__submit_report,mcp__aletheia-x__send_to_cross_check,mcp__aletheia-x__send_to_review,mcp__aletheia-x__submit_report_to_review,mcp__aletheia-x__release_review_task,mcp__aletheia-x__add_review_comment,mcp__aletheia-x__search`
+- Writer: `select:mcp__aletheia-x__next_review_task,mcp__aletheia-x__list_review_tasks,mcp__aletheia-x__get_review_log,mcp__aletheia-x__save_review_log,mcp__aletheia-x__submit_report,mcp__aletheia-x__send_to_cross_check,mcp__aletheia-x__send_to_review,mcp__aletheia-x__submit_report_to_review,mcp__aletheia-x__list_assignable_users,mcp__aletheia-x__release_review_task,mcp__aletheia-x__add_review_comment,mcp__aletheia-x__search`
 - Cross-checker: `select:mcp__aletheia-x__claim_cross_check,mcp__aletheia-x__next_cross_checking,mcp__aletheia-x__get_review_log,mcp__aletheia-x__submit_cross_check`
 - Reviewer: `select:mcp__aletheia-x__claim_review_task,mcp__aletheia-x__list_my_review_tasks,mcp__aletheia-x__publish_review_task,mcp__aletheia-x__reject_review_task,mcp__aletheia-x__add_review_comment`
 

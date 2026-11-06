@@ -57,6 +57,7 @@ describe("MCP discovery (e2e)", () => {
                 "get_review_task",
                 "get_verification_request",
                 "join_review_task",
+                "list_assignable_users",
                 "list_classification_methodologies",
                 "list_claims",
                 "list_my_review_tasks",

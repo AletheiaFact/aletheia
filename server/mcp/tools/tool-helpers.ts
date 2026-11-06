@@ -6,6 +6,7 @@ import {
 import { AbilityFactory, Action } from "../../auth/ability/ability.factory";
 import { NameSpaceService } from "../../auth/name-space/name-space.service";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { AssignmentRefused } from "../review-workflow/assignable-users";
 
 const logger = new Logger("McpTools");
 
@@ -113,6 +114,9 @@ function refusalKind(error: unknown): string {
     }
     if (error instanceof ConflictException) {
         return " (the task's current state does not allow it; this is not a permission problem)";
+    }
+    if (error instanceof AssignmentRefused) {
+        return " (the picked user cannot take this step; pick another one with list_assignable_users)";
     }
     return "";
 }

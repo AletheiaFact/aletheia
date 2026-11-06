@@ -25,6 +25,18 @@ export const OTHER_NS = "secret-ns";
 export const USER_ID = "6ad9aa000000000000000011";
 export const MEMBER_ID = "6ad9aa000000000000000012";
 export const OTHER_USER_ID = "6ad9aa000000000000000013";
+// Users a writer can pick as cross-checker (CHECKER_ID) or reviewer
+// (REVIEWER_ID); REGULAR_ID can take neither step.
+export const CHECKER_ID = "6ad9aa000000000000000014";
+export const REVIEWER_ID = "6ad9aa000000000000000015";
+export const REGULAR_ID = "6ad9aa000000000000000016";
+
+export const storedUsers = [
+    { _id: USER_ID, name: "Writer", role: { main: "fact-checker" } },
+    { _id: CHECKER_ID, name: "Checker", role: { main: "fact-checker" } },
+    { _id: REVIEWER_ID, name: "Reviewer", role: { main: "reviewer" } },
+    { _id: REGULAR_ID, name: "Reader", role: { main: "regular" } },
+];
 
 const mainUser = (role: string, extra: Record<string, unknown> = {}) => ({
     isM2M: false,
@@ -134,6 +146,14 @@ function buildDeps(user: any) {
         verificationRequestStateMachineService: {
             request: vi.fn().mockResolvedValue({ ok: true }),
         },
+        usersService: {
+            findAll: vi.fn(async () => storedUsers),
+            getById: vi.fn(async (id: string) => {
+                const user = storedUsers.find((u) => u._id === id);
+                if (!user) throw new Error(`User not found: ${id}`);
+                return user;
+            }),
+        },
         nameSpaceService: {
             // `secret-ns` exists but only `member-1` belongs to it
             findOne: vi.fn(async ({ slug }: { slug: string }) =>
@@ -170,6 +190,7 @@ function buildDeps(user: any) {
         nameSpaceService: mocks.nameSpaceService,
         reviewWorkflowService,
         reviewQueueService,
+        usersService: mocks.usersService,
     } as unknown as McpToolDeps;
     return { deps, mocks };
 }
@@ -242,6 +263,7 @@ export const validArgs: Record<string, Record<string, unknown>> = {
     submit_report_to_review: { dataHash: HASH_A },
     release_review_task: { dataHash: HASH_A, reason: "not-checkable" },
     send_to_cross_check: { dataHash: HASH_A },
+    list_assignable_users: { dataHash: HASH_A, for: "crossCheck" },
     claim_cross_check: {},
     submit_cross_check: {
         dataHash: HASH_A,
@@ -285,6 +307,10 @@ export const happyPath: Record<string, { task?: unknown; user: unknown }> = {
         user: factChecker,
     },
     send_to_cross_check: { task: storedTask("reported"), user: factChecker },
+    list_assignable_users: {
+        task: storedTask("reported"),
+        user: factChecker,
+    },
     claim_cross_check: { user: factChecker },
     submit_cross_check: {
         task: storedTask("cross-checking", {
