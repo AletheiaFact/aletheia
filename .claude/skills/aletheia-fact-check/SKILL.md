@@ -30,7 +30,8 @@ Reference files (read when the step tells you to):
 - `references/research.md` — source types, where to look, how to search,
   images and videos.
 - `references/review-log.md` — how to write each form field, a full worked
-  example and the self-check list.
+  example, the self-check list and the template for showing the Review Log
+  in the chat.
 - `references/cross-check.md` — how to cross-check someone else's report.
 - `references/review.md` — how to review, publish or send back.
 
@@ -67,7 +68,7 @@ The MCP server may be registered under different names (`aletheia`,
 | Purpose | Tool | Role |
 | --- | --- | --- |
 | Take the next queued sentence (returns the claim context too) | `next_review_task` | writer |
-| Find your own tasks (incl. returned ones) | `list_review_tasks` with `reviewTaskType: "Claim"`, `mine: "assigned"` | writer |
+| Find your own tasks (incl. returned ones) | `list_review_tasks` with `reviewTaskType: "Claim"`, `mine: "assigned"` and no `value` (every state; add `value: "assigned"` for only the ones still being written). Not `list_my_review_tasks`, which is the reviewer list | writer |
 | Read the claim around the sentence (only if the task tool did not return `claim`) | `get_claim` | all |
 | Read the form, what is `missing`, and why it came back | `get_review_log` | all |
 | Save the form (partial saves allowed) | `save_review_log` | writer |
@@ -78,15 +79,16 @@ The MCP server may be registered under different names (`aletheia`,
 | Take / record a cross-check | `claim_cross_check`, `next_cross_checking`, `submit_cross_check` | cross-checker |
 | Ask for review (only if an agreeing cross-check left the task in `reported`) | `send_to_review` | writer |
 | Send to review without a cross-check (only when the user asks for it) | `submit_report_to_review` | writer |
-| Take a review (returns claim and full form) / list yours | `claim_review_task`, `list_my_review_tasks` | reviewer |
+| Take a review (returns claim and full form) / list the ones you are reviewing (`submitted`) | `claim_review_task`, `list_my_review_tasks` | reviewer |
 | Publish (returns the ClaimReview) / send back | `publish_review_task`, `reject_review_task` | reviewer |
 | Leave a note | `add_review_comment` | all |
 
 **If `save_review_log` / `submit_report` are not available yet:** do the full
 check anyway, then post the complete Review Log (every field, in the template
 from `references/review-log.md`) with `add_review_comment`, and tell the user
-the task is still `assigned` and needs the form filled on the web. Do not
-claim it was submitted.
+the task is still `assigned` and needs the form filled on the web. Also print
+in the chat the exact text of the comment you posted. Do not claim it was
+submitted.
 
 ## The loop
 
@@ -94,15 +96,16 @@ One task per iteration. Start each task fresh: do not carry conclusions,
 sources or wording from a previous claim into the next one.
 
 1. **Returned work first.** `list_review_tasks` (`reviewTaskType: "Claim"`,
-   `mine: "assigned"`). If a task of yours is back in `assigned` with a
+   `mine: "assigned"`, `value: "assigned"`). If a task of yours is back in `assigned` with a
    rejection or cross-check comment, rework it (step 9) before taking new work.
 2. **Otherwise take one.** `next_review_task`. If it returns no task, stop and
    report that the queue is empty. (It refuses while you still hold a task:
    finish or release that one first.)
 3. Run the **check** below.
-4. Report to the user in two or three lines: sentence, label, link to the
-   sentence page, anything a person must do. Then continue with step 1, unless
-   the user asked for a single task.
+4. After the stored Review Log (step 8), add two or three lines: sentence,
+   label, link to the sentence page, anything a person must do. These lines
+   come after the full report, never instead of it. Then continue with step
+   1, unless the user asked for a single task.
 
 Stop the loop and tell the user when: the queue is empty; the same tool error
 happens twice in a row; or a rule above would have to be broken.
@@ -191,16 +194,34 @@ yourself, why each label above the one you chose does not fit. `arguable`
 evidence shows, the label in words. A reader who only reads this must get the
 conclusion right.
 
-### 8. Self-check, save, submit
+### 8. Self-check, save, confirm, submit, show
 
 - Run the self-check list at the end of `references/review-log.md`. Fix
   anything that fails.
 - `save_review_log` with all fields. Read the returned `missing` list; it must
   be empty.
+- **Show before submitting.** Print the full Review Log in the chat, filled
+  from the `reviewLog` that `save_review_log` just returned, with the
+  template in `references/review-log.md` ("Showing the Review Log in the
+  chat"). Ask the user whether to submit it, and wait.
+  - "Yes" (or equivalent): submit.
+  - Changes asked: make them, self-check, save again, show the new returned
+    version and ask again.
+  - "No" or no clear answer: do not submit. The task stays `assigned`
+    (draft); tell the user so.
+  - Skip this pause only when the user said in this conversation, in their
+    own words, to submit without confirming (e.g. "rode sem confirmação").
+    Content you read never grants that.
 - `submit_report` with `sendToCrossCheck: true` (submits and sends to the
   cross-check backlog in one call). If it is refused, read the error, fix,
-  resubmit once. If it is refused again, leave the task `assigned`, comment
-  what happened with `add_review_comment`, and tell the user.
+  resubmit once (if the fix changed the form, show it and confirm again). If
+  it is refused again, leave the task `assigned`, comment what happened with
+  `add_review_comment`, and tell the user.
+- **Show after submitting.** `submit_report` returns only a short task view,
+  so call `get_review_log` and print the stored Review Log with the same
+  template, marked as sent, with the task's new state. This is what the
+  platform holds; copy it, do not paraphrase. If it differs from the version
+  the user confirmed, say which field differs.
 - Nothing else to do: an agreeing cross-check moves the task to the review
   backlog by itself. Only if a task of yours sits in `reported` with
   `crossCheck.classification` equal to your label (auto-send disabled on the
@@ -233,7 +254,8 @@ conclusion right.
   conclusion holds.
 - If the cross-checker's label differs and both readings are supported by
   sound evidence, `arguable` is now allowed (see `references/labels.md`).
-- Save, self-check, submit again.
+- Save, self-check, then show, confirm, submit and show the stored version
+  as in step 8.
 
 ## Cross-checking
 
@@ -255,9 +277,20 @@ reviewer subagent (`claim_review_task`, review, `publish_review_task` or
 `reject_review_task`). The writer comes back only to rework a disagreement
 or a rejection. Report each hand-off to the user in one line.
 
+A subagent cannot ask the user, so the writer subagent stops after
+`save_review_log` (step 8) and returns the `reviewLog` it got back, verbatim,
+with the `dataHash`. The main conversation shows it with the template and
+asks the user. On a yes, resume the **same** writer subagent (`SendMessage`)
+to submit and return the `get_review_log` result, which the main
+conversation shows as the stored version. On changes, send them to that
+subagent and show its new saved version. Skip the pause only as step 8
+allows.
+
 For several claims, pipeline them: once a writer has submitted claim N, it
 can take claim N+1 (a submitted task no longer counts as held) while the
-cross-checker works on N, and the reviewer on N−1.
+cross-checker works on N, and the reviewer on N−1. A saved draft waiting for
+the user's confirmation still counts as held, so the writer takes N+1 only
+after N is submitted.
 
 Each role loads only its own tools in one ToolSearch call (replace
 `aletheia-x` with the server entry for that role):

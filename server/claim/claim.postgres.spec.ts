@@ -129,7 +129,9 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
                     nameSpace: "main",
                     latestRevisionId: randomUUID(),
                 })
-            ).rejects.toThrow(/duplicate key/);
+            ).rejects.toMatchObject({
+                cause: { message: /duplicate key/ },
+            });
         });
 
         it("sentence findAll searches content by trigram, honours visibility and the topics filter", async () => {

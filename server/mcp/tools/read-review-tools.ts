@@ -65,7 +65,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "list_review_tasks",
         {
             description:
-                "List fact-checking review tasks by workflow state (unassigned, assigned, reported, published)." +
+                "List fact-checking review tasks, optionally by workflow state (`value`: unassigned, assigned, reported, cross-checking, submitted, published). To find the tasks assigned to you, pass `mine: \"assigned\"` and omit `value`: that returns your tasks in every state (being written, reported, in cross-check, in review, sent back)." +
                 LABELS_NOTE,
             inputSchema: ListReviewTasksSchema.shape as any,
         },
@@ -129,7 +129,7 @@ export function registerReadReviewTools(server: McpServer, deps: McpToolDeps) {
         "list_my_review_tasks",
         {
             description:
-                "List tasks in review (submitted) where you are the reviewer, oldest first: the reports you need to review to publish." +
+                "Reviewers only: list tasks in review (submitted) where you are the reviewer, oldest first: the reports you need to review to publish. This is NOT the list of tasks assigned to you as a fact-checker; for those use list_review_tasks with mine: \"assigned\"." +
                 LABELS_NOTE,
             inputSchema: ListMyReviewTasksSchema.shape as any,
         },
