@@ -110,6 +110,53 @@ Etiqueta: <Etiqueta> (<value>)
 Cross-check: pendente
 ```
 
+## Showing the Review Log in the chat
+
+A fact-checker who works only through the agent never opens the platform,
+so the chat is the only place they see what they are signing. Show the full
+Review Log twice: before `submit_report` (to confirm) and after it (as
+stored).
+
+**Copy, never retell.** Fill the template below from the `reviewLog` object
+a tool just returned: from `save_review_log` before submitting, and from
+`get_review_log` after. Paste each field's text exactly as it came back. Do
+not summarize, shorten, reword, translate, reorder or fix typos, and do not
+rebuild it from what you remember writing. If something in it is wrong, fix
+it with `save_review_log` and show the new returned version; never correct
+it only in the chat. An empty field is shown as `(vazio)`.
+
+Fields appear in the order of the published page. Questions are numbered in
+their stored order; the report keeps its stored line breaks.
+
+```
+**Review Log — <sentence>**
+<before submitting: "Rascunho salvo, ainda não enviado" | after: "Enviado — estado: <task.state>">
+Metodologia: <methodologyName.pt> · Etiqueta: <classificationLabel.pt> (`<classification>`)
+
+**Resumo da conclusão**
+<summary>
+
+**Quais perguntas a verificação deverá responder?**
+1. <questions[0]>
+2. <questions[1]>
+
+**Relatório da verificação**
+<report>
+
+**Como verificamos?**
+<verification>
+
+**Fontes**
+- <href> — campo: <field> — trecho: "<quotedText>"
+- <href> (sem trecho vinculado)
+
+Pendências para envio: <missing, or "nenhuma">
+Link: <sentence page URL>
+```
+
+After the template, add at most one line of your own (e.g. what changed
+since the last version shown). Your own words never go inside the template.
+
 ## Self-check (run before every submit)
 
 - [ ] Every guiding question is answered in `report`, in order.
