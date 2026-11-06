@@ -1,0 +1,38 @@
+[
+  {
+    "claimTitle": "Discurso de Fernando Haddad sobre organizações criminosas",
+    "sentence": "\"Em geral, quem fica preso é o personagem menos importante da estrutura criminosa.",
+    "classification": "not-fact",
+    "reportModel": "Fact-checking",
+    "date": "2025-09-29T13:20:50.471Z",
+    "isPartial": false,
+    "questions": [
+      "Qual o nível hierárquico das pessoas presas em operações contra o crime organizado?"
+    ],
+    "summary": "O discurso do ministro se trata de uma opinião e não há dados que o sustentem. Ele carece de embasamento teórico, não detalha quais organizações criminosas se refere, o que define um personagem “menos” importante na estrutura criminosa. A fala não possui evidências e as informações obtidas pela checagem, como o número de presos por associação criminosa no Brasil, contrariam sua generalização.",
+    "report": "A fala do deputado se refere à estrutura do crime organizado. A Lei Nº 12.850, de 2 de agosto de 2013 dispõe que: “§ 1º Considera-se organização criminosa a associação de 4 (quatro) ou mais pessoas estruturalmente ordenada e caracterizada pela divisão de tarefas, ainda que informalmente, com objetivo de obter, direta ou indiretamente, vantagem de qualquer natureza, mediante a prática de infrações penais cujas penas máximas sejam superiores a 4 (quatro) anos, ou que sejam de caráter transnacional.” O art. 288 do Código Penal (CP), “Quadrilha ou Bando”, tipifica o crime de associação criminosa: “TÍTULO IX - DOS CRIMES CONTRA A PAZ PÚBLICA [...] Associação Criminosa - Art. 288. Associarem-se 3 (três) ou mais pessoas, para o fim específico de cometer crimes (Redação dada pela Lei nº 12.850, de 2013)”. Deve-se pontuar que a fala do ministro não especifica quais organizações criminosas, ou operações da PF, a afirmação se refere. Os estudos científicos recentes não apresentam uma definição oficial da hierarquia das organizações criminosas no Brasil. O Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024 aponta que 13.361 presos no país se enquadram no art. 288 do CP. Entretanto, os dados não confirmam a fala do ministro, já que não há registros que certos cargos das organizações são mais encarcerados que outros. Além disso, eventos históricos como as prisões de Marcola, do PCC, e Marcinho VP, do CV, mostram que lideranças do crime organizado são encarceradas. Segundo Sergio Senna Pires, Consultor Legislativo de Segurança Pública na Câmara dos Deputados, o discurso é muito genérico para ser compreendido como um fato. “Me parece uma afirmação retórica, cuja generalidade é proposital para parecer lógica e induzir o leitor à concordância no senso comum, mas carece dos detalhes que nos dariam elementos para defini-la como verdadeira ou falsa”, afirmou em contato com a equipe Aletheia Fact em 17 de setembro de 2025.",
+    "verification": "Para realizar a checagem, acessamos normativas jurídicas que dispõem sobre o crime organizado: a Lei 12.850/13,que define o conceito de organização criminosa para o Estado brasileiro, e o Código Penal, que criminaliza a atividade pelo Artigo 288. O Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024, divulgado pelo Departamento Penitenciário Nacional (Depen) foi utilizado para obter dados sobre as prisões sobre essa tipificação penal. Por se tratar de uma checagem qualitativa, tornou-se necessário consultar fontes especialistas sobre o tema. Por meio do buscador do Google Acadêmico, mapeamos as publicações a partir de 2024 sobre as palavras-chave “crime organizado”, “operações”, “prisões”. Com base nas publicações, mapeou-se três possíveis autores especialistas para se consultar na checagem. O retorno que obtivemos durante o período investigativo foi o de Sergio Senna Pires. A entrevista foi realizada por uma troca de emails no dia 17 de setembro de 2025, no qual se investigou a compreensão do profissional sobre o discurso verificado.",
+    "sources": [
+      {
+        "href": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12850.htm",
+        "field": "report",
+        "quotedText": " Lei Nº 12.850, de 2 de agosto de 2013"
+      },
+      {
+        "href": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+        "field": "report",
+        "quotedText": "Código Penal (CP),"
+      },
+      {
+        "href": "https://www.gov.br/senappen/pt-br/servicos/sisdepen/relatorios/relipen/relipen-2o-semestre-de-2024.pdf",
+        "field": "report",
+        "quotedText": "Relatório de Informações Penais (RELIPEN) do segundo semestre de 2024"
+      },
+      {
+        "href": "https://buscatextual.cnpq.br/buscatextual/visualizacv.do;jsessionid=7554AF721D97072495DC88BB5ABC08EF.buscatextual_0",
+        "field": "report",
+        "quotedText": "Sergio Senna Pires, Consultor Legislativo de Segurança Pública na Câmara dos Deputados,"
+      }
+    ]
+  }
+]
