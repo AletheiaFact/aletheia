@@ -293,8 +293,8 @@ export class ReviewWorkflowService {
         return this.writing.releaseTask(user, task, reason, note);
     }
 
-    sendToCrossCheck(user: WorkflowUser, task: any) {
-        return this.stages.sendToCrossCheck(user, task);
+    sendToCrossCheck(user: WorkflowUser, task: any, crossCheckerId?: string) {
+        return this.stages.sendToCrossCheck(user, task, crossCheckerId);
     }
 
     submitCrossCheck(
@@ -311,17 +311,28 @@ export class ReviewWorkflowService {
         );
     }
 
-    sendToReview(user: WorkflowUser, task: any) {
-        return this.stages.sendToReview(user, task);
+    sendToReview(user: WorkflowUser, task: any, reviewerId?: string) {
+        return this.stages.sendToReview(user, task, { reviewerId });
     }
 
     /**
      * Submits the report and sends it to the review backlog in one call,
-     * without a cross-check. A task already `reported` skips the submit, so a
-     * retry after a failed send works.
+     * without a cross-check. A task already submitted (`reported`, or still
+     * waiting in the cross-check or review backlog) skips the submit, so a
+     * retry after a failed send works and a writer can drop a requested
+     * cross-check nobody took yet. With `reviewerId` it goes straight to
+     * that user's review.
      */
-    async submitReportToReview(user: WorkflowUser, task: any) {
-        const alreadyReported = stateName(task.machine?.value) === "reported";
+    async submitReportToReview(
+        user: WorkflowUser,
+        task: any,
+        reviewerId?: string
+    ) {
+        const alreadyReported = [
+            "reported",
+            "selectCrossChecker",
+            "selectReviewer",
+        ].includes(stateName(task.machine?.value));
         if (alreadyReported) {
             // submitReport checks the label against the task's methodology;
             // a retry that skips it must not skip that check
@@ -336,6 +347,7 @@ export class ReviewWorkflowService {
             : await this.writing.submitReport(user, task);
         return this.stages.sendToReview(user, reported, {
             skipCrossCheck: true,
+            reviewerId,
         });
     }
 
