@@ -68,7 +68,7 @@ The MCP server may be registered under different names (`aletheia`,
 | Purpose | Tool | Role |
 | --- | --- | --- |
 | Take the next queued sentence (returns the claim context too) | `next_review_task` | writer |
-| Find your own tasks (incl. returned ones) | `list_review_tasks` with `reviewTaskType: "Claim"`, `mine: "assigned"` | writer |
+| Find your own tasks (incl. returned ones) | `list_review_tasks` with `reviewTaskType: "Claim"`, `mine: "assigned"` and no `value` (every state; add `value: "assigned"` for only the ones still being written). Not `list_my_review_tasks`, which is the reviewer list | writer |
 | Read the claim around the sentence (only if the task tool did not return `claim`) | `get_claim` | all |
 | Read the form, what is `missing`, and why it came back | `get_review_log` | all |
 | Save the form (partial saves allowed) | `save_review_log` | writer |
@@ -77,7 +77,7 @@ The MCP server may be registered under different names (`aletheia`,
 | Ask for the cross-check (only after a plain `submit_report`) | `send_to_cross_check` | writer |
 | Take / record a cross-check | `claim_cross_check`, `next_cross_checking`, `submit_cross_check` | cross-checker |
 | Ask for review (only if an agreeing cross-check left the task in `reported`) | `send_to_review` | writer |
-| Take a review (returns claim and full form) / list yours | `claim_review_task`, `list_my_review_tasks` | reviewer |
+| Take a review (returns claim and full form) / list the ones you are reviewing (`submitted`) | `claim_review_task`, `list_my_review_tasks` | reviewer |
 | Publish (returns the ClaimReview) / send back | `publish_review_task`, `reject_review_task` | reviewer |
 | Leave a note | `add_review_comment` | all |
 
@@ -94,7 +94,7 @@ One task per iteration. Start each task fresh: do not carry conclusions,
 sources or wording from a previous claim into the next one.
 
 1. **Returned work first.** `list_review_tasks` (`reviewTaskType: "Claim"`,
-   `mine: "assigned"`). If a task of yours is back in `assigned` with a
+   `mine: "assigned"`, `value: "assigned"`). If a task of yours is back in `assigned` with a
    rejection or cross-check comment, rework it (step 9) before taking new work.
 2. **Otherwise take one.** `next_review_task`. If it returns no task, stop and
    report that the queue is empty. (It refuses while you still hold a task:

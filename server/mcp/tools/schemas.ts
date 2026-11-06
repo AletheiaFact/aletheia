@@ -75,9 +75,9 @@ export const ListReviewTasksSchema = z.object({
     ...pagination,
     value: z
         .string()
-        .default("")
+        .optional()
         .describe(
-            "Workflow state filter, e.g. unassigned, assigned, reported, published"
+            "Workflow state filter, e.g. unassigned, assigned, reported, cross-checking, submitted, published. Omit it to list every state"
         ),
     reviewTaskType: z.enum(ReviewTaskTypeEnum),
     mine: z
