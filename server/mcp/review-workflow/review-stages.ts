@@ -66,6 +66,41 @@ function notSent(
     );
 }
 
+/**
+ * A review send already made: the task is in the picked reviewer's review,
+ * or (without a pick) waits in the review backlog.
+ */
+function alreadySentToReview(task: any, reviewerId?: string): boolean {
+    if (!reviewerId) {
+        return inBacklog(task, "selectReviewer");
+    }
+    return (
+        stateName(task.machine?.value) === "submitted" &&
+        idsEqual(task.machine?.context?.reviewData?.reviewerId, reviewerId)
+    );
+}
+
+/** The report has a cross-check that agrees with its label. */
+function crossCheckAgreed(task: any): boolean {
+    const reviewData = task.machine?.context?.reviewData ?? {};
+    return (
+        !!reviewData.crossCheckingClassification &&
+        reviewData.crossCheckingClassification === reviewData.classification
+    );
+}
+
+/**
+ * The refusal when review requires an agreeing cross-check the report does
+ * not have; a task elsewhere in the flow is told where it is instead.
+ */
+function missingCrossCheck(task: any): ConflictException {
+    return stateName(task.machine?.value) === "reported"
+        ? new ConflictException(
+              "The report has no cross-check that agrees with its label yet, which review requires. To ask for one, use send_to_cross_check; to send it to review without a cross-check, use submit_report_to_review"
+          )
+        : notSent(task, "review", []);
+}
+
 /** The task's writers other than `user`, who are told it moved on. */
 function otherAssignees(task: any, user: WorkflowUser): unknown[] {
     return (task.machine.context.reviewData.usersId ?? []).filter(
@@ -305,35 +340,16 @@ export class ReviewStages {
         }: { skipCrossCheck?: boolean; reviewerId?: string } = {}
     ) {
         assertWriter(user, task, "send it to review");
-        const state = stateName(task.machine?.value);
-        const reviewData = task.machine?.context?.reviewData ?? {};
-        if (reviewerId) {
-            if (
-                state === "submitted" &&
-                idsEqual(reviewData.reviewerId, reviewerId)
-            ) {
-                return task;
-            }
-        } else if (inBacklog(task, "selectReviewer")) {
+        if (alreadySentToReview(task, reviewerId)) {
             return task;
         }
-        const inReviewBacklog = inBacklog(task, "selectReviewer");
-        const crossCheckAgreed =
-            !!reviewData.crossCheckingClassification &&
-            reviewData.crossCheckingClassification ===
-                reviewData.classification;
-        if (
-            this.config.requireCrossCheck() &&
-            !crossCheckAgreed &&
-            !skipCrossCheck &&
-            !inReviewBacklog
-        ) {
-            // A task elsewhere in the flow is told where it is instead
-            throw state === "reported"
-                ? new ConflictException(
-                      "The report has no cross-check that agrees with its label yet, which review requires. To ask for one, use send_to_cross_check; to send it to review without a cross-check, use submit_report_to_review"
-                  )
-                : notSent(task, "review", []);
+        // A task in the review backlog passed the rule on its way in
+        const crossCheckWaived =
+            skipCrossCheck ||
+            !this.config.requireCrossCheck() ||
+            inBacklog(task, "selectReviewer");
+        if (!crossCheckWaived && !crossCheckAgreed(task)) {
+            throw missingCrossCheck(task);
         }
         const fromBacklogs: Backlog[] = [
             ...(skipCrossCheck ? (["selectCrossChecker"] as const) : []),

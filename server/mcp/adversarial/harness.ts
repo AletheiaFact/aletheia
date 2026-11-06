@@ -147,11 +147,12 @@ function buildDeps(user: any) {
             request: vi.fn().mockResolvedValue({ ok: true }),
         },
         usersService: {
-            findAll: vi.fn(async () => storedUsers),
-            getById: vi.fn(async (id: string) => {
+            findAll: vi.fn(() => Promise.resolve(storedUsers)),
+            getById: vi.fn((id: string) => {
                 const user = storedUsers.find((u) => u._id === id);
-                if (!user) throw new Error(`User not found: ${id}`);
-                return user;
+                return user
+                    ? Promise.resolve(user)
+                    : Promise.reject(new Error(`User not found: ${id}`));
             }),
         },
         nameSpaceService: {
