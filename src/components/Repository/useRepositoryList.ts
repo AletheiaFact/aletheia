@@ -93,11 +93,12 @@ const useRepositoryList = (tab: RepositoryTab, filters: RepositoryFilters) => {
         [fetchPage, tab]
     );
 
+    // load handles its own errors, so these promises never reject
     useEffect(() => {
-        load(1);
+        void load(1);
     }, [load]);
 
-    const loadMore = () => load(list.page + 1);
+    const loadMore = () => void load(list.page + 1);
 
     return {
         ...list,

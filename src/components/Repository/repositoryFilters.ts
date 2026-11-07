@@ -61,8 +61,10 @@ export type RepositoryQuery = Record<string, QueryValue>;
 
 const first = (value: QueryValue) =>
     Array.isArray(value) ? value[0] : value;
-const all = (value: QueryValue) =>
-    value === undefined ? [] : Array.isArray(value) ? value : [value];
+const all = (value: QueryValue): string[] => {
+    if (value === undefined) return [];
+    return Array.isArray(value) ? value : [value];
+};
 
 // Dates travel as local yyyy-mm-dd so a shared link means the same days.
 const toDay = (date: Date) =>
@@ -73,7 +75,7 @@ const toDay = (date: Date) =>
     ].join("-");
 
 const fromDay = (value?: string) => {
-    const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const match = value && /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
     return match ? new Date(+match[1], +match[2] - 1, +match[3]) : null;
 };
 

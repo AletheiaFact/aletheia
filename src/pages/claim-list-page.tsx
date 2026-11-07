@@ -34,7 +34,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            nameSpace: nameSpace ? nameSpace : NameSpaceEnum.Main,
+            nameSpace: nameSpace || NameSpaceEnum.Main,
             // Repository tab and filters from the URL
             initialQuery,
         },

@@ -94,7 +94,8 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
 
     useEffect(() => {
         const params = toSearchParams(tab, filters).toString();
-        const url = `${window.location.pathname}${params ? `?${params}` : ""}`;
+        const search = params ? "?" + params : "";
+        const url = window.location.pathname + search;
         // Replace without a Next navigation: the page is rendered by Nest,
         // so the Next router does not know the /claim route.
         window.history.replaceState(window.history.state, "", url);
