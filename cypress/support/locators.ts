@@ -21,6 +21,18 @@ const locators = {
         METHODOLOGY: (id: string) => `[data-cy=testRepositoryMethodology-${id}]`,
         REVIEW_STATUS: (value: string) =>
             `[data-cy=testRepositoryReviewStatus-${value}]`,
+        DATE_RANGE: `[data-cy=testRepositoryFilters] [data-cy=testDateRangeInput]`,
+    },
+
+    dateRange: {
+        INPUT: "[data-cy=testDateRangeInput] input",
+        CLEAR: "[data-cy=testDateRangeClear]",
+        PREVIOUS_MONTH: "[role=dialog] [data-testid=ArrowLeftIcon]",
+        DAY: (day: number) =>
+            cy.contains(
+                "[role=dialog] button.MuiPickersDay-root:not(.MuiPickersDay-dayOutsideMonth)",
+                new RegExp(`^${day}$`)
+            ),
     },
 
     login: {

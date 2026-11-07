@@ -357,7 +357,8 @@ const RepositoryFilterPanel = ({
                 )}
             >
                 <DateRangePicker
-                    vertical
+                    label={null}
+                    fullWidth
                     startDate={filters.startDate}
                     endDate={filters.endDate}
                     setStartDate={(startDate: Date | null) =>
