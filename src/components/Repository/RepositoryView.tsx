@@ -140,6 +140,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                     {hasActiveFilters(filters) && (
                         <Button
                             onClick={clearFilters}
+                            data-cy="testRepositoryEmptyClear"
                             sx={{ mt: 2, textTransform: "none" }}
                         >
                             {t("repository:clearFilters")}
@@ -293,6 +294,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                                         variant="outlined"
                                         startIcon={<FilterListIcon />}
                                         onClick={() => setDrawerOpen(true)}
+                                        data-cy="testRepositoryOpenFilters"
                                         sx={{ textTransform: "none" }}
                                     >
                                         {t("repository:showFilters")}
@@ -386,6 +388,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                 <AletheiaButton
                     type={ButtonType.primary}
                     onClick={() => setDrawerOpen(false)}
+                    data-cy="testRepositoryApplyFilters"
                     style={{ marginTop: 24, width: "100%" }}
                 >
                     {t("repository:applyFilters")}

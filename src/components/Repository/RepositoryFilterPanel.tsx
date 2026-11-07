@@ -197,7 +197,11 @@ const RepositoryFilterPanel = ({
                             sx={toggleGroupSx}
                         >
                             {METHODOLOGY_IDS.map((id) => (
-                                <ToggleButton key={id} value={id}>
+                                <ToggleButton
+                                    key={id}
+                                    value={id}
+                                    data-cy={`testRepositoryMethodology-${id}`}
+                                >
                                     {classificationMethodologies[id].name[lang]}
                                 </ToggleButton>
                             ))}
@@ -213,6 +217,7 @@ const RepositoryFilterPanel = ({
                                     control={
                                         <Checkbox
                                             size="small"
+                                            data-cy={`testRepositoryClassification-${option.value}`}
                                             checked={filters.classification.includes(
                                                 option.value
                                             )}
@@ -268,6 +273,7 @@ const RepositoryFilterPanel = ({
                         control={
                             <Checkbox
                                 size="small"
+                                data-cy={`testRepositoryContentModel-${contentModel}`}
                                 checked={filters.contentModel.includes(
                                     contentModel
                                 )}
@@ -313,13 +319,22 @@ const RepositoryFilterPanel = ({
                         }
                         sx={toggleGroupSx}
                     >
-                        <ToggleButton value="all">
+                        <ToggleButton
+                            value="all"
+                            data-cy="testRepositoryReviewStatus-all"
+                        >
                             {t("repository:reviewStatusAll")}
                         </ToggleButton>
-                        <ToggleButton value="with">
+                        <ToggleButton
+                            value="with"
+                            data-cy="testRepositoryReviewStatus-with"
+                        >
                             {t("repository:reviewStatusWith")}
                         </ToggleButton>
-                        <ToggleButton value="without">
+                        <ToggleButton
+                            value="without"
+                            data-cy="testRepositoryReviewStatus-without"
+                        >
                             {t("repository:reviewStatusWithout")}
                         </ToggleButton>
                     </ToggleButtonGroup>

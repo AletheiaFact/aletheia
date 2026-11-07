@@ -1,6 +1,28 @@
 import personality from "../fixtures/personality";
 
 const locators = {
+    repository: {
+        CLAIMS_TAB: "[data-cy=testRepositoryClaimsTab]",
+        REVIEWS_TAB: "[data-cy=testRepositoryReviewsTab]",
+        SEARCH: "[data-cy=testRepositorySearch] input",
+        RESULTS: "[data-cy=testRepositoryResults]",
+        TOTAL: "[data-cy=testRepositoryTotal]",
+        EMPTY: "[data-cy=testRepositoryEmpty]",
+        EMPTY_CLEAR: "[data-cy=testRepositoryEmptyClear]",
+        FILTERS: "[data-cy=testRepositoryFilters]",
+        CLEAR_FILTERS: "[data-cy=testRepositoryClearFilters]",
+        OPEN_FILTERS: "[data-cy=testRepositoryOpenFilters]",
+        APPLY_FILTERS: "[data-cy=testRepositoryApplyFilters]",
+        CONTENT_MODEL: (value: string) =>
+            `[data-cy=testRepositoryContentModel-${value}] input`,
+        CLASSIFICATION: (value: string) =>
+            `[data-cy=testRepositoryClassification-${value}] input`,
+        CLASSIFICATIONS: "[data-cy^=testRepositoryClassification-]",
+        METHODOLOGY: (id: string) => `[data-cy=testRepositoryMethodology-${id}]`,
+        REVIEW_STATUS: (value: string) =>
+            `[data-cy=testRepositoryReviewStatus-${value}]`,
+    },
+
     login: {
         USER: "[data-cy=emailFormLogin]",
         PASSWORD: "[data-cy=passwordFormLogin]",
