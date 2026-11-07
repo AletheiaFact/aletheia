@@ -788,6 +788,19 @@ describe("ClaimController (e2e)", () => {
 
             const bySentence = await list({ q: "dolor sit" }).expect(200);
             expect(ids(bySentence.body)).toEqual([speechClaimId]);
+
+            const accented = await list({ q: "dólor sít" }).expect(200);
+            expect(ids(accented.body)).toEqual([speechClaimId]);
+        });
+
+        it("finds approved debate turns but not drafts or rejected ones", async () => {
+            const approved = await list({ q: "lower taxes" }).expect(200);
+            expect(
+                approved.body.claims.map((claim: any) => claim.contentModel)
+            ).toEqual([ContentModelEnum.Debate]);
+
+            const rejected = await list({ q: "tried before" }).expect(200);
+            expect(rejected.body.totalClaims).toBe(0);
         });
 
         it("treats the search text literally", async () => {

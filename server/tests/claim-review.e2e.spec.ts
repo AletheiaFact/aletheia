@@ -200,6 +200,7 @@ describe("ClaimReviewController (e2e)", () => {
 
         it("searches sentence text and personality name", async () => {
             expect(await total({ q: "typesetting" })).toBe(1);
+            expect(await total({ q: "typésêtting" })).toBe(1);
             expect(await total({ q: "barack" })).toBe(1);
             expect(await total({ q: "nothing like this" })).toBe(0);
         });

@@ -44,7 +44,7 @@ import {
     listAllData,
 } from "./types/claim-review.interfaces";
 import { mapAggregateToRecord } from "../util/mongo-utils";
-import { escapeRegex } from "../util/regex.util";
+import { accentInsensitiveRegex } from "../util/regex.util";
 import { DEFAULT_METHODOLOGY } from "../../lib/classification-methodology";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -197,7 +197,10 @@ export class ClaimReviewService {
         }
 
         if (q) {
-            const text = { $regex: escapeRegex(q), $options: "i" };
+            const text = {
+                $regex: accentInsensitiveRegex(q),
+                $options: "i",
+            };
             stages.push(
                 {
                     $lookup: {

@@ -33,7 +33,7 @@ import type {
     ClaimListFilters,
     IClaimService,
 } from "../../interfaces/claim.service.interface";
-import { escapeRegex } from "../../util/regex.util";
+import { accentInsensitiveRegex } from "../../util/regex.util";
 import { mapAggregateToRecord } from "../../util/mongo-utils";
 import {
     annotateClaimContent,
@@ -201,7 +201,10 @@ export class MongoClaimService implements IClaimService {
         }
 
         if (filters.q) {
-            const text = { $regex: escapeRegex(filters.q), $options: "i" };
+            const text = {
+                $regex: accentInsensitiveRegex(filters.q),
+                $options: "i",
+            };
             pipeline.push(
                 lookupRevisionContent("sentences", { content: text }, "textHits"),
                 {
