@@ -3,7 +3,7 @@
 import repository from "../../fixtures/repository";
 import locators from "../../support/locators";
 
-const { repository: page } = locators;
+const { repository: page, dateRange } = locators;
 // The list endpoints only; /api/claim/:id and /api/review/:hash differ
 const CLAIM_LIST = /\/api\/claim\/?\?/;
 const REVIEW_LIST = /\/api\/review\/?\?/;
@@ -62,6 +62,44 @@ describe("Repository page", () => {
             cy.get(page.CLEAR_FILTERS).click();
             cy.location("search").should("eq", "");
             cy.get(page.CONTENT_MODEL("Speech")).should("not.be.checked");
+        });
+
+        it("filters by a period picked in one field", () => {
+            const lastMonth = new Date();
+            lastMonth.setDate(1);
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            const day = (n: number) =>
+                [
+                    lastMonth.getFullYear(),
+                    String(lastMonth.getMonth() + 1).padStart(2, "0"),
+                    String(n).padStart(2, "0"),
+                ].join("-");
+
+            cy.visit("/claim");
+            cy.wait("@listClaims");
+
+            cy.get(`${page.DATE_RANGE} input`).click();
+            cy.get(dateRange.PREVIOUS_MONTH).click();
+            dateRange.DAY(10).click();
+            dateRange.DAY(20).click();
+
+            cy.wait("@listClaims").then(({ request, response }) => {
+                expect(response?.statusCode).to.eq(200);
+                const params = new URL(request.url).searchParams;
+                expect(params.get("startDate")).to.match(/T/);
+                expect(params.get("endDate")).to.match(/T/);
+            });
+            cy.location("search")
+                .should("include", `startDate=${day(10)}`)
+                .and("include", `endDate=${day(20)}`);
+            cy.get(`${page.DATE_RANGE} input`)
+                .invoke("val")
+                .should("match", /^10\/\d{2}\/\d{2} – 20\/\d{2}\/\d{2}$/);
+
+            cy.get(`${page.DATE_RANGE} input`).click();
+            cy.get(dateRange.CLEAR).click();
+            cy.location("search").should("not.include", "startDate");
+            cy.get(`${page.DATE_RANGE} input`).should("have.value", "");
         });
 
         it("shows the empty state for a search without results", () => {
