@@ -12,6 +12,7 @@ import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Header/Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 import DonationBanner from "./Home/DonationBanner/DonationBanner";
+import CatarseMeuCandidatoModal from "./CatarseMeuCandidato/CatarseMeuCandidatoModal";
 import localConfig from "../../config/localConfig";
 
 const copilotDrawerWidth = 350;
@@ -64,6 +65,7 @@ const MainApp = ({ children }) => {
                 {enableOverlay && <OverlaySearchResults />}
             </Box>
             <ClaimReviewDrawer />
+            <CatarseMeuCandidatoModal />
         </Box>
     );
 };
