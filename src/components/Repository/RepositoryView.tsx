@@ -116,7 +116,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
             return (
                 <Grid container spacing={2}>
                     {[0, 1, 2, 3].map((key) => (
-                        <Grid item xs={12} md={isClaims ? 6 : 4} key={key}>
+                        <Grid item xs={12} md={6} key={key}>
                             <Skeleton variant="rounded" height={240} />
                         </Grid>
                     ))}
@@ -154,26 +154,27 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
         return (
             <>
                 <Grid container spacing={2} data-cy="testRepositoryResults">
-                    {list.items.map((item) =>
-                        isClaims ? (
-                            <Grid item xs={12} md={6} key={item._id}>
+                    {list.items.map((item) => (
+                        <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            key={
+                                isClaims
+                                    ? item._id
+                                    : item.content?._id || item.reviewHref
+                            }
+                        >
+                            {isClaims ? (
                                 <ClaimCard
                                     personality={{ _id: null }}
                                     claim={item}
                                 />
-                            </Grid>
-                        ) : (
-                            <Grid
-                                item
-                                xs={12}
-                                sm={6}
-                                lg={4}
-                                key={item.content?._id || item.reviewHref}
-                            >
+                            ) : (
                                 <ReviewCard review={item} />
-                            </Grid>
-                        )
-                    )}
+                            )}
+                        </Grid>
+                    ))}
                 </Grid>
                 {list.hasMore && (
                     <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
