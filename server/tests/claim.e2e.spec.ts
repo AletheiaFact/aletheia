@@ -752,6 +752,86 @@ describe("ClaimController (e2e)", () => {
             .expect(({ body }) => expect(body?.claims.length).toEqual(4));
     });
 
+    describe("repository filters", () => {
+        const listQuery = {
+            page: 0,
+            pageSize: 10,
+            order: "asc",
+            language: "pt",
+            nameSpace: NameSpaceEnum.Main,
+        };
+        const list = (filters: Record<string, unknown>) =>
+            request(app.getHttpServer())
+                .get("/api/claim")
+                .query({ ...listQuery, ...filters });
+        const ids = (body: any) => body.claims.map((claim: any) => claim._id);
+
+        it("filters by content type and counts every type", async () => {
+            const { body } = await list({
+                contentModel: ContentModelEnum.Image,
+            }).expect(200);
+
+            expect(body.totalClaims).toBe(2);
+            expect(
+                body.claims.map((claim: any) => claim.contentModel)
+            ).toEqual([ContentModelEnum.Image, ContentModelEnum.Image]);
+            expect(body.contentModelCounts).toEqual({
+                [ContentModelEnum.Speech]: 1,
+                [ContentModelEnum.Image]: 2,
+                [ContentModelEnum.Debate]: 1,
+            });
+        });
+
+        it("searches titles and the claim's sentence text", async () => {
+            const byTitle = await list({ q: "image claim title" }).expect(200);
+            expect(byTitle.body.totalClaims).toBe(2);
+
+            const bySentence = await list({ q: "dolor sit" }).expect(200);
+            expect(ids(bySentence.body)).toEqual([speechClaimId]);
+        });
+
+        it("treats the search text literally", async () => {
+            const { body } = await list({ q: "Speech.*" }).expect(200);
+            expect(body.totalClaims).toBe(0);
+        });
+
+        it("filters by a topic of the claim's sentences", async () => {
+            const topicId = new Types.ObjectId();
+            await app
+                .get(getConnectionToken())
+                .collection("sentences")
+                .updateOne(
+                    { content: { $regex: "Dolor Sit" } },
+                    { $set: { topics: [{ id: topicId, label: "Saúde" }] } }
+                );
+
+            const { body } = await list({ topic: topicId.toString() }).expect(
+                200
+            );
+            expect(ids(body)).toEqual([speechClaimId]);
+        });
+
+        it("filters by review status and claim date", async () => {
+            const withReviews = await list({ reviewStatus: "with" }).expect(200);
+            expect(withReviews.body.totalClaims).toBe(0);
+
+            const without = await list({ reviewStatus: "without" }).expect(200);
+            expect(without.body.totalClaims).toBe(4);
+
+            const after = await list({
+                startDate: "2023-11-26T00:00:00.000Z",
+                sortBy: "date",
+            }).expect(200);
+            expect(after.body.totalClaims).toBe(0);
+        });
+
+        it("returns 400 for an unknown content type or a bad date", async () => {
+            await list({ contentModel: "Interview" }).expect(400);
+            await list({ startDate: "yesterday" }).expect(400);
+            await list({ topic: "not-an-id" }).expect(400);
+        });
+    });
+
     /**
      * Test: Hide Claim Functionality
      * Purpose: Validates ability to hide a claim from public view

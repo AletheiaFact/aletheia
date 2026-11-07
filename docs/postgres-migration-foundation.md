@@ -198,7 +198,7 @@ Source reference columns land per D3 without constraints: `user_id uuid` (users 
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
-| `searchTopics` query semantics | unescaped `$regex` (`.`/`*` are metacharacters; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | regex syntax differs between engines and the input was never escaped; literal match is what callers mean |
+| `searchTopics` query semantics | escaped `$regex` (literal substring; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | the query is escaped on both since the endpoint went public (repository topic filter); only the sort order differs |
 | `create` with duplicate entries in one batch | `Promise.all` races into `E11000` → 500 | sequential loop; the second entry finds the first and returns its ref | deterministic; Mongo behavior is a race, not a rule |
 | `create` with a `{ slug }` reference to a missing topic | `name` is an object → Mongoose CastError → 500 | `BadRequestException` (400) | there is no usable name; 400 is the honest code |
 | `create` with `contentModel = Image` | attaches topics to the image | `NotImplementedError` (501) | image table ports in Phase 2 MR 2; any other `contentModel` attaches to the sentence through the `"SentenceService"` token (Phase 2 MR 1) |

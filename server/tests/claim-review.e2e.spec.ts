@@ -24,6 +24,7 @@ import { SeedTestClaimRevision } from "./utils/SeedTestClaimRevision";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
 import { ValidationPipe } from "@nestjs/common";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
+import { getConnectionToken } from "@nestjs/mongoose";
 const { ObjectId } = require("mongodb");
 
 
@@ -173,6 +174,75 @@ describe("ClaimReviewController (e2e)", () => {
                 expect(body.reviews[0]).toHaveProperty("personality");
                 expect(body.reviews[0].content).toHaveProperty("data_hash");
             });
+    });
+
+    describe("repository filters", () => {
+        const list = (filters: Record<string, unknown>) =>
+            request(app.getHttpServer())
+                .get("/api/review")
+                .query({
+                    page: 0,
+                    pageSize: 10,
+                    order: "desc",
+                    nameSpace: NameSpaceEnum.Main,
+                    ...filters,
+                });
+        const total = async (filters: Record<string, unknown>) =>
+            (await list(filters).expect(200)).body.totalReviews;
+
+        it("filters by classification and methodology", async () => {
+            expect(await total({ classification: "misleading" })).toBe(1);
+            expect(await total({ classification: ["false", "trustworthy"] })).toBe(0);
+            // Reports without a methodology are aletheia
+            expect(await total({ classificationMethodology: "aletheia" })).toBe(1);
+            expect(await total({ classificationMethodology: "rncd-debate" })).toBe(0);
+        });
+
+        it("searches sentence text and personality name", async () => {
+            expect(await total({ q: "typesetting" })).toBe(1);
+            expect(await total({ q: "barack" })).toBe(1);
+            expect(await total({ q: "nothing like this" })).toBe(0);
+        });
+
+        it("filters by personality and publication date", async () => {
+            expect(await total({ personality: personalitiesId[0] })).toBe(1);
+            expect(await total({ personality: personalitiesId[1] })).toBe(0);
+            expect(
+                await total({
+                    startDate: "2024-04-18T00:00:00.000Z",
+                    endDate: "2024-04-18T23:59:59.999Z",
+                })
+            ).toBe(1);
+            expect(await total({ startDate: "2024-04-19T00:00:00.000Z" })).toBe(0);
+        });
+
+        it("filters by content type and counts every type", async () => {
+            const { body } = await list({
+                contentModel: "Image",
+                withCounts: true,
+            }).expect(200);
+            expect(body.totalReviews).toBe(0);
+            expect(body.contentModelCounts).toEqual({ Speech: 1 });
+
+            const plain = await list({}).expect(200);
+            expect(plain.body).not.toHaveProperty("contentModelCounts");
+        });
+
+        it("lists only published reviews", async () => {
+            const reviews = app.get(getConnectionToken()).collection("claimreviews");
+            await reviews.updateMany({}, { $set: { isPublished: false } });
+            try {
+                expect(await total({})).toBe(0);
+            } finally {
+                await reviews.updateMany({}, { $set: { isPublished: true } });
+            }
+        });
+
+        it("returns 400 for an unknown classification or methodology", async () => {
+            await list({ classification: "in-progress" }).expect(400);
+            await list({ classificationMethodology: "other" }).expect(400);
+            await list({ personality: "not-an-id" }).expect(400);
+        });
     });
 
     /**

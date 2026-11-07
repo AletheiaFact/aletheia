@@ -10,8 +10,10 @@ import colors from "../styles/colors";
 interface DateRangePickerProps {
     startDate: Date | null;
     endDate: Date | null;
-    setStartDate: React.Dispatch<React.SetStateAction<Date | null>>;
-    setEndDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    setStartDate: (date: Date | null) => void;
+    setEndDate: (date: Date | null) => void;
+    // Stack the inputs, for narrow containers such as a sidebar
+    vertical?: boolean;
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
@@ -19,6 +21,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     endDate,
     setStartDate,
     setEndDate,
+    vertical = false,
 }) => {
     const [openStart, setOpenStart] = useState(false);
     const [openEnd, setOpenEnd] = useState(false);
@@ -26,7 +29,13 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     const today = new Date();
 
     return (
-        <Box sx={{ display: "flex", gap: "8px" }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: vertical ? "column" : "row",
+                gap: "8px",
+            }}
+        >
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
                 <DatePicker
                     label={t("verificationRequest:startDate")}

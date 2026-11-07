@@ -51,7 +51,8 @@ export class MongoTopicService implements ITopicService {
         }
 
         const normalizedQuery = normalizeText(query);
-        const searchRegex = new RegExp(normalizedQuery, "i");
+        // Escaped: the endpoint is public, so a raw pattern would be a ReDoS.
+        const searchRegex = new RegExp(escapeRegex(normalizedQuery), "i");
 
         const topics = await this.TopicModel.find({
             language: { $eq: language },
