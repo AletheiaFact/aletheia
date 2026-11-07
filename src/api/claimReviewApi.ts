@@ -14,6 +14,14 @@ interface FetchOptions {
     latest?: boolean;
     nameSpace?: NameSpaceEnum;
     mainTopicId?: string;
+    q?: string;
+    personality?: string;
+    contentModel?: string[];
+    classification?: string[];
+    classificationMethodology?: string;
+    startDate?: string;
+    endDate?: string;
+    withCounts?: boolean;
 }
 
 const get = (
@@ -27,17 +35,27 @@ const get = (
         latest: options?.latest,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
         mainTopicId: options?.mainTopicId,
+        q: options.q,
+        personality: options.personality,
+        contentModel: options.contentModel,
+        classification: options.classification,
+        classificationMethodology: options.classificationMethodology,
+        startDate: options.startDate,
+        endDate: options.endDate,
+        withCounts: options.withCounts,
     };
 
     return request
         .get(`/`, { params })
         .then((response) => {
-            const { totalPages, totalReviews, reviews } = response.data;
+            const { totalPages, totalReviews, reviews, contentModelCounts } =
+                response.data;
 
             return {
                 data: reviews,
                 total: totalReviews,
                 totalPages,
+                contentModelCounts,
             };
         })
         .catch();

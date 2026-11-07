@@ -122,8 +122,8 @@ export class PostgresTopicService implements ITopicService {
             );
         }
 
-        // Mongo feeds the (unescaped) query to $regex; here it is a literal
-        // case-insensitive substring match (documented divergence).
+        // Literal case-insensitive substring match, like Mongo's escaped
+        // $regex (sort order still differs: documented divergence).
         const normalizedQuery = normalizeText(query);
         const pattern = `%${escapeLike(normalizedQuery)}%`;
 
