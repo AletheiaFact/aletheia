@@ -77,6 +77,8 @@ export class ImageService {
         if (image) {
             image.props = {
                 classification: report?.classification,
+                classificationMethodology:
+                    report?.classificationMethodology ?? undefined,
                 ...image.props,
             };
             return image;

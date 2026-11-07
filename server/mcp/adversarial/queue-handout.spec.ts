@@ -48,6 +48,57 @@ describe("MCP adversarial: work queue hand-out", () => {
         expect(JSON.parse(res.text)).toMatchObject({ task: null });
     });
 
+    it("next_review_task fixes the requested methodology in the same atomic take", async () => {
+        session = await connect(factChecker);
+        await session.call("next_review_task", {
+            classificationMethodology: "rncd-debate",
+        });
+        const [filter, update] = firstTransition(session);
+        // Only tasks with no methodology yet, or the same one, are handed out
+        expect(filter.$or).toEqual([
+            { classificationMethodology: { $exists: false } },
+            { classificationMethodology: "rncd-debate" },
+        ]);
+        expect(update.$set.classificationMethodology).toBe("rncd-debate");
+    });
+
+    it("next_review_task defaults the methodology to aletheia", async () => {
+        session = await connect(factChecker);
+        await session.call("next_review_task", {});
+        const [, update] = firstTransition(session);
+        expect(update.$set.classificationMethodology).toBe("aletheia");
+    });
+
+    it("next_review_task rejects an unknown methodology before taking anything", async () => {
+        session = await connect(factChecker);
+        const res = await session.call("next_review_task", {
+            classificationMethodology: "nope",
+        });
+        expect(res.isError).toBe(true);
+        expect(
+            session.mocks.reviewTaskService.transitionAtomically
+        ).not.toHaveBeenCalled();
+    });
+
+    it("next_review_task takes nothing when the methodology is refused (flag off)", async () => {
+        session = await connect(factChecker);
+        session.mocks.reviewTaskService.resolveMethodologyForNewTask.mockImplementation(
+            () => {
+                throw new Error(
+                    "Classification methodology selection is disabled"
+                );
+            }
+        );
+        const res = await session.call("next_review_task", {
+            classificationMethodology: "rncd-debate",
+        });
+        expect(res.isError).toBe(true);
+        expect(res.text).toMatch(/disabled/);
+        expect(
+            session.mocks.reviewTaskService.transitionAtomically
+        ).not.toHaveBeenCalled();
+    });
+
     it("claim_review_task is reviewer/admin only", async () => {
         session = await connect(factChecker);
         const res = await session.call("claim_review_task", {});

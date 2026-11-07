@@ -1,6 +1,10 @@
 import { getInitialContext } from "../../../src/machines/reviewTask/context";
 import { ReviewTaskTypeEnum } from "../../../src/machines/reviewTask/enums";
-import { buildClaimContext, claimPersonalityId } from "./machine";
+import {
+    buildClaimContext,
+    claimPersonalityId,
+    sentencePersonalityId,
+} from "./machine";
 
 describe("buildClaimContext", () => {
     it("matches the frontend initial context for a Claim task", () => {
@@ -40,5 +44,43 @@ describe("claimPersonalityId", () => {
         expect(buildClaimContext([], "claim-1", "p-1").review.personality).toBe(
             "p-1"
         );
+    });
+});
+
+describe("sentencePersonalityId", () => {
+    const sentence = (data_hash: string) => ({
+        type: "sentence",
+        data_hash,
+        content: "text",
+    });
+    const speech = (personality: unknown, data_hash: string) => ({
+        type: "speech",
+        personality,
+        content: [{ type: "paragraph", content: [sentence(data_hash)] }],
+    });
+
+    it("returns the personality of the debate speech holding the sentence", () => {
+        const debate = {
+            personalities: [{ _id: "lula" }, { _id: "flavio" }],
+            content: {
+                type: "debate",
+                content: [
+                    speech("lula", "h-1"),
+                    speech({ _id: "flavio" }, "h-2"),
+                ],
+            },
+        };
+
+        expect(sentencePersonalityId(debate, "h-1")).toBe("lula");
+        expect(sentencePersonalityId(debate, "h-2")).toBe("flavio");
+    });
+
+    it("falls back to the claim's first personality", () => {
+        const claim = {
+            personalities: ["p-1"],
+            content: [{ type: "paragraph", content: [sentence("h-1")] }],
+        };
+
+        expect(sentencePersonalityId(claim, "h-1")).toBe("p-1");
     });
 });

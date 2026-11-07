@@ -9,6 +9,7 @@
         "start": "node dist/server/main.js",
         "seed": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
+        "seed:ci:prebuilt": "node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "env-cmd --silent vitest run",
         "test:unit": "env-cmd --silent vitest run --project unit",
@@ -47,7 +48,7 @@
         "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
         "test:e2e:cy-ferretdb": "env-cmd --silent concurrently -p \"[{name}]\" -n \"Ory,Server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:27018 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
         "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
-        "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml",
+        "test:e2e:app-server": "yarn seed:ci:prebuilt && yarn start -c config.test.ci.yaml",
         "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts"
     },
     "nodemonConfig": {
@@ -124,7 +125,7 @@
         "aws-sdk": "^2.1154.0",
         "axios": "1.20.0",
         "babel-plugin-styled-components": "^1.13.2",
-        "body-parser": "1.20.6",
+        "body-parser": "1.20.9",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "compromise": "^13.11.4",
@@ -134,7 +135,7 @@
         "dayjs": "^1.11.13",
         "domino": "^2.1.6",
         "dompurify": "3.4.17",
-        "drizzle-orm": "0.36.4",
+        "drizzle-orm": "0.45.2",
         "express": "4.19.2",
         "express-session": "^1.17.2",
         "helmet": "^6.0.0",
@@ -189,7 +190,7 @@
         "y-webrtc": "^10.2.5",
         "y-websocket": "^1.5.0",
         "yjs": "^13.5.23",
-        "zod": "^4.3.6"
+        "zod": "^4.6.6"
     },
     "devDependencies": {
         "@babel/core": "^7.29.6",
@@ -280,6 +281,11 @@
         "@compodoc/compodoc": "1.1.21",
         "cheerio": "1.0.0-rc.12",
         "@langchain/core/ansi-styles": "5.2.0"
+    },
+    "dependenciesMeta": {
+        "sharp@0.32.6": {
+            "built": false
+        }
     },
     "packageManager": "yarn@3.6.3",
     "engines": {

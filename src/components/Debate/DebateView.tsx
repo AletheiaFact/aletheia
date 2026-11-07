@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserRole } from "../../atoms/currentUser";
+import { isAdmin } from "../../utils/GetUserPermission";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
@@ -71,6 +72,8 @@ const DebateView = ({ claim }) => {
                         <DebateTimelineWrapper
                             speeches={speeches}
                             isLive={debate.isLive}
+                            claimId={claim?.claimId}
+                            canEditSpeeches={isAdmin(userRole)}
                         />
                     </Grid>
                 </Grid>

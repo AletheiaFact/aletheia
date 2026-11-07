@@ -9,6 +9,12 @@ export interface SentenceViewDto {
     dataHash: string;
     text: string;
     position: number;
+    // Set when the sentence has a review: a published one blocks deletion,
+    // an in-progress one makes the editor ask before deleting.
+    reviewStatus?: "in-progress" | "published";
+    // Set for debates: the speech (turn) the sentence belongs to.
+    speechId?: string;
+    personalityId?: string;
 }
 
 export interface ClaimEditableViewDto {
@@ -17,6 +23,7 @@ export interface ClaimEditableViewDto {
     nameSpace: string;
     personalitySlug?: string;
     baseRevisionId: string;
+    contentModel: string;
     metadata: {
         title: string;
         date: string;
@@ -40,6 +47,7 @@ export interface ClaimEditCommitResponseDto {
     cascadeSummary: {
         reviewTasksUpdated: number;
         claimReviewsUpdated: number;
+        reportsUpdated: number;
         verificationRequestsUpdated: number;
         commentsUpdated: number;
     };

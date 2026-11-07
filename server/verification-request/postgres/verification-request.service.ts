@@ -502,8 +502,9 @@ export class PostgresVerificationRequestService
     private rethrowCreateError(error: unknown): never {
         const err = toError(error) as any;
         this.logger.error("Failed to create verification request", err.stack);
-        if (err?.code === "23502" && err?.column) {
-            const field = String(err.column).replace(
+        const pg = (error as any)?.cause ?? err;
+        if (pg?.code === "23502" && pg?.column) {
+            const field = String(pg.column).replace(
                 /_([a-z])/g,
                 (_: string, c: string) => c.toUpperCase()
             );

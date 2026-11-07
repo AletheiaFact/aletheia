@@ -1,5 +1,5 @@
 {
-  "id": "aeda7422-44fe-4757-92bd-6056b4ebaa7f",
+  "id": "93ba06c4-eecc-4e00-b91e-dcaa47a219ee",
   "prevId": "19f8b5f6-dfcd-4b4e-8b94-de1c63d32ceb",
   "version": "7",
   "dialect": "postgresql",
@@ -925,13 +925,6 @@
         },
         "pending_ai_tasks": {
           "name": "pending_ai_tasks",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'{}'::jsonb"
-        },
-        "field_provenance": {
-          "name": "field_provenance",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
@@ -2160,6 +2153,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "classification_methodology": {
+          "name": "classification_methodology",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "is_deleted": {
           "name": "is_deleted",
