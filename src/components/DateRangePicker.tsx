@@ -210,7 +210,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                 anchorEl={anchorRef.current}
                 onClose={closeCalendar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                PaperProps={{ role: "dialog" }}
+                slotProps={{ paper: { role: "dialog" } }}
             >
                 <LocalizationProvider
                     dateAdapter={AdapterDateFns}
