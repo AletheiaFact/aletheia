@@ -218,18 +218,18 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                     }}
                 >
                     <Tab
-                        value="claims"
-                        icon={<ChatOutlinedIcon fontSize="small" />}
-                        iconPosition="start"
-                        label={t("repository:claimsTab")}
-                        data-cy="testRepositoryClaimsTab"
-                    />
-                    <Tab
                         value="reviews"
                         icon={<VerifiedUserIcon fontSize="small" />}
                         iconPosition="start"
                         label={t("repository:reviewsTab")}
                         data-cy="testRepositoryReviewsTab"
+                    />
+                    <Tab
+                        value="claims"
+                        icon={<ChatOutlinedIcon fontSize="small" />}
+                        iconPosition="start"
+                        label={t("repository:claimsTab")}
+                        data-cy="testRepositoryClaimsTab"
                     />
                 </Tabs>
 

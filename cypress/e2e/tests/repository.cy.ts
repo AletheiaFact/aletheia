@@ -35,8 +35,10 @@ describe("Repository page", () => {
     });
 
     describe("claims tab", () => {
+        const CLAIMS_URL = "/claim?tab=claims";
+
         it("lists claims and keeps the filters in the URL", () => {
-            cy.visit("/claim");
+            cy.visit(CLAIMS_URL);
             expectListRequest("@listClaims", { sortBy: "date" });
             cy.get(page.TOTAL).should("be.visible");
 
@@ -60,7 +62,7 @@ describe("Repository page", () => {
             );
 
             cy.get(page.CLEAR_FILTERS).click();
-            cy.location("search").should("eq", "");
+            cy.location("search").should("eq", "?tab=claims");
             cy.get(page.CONTENT_MODEL("Speech")).should("not.be.checked");
         });
 
@@ -75,7 +77,7 @@ describe("Repository page", () => {
                     String(n).padStart(2, "0"),
                 ].join("-");
 
-            cy.visit("/claim");
+            cy.visit(CLAIMS_URL);
             cy.wait("@listClaims");
 
             cy.get(`${page.DATE_RANGE} input`).click();
@@ -103,7 +105,7 @@ describe("Repository page", () => {
         });
 
         it("shows the empty state for a search without results", () => {
-            cy.visit("/claim");
+            cy.visit(CLAIMS_URL);
             cy.wait("@listClaims");
 
             cy.get(page.SEARCH).type(repository.unknownSearch);
@@ -113,7 +115,7 @@ describe("Repository page", () => {
 
             cy.get(page.EMPTY_CLEAR).click();
             cy.get(page.SEARCH).should("have.value", "");
-            cy.location("search").should("eq", "");
+            cy.location("search").should("eq", "?tab=claims");
         });
     });
 
@@ -123,11 +125,12 @@ describe("Repository page", () => {
                 { method: "GET", url: REVIEW_LIST },
                 { body: repository.reviews }
             ).as("listReviews");
+            // Fact-checks are the tab /claim opens on
             cy.visit("/claim");
 
-            cy.get(page.REVIEWS_TAB).click();
             expectListRequest("@listReviews", { withCounts: "true" });
-            cy.location("search").should("include", "tab=reviews");
+            cy.get(page.REVIEWS_TAB).should("have.class", "Mui-selected");
+            cy.location("search").should("not.include", "tab=");
             cy.get(`${page.RESULTS} [data-cy=testReviewCardContainer]`).should(
                 "have.length",
                 2
@@ -172,7 +175,7 @@ describe("Repository page", () => {
         beforeEach(() => cy.viewport("iphone-x"));
 
         it("moves the filters into a drawer", () => {
-            cy.visit("/claim");
+            cy.visit("/claim?tab=claims");
             cy.wait("@listClaims");
             cy.get(page.FILTERS).should("not.exist");
 

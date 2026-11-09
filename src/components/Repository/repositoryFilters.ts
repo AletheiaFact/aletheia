@@ -82,8 +82,9 @@ const fromDay = (value?: string) => {
 const namedOption = (id?: string, name?: string): NamedOption | null =>
     id ? { id, name: name || id } : null;
 
+// Fact-checks are the default tab; claims need an explicit ?tab=claims
 export const parseTab = (query: RepositoryQuery): RepositoryTab =>
-    first(query.tab) === "reviews" ? "reviews" : "claims";
+    first(query.tab) === "claims" ? "claims" : "reviews";
 
 export const parseFilters = (query: RepositoryQuery): RepositoryFilters => {
     const reviewStatus = first(query.reviewStatus);
@@ -118,7 +119,7 @@ export const toSearchParams = (
     const set = (key: string, value?: string | null) =>
         value && params.set(key, value);
 
-    if (tab === "reviews") {
+    if (tab === "claims") {
         params.set("tab", tab);
     }
     set("q", filters.q.trim());
