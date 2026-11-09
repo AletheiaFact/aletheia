@@ -25,6 +25,12 @@ export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) 
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
 
+    const isDirty =
+        !!title.trim() ||
+        !!content.trim() ||
+        !!date ||
+        sources.some((source) => !!source.trim());
+
     const clearError = (field) => {
         if (errors?.[field]) {
             setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -87,5 +93,6 @@ export const useBaseClaimForm = (options?: { shouldValidateContent?: boolean }) 
         setErrors,
         clearError,
         validateFields,
+        isDirty,
     };
 };

@@ -24,5 +24,8 @@
         "node_modules",
         "./**/*.spec.ts",
         "./**/*.example.ts",
+        "./tests/utils/McpTestHelper.ts",
+        "./tests/utils/McpQueueHelper.ts",
+        "./mcp/adversarial/harness.ts",
     ]
 }

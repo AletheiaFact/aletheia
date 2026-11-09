@@ -1,13 +1,11 @@
 import { Model } from "mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
-import { VerificationRequestService } from "./verification-request.service";
-import { VerificationRequestDocument } from "./schemas/verification-request.schema";
-import { VerificationRequestStateMachineService } from "./state-machine/verification-request.state-machine.service";
-import { GroupService } from "../group/group.service";
+import { MongoVerificationRequestService } from "./mongo/verification-request.service";
+import { VerificationRequestDocument } from "./mongo/schemas/verification-request.schema";
+
 import { HistoryService } from "../history/history.service";
 import { AiTaskService } from "../ai-task/ai-task.service";
-import { TopicService } from "../topic/topic.service";
 import { EMBEDDINGS_PROVIDER } from "../llm/llm.tokens";
 import {
     createFakeVerificationRequest,
@@ -23,15 +21,15 @@ const mockTopicService = {
     findOrCreateTopic: vi.fn(),
 };
 
-describe("VerificationRequestService (Unit)", () => {
+describe("MongoVerificationRequestService (Unit)", () => {
     let testingModule: TestingModule;
-    let service: VerificationRequestService;
+    let service: MongoVerificationRequestService;
     let model: Model<VerificationRequestDocument>;
 
     beforeAll(async () => {
         testingModule = await Test.createTestingModule({
             providers: [
-                VerificationRequestService,
+                MongoVerificationRequestService,
                 {
                     provide: getModelToken("VerificationRequest"),
                     useValue: mockVerificationRequestModel,
@@ -40,15 +38,11 @@ describe("VerificationRequestService (Unit)", () => {
                     provide: "REQUEST",
                     useValue: { user: { id: "test-user" } },
                 },
-                {
-                    provide: VerificationRequestStateMachineService,
-                    useValue: {},
-                },
                 { provide: "SourceService", useValue: mockSourceService },
-                { provide: GroupService, useValue: {} },
+                { provide: "GroupService", useValue: {} },
                 { provide: HistoryService, useValue: {} },
                 { provide: AiTaskService, useValue: {} },
-                { provide: TopicService, useValue: mockTopicService },
+                { provide: "TopicService", useValue: mockTopicService },
                 { provide: "PersonalityService", useValue: {} },
                 {
                     provide: EMBEDDINGS_PROVIDER,
@@ -65,8 +59,8 @@ describe("VerificationRequestService (Unit)", () => {
     });
 
     beforeEach(async () => {
-        service = await testingModule.resolve<VerificationRequestService>(
-            VerificationRequestService
+        service = await testingModule.resolve<MongoVerificationRequestService>(
+            MongoVerificationRequestService
         );
 
         vi.clearAllMocks();
@@ -151,7 +145,10 @@ describe("VerificationRequestService (Unit)", () => {
         beforeEach(() => {
             (mockVerificationRequestModel as any).findById = vi
                 .fn()
-                .mockResolvedValue({ id: targetId, stateFingerprints: new Map() });
+                .mockResolvedValue({
+                    id: targetId,
+                    stateFingerprints: new Map(),
+                });
             mockFindByIdAndUpdate = vi.fn().mockReturnValue({
                 exec: vi.fn().mockResolvedValue({ id: targetId }),
             });

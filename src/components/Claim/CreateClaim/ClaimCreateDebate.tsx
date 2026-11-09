@@ -1,17 +1,18 @@
-import { useTranslation } from "next-i18next";
 import React from "react";
 import BaseClaimForm from "./BaseClaimForm";
 import { useBaseClaimForm } from "./UseBaseClaimForm";
+import { ContentModelEnum } from "../../../types/enums";
 
 const ClaimCreateDebate = () => {
-    const { t } = useTranslation();
     const {
-        handleSubmit, title, setTitle, recaptcha, setRecaptcha, date, setDate, setSources, sources, isLoading, errors, clearError
+        handleSubmit, title, setTitle, recaptcha, setRecaptcha, date, setDate, setSources, sources, isLoading, errors, clearError, isDirty
     } = useBaseClaimForm({ shouldValidateContent: false });
 
     return (
         <BaseClaimForm
+            variant={ContentModelEnum.Debate}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
             isLoading={isLoading}
             errors={errors}
             clearError={clearError}
@@ -23,7 +24,6 @@ const ClaimCreateDebate = () => {
             setDate={setDate}
             sources={sources}
             setSources={setSources}
-            dateExtraText={t("claimForm:dateFieldHelpDebate")}
         />
     );
 };

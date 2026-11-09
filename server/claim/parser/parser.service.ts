@@ -1,11 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { SentenceService } from "../types/sentence/sentence.service";
-import { ParagraphService } from "../types/paragraph/paragraph.service";
-import { SpeechService } from "../types/speech/speech.service";
-import { SpeechDocument } from "../types/speech/schemas/speech.schema";
-import { Types } from "mongoose";
-import { UnattributedService } from "../types/unattributed/unattributed.service";
-import { UnattributedDocument } from "../types/unattributed/schemas/unattributed.schema";
+import { Inject, Injectable } from "@nestjs/common";
+import type { ISentenceService } from "../../interfaces/sentence.service.interface";
+import type { IParagraphService } from "../../interfaces/paragraph.service.interface";
+import type { ISpeechService } from "../../interfaces/speech.service.interface";
+import type { IUnattributedService } from "../../interfaces/unattributed.service.interface";
+import type {
+    ISpeech,
+    IUnattributed,
+} from "../../interfaces/claim-content.interface";
 import { ContentModelEnum } from "../../types/enums";
 import { SentenceHashService } from "../admin-editor/sentence-hash.service";
 const nlp = require("compromise");
@@ -15,10 +16,12 @@ nlp.extend(require("compromise-paragraphs"));
 @Injectable()
 export class ParserService {
     constructor(
-        private speechService: SpeechService,
-        private paragraphService: ParagraphService,
-        private sentenceService: SentenceService,
-        private unattributedService: UnattributedService,
+        @Inject("SpeechService") private speechService: ISpeechService,
+        @Inject("ParagraphService")
+        private paragraphService: IParagraphService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
+        @Inject("UnattributedService")
+        private unattributedService: IUnattributedService,
         private hashService: SentenceHashService
     ) {}
     paragraphSequence: number;
@@ -27,10 +30,13 @@ export class ParserService {
 
     async parse(
         content: string,
-        claimRevisionId: object,
+        claimRevisionId: string | object,
         personality: string | null = null,
-        contentModel = ContentModelEnum.Speech
-    ): Promise<SpeechDocument | UnattributedDocument> {
+        contentModel = ContentModelEnum.Speech,
+        { isDraft = false }: { isDraft?: boolean } = {}
+    ): Promise<ISpeech | IUnattributed> {
+        // Only set the flag on drafts so other content keeps its shape.
+        const draftProps = isDraft ? { isDraft: true } : {};
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result: Promise<any>[] = [];
@@ -60,7 +66,8 @@ export class ParserService {
                             this.parseSentence(
                                 sentence,
                                 paragraphDataHash,
-                                claimRevisionId
+                                claimRevisionId,
+                                draftProps
                             )
                         ),
                     })
@@ -68,12 +75,8 @@ export class ParserService {
             }
         });
 
-        if (personality) {
-            personality = new Types.ObjectId(personality) as any;
-        }
-
         return await Promise.all(result).then(
-            (object: any[]): Promise<SpeechDocument | UnattributedDocument> => {
+            (object: any[]): Promise<ISpeech | IUnattributed> => {
                 if (contentModel === ContentModelEnum.Unattributed) {
                     return this.unattributedService.create({
                         content: object,
@@ -83,7 +86,8 @@ export class ParserService {
                 return this.speechService.create({
                     content: object,
                     claimRevisionId: claimRevisionId,
-                    personality,
+                    personality: personality || null,
+                    ...draftProps,
                 });
             }
         );
@@ -93,7 +97,6 @@ export class ParserService {
         let newSentences: string[] = [];
         sentences.forEach((sentence: any) => {
             const sentenceText = sentence.text(this.nlpOptions);
-            // Extract semicolon sentences
             let semicolonSentences = sentenceText.split(";");
             if (sentenceText.includes(";")) {
                 semicolonSentences = semicolonSentences.map(
@@ -112,7 +115,8 @@ export class ParserService {
     parseSentence(
         sentenceContent: string,
         paragraphDataHash: string,
-        claimRevisionId: object
+        claimRevisionId: string | object,
+        draftProps: { isDraft?: boolean } = {}
     ) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = this.hashService.computeSentenceHash(
@@ -128,6 +132,7 @@ export class ParserService {
             },
             content: sentenceContent,
             claimRevisionId: claimRevisionId,
+            ...draftProps,
         });
     }
 

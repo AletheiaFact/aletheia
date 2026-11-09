@@ -18,6 +18,19 @@ export const cop28Topic = {
     value: "Q123456",
 };
 
+export const participantOrganizations = [
+    {
+        name: "Organização Parceira Um",
+        website: "https://example.org/parceira-um",
+        logo: "cypress/fixtures/organizationLogo1.png",
+    },
+    {
+        name: "Organização Parceira Dois",
+        website: "",
+        logo: "cypress/fixtures/organizationLogo2.png",
+    },
+];
+
 export const buildEvent = (overrides = {}) => ({
     badge: "COP30",
     name: topic.name,

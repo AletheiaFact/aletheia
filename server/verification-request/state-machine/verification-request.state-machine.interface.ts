@@ -1,15 +1,16 @@
 import { StateMachineContext } from "./base";
-import { VerificationRequestService } from "../verification-request.service";
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 
 export interface VerificationRequestStateMachineContext
     extends StateMachineContext {
     verificationRequest:
-        | any & { // TODO: improve this type
-        id?: string;
-    };
+        | any & {
+              // TODO: improve this type
+              id?: string;
+          };
     user?: any;
 }
 
 export interface VerificationRequestStateMachineService {
-    verificationRequestService: VerificationRequestService;
+    verificationRequestService: IVerificationRequestService;
 }

@@ -1,0 +1,13 @@
+# Keep the build context small: the Dockerfile copies only what it needs.
+.git
+node_modules
+dist
+.yarn/cache
+.yarn/install-state.gz
+.cache
+coverage
+cypress
+docs
+.github
+.worktrees
+*.md

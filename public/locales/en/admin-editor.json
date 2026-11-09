@@ -1,7 +1,10 @@
 {
     "page": {
         "title": "Edit claim",
-        "subtitle": "Edit metadata and sentences of this claim"
+        "subtitle": "Edit metadata and sentences of this claim",
+        "debateTitle": "Edit debate speech",
+        "debateSubtitle": "Edit the sentences of this speech in the debate \"{{title}}\"",
+        "debateSpeaker": "Speech by {{name}}"
     },
     "status": {
         "unsaved": "Unsaved changes",
@@ -19,18 +22,26 @@
     "actions": {
         "submit": "Save changes",
         "discard": "Discard",
-        "editClaim": "Edit claim metadata"
+        "editClaim": "Edit claim metadata",
+        "editSpeech": "Edit the sentences of this speech"
     },
     "load": {
         "error": "Failed to load claim"
     },
     "commit": {
         "success": "Claim updated",
-        "error": "Failed to save claim"
+        "error": "Failed to save claim",
+        "errors": {
+            "sentence-has-review": "Sentences with a published review cannot be deleted.",
+            "speech-would-be-empty": "Each speech must keep at least one sentence.",
+            "content-type-not-supported": "This change is not supported for this content type.",
+            "intent-mismatch": "The changes could not be applied. Reload the page and try again.",
+            "no-op": "There are no changes to save."
+        }
     },
     "conflict": {
-        "title": "Claim changed",
-        "body": "Another administrator modified this claim while you were editing. Refresh to see the latest version, then re-apply your changes.",
+        "title": "Content modified",
+        "body": "Another admin modified this content while you were editing. Refresh to see the latest version and reapply your changes.",
         "refresh": "Refresh",
         "discard": "Discard my changes"
     },
@@ -50,6 +61,15 @@
         "editedBadge": "Edited",
         "editingLabel": "Editing...",
         "saveEdit": "Save",
-        "cancelEdit": "Cancel"
+        "cancelEdit": "Cancel",
+        "deleteTooltip": "Delete this sentence",
+        "deletedBadge": "Will be deleted",
+        "deletePublishedTooltip": "Sentences with a published review cannot be deleted"
+    },
+    "deleteSentence": {
+        "title": "Delete a sentence with a review in progress?",
+        "body": "This sentence has a review in progress. If it is deleted, the in-progress report will no longer have its sentence in the text. The deletion only applies when you save your changes.",
+        "confirm": "Delete anyway",
+        "cancel": "Cancel"
     }
 }

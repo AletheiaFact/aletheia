@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { EventSchema } from "./schema/event.schema";
+import { Event, EventSchema } from "./schema/event.schema";
 import { EventsController } from "./event.controller";
 import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "../view/view.module";
@@ -8,9 +8,10 @@ import { EventsService } from "./event.service";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { TopicModule } from "../topic/topic.module";
 import { AbilityModule } from "../auth/ability/ability.module";
-import { Topic, TopicSchema } from "../topic/schemas/topic.schema";
+import { Topic, TopicSchema } from "../topic/mongo/schemas/topic.schema";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { OrganizationModule } from "../organization/organization.module";
 
 const EventModel = MongooseModule.forFeature([
     {
@@ -30,9 +31,10 @@ const EventModel = MongooseModule.forFeature([
         ViewModule,
         AbilityModule,
         ClaimReviewModule,
-        TopicModule,
+        TopicModule.register(),
         FeatureFlagModule,
         CaptchaModule,
+        OrganizationModule,
     ],
     controllers: [EventsController],
     providers: [EventsService],

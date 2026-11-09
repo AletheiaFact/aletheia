@@ -9,6 +9,7 @@
         "start": "node dist/server/main.js",
         "seed": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
+        "seed:ci:prebuilt": "node dist/server/scripts/seed.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "env-cmd --silent vitest run",
         "test:unit": "env-cmd --silent vitest run --project unit",
@@ -35,9 +36,10 @@
         "build-storybook": "storybook build -o ./docs/storybook",
         "migrate:create": "env-cmd sh -c 'ts-node node_modules/.bin/migrate-mongo-ts create $0 -f migrate-mongo-config.ts' ",
         "migrate:status": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts status -f migrate-mongo-config.ts",
-        "migrate:pg": "env-cmd drizzle-kit migrate",
-        "migrate:pg:create": "env-cmd drizzle-kit generate",
-        "migrate:pg:status": "env-cmd drizzle-kit check",
+        "migrate:pg": "env-cmd --silent drizzle-kit migrate",
+        "migrate:pg:create": "env-cmd --silent drizzle-kit generate",
+        "migrate:pg:status": "env-cmd --silent drizzle-kit check",
+        "parity:diff": "ts-node scripts/parity/diff.ts",
         "migrate:undo-last": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts down -f migrate-mongo-config.ts && npm run migrate:status",
         "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
         "cypress-open": "cypress open",
@@ -46,7 +48,7 @@
         "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
         "test:e2e:cy-ferretdb": "env-cmd --silent concurrently -p \"[{name}]\" -n \"Ory,Server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:27018 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
         "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
-        "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml",
+        "test:e2e:app-server": "yarn seed:ci:prebuilt && yarn start -c config.test.ci.yaml",
         "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts"
     },
     "nodemonConfig": {
@@ -84,6 +86,7 @@
         "@langchain/core": "1.1.26",
         "@langchain/langgraph": "^1.1.5",
         "@langchain/openai": "1.2.8",
+        "@modelcontextprotocol/sdk": "^1.29.0",
         "@mui/icons-material": "^5.10.9",
         "@mui/joy": "^5.0.0-beta.48",
         "@mui/lab": "^6.0.0-beta.30",
@@ -120,9 +123,9 @@
         "accept-language-parser": "^1.5.0",
         "ai": "5.0.52",
         "aws-sdk": "^2.1154.0",
-        "axios": "1.18.0",
+        "axios": "1.20.0",
         "babel-plugin-styled-components": "^1.13.2",
-        "body-parser": "1.20.6",
+        "body-parser": "1.20.9",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "compromise": "^13.11.4",
@@ -131,8 +134,8 @@
         "cookie-parser": "^1.4.5",
         "dayjs": "^1.11.13",
         "domino": "^2.1.6",
-        "dompurify": "3.4.12",
-        "drizzle-orm": "0.36.4",
+        "dompurify": "3.4.17",
+        "drizzle-orm": "0.45.2",
         "express": "4.19.2",
         "express-session": "^1.17.2",
         "helmet": "^6.0.0",
@@ -152,7 +155,7 @@
         "mongoose": "6.13.10",
         "mongoose-softdelete-typescript": "^0.0.3",
         "nestjs-unleash": "^2.2.3",
-        "next": "15.5.21",
+        "next": "15.5.28",
         "next-i18next": "^10.2.0",
         "next-seo": "^5.4.0",
         "pg": "^8.13.0",
@@ -187,7 +190,7 @@
         "y-webrtc": "^10.2.5",
         "y-websocket": "^1.5.0",
         "yjs": "^13.5.23",
-        "zod": "^4.3.6"
+        "zod": "^4.6.6"
     },
     "devDependencies": {
         "@babel/core": "^7.29.6",
@@ -219,7 +222,7 @@
         "@types/shelljs": "^0.10.0",
         "@types/ws": "^8.18.1",
         "@typescript-eslint/parser": "^8.54.0",
-        "@vitest/coverage-v8": "^4.1.4",
+        "@vitest/coverage-v8": "^4.1.11",
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.5",
         "concurrently": "^8.2.1",
@@ -245,7 +248,7 @@
         "supertest": "^6.2.4",
         "typescript": "^5.3.0",
         "unplugin-swc": "^1.5.9",
-        "vitest": "^4.1.4",
+        "vitest": "^4.1.11",
         "wait-on": "9.0.3"
     },
     "browserslist": [
@@ -278,6 +281,11 @@
         "@compodoc/compodoc": "1.1.21",
         "cheerio": "1.0.0-rc.12",
         "@langchain/core/ansi-styles": "5.2.0"
+    },
+    "dependenciesMeta": {
+        "sharp@0.32.6": {
+            "built": false
+        }
     },
     "packageManager": "yarn@3.6.3",
     "engines": {

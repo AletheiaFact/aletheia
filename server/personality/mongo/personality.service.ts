@@ -8,7 +8,11 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { deriveSlug, defaultDescription } from "../shared/personality.rules";
+import {
+    defaultDescription,
+    deriveSlug,
+    extractClaimWithTextSummary,
+} from "../shared/personality.rules";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../../wikidata/wikidata.service";
 import { UtilService } from "../../util";
@@ -607,13 +611,7 @@ export class MongoPersonalityService {
     }
 
     extractClaimWithTextSummary(claims: any) {
-        claims = Array.isArray(claims) ? claims : [claims];
-        return claims.map((claim: any) => {
-            if (!claim.content) {
-                return claim;
-            }
-            return { ...claim, content: claim.content.text };
-        });
+        return extractClaimWithTextSummary(claims);
     }
 
     verifyInputsQuery(query: Record<string, any>) {

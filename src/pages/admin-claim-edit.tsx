@@ -7,11 +7,22 @@ import EditClaimView from "../components/Claim/EditClaim/EditClaimView";
 interface Props {
     claimId: string;
     nameSpace?: string;
+    speechId?: string;
 }
 
-const AdminClaimEditPage: NextPage<Props> = ({ claimId, nameSpace }) => {
+const AdminClaimEditPage: NextPage<Props> = ({
+    claimId,
+    nameSpace,
+    speechId,
+}) => {
     if (!claimId) return null;
-    return <EditClaimView claimId={claimId} nameSpace={nameSpace} />;
+    return (
+        <EditClaimView
+            claimId={claimId}
+            nameSpace={nameSpace}
+            speechId={speechId}
+        />
+    );
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -24,12 +35,17 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         (typeof query?.namespace === "string" ? query.namespace : "") ||
         (typeof parsed.namespace === "string" ? parsed.namespace : "") ||
         null;
+    const speechId =
+        (typeof query?.speechId === "string" ? query.speechId : "") ||
+        (typeof parsed.speechId === "string" ? parsed.speechId : "") ||
+        null;
 
     return {
         props: {
             ...(await serverSideTranslations(resolvedLocale)),
             claimId,
             nameSpace,
+            speechId,
         },
     };
 }

@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Divider, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { EventPayload, EventsActions, EventsState } from "../../../types/event";
 import LargeDrawer from "../../LargeDrawer";
-import DynamicEventForm from "./DynamicEventForm";
+import DynamicEventForm, { EventFormValues } from "./DynamicEventForm";
 import EventApi from "../../../api/eventApi";
+import { draftsFromParticipants } from "../Participants/participantDrafts";
+import { persistParticipants } from "../Participants/persistParticipants";
+import { createParticipantsApi } from "../Participants/participantsApi";
+import { Organization } from "../../../types/Organization";
 
 interface EventDrawerProps {
     open: boolean;
@@ -21,13 +25,19 @@ const EventDrawer = ({
     currentEvent,
     onSave,
     state,
-    actions
+    actions,
 }: EventDrawerProps) => {
     const { t } = useTranslation();
     const { hasCaptcha, isLoading } = state;
     const { setRecaptchaString, setIsLoading } = actions;
 
-    const onSubmit = async (formData: Partial<EventPayload>) => {
+    // Organizations created by a failed attempt, reused when retrying.
+    const createdOrganizations = useRef(new Map<string, Organization>());
+
+    const onSubmit = async ({
+        participants: participantDrafts,
+        ...formData
+    }: EventFormValues) => {
         try {
             if (setIsLoading) setIsLoading(true);
 
@@ -37,7 +47,24 @@ const EventDrawer = ({
                 throw new Error("Event ID not found");
             }
 
-            const response = await EventApi.updateEvent(eventId, formData, t);
+            // Only send participants when the form holds them, so an update
+            // can never clear the list by omission.
+            const prepared =
+                participantDrafts &&
+                (await persistParticipants(
+                    participantDrafts,
+                    createParticipantsApi(t),
+                    createdOrganizations.current
+                ));
+            const response = await EventApi.updateEvent(
+                eventId,
+                {
+                    ...formData,
+                    ...(prepared && { participants: prepared.participants }),
+                },
+                t
+            );
+            await prepared?.commitEdits();
 
             if (response) {
                 onSave(response);
@@ -49,15 +76,16 @@ const EventDrawer = ({
         }
     };
 
-    const formattedEvent = {
+    const formattedEvent: EventFormValues = {
         ...currentEvent,
+        participants: draftsFromParticipants(currentEvent.participants),
         mainTopic: {
             label: currentEvent.mainTopic.name,
             value: currentEvent.mainTopic.wikidataId,
             aliases: currentEvent.mainTopic.aliases || [],
             matchedAlias: null,
             displayLabel: currentEvent.mainTopic.name,
-        }
+        },
     };
 
     return (

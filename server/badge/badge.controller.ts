@@ -1,7 +1,7 @@
 import {
-    Body,
     Controller,
     Get,
+    Inject,
     NotFoundException,
     Post,
     Put,
@@ -13,10 +13,16 @@ import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
 
 import { ViewService } from "../view/view.service";
-import { BadgeService } from "./badge.service";
-import { CreateBadgeDTO } from "./dto/create-badge.dto";
-import { UpdateBadgeDTO } from "./dto/update-badge.dto";
+import type { IBadgeService } from "../interfaces/badge.service.interface";
+import {
+    CreateBadgeDto,
+    CreateBadgeSchema,
+    UpdateBadgeDto,
+    UpdateBadgeSchema,
+} from "./dto/badge.dto";
+import { ZodBody } from "../common/validation";
 import { UsersService } from "../users/users.service";
+import type { Badge } from "./mongo/schemas/badge.schema";
 import { Types } from "mongoose";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
@@ -27,7 +33,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 @Controller(":namespace?")
 export class BadgeController {
     constructor(
-        private badgeService: BadgeService,
+        @Inject("BadgeService") private badgeService: IBadgeService,
         private viewService: ViewService,
         private imageService: ImageService,
         private usersService: UsersService,
@@ -40,17 +46,16 @@ export class BadgeController {
     @ApiTags("badge")
     @Post("api/badge")
     public async createBadge(
-        @Body() badge: CreateBadgeDTO,
+        @ZodBody(CreateBadgeSchema) badge: CreateBadgeDto,
         @Req() request: any
     ) {
         const { users, ...rest } = badge;
-        if (!rest.image._id) {
-            const image = await this.imageService.create(rest.image);
-            rest.image = image;
-        }
+        const image = rest.image._id
+            ? rest.image
+            : await this.imageService.create(rest.image);
 
-        const createdBadge = await this.badgeService.create(rest);
-        createdBadge.image = rest.image;
+        const createdBadge = await this.badgeService.create({ ...rest, image });
+        createdBadge.image = image;
 
         if (users) {
             users.forEach((user) => {
@@ -72,21 +77,19 @@ export class BadgeController {
     @ApiTags("badge")
     @Put("api/badge/:id")
     public async updateBadge(
-        @Body() badge: UpdateBadgeDTO,
+        @ZodBody(UpdateBadgeSchema) badge: UpdateBadgeDto,
         @Req() request: any
     ) {
         const { users, ...rest } = badge;
+        const image = rest.image._id
+            ? rest.image
+            : await this.imageService.create(rest.image);
 
-        if (!rest.image._id) {
-            const image = await this.imageService.create(rest.image);
-            rest.image = new Types.ObjectId(image._id);
-        }
-
-        const updatedBadge = await this.badgeService.update(rest);
+        const updatedBadge = await this.badgeService.update({ ...rest, image });
         if (!updatedBadge) {
             throw new NotFoundException("Badge not found");
         }
-        updatedBadge.image = rest.image;
+        updatedBadge.image = image;
 
         const usersWithBadge = await this.usersService.findAll({
             badges: new Types.ObjectId(updatedBadge._id),
@@ -109,7 +112,7 @@ export class BadgeController {
                         (userBadge) =>
                             userBadge._id.toString() !==
                             updatedBadge._id.toString()
-                    ),
+                    ) as Badge[],
                 });
                 user.badges = user.badges.filter(
                     (userBadge) =>

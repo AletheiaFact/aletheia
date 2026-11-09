@@ -17,13 +17,50 @@ export default class OryService {
             this.configService.get<string>("app_affiliation");
     }
 
+    /**
+     * Kratos' admin PUT replaces the whole traits object, so every update must
+     * send the full set — a trait left out is erased on the identity.
+     */
+    private buildTraits(user: any, role?: Record<string, any>) {
+        return {
+            email: user.email,
+            user_id: String(user._id),
+            app_affiliation: this.app_affiliation,
+            role: role ?? user.role ?? { main: Roles.Regular },
+        };
+    }
+
+    private async putIdentity(
+        user: any,
+        body: Record<string, any>
+    ): Promise<any> {
+        const { access_token: token, schema_id } =
+            this.configService.get("ory");
+        const response = await fetch(
+            `${this.adminUrl}/identities/${user.oryId}`,
+            {
+                method: "put",
+                body: JSON.stringify({ schema_id, ...body }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        if (!response.ok) {
+            const detail = await response.text().catch(() => "");
+            throw new Error(
+                `Failed to update identity ${user.oryId}: ${response.status} ${detail}`
+            );
+        }
+        return response;
+    }
+
     async updateIdentity(
         user: any,
         password: string,
         traits?: { role?: any }
     ): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
         const credentials = password
             ? {
                   password: {
@@ -31,43 +68,20 @@ export default class OryService {
                   },
               }
             : {};
-        return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
-            method: "put",
-            body: JSON.stringify({
-                schema_id,
-                traits: {
-                    email: user.email,
-                    user_id: user._id,
-                    app_affiliation: this.app_affiliation,
-                    ...traits,
-                },
-                credentials,
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
+        return this.putIdentity(user, {
+            traits: this.buildTraits(user, traits?.role),
+            credentials,
         });
     }
 
-    async updateUserState(user: any, state: string): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
-
-        return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
-            method: "put",
-            body: JSON.stringify({
-                schema_id,
-                state,
-                traits: {
-                    email: user.email,
-                    user_id: user._id,
-                },
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
+    async updateUserState(
+        user: any,
+        state: string,
+        role?: Record<string, any>
+    ): Promise<any> {
+        return this.putIdentity(user, {
+            state,
+            traits: this.buildTraits(user, role),
         });
     }
 
@@ -75,27 +89,8 @@ export default class OryService {
         user: any,
         role: Record<string, string>
     ): Promise<any> {
-        const { access_token: token, schema_id } =
-            this.configService.get("ory");
-        const app_affiliation =
-            this.configService.get<string>("app_affiliation");
-
-        return await fetch(`${this.adminUrl}/identities/${user.oryId}`, {
-            method: "put",
-            body: JSON.stringify({
-                schema_id,
-                //When updating any traits, the user_id and email traits are required.
-                traits: {
-                    email: user.email,
-                    user_id: user._id,
-                    app_affiliation,
-                    role,
-                },
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
+        return this.putIdentity(user, {
+            traits: this.buildTraits(user, role),
         });
     }
 
@@ -111,12 +106,7 @@ export default class OryService {
             method: "post",
             body: JSON.stringify({
                 schema_id,
-                traits: {
-                    email: user.email,
-                    user_id: user._id,
-                    app_affiliation: this.app_affiliation,
-                    role: traits?.role || { main: Roles.Regular },
-                },
+                traits: this.buildTraits(user, traits?.role),
                 credentials: {
                     password: {
                         config: { password },

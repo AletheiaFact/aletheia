@@ -13,6 +13,8 @@ Aletheia is a crowd-sourced fact-checking platform for analyzing public figure s
 
 ## Essential Commands
 
+When changing the root `aletheia` script, check and update `docs/aletheia-cli.md` for changed flags, combinations, or behavior.
+
 ### Development
 ```bash
 yarn install              # Install dependencies
@@ -121,7 +123,7 @@ NestJS modular architecture. All modules registered in `server/app.module.ts`.
 ## Auth System
 
 ### Guards (applied globally via `SessionGuard`)
-- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it
+- `SessionGuard` — Global guard, validates Ory session. Routes marked `@Public()` bypass it. `/api/health` (the k8s probe) skips the Ory lookup entirely. The lookup has a 5s deadline; if Ory is unreachable (DNS/network error, timeout, 5xx), protected `/api` routes return 503 instead of running as anonymous
 - `AbilitiesGuard` — Checks CASL abilities for role-based access
 - `M2MGuard` — Validates M2M (machine-to-machine) OAuth2 tokens
 - `SessionOrM2MGuard` — Accepts either session or M2M auth
@@ -169,6 +171,18 @@ Active flags:
 - `enable_editor_annotations` — Editor annotation support
 - `enable_reviewers_update_report` — Allow reviewers to update reports
 - `enable_view_report_preview` — Report preview feature
+- `enable_instagram_chatbot` — Verification request chatbot on Instagram DMs (off = Instagram messages are ignored; WhatsApp unaffected)
+- `enable_classification_methodology` — Methodology picker on new fact-checking tasks (off = new tasks use `aletheia`; reviews that already have a methodology are still shown with it)
+
+## Rate Limiting
+
+A global `ClientIpThrottlerGuard` (`server/common/throttler/`) limits each
+route per visitor IP (`throttle.ttl` / `throttle.limit` in config; production
+is 100 per 60s). Production sits behind Cloudflare and Traefik, so the guard
+keys on the `CF-Connecting-IP` header and only falls back to `req.ip`.
+Counters live in memory in each pod, so the effective limit grows with the
+replica count. Public read endpoints polled by many viewers at once
+(`GET api/claim/:id`, `GET api/personality/:id`) use `@SkipThrottle()`.
 
 ## Captcha Provider
 
@@ -204,6 +218,8 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 
 11. **LLM / Embeddings Providers**: AI features (copilot, summarization, verification-request embeddings) use injectable `LLMProvider` / `EmbeddingsProvider` abstractions (`server/llm/`, DI tokens `LLM_PROVIDER` / `EMBEDDINGS_PROVIDER`, bound by the global `LlmModule`). The default implementations target any OpenAI-compatible endpoint. Configure via the `llm` block in `config.yaml` (`api_key`, optional `base_url`, `chat_model`, `temperature`, `embeddings_model`); `api_key` falls back to `openai.api_key` then `OPENAI_API_KEY`. Point `llm.base_url` at a self-hosted/open-weight server (Ollama, vLLM, LocalAI, Azure) to swap providers with no code change; when no key is configured, a placeholder API key is supplied automatically for keyless local servers. Leave `embeddings_model` unset to preserve stored-vector compatibility. See `server/llm/USING-A-LOCAL-PROVIDER.md` for an Ollama setup example.
 
+12. **Classification methodologies**: Stored classifications are always one of the 9 `ClassificationEnum` keys (`lib/classification.ts`). A methodology (`lib/classification-methodology.ts`: `aletheia` default, `rncd-debate`) decides which keys a task offers and how they are worded (pt/en labels live in the registry, not the locale files). It is chosen on the assignment form of a fact-checking task (and can only change there: anyone taking a queued task, or an admin reassigning one, which clears the label the new methodology does not offer and the cross-check), stored on the review task and copied to the report on publish; reads expose it as `props.classificationMethodology` next to `props.classification`. Use `useClassificationLabel` / `ClassificationText` (frontend) or `getClassificationLabel` (server) — never translate a classification key directly. Combined stats keep the aletheia wording.
+
 ## Development Setup
 
 1. Copy config files:
@@ -236,7 +252,7 @@ provided as a build-excluded `.example.ts(x)` reference, not a dependency).
 Zod 4 (`import { z } from "zod"`, single copy shared with LangChain). Do NOT add `nestjs-zod` or new class-validator DTOs; the legacy class-validator DTOs (30 files) get migrated when their module is touched.
 
 **Where things live**
-- `lib/schemas/` holds isomorphic primitives: `objectId`, `dataHash`, `wikidataId`, `nonEmptyText(max)`, `email`, `captchaToken`, `isoDateTime`, `queryInt`, `pageQuery`, `pageSizeQuery(max)`, `queryBoolean`, `legacyQueryFlag`, `queryArray(item)`, `sortOrder`. No imports from Nest/mongoose/drizzle/react/`server`/`src`, so the frontend can import them. Only add a primitive for a rule that already exists in the codebase, with a spec.
+- `lib/schemas/` holds isomorphic primitives: `objectId`, `dataHash`, `wikidataId`, `nonEmptyText(max)`, `email`, `captchaToken`, `isoDateTime`, `queryInt`, `pageQuery`, `pageSizeQuery(max)`, `queryBoolean`, `legacyQueryFlag`, `legacyBodyFlag` (coerces only a present key, like `@Transform`; use `.optional()` on bodies), `queryArray(item)`, `sortOrder`, `entityId`. No imports from Nest/mongoose/drizzle/react/`server`/`src`, so the frontend can import them. Only add a primitive for a rule that already exists in the codebase, with a spec.
 - `server/common/validation/` holds the Nest glue: `ZodBody`, `ZodQuery`, `ZodParam`, `ZodValidationPipe`, `ZodValidationException`.
 - `server/<module>/dto/*.dto.ts` holds module schemas. Promote one to `lib/schemas/` when the frontend needs the same contract.
 

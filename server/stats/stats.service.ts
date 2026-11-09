@@ -1,6 +1,6 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimService } from "../claim/claim.service";
+import type { IClaimService } from "../interfaces/claim.service.interface";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
@@ -13,7 +13,7 @@ export class StatsService {
         private claimReviewService: ClaimReviewService,
         @Inject("PersonalityService")
         private readonly personalityService: IPersonalityService,
-        private claimService: ClaimService
+        @Inject("ClaimService") private claimService: IClaimService
     ) {}
 
     getHomeStats() {
@@ -32,7 +32,7 @@ export class StatsService {
                     isHidden: false,
                     isDeleted: false,
                     nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
-                }
+                },
             }),
         ]).then((values) => {
             return {

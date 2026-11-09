@@ -14,6 +14,8 @@ interface ReviewTaskOptions {
     filterUser?: string;
     reviewTaskType?: string;
     nameSpace?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 const getReviewTasks = (
@@ -27,6 +29,8 @@ const getReviewTasks = (
         filterUser: options.filterUser,
         reviewTaskType: options.reviewTaskType,
         nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
+        startDate: options.startDate || undefined,
+        endDate: options.endDate || undefined,
     };
     return request
         .get(`/`, { params })
@@ -93,22 +97,25 @@ const autoSaveDraft = (
         });
 };
 
+// Used when the draft save auto-creates the review task
+interface SaveDraftTaskFields {
+    reportModel?: string;
+    nameSpace?: string;
+    reviewTaskType?: string;
+    target?: string;
+    classificationMethodology?: string;
+}
+
 const saveDraft = (
     data_hash: string,
     machine: { context: any },
     t,
-    reportModel?: string,
-    nameSpace?: string,
-    reviewTaskType?: string,
-    target?: string
+    taskFields: SaveDraftTaskFields = {}
 ) => {
     return request
         .put(`/save-draft/${data_hash}`, {
             machine,
-            reportModel,
-            nameSpace,
-            reviewTaskType,
-            target,
+            ...taskFields,
         })
         .then((response) => {
             MessageManager.showMessage(
@@ -142,7 +149,7 @@ const getEditorContentObject = (
 
 const addComment = (
     hash: string,
-    comment: NewCommentPayload,
+    comment: NewCommentPayload
 ): Promise<{ comment: Comment; reviewData: unknown }> => {
     return request
         .put(`/add-comment/${hash}`, { comment })
@@ -167,7 +174,19 @@ const deleteComment = (hash: string, commentId: string): Promise<unknown> => {
         });
 };
 
+const methodologyRequest = createApiInstance("/api/reviewtask-methodology");
+
+const getClassificationMethodologySettings = (): Promise<{
+    enabled: boolean;
+}> => {
+    return methodologyRequest
+        .get("/")
+        .then((response) => response.data)
+        .catch(() => ({ enabled: false }));
+};
+
 const ReviewTaskApi = {
+    getClassificationMethodologySettings,
     getMachineByDataHash,
     createReviewTask,
     getReviewTasks,

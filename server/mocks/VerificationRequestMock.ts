@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { VerificationRequestDocument } from "../verification-request/schemas/verification-request.schema";
+import { VerificationRequestDocument } from "../verification-request/mongo/schemas/verification-request.schema";
 
 export const createFakeVerificationRequest = (
   overrides?: Partial<VerificationRequestDocument>

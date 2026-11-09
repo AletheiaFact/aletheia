@@ -1,6 +1,8 @@
-import { CloseOutlined } from "@mui/icons-material";
+import { CloseOutlined, InfoOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import React from "react";
+import colors from "../../../../../styles/colors";
+import InfoTooltip from "../../../../Claim/InfoTooltip";
 
 const SourceDialogHeader = ({ onCloseModal }) => {
     const { t } = useTranslation();
@@ -28,10 +30,29 @@ const SourceDialogHeader = ({ onCloseModal }) => {
                 style={{
                     margin: 0,
                     width: "calc(100% - 16px)",
-                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 4,
                 }}
             >
                 {t("sourceForm:sourceModalHeader")}
+                <InfoTooltip
+                    useCustomStyle={false}
+                    content={
+                        <>
+                            <strong style={{ display: "block", textTransform: "uppercase" }}>
+                                {t("sourceForm:sourceModalTooltipTitle")}
+                            </strong>
+                            {t("sourceForm:sourceModalTooltip")}
+                        </>
+                    }
+                >
+                    <InfoOutlined
+                        data-cy="testSourceModalTooltip"
+                        style={{ height: 16, color: colors.neutralSecondary }}
+                    />
+                </InfoTooltip>
             </span>
         </header>
     );

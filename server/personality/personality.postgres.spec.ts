@@ -232,17 +232,18 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
                     ),
             ],
             ["combinedListAll", () => service.combinedListAll({})],
-            [
-                "extractClaimWithTextSummary",
-                () => service.extractClaimWithTextSummary([]),
-            ],
         ])("%s throws NotImplementedError", async (_name, call) => {
-            // `call()` may throw synchronously (e.g. extractClaimWithTextSummary
-            // is non-async) or reject (async methods). Wrap in an async IIFE so
-            // both forms surface as a rejected promise.
             await expect((async () => call())()).rejects.toBeInstanceOf(
                 NotImplementedError
             );
+        });
+
+        it("extractClaimWithTextSummary is a shared rule (unblocked by Phase 2)", () => {
+            expect(
+                service.extractClaimWithTextSummary([
+                    { content: { text: "t" } },
+                ])
+            ).toEqual([{ content: "t" }]);
         });
     }
 );

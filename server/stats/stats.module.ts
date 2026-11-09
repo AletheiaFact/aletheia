@@ -6,7 +6,11 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { StatsService } from "./stats.service";
 
 @Module({
-    imports: [PersonalityModule.register(), ClaimModule, ClaimReviewModule],
+    imports: [
+        PersonalityModule.register(),
+        ClaimModule.register(),
+        ClaimReviewModule,
+    ],
     controllers: [StatsController],
     providers: [StatsService],
     exports: [StatsService],

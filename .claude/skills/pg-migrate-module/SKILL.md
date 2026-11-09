@@ -79,17 +79,43 @@ Map before writing:
 1. Extract/verify `I<Module>Service` in `server/interfaces/` — full surface,
    NO mongoose/drizzle types (neutral refs like `PersonalityRef`).
 2. Move the Mongo impl to `server/<module>/mongo/` (move-only), wire
-   `<module>.provider.ts` factory + `<module>.module.ts` `dbConfig.type` branch
-   (copy `personality.provider.ts` / `personality.module.ts`).
+   `<module>.provider.ts` via the shared `createDbServiceProvider<I>()`
+   (`server/database/db-service.provider.ts`) + `<module>.module.ts`
+   `register()` with the `dbConfig.type` branch (copy `source.module.ts`).
+   Other shared infra already extracted — reuse, never re-copy:
+   `rethrowUniqueViolation` (`server/database/postgres/unique-violation.ts`)
+   and `ExactlyImplements` (`server/interfaces/service-surface.type.ts`).
+   Mongoose methods that return a bare `Query` (no `await`/`.exec()`) must
+   gain `.exec()` so the class satisfies the Promise-typed interface — same
+   execution, same results; say so in the commit.
    Then sweep the consumers: every constructor injecting the service CLASS
    becomes `@Inject("<Module>Service") + import type I<Module>Service`, every
-   importing module switches `XModule` → `XModule.register()` (including
-   `forwardRef(() => XModule.register())`), and test providers switch to the
-   string token. Grep the class name repo-wide until only type-only imports
-   remain.
+   importing module switches `XModule` → `XModule.register()`, and test
+   providers switch to the string token. Grep the class name repo-wide until
+   only type-only imports remain.
+   **Cycle rule (Nest 9):** a dynamic module must never import
+   `forwardRef(() => XModule.register())` — the compiler unwraps the
+   forwardRef into the `DynamicModule` object and boot dies with "metatype
+   is not a constructor". If the module you are porting is the target of a
+   `forwardRef` anywhere, keep it a static `@Module` with the `dbConfig.type`
+   branch inline (copy `report.module.ts` / `sentence.module.ts`); static
+   modules may still `forwardRef(() => X.register())`. Always run
+   `yarn test:e2e server/tests/parser.service.e2e.spec.ts` (full AppModule
+   boot) after the sweep.
 3. Extract shared rules to `shared/<module>.rules.ts` + direct unit spec.
-4. Add the type-test (`<module>.service.type-test.ts`, copy the personality one).
+   If the module has no driver-free rule (badge: ids pass through), skip the
+   file and say so in the foundation doc — don't invent one.
+4. Add the type-test (`<module>.service.type-test.ts`, copy the source one).
    `yarn build-ts` must pass before any Postgres code exists.
+5. Validation (CLAUDE.md "Validation (Zod)"): the port touches the module's
+   controller, so migrate its class-validator DTOs / inline-typed
+   `@Body`/`@Query`/`@Param` to Zod schemas (`<module>/dto/*.dto.ts`,
+   `ZodBody`/`ZodQuery`/`ZodParam`), keep the same accepted inputs, call out
+   every tightening in the PR, add a 400 case per schema, and delete the
+   module's lines from `validation-coverage.baseline.json` (class-DTO bodies
+   are not in the baseline — nothing to delete then). Separate commit.
+   Where the controller dereferences an optional array unguarded (a latent
+   500), prefer making it required in the schema (400) and call it out.
 
 ### Step 3 — Schema + migration
 - `server/<module>/postgres/schema/<entity>.schema.ts` per the conventions;
@@ -140,9 +166,21 @@ Plus MR hygiene:
   new divergences, new conventions discovered.
 - Merge dark: prod stays `DB_TYPE=mongodb`. Merging ≠ cutting over (§8).
 
-## From Phase 1 onward (cross-cutting additions)
-Phase 1 (verification-request) also builds, and later phases reuse:
-`scripts/parity/` differ, the real-Postgres CI service-container job, the
-per-method latency/error interceptor, and the `expectParity(op)` contract
-helper. If they exist when you run, extend them for this module; if you ARE
-Phase 1, build them per foundation doc §8/§9 (D4.4, D4.5).
+## From Phase 1 onward (cross-cutting tooling — exists, reuse it)
+- **Parity in the contract suite:** `new ParityRecorder({ dropKeys })` from
+  `server/tests/parity.ts`; `parity.record("<op>", backend, result)` inside
+  the shared cases, `parity.assertAll()` + `expect(parity.incomplete()).toEqual([])`
+  in `afterAll`. Drop raw-column leftovers (`dataHash`, `targetIds`, …) and
+  timing-derived fields (`duration`, `estimatedCompletion`) — never real data.
+- **Offline diff:** `yarn parity:diff --left mongo.json --right pg.json`.
+- **Real Postgres:** the `vitest-postgres-real` CI job runs the suite with
+  `TEST_POSTGRES_URL`; locally `docker run -p 5433:5432 pgvector/pgvector:pg16`
+  then `POSTGRES_URL=… yarn migrate:pg && TEST_POSTGRES_URL=… yarn test:pg`.
+- **Latency samples:** `DB_METRICS=1` logs per-method `{backend, method, ms,
+  error}` from every `createDbServiceProvider` service.
+- **Entity mappers** for already-ported rows are exported next to each
+  Postgres service (`toSourceEntity`, `toTopicEntity`, `toPersonalityEntity`)
+  — use them when populating references, never a raw row spread.
+- **Timestamp ties:** Postgres insertion order is `created_at` + `id`; pglite
+  can tie inside one tick, so ordering-sensitive seeds in specs wait a few ms.
+- `entityId` (`lib/schemas`) validates a route id on both backends.

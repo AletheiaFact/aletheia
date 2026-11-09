@@ -16,13 +16,14 @@ import {
     ClaimReviewDocument,
 } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
+import { targetIdFilter } from "../common/target-id-filter";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { PerformedBy } from "../history/types/history.interfaces";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
-import { ReportDocument } from "../report/schemas/report.schema";
-import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { ReportDocument } from "../report/mongo/schemas/report.schema";
+import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
@@ -54,7 +55,7 @@ export class ClaimReviewService {
             ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
         private util: UtilService,
-        private sentenceService: SentenceService,
+        @Inject("SentenceService") private sentenceService: ISentenceService,
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private wikidata: WikidataService
@@ -308,14 +309,21 @@ export class ClaimReviewService {
             const key = JSON.stringify({
                 data_hash: review.data_hash,
                 classification: review.report.classification,
+                classificationMethodology:
+                    review.report.classificationMethodology,
             });
             classificationCounts[key] = (classificationCounts[key] || 0) + 1;
         });
 
         return Object.entries(classificationCounts).map(([key, count]) => {
-            const { data_hash, classification } = JSON.parse(key);
+            const { data_hash, classification, classificationMethodology } =
+                JSON.parse(key);
             return {
-                _id: { data_hash, classification: [classification] },
+                _id: {
+                    data_hash,
+                    classification: [classification],
+                    classificationMethodology,
+                },
                 count: count as number,
             };
         });
@@ -672,7 +680,11 @@ export class ClaimReviewService {
         session: mongoose.ClientSession
     ): Promise<number> {
         const result = await this.ClaimReviewModel.updateMany(
-            { data_hash: oldHash, target: claimId, targetModel: "Claim" },
+            {
+                data_hash: oldHash,
+                target: targetIdFilter(claimId),
+                targetModel: "Claim",
+            },
             { $set: { data_hash: newHash } },
             { session }
         );

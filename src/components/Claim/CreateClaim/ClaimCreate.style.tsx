@@ -23,6 +23,10 @@ justify-content: center;
 .extra-label{
   font-size: 14px;
   color: ${colors.neutralSecondary};
+  margin: 4px 0 0;
+}
+.extra-label:empty{
+  display: none;
 }
     
 `;

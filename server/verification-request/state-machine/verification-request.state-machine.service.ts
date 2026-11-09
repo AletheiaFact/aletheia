@@ -1,6 +1,12 @@
-import { Injectable, forwardRef, Inject, Logger, NotFoundException, Scope } from "@nestjs/common";
+import {
+    Injectable,
+    Inject,
+    Logger,
+    NotFoundException,
+    Scope,
+} from "@nestjs/common";
 import { VerificationRequestStateMachine } from "./verification-request.state-machine";
-import { VerificationRequestService } from "../verification-request.service";
+import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import {
     VerificationRequestStateMachineEvents,
     VerificationRequestStatus,
@@ -14,8 +20,8 @@ export class VerificationRequestStateMachineService {
     private verificationRequestStateMachine: VerificationRequestStateMachine;
 
     constructor(
-        @Inject(forwardRef(() => VerificationRequestService))
-        private readonly verificationRequestService: VerificationRequestService
+        @Inject("VerificationRequestService")
+        private readonly verificationRequestService: IVerificationRequestService
     ) {
         this.verificationRequestStateMachine =
             new VerificationRequestStateMachine({
@@ -55,7 +61,9 @@ export class VerificationRequestStateMachineService {
                 verificationRequestId
             );
         if (!verificationRequest) {
-            throw new NotFoundException(`Verification request ${verificationRequestId} not found`);
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
         }
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
@@ -75,7 +83,9 @@ export class VerificationRequestStateMachineService {
                 verificationRequestId
             );
         if (!verificationRequest) {
-            throw new NotFoundException(`Verification request ${verificationRequestId} not found`);
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
         }
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
@@ -95,7 +105,9 @@ export class VerificationRequestStateMachineService {
                 verificationRequestId
             );
         if (!verificationRequest) {
-            throw new NotFoundException(`Verification request ${verificationRequestId} not found`);
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
         }
 
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
@@ -117,7 +129,9 @@ export class VerificationRequestStateMachineService {
                 verificationRequestId
             );
         if (!verificationRequest) {
-            throw new NotFoundException(`Verification request ${verificationRequestId} not found`);
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
         }
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(
             {
@@ -138,7 +152,9 @@ export class VerificationRequestStateMachineService {
                 ["topics", "impactArea", "identifiedData"]
             );
         if (!verificationRequest) {
-            throw new NotFoundException(`Verification request ${verificationRequestId} not found`);
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
         }
 
         return this.verificationRequestStateMachine.createMachineAndWaitForResult(

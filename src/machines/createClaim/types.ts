@@ -9,6 +9,7 @@ enum CreateClaimEvents {
     noPersonality = "NO_PERSONALITY",
     persist = "PERSIST",
     updateGroup = "UPDATE_GROUP",
+    back = "BACK",
 }
 
 enum CreateClaimStates {

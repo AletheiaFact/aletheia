@@ -58,6 +58,47 @@ describe("validateFormSubmission", () => {
 
             expect(errors.some((e) => e.field === "sources")).toBe(false);
         });
+
+        it("should not require report content for not-fact classification", () => {
+            const errors = validateFormSubmission(
+                buildInput({
+                    formData: {
+                        classification: "not-fact",
+                        visualEditor: null,
+                    },
+                })
+            );
+
+            expect(errors.some((e) => e.field === "visualEditor")).toBe(false);
+        });
+
+        it("should still require sources for not-fact classification", () => {
+            const errors = validateFormSubmission(
+                buildInput({
+                    formData: {
+                        classification: "not-fact",
+                        visualEditor: null,
+                    },
+                    editorSources: [],
+                    machineSources: [],
+                })
+            );
+
+            expect(errors.some((e) => e.field === "sources")).toBe(true);
+        });
+
+        it("should still require report content for regular classifications", () => {
+            const errors = validateFormSubmission(
+                buildInput({
+                    formData: {
+                        classification: "false",
+                        visualEditor: null,
+                    },
+                })
+            );
+
+            expect(errors.some((e) => e.field === "visualEditor")).toBe(true);
+        });
     });
 
     describe("publish", () => {
@@ -106,6 +147,34 @@ describe("validateFormSubmission", () => {
             );
 
             expect(errors.some((e) => e.field === "sources")).toBe(false);
+        });
+
+        it("should not require report content for not-fact classification", () => {
+            const errors = validateFormSubmission(
+                buildInput({
+                    event: ReviewTaskEvents.publish,
+                    formData: {
+                        classification: "not-fact",
+                        visualEditor: null,
+                    },
+                })
+            );
+
+            expect(errors.some((e) => e.field === "visualEditor")).toBe(false);
+        });
+
+        it("should still require report content for regular classifications", () => {
+            const errors = validateFormSubmission(
+                buildInput({
+                    event: ReviewTaskEvents.publish,
+                    formData: {
+                        classification: "trustworthy",
+                        visualEditor: null,
+                    },
+                })
+            );
+
+            expect(errors.some((e) => e.field === "visualEditor")).toBe(true);
         });
     });
 

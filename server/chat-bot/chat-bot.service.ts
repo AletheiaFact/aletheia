@@ -10,6 +10,8 @@ import { Roles } from "../auth/ability/ability.factory";
 import { M2M } from "../entities/m2m.entity";
 import * as crypto from "crypto";
 import { toError } from "../util/error-handling";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { VerificationRequestSourceChannel } from "../verification-request/dto/types";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP: Record<string, string> = {
@@ -38,7 +40,8 @@ export class ChatbotService {
         private configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly verificationRequestStateMachineService: VerificationRequestStateMachineService,
-        private chatBotStateService: ChatBotStateService
+        private chatBotStateService: ChatBotStateService,
+        private readonly featureFlagService: FeatureFlagService
     ) {}
 
     private async getOrCreateChatBotMachine(data_hash: string) {
@@ -98,6 +101,16 @@ export class ChatbotService {
         this.logger.log(
             `Received message [channel=${channel}, from=${from}, state=processing]`
         );
+
+        if (
+            channel === VerificationRequestSourceChannel.Instagram &&
+            !this.featureFlagService.isEnableInstagramChatBot()
+        ) {
+            this.logger.log(
+                `Instagram chatbot disabled, ignoring message [channel=${channel}, from=${from}]`
+            );
+            return;
+        }
 
         if (!contents?.length || !contents[0]) {
             this.logger.warn(

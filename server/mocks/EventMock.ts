@@ -20,6 +20,10 @@ export const mockTopicService = {
     findOrCreateTopic: vi.fn(),
 };
 
+export const mockOrganizationService = {
+    findExistingIds: vi.fn(),
+};
+
 export const mockCreateEventDto = {
     badge: "event-badge",
     name: "My Event",
@@ -35,6 +39,8 @@ export const mockEventsService = {
     update: vi.fn(),
     findAll: vi.fn(),
     findByHash: vi.fn(),
+    findBySlug: vi.fn(),
+    getSlugByHash: vi.fn(),
 };
 
 export const mockConfigService = {
@@ -47,8 +53,8 @@ export const mockViewService = {
 
 export const mockRequest = {
     params: {
-        namespace: "main"
-    }
+        namespace: "main",
+    },
 };
 
 export const mockFeatureFlagService = {

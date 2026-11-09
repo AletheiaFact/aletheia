@@ -6,5 +6,6 @@
     "myReviewed": "My reviews only",
     "tabClaimTitle": "Claims",
     "tabSourceTitle": "Sources",
-    "tabVerificationRequestTitle": "Verification Requests"
+    "tabVerificationRequestTitle": "Verification Requests",
+    "clearDates": "Clear dates"
 }

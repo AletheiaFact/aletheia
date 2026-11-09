@@ -18,6 +18,16 @@ import { deriveDataHash, isValidSourceHref } from "../shared/source.rules";
 import { source } from "./schema/source.schema";
 import type { SourceRow } from "./schema/source.schema";
 
+export function toSourceEntity(row: SourceRow): ISource {
+    return {
+        ...row,
+        _id: row.id,
+        data_hash: row.dataHash,
+        targetId: row.targetIds,
+        user: row.userId,
+    } as unknown as ISource;
+}
+
 @Injectable()
 export class PostgresSourceService implements ISourceService {
     constructor(@Inject(DRIZZLE) private readonly db: DrizzleClient) {}
@@ -29,13 +39,7 @@ export class PostgresSourceService implements ISourceService {
      * Never return a raw row cast `as ISource`.
      */
     private toEntity(row: SourceRow): ISource {
-        return {
-            ...row,
-            _id: row.id,
-            data_hash: row.dataHash,
-            targetId: row.targetIds,
-            user: row.userId,
-        } as unknown as ISource;
+        return toSourceEntity(row);
     }
 
     /** SQLSTATE 23505 → neutral DuplicateKeyError (shared infra). */

@@ -75,10 +75,85 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
     });
 
+    // Runs before any task exists for the sentence. CI cannot turn the
+    // Unleash flag on, so the flag endpoint is stubbed. Nothing is saved.
+    it("offers the methodology on the assignment form only", () => {
+        cy.login();
+        cy.intercept("GET", "/api/reviewtask-methodology", {
+            statusCode: 200,
+            body: { enabled: true },
+        });
+        goToClaimReviewPage();
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist");
+        cy.get("[data-cy=testClassificationMethodologySelect]").should(
+            "not.exist"
+        );
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).click();
+        cy.get(locators.claimReview.INPUT_USER).should("exist");
+        cy.get("[data-cy=testClassificationMethodologySelect]").should(
+            "be.visible"
+        );
+    });
+
     it("should be able to assign a user", () => {
         cy.login();
         goToClaimReviewPage();
         assignUser();
+    });
+
+    // Runs while the task is still `assigned`: once the report is finished
+    // the form is read-only and the classification select opens no menu.
+    // CI cannot turn the Unleash flag on, so the task's methodology is
+    // injected into the review task response instead. Nothing is saved.
+    it("offers only the methodology's options for an rncd-debate task", () => {
+        cy.login();
+        cy.intercept("GET", "/api/reviewtask/hash/*", (req) => {
+            // The endpoint is `no-cache` with an ETag: without these, the
+            // browser caches the rewritten body and later tests revalidate
+            // (304) straight back into rncd-debate
+            delete req.headers["if-none-match"];
+            req.continue((res) => {
+                res.headers["cache-control"] = "no-store";
+                delete res.headers["etag"];
+                if (res.body && typeof res.body === "object") {
+                    res.body.classificationMethodology = "rncd-debate";
+                }
+            });
+        }).as("getReviewTask");
+        cy.intercept("GET", "/api/reviewtask/editor-content/*", (req) => {
+            req.reply({
+                statusCode: 200,
+                body: review.editorContent,
+                headers: {
+                    "content-type": "application/json",
+                },
+            });
+        }).as("getEditorContent");
+        goToClaimReviewPage();
+        cy.wait("@getReviewTask");
+        cy.wait("@getEditorContent");
+        cy.get(locators.claimReview.INPUT_CLASSIFICATION)
+            .should("exist")
+            .click();
+        const expected = [
+            ["false", /^(False|Falso)\s*$/],
+            ["trustworthy-but", /^(Imprecise|Impreciso)\s*$/],
+            [
+                "unverifiable",
+                /^(Insufficient evidence|Evidências insuficientes)\s*$/,
+            ],
+            ["trustworthy", /^(True|Verdadeiro)\s*$/],
+        ] as const;
+        cy.get("[role=listbox] [role=option] [data-cy]")
+            .should("have.length", expected.length)
+            .each(($label, index) => {
+                const [value, text] = expected[index];
+                expect($label.attr("data-cy")).to.equal(value);
+                expect($label.text()).to.match(text);
+            });
+        cy.get("[data-cy=misleading]").should("not.exist");
+        cy.get("[data-cy=exaggerated]").should("not.exist");
+        cy.get("body").type("{esc}");
     });
 
     it("should be able to submit full review fields", () => {

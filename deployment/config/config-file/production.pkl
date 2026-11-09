@@ -9,6 +9,11 @@ var = new {
         recaptcha_sitekey = "6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
         websocketUrl = "wss://ws.\(appBaseUrl) "
         baseUrl = "https://\(appBaseUrl)"
+        // Remote MCP server (server/mcp).
+        mcp = new {
+            enabled = true
+            public_url = "https://\(appBaseUrl)"
+        }
         db = (mongodb) {
             atlas = true
         }

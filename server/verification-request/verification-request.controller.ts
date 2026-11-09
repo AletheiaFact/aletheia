@@ -1,28 +1,44 @@
 import {
     BadRequestException,
+    Inject,
     NotFoundException,
     Controller,
     Post,
-    Body,
     Get,
     Res,
     Req,
     Header,
-    Query,
-    Param,
     Put,
     Logger,
 } from "@nestjs/common";
 import { ApiTags, ApiQuery } from "@nestjs/swagger";
-import { VerificationRequestService } from "./verification-request.service";
+import type {
+    IVerificationRequestService,
+    IVerificationRequestStatsService,
+} from "../interfaces/verification-request.service.interface";
 import type { BaseRequest } from "../types";
 import { parse } from "url";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { ReviewTaskService } from "../review-task/review-task.service";
-import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
-import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
+import {
+    CreateVerificationRequestDto,
+    CreateVerificationRequestSchema,
+    DataHashParam,
+    ListVerificationRequestsQueryDto,
+    ListVerificationRequestsQuerySchema,
+    PersonalitiesQuerySchema,
+    RemoveFromGroupSchema,
+    SearchVerificationRequestsQueryDto,
+    SearchVerificationRequestsQuerySchema,
+    UpdateVerificationRequestDto,
+    UpdateVerificationRequestSchema,
+    VerificationRequestIdParam,
+    VerificationRequestTopicsDto,
+    VerificationRequestTopicsSchema,
+} from "./dto/verification-request.dto";
+import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { CaptchaService } from "../captcha/captcha.service";
 import { TargetModel } from "../history/schema/history.schema";
 
@@ -37,7 +53,6 @@ import { StatsDto } from "./dto/stats-verification-request-dto";
 import { Roles } from "../auth/ability/ability.factory";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { PersonalityWithWikidataDto } from "./dto/personality-with-wikidata.dto";
-import { VerificationRequestStatsService } from "./verification-request-stats.service";
 import { toError } from "../util/error-handling";
 
 @Controller(":namespace?")
@@ -45,8 +60,10 @@ export class VerificationRequestController {
     private readonly logger = new Logger(VerificationRequestController.name);
 
     constructor(
-        private verificationRequestService: VerificationRequestService,
-        private readonly verificationRequestStatsService: VerificationRequestStatsService,
+        @Inject("VerificationRequestService")
+        private verificationRequestService: IVerificationRequestService,
+        @Inject("VerificationRequestStatsService")
+        private readonly verificationRequestStatsService: IVerificationRequestStatsService,
         private configService: ConfigService,
         private viewService: ViewService,
         private reviewTaskService: ReviewTaskService,
@@ -66,12 +83,15 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request")
     @Public()
-    public async listAll(@Query() getVerificationRequest: Record<string, any>) {
+    public async listAll(
+        @ZodQuery(ListVerificationRequestsQuerySchema)
+        getVerificationRequest: ListVerificationRequestsQueryDto
+    ) {
         const {
             pageSize,
             page,
-            contentFilters = [],
-            topics = [],
+            contentFilters,
+            topics,
             order,
             startDate,
             endDate,
@@ -87,7 +107,7 @@ export class VerificationRequestController {
                     contentFilters,
                     topics,
                     page,
-                    pageSize,
+                    pageSize: String(pageSize),
                     order,
                     startDate,
                     endDate,
@@ -139,12 +159,8 @@ export class VerificationRequestController {
         description: "Number of results to return",
     })
     public async getAll(
-        @Query()
-        getVerificationRequest: {
-            sourceUrl?: string;
-            searchContent?: string;
-            pageSize?: number;
-        }
+        @ZodQuery(SearchVerificationRequestsQuerySchema)
+        getVerificationRequest: SearchVerificationRequestsQueryDto
     ) {
         if (getVerificationRequest.sourceUrl) {
             return this.verificationRequestService.findBySourceUrl(
@@ -158,7 +174,10 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Get("api/verification-request/:id")
     @Header("Cache-Control", "private, max-age=60, must-revalidate")
-    public async getById(@Param("id") verificationRequestId: string) {
+    public async getById(
+        @ZodParam("id", VerificationRequestIdParam)
+        verificationRequestId: string
+    ) {
         return this.verificationRequestService.getById(verificationRequestId);
     }
 
@@ -173,8 +192,9 @@ export class VerificationRequestController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @Public()
     public async getPersonalitiesWithWikidata(
-        @Param("id") verificationRequestId: string,
-        @Query("language") language: string = "en"
+        @ZodParam("id", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodQuery(PersonalitiesQuerySchema) { language }: { language: string }
     ): Promise<PersonalityWithWikidataDto[]> {
         const verificationRequest =
             await this.verificationRequestService.getByIdWithPopulatedFields(
@@ -274,7 +294,8 @@ export class VerificationRequestController {
     @Post("api/verification-request")
     async create(
         @Req() req: BaseRequest,
-        @Body() verificationRequestBody: CreateVerificationRequestDTO
+        @ZodBody(CreateVerificationRequestSchema)
+        verificationRequestBody: CreateVerificationRequestDto
     ) {
         const isM2MUser = req.user?.role?.main === Roles.Integration;
 
@@ -324,8 +345,10 @@ export class VerificationRequestController {
     @Put("api/verification-request/:verificationRequestId")
     @AdminOnly()
     async updateVerificationRequest(
-        @Param("verificationRequestId") verificationRequestId: string,
-        @Body() updateVerificationRequestDto: UpdateVerificationRequestDTO
+        @ZodParam("verificationRequestId", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodBody(UpdateVerificationRequestSchema)
+        updateVerificationRequestDto: UpdateVerificationRequestDto
     ) {
         return this.verificationRequestService.update(
             verificationRequestId,
@@ -336,8 +359,9 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Put("api/verification-request/:data_hash/topics")
     async updateVerificationRequestWithTopics(
-        @Param("data_hash") data_hash: string,
-        @Body() topics: Array<{ value?: string; wikidataId?: string }>
+        @ZodParam("data_hash", DataHashParam) data_hash: string,
+        @ZodBody(VerificationRequestTopicsSchema)
+        topics: VerificationRequestTopicsDto
     ) {
         return this.verificationRequestService.updateVerificationRequestWithTopics(
             topics,
@@ -348,8 +372,9 @@ export class VerificationRequestController {
     @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId/group")
     async removeVerificationRequestFromGroup(
-        @Param("verificationRequestId") verificationRequestId: string,
-        @Body() { group }: { group: string }
+        @ZodParam("verificationRequestId", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodBody(RemoveFromGroupSchema) { group }: { group: string }
     ) {
         return this.verificationRequestService.removeVerificationRequestFromGroup(
             verificationRequestId,
@@ -413,7 +438,7 @@ export class VerificationRequestController {
 
         const recommendations =
             await this.verificationRequestService.findSimilarRequests(
-                verificationRequest.embedding,
+                verificationRequest.embedding ?? [],
                 recommendationFilter,
                 5
             );

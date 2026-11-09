@@ -26,6 +26,8 @@ interface KanbanColProps {
         crossChecked: boolean;
         reviewed: boolean;
     };
+    startDate: Date | null;
+    endDate: Date | null;
 }
 
 const KanbanGrid = ({
@@ -33,6 +35,8 @@ const KanbanGrid = ({
     state,
     filterUser,
     reviewTaskType,
+    startDate,
+    endDate,
 }: KanbanColProps) => {
     const { t } = useTranslation();
 
@@ -46,6 +50,8 @@ const KanbanGrid = ({
                     reviewTaskType,
                     filterUser,
                     nameSpace,
+                    startDate: startDate?.toISOString(),
+                    endDate: endDate?.toISOString(),
                 }}
                 renderItem={(task) => (
                     <KanbanCard

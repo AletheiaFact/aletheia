@@ -8,10 +8,10 @@ import { AbilityModule } from "../auth/ability/ability.module";
 
 @Module({
     imports: [
-        ClaimModule,
+        ClaimModule.register(),
         ClaimReviewModule,
         AbilityModule,
-        PersonalityModule.register()
+        PersonalityModule.register(),
     ],
     controllers: [ManagementController],
     providers: [ManagementService],

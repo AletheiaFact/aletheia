@@ -1,13 +1,13 @@
 import React from "react";
 import EventCard from "./EventCard";
 import GridList, { SeeMorePosition } from "../../GridList";
-import { EventMetrics, EventPayload } from "../../../types/event";
+import { EventMetricsByHash, EventPayload } from "../../../types/event";
 import { TFunction } from "react-i18next";
 import useEventsHook from "../hooks/useEventsHook";
 
 type EventsGridProps = {
     events: EventPayload[];
-    eventMetrics: EventMetrics;
+    eventMetrics: EventMetricsByHash;
     t: TFunction;
     hasDivider?: boolean;
     disableSeeMoreButton?: boolean;
@@ -46,6 +46,7 @@ const EventsGrid = ({
                     event={event}
                     eventMetrics={eventMetrics}
                     openEventLabel={t("events:openEvent")}
+                    eventHref={state.eventHref}
                 />
             )}
         />

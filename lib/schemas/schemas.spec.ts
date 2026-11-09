@@ -3,6 +3,7 @@ import {
     dataHash,
     email,
     isoDateTime,
+    legacyBodyFlag,
     legacyQueryFlag,
     nonEmptyText,
     objectId,
@@ -11,6 +12,7 @@ import {
     queryBoolean,
     queryInt,
     wikidataId,
+    entityId,
 } from "./index";
 import { z } from "zod";
 
@@ -23,6 +25,16 @@ describe("lib/schemas primitives", () => {
             false
         );
         expect(objectId.safeParse({ $ne: null }).success).toBe(false);
+    });
+
+    it("entityId accepts an ObjectId or a uuid", () => {
+        expect(entityId.safeParse("64b7f0c2e1a2b3c4d5e6f701").success).toBe(
+            true
+        );
+        expect(
+            entityId.safeParse("3f2504e0-4f89-41d3-9a0c-0305e82c3301").success
+        ).toBe(true);
+        expect(entityId.safeParse("nope").success).toBe(false);
     });
 
     it("dataHash", () => {
@@ -88,6 +100,13 @@ describe("lib/schemas query helpers", () => {
         for (const v of [false, "false", "0", 0, "yes", "", undefined]) {
             expect(legacyQueryFlag.parse(v)).toBe(false);
         }
+    });
+
+    it("legacyBodyFlag coerces present values and leaves an absent key unset", () => {
+        expect(legacyBodyFlag.parse("enabled")).toBe(true);
+        expect(legacyBodyFlag.parse("yes")).toBe(false);
+        expect(legacyBodyFlag.optional().parse(undefined)).toBeUndefined();
+        expect(legacyBodyFlag.safeParse(null).success).toBe(false);
     });
 
     it("queryArray normalizes single and repeated values", () => {

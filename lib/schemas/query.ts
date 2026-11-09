@@ -11,11 +11,15 @@ export const pageSizeQuery = (max = 100) => queryInt.min(1).max(max);
 export const queryBoolean = z.union([z.boolean(), z.stringbool()]);
 
 // Parity with the legacy class-transformer flag idiom. Only for ported DTOs.
+// legacyBodyFlag coerces a present value; `@Transform` never ran on absent keys,
+// so body DTOs use `legacyBodyFlag.optional()`. legacyQueryFlag defaults to false.
 const LEGACY_TRUE_VALUES: unknown[] = [true, "enabled", "true", 1, "1"];
-export const legacyQueryFlag = z
+export const legacyBodyFlag = z
     .union([z.boolean(), z.string(), z.number()])
-    .optional()
     .transform((value) => LEGACY_TRUE_VALUES.includes(value));
+export const legacyQueryFlag = legacyBodyFlag
+    .optional()
+    .transform((value) => value ?? false);
 
 export const queryArray = <T extends z.ZodType>(item: T) =>
     z

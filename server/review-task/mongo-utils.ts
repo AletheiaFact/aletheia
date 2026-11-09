@@ -1,6 +1,10 @@
 export const getQueryMatchForMachineValue = (
-    value: string
+    value?: string
 ): Record<string, any> => {
+    // No state: match every state. Without this guard "" became the path
+    // "machine.value." and matched nothing (issue #2707).
+    if (!value) return {};
+
     if (value === "cross-checking") {
         return {
             "machine.value": {
@@ -14,7 +18,11 @@ export const getQueryMatchForMachineValue = (
         : { [`machine.value.${value}`]: { $exists: true } };
 };
 
+// States the machine stores as a plain string (not a compound object).
 const plainValues = [
+    "unassigned",
+    "selectCrossChecker",
+    "selectReviewer",
     "published",
     "submitted",
     "reported",
