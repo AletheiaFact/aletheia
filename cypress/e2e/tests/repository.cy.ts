@@ -4,6 +4,7 @@ import repository from "../../fixtures/repository";
 import locators from "../../support/locators";
 
 const { repository: page, dateRange } = locators;
+const floatButton = locators.floatButton.FLOAT_BUTTON;
 // The list endpoints only; /api/claim/:id and /api/review/:hash differ
 const CLAIM_LIST = /\/api\/claim\/?\?/;
 const REVIEW_LIST = /\/api\/review\/?\?/;
@@ -175,11 +176,16 @@ describe("Repository page", () => {
         beforeEach(() => cy.viewport("iphone-x"));
 
         it("moves the filters into a drawer", () => {
+            // The "+" button only shows to signed-in users
+            cy.login();
             cy.visit("/claim?tab=claims");
             cy.wait("@listClaims");
             cy.get(page.FILTERS).should("not.exist");
 
+            cy.get(floatButton).should("exist");
             cy.get(page.OPEN_FILTERS).click();
+            // The "+" button would cover the sheet
+            cy.get(floatButton).should("not.exist");
             // The sort moves from the toolbar into the filters sheet
             cy.get(`${page.FILTERS} [data-cy=testRepositorySort]`).should(
                 "be.visible"
@@ -189,6 +195,7 @@ describe("Repository page", () => {
 
             cy.get(page.APPLY_FILTERS).click();
             cy.get(page.FILTERS).should("not.exist");
+            cy.get(floatButton).should("exist");
             cy.location("search").should("include", "contentModel=Debate");
         });
     });

@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React from "react";
+import React, { useState } from "react";
 import { GetLocale } from "../utils/GetLocale";
 import Seo from "../components/Seo";
 import RepositoryView from "../components/Repository/RepositoryView";
@@ -14,6 +14,8 @@ const ImageClaimsPage: NextPage<any> = (props) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
+    // The "+" button would sit on top of the phone filters sheet
+    const [filtersOpen, setFiltersOpen] = useState(false);
 
     return (
         <>
@@ -21,8 +23,11 @@ const ImageClaimsPage: NextPage<any> = (props) => {
                 title={t("seo:claimListTitle")}
                 description={t("seo:claimListDescription")}
             />
-            <RepositoryView initialQuery={props.initialQuery} />
-            <AffixButton />
+            <RepositoryView
+                initialQuery={props.initialQuery}
+                onFiltersOpenChange={setFiltersOpen}
+            />
+            {!filtersOpen && <AffixButton />}
         </>
     );
 };

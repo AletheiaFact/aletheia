@@ -41,7 +41,16 @@ import {
 
 const SEARCH_DEBOUNCE_MS = 400;
 
-const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => {
+interface RepositoryViewProps {
+    initialQuery: RepositoryQuery;
+    // Lets the page hide floating buttons behind the phone filters sheet
+    onFiltersOpenChange?: (open: boolean) => void;
+}
+
+const RepositoryView = ({
+    initialQuery,
+    onFiltersOpenChange,
+}: RepositoryViewProps) => {
     const { t } = useTranslation();
     // Below the app's md breakpoint the filters move into a drawer
     const isMobile = useAppSelector((state) => state?.vw?.md);
@@ -102,6 +111,11 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
     }, [tab, filters]);
 
     const closeDrawer = () => setDrawerOpen(false);
+    const sheetOpen = isMobile && drawerOpen;
+
+    useEffect(() => {
+        onFiltersOpenChange?.(sheetOpen);
+    }, [sheetOpen, onFiltersOpenChange]);
 
     const renderFilterPanel = (inSheet = false) => (
         <RepositoryFilterPanel
@@ -397,7 +411,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
 
             <Drawer
                 anchor="bottom"
-                open={isMobile && drawerOpen}
+                open={sheetOpen}
                 onClose={closeDrawer}
                 // MUI 5 Drawer only styles its paper through PaperProps
                 PaperProps={{
