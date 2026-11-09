@@ -173,11 +173,15 @@ describe("Repository page", () => {
     });
 
     describe("on a phone", () => {
-        beforeEach(() => cy.viewport("iphone-x"));
+        beforeEach(() => {
+            // Sign in at the desktop size: cy.login goes through the header
+            // user menu, which a phone layout re-renders under the click.
+            // Signed in, so the "+" button shows.
+            cy.login();
+            cy.viewport("iphone-x");
+        });
 
         it("moves the filters into a drawer", () => {
-            // The "+" button only shows to signed-in users
-            cy.login();
             cy.visit("/claim?tab=claims");
             cy.wait("@listClaims");
             cy.get(page.FILTERS).should("not.exist");
