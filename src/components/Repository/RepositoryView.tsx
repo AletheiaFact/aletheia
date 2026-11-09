@@ -101,13 +101,17 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
         window.history.replaceState(window.history.state, "", url);
     }, [tab, filters]);
 
-    const filterPanel = (
+    const closeDrawer = () => setDrawerOpen(false);
+
+    const renderFilterPanel = (inSheet = false) => (
         <RepositoryFilterPanel
             tab={tab}
             filters={filters}
             contentModelCounts={list.contentModelCounts}
             onChange={updateFilters}
             onClear={clearFilters}
+            showSort={inSheet}
+            onClose={inSheet ? closeDrawer : undefined}
         />
     );
 
@@ -240,7 +244,7 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                                 elevation={2}
                                 sx={{ p: 2.5, position: "sticky", top: 80 }}
                             >
-                                {filterPanel}
+                                {renderFilterPanel()}
                             </Paper>
                         </Grid>
                     )}
@@ -249,9 +253,10 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                         <Box
                             sx={{
                                 display: "flex",
-                                flexWrap: "wrap",
                                 gap: 1.5,
                                 alignItems: "center",
+                                // Search and the filters button share one row
+                                flexWrap: isMobile ? "nowrap" : "wrap",
                             }}
                         >
                             <TextField
@@ -281,7 +286,8 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                                     ),
                                 }}
                                 sx={{
-                                    flex: "1 1 280px",
+                                    flex: isMobile ? "1 1 0" : "1 1 280px",
+                                    minWidth: 0,
                                     backgroundColor: colors.white,
                                 }}
                                 data-cy="testRepositorySearch"
@@ -297,52 +303,59 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                                         startIcon={<FilterListIcon />}
                                         onClick={() => setDrawerOpen(true)}
                                         data-cy="testRepositoryOpenFilters"
-                                        sx={{ textTransform: "none" }}
+                                        sx={{
+                                            textTransform: "none",
+                                            whiteSpace: "nowrap",
+                                            height: 40,
+                                        }}
                                     >
                                         {t("repository:showFilters")}
                                     </Button>
                                 </Badge>
                             )}
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 1,
-                                }}
-                            >
-                                <SortIcon fontSize="small" />
-                                <Typography
-                                    component="label"
-                                    htmlFor="repository-sort"
-                                    sx={{ fontWeight: 600 }}
-                                >
-                                    {t("repository:sort")}
-                                </Typography>
-                                <Select
-                                    size="small"
-                                    id="repository-sort"
-                                    value={filters.order}
-                                    onChange={(event) =>
-                                        updateFilters({
-                                            order: event.target.value as
-                                                | "asc"
-                                                | "desc",
-                                        })
-                                    }
+                            {/* On a phone the sort lives in the filters sheet */}
+                            {!isMobile && (
+                                <Box
                                     sx={{
-                                        minWidth: 170,
-                                        backgroundColor: colors.white,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 1,
                                     }}
-                                    data-cy="testRepositorySort"
                                 >
-                                    <MenuItem value="desc">
-                                        {t("repository:sortNewest")}
-                                    </MenuItem>
-                                    <MenuItem value="asc">
-                                        {t("repository:sortOldest")}
-                                    </MenuItem>
-                                </Select>
-                            </Box>
+                                    <SortIcon fontSize="small" />
+                                    <Typography
+                                        component="label"
+                                        htmlFor="repository-sort"
+                                        sx={{ fontWeight: 600 }}
+                                    >
+                                        {t("repository:sort")}
+                                    </Typography>
+                                    <Select
+                                        size="small"
+                                        id="repository-sort"
+                                        value={filters.order}
+                                        onChange={(event) =>
+                                            updateFilters({
+                                                order: event.target.value as
+                                                    | "asc"
+                                                    | "desc",
+                                            })
+                                        }
+                                        sx={{
+                                            minWidth: 170,
+                                            backgroundColor: colors.white,
+                                        }}
+                                        data-cy="testRepositorySort"
+                                    >
+                                        <MenuItem value="desc">
+                                            {t("repository:sortNewest")}
+                                        </MenuItem>
+                                        <MenuItem value="asc">
+                                            {t("repository:sortOldest")}
+                                        </MenuItem>
+                                    </Select>
+                                </Box>
+                            )}
                         </Box>
 
                         <Box
@@ -353,13 +366,15 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
                                 my: 2,
                             }}
                         >
-                            <Typography variant="h2" fontSize={22}>
-                                {t(
-                                    isClaims
-                                        ? "repository:claimsTab"
-                                        : "repository:reviewsTab"
-                                )}
-                            </Typography>
+                            {!isMobile && (
+                                <Typography variant="h2" fontSize={22}>
+                                    {t(
+                                        isClaims
+                                            ? "repository:claimsTab"
+                                            : "repository:reviewsTab"
+                                    )}
+                                </Typography>
+                            )}
                             {!list.refreshing && (
                                 <Typography
                                     variant="body2"
@@ -381,20 +396,58 @@ const RepositoryView = ({ initialQuery }: { initialQuery: RepositoryQuery }) => 
             </Grid>
 
             <Drawer
-                anchor="left"
+                anchor="bottom"
                 open={isMobile && drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-                PaperProps={{ sx: { width: "min(320px, 90vw)", p: 2.5 } }}
+                onClose={closeDrawer}
+                // MUI 5 Drawer only styles its paper through PaperProps
+                PaperProps={{
+                    sx: {
+                        maxHeight: "90vh",
+                        borderTopLeftRadius: 16,
+                        borderTopRightRadius: 16,
+                        display: "flex",
+                        flexDirection: "column",
+                    },
+                }}
             >
-                {filterPanel}
-                <AletheiaButton
-                    type={ButtonType.primary}
-                    onClick={() => setDrawerOpen(false)}
-                    data-cy="testRepositoryApplyFilters"
-                    style={{ marginTop: 24, width: "100%" }}
+                {/* Grab handle of the bottom sheet */}
+                <Box
+                    sx={{
+                        width: 40,
+                        height: 4,
+                        borderRadius: 2,
+                        backgroundColor: colors.neutralTertiary,
+                        mx: "auto",
+                        mt: 1,
+                        flexShrink: 0,
+                    }}
+                />
+                <Box sx={{ overflowY: "auto", px: 2.5, pt: 1.5, pb: 2 }}>
+                    {renderFilterPanel(true)}
+                </Box>
+                <Box
+                    sx={{
+                        px: 2.5,
+                        pt: 1.5,
+                        pb: "calc(16px + env(safe-area-inset-bottom, 0px))",
+                        borderTop: `1px solid ${colors.neutralTertiary}`,
+                        flexShrink: 0,
+                    }}
                 >
-                    {t("repository:applyFilters")}
-                </AletheiaButton>
+                    <AletheiaButton
+                        type={ButtonType.primary}
+                        onClick={closeDrawer}
+                        loading={list.refreshing}
+                        data-cy="testRepositoryApplyFilters"
+                        style={{ width: "100%" }}
+                    >
+                        {list.refreshing
+                            ? t("repository:applyFilters")
+                            : t("repository:showResults", {
+                                  count: list.total,
+                              })}
+                    </AletheiaButton>
+                </Box>
             </Drawer>
         </Grid>
     );

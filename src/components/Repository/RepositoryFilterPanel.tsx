@@ -4,11 +4,15 @@ import {
     Button,
     Checkbox,
     FormControlLabel,
+    IconButton,
+    MenuItem,
+    Select,
     ToggleButton,
     ToggleButtonGroup,
     Typography,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import personalityApi from "../../api/personality";
@@ -88,6 +92,9 @@ interface RepositoryFilterPanelProps {
     contentModelCounts: Record<string, number>;
     onChange: (changes: Partial<RepositoryFilters>) => void;
     onClear: () => void;
+    // Phone sheet only: the sort moves into the panel and it can be closed
+    showSort?: boolean;
+    onClose?: () => void;
 }
 
 const RepositoryFilterPanel = ({
@@ -96,6 +103,8 @@ const RepositoryFilterPanel = ({
     contentModelCounts,
     onChange,
     onClear,
+    showSort = false,
+    onClose,
 }: RepositoryFilterPanelProps) => {
     const { t, i18n } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -164,15 +173,55 @@ const RepositoryFilterPanel = ({
                     <FilterListIcon fontSize="small" />
                     {t("repository:filters")}
                 </Typography>
-                <Button
-                    size="small"
-                    onClick={onClear}
-                    sx={{ textTransform: "none", color: colors.lightPrimary }}
-                    data-cy="testRepositoryClearFilters"
-                >
-                    {t("repository:clearFilters")}
-                </Button>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Button
+                        size="small"
+                        onClick={onClear}
+                        sx={{
+                            textTransform: "none",
+                            color: colors.lightPrimary,
+                        }}
+                        data-cy="testRepositoryClearFilters"
+                    >
+                        {t("repository:clearFilters")}
+                    </Button>
+                    {onClose && (
+                        <IconButton
+                            size="small"
+                            onClick={onClose}
+                            aria-label={t("repository:closeFilters")}
+                            data-cy="testRepositoryCloseFilters"
+                        >
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    )}
+                </Box>
             </Box>
+
+            {showSort && (
+                <FilterSection title={t("repository:sortBy")}>
+                    <Select
+                        size="small"
+                        fullWidth
+                        value={filters.order}
+                        onChange={(event) =>
+                            onChange({
+                                order: event.target.value as "asc" | "desc",
+                            })
+                        }
+                        inputProps={{ "aria-label": t("repository:sortBy") }}
+                        sx={{ backgroundColor: colors.white }}
+                        data-cy="testRepositorySort"
+                    >
+                        <MenuItem value="desc">
+                            {t("repository:sortNewest")}
+                        </MenuItem>
+                        <MenuItem value="asc">
+                            {t("repository:sortOldest")}
+                        </MenuItem>
+                    </Select>
+                </FilterSection>
+            )}
 
             <FilterSection title={t("repository:personality")}>
                 <AsyncOptionFilter

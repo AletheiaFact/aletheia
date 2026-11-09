@@ -180,6 +180,10 @@ describe("Repository page", () => {
             cy.get(page.FILTERS).should("not.exist");
 
             cy.get(page.OPEN_FILTERS).click();
+            // The sort moves from the toolbar into the filters sheet
+            cy.get(`${page.FILTERS} [data-cy=testRepositorySort]`).should(
+                "be.visible"
+            );
             cy.get(page.CONTENT_MODEL("Debate")).check();
             expectListRequest("@listClaims", { "contentModel[]": "Debate" });
 
