@@ -125,7 +125,7 @@
         "aws-sdk": "^2.1154.0",
         "axios": "1.20.0",
         "babel-plugin-styled-components": "^1.13.2",
-        "body-parser": "1.20.6",
+        "body-parser": "1.20.9",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "compromise": "^13.11.4",
@@ -135,7 +135,7 @@
         "dayjs": "^1.11.13",
         "domino": "^2.1.6",
         "dompurify": "3.4.17",
-        "drizzle-orm": "0.36.4",
+        "drizzle-orm": "0.45.2",
         "express": "4.19.2",
         "express-session": "^1.17.2",
         "helmet": "^6.0.0",
@@ -190,7 +190,7 @@
         "y-webrtc": "^10.2.5",
         "y-websocket": "^1.5.0",
         "yjs": "^13.5.23",
-        "zod": "^4.3.6"
+        "zod": "^4.6.6"
     },
     "devDependencies": {
         "@babel/core": "^7.29.6",

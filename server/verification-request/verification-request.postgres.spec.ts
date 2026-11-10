@@ -115,7 +115,9 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             await service.update(vr._id, { embedding: [1, 0, 0] }, false);
             await expect(
                 service.findSimilarRequests([1, 0], [], 5)
-            ).rejects.toThrow(/dimensions/);
+            ).rejects.toMatchObject({
+                cause: { message: /dimensions/ },
+            });
         });
 
         it("getById with a non-uuid id raises the driver error (Mongo: CastError)", async () => {

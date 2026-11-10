@@ -160,7 +160,7 @@ tools that create or change data.
 | Tool                 | Access | Description                                                                     |
 | -------------------- | ------ | ------------------------------------------------------------------------------- |
 | `get_claim_review`   | read   | Get a published fact-check review by id or `data_hash`                          |
-| `list_review_tasks`  | read   | List review tasks by workflow state (unassigned, assigned, reported, published) |
+| `list_review_tasks`  | read   | List review tasks, optionally by workflow state (`value`). `mine: "assigned"` without `value` lists every task assigned to you, in any state |
 | `get_review_task`    | read   | Get a review task by id                                                         |
 | `add_review_comment` | write  | Add a comment to a review task (by `data_hash`)                                 |
 | `list_classification_methodologies` | read | List classification methodologies and their labels                    |
@@ -223,7 +223,8 @@ view gets a conflict, never someone else's task.
 | Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `selectReviewer` (or `reported` when `auto_send_to_review` is false); different → `assigned` |
 | Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` (only when `auto_send_to_review` is false) |
 | Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` (returns the claim context and the review form) |
-| My reviews | `list_my_review_tasks` | read | reviewer | — |
+| My tasks | `list_review_tasks` with `mine: "assigned"` (omit `value` for every state) | read | assignee | — |
+| My reviews | `list_my_review_tasks` (only `submitted` tasks where you are the reviewer) | read | reviewer | — |
 | Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
 | Publish | `publish_review_task` | write | reviewer | `submitted` → `published` (returns the ClaimReview) |
 
