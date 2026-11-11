@@ -64,12 +64,12 @@ export const EMPTY_FILTERS: RepositoryFilters = {
 };
 
 // View preferences, kept by "clear filters" and not counted as filters
-const VIEW_KEYS = ["order", "methodology"];
+const VIEW_KEYS = new Set(["order", "methodology"]);
 
 export const hasActiveFilters = (filters: RepositoryFilters) =>
     Object.keys(EMPTY_FILTERS).some(
         (key) =>
-            !VIEW_KEYS.includes(key) &&
+            !VIEW_KEYS.has(key) &&
             JSON.stringify(filters[key]) !== JSON.stringify(EMPTY_FILTERS[key])
     );
 

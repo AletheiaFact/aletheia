@@ -256,13 +256,14 @@ describe("Repository page", () => {
             cy.get(`${page.FILTERS} [data-cy=testRepositorySort]`).should(
                 "not.exist"
             );
-            cy.get(page.CONTENT_MODEL("Debate")).check();
-            expectListRequest("@listClaims", { "contentModel[]": "Debate" });
+            // A type with no results is disabled, and the seed has speeches
+            cy.get(page.CONTENT_MODEL("Speech")).check();
+            expectListRequest("@listClaims", { "contentModel[]": "Speech" });
 
             cy.get(page.APPLY_FILTERS).click();
             cy.get(page.FILTERS).should("not.exist");
             cy.get(floatButton).should("exist");
-            cy.location("search").should("include", "contentModel=Debate");
+            cy.location("search").should("include", "contentModel=Speech");
             cy.get("[data-cy=testRepositorySort]").should("be.visible");
             // The button counts the applied filters
             cy.get(page.ACTIVE_FILTER_COUNT).should("have.text", "1");
