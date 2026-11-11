@@ -1,14 +1,6 @@
 import React from "react";
-import {
-    Badge,
-    Box,
-    Button,
-    InputAdornment,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Box, Button, InputAdornment, TextField, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import SortIcon from "@mui/icons-material/Sort";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -18,65 +10,85 @@ import { RepositoryTab, SortOrder } from "./repositoryFilters";
 interface RepositoryToolbarProps {
     tab: RepositoryTab;
     isMobile: boolean;
+    // Hidden while the results reload
+    total: number | null;
     searchText: string;
     onSearchChange: (text: string) => void;
     order: SortOrder;
     onOrderChange: (order: SortOrder) => void;
-    hasActiveFilters: boolean;
+    activeFilterCount: number;
     onOpenFilters: () => void;
 }
 
-// Search, plus the sort on desktop or the filters button on a phone
+// Title and total, search, sort and, on a phone, the filters button
 const RepositoryToolbar = ({
     tab,
     isMobile,
+    total,
     searchText,
     onSearchChange,
     order,
     onOrderChange,
-    hasActiveFilters,
+    activeFilterCount,
     onOpenFilters,
 }: RepositoryToolbarProps) => {
     const { t } = useTranslation();
+    const isClaims = tab === "claims";
     const searchLabel = t(
-        tab === "claims" ? "repository:searchClaims" : "repository:searchReviews"
+        isClaims ? "repository:searchClaims" : "repository:searchReviews"
     );
 
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                gap: 1.5,
-                alignItems: "center",
-                // Search and the filters button share one row
-                flexWrap: isMobile ? "nowrap" : "wrap",
+    const title = (
+        <Box sx={{ flexShrink: 0 }}>
+            <Typography variant="h2" fontSize={22}>
+                {t(isClaims ? "repository:claimsTab" : "repository:reviewsTab")}
+            </Typography>
+            <Typography
+                variant="body2"
+                sx={{ color: colors.neutralSecondary, minHeight: 20 }}
+                data-cy="testRepositoryTotal"
+            >
+                {total !== null &&
+                    t(
+                        isClaims
+                            ? "repository:claimsTotal"
+                            : "repository:reviewsTotal",
+                        { count: total }
+                    )}
+            </Typography>
+        </Box>
+    );
+
+    const search = (
+        <TextField
+            size="small"
+            value={searchText}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder={searchLabel}
+            inputProps={{ maxLength: 100, "aria-label": searchLabel }}
+            InputProps={{
+                startAdornment: (
+                    <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                ),
             }}
-        >
-            <TextField
-                size="small"
-                value={searchText}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchLabel}
-                inputProps={{ maxLength: 100, "aria-label": searchLabel }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                    ),
-                }}
-                sx={{
-                    flex: isMobile ? "1 1 0" : "1 1 280px",
-                    minWidth: 0,
-                    backgroundColor: colors.white,
-                }}
-                data-cy="testRepositorySearch"
-            />
-            {isMobile ? (
-                <Badge
-                    color="primary"
-                    variant="dot"
-                    invisible={!hasActiveFilters}
+            sx={{ flex: "1 1 auto", minWidth: 0, backgroundColor: colors.white }}
+            data-cy="testRepositorySearch"
+        />
+    );
+
+    if (isMobile) {
+        return (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {title}
+                <Box sx={{ display: "flex" }}>{search}</Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: 1.5,
+                    }}
                 >
                     <Button
                         variant="outlined"
@@ -87,30 +99,50 @@ const RepositoryToolbar = ({
                             textTransform: "none",
                             whiteSpace: "nowrap",
                             height: 40,
+                            color: colors.primary,
+                            borderColor: colors.neutralTertiary,
                         }}
                     >
                         {t("repository:showFilters")}
+                        {activeFilterCount > 0 && (
+                            <Box
+                                component="span"
+                                sx={{ ml: 1, color: colors.neutralSecondary }}
+                                data-cy="testRepositoryActiveFilterCount"
+                            >
+                                {activeFilterCount}
+                            </Box>
+                        )}
                     </Button>
-                </Badge>
-            ) : (
-                // On a phone the sort lives in the filters sheet
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <SortIcon fontSize="small" />
-                    <Typography
-                        component="label"
-                        htmlFor="repository-sort"
-                        sx={{ fontWeight: 600 }}
-                    >
-                        {t("repository:sort")}
-                    </Typography>
                     <SortSelect
-                        id="repository-sort"
                         value={order}
                         onChange={onOrderChange}
-                        sx={{ minWidth: 170 }}
+                        sx={{ minWidth: 0, flex: "0 1 180px" }}
                     />
                 </Box>
-            )}
+            </Box>
+        );
+    }
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                // Below lg the title sits above the search
+                flexDirection: { xs: "column", lg: "row" },
+                alignItems: { xs: "stretch", lg: "flex-start" },
+                gap: { xs: 1.5, lg: 3 },
+            }}
+        >
+            {title}
+            <Box sx={{ display: "flex", flex: 1, gap: 1.5 }}>
+                {search}
+                <SortSelect
+                    value={order}
+                    onChange={onOrderChange}
+                    sx={{ minWidth: 180 }}
+                />
+            </Box>
         </Box>
     );
 };

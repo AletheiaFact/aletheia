@@ -43,6 +43,15 @@ const useRepositoryList = (tab: RepositoryTab, filters: RepositoryFilters) => {
     // an older filter never overwrites a newer one.
     const requestId = useRef(0);
 
+    // Only what the API receives triggers a reload: changes such as the
+    // methodology, which only rewords the labels, keep the current list.
+    const isClaims = tab === "claims";
+    const claimParams = isClaims ? toClaimParams(filters) : null;
+    const reviewParams = isClaims ? null : toReviewParams(filters);
+    const paramsKey = JSON.stringify(claimParams ?? reviewParams);
+    const paramsRef = useRef({ claimParams, reviewParams });
+    paramsRef.current = { claimParams, reviewParams };
+
     const fetchPage = useCallback(
         (page: number) => {
             const options = {
@@ -50,16 +59,19 @@ const useRepositoryList = (tab: RepositoryTab, filters: RepositoryFilters) => {
                 pageSize: PAGE_SIZE,
                 nameSpace: (nameSpace || NameSpaceEnum.Main) as NameSpaceEnum,
             };
-            return tab === "claims"
+            const current = paramsRef.current;
+            return current.claimParams
                 ? claimApi.get({
                       ...options,
-                      ...toClaimParams(filters),
+                      ...current.claimParams,
                       i18n,
                       fetchOnly: true,
                   })
-                : claimReviewApi.get({ ...options, ...toReviewParams(filters) });
+                : claimReviewApi.get({ ...options, ...current.reviewParams });
         },
-        [tab, filters, nameSpace, i18n]
+        // paramsKey stands for the params read from the ref
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [tab, paramsKey, nameSpace, i18n]
     );
 
     const load = useCallback(

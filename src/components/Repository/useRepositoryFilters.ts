@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     EMPTY_FILTERS,
+    clearedFilters,
     RepositoryFilters,
     RepositoryQuery,
     RepositoryTab,
@@ -37,7 +38,7 @@ const useRepositoryFilters = (initialQuery: RepositoryQuery) => {
 
     const clearFilters = () => {
         setSearchText("");
-        updateFilters({ ...EMPTY_FILTERS, order: filters.order });
+        updateFilters(clearedFilters(filters));
     };
 
     const changeTab = (nextTab: RepositoryTab) => {

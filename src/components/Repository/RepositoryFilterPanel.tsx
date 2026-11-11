@@ -1,16 +1,12 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { useTranslation } from "next-i18next";
 import FilterPanelHeader from "./filters/FilterPanelHeader";
-import FilterSection from "./filters/FilterSection";
-import SortSelect from "./filters/SortSelect";
-import PersonalityFilter from "./filters/PersonalityFilter";
-import MethodologyFilter from "./filters/MethodologyFilter";
 import ClassificationFilter from "./filters/ClassificationFilter";
+import PersonalityFilter from "./filters/PersonalityFilter";
+import DateFilter from "./filters/DateFilter";
 import ContentTypeFilter from "./filters/ContentTypeFilter";
 import ReviewStatusFilter from "./filters/ReviewStatusFilter";
 import TopicFilter from "./filters/TopicFilter";
-import DateFilter from "./filters/DateFilter";
 import {
     FiltersChangeHandler,
     RepositoryFilters,
@@ -21,10 +17,10 @@ interface RepositoryFilterPanelProps {
     tab: RepositoryTab;
     filters: RepositoryFilters;
     contentModelCounts: Record<string, number>;
+    countsReady: boolean;
     onChange: FiltersChangeHandler;
     onClear: () => void;
-    // Phone sheet only: the sort moves into the panel and it can be closed
-    showSort?: boolean;
+    // Phone sheet only
     onClose?: () => void;
 }
 
@@ -32,27 +28,26 @@ const RepositoryFilterPanel = ({
     tab,
     filters,
     contentModelCounts,
+    countsReady,
     onChange,
     onClear,
-    showSort = false,
     onClose,
 }: RepositoryFilterPanelProps) => {
-    const { t } = useTranslation();
     const isClaims = tab === "claims";
 
     return (
         <Box data-cy="testRepositoryFilters">
             <FilterPanelHeader onClear={onClear} onClose={onClose} />
 
-            {showSort && (
-                <FilterSection title={t("repository:sortBy")}>
-                    <SortSelect
-                        fullWidth
-                        value={filters.order}
-                        onChange={(order) => onChange({ order })}
-                        inputProps={{ "aria-label": t("repository:sortBy") }}
-                    />
-                </FilterSection>
+            {!isClaims && (
+                <ClassificationFilter
+                    methodology={filters.methodology}
+                    onMethodologyChange={(methodology) =>
+                        onChange({ methodology })
+                    }
+                    value={filters.classification}
+                    onChange={(classification) => onChange({ classification })}
+                />
             )}
 
             <PersonalityFilter
@@ -60,26 +55,17 @@ const RepositoryFilterPanel = ({
                 onChange={(personality) => onChange({ personality })}
             />
 
-            {!isClaims && (
-                <>
-                    <MethodologyFilter
-                        value={filters.methodology}
-                        classification={filters.classification}
-                        onChange={onChange}
-                    />
-                    <ClassificationFilter
-                        methodology={filters.methodology}
-                        value={filters.classification}
-                        onChange={(classification) =>
-                            onChange({ classification })
-                        }
-                    />
-                </>
-            )}
+            <DateFilter
+                tab={tab}
+                startDate={filters.startDate}
+                endDate={filters.endDate}
+                onChange={onChange}
+            />
 
             <ContentTypeFilter
                 value={filters.contentModel}
                 counts={contentModelCounts}
+                countsReady={countsReady}
                 onChange={(contentModel) => onChange({ contentModel })}
             />
 
@@ -93,13 +79,6 @@ const RepositoryFilterPanel = ({
             <TopicFilter
                 value={filters.topic}
                 onChange={(topic) => onChange({ topic })}
-            />
-
-            <DateFilter
-                tab={tab}
-                startDate={filters.startDate}
-                endDate={filters.endDate}
-                onChange={onChange}
             />
         </Box>
     );

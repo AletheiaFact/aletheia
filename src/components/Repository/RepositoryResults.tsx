@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Grid, Paper, Skeleton, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../AletheiaButton";
 import ClaimCard from "../Claim/ClaimCard";
 import ReviewCard from "../ClaimReview/ReviewCard";
@@ -17,7 +18,7 @@ interface RepositoryResultsProps {
 const LoadingResults = () => (
     <Grid container spacing={2}>
         {[0, 1, 2, 3].map((key) => (
-            <Grid item xs={12} md={6} key={key}>
+            <Grid item xs={12} lg={6} key={key}>
                 <Skeleton variant="rounded" height={240} />
             </Grid>
         ))}
@@ -67,7 +68,7 @@ const RepositoryResults = ({
                     <Grid
                         item
                         xs={12}
-                        md={6}
+                        lg={6}
                         key={
                             isClaims
                                 ? item._id
@@ -83,7 +84,15 @@ const RepositoryResults = ({
                 ))}
             </Grid>
             {list.hasMore && (
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 4,
+                    }}
+                >
                     <AletheiaButton
                         type={ButtonType.whiteOutline}
                         onClick={list.loadMore}
@@ -92,6 +101,16 @@ const RepositoryResults = ({
                     >
                         {t("repository:loadMore")}
                     </AletheiaButton>
+                    <Typography
+                        variant="body2"
+                        sx={{ color: colors.neutralSecondary }}
+                        data-cy="testRepositoryShownOfTotal"
+                    >
+                        {t("repository:shownOfTotal", {
+                            shown: list.items.length,
+                            total: list.total,
+                        })}
+                    </Typography>
                 </Box>
             )}
         </>

@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Button, IconButton, Typography } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
@@ -22,16 +21,7 @@ const FilterPanelHeader = ({ onClear, onClose }: FilterPanelHeaderProps) => {
                 justifyContent: "space-between",
             }}
         >
-            <Typography
-                variant="h2"
-                sx={{
-                    fontSize: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                }}
-            >
-                <FilterListIcon fontSize="small" />
+            <Typography variant="h2" sx={{ fontSize: 20 }}>
                 {t("repository:filters")}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

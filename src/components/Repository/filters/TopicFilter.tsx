@@ -32,7 +32,11 @@ const TopicFilter = ({ value, onChange }: TopicFilterProps) => {
     );
 
     return (
-        <FilterSection title={t("repository:topic")}>
+        <FilterSection
+            title={t("repository:topic")}
+            collapsible
+            defaultOpen={!!value}
+        >
             <AsyncOptionFilter
                 value={value}
                 onChange={onChange}

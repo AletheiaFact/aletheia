@@ -46,6 +46,9 @@ describe("Repository page", () => {
             cy.get(page.CONTENT_MODEL("Speech")).check();
             expectListRequest("@listClaims", { "contentModel[]": "Speech" });
             cy.location("search").should("include", "contentModel=Speech");
+            cy.get(page.ACTIVE_FILTER("contentModel-Speech")).should(
+                "be.visible"
+            );
 
             cy.get(page.REVIEW_STATUS("without")).click();
             expectListRequest("@listClaims", { reviewStatus: "without" });
@@ -62,9 +65,45 @@ describe("Repository page", () => {
                 "Mui-selected"
             );
 
+            // Removing a chip clears just that filter
+            cy.get(
+                `${page.ACTIVE_FILTER("reviewStatus")} .MuiChip-deleteIcon`
+            ).click();
+            cy.location("search").should("not.include", "reviewStatus");
+            cy.get(page.ACTIVE_FILTER("reviewStatus")).should("not.exist");
+
             cy.get(page.CLEAR_FILTERS).click();
             cy.location("search").should("eq", "?tab=claims");
             cy.get(page.CONTENT_MODEL("Speech")).should("not.be.checked");
+            cy.get(page.ACTIVE_FILTERS).should("not.exist");
+        });
+
+        it("filters by a date shortcut", () => {
+            cy.visit(CLAIMS_URL);
+            cy.wait("@listClaims");
+
+            cy.get(page.DATE_PRESET("7d")).click();
+            cy.wait("@listClaims").then(({ request, response }) => {
+                expect(response?.statusCode).to.eq(200);
+                const params = new URL(request.url).searchParams;
+                expect(params.get("startDate")).to.match(/T/);
+                expect(params.get("endDate")).to.match(/T/);
+            });
+            cy.get(page.DATE_PRESET("7d")).should(
+                "have.attr",
+                "aria-pressed",
+                "true"
+            );
+            cy.location("search").should("include", "startDate=");
+
+            // The × in the field clears the period
+            cy.get("[data-cy=testDateRangeFieldClear]").click();
+            cy.location("search").should("not.include", "startDate");
+            cy.get(page.DATE_PRESET("7d")).should(
+                "have.attr",
+                "aria-pressed",
+                "false"
+            );
         });
 
         it("filters by a period picked in one field", () => {
@@ -125,7 +164,7 @@ describe("Repository page", () => {
     });
 
     describe("fact-checks tab", () => {
-        it("lists fact-checks and filters by methodology and classification", () => {
+        it("filters by classification, worded by the chosen methodology", () => {
             cy.intercept(
                 { method: "GET", url: REVIEW_LIST },
                 { body: repository.reviews }
@@ -140,23 +179,43 @@ describe("Repository page", () => {
                 "have.length",
                 2
             );
+            // Aletheia is selected from the start
+            cy.get(page.METHODOLOGY("aletheia")).should(
+                "have.class",
+                "Mui-selected"
+            );
             cy.get(page.CLASSIFICATIONS).should("have.length", 9);
 
+            // The methodology only changes the labels listed, so it sends
+            // no new request
             cy.get(page.METHODOLOGY("rncd-debate")).click();
-            expectListRequest("@listReviews", {
-                classificationMethodology: "rncd-debate",
-            });
             cy.get(page.CLASSIFICATIONS).should("have.length", 4);
+            cy.location("search").should("include", "methodology=rncd-debate");
 
-            cy.get(page.CLASSIFICATION("false")).check();
-            expectListRequest("@listReviews", { "classification[]": "false" });
-            cy.location("search")
-                .should("include", "methodology=rncd-debate")
-                .and("include", "classification=false");
+            cy.get(page.CLASSIFICATION("unverifiable")).click();
+            cy.wait("@listReviews").then(({ request }) => {
+                const params = new URL(request.url).searchParams;
+                expect(params.getAll("classification[]")).to.deep.eq([
+                    "unverifiable",
+                ]);
+                expect(params.has("classificationMethodology")).to.eq(false);
+            });
+            cy.get(page.ACTIVE_FILTER("classification-unverifiable")).should(
+                "be.visible"
+            );
 
-            // A second click clears the methodology
-            cy.get(page.METHODOLOGY("rncd-debate")).click();
+            // Every methodology stores the same keys: RNCD's "Evidências
+            // insuficientes" stays selected as Aletheia's "Inverificável"
+            cy.get(page.METHODOLOGY("aletheia")).click();
             cy.get(page.CLASSIFICATIONS).should("have.length", 9);
+            cy.get(page.CLASSIFICATION("unverifiable")).should(
+                "have.attr",
+                "aria-pressed",
+                "true"
+            );
+            cy.location("search")
+                .should("not.include", "methodology=")
+                .and("include", "classification=unverifiable");
         });
 
         it("sends filters the reviews API accepts", () => {
@@ -165,7 +224,6 @@ describe("Repository page", () => {
                 "/claim?tab=reviews&methodology=rncd-debate&classification=false&contentModel=Debate&startDate=2026-01-01&endDate=2026-12-31"
             );
             expectListRequest("@listReviews", {
-                classificationMethodology: "rncd-debate",
                 "classification[]": "false",
                 "contentModel[]": "Debate",
             });
@@ -194,9 +252,9 @@ describe("Repository page", () => {
             cy.get(page.OPEN_FILTERS).click();
             // The "+" button would cover the sheet
             cy.get(floatButton).should("not.exist");
-            // The sort moves from the toolbar into the filters sheet
+            // The sort stays on the page, next to the filters button
             cy.get(`${page.FILTERS} [data-cy=testRepositorySort]`).should(
-                "be.visible"
+                "not.exist"
             );
             cy.get(page.CONTENT_MODEL("Debate")).check();
             expectListRequest("@listClaims", { "contentModel[]": "Debate" });
@@ -205,6 +263,9 @@ describe("Repository page", () => {
             cy.get(page.FILTERS).should("not.exist");
             cy.get(floatButton).should("exist");
             cy.location("search").should("include", "contentModel=Debate");
+            cy.get("[data-cy=testRepositorySort]").should("be.visible");
+            // The button counts the applied filters
+            cy.get(page.ACTIVE_FILTER_COUNT).should("have.text", "1");
         });
     });
 });

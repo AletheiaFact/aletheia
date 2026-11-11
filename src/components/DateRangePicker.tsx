@@ -1,13 +1,14 @@
 import React, { useRef, useState } from "react";
 import {
     Box,
-    Button,
+    IconButton,
     InputAdornment,
     Popover,
     TextField,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import {
     CalendarPicker,
     LocalizationProvider,
@@ -16,10 +17,19 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { ptBR as ptBRPickers } from "@mui/x-date-pickers/locales";
-import { format, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
-import { enUS, ptBR } from "date-fns/locale";
+import {
+    getDay,
+    getDaysInMonth,
+    isAfter,
+    isBefore,
+    isSameDay,
+    startOfDay,
+    startOfMonth,
+} from "date-fns";
 import { useTranslation } from "react-i18next";
 import colors from "../styles/colors";
+import { formatDateRange, getDateFormat } from "../utils/dateRangeFormat";
+import AletheiaButton, { ButtonType } from "./AletheiaButton";
 
 interface DateRangePickerProps {
     startDate: Date | null;
@@ -29,7 +39,16 @@ interface DateRangePickerProps {
     // null hides the label, for containers that already title the field
     label?: string | null;
     fullWidth?: boolean;
+    // Shows a × in the field that clears the period
+    clearable?: boolean;
 }
+
+// MUI's day is 36px with a 2px margin on each side, so a cell is 40px wide
+// and a week 40px tall.
+const CELL_WIDTH = 40;
+const DAY_SIZE = 36;
+const WEEK_HEIGHT = 40;
+const TODAY_SIZE = 32;
 
 interface RangeDayProps extends PickersDayProps<Date> {
     inRange: boolean;
@@ -38,37 +57,94 @@ interface RangeDayProps extends PickersDayProps<Date> {
 }
 
 // The free MUI X calendar has no range mode (DateRangePicker is MUI X
-// Pro), so each day paints its own part of the range band.
+// Pro), so each day paints its own part of the range band. The start and
+// end are a full circle over the band, drawn as background layers so hover
+// and focus can't recolour them.
 const RangeDay = styled(PickersDay, {
     shouldForwardProp: (prop) =>
         prop !== "inRange" && prop !== "isStart" && prop !== "isEnd",
-})<RangeDayProps>(({ inRange, isStart, isEnd }) => ({
-    ...(inRange && {
-        borderRadius: 0,
-        backgroundColor: colors.lightTertiary,
-        color: colors.primary,
-        "&:hover, &:focus": { backgroundColor: colors.tertiary },
-    }),
-    ...((isStart || isEnd) && {
-        backgroundColor: colors.primary,
-        color: colors.white,
-        "&:hover, &:focus": { backgroundColor: colors.primaryHover },
-    }),
-    ...(isStart && {
-        borderTopLeftRadius: "50%",
-        borderBottomLeftRadius: "50%",
-    }),
-    ...(isEnd && {
-        borderTopRightRadius: "50%",
-        borderBottomRightRadius: "50%",
-    }),
-}));
+})<RangeDayProps>(({ inRange, isStart, isEnd }) => {
+    const isEdge = isStart || isEnd;
+    const band = colors.lightTertiary;
+    // Which half of an edge day the band covers, if any
+    let bandHalf = "";
+    if (isStart && !isEnd) bandHalf = "right";
+    if (isEnd && !isStart) bandHalf = "left";
+    const circle = `radial-gradient(circle, ${colors.primary} ${
+        DAY_SIZE / 2 - 0.5
+    }px, transparent ${DAY_SIZE / 2}px)`;
+    const edgeBackground = bandHalf
+        ? `${circle}, linear-gradient(to ${bandHalf}, transparent 50%, ${band} 50%)`
+        : circle;
 
-// Day order follows the UI language; the full year is shown for a single
-// day, while a full range uses two-digit years so it fits a sidebar field
-const DATE_FORMATS = {
-    pt: { locale: ptBR, day: "dd/MM/yyyy", rangeDay: "dd/MM/yy" },
-    en: { locale: enUS, day: "MM/dd/yyyy", rangeDay: "MM/dd/yy" },
+    // Range days fill the whole cell, so the band has no gaps
+    const fullCell = {
+        width: CELL_WIDTH,
+        height: DAY_SIZE,
+        margin: 0,
+        borderRadius: 0,
+        // Inside the range, today needs no ring of its own
+        "&.MuiPickersDay-today:not(.Mui-selected)": {
+            width: CELL_WIDTH,
+            height: DAY_SIZE,
+            margin: 0,
+            border: "none",
+            boxShadow: "none",
+            borderRadius: 0,
+        },
+    };
+
+    return {
+        // A thinner, smaller ring for today, centred in its cell
+        "&.MuiPickersDay-today:not(.Mui-selected)": {
+            border: "none",
+            boxShadow: `inset 0 0 0 1px ${colors.neutralSecondary}`,
+            width: TODAY_SIZE,
+            height: TODAY_SIZE,
+            margin: `${(DAY_SIZE - TODAY_SIZE) / 2}px ${
+                (CELL_WIDTH - TODAY_SIZE) / 2
+            }px`,
+        },
+        ...(inRange &&
+            !isEdge && {
+                ...fullCell,
+                backgroundColor: band,
+                color: colors.primary,
+                "&:hover, &:focus, &.Mui-focusVisible": {
+                    backgroundColor: colors.tertiary,
+                },
+            }),
+        ...(isEdge && {
+            ...fullCell,
+            background: edgeBackground,
+            color: colors.white,
+            fontWeight: 600,
+            "&:hover, &:focus, &.Mui-focusVisible": {
+                background: edgeBackground,
+            },
+        }),
+    };
+});
+
+// Rows the month needs (4 to 6), so the calendar has no empty last row
+const weeksInMonth = (month: Date) =>
+    Math.ceil((getDay(startOfMonth(month)) + getDaysInMonth(month)) / 7);
+
+const calendarSx = {
+    // "< Novembro 2026 ▾ >": the arrows around the month. The arrow
+    // switcher is flattened so its buttons can be ordered around the label.
+    "& .MuiPickersCalendarHeader-root": {
+        px: 1.5,
+        justifyContent: "space-between",
+    },
+    "& .MuiPickersArrowSwitcher-root": { display: "contents" },
+    "& .MuiPickersArrowSwitcher-spacer": { display: "none" },
+    "& .MuiPickersArrowSwitcher-button:first-of-type": { order: -1 },
+    "& .MuiPickersCalendarHeader-labelContainer": {
+        mx: "auto",
+        textTransform: "capitalize",
+    },
+    "& .MuiPickersCalendarHeader-switchViewButton": { mr: 0 },
 };
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
@@ -78,18 +154,18 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     setEndDate,
     label,
     fullWidth = false,
+    clearable = false,
 }) => {
     const { t, i18n } = useTranslation();
     const isPortuguese = i18n.language?.startsWith("pt");
-    const dateFormat = isPortuguese ? DATE_FORMATS.pt : DATE_FORMATS.en;
-    const formatDay = (date: Date) => format(date, dateFormat.day);
-    const formatRangeDay = (date: Date) => format(date, dateFormat.rangeDay);
     const anchorRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
     // The range being picked; applied when the second day is chosen
     const [draftStart, setDraftStart] = useState<Date | null>(null);
     const [draftEnd, setDraftEnd] = useState<Date | null>(null);
     const [hovered, setHovered] = useState<Date | null>(null);
+    // The month on screen, to size the calendar to its weeks
+    const [viewMonth, setViewMonth] = useState<Date>(new Date());
 
     const apply = (start: Date | null, end: Date | null) => {
         setStartDate(start);
@@ -100,6 +176,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         setDraftStart(startDate);
         setDraftEnd(endDate);
         setHovered(null);
+        setViewMonth(endDate ?? startDate ?? new Date());
         setOpen(true);
     };
 
@@ -147,7 +224,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         pickersDayProps: PickersDayProps<Date>
     ) => {
         const isStart = !!draftStart && isSameDay(day, draftStart);
-        const isEnd = !!rangeEnd && isSameDay(day, rangeEnd);
+        const isEnd =
+            (!!rangeEnd && isSameDay(day, rangeEnd)) ||
+            // A start without an end is a single circle
+            (isStart && !rangeEnd);
         const inRange =
             !!draftStart &&
             !!rangeEnd &&
@@ -165,17 +245,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         );
     };
 
-    let displayValue = "";
-    if (startDate && endDate) {
-        displayValue = `${formatRangeDay(startDate)} – ${formatRangeDay(endDate)}`;
-    } else if (startDate) {
-        displayValue = t("common:dateRangeFrom", { date: formatDay(startDate) });
-    } else if (endDate) {
-        displayValue = t("common:dateRangeUntil", { date: formatDay(endDate) });
-    }
-
+    const displayValue = formatDateRange(startDate, endDate, i18n.language, t);
     const fieldLabel =
         label === undefined ? t("common:dateRangeLabel") : label ?? undefined;
+    const showClear = clearable && !!(startDate || endDate);
 
     return (
         <>
@@ -200,6 +273,23 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                             <CalendarMonthOutlinedIcon fontSize="small" />
                         </InputAdornment>
                     ),
+                    endAdornment: showClear && (
+                        <InputAdornment position="end">
+                            <IconButton
+                                size="small"
+                                edge="end"
+                                aria-label={t("common:dateRangeClear")}
+                                onClick={(event) => {
+                                    // Clearing must not open the calendar
+                                    event.stopPropagation();
+                                    clear();
+                                }}
+                                data-cy="testDateRangeFieldClear"
+                            >
+                                <CloseIcon sx={{ fontSize: 16 }} />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
                 }}
                 inputProps={{
                     "aria-haspopup": "dialog",
@@ -221,7 +311,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             >
                 <LocalizationProvider
                     dateAdapter={AdapterDateFns}
-                    adapterLocale={dateFormat.locale}
+                    adapterLocale={getDateFormat(i18n.language).locale}
                     // Button labels such as "Previous month"
                     localeText={
                         isPortuguese
@@ -230,10 +320,20 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                             : undefined
                     }
                 >
-                    <Box onMouseLeave={() => setHovered(null)}>
+                    <Box
+                        onMouseLeave={() => setHovered(null)}
+                        sx={{
+                            ...calendarSx,
+                            "& .MuiDayPicker-slideTransition": {
+                                minHeight:
+                                    weeksInMonth(viewMonth) * WEEK_HEIGHT,
+                            },
+                        }}
+                    >
                         <CalendarPicker
                             date={draftEnd ?? draftStart ?? endDate ?? null}
                             onChange={handleDayClick}
+                            onMonthChange={(month) => setViewMonth(month)}
                             disableFuture
                             renderDay={renderDay}
                         />
@@ -247,14 +347,14 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
                         pb: 1.5,
                     }}
                 >
-                    <Button
+                    <AletheiaButton
+                        type={ButtonType.whiteOutline}
                         size="small"
                         onClick={clear}
-                        sx={{ textTransform: "none" }}
                         data-cy="testDateRangeClear"
                     >
                         {t("common:dateRangeClear")}
-                    </Button>
+                    </AletheiaButton>
                 </Box>
             </Popover>
         </>

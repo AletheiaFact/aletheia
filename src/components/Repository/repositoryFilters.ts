@@ -1,4 +1,5 @@
 import {
+    DEFAULT_METHODOLOGY,
     MethodologyId,
     isMethodologyId,
 } from "../../../lib/classification-methodology";
@@ -24,8 +25,10 @@ export interface RepositoryFilters {
     order: SortOrder;
     // Claims tab only
     reviewStatus: ReviewStatus;
-    // Reviews tab only
-    methodology: MethodologyId | null;
+    // Reviews tab only. The methodology only picks the wording of the
+    // classification options; it does not filter the results, since every
+    // methodology stores the same classification keys.
+    methodology: MethodologyId;
     classification: string[];
 }
 
@@ -56,16 +59,25 @@ export const EMPTY_FILTERS: RepositoryFilters = {
     endDate: null,
     order: "desc",
     reviewStatus: "all",
-    methodology: null,
+    methodology: DEFAULT_METHODOLOGY,
     classification: [],
 };
+
+// View preferences, kept by "clear filters" and not counted as filters
+const VIEW_KEYS = ["order", "methodology"];
 
 export const hasActiveFilters = (filters: RepositoryFilters) =>
     Object.keys(EMPTY_FILTERS).some(
         (key) =>
-            key !== "order" &&
+            !VIEW_KEYS.includes(key) &&
             JSON.stringify(filters[key]) !== JSON.stringify(EMPTY_FILTERS[key])
     );
+
+export const clearedFilters = (filters: RepositoryFilters): RepositoryFilters => ({
+    ...EMPTY_FILTERS,
+    order: filters.order,
+    methodology: filters.methodology,
+});
 
 type QueryValue = string | string[] | undefined;
 export type RepositoryQuery = Record<string, QueryValue>;
@@ -117,7 +129,9 @@ export const parseFilters = (query: RepositoryQuery): RepositoryFilters => {
             reviewStatus === "with" || reviewStatus === "without"
                 ? reviewStatus
                 : "all",
-        methodology: isMethodologyId(methodology) ? methodology : null,
+        methodology: isMethodologyId(methodology)
+            ? methodology
+            : DEFAULT_METHODOLOGY,
         classification: all(query.classification).filter(isClassificationKey),
     };
 };
@@ -145,7 +159,10 @@ export const toSearchParams = (
     if (tab === "claims") {
         set("reviewStatus", filters.reviewStatus !== "all" && filters.reviewStatus);
     } else {
-        set("methodology", filters.methodology);
+        set(
+            "methodology",
+            filters.methodology !== DEFAULT_METHODOLOGY && filters.methodology
+        );
         filters.classification.forEach((value) =>
             params.append("classification", value)
         );
@@ -192,7 +209,6 @@ export const toReviewParams = (filters: RepositoryFilters) => ({
     ...sharedParams(filters),
     personality: filters.personality?.id,
     mainTopicId: filters.topic?.id,
-    classificationMethodology: filters.methodology ?? undefined,
     classification: filters.classification.length
         ? filters.classification
         : undefined,

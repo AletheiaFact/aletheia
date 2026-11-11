@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
+import ActiveFilterChips, { getActiveFilters } from "./ActiveFilterChips";
 import RepositoryFilterPanel from "./RepositoryFilterPanel";
 import RepositoryFiltersSheet from "./RepositoryFiltersSheet";
 import RepositoryResults from "./RepositoryResults";
@@ -21,7 +22,7 @@ const RepositoryView = ({
     initialQuery,
     onFiltersOpenChange,
 }: RepositoryViewProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // Below the app's md breakpoint the filters move into a bottom sheet
     const isMobile = !!useAppSelector((state) => state?.vw?.md);
     const {
@@ -35,8 +36,7 @@ const RepositoryView = ({
     } = useRepositoryFilters(initialQuery);
     const list = useRepositoryList(tab, filters);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const isClaims = tab === "claims";
-    const filtersActive = hasActiveFilters(filters);
+    const activeFilters = getActiveFilters(tab, filters, i18n.language, t);
 
     const closeDrawer = () => setDrawerOpen(false);
     const sheetOpen = isMobile && drawerOpen;
@@ -50,9 +50,9 @@ const RepositoryView = ({
             tab={tab}
             filters={filters}
             contentModelCounts={list.contentModelCounts}
+            countsReady={!list.refreshing}
             onChange={updateFilters}
             onClear={clearFilters}
-            showSort={inSheet}
             onClose={inSheet ? closeDrawer : undefined}
         />
     );
@@ -85,50 +85,31 @@ const RepositoryView = ({
                         <RepositoryToolbar
                             tab={tab}
                             isMobile={isMobile}
+                            total={list.refreshing ? null : list.total}
                             searchText={searchText}
                             onSearchChange={setSearchText}
                             order={filters.order}
                             onOrderChange={(order) => updateFilters({ order })}
-                            hasActiveFilters={filtersActive}
+                            activeFilterCount={activeFilters.length}
                             onOpenFilters={() => setDrawerOpen(true)}
                         />
 
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "baseline",
-                                gap: 1.5,
-                                my: 2,
-                            }}
-                        >
-                            {!isMobile && (
-                                <Typography variant="h2" fontSize={22}>
-                                    {t(
-                                        isClaims
-                                            ? "repository:claimsTab"
-                                            : "repository:reviewsTab"
-                                    )}
-                                </Typography>
-                            )}
-                            {!list.refreshing && (
-                                <Typography
-                                    variant="body2"
-                                    data-cy="testRepositoryTotal"
-                                >
-                                    {t(
-                                        isClaims
-                                            ? "repository:claimsTotal"
-                                            : "repository:reviewsTotal",
-                                        { count: list.total }
-                                    )}
-                                </Typography>
-                            )}
-                        </Box>
+                        <Divider sx={{ my: 2.5 }} />
+
+                        {activeFilters.length > 0 && (
+                            <Box sx={{ mb: 2.5 }}>
+                                <ActiveFilterChips
+                                    filters={activeFilters}
+                                    onChange={updateFilters}
+                                    onClear={clearFilters}
+                                />
+                            </Box>
+                        )}
 
                         <RepositoryResults
                             tab={tab}
                             list={list}
-                            hasActiveFilters={filtersActive}
+                            hasActiveFilters={hasActiveFilters(filters)}
                             onClearFilters={clearFilters}
                         />
                     </Grid>

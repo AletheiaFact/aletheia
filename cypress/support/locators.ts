@@ -16,12 +16,18 @@ const locators = {
         CONTENT_MODEL: (value: string) =>
             `[data-cy=testRepositoryContentModel-${value}] input`,
         CLASSIFICATION: (value: string) =>
-            `[data-cy=testRepositoryClassification-${value}] input`,
+            `[data-cy=testRepositoryClassification-${value}]`,
         CLASSIFICATIONS: "[data-cy^=testRepositoryClassification-]",
         METHODOLOGY: (id: string) => `[data-cy=testRepositoryMethodology-${id}]`,
         REVIEW_STATUS: (value: string) =>
             `[data-cy=testRepositoryReviewStatus-${value}]`,
         DATE_RANGE: `[data-cy=testRepositoryFilters] [data-cy=testDateRangeInput]`,
+        DATE_PRESET: (key: string) => `[data-cy=testRepositoryDatePreset-${key}]`,
+        ACTIVE_FILTERS: "[data-cy=testRepositoryActiveFilters]",
+        ACTIVE_FILTER: (key: string) =>
+            `[data-cy=testRepositoryActiveFilter-${key}]`,
+        ACTIVE_FILTER_COUNT: "[data-cy=testRepositoryActiveFilterCount]",
+        CLEAR_ALL_FILTERS: "[data-cy=testRepositoryClearAllFilters]",
     },
 
     dateRange: {
