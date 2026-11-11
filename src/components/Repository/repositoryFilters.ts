@@ -7,6 +7,7 @@ import { ContentModelEnum } from "../../types/enums";
 
 export type RepositoryTab = "claims" | "reviews";
 export type ReviewStatus = "all" | "with" | "without";
+export type SortOrder = "desc" | "asc";
 
 export interface NamedOption {
     id: string;
@@ -20,13 +21,23 @@ export interface RepositoryFilters {
     contentModel: string[];
     startDate: Date | null;
     endDate: Date | null;
-    order: "desc" | "asc";
+    order: SortOrder;
     // Claims tab only
     reviewStatus: ReviewStatus;
     // Reviews tab only
     methodology: MethodologyId | null;
     classification: string[];
 }
+
+export type FiltersChangeHandler = (
+    changes: Partial<RepositoryFilters>
+) => void;
+
+// Adds the value to a multi-select filter, or removes it if already there
+export const toggleValue = (list: string[], value: string) =>
+    list.includes(value)
+        ? list.filter((item) => item !== value)
+        : [...list, value];
 
 // Display order of the content type filter
 export const CONTENT_MODELS = [

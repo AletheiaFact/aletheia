@@ -1,45 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {
-    Badge,
-    Box,
-    Button,
-    Drawer,
-    Grid,
-    InputAdornment,
-    MenuItem,
-    Paper,
-    Select,
-    Skeleton,
-    Tab,
-    Tabs,
-    TextField,
-    Typography,
-} from "@mui/material";
-import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import SearchIcon from "@mui/icons-material/Search";
-import SortIcon from "@mui/icons-material/Sort";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/store";
-import AletheiaButton, { ButtonType } from "../AletheiaButton";
-import ClaimCard from "../Claim/ClaimCard";
-import ReviewCard from "../ClaimReview/ReviewCard";
 import RepositoryFilterPanel from "./RepositoryFilterPanel";
+import RepositoryFiltersSheet from "./RepositoryFiltersSheet";
+import RepositoryResults from "./RepositoryResults";
+import RepositoryTabs from "./RepositoryTabs";
+import RepositoryToolbar from "./RepositoryToolbar";
+import useRepositoryFilters from "./useRepositoryFilters";
 import useRepositoryList from "./useRepositoryList";
-import {
-    EMPTY_FILTERS,
-    RepositoryFilters,
-    RepositoryQuery,
-    RepositoryTab,
-    hasActiveFilters,
-    parseFilters,
-    parseTab,
-    toSearchParams,
-} from "./repositoryFilters";
-
-const SEARCH_DEBOUNCE_MS = 400;
+import { RepositoryQuery, hasActiveFilters } from "./repositoryFilters";
 
 interface RepositoryViewProps {
     initialQuery: RepositoryQuery;
@@ -52,63 +22,21 @@ const RepositoryView = ({
     onFiltersOpenChange,
 }: RepositoryViewProps) => {
     const { t } = useTranslation();
-    // Below the app's md breakpoint the filters move into a drawer
-    const isMobile = useAppSelector((state) => state?.vw?.md);
-    const [tab, setTab] = useState<RepositoryTab>(() => parseTab(initialQuery));
-    // Each tab keeps its own filters; the URL reflects the open tab.
-    const [filtersByTab, setFiltersByTab] = useState<
-        Record<RepositoryTab, RepositoryFilters>
-    >(() => {
-        const initialTab = parseTab(initialQuery);
-        const initialFilters = parseFilters(initialQuery);
-        return {
-            claims: initialTab === "claims" ? initialFilters : EMPTY_FILTERS,
-            reviews: initialTab === "reviews" ? initialFilters : EMPTY_FILTERS,
-        };
-    });
-    const filters = filtersByTab[tab];
-    const [searchText, setSearchText] = useState(filters.q);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    // Below the app's md breakpoint the filters move into a bottom sheet
+    const isMobile = !!useAppSelector((state) => state?.vw?.md);
+    const {
+        tab,
+        changeTab,
+        filters,
+        updateFilters,
+        clearFilters,
+        searchText,
+        setSearchText,
+    } = useRepositoryFilters(initialQuery);
     const list = useRepositoryList(tab, filters);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const isClaims = tab === "claims";
-
-    const updateFilters = (changes: Partial<RepositoryFilters>) =>
-        setFiltersByTab((previous) => ({
-            ...previous,
-            [tab]: { ...previous[tab], ...changes },
-        }));
-
-    const clearFilters = () => {
-        setSearchText("");
-        updateFilters({ ...EMPTY_FILTERS, order: filters.order });
-    };
-
-    const changeTab = (nextTab: RepositoryTab) => {
-        setTab(nextTab);
-        setSearchText(filtersByTab[nextTab].q);
-    };
-
-    useEffect(() => {
-        if (searchText === filters.q) return;
-        const timer = setTimeout(
-            () =>
-                setFiltersByTab((previous) => ({
-                    ...previous,
-                    [tab]: { ...previous[tab], q: searchText },
-                })),
-            SEARCH_DEBOUNCE_MS
-        );
-        return () => clearTimeout(timer);
-    }, [searchText, tab, filters.q]);
-
-    useEffect(() => {
-        const params = toSearchParams(tab, filters).toString();
-        const search = params ? "?" + params : "";
-        const url = window.location.pathname + search;
-        // Replace without a Next navigation: the page is rendered by Nest,
-        // so the Next router does not know the /claim route.
-        window.history.replaceState(window.history.state, "", url);
-    }, [tab, filters]);
+    const filtersActive = hasActiveFilters(filters);
 
     const closeDrawer = () => setDrawerOpen(false);
     const sheetOpen = isMobile && drawerOpen;
@@ -129,87 +57,6 @@ const RepositoryView = ({
         />
     );
 
-    const renderResults = () => {
-        if (list.refreshing) {
-            return (
-                <Grid container spacing={2}>
-                    {[0, 1, 2, 3].map((key) => (
-                        <Grid item xs={12} md={6} key={key}>
-                            <Skeleton variant="rounded" height={240} />
-                        </Grid>
-                    ))}
-                </Grid>
-            );
-        }
-
-        if (!list.items.length) {
-            return (
-                <Paper
-                    variant="outlined"
-                    sx={{ p: 4, textAlign: "center" }}
-                    data-cy="testRepositoryEmpty"
-                >
-                    <Typography>
-                        {t(
-                            list.error
-                                ? "repository:loadError"
-                                : "repository:noResults"
-                        )}
-                    </Typography>
-                    {hasActiveFilters(filters) && (
-                        <Button
-                            onClick={clearFilters}
-                            data-cy="testRepositoryEmptyClear"
-                            sx={{ mt: 2, textTransform: "none" }}
-                        >
-                            {t("repository:clearFilters")}
-                        </Button>
-                    )}
-                </Paper>
-            );
-        }
-
-        return (
-            <>
-                <Grid container spacing={2} data-cy="testRepositoryResults">
-                    {list.items.map((item) => (
-                        <Grid
-                            item
-                            xs={12}
-                            md={6}
-                            key={
-                                isClaims
-                                    ? item._id
-                                    : item.content?._id || item.reviewHref
-                            }
-                        >
-                            {isClaims ? (
-                                <ClaimCard
-                                    personality={{ _id: null }}
-                                    claim={item}
-                                />
-                            ) : (
-                                <ReviewCard review={item} />
-                            )}
-                        </Grid>
-                    ))}
-                </Grid>
-                {list.hasMore && (
-                    <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                        <AletheiaButton
-                            type={ButtonType.whiteOutline}
-                            onClick={list.loadMore}
-                            loading={list.loading}
-                            data-cy="testRepositoryLoadMore"
-                        >
-                            {t("repository:loadMore")}
-                        </AletheiaButton>
-                    </Box>
-                )}
-            </>
-        );
-    };
-
     return (
         <Grid container sx={{ mt: 8, mb: 6, justifyContent: "center" }}>
             <Grid item xs={11} lg={10.5}>
@@ -220,36 +67,7 @@ const RepositoryView = ({
                     {t("claim:claimListDescription")}
                 </Typography>
 
-                <Tabs
-                    value={tab}
-                    onChange={(_event, value) => changeTab(value)}
-                    sx={{
-                        mt: 3,
-                        borderBottom: `1px solid ${colors.neutralTertiary}`,
-                        "& .MuiTab-root": {
-                            textTransform: "none",
-                            fontSize: 16,
-                            minHeight: 48,
-                        },
-                        "& .Mui-selected": { color: `${colors.primary} !important` },
-                        "& .MuiTabs-indicator": { backgroundColor: colors.primary },
-                    }}
-                >
-                    <Tab
-                        value="reviews"
-                        icon={<VerifiedUserIcon fontSize="small" />}
-                        iconPosition="start"
-                        label={t("repository:reviewsTab")}
-                        data-cy="testRepositoryReviewsTab"
-                    />
-                    <Tab
-                        value="claims"
-                        icon={<ChatOutlinedIcon fontSize="small" />}
-                        iconPosition="start"
-                        label={t("repository:claimsTab")}
-                        data-cy="testRepositoryClaimsTab"
-                    />
-                </Tabs>
+                <RepositoryTabs value={tab} onChange={changeTab} />
 
                 <Grid container spacing={3} sx={{ mt: 0 }}>
                     {!isMobile && (
@@ -264,113 +82,16 @@ const RepositoryView = ({
                     )}
 
                     <Grid item xs={12} md={isMobile ? 12 : 9}>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                gap: 1.5,
-                                alignItems: "center",
-                                // Search and the filters button share one row
-                                flexWrap: isMobile ? "nowrap" : "wrap",
-                            }}
-                        >
-                            <TextField
-                                size="small"
-                                value={searchText}
-                                onChange={(event) =>
-                                    setSearchText(event.target.value)
-                                }
-                                placeholder={t(
-                                    isClaims
-                                        ? "repository:searchClaims"
-                                        : "repository:searchReviews"
-                                )}
-                                inputProps={{
-                                    maxLength: 100,
-                                    "aria-label": t(
-                                        isClaims
-                                            ? "repository:searchClaims"
-                                            : "repository:searchReviews"
-                                    ),
-                                }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon fontSize="small" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    flex: isMobile ? "1 1 0" : "1 1 280px",
-                                    minWidth: 0,
-                                    backgroundColor: colors.white,
-                                }}
-                                data-cy="testRepositorySearch"
-                            />
-                            {isMobile && (
-                                <Badge
-                                    color="primary"
-                                    variant="dot"
-                                    invisible={!hasActiveFilters(filters)}
-                                >
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<FilterListIcon />}
-                                        onClick={() => setDrawerOpen(true)}
-                                        data-cy="testRepositoryOpenFilters"
-                                        sx={{
-                                            textTransform: "none",
-                                            whiteSpace: "nowrap",
-                                            height: 40,
-                                        }}
-                                    >
-                                        {t("repository:showFilters")}
-                                    </Button>
-                                </Badge>
-                            )}
-                            {/* On a phone the sort lives in the filters sheet */}
-                            {!isMobile && (
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 1,
-                                    }}
-                                >
-                                    <SortIcon fontSize="small" />
-                                    <Typography
-                                        component="label"
-                                        htmlFor="repository-sort"
-                                        sx={{ fontWeight: 600 }}
-                                    >
-                                        {t("repository:sort")}
-                                    </Typography>
-                                    <Select
-                                        size="small"
-                                        id="repository-sort"
-                                        value={filters.order}
-                                        onChange={(event) =>
-                                            updateFilters({
-                                                order: event.target.value as
-                                                    | "asc"
-                                                    | "desc",
-                                            })
-                                        }
-                                        sx={{
-                                            minWidth: 170,
-                                            backgroundColor: colors.white,
-                                        }}
-                                        data-cy="testRepositorySort"
-                                    >
-                                        <MenuItem value="desc">
-                                            {t("repository:sortNewest")}
-                                        </MenuItem>
-                                        <MenuItem value="asc">
-                                            {t("repository:sortOldest")}
-                                        </MenuItem>
-                                    </Select>
-                                </Box>
-                            )}
-                        </Box>
+                        <RepositoryToolbar
+                            tab={tab}
+                            isMobile={isMobile}
+                            searchText={searchText}
+                            onSearchChange={setSearchText}
+                            order={filters.order}
+                            onOrderChange={(order) => updateFilters({ order })}
+                            hasActiveFilters={filtersActive}
+                            onOpenFilters={() => setDrawerOpen(true)}
+                        />
 
                         <Box
                             sx={{
@@ -404,65 +125,24 @@ const RepositoryView = ({
                             )}
                         </Box>
 
-                        {renderResults()}
+                        <RepositoryResults
+                            tab={tab}
+                            list={list}
+                            hasActiveFilters={filtersActive}
+                            onClearFilters={clearFilters}
+                        />
                     </Grid>
                 </Grid>
             </Grid>
 
-            <Drawer
-                anchor="bottom"
+            <RepositoryFiltersSheet
                 open={sheetOpen}
                 onClose={closeDrawer}
-                // MUI 5 Drawer only styles its paper through PaperProps
-                PaperProps={{
-                    sx: {
-                        maxHeight: "90vh",
-                        borderTopLeftRadius: 16,
-                        borderTopRightRadius: 16,
-                        display: "flex",
-                        flexDirection: "column",
-                    },
-                }}
+                refreshing={list.refreshing}
+                total={list.total}
             >
-                {/* Grab handle of the bottom sheet */}
-                <Box
-                    sx={{
-                        width: 40,
-                        height: 4,
-                        borderRadius: 2,
-                        backgroundColor: colors.neutralTertiary,
-                        mx: "auto",
-                        mt: 1,
-                        flexShrink: 0,
-                    }}
-                />
-                <Box sx={{ overflowY: "auto", px: 2.5, pt: 1.5, pb: 2 }}>
-                    {renderFilterPanel(true)}
-                </Box>
-                <Box
-                    sx={{
-                        px: 2.5,
-                        pt: 1.5,
-                        pb: "calc(16px + env(safe-area-inset-bottom, 0px))",
-                        borderTop: `1px solid ${colors.neutralTertiary}`,
-                        flexShrink: 0,
-                    }}
-                >
-                    <AletheiaButton
-                        type={ButtonType.primary}
-                        onClick={closeDrawer}
-                        loading={list.refreshing}
-                        data-cy="testRepositoryApplyFilters"
-                        style={{ width: "100%" }}
-                    >
-                        {list.refreshing
-                            ? t("repository:applyFilters")
-                            : t("repository:showResults", {
-                                  count: list.total,
-                              })}
-                    </AletheiaButton>
-                </Box>
-            </Drawer>
+                {renderFilterPanel(true)}
+            </RepositoryFiltersSheet>
         </Grid>
     );
 };

@@ -111,4 +111,6 @@ const useRepositoryList = (tab: RepositoryTab, filters: RepositoryFilters) => {
     };
 };
 
+export type RepositoryList = ReturnType<typeof useRepositoryList>;
+
 export default useRepositoryList;
