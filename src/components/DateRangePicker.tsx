@@ -17,7 +17,7 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { ptBR as ptBRPickers } from "@mui/x-date-pickers/locales";
 import { format, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { enUS, ptBR } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import colors from "../styles/colors";
 
@@ -64,9 +64,12 @@ const RangeDay = styled(PickersDay, {
     }),
 }));
 
-const formatDay = (date: Date) => format(date, "dd/MM/yyyy");
-// Both ends with a two-digit year, so a full range fits a sidebar field
-const formatRangeDay = (date: Date) => format(date, "dd/MM/yy");
+// Day order follows the UI language; the full year is shown for a single
+// day, while a full range uses two-digit years so it fits a sidebar field
+const DATE_FORMATS = {
+    pt: { locale: ptBR, day: "dd/MM/yyyy", rangeDay: "dd/MM/yy" },
+    en: { locale: enUS, day: "MM/dd/yyyy", rangeDay: "MM/dd/yy" },
+};
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
     startDate,
@@ -77,6 +80,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     fullWidth = false,
 }) => {
     const { t, i18n } = useTranslation();
+    const isPortuguese = i18n.language?.startsWith("pt");
+    const dateFormat = isPortuguese ? DATE_FORMATS.pt : DATE_FORMATS.en;
+    const formatDay = (date: Date) => format(date, dateFormat.day);
+    const formatRangeDay = (date: Date) => format(date, dateFormat.rangeDay);
     const anchorRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
     // The range being picked; applied when the second day is chosen
@@ -214,10 +221,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             >
                 <LocalizationProvider
                     dateAdapter={AdapterDateFns}
-                    adapterLocale={ptBR}
+                    adapterLocale={dateFormat.locale}
                     // Button labels such as "Previous month"
                     localeText={
-                        i18n.language?.startsWith("pt")
+                        isPortuguese
                             ? ptBRPickers.components.MuiLocalizationProvider
                                   .defaultProps.localeText
                             : undefined

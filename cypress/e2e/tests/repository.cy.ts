@@ -97,7 +97,11 @@ describe("Repository page", () => {
                 .and("include", `endDate=${day(20)}`);
             cy.get(`${page.DATE_RANGE} input`)
                 .invoke("val")
-                .should("match", /^10\/\d{2}\/\d{2} – 20\/\d{2}\/\d{2}$/);
+                // dd/MM/yy in pt, MM/dd/yy in en
+                .should(
+                    "match",
+                    /^(10\/\d{2}|\d{2}\/10)\/\d{2} – (20\/\d{2}|\d{2}\/20)\/\d{2}$/
+                );
 
             cy.get(`${page.DATE_RANGE} input`).click();
             cy.get(dateRange.CLEAR).click();
