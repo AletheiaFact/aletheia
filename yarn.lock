@@ -12664,7 +12664,7 @@ __metadata:
     moment: ^2.30.1
     mongodb: ^6.8.0
     mongodb-memory-server: ^10.0.0
-    mongoose: 6.13.10
+    mongoose: 6.13.12
     mongoose-softdelete-typescript: ^0.0.3
     nestjs-unleash: ^2.2.3
     next: 15.5.28
@@ -22775,18 +22775,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:6.13.10":
-  version: 6.13.10
-  resolution: "mongoose@npm:6.13.10"
+"mongoose@npm:6.13.12":
+  version: 6.13.12
+  resolution: "mongoose@npm:6.13.12"
   dependencies:
     bson: ^4.7.2
     kareem: 2.5.1
     mongodb: 4.17.2
     mpath: 0.9.0
-    mquery: 4.0.3
+    mquery: 4.0.4
     ms: 2.1.3
     sift: 16.0.1
-  checksum: 4c7c8de41e95addd36fc0349a8329424c9d3511bc45c16d3525a8593d5b25755b0a925746a37546586927f85927673dfbe71379c5341d4dade6fbc33c22ab535
+  checksum: 8e5151906fd30ba4552355fa399276669364cfd9bea1e963608dae742e39dee90ba7059dc122fd133cdc08348018804770b0a9c9152ba5cf54b3622bcf5f58c2
   languageName: node
   linkType: hard
 
@@ -22817,12 +22817,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mquery@npm:4.0.3":
-  version: 4.0.3
-  resolution: "mquery@npm:4.0.3"
+"mquery@npm:4.0.4":
+  version: 4.0.4
+  resolution: "mquery@npm:4.0.4"
   dependencies:
     debug: 4.x
-  checksum: 16a6887ba7594e71d38969ab58c7be1866a0ffa07a559e4bb43eaefd00db2ae174aedbe2187d94f2a86dca1e07e024d03c22c39fdea09bf08dbf586a2f7ecb0c
+  checksum: 71aa16bc25f6a2de2cff4141f7310cd17ab3b8c79c30b11e0b8175f30ff6df169cc02b16e8d28edf1d5ce13920b30a7af5cbfebd383640ab07c1d055db7f3823
   languageName: node
   linkType: hard
 
