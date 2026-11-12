@@ -50,9 +50,7 @@ function notSent(
     fromBacklogs: Backlog[]
 ): ConflictException {
     const state = stateName(task.machine?.value);
-    const sendable =
-        state === "reported" || fromBacklogs.some((b) => inBacklog(task, b));
-    if (sendable) {
+    if (state === "reported" || fromBacklogs.some((b) => inBacklog(task, b))) {
         return new ConflictException(MOVED_BY_SOMEONE_ELSE);
     }
     const skipHint =
@@ -71,13 +69,13 @@ function notSent(
  * or (without a pick) waits in the review backlog.
  */
 function alreadySentToReview(task: any, reviewerId?: string): boolean {
-    if (!reviewerId) {
-        return inBacklog(task, "selectReviewer");
-    }
-    return (
-        stateName(task.machine?.value) === "submitted" &&
-        idsEqual(task.machine?.context?.reviewData?.reviewerId, reviewerId)
-    );
+    return reviewerId
+        ? stateName(task.machine?.value) === "submitted" &&
+              idsEqual(
+                  task.machine?.context?.reviewData?.reviewerId,
+                  reviewerId
+              )
+        : inBacklog(task, "selectReviewer");
 }
 
 /** The report has a cross-check that agrees with its label. */
