@@ -1,5 +1,5 @@
 {
-  "id": "f4ebc570-bb8e-4d24-8a70-dce787b6efed",
+  "id": "74dc279f-e33b-408a-913c-8287d52cc5d1",
   "prevId": "93ba06c4-eecc-4e00-b91e-dcaa47a219ee",
   "version": "7",
   "dialect": "postgresql",
@@ -930,13 +930,6 @@
           "notNull": true,
           "default": "'{}'::jsonb"
         },
-        "field_provenance": {
-          "name": "field_provenance",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'{}'::jsonb"
-        },
         "is_deleted": {
           "name": "is_deleted",
           "type": "boolean",
@@ -1587,6 +1580,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "is_deleted": {
           "name": "is_deleted",
           "type": "boolean",
@@ -1890,6 +1890,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "is_deleted": {
           "name": "is_deleted",

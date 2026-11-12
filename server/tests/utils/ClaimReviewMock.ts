@@ -18,7 +18,7 @@ export const ReviewMock = (
     usersId: [new ObjectId(userId)],
     report: new ObjectId(reportId),
     data_hash: "4be75d25957a3cc0dbc6975a6939a385",
-    date: "2024-04-18T17:32:36.769+00:00",
+    date: new Date("2024-04-18T17:32:36.769+00:00"),
     isPublished: true,
     nameSpace: NameSpaceEnum.Main,
 });

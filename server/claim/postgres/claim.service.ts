@@ -10,6 +10,7 @@ import { REQUEST } from "@nestjs/core";
 import { randomUUID } from "node:crypto";
 import { and, eq, inArray, sql, SQL } from "drizzle-orm";
 import type {
+    ClaimListFilters,
     ClaimListQuery,
     IClaimService,
 } from "../../interfaces/claim.service.interface";
@@ -99,7 +100,8 @@ export class PostgresClaimService implements IClaimService {
         _page: number,
         _pageSize: number,
         _order: string,
-        _query: ClaimListQuery
+        _query: ClaimListQuery,
+        _filters?: ClaimListFilters
     ): Promise<{ data: any[]; total: number }> {
         return Promise.reject(
             new NotImplementedError("postgres", "listAll(postProcess)")

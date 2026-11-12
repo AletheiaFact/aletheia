@@ -61,8 +61,15 @@
     {
       "idx": 8,
       "version": "7",
-      "when": 1794067114211,
-      "tag": "0008_verification_request_field_provenance",
+      "when": 1794322173147,
+      "tag": "0008_content_is_draft",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794512091788,
+      "tag": "0009_verification_request_field_provenance",
       "breakpoints": true
     }
   ]

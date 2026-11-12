@@ -7,7 +7,6 @@ import {
     Get,
     Header,
     Delete,
-    Query,
 } from "@nestjs/common";
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -15,8 +14,11 @@ import { ClaimReviewService } from "./claim-review.service";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
-import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import {
+    ListClaimReviewsQuerySchema,
+    ListClaimReviewsQueryDto,
+} from "./dto/get-claim-reviews.dto";
+import { ZodQuery } from "../common/validation";
 import { listAllResponse } from "./types/claim-review.interfaces";
 import { UpdateClaimReviewDTO } from "./dto/update-claim-review.dto";
 import { UpdateWriteOpResult } from "mongoose";
@@ -34,29 +36,49 @@ export class ClaimReviewController {
     @Get("api/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(
-        @Query() getClaimReviewsDto: GetClaimReviewsDTO
+        @ZodQuery(ListClaimReviewsQuerySchema)
+        getClaimReviewsDto: ListClaimReviewsQueryDto
     ): Promise<listAllResponse> {
         const {
-            page = 0,
-            pageSize = 10,
-            order = "asc",
-            isHidden = false,
-            latest = false,
-            nameSpace = NameSpaceEnum.Main,
+            page,
+            pageSize,
+            order,
+            isHidden,
+            latest,
+            nameSpace,
             mainTopicId,
+            q,
+            personality,
+            contentModel,
+            classification,
+            classificationMethodology,
+            startDate,
+            endDate,
+            withCounts,
         } = getClaimReviewsDto;
 
         const reviews = await this.claimReviewService.listAll({
             page,
             pageSize,
-            order,
+            order: order === "asc" ? "asc" : "desc",
             query: {
                 isHidden,
                 nameSpace,
                 isDeleted: false,
+                isPublished: true,
             },
             latest,
             mainTopicId,
+            filters: {
+                q,
+                personality,
+                contentModel,
+                classification,
+                classificationMethodology,
+                startDate,
+                endDate,
+            },
+            withContentModelCounts: withCounts,
         });
 
         return {
@@ -65,6 +87,9 @@ export class ClaimReviewController {
             totalPages: Math.ceil(reviews.total / pageSize),
             page: page,
             pageSize: pageSize,
+            ...(reviews.contentModelCounts && {
+                contentModelCounts: reviews.contentModelCounts,
+            }),
         };
     }
 

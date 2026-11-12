@@ -1,42 +1,37 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
-import { IsInt, IsNumber, IsOptional, IsString, Min } from "class-validator";
-export class GetClaimReviewsDTO {
-    @IsNumber()
-    @IsInt()
-    @Min(0)
-    @ApiProperty()
-    page: number;
+import { z } from "zod";
+import {
+    legacyQueryFlag,
+    objectId,
+    pageQuery,
+    pageSizeQuery,
+    queryArray,
+    queryBoolean,
+} from "../../../lib/schemas";
+import { isClassificationKey } from "../../../lib/classification";
+import { METHODOLOGY_IDS } from "../../../lib/classification-methodology";
+import { repositoryFilterFields } from "../../claim/dto/claim.dto";
 
-    @IsNumber()
-    @Min(0)
-    @ApiProperty()
-    pageSize: number;
+const classificationKey = z
+    .string()
+    .refine(isClassificationKey, { error: "Invalid classification" });
 
-    @IsString()
-    @ApiProperty()
-    order: "asc" | "desc";
-
-    @IsOptional()
-    @ApiProperty()
-    @Transform(({ value }) => {
-        return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
-    })
-    isHidden: boolean | string;
-
-    @IsOptional()
-    @ApiProperty()
-    @Transform(({ value }) => {
-        return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
-    })
-    latest: boolean;
-
-    @IsString()
-    @ApiProperty()
-    nameSpace: string;
-
-    @IsOptional()
-    @IsString()
-    @ApiProperty()
-    mainTopicId: string;
-}
+// Ported from the class-validator DTO, which was strict.
+export const ListClaimReviewsQuerySchema = z.strictObject({
+    page: pageQuery,
+    pageSize: pageSizeQuery(100),
+    order: z.string(),
+    isHidden: legacyQueryFlag,
+    latest: legacyQueryFlag,
+    nameSpace: z.string(),
+    mainTopicId: objectId.optional(),
+    ...repositoryFilterFields,
+    personality: objectId.optional(),
+    classification: queryArray(classificationKey).optional(),
+    classificationMethodology: z.enum(METHODOLOGY_IDS).optional(),
+    withCounts: queryBoolean
+        .optional()
+        .meta({ description: "Also return contentModelCounts" }),
+});
+export type ListClaimReviewsQueryDto = z.output<
+    typeof ListClaimReviewsQuerySchema
+>;

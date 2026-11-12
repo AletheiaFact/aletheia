@@ -21,5 +21,10 @@
     "submit": "Enviar",
     "cancel": "Cancelar",
     "resolve": "Resolver",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "dateRangeLabel": "Período",
+    "dateRangePlaceholder": "Selecione o período",
+    "dateRangeFrom": "A partir de {{date}}",
+    "dateRangeUntil": "Até {{date}}",
+    "dateRangeClear": "Limpar"
 }
