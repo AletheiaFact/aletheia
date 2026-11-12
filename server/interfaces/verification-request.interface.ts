@@ -1,3 +1,5 @@
+import type { FieldProvenanceMap } from "../verification-request/dto/types";
+
 export interface IVerificationRequest {
     _id?: any;
     id?: any;
@@ -37,6 +39,7 @@ export interface IVerificationRequest {
     stateFingerprints?: any;
     auditLog?: Array<Record<string, any>>;
     pendingAiTasks?: any;
+    fieldProvenance?: FieldProvenanceMap;
     createdAt?: Date;
     updatedAt?: Date;
     [key: string]: any;

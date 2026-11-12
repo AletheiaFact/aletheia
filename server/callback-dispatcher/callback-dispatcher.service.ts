@@ -11,9 +11,12 @@ const CallbackResultSchema = z.any();
 
 type CallbackParams = { targetId: string; field: string };
 type CallbackResult = z.infer<typeof CallbackResultSchema>;
+// Which AI task produced the result, so handlers can record its origin
+export type CallbackMeta = { taskId?: string; model?: string };
 type CallbackHandler = (
     params: CallbackParams,
-    result: CallbackResult
+    result: CallbackResult,
+    meta: CallbackMeta
 ) => Promise<unknown>;
 
 @Injectable()
@@ -31,7 +34,12 @@ export class CallbackDispatcherService {
         this.logger.log(`Registered callback handler for key: ${routeKey}`);
     }
 
-    async dispatch(routeKey: string, params: unknown, result: unknown) {
+    async dispatch(
+        routeKey: string,
+        params: unknown,
+        result: unknown,
+        meta: CallbackMeta = {}
+    ) {
         const handler = this.handlers[routeKey];
         if (!handler) {
             this.logger.error(`No handler registered for key: ${routeKey}`);
@@ -44,7 +52,7 @@ export class CallbackDispatcherService {
             ) as CallbackParams;
             const validatedResult = CallbackResultSchema.parse(result);
 
-            await handler(validatedParams, validatedResult);
+            await handler(validatedParams, validatedResult, meta);
             this.logger.log(
                 `Successfully dispatched callback for key: ${routeKey}`
             );
