@@ -1,9 +1,12 @@
 import { z } from "zod";
 import {
     captchaToken,
+    isoDateTime,
     legacyQueryFlag,
     nonEmptyText,
+    objectId,
     pageQuery,
+    queryArray,
 } from "../../../lib/schemas";
 import { ContentModelEnum } from "../../types/enums";
 
@@ -78,6 +81,20 @@ export const UpdateHiddenStatusSchema = z.strictObject({
 });
 export type UpdateHiddenStatusDto = z.output<typeof UpdateHiddenStatusSchema>;
 
+// Filters shared by the repository page's claim and review lists.
+export const repositoryFilterFields = {
+    q: z
+        .string()
+        .trim()
+        .max(100)
+        .optional()
+        .transform((value) => value || undefined)
+        .meta({ description: "Text search, case-insensitive" }),
+    contentModel: queryArray(z.enum(ContentModelEnum)).optional(),
+    startDate: isoDateTime.optional(),
+    endDate: isoDateTime.optional(),
+};
+
 export const ListClaimsQuerySchema = z.strictObject({
     page: pageQuery,
     pageSize: z.coerce.number().min(0),
@@ -86,6 +103,13 @@ export const ListClaimsQuerySchema = z.strictObject({
     personality: z.string().optional(),
     isHidden: legacyQueryFlag,
     nameSpace: z.string().optional(),
+    ...repositoryFilterFields,
+    topic: objectId.optional(),
+    reviewStatus: z.enum(["with", "without"]).optional(),
+    sortBy: z
+        .enum(["id", "date"])
+        .optional()
+        .meta({ description: "date sorts by the claim's own date" }),
 });
 export type ListClaimsQueryDto = z.output<typeof ListClaimsQuerySchema>;
 

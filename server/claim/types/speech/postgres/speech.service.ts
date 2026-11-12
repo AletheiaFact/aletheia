@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { ISpeechService } from "../../../../interfaces/speech.service.interface";
 import type { ISpeech } from "../../../../interfaces/claim-content.interface";
 import { DRIZZLE } from "../../../../database/postgres/postgres.provider";
@@ -21,16 +21,18 @@ export class PostgresSpeechService implements ISpeechService {
                     ? String(speechBody.personality)
                     : null,
                 claimRevisionId: String(speechBody.claimRevisionId),
+                isDraft: speechBody.isDraft === true,
             })
             .returning();
         return toSpeechEntity(row);
     }
 
     async getSpeech(id: string): Promise<ISpeech | null> {
+        // Draft debate transcript speeches are not public until approved.
         const [row] = await this.db
             .select()
             .from(speech)
-            .where(eq(speech.id, id))
+            .where(and(eq(speech.id, id), eq(speech.isDraft, false)))
             .limit(1);
         return row ? loadSpeechTree(this.db, row) : null;
     }

@@ -193,6 +193,36 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect(noTopic.totalRows).toBe(0);
         });
 
+        it("sentence findAll skips draft transcript sentences", async () => {
+            const visible = await claimService.create(body());
+            await sentenceService.create({
+                data_hash: "d".repeat(32),
+                props: { id: 9 },
+                content: "The economy grew a lot in the draft.",
+                topics: ["economia"],
+                claimRevisionId: String(visible.latestRevision),
+                isDraft: true,
+            });
+
+            const result = await sentenceService.findAll({
+                searchText: "economy grew",
+                pageSize: 10,
+                nameSpace: "main",
+            });
+            expect(result.totalRows).toBe(1);
+            expect(result.processedSentences[0].content).toBe(
+                "The economy grew last year."
+            );
+
+            const byTopic = await sentenceService.findAll({
+                searchText: "",
+                filter: "economia",
+                pageSize: 10,
+                nameSpace: "main",
+            });
+            expect(byTopic.totalRows).toBe(0);
+        });
+
         it("claim-revision findAll searches titles by trigram under the same visibility rules", async () => {
             const hiddenPersonality = await seedPersonality("Hidden One", true);
             await claimService.create(body());

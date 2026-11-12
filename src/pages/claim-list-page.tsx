@@ -1,9 +1,9 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React from "react";
+import React, { useState } from "react";
 import { GetLocale } from "../utils/GetLocale";
 import Seo from "../components/Seo";
-import ClaimListView from "../components/Claim/ClaimListView";
+import RepositoryView from "../components/Repository/RepositoryView";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -14,6 +14,8 @@ const ImageClaimsPage: NextPage<any> = (props) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
+    // The "+" button would sit on top of the phone filters sheet
+    const [filtersOpen, setFiltersOpen] = useState(false);
 
     return (
         <>
@@ -21,8 +23,11 @@ const ImageClaimsPage: NextPage<any> = (props) => {
                 title={t("seo:claimListTitle")}
                 description={t("seo:claimListDescription")}
             />
-            <ClaimListView />
-            <AffixButton />
+            <RepositoryView
+                initialQuery={props.initialQuery}
+                onFiltersOpenChange={setFiltersOpen}
+            />
+            {!filtersOpen && <AffixButton />}
         </>
     );
 };
@@ -30,10 +35,13 @@ const ImageClaimsPage: NextPage<any> = (props) => {
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     query = JSON.parse(query.props);
+    const { nameSpace, ...initialQuery } = query;
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
+            nameSpace: nameSpace || NameSpaceEnum.Main,
+            // Repository tab and filters from the URL
+            initialQuery,
         },
     };
 }
