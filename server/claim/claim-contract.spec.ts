@@ -486,6 +486,48 @@ describe.each(backends)(
             );
         });
 
+        it("draft transcript sentences and speeches are hidden from public reads", async () => {
+            const created = await stack.claimService.create(speechBody());
+            const revisionId = idOf(created.latestRevision);
+            const topicId = makeTopicId();
+            const draftHash = "d".repeat(32);
+
+            const sentenceId = await stack.sentenceService.create({
+                data_hash: draftHash,
+                props: { id: 9 },
+                content: "Draft sentence here.",
+                topics: [{ id: topicId, label: "Saúde", value: "Q1" }],
+                claimRevisionId: revisionId,
+                isDraft: true,
+            });
+            const draftSpeech = await stack.speechService.create({
+                content: [],
+                claimRevisionId: revisionId,
+                personality: personalityId,
+                isDraft: true,
+            });
+            expect(draftSpeech.isDraft).toBe(true);
+
+            await expect(
+                stack.sentenceService.getByDataHash(draftHash)
+            ).rejects.toBeInstanceOf(NotFoundException);
+            expect(
+                await stack.sentenceService.getHashesByTopic(String(topicId))
+            ).toEqual([]);
+            expect(
+                await stack.speechService.getSpeech(idOf(draftSpeech))
+            ).toBeNull();
+
+            // Non-draft content carries no isDraft key on either backend.
+            const revision = await stack.revisionService.getRevisionById(
+                revisionId
+            );
+            const speech = revision!.content[0];
+            expect(speech).not.toHaveProperty("isDraft");
+            expect(speech.content[0].content[0]).not.toHaveProperty("isDraft");
+            expect(idOf(sentenceId)).toBeTruthy();
+        });
+
         it("speech and claim-revision reads resolve the content tree and the content id", async () => {
             const created = await stack.claimService.create(speechBody());
             const revision = await stack.revisionService.getRevisionById(

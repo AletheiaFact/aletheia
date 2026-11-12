@@ -24,6 +24,9 @@ export const sentence = pgTable(
         content: text("content").notNull(),
         topics: jsonb("topics").$type<any[]>(),
         claimRevisionId: uuid("claim_revision_id").notNull(),
+        // Content parsed from a debate transcript turn that is not approved
+        // yet. Public reads skip draft rows.
+        isDraft: boolean("is_draft").notNull().default(false),
         isDeleted: boolean("is_deleted").notNull().default(false),
         deletedAt: timestamp("deleted_at", { withTimezone: true }),
         createdAt: timestamp("created_at", { withTimezone: true })
