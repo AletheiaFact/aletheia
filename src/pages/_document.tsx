@@ -41,13 +41,13 @@ class MyDocument extends Document {
 
     render() {
         const { language } = this.props as { language?: string };
+        // Preload only the woff2 faces used above the fold. Do not preload
+        // the .woff fallbacks (legacy browsers) or add more preload links:
+        // every preload is downloaded unconditionally.
+        // See src/styles/fontfaces.ts for the @font-face rules.
         return (
             <Html lang={language}>
                 <Head>
-                    {/* Preload only the woff2 faces used above the fold. Do not
-                        preload the .woff fallbacks (legacy browsers) or add more
-                        preload links: every preload is downloaded unconditionally.
-                        See src/styles/fontfaces.ts for the @font-face rules. */}
                     <link
                         href="/fonts/Noticia_Text/noticiatext-regular-latin.woff2"
                         rel="preload"
