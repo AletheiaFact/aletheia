@@ -18,8 +18,10 @@ const HomeDebatesSection = ({ debates }: HomeDebatesSectionProps) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
 
-    const seeAllHref =
-        nameSpace === NameSpaceEnum.Main ? "/claim" : `/${nameSpace}/claim`;
+    // /claim opens on fact-checks; debates live in the claims tab
+    const seeAllHref = `${
+        nameSpace === NameSpaceEnum.Main ? "" : `/${nameSpace}`
+    }/claim?tab=claims&contentModel=Debate`;
 
 
     if (!Array.isArray(debates) || debates.length === 0) return null;

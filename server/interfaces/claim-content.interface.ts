@@ -7,6 +7,8 @@ export interface ISentence {
     content: string;
     topics?: any[];
     claimRevisionId?: any;
+    /** Present (true) only on unapproved debate transcript content. */
+    isDraft?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
     [key: string]: any;
@@ -32,6 +34,8 @@ export interface ISpeech {
     content: any[];
     personality?: any;
     claimRevisionId?: any;
+    /** Present (true) only on unapproved debate transcript content. */
+    isDraft?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
     [key: string]: any;

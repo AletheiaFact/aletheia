@@ -9,11 +9,25 @@ import type { ParagraphRow } from "../types/paragraph/postgres/schema/paragraph.
 import type { SpeechRow } from "../types/speech/postgres/schema/speech.schema";
 import type { UnattributedRow } from "../types/unattributed/postgres/schema/unattributed.schema";
 
+// Mongo stores `isDraft` only on drafts and unsets it on approval, so the
+// key is present only when it is true.
+function draftFlag(isDraft: boolean) {
+    return isDraft ? { isDraft: true } : {};
+}
+
 export function toSentenceEntity(row: SentenceRow): ISentence {
-    const { dataHash, legacyObjectId, isDeleted, deletedAt, topics, ...rest } =
-        row;
+    const {
+        dataHash,
+        legacyObjectId,
+        isDeleted,
+        deletedAt,
+        topics,
+        isDraft,
+        ...rest
+    } = row;
     return {
         ...rest,
+        ...draftFlag(isDraft),
         _id: row.id,
         data_hash: dataHash,
         topics: topics ?? undefined,
@@ -50,10 +64,12 @@ export function toSpeechEntity(
         legacyObjectId,
         isDeleted,
         deletedAt,
+        isDraft,
         ...rest
     } = row;
     return {
         ...rest,
+        ...draftFlag(isDraft),
         _id: row.id,
         content: content ?? contentIds,
         personality: personalityId ?? undefined,

@@ -198,7 +198,7 @@ Source reference columns land per D3 without constraints: `user_id uuid` (users 
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
-| `searchTopics` query semantics | unescaped `$regex` (`.`/`*` are metacharacters; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | regex syntax differs between engines and the input was never escaped; literal match is what callers mean |
+| `searchTopics` query semantics | escaped `$regex` (literal substring; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | the query is escaped on both since the endpoint went public (repository topic filter); only the sort order differs |
 | `create` with duplicate entries in one batch | `Promise.all` races into `E11000` → 500 | sequential loop; the second entry finds the first and returns its ref | deterministic; Mongo behavior is a race, not a rule |
 | `create` with a `{ slug }` reference to a missing topic | `name` is an object → Mongoose CastError → 500 | `BadRequestException` (400) | there is no usable name; 400 is the honest code |
 | `create` with `contentModel = Image` | attaches topics to the image | `NotImplementedError` (501) | image table ports in Phase 2 MR 2; any other `contentModel` attaches to the sentence through the `"SentenceService"` token (Phase 2 MR 1) |
@@ -281,6 +281,7 @@ Report is **global**; the classification check is the shared rule `shared/report
 | `getHashesByTopic` | `topics.id` compared to an ObjectId | jsonb containment `topics @> [{"id": uuid}]` | same predicate on the id the topic service wrote |
 | `getSpeech` / `getRevision` content | populate hooks, `personality` ref never populated | content tree loaded explicitly, `personality` stays an id | parity |
 | `unattributed` | no `claimRevisionId`, no `data_hash` (the parser never sets them) | same columns absent | parity; README spec drift left as-is |
+| draft debate transcript content (`isDraft`) | optional `isDraft` on sentence and speech, set by `parse(..., { isDraft: true })` and `$unset` on approval; `getByDataHash`, `findAll`, `getHashesByTopic` and `getSpeech` skip drafts; populated trees do not filter | `is_draft boolean NOT NULL DEFAULT false` (migration `0008_content_is_draft`), same four reads filter `is_draft = false`, trees do not filter; the entity carries `isDraft: true` only on drafts | parity of the key shape. Clearing the flag on approval lives in the Mongo-only `DebateService.publishSpeeches` and ports with debate (Phase 2 MR 2) |
 
 **Claim-revision module (Phase 2 MR 1) divergences:**
 

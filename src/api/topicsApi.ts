@@ -10,13 +10,19 @@ interface IGetTopicsOptions {
 
 const request = createApiInstance("/api/topics");
 
-const searchTopics = ({ query, limit = 5, language = "pt", dispatch, t }) => {
+const searchTopics = ({
+  query,
+  limit = 5,
+  language = "pt",
+  dispatch = undefined,
+  t,
+}) => {
   const params = { query, limit, language };
   return request
     .get(`/search`, { params })
     .then((response) => {
       const topicResults = response.data;
-      dispatch({
+      dispatch?.({
         type: ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE,
         results: topicResults,
       });
