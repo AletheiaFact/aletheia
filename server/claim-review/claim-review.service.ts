@@ -38,11 +38,14 @@ import { WikidataService } from "../wikidata/wikidata.service";
 import {
     IlistAll,
     IListAllQuery,
+    ReviewListFilters,
     ClaimReviewAggregated,
     ClaimReviewList,
     listAllData,
 } from "./types/claim-review.interfaces";
 import { mapAggregateToRecord } from "../util/mongo-utils";
+import { accentInsensitiveRegex } from "../util/regex.util";
+import { DEFAULT_METHODOLOGY } from "../../lib/classification-methodology";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -62,17 +65,40 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(params: IlistAll): Promise<ClaimReviewList> {
-        const basePipeline = await this.createSharedPipeline(
+        const { filters } = params;
+        const sharedPipeline = await this.createSharedPipeline(
             params.query,
-            params.mainTopicId
+            params.mainTopicId,
+            filters
         );
+        const basePipeline = filters?.contentModel?.length
+            ? [
+                  ...sharedPipeline,
+                  {
+                      $match: {
+                          "target.latestRevision.contentModel": {
+                              $in: filters.contentModel,
+                          },
+                      },
+                  },
+              ]
+            : sharedPipeline;
 
-        const [total, data] = await Promise.all([
+        const [total, data, contentModelCounts] = await Promise.all([
             this.countReviews(basePipeline),
             this.findReviews(basePipeline, params),
+            // Counted without the content type filter so every option keeps
+            // its number while one is selected.
+            params.withContentModelCounts
+                ? this.countByContentModel(sharedPipeline)
+                : undefined,
         ]);
 
-        return { data, total };
+        return {
+            data,
+            total,
+            ...(contentModelCounts && { contentModelCounts }),
+        };
     }
 
     async count(params: {
@@ -89,12 +115,24 @@ export class ClaimReviewService {
 
     private async createSharedPipeline(
         query: IListAllQuery,
-        topicId?: string
+        topicId?: string,
+        filters: ReviewListFilters = {}
     ): Promise<any[]> {
         let initialMatch: any = {
             ...query,
             targetModel: ReviewTaskTypeEnum.Claim,
         };
+
+        if (filters.personality) {
+            initialMatch.personality = new Types.ObjectId(filters.personality);
+        }
+
+        if (filters.startDate || filters.endDate) {
+            initialMatch.date = {
+                ...(filters.startDate && { $gte: new Date(filters.startDate) }),
+                ...(filters.endDate && { $lte: new Date(filters.endDate) }),
+            };
+        }
 
         if (topicId) {
             const [sentenceHashes, imageHashes] = await Promise.all([
@@ -107,7 +145,101 @@ export class ClaimReviewService {
             initialMatch.data_hash = { $in: validHashes };
         }
 
-        return this.buildClaimReviewBasePipeline(initialMatch, query);
+        return [
+            ...this.buildClaimReviewBasePipeline(initialMatch, query),
+            ...this.buildFilterStages(filters),
+        ];
+    }
+
+    private buildFilterStages(filters: ReviewListFilters): any[] {
+        const stages: any[] = [];
+        const { classification, classificationMethodology, q } = filters;
+
+        if (classification?.length || classificationMethodology || q) {
+            stages.push({
+                $lookup: {
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    pipeline: [
+                        {
+                            $project: {
+                                classification: 1,
+                                classificationMethodology: 1,
+                                summary: 1,
+                            },
+                        },
+                    ],
+                    as: "reportFields",
+                },
+            });
+        }
+
+        if (classification?.length) {
+            stages.push({
+                $match: { "reportFields.classification": { $in: classification } },
+            });
+        }
+
+        if (classificationMethodology) {
+            // Reports saved before methodologies existed are aletheia.
+            const methodologies =
+                classificationMethodology === DEFAULT_METHODOLOGY
+                    ? [classificationMethodology, null]
+                    : [classificationMethodology];
+            stages.push({
+                $match: {
+                    "reportFields.classificationMethodology": {
+                        $in: methodologies,
+                    },
+                },
+            });
+        }
+
+        if (q) {
+            const text = {
+                $regex: accentInsensitiveRegex(q),
+                $options: "i",
+            };
+            stages.push(
+                {
+                    $lookup: {
+                        from: "sentences",
+                        localField: "data_hash",
+                        foreignField: "data_hash",
+                        pipeline: [{ $project: { content: 1 } }],
+                        as: "sentenceFields",
+                    },
+                },
+                {
+                    $match: {
+                        $or: [
+                            { "sentenceFields.content": text },
+                            { "target.latestRevision.title": text },
+                            { "personality.name": text },
+                            { "reportFields.summary": text },
+                        ],
+                    },
+                }
+            );
+        }
+
+        return stages;
+    }
+
+    private async countByContentModel(
+        basePipeline: any[]
+    ): Promise<Record<string, number>> {
+        const counts = await this.ClaimReviewModel.aggregate([
+            ...basePipeline,
+            {
+                $group: {
+                    _id: "$target.latestRevision.contentModel",
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        return mapAggregateToRecord<number>(counts, "count");
     }
 
     private async findReviews(

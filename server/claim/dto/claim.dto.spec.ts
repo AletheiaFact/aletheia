@@ -226,6 +226,47 @@ describe("claim DTO schemas", () => {
             expect(on.data?.isHidden).toBe(true);
         });
 
+        it("coerces the repository filters", () => {
+            const r = ListClaimsQuerySchema.safeParse({
+                page: "0",
+                pageSize: "10",
+                order: "desc",
+                language: "pt",
+                q: "  ",
+                contentModel: "Speech",
+                topic: objectId,
+                startDate: "2024-01-01T00:00:00.000Z",
+                reviewStatus: "with",
+                sortBy: "date",
+            });
+            expect(r.success).toBe(true);
+            expect(r.data).toMatchObject({
+                q: undefined,
+                contentModel: ["Speech"],
+                reviewStatus: "with",
+            });
+        });
+
+        it("rejects bad repository filters", () => {
+            const base = {
+                page: "0",
+                pageSize: "10",
+                order: "desc",
+                language: "pt",
+            };
+            for (const bad of [
+                { contentModel: "Interview" },
+                { topic: "abc" },
+                { startDate: "2024-01-01" },
+                { reviewStatus: "maybe" },
+                { q: "x".repeat(101) },
+            ]) {
+                expect(
+                    ListClaimsQuerySchema.safeParse({ ...base, ...bad }).success
+                ).toBe(false);
+            }
+        });
+
         it("rejects a negative page, a non-alpha language, and unknown keys", () => {
             expect(
                 ListClaimsQuerySchema.safeParse({
