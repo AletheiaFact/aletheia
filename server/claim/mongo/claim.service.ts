@@ -8,7 +8,13 @@ import {
     ConflictException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Model, Types, UpdateWriteOpResult } from "mongoose";
+import {
+    FilterQuery,
+    Model,
+    PipelineStage,
+    Types,
+    UpdateWriteOpResult,
+} from "mongoose";
 import { Claim, ClaimDocument } from "./schemas/claim.schema";
 import { ClaimReviewService } from "../../claim-review/claim-review.service";
 import type { IClaimRevisionService } from "../../interfaces/claim-revision.service.interface";
@@ -23,7 +29,12 @@ import { ReviewTaskService } from "../../review-task/review-task.service";
 import { UtilService } from "../../util";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import type { IGroupService } from "../../interfaces/group.service.interface";
-import type { IClaimService } from "../../interfaces/claim.service.interface";
+import type {
+    ClaimListFilters,
+    IClaimService,
+} from "../../interfaces/claim.service.interface";
+import { accentInsensitiveRegex } from "../../util/regex.util";
+import { mapAggregateToRecord } from "../../util/mongo-utils";
 import {
     annotateClaimContent,
     calculateOverallStats,
@@ -31,6 +42,38 @@ import {
     getClaimContent,
 } from "../shared/claim.rules";
 import { toError } from "../../util/error-handling";
+
+function buildDateRange(startDate?: string, endDate?: string) {
+    if (!startDate && !endDate) {
+        return undefined;
+    }
+    return {
+        ...(startDate ? { $gte: new Date(startDate) } : {}),
+        ...(endDate ? { $lte: new Date(endDate) } : {}),
+    };
+}
+
+// Whether any sentence/image of the claim's revisions (`revisionIds`)
+// matches; capped at one hit since only existence is checked.
+function lookupRevisionContent(
+    from: "sentences" | "images",
+    match: Record<string, unknown>,
+    as: string
+): PipelineStage.Lookup {
+    return {
+        $lookup: {
+            from,
+            localField: "revisionIds._id",
+            foreignField: "claimRevisionId",
+            pipeline: [
+                { $match: { ...match, isDraft: { $ne: true } } },
+                { $limit: 1 },
+                { $project: { _id: 1 } },
+            ],
+            as,
+        },
+    };
+}
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -66,11 +109,16 @@ export class MongoClaimService implements IClaimService {
         page: number,
         pageSize: number,
         order: string,
-        query: FilterQuery<ClaimDocument>
+        query: FilterQuery<ClaimDocument>,
+        filters?: ClaimListFilters
     ) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
             query.personalities = new Types.ObjectId(query.personalities);
+        }
+
+        if (filters) {
+            return this.listFiltered(page, pageSize, order, query, filters);
         }
 
         const [claims, total] = await Promise.all([
@@ -96,6 +144,191 @@ export class MongoClaimService implements IClaimService {
         return {
             data: processedClaim,
             total,
+        };
+    }
+
+    /**
+     * Repository listing: the aggregation filters on the latest revision and
+     * the claim's sentences/images, then the page is loaded with the regular
+     * populate so postProcess sees the same shape as the find path.
+     */
+    private async listFiltered(
+        page: number,
+        pageSize: number,
+        order: string,
+        query: FilterQuery<ClaimDocument>,
+        filters: ClaimListFilters
+    ) {
+        const direction: 1 | -1 = order === "asc" ? 1 : -1;
+        const sort: Record<string, 1 | -1> =
+            filters.sortBy === "date"
+                ? { "latestRevision.date": direction, _id: direction }
+                : { _id: direction };
+
+        const pipeline: PipelineStage[] = [
+            { $match: { isDeleted: false, ...query } },
+            {
+                $lookup: {
+                    from: "claimrevisions",
+                    localField: "latestRevision",
+                    foreignField: "_id",
+                    pipeline: [
+                        { $project: { title: 1, date: 1, contentModel: 1 } },
+                    ],
+                    as: "latestRevision",
+                },
+            },
+            { $unwind: "$latestRevision" },
+        ];
+
+        const dateRange = buildDateRange(filters.startDate, filters.endDate);
+        if (dateRange) {
+            pipeline.push({ $match: { "latestRevision.date": dateRange } });
+        }
+
+        if (filters.q || filters.topic) {
+            // Sentences and images point at the revision that created them,
+            // which may be older than the latest one, so match on all of them.
+            pipeline.push({
+                $lookup: {
+                    from: "claimrevisions",
+                    localField: "_id",
+                    foreignField: "claimId",
+                    pipeline: [{ $project: { _id: 1 } }],
+                    as: "revisionIds",
+                },
+            });
+        }
+
+        if (filters.q) {
+            const text = {
+                $regex: accentInsensitiveRegex(filters.q),
+                $options: "i",
+            };
+            pipeline.push(
+                lookupRevisionContent("sentences", { content: text }, "textHits"),
+                {
+                    $match: {
+                        $or: [
+                            { "latestRevision.title": text },
+                            { "textHits.0": { $exists: true } },
+                        ],
+                    },
+                }
+            );
+        }
+
+        if (filters.topic) {
+            const topic = { "topics.id": new Types.ObjectId(filters.topic) };
+            pipeline.push(
+                lookupRevisionContent("sentences", topic, "topicSentences"),
+                lookupRevisionContent("images", topic, "topicImages"),
+                {
+                    $match: {
+                        $or: [
+                            { "topicSentences.0": { $exists: true } },
+                            { "topicImages.0": { $exists: true } },
+                        ],
+                    },
+                }
+            );
+        }
+
+        if (filters.reviewStatus) {
+            pipeline.push(
+                {
+                    $lookup: {
+                        from: "claimreviews",
+                        localField: "_id",
+                        foreignField: "target",
+                        pipeline: [
+                            {
+                                $match: {
+                                    isDeleted: false,
+                                    isPublished: true,
+                                    isHidden: false,
+                                },
+                            },
+                            { $limit: 1 },
+                            { $project: { _id: 1 } },
+                        ],
+                        as: "publishedReviews",
+                    },
+                },
+                {
+                    $match: {
+                        "publishedReviews.0": {
+                            $exists: filters.reviewStatus === "with",
+                        },
+                    },
+                }
+            );
+        }
+
+        // Counts ignore the content type filter so every option keeps its
+        // number while one is selected.
+        const contentModelMatch = filters.contentModel?.length
+            ? [
+                  {
+                      $match: {
+                          "latestRevision.contentModel": {
+                              $in: filters.contentModel,
+                          },
+                      },
+                  },
+              ]
+            : [];
+
+        pipeline.push({
+            $facet: {
+                page: [
+                    ...contentModelMatch,
+                    { $sort: sort },
+                    // pageSize 0 means no limit, as in find()
+                    ...(pageSize > 0
+                        ? [{ $skip: page * pageSize }, { $limit: pageSize }]
+                        : []),
+                    { $project: { _id: 1 } },
+                ],
+                total: [...contentModelMatch, { $count: "count" }],
+                contentModelCounts: [
+                    {
+                        $group: {
+                            _id: "$latestRevision.contentModel",
+                            count: { $sum: 1 },
+                        },
+                    },
+                ],
+            },
+        });
+
+        const [result] = await this.ClaimModel.aggregate(pipeline);
+        const ids: Types.ObjectId[] = result.page.map(
+            ({ _id }: { _id: Types.ObjectId }) => _id
+        );
+        const claims = await this.ClaimModel.find({ _id: { $in: ids } })
+            .populate("latestRevision")
+            .lean();
+        const byId = new Map(
+            claims.map((claim: any) => [String(claim._id), claim])
+        );
+
+        const data = await Promise.all(
+            ids
+                .map((id) => byId.get(String(id)))
+                .filter(Boolean)
+                .map((claim: any) =>
+                    this.postProcess({ ...claim.latestRevision, ...claim })
+                )
+        );
+
+        return {
+            data,
+            total: result.total[0]?.count ?? 0,
+            contentModelCounts: mapAggregateToRecord<number>(
+                result.contentModelCounts,
+                "count"
+            ),
         };
     }
 

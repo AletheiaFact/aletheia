@@ -113,15 +113,39 @@ export class ClaimController {
     async listAll(
         @ZodQuery(ListClaimsQuerySchema) getClaimsDTO: ListClaimsQueryDto
     ) {
-        const { page, pageSize, order } = getClaimsDTO;
+        const {
+            page,
+            pageSize,
+            order,
+            q,
+            contentModel,
+            topic,
+            startDate,
+            endDate,
+            reviewStatus,
+            sortBy,
+        } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
+        const filters = {
+            q,
+            contentModel,
+            topic,
+            startDate,
+            endDate,
+            reviewStatus,
+            sortBy,
+        };
+        const hasFilters = Object.values(filters).some(
+            (value) => value !== undefined
+        );
 
         try {
             const claims = await this.claimService.listAll(
                 page,
                 pageSize,
                 order,
-                queryInputs
+                queryInputs,
+                hasFilters ? filters : undefined
             );
 
             const totalPages = Math.ceil(claims.total / pageSize);
@@ -136,6 +160,9 @@ export class ClaimController {
                 totalPages,
                 page,
                 pageSize,
+                ...(claims.contentModelCounts && {
+                    contentModelCounts: claims.contentModelCounts,
+                }),
             };
         } catch (error) {
             this.logger.error(error);

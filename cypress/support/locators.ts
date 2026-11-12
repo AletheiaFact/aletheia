@@ -1,6 +1,46 @@
 import personality from "../fixtures/personality";
 
 const locators = {
+    repository: {
+        CLAIMS_TAB: "[data-cy=testRepositoryClaimsTab]",
+        REVIEWS_TAB: "[data-cy=testRepositoryReviewsTab]",
+        SEARCH: "[data-cy=testRepositorySearch] input",
+        RESULTS: "[data-cy=testRepositoryResults]",
+        TOTAL: "[data-cy=testRepositoryTotal]",
+        EMPTY: "[data-cy=testRepositoryEmpty]",
+        EMPTY_CLEAR: "[data-cy=testRepositoryEmptyClear]",
+        FILTERS: "[data-cy=testRepositoryFilters]",
+        CLEAR_FILTERS: "[data-cy=testRepositoryClearFilters]",
+        OPEN_FILTERS: "[data-cy=testRepositoryOpenFilters]",
+        APPLY_FILTERS: "[data-cy=testRepositoryApplyFilters]",
+        CONTENT_MODEL: (value: string) =>
+            `[data-cy=testRepositoryContentModel-${value}] input`,
+        CLASSIFICATION: (value: string) =>
+            `[data-cy=testRepositoryClassification-${value}]`,
+        CLASSIFICATIONS: "[data-cy^=testRepositoryClassification-]",
+        METHODOLOGY: (id: string) => `[data-cy=testRepositoryMethodology-${id}]`,
+        REVIEW_STATUS: (value: string) =>
+            `[data-cy=testRepositoryReviewStatus-${value}]`,
+        DATE_RANGE: `[data-cy=testRepositoryFilters] [data-cy=testDateRangeInput]`,
+        DATE_PRESET: (key: string) => `[data-cy=testRepositoryDatePreset-${key}]`,
+        ACTIVE_FILTERS: "[data-cy=testRepositoryActiveFilters]",
+        ACTIVE_FILTER: (key: string) =>
+            `[data-cy=testRepositoryActiveFilter-${key}]`,
+        ACTIVE_FILTER_COUNT: "[data-cy=testRepositoryActiveFilterCount]",
+        CLEAR_ALL_FILTERS: "[data-cy=testRepositoryClearAllFilters]",
+    },
+
+    dateRange: {
+        INPUT: "[data-cy=testDateRangeInput] input",
+        CLEAR: "[data-cy=testDateRangeClear]",
+        PREVIOUS_MONTH: "[role=dialog] [data-testid=ArrowLeftIcon]",
+        DAY: (day: number) =>
+            cy.contains(
+                "[role=dialog] button.MuiPickersDay-root:not(.MuiPickersDay-dayOutsideMonth)",
+                new RegExp(`^${day}$`)
+            ),
+    },
+
     login: {
         USER: "[data-cy=emailFormLogin]",
         PASSWORD: "[data-cy=passwordFormLogin]",
