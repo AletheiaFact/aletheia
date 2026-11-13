@@ -16,6 +16,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Comment, CommentDocument } from "./schema/comment.schema";
 import { UsersService } from "../../users/users.service";
 import { UpdateCommentDTO } from "./dto/create-comment.dto";
+import { UpdateCommentFieldsSchema } from "./dto/update-comment-fields.zod";
 
 @Injectable()
 export class CommentService {
@@ -56,7 +57,18 @@ export class CommentService {
                 );
             }
 
-            const { user, ...otherFields } = UpdateCommentDto;
+            const parsed = UpdateCommentFieldsSchema.safeParse(
+                UpdateCommentDto
+            );
+            if (!parsed.success) {
+                throw new BadRequestException(
+                    `Invalid comment update: ${parsed.error.issues
+                        .map((issue) => issue.path.join("."))
+                        .join(", ")}`
+                );
+            }
+
+            const { user, ...otherFields } = parsed.data;
 
             const updateData: UpdateQuery<Comment> = { ...otherFields };
 
