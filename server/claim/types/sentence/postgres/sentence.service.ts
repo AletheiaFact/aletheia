@@ -47,6 +47,7 @@ export class PostgresSentenceService implements ISentenceService {
                 content: sentenceBody.content,
                 topics: sentenceBody.topics ?? null,
                 claimRevisionId: String(sentenceBody.claimRevisionId),
+                isDraft: sentenceBody.isDraft === true,
             })
             .returning({ id: sentence.id });
         return row.id;
@@ -62,7 +63,12 @@ export class PostgresSentenceService implements ISentenceService {
         const [row] = await this.db
             .select()
             .from(sentence)
-            .where(eq(sentence.dataHash, data_hash))
+            .where(
+                and(
+                    eq(sentence.dataHash, data_hash),
+                    eq(sentence.isDraft, false)
+                )
+            )
             .orderBy(asc(sentence.createdAt), asc(sentence.id))
             .limit(1);
         if (!row) {
@@ -71,6 +77,8 @@ export class PostgresSentenceService implements ISentenceService {
         const entity = toSentenceEntity(row);
         entity.props = {
             classification: report?.classification,
+            classificationMethodology:
+                report?.classificationMethodology ?? undefined,
             ...entity.props,
         };
         return entity;
@@ -111,6 +119,8 @@ export class PostgresSentenceService implements ISentenceService {
 
         const conditions = [
             eq(sentence.isDeleted, false),
+            // Draft debate transcript sentences are not public until approved.
+            eq(sentence.isDraft, false),
             ...visibleRevisionConditions(nameSpace),
         ];
         if (searchText) {
@@ -208,9 +218,12 @@ export class PostgresSentenceService implements ISentenceService {
                 .select({ dataHash: sentence.dataHash })
                 .from(sentence)
                 .where(
-                    sql`${sentence.topics} @> ${JSON.stringify([
-                        { id: topicId },
-                    ])}::jsonb`
+                    and(
+                        sql`${sentence.topics} @> ${JSON.stringify([
+                            { id: topicId },
+                        ])}::jsonb`,
+                        eq(sentence.isDraft, false)
+                    )
                 );
             return rows.map((r) => r.dataHash);
         } catch (error) {

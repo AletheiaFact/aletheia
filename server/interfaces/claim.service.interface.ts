@@ -8,13 +8,30 @@ export type ClaimListQuery = {
     [key: string]: any;
 };
 
+// Repository page filters. Their presence switches listAll to the
+// aggregation path, which sorts by `sortBy` and returns contentModelCounts.
+export type ClaimListFilters = {
+    q?: string;
+    contentModel?: string[];
+    topic?: string;
+    startDate?: string;
+    endDate?: string;
+    reviewStatus?: "with" | "without";
+    sortBy?: "id" | "date";
+};
+
 export type IClaimService = {
     listAll(
         page: number,
         pageSize: number,
         order: string,
-        query: ClaimListQuery
-    ): Promise<{ data: any[]; total: number }>;
+        query: ClaimListQuery,
+        filters?: ClaimListFilters
+    ): Promise<{
+        data: any[];
+        total: number;
+        contentModelCounts?: Record<string, number>;
+    }>;
     count(query?: ClaimListQuery): Promise<number>;
     create(claim: Record<string, any>): Promise<any>;
     update(

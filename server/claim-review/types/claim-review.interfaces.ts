@@ -17,6 +17,18 @@ export interface IListAllQuery {
     isHidden?: boolean | string;
     nameSpace?: string;
     isDeleted?: boolean;
+    isPublished?: boolean;
+}
+
+// Repository page filters
+export interface ReviewListFilters {
+    q?: string;
+    personality?: string;
+    contentModel?: string[];
+    classification?: string[];
+    classificationMethodology?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 export interface IlistAll {
@@ -26,6 +38,8 @@ export interface IlistAll {
     query: IListAllQuery;
     mainTopicId?: string;
     latest?: boolean;
+    filters?: ReviewListFilters;
+    withContentModelCounts?: boolean;
 }
 
 export interface ClaimReviewAggregated {
@@ -60,6 +74,7 @@ export interface listAllData {
 export interface ClaimReviewList {
     data: listAllData[];
     total: number;
+    contentModelCounts?: Record<string, number>;
 }
 
 export interface listAllResponse {
@@ -68,4 +83,5 @@ export interface listAllResponse {
     totalPages: number;
     page: number;
     pageSize: number;
+    contentModelCounts?: Record<string, number>;
 }

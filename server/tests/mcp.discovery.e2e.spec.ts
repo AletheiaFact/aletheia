@@ -57,6 +57,7 @@ describe("MCP discovery (e2e)", () => {
                 "get_review_task",
                 "get_verification_request",
                 "join_review_task",
+                "list_classification_methodologies",
                 "list_claims",
                 "list_my_review_tasks",
                 "list_personalities",
@@ -76,6 +77,7 @@ describe("MCP discovery (e2e)", () => {
                 "start_review_task",
                 "submit_cross_check",
                 "submit_report",
+                "submit_report_to_review",
             ].sort()
         );
     });

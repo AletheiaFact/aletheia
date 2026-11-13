@@ -19,6 +19,13 @@ interface FetchOptions {
     personality: string;
     i18n?: { languages?: any };
     fetchOnly?: boolean;
+    q?: string;
+    contentModel?: string[];
+    topic?: string;
+    startDate?: string;
+    endDate?: string;
+    reviewStatus?: "with" | "without";
+    sortBy?: "id" | "date";
 }
 
 const get = (
@@ -32,17 +39,26 @@ const get = (
         language: options?.i18n?.languages[0],
         isHidden: options?.isHidden || false,
         nameSpace: options?.nameSpace || NameSpaceEnum.Main,
+        q: options.q,
+        contentModel: options.contentModel,
+        topic: options.topic,
+        startDate: options.startDate,
+        endDate: options.endDate,
+        reviewStatus: options.reviewStatus,
+        sortBy: options.sortBy,
     };
 
     return request
         .get("/", { params })
         .then((response) => {
-            const { claims, totalPages, totalClaims } = response.data;
+            const { claims, totalPages, totalClaims, contentModelCounts } =
+                response.data;
             if (options.fetchOnly) {
                 return {
                     data: claims,
                     total: totalClaims,
                     totalPages,
+                    contentModelCounts,
                 };
             }
         })

@@ -4,6 +4,8 @@ export interface PaginatedResponse<T> {
     data: T[];
     total: number;
     totalPages: number;
+    // Sent by the repository list endpoints when a filter is applied
+    contentModelCounts?: Record<string, number>;
 }
 
 export interface ClaimCreateResponse {

@@ -491,9 +491,11 @@ describe("ClaimController (e2e)", () => {
             ]);
             expect(response.body[0].speech._id).toBe(drafts["turn-1"].speechId);
             expect(response.body[0].speech.content.length).toBeGreaterThan(0);
-            expect(
-                response.body.map((t) => t.checkability ?? null)
-            ).toEqual([72, 0, null]);
+            expect(response.body.map((t) => t.checkability ?? null)).toEqual([
+                72,
+                0,
+                null,
+            ]);
         });
 
         it("edits a draft by parsing a new draft speech", async () => {
@@ -748,6 +750,99 @@ describe("ClaimController (e2e)", () => {
             })
             .expect(200)
             .expect(({ body }) => expect(body?.claims.length).toEqual(4));
+    });
+
+    describe("repository filters", () => {
+        const listQuery = {
+            page: 0,
+            pageSize: 10,
+            order: "asc",
+            language: "pt",
+            nameSpace: NameSpaceEnum.Main,
+        };
+        const list = (filters: Record<string, unknown>) =>
+            request(app.getHttpServer())
+                .get("/api/claim")
+                .query({ ...listQuery, ...filters });
+        const ids = (body: any) => body.claims.map((claim: any) => claim._id);
+
+        it("filters by content type and counts every type", async () => {
+            const { body } = await list({
+                contentModel: ContentModelEnum.Image,
+            }).expect(200);
+
+            expect(body.totalClaims).toBe(2);
+            expect(
+                body.claims.map((claim: any) => claim.contentModel)
+            ).toEqual([ContentModelEnum.Image, ContentModelEnum.Image]);
+            expect(body.contentModelCounts).toEqual({
+                [ContentModelEnum.Speech]: 1,
+                [ContentModelEnum.Image]: 2,
+                [ContentModelEnum.Debate]: 1,
+            });
+        });
+
+        it("searches titles and the claim's sentence text", async () => {
+            const byTitle = await list({ q: "image claim title" }).expect(200);
+            expect(byTitle.body.totalClaims).toBe(2);
+
+            const bySentence = await list({ q: "dolor sit" }).expect(200);
+            expect(ids(bySentence.body)).toEqual([speechClaimId]);
+
+            const accented = await list({ q: "dólor sít" }).expect(200);
+            expect(ids(accented.body)).toEqual([speechClaimId]);
+        });
+
+        it("finds approved debate turns but not drafts or rejected ones", async () => {
+            const approved = await list({ q: "lower taxes" }).expect(200);
+            expect(
+                approved.body.claims.map((claim: any) => claim.contentModel)
+            ).toEqual([ContentModelEnum.Debate]);
+
+            const rejected = await list({ q: "tried before" }).expect(200);
+            expect(rejected.body.totalClaims).toBe(0);
+        });
+
+        it("treats the search text literally", async () => {
+            const { body } = await list({ q: "Speech.*" }).expect(200);
+            expect(body.totalClaims).toBe(0);
+        });
+
+        it("filters by a topic of the claim's sentences", async () => {
+            const topicId = new Types.ObjectId();
+            await app
+                .get(getConnectionToken())
+                .collection("sentences")
+                .updateOne(
+                    { content: { $regex: "Dolor Sit" } },
+                    { $set: { topics: [{ id: topicId, label: "Saúde" }] } }
+                );
+
+            const { body } = await list({ topic: topicId.toString() }).expect(
+                200
+            );
+            expect(ids(body)).toEqual([speechClaimId]);
+        });
+
+        it("filters by review status and claim date", async () => {
+            const withReviews = await list({ reviewStatus: "with" }).expect(200);
+            expect(withReviews.body.totalClaims).toBe(0);
+
+            const without = await list({ reviewStatus: "without" }).expect(200);
+            expect(without.body.totalClaims).toBe(4);
+
+            const after = await list({
+                startDate: "2023-11-26T00:00:00.000Z",
+                sortBy: "date",
+            }).expect(200);
+            expect(after.body.totalClaims).toBe(0);
+        });
+
+        it("returns 400 for an unknown content type or a bad date", async () => {
+            await list({ contentModel: "Interview" }).expect(400);
+            await list({ startDate: "yesterday" }).expect(400);
+            await list({ topic: "not-an-id" }).expect(400);
+        });
     });
 
     /**

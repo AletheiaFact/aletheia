@@ -1,4 +1,5 @@
-import { ClassificationEnum, ContentModelEnum } from "../types/enums";
+import { ContentModelEnum } from "../types/enums";
+import { buildReviewRating } from "../utils/buildReviewRating";
 
 import AffixCopilotButton from "../components/AffixButton/AffixCopilotButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
@@ -39,7 +40,7 @@ export interface ClaimReviewPageProps {
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
@@ -94,15 +95,14 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             ],
         },
         claimReviewed: content.content,
-        reviewRating: {
-            "@type": "Rating",
-            ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
-            bestRating: 8,
-            worstRating: 1,
-            alternateName: claimReview?.isHidden
-                ? t("claimReviewForm:notReviewed")
-                : t(`claimReviewForm:${review}`),
-        },
+        reviewRating: buildReviewRating({
+            classification: review,
+            classificationMethodology:
+                content?.props?.classificationMethodology,
+            isHidden: claimReview?.isHidden,
+            language: i18n.language,
+            t,
+        }),
         itemReviewed: {
             "@type": "CreativeWork",
             author: {
@@ -131,6 +131,9 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 data_hash={content.data_hash}
                 baseMachine={props.reviewTask?.machine}
                 baseReportModel={props?.reviewTask?.reportModel}
+                baseClassificationMethodology={
+                    props?.reviewTask?.classificationMethodology
+                }
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Claim}
                 claim={claim}

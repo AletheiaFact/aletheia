@@ -34,6 +34,7 @@ export class TopicController {
         return this.topicService.getImpactAreas();
     }
 
+    @Public()
     @ApiTags("topics")
     @Get("api/topics/search")
     async searchTopics(

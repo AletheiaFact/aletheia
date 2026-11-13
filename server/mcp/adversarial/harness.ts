@@ -114,6 +114,9 @@ function buildDeps(user: any) {
                 .fn()
                 .mockResolvedValue(storedTask("published", publishableReport)),
             enqueueUnassigned: vi.fn().mockResolvedValue(true),
+            resolveMethodologyForNewTask: vi.fn(
+                (requested?: string) => requested || "aletheia"
+            ),
             createAssigned: vi
                 .fn()
                 .mockResolvedValue(storedTask({ assigned: "undraft" })),
@@ -236,6 +239,7 @@ export const validArgs: Record<string, Record<string, unknown>> = {
     publish_review_task: { dataHash: HASH_A },
     save_review_log: { dataHash: HASH_A, summary: "Resumo." },
     submit_report: { dataHash: HASH_A },
+    submit_report_to_review: { dataHash: HASH_A },
     release_review_task: { dataHash: HASH_A, reason: "not-checkable" },
     send_to_cross_check: { dataHash: HASH_A },
     claim_cross_check: {},
@@ -272,6 +276,10 @@ export const happyPath: Record<string, { task?: unknown; user: unknown }> = {
         task: storedTask({ assigned: "draft" }, publishableReport),
         user: factChecker,
     },
+    submit_report_to_review: {
+        task: storedTask({ assigned: "draft" }, publishableReport),
+        user: factChecker,
+    },
     release_review_task: {
         task: storedTask({ assigned: "draft" }),
         user: factChecker,
@@ -305,6 +313,8 @@ export const READ_TOOLS = [
     "get_claim_review",
     "list_review_tasks",
     "get_review_task",
+    // Static registry only: no namespace, user or database access
+    "list_classification_methodologies",
     "list_verification_requests",
     "get_verification_request",
     "search_topics",
