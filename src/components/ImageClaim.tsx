@@ -1,16 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { Box } from "@mui/material";
+import { isSafeImageSrc } from "../utils/ValidateUrl";
 
 interface ImageClaimProps {
     src: string;
     title?: string;
 }
 
-const SAFE_IMAGE_SRC = /^(https?:\/\/|blob:|data:image\/|\/(?!\/))/i;
-
 const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
-    const safeSrc = SAFE_IMAGE_SRC.test(src?.trim() ?? "") ? src.trim() : "";
+    const trimmedSrc = src?.trim();
+    const safeSrc = isSafeImageSrc(trimmedSrc) ? trimmedSrc : "";
     return (
         <Box
             sx={{

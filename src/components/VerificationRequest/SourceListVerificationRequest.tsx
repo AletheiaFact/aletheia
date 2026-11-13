@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { VerificationRequestContent } from "./VerificationRequestContent";
 import { truncateUrl } from "../../helpers/verificationRequestCardHelper";
+import { isSafeLinkUrl } from "../../utils/ValidateUrl";
 
 interface SourceListProps {
     sources: Array<{ href?: string }>;
@@ -28,7 +29,7 @@ const SourceList: React.FC<SourceListProps> = ({ sources, t, id }) => {
                             : ""
                     }
                     value={
-                        /^https?:\/\//i.test(source.href) ? (
+                        isSafeLinkUrl(source.href) ? (
                             <Link href={source.href} passHref>
                                 {truncateUrl(source.href)}
                             </Link>

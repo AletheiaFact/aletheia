@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Typography, Divider } from "@mui/material";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
+import { isSafeWikipediaUrl } from "../../utils/ValidateUrl";
 
 interface PersonalityInfo {
     summarized: boolean;
@@ -16,11 +17,9 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
     const { t } = useTranslation();
     const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
-    const wikipediaHref =
-        typeof personality.wikipedia === "string" &&
-        /^https:\/\/([a-z0-9-]+\.)*wikipedia\.org(\/|$)/i.test(personality.wikipedia)
-            ? personality.wikipedia
-            : undefined;
+    const wikipediaHref = isSafeWikipediaUrl(personality.wikipedia)
+        ? personality.wikipedia
+        : undefined;
     return (
         <Grid item
             xs={componentStyle.titleSpan}
