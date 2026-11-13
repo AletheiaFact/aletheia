@@ -1,10 +1,8 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
 import type { IClaimService } from "../interfaces/claim.service.interface";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
-import { toError } from "../util/error-handling";
-const axios = require("axios");
 
 @Injectable()
 export class SitemapService {
@@ -14,7 +12,6 @@ export class SitemapService {
         @Inject("ClaimService") private claimService: IClaimService,
         private claimReviewService: ClaimReviewService
     ) {}
-    private readonly logger = new Logger("SitemapService");
 
     async getSitemap(hostname: string) {
         const sites: any[] = [
@@ -71,21 +68,5 @@ export class SitemapService {
         sitemapStream.end();
 
         return streamToPromise(sitemapStream);
-    }
-
-    async submitSitemap(hostname: string) {
-        try {
-            await axios.get(
-                `https://google.com/ping?sitemap=${hostname}/sitemap.xml`
-            );
-            return "Sitemap submitted";
-        } catch (error) {
-            const err = toError(error);
-            const message =
-                "Error while submitting sitemap to search engine: " +
-                err.message;
-            this.logger.error(message);
-            return message;
-        }
     }
 }

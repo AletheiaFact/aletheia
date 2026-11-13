@@ -1,26 +1,26 @@
-import { Controller, Get, Header, Request, Res } from "@nestjs/common";
+import { Controller, Get, Header } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { SitemapService } from "./sitemap.service";
 import { Public } from "../auth/decorators/auth.decorator";
 
 @Controller("/")
 export class SitemapController {
-    constructor(private sitemapService: SitemapService) {}
+    constructor(
+        private sitemapService: SitemapService,
+        private configService: ConfigService
+    ) {}
 
+    /**
+     * The sitemap is cached for a day, so its links use the configured
+     * `baseUrl` instead of the request Host header, which clients control.
+     */
     @Public()
     @Get("sitemap.xml")
     @Header("Content-Type", "text/xml")
     @Header("Cache-Control", "max-age=86400")
-    async getSitemap(@Res() res: any, @Request() req: any) {
-        const sitemapXml = await this.sitemapService.getSitemap(
-            req.protocol + "://" + req.get("host")
-        );
-        res.send(sitemapXml);
-    }
-
-    @Get("submit-sitemap")
-    async submitSitemap(@Request() req: any) {
-        return this.sitemapService.submitSitemap(
-            req.protocol + "://" + req.get("host")
+    async getSitemap(): Promise<Buffer> {
+        return this.sitemapService.getSitemap(
+            this.configService.getOrThrow<string>("baseUrl")
         );
     }
 }

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { Box } from "@mui/material";
+import { isSafeImageSrc } from "../utils/ValidateUrl";
 
 interface ImageClaimProps {
     src: string;
@@ -8,6 +9,8 @@ interface ImageClaimProps {
 }
 
 const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
+    const trimmedSrc = src?.trim();
+    const safeSrc = isSafeImageSrc(trimmedSrc) ? trimmedSrc : "";
     return (
         <Box
             sx={{
@@ -25,7 +28,7 @@ const ImageClaim: React.FC<ImageClaimProps> = ({ src, title = "" }) => {
             }}
         >
             <img
-                src={src}
+                src={safeSrc}
                 alt={`${title} claim`}
                 loading="lazy"
                 style={{

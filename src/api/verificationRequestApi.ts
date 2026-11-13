@@ -131,7 +131,7 @@ const updateVerificationRequest = (id, params, t, operationType = "update") => {
     };
 
     return request
-        .put(`/${id}`, params)
+        .put(`/${encodeURIComponent(id)}`, params)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
@@ -169,7 +169,7 @@ const updateVerificationRequestWithTopics = (topics, data_hash, t) => {
 
 const removeVerificationRequestFromGroup = (id, params, t) => {
     return request
-        .put(`/${id}/group`, params)
+        .put(`/${encodeURIComponent(id)}/group`, params)
         .then((response) => {
             MessageManager.showMessage(
                 "success",
@@ -222,7 +222,7 @@ const getPersonalitiesWithWikidata = (
     language: string = "en"
 ): Promise<PersonalityWithWikidata[]> => {
     return request
-        .get(`/${verificationRequestId}/personalities`, {
+        .get(`/${encodeURIComponent(verificationRequestId)}/personalities`, {
             params: { language },
         })
         .then((response) => response.data)
