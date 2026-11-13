@@ -29,6 +29,9 @@ Reference files (read when the step tells you to):
   allows. Read before choosing a label, every time.
 - `references/research.md` — source types, where to look, how to search,
   images and videos.
+- `references/video.md` — getting a transcript of what was said in a video
+  (captions with `yt-dlp`, `scripts/vtt_to_text.py`), how far to trust it,
+  how to cite it.
 - `references/review-log.md` — how to write each form field, a full worked
   example, the self-check list and the template for showing the Review Log
   in the chat.
@@ -120,6 +123,9 @@ on the page.
   the task's `claimId` only when it is missing): the sentences around the
   one you were given (`isTask: true`), who said it, when (`date`), in what
   context (title, sources attached to the claim).
+- If the claim's source is a video (a speech, debate, interview, post), get
+  what was said around the sentence with `references/video.md` instead of
+  relying on the claim's text alone or asking the user to transcribe it.
 - Restate the sentence's factual content in one line for yourself.
 
 ### 2. Decide whether it can be checked
@@ -155,6 +161,7 @@ Read `references/research.md`. In short:
   authorities, reference works.
 - Prefer the original over coverage of it. Two independent sources for
   anything decisive.
+- A source that is a video: `references/video.md`.
 - For every source keep: URL, what it shows, and the exact sentence of your
   text it supports.
 - Open independent sources in parallel (several fetches in one turn), not
