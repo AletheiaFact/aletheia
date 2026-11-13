@@ -11,11 +11,13 @@ import {
     ReleaseReviewTaskSchema,
     ReviewTaskByHashSchema,
     SaveReviewLogSchema,
+    SendToReviewSchema,
     StartReviewTaskSchema,
     SubmitReportSchema,
 } from "./schemas";
 import { describeClaimContext, describeTask } from "./review-task-view";
 import {
+    assertPickedUser,
     authorizeNamespaceWrite,
     authorizeStoredTask,
     describeWithLog,
@@ -137,13 +139,22 @@ export function registerWriteReviewWritingTools(
         "submit_report",
         {
             description:
-                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled. With sendToCrossCheck: true it also sends the report to the cross-check backlog (reported → selectCrossChecker), saving a send_to_cross_check call. The classification must be an option of the task's classification methodology." +
+                "Finish the report of a task you are writing (assigned → reported). Refused, with the list of missing fields, unless classification, summary, sources and (except for not-fact) questions, report and verification are filled. With sendToCrossCheck: true it also sends the report to the cross-check backlog (reported → selectCrossChecker), saving a send_to_cross_check call; with crossCheckerId (from list_assignable_users) it sends it to that user's cross-check instead (reported → cross-checking). The classification must be an option of the task's classification methodology." +
                 LABELS_NOTE,
             inputSchema: SubmitReportSchema.shape as any,
         },
         safeTool("submit_report", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
             const user = deps.request.user as any;
+            // A bad pick is refused before the report is submitted
+            if (args.crossCheckerId) {
+                await assertPickedUser(
+                    deps,
+                    task,
+                    args.crossCheckerId,
+                    "crossCheck"
+                );
+            }
             const reported = await deps.reviewWorkflowService.submitReport(
                 user,
                 task
@@ -151,10 +162,11 @@ export function registerWriteReviewWritingTools(
             return jsonResult(
                 await describeTask(
                     deps,
-                    args.sendToCrossCheck === true
+                    args.sendToCrossCheck === true || args.crossCheckerId
                         ? await deps.reviewWorkflowService.sendToCrossCheck(
                               user,
-                              reported
+                              reported,
+                              args.crossCheckerId
                           )
                         : reported
                 )
@@ -166,18 +178,28 @@ export function registerWriteReviewWritingTools(
         "submit_report_to_review",
         {
             description:
-                "Finish the report of a task you are writing and send it straight to the review backlog, skipping the cross-check (assigned → reported → selectReviewer). Same completeness rules as submit_report. For conclusions already validated by people, such as imports from the validation spreadsheet. Assignees or admins only; a different user must review it. The classification must be an option of the task's classification methodology." +
+                "Send a report to review without a cross-check: finishes it first when it is still being written (assigned → reported), and also works on a task already reported or waiting in either backlog that nobody took yet. With reviewerId (from list_assignable_users, for: review) that user becomes its reviewer right away (state submitted), as picking one on the web does; use it when the user names who reviews. Without it the task goes to the review backlog (selectReviewer) for any reviewer to claim. Use when the user asks to send the report straight to review, or for conclusions already validated by people. Same completeness rules as submit_report. Any assignee of the task (fact-checkers included) or an admin; a different user must review it. The classification must be an option of the task's classification methodology." +
                 LABELS_NOTE,
-            inputSchema: ReviewTaskByHashSchema.shape as any,
+            inputSchema: SendToReviewSchema.shape as any,
         },
         safeTool("submit_report_to_review", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
+            // A bad pick is refused before the report is submitted
+            if (args.reviewerId) {
+                await assertPickedUser(
+                    deps,
+                    task,
+                    args.reviewerId,
+                    "review"
+                );
+            }
             return jsonResult(
                 await describeTask(
                     deps,
                     await deps.reviewWorkflowService.submitReportToReview(
                         deps.request.user as any,
-                        task
+                        task,
+                        args.reviewerId
                     )
                 )
             );

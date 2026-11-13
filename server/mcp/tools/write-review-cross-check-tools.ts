@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { jsonResult, safeTool } from "./tool-helpers";
 import {
     NamespaceOnlySchema,
-    ReviewTaskByHashSchema,
+    SendToCrossCheckSchema,
     SubmitCrossCheckSchema,
 } from "./schemas";
 import {
@@ -11,6 +11,7 @@ import {
     describeTaskBlind,
 } from "./review-task-view";
 import {
+    assertPickedUser,
     authorizeNamespaceWrite,
     authorizeStoredTask,
 } from "./write-review-helpers";
@@ -26,18 +27,27 @@ export function registerWriteReviewCrossCheckTools(
         "send_to_cross_check",
         {
             description:
-                "Send a reported task to the cross-check backlog, where another checker claims it with claim_cross_check. Assignees or admins only." +
+                "Send a reported task to cross-checking. With crossCheckerId (from list_assignable_users, for: crossCheck) that user becomes its cross-checker right away (state cross-checking), as picking one on the web does; use it when the user names who cross-checks. Without it the task goes to the cross-check backlog, where another checker claims it with claim_cross_check. Also moves a task waiting in either backlog that nobody took yet. A task already where the call would put it is returned unchanged. Any assignee of the task (fact-checkers included) or an admin." +
                 LABELS_NOTE,
-            inputSchema: ReviewTaskByHashSchema.shape as any,
+            inputSchema: SendToCrossCheckSchema.shape as any,
         },
         safeTool("send_to_cross_check", async (args) => {
             const task = await authorizeStoredTask(deps, args.dataHash);
+            if (args.crossCheckerId) {
+                await assertPickedUser(
+                    deps,
+                    task,
+                    args.crossCheckerId,
+                    "crossCheck"
+                );
+            }
             return jsonResult(
                 await describeTask(
                     deps,
                     await deps.reviewWorkflowService.sendToCrossCheck(
                         deps.request.user as any,
-                        task
+                        task,
+                        args.crossCheckerId
                     )
                 )
             );

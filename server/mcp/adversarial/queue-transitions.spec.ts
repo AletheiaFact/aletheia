@@ -42,7 +42,7 @@ describe("MCP adversarial: send to review and publish", () => {
             dataHash: HASH_A,
         });
         expect(res.isError).toBe(true);
-        expect(res.text).toMatch(/needs a cross-check/);
+        expect(res.text).toMatch(/no cross-check that agrees/);
         expect(
             session.mocks.reviewTaskService.transitionAtomically
         ).not.toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe("MCP adversarial: send to review and publish", () => {
         });
         expect(res.isError).toBe(false);
         const [filter, update] = firstTransition(session);
-        expect(filter["machine.value"]).toBe("reported");
+        expect(filter.$or).toEqual([{ "machine.value": "reported" }]);
         expect(update.$set).toEqual({
             "machine.value": "selectReviewer",
             "machine.context.reviewData.reviewerId": null,
@@ -132,7 +132,13 @@ describe("MCP adversarial: send to review and publish", () => {
             expect(submit[1].$set).toMatchObject({
                 "machine.value": "reported",
             });
-            expect(send[0]["machine.value"]).toBe("reported");
+            expect(send[0].$or).toEqual([
+                { "machine.value": "reported" },
+                {
+                    "machine.value": "selectCrossChecker",
+                    "machine.context.reviewData.crossCheckerId": null,
+                },
+            ]);
             expect(send[1].$set).toEqual({
                 "machine.value": "selectReviewer",
                 "machine.context.reviewData.reviewerId": null,
@@ -162,7 +168,7 @@ describe("MCP adversarial: send to review and publish", () => {
                 dataHash: HASH_A,
             });
             expect(res.isError).toBe(true);
-            expect(res.text).toMatch(/needs a cross-check/);
+            expect(res.text).toMatch(/no cross-check that agrees/);
         });
     });
 
