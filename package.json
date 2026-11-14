@@ -149,7 +149,7 @@
         "lottie-web": "^5.10.1",
         "md5": "^2.3.0",
         "migrate-mongo-ts": "^1.1.4",
-        "moment": "^2.30.1",
+        "moment": "^2.31.0",
         "mongodb": "^6.8.0",
         "mongodb-memory-server": "^10.0.0",
         "mongoose": "6.13.12",
