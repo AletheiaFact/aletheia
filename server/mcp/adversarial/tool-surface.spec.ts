@@ -18,8 +18,10 @@ describe("MCP adversarial: tool surface", () => {
         const { tools } = await session.client.listTools();
         const forbidden = /delete|remove|publish|role|admin|user|assign/i;
         // publish_review_task is in scope by decision (task queue spec)
-        // and covered by queue-transitions.spec.ts.
-        const audited = ["publish_review_task"];
+        // and covered by queue-transitions.spec.ts. list_assignable_users
+        // only reads the web picker's list for the caller's own task, and
+        // is covered by pick-next-step-user.spec.ts.
+        const audited = ["publish_review_task", "list_assignable_users"];
         expect(
             tools
                 .map((t) => t.name)

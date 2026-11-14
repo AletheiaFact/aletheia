@@ -12,6 +12,7 @@ import { PersonalityModule } from "../personality/personality.module";
 import { ReviewTaskModule } from "../review-task/review-task.module";
 import { SourceModule } from "../source/source.module";
 import { TopicModule } from "../topic/topic.module";
+import { UsersModule } from "../users/users.module";
 import { ViewModule } from "../view/view.module";
 import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { McpAuthGuard } from "./mcp-auth.guard";
@@ -43,6 +44,7 @@ import { ReviewWorkflowService } from "./review-workflow/review-workflow.service
         ConfigModule,
         ViewModule,
         NotificationModule,
+        UsersModule,
     ],
     controllers: [
         McpController,

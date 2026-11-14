@@ -214,19 +214,31 @@ view gets a conflict, never someone else's task.
 | Join | `join_review_task` | write | any checker | adds an assignee |
 | Read the form | `get_review_log` | read | anyone | — |
 | Write the form | `save_review_log` | write | assignee | `assigned` (draft) |
-| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`) |
-| Finish and send to review | `submit_report_to_review` | write | assignee | `assigned` → `reported` → `selectReviewer`, no cross-check (for conclusions already validated by people; a different user reviews) |
+| Finish the report | `submit_report` | write | assignee | `assigned` → `reported` (→ `selectCrossChecker` with `sendToCrossCheck: true`; → `cross-checking` with `crossCheckerId`) |
+| Who can be picked | `list_assignable_users` | write | assignee | — (the web picker's users for `crossCheck` or `review`, minus the people on the task) |
+| Send to review without a cross-check | `submit_report_to_review` | write | assignee | `assigned` → `reported` → `selectReviewer` (→ `submitted` with `reviewerId`); also from `reported` or from a backlog nobody took. For when the user asks to skip the cross-check, or conclusions already validated by people; a different user reviews |
 | Give back | `release_review_task` | write | assignee | `assigned` → `unassigned` |
-| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` → `selectCrossChecker` |
+| Ask for a cross-check | `send_to_cross_check` | write | assignee | `reported` (or a backlog nobody took) → `selectCrossChecker`, or → `cross-checking` with `crossCheckerId`; already there → unchanged |
 | Take a cross-check | `claim_cross_check` | write | not an assignee | → `cross-checking` (returns the claim context, not the writer's label) |
 | My cross-checks | `next_cross_checking` | read | cross-checker | — |
 | Record the cross-check | `submit_cross_check` | write | cross-checker | same label → `selectReviewer` (or `reported` when `auto_send_to_review` is false); different → `assigned` |
-| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer` (only when `auto_send_to_review` is false) |
+| Ask for review | `send_to_review` | write | assignee | `reported` → `selectReviewer`, needs an agreeing cross-check (only when `auto_send_to_review` is false); with `reviewerId`, `reported` or the review backlog → `submitted`; already there → unchanged |
 | Take a review | `claim_review_task` | write | reviewer, not assignee or cross-checker | → `submitted` (returns the claim context and the review form) |
 | My tasks | `list_review_tasks` with `mine: "assigned"` (omit `value` for every state) | read | assignee | — |
 | My reviews | `list_my_review_tasks` (only `submitted` tasks where you are the reviewer) | read | reviewer | — |
 | Send back | `reject_review_task` | write | reviewer | `submitted` → `assigned` |
 | Publish | `publish_review_task` | write | reviewer | `submitted` → `published` (returns the ClaimReview) |
+
+**Picking the next person.** On the web the writer picks who cross-checks
+and who reviews; through MCP the writer passes `crossCheckerId` or
+`reviewerId` from `list_assignable_users`, and the picked user finds the task
+with `next_cross_checking` or `list_my_review_tasks`. Without a pick the task
+waits in its backlog for `claim_cross_check` / `claim_review_task`. A pick is
+offered and accepted with the web picker's rules: a member of the task's
+namespace, not Regular (nor FactChecker, for review), and not already on the
+task (its writers; for review also its cross-checker). A refused pick is
+labelled `(the picked user cannot take this step …)`, not as a permission
+problem.
 
 `save_review_log` takes the form in plain text — `summary` ("Resumo da
 conclusão"), `questions`, `report` ("Relatório da verificação"),
@@ -239,6 +251,17 @@ completeness rules and list what is missing.
 Rules (`mcp.task_queue` in `config.yaml`):
 
 - `max_assignees` (default 10): limit for `join_review_task`.
+- `require_cross_check` (default true): `send_to_review` needs a cross-check
+  that agreed with the report's label. `submit_report_to_review` always skips
+  it.
+- `auto_send_to_review` (default true): an agreeing `submit_cross_check`
+  sends the task to the review backlog by itself.
+
+Refusals say which kind they are, so an agent does not report a state
+conflict as a missing permission: `<tool> failed (not allowed for this
+account): …` when the caller may not act on the task, and `<tool> failed
+(the task's current state does not allow it; …): …` with the next step when
+the task is somewhere else in the flow.
 
 The four-eyes rule is enforced by account: a cross-checker is never an
 assignee, and a reviewer is never an assignee or the cross-checker. An agent
