@@ -1,6 +1,11 @@
-import { Controller, Param, Put, Body, Get, Inject } from "@nestjs/common";
+import { Controller, Put, Get, Inject } from "@nestjs/common";
 import type { IImageService } from "../../../interfaces/image.service.interface";
 import { ApiTags } from "@nestjs/swagger";
+import { ZodBody, ZodParam } from "../../../common/validation";
+import { dataHash } from "../../../../lib/schemas";
+// The topic drawer sends images the same topics array as sentences.
+import { SentenceTopicsSchema } from "../../dto/claim.dto";
+import type { SentenceTopicsDto } from "../../dto/claim.dto";
 
 @Controller()
 export class ImageController {
@@ -8,13 +13,16 @@ export class ImageController {
 
     @ApiTags("claim")
     @Get("api/image/:data_hash")
-    getSentenceByHash(@Param("data_hash") data_hash: string) {
+    getSentenceByHash(@ZodParam("data_hash", dataHash) data_hash: string) {
         return this.imageService.getByDataHash(data_hash);
     }
 
     @ApiTags("claim")
     @Put("api/image/:data_hash")
-    update(@Param("data_hash") data_hash: string, @Body() topics: any[]) {
+    update(
+        @ZodParam("data_hash", dataHash) data_hash: string,
+        @ZodBody(SentenceTopicsSchema) topics: SentenceTopicsDto
+    ) {
         return this.imageService.updateImageWithTopics(topics, data_hash);
     }
 }
