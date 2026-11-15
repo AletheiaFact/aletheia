@@ -21,6 +21,8 @@ import type { IReportService } from "../../../../interfaces/report.service.inter
 import type { BaseRequest } from "../../../../types";
 import { GetByDataHashDto } from "../../../dto/get-by-datahash.dto";
 import type { IImageService } from "../../../../interfaces/image.service.interface";
+import { imageFromUpload } from "../../../shared/image.rules";
+import { withReportClassification } from "../../../../report/shared/report.rules";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoImageService implements IImageService {
@@ -36,12 +38,7 @@ export class MongoImageService implements IImageService {
 
     async create(image: Record<string, any>, claimRevisionId: any = null) {
         const imageSchema = {
-            data_hash: image.DataHash,
-            props: {
-                key: image.Key,
-                extension: image.Extension,
-            },
-            content: image.FileURL,
+            ...imageFromUpload(image),
             claimRevisionId: claimRevisionId,
         };
 
@@ -76,12 +73,7 @@ export class MongoImageService implements IImageService {
             data_hash: validatedHash,
         });
         if (image) {
-            image.props = {
-                classification: report?.classification,
-                classificationMethodology:
-                    report?.classificationMethodology ?? undefined,
-                ...image.props,
-            };
+            image.props = withReportClassification(image.props, report);
             return image;
         } else {
             throw new NotFoundException();

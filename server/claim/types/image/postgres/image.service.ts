@@ -20,6 +20,8 @@ import { toError } from "../../../../util/error-handling";
 import { GetByDataHashDto } from "../../../dto/get-by-datahash.dto";
 import { image } from "./schema/image.schema";
 import { toImageEntity } from "../../../postgres/content.entity";
+import { imageFromUpload } from "../../../shared/image.rules";
+import { withReportClassification } from "../../../../report/shared/report.rules";
 
 // History writes on create are deferred until history ports (Phase 6), as
 // for claim; the service is therefore not request-scoped.
@@ -36,7 +38,8 @@ export class PostgresImageService implements IImageService {
         upload: ImageUpload,
         claimRevisionId: any = null
     ): Promise<IImage> {
-        if (!upload?.DataHash || !upload?.FileURL) {
+        const fields = imageFromUpload(upload ?? {});
+        if (!fields.data_hash || !fields.content) {
             throw new BadRequestException(
                 "An image needs a DataHash and a FileURL."
             );
@@ -44,9 +47,9 @@ export class PostgresImageService implements IImageService {
         const [row] = await this.db
             .insert(image)
             .values({
-                dataHash: upload.DataHash,
-                props: { key: upload.Key, extension: upload.Extension },
-                content: upload.FileURL,
+                dataHash: fields.data_hash,
+                props: fields.props,
+                content: fields.content,
                 claimRevisionId: claimRevisionId
                     ? String(claimRevisionId)
                     : null,
@@ -87,12 +90,7 @@ export class PostgresImageService implements IImageService {
             throw new NotFoundException();
         }
         const entity = toImageEntity(row);
-        entity.props = {
-            classification: report?.classification,
-            classificationMethodology:
-                report?.classificationMethodology ?? undefined,
-            ...entity.props,
-        };
+        entity.props = withReportClassification(entity.props, report);
         return entity;
     }
 
