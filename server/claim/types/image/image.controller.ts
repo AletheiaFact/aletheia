@@ -3,9 +3,8 @@ import type { IImageService } from "../../../interfaces/image.service.interface"
 import { ApiTags } from "@nestjs/swagger";
 import { ZodBody, ZodParam } from "../../../common/validation";
 import { dataHash } from "../../../../lib/schemas";
-// The topic drawer sends images the same topics array as sentences.
-import { SentenceTopicsSchema } from "../../dto/claim.dto";
-import type { SentenceTopicsDto } from "../../dto/claim.dto";
+import { ContentTopicsSchema } from "../../dto/claim.dto";
+import type { ContentTopicsDto } from "../../dto/claim.dto";
 
 @Controller()
 export class ImageController {
@@ -21,7 +20,7 @@ export class ImageController {
     @Put("api/image/:data_hash")
     update(
         @ZodParam("data_hash", dataHash) data_hash: string,
-        @ZodBody(SentenceTopicsSchema) topics: SentenceTopicsDto
+        @ZodBody(ContentTopicsSchema) topics: ContentTopicsDto
     ) {
         return this.imageService.updateImageWithTopics(topics, data_hash);
     }

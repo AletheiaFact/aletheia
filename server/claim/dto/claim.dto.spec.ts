@@ -6,7 +6,7 @@ import {
     CreateUnattributedClaimSchema,
     GetClaimQuerySchema,
     ListClaimsQuerySchema,
-    SentenceTopicsSchema,
+    ContentTopicsSchema,
     UpdateClaimSchema,
     UpdateDebateSchema,
     UpdateHiddenStatusSchema,
@@ -321,13 +321,13 @@ describe("claim DTO schemas", () => {
         });
     });
 
-    it("SentenceTopicsSchema accepts slug strings and topic refs, rejects a non-array", () => {
+    it("ContentTopicsSchema accepts slug strings and topic refs, rejects a non-array", () => {
         expect(
-            SentenceTopicsSchema.safeParse([
+            ContentTopicsSchema.safeParse([
                 "saude",
                 { id: objectId, label: "Saúde", value: "Q1" },
             ]).success
         ).toBe(true);
-        expect(SentenceTopicsSchema.safeParse({ a: 1 }).success).toBe(false);
+        expect(ContentTopicsSchema.safeParse({ a: 1 }).success).toBe(false);
     });
 });
