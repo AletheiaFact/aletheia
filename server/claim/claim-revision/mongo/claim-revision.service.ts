@@ -9,7 +9,7 @@ import {
     ClaimRevisionDocument,
 } from "./schemas/claim-revision.schema";
 import { ContentModelEnum } from "../../../types/enums";
-import { ImageService } from "../../types/image/image.service";
+import type { IImageService } from "../../../interfaces/image.service.interface";
 import { DebateService } from "../../types/debate/debate.service";
 import { UtilService } from "../../../util";
 import { IFindAllOptions } from "../../../interfaces/personality.interface";
@@ -26,7 +26,8 @@ export class MongoClaimRevisionService {
         @Inject("SourceService")
         private readonly sourceService: ISourceService,
         private readonly parserService: ParserService,
-        private readonly imageService: ImageService,
+        @Inject("ImageService")
+        private readonly imageService: IImageService,
         private readonly debateService: DebateService,
         private readonly util: UtilService
     ) {

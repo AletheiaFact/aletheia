@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import type { ClaimDocument } from "../claim/mongo/schemas/claim.schema";
-import type { ImageDocument } from "../claim/types/image/schemas/image.schema";
+import type { IImage } from "../interfaces/claim-content.interface";
 import type { PersonalityDocument } from "../personality/mongo/schemas/personality.schema";
 
 /**
@@ -18,12 +18,12 @@ export const mockClaimService = () => ({
 });
 
 /**
- * Mock factory for ImageService matching actual service interface
+ * Mock factory for the "ImageService" token (IImageService)
  */
 export const mockImageService = () => ({
-    getByDataHash: vi.fn<() => Promise<Partial<ImageDocument>>>(),
-    create: vi.fn<() => Promise<Partial<ImageDocument>>>(),
-    updateImageWithTopics: vi.fn<() => Promise<Partial<ImageDocument>>>(),
+    getByDataHash: vi.fn<() => Promise<Partial<IImage>>>(),
+    create: vi.fn<() => Promise<Partial<IImage>>>(),
+    updateImageWithTopics: vi.fn<() => Promise<Partial<IImage>>>(),
 });
 
 /**

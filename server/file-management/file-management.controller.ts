@@ -13,7 +13,7 @@ import {
 import { FilesInterceptor } from "@nestjs/platform-express/multer";
 import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import { FileManagementService } from "./file-management.service";
-import { ImageService } from "../claim/types/image/image.service";
+import type { IImageService } from "../interfaces/image.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 const md5 = require("md5");
 
@@ -21,7 +21,8 @@ const md5 = require("md5");
 export class FileManagementController {
     constructor(
         private fileManagementService: FileManagementService,
-        private imageService: ImageService,
+        @Inject("ImageService")
+        private imageService: IImageService,
         @Inject("ClaimRevisionService")
         private claimRevisionService: IClaimRevisionService
     ) {}

@@ -1,10 +1,10 @@
-import { Controller, Param, Put, Body, Get } from "@nestjs/common";
-import { ImageService } from "./image.service";
+import { Controller, Param, Put, Body, Get, Inject } from "@nestjs/common";
+import type { IImageService } from "../../../interfaces/image.service.interface";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class ImageController {
-    constructor(private imageService: ImageService) {}
+    constructor(@Inject("ImageService") private imageService: IImageService) {}
 
     @ApiTags("claim")
     @Get("api/image/:data_hash")

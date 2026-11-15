@@ -5,7 +5,6 @@ import {
     AdminUserAbility,
     CHECK_ABILITY,
 } from "../auth/ability/ability.decorator";
-import { ImageService } from "../claim/types/image/image.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { OrganizationController } from "./organization.controller";
 
@@ -35,7 +34,7 @@ describe("OrganizationController", () => {
                     provide: "OrganizationService",
                     useValue: mockOrganizationService,
                 },
-                { provide: ImageService, useValue: mockImageService },
+                { provide: "ImageService", useValue: mockImageService },
                 {
                     provide: FeatureFlagService,
                     useValue: mockFeatureFlagService,

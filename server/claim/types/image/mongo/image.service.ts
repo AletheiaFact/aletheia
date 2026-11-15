@@ -8,22 +8,23 @@ import {
     Scope,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { HistoryService } from "../../../history/history.service";
-import { toError } from "../../../util/error-handling";
+import { HistoryService } from "../../../../history/history.service";
+import { toError } from "../../../../util/error-handling";
 import { Model, Types } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
     TargetModel,
     HistoryType,
-} from "../../../history/schema/history.schema";
+} from "../../../../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
-import type { IReportService } from "../../../interfaces/report.service.interface";
-import type { BaseRequest } from "../../../types";
-import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
+import type { IReportService } from "../../../../interfaces/report.service.interface";
+import type { BaseRequest } from "../../../../types";
+import { GetByDataHashDto } from "../../../dto/get-by-datahash.dto";
+import type { IImageService } from "../../../../interfaces/image.service.interface";
 
 @Injectable({ scope: Scope.REQUEST })
-export class ImageService {
-    private readonly logger = new Logger(ImageService.name);
+export class MongoImageService implements IImageService {
+    private readonly logger = new Logger(MongoImageService.name);
 
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
