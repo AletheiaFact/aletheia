@@ -12,6 +12,8 @@ import { NotImplementedError } from "../database/errors";
 import { claim } from "./postgres/schema/claim.schema";
 import { claimRevision } from "./claim-revision/postgres/schema/claim-revision.schema";
 import { sentence } from "./types/sentence/postgres/schema/sentence.schema";
+import { image } from "./types/image/postgres/schema/image.schema";
+import { PostgresImageService } from "./types/image/postgres/image.service";
 
 describe.skipIf(process.env.DB_TYPE !== "postgres")(
     "claim postgres-only",
@@ -20,6 +22,7 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         let claimService: PostgresClaimService;
         let revisionService: PostgresClaimRevisionService;
         let sentenceService: PostgresSentenceService;
+        let imageService: PostgresImageService;
         let personalityId: string;
 
         const seedPersonality = async (name: string, isHidden = false) =>
@@ -39,7 +42,7 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         beforeEach(async () => {
             await resetTestDrizzle();
             db = await getTestDrizzle();
-            ({ claimService, revisionService, sentenceService } =
+            ({ claimService, revisionService, sentenceService, imageService } =
                 buildPostgresClaimStack(db, {} as any));
             personalityId = await seedPersonality("Ada Lovelace");
         });
@@ -83,7 +86,7 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
                     title: "Picture",
                     slug: "picture",
                     contentId: randomUUID(),
-                    contentModel: "Image",
+                    contentModel: "Debate",
                     date: new Date(),
                     claimId: created._id,
                     personalityIds: [personalityId],
@@ -104,18 +107,28 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             expect(await db.select().from(sentence)).toEqual([]);
         });
 
+        it("an image upload without a DataHash or a FileURL is a 400 before any write", async () => {
+            await expect(
+                claimService.create(
+                    body({ contentModel: "Image", content: { DataHash: "x" } })
+                )
+            ).rejects.toBeInstanceOf(BadRequestException);
+            expect(await db.select().from(image)).toEqual([]);
+            expect(await db.select().from(claim)).toEqual([]);
+        });
+
+        it("image getById treats a malformed id as missing", async () => {
+            expect(await imageService.getById("not-a-uuid")).toBeNull();
+            expect(await imageService.getById(randomUUID())).toBeNull();
+        });
+
         it("sentence findAll needs a searchText or a topic filter", async () => {
             await expect(
                 sentenceService.findAll({ searchText: "", pageSize: 10 })
             ).rejects.toBeInstanceOf(BadRequestException);
         });
 
-        it("image and debate claims are loud 501s until their tables port", async () => {
-            await expect(
-                claimService.create(
-                    body({ contentModel: "Image", content: { DataHash: "x" } })
-                )
-            ).rejects.toBeInstanceOf(NotImplementedError);
+        it("debate claims are loud 501s until the debate table ports", async () => {
             await expect(
                 claimService.create(body({ contentModel: "Debate" }))
             ).rejects.toBeInstanceOf(NotImplementedError);

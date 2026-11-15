@@ -6,6 +6,7 @@ import { PostgresSentenceService } from "../claim/types/sentence/postgres/senten
 import { PostgresParagraphService } from "../claim/types/paragraph/postgres/paragraph.service";
 import { PostgresSpeechService } from "../claim/types/speech/postgres/speech.service";
 import { PostgresUnattributedService } from "../claim/types/unattributed/postgres/unattributed.service";
+import { PostgresImageService } from "../claim/types/image/postgres/image.service";
 import { PostgresReportService } from "../report/postgres/report.service";
 import { PostgresSourceService } from "../source/postgres/source.service";
 import { PostgresGroupService } from "../group/postgres/group.service";
@@ -47,6 +48,7 @@ export function buildPostgresClaimStack(
         fuzzyConfigStub
     );
     const speechService = new PostgresSpeechService(db);
+    const imageService = new PostgresImageService(db, reportService);
     const parser = new ParserService(
         speechService,
         new PostgresParagraphService(db),
@@ -57,6 +59,7 @@ export function buildPostgresClaimStack(
     const revisionService = new PostgresClaimRevisionService(
         db,
         sourceService,
+        imageService,
         parser,
         fuzzyConfigStub
     );
@@ -72,6 +75,7 @@ export function buildPostgresClaimStack(
         revisionService,
         sentenceService,
         speechService,
+        imageService,
         reportService,
         sourceService,
         groupService,
