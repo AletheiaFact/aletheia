@@ -37,6 +37,8 @@ Chosen over Prisma / TypeORM / MikroORM / Kysely / raw `pg` because the migratio
 
 **Risk control:** `drizzle-orm` and `drizzle-kit` are pinned to exact versions (no `^`) — both are pre-1.0. Upgrades are deliberate, at most one per phase.
 
+**Upgrade log:** `drizzle-orm` 0.36.4 → 0.45.2 landed through a dependency batch (#2713, Phase 2) rather than a deliberate bump; `drizzle-kit` stays 0.28.1. The visible change: query errors arrive wrapped in a `DrizzleQueryError` with the pg error on `.cause`, so SQLSTATE checks read `error.cause ?? error` (`invalid-uuid.ts`, `unique-violation.ts` and the verification-request `23502` mapping already do). The full suite and the real-Postgres job are green on 0.45.2. Count it as Phase 2's one upgrade; route future drizzle bumps outside the dependency batch.
+
 ### D2 — Pattern: dual services + shared rules module
 
 The swap mechanism is two sibling service implementations behind one interface, selected at boot. A full repository pattern was rejected (forces refactoring live Mongo services; aggregation-heavy modules don't decompose into neutral repo methods).
@@ -201,7 +203,7 @@ Source reference columns land per D3 without constraints: `user_id uuid` (users 
 | `searchTopics` query semantics | escaped `$regex` (literal substring; sort by `name` in byte order) | literal `ILIKE '%q%'` substring on `name` or any alias; sort by `name` in collation order | the query is escaped on both since the endpoint went public (repository topic filter); only the sort order differs |
 | `create` with duplicate entries in one batch | `Promise.all` races into `E11000` → 500 | sequential loop; the second entry finds the first and returns its ref | deterministic; Mongo behavior is a race, not a rule |
 | `create` with a `{ slug }` reference to a missing topic | `name` is an object → Mongoose CastError → 500 | `BadRequestException` (400) | there is no usable name; 400 is the honest code |
-| `create` with `contentModel = Image` | attaches topics to the image | `NotImplementedError` (501) | image table ports in Phase 2 MR 2; any other `contentModel` attaches to the sentence through the `"SentenceService"` token (Phase 2 MR 1) |
+| `create` with a `contentModel` | `Image` attaches topics to the image, any other value to the sentence | same, through the `"ImageService"` (Phase 2 MR 2a) and `"SentenceService"` (Phase 2 MR 1) tokens | parity |
 | `findByNames([])` | `$or: []` is a driver error → 500 | `[]` | live callers guard the empty case; empty result is the honest answer |
 | `findByWikidataIds` with non-string ids | forwarded to `$in` as-is | non-strings dropped before the query | only real ids can match a text column |
 | slug collision on insert (race) | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
@@ -213,12 +215,12 @@ Topic is **global** (no `nameSpace` on the Mongo schema). Its Mongo schema has *
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
-| `listAll` | `$lookup` users (holders) + images, image unwound | `NotImplementedError` (501) | users table ports in Phase 4, image in Phase 2; returning rows without the lookups would silently drop data |
+| `listAll` | `$lookup` users (holders) + images, image unwound | `NotImplementedError` (501) | needs the users table (Phase 4); the image table landed in Phase 2 MR 2a. Returning rows without the lookups would silently drop data |
 | invalid `image._id` on create/update | `new Types.ObjectId(x)` → BSONError 500 | non-uuid → 22P02 → 500 | parity today; Phase 10 may add a 22P02→400 mapping |
 | unknown body keys reaching the service (`created_at`, `users`) | dropped by the strict Mongoose schema | never selected into the insert/update | same observable result |
 | `getById` / `update` on missing id | `null` | `null` | kept (controller 404s on `update`); no normalization |
 
-Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity. `image_id uuid` lands per D3 without a constraint, btree-indexed. No `shared/badge.rules.ts`: the module has no driver-free business rule (ids pass through, no derivation). The badge controller still wraps ids in `Types.ObjectId` for the Mongo-only `users` service and `imageService` — Phase 4 / Phase 2 remove those. Pre-existing controller bug left as-is: `updateBadge` returns `undefined` (the `return` sits inside a `forEach`); the frontend ignores the body.
+Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity. `image_id uuid` lands per D3 without a constraint, btree-indexed. No `shared/badge.rules.ts`: the module has no driver-free business rule (ids pass through, no derivation). The badge controller still wraps ids in `Types.ObjectId` for the Mongo-only `users` service — Phase 4 removes it; image creation goes through the `"ImageService"` token since Phase 2 MR 2a. Pre-existing controller bug left as-is: `updateBadge` returns `undefined` (the `return` sits inside a `forEach`); the frontend ignores the body.
 
 **Group module (Phase 1) divergences:**
 
@@ -283,12 +285,28 @@ Report is **global**; the classification check is the shared rule `shared/report
 | `unattributed` | no `claimRevisionId`, no `data_hash` (the parser never sets them) | same columns absent | parity; README spec drift left as-is |
 | draft debate transcript content (`isDraft`) | optional `isDraft` on sentence and speech, set by `parse(..., { isDraft: true })` and `$unset` on approval; `getByDataHash`, `findAll`, `getHashesByTopic` and `getSpeech` skip drafts; populated trees do not filter | `is_draft boolean NOT NULL DEFAULT false` (migration `0008_content_is_draft`), same four reads filter `is_draft = false`, trees do not filter; the entity carries `isDraft: true` only on drafts | parity of the key shape. Clearing the flag on approval lives in the Mongo-only `DebateService.publishSpeeches` and ports with debate (Phase 2 MR 2) |
 
+**Image content type (Phase 2 MR 2a) divergences:**
+
+| Behavior | Mongo (authoritative, untouched) | Postgres | Why |
+|---|---|---|---|
+| history write on `create` | `HistoryService` entry (the reason the Mongo impl is `Scope.REQUEST`) | deferred until Phase 6 ports history | same as claim; the Postgres impl is not request-scoped |
+| `create` without `DataHash` or `FileURL` | Mongoose `ValidationError` → 500 | `BadRequestException` (400) before the insert | no row can exist without them; 400 is the honest code. Live callers (claim create, badge, organization) send an upload result that has both |
+| `getById` with a malformed id | `CastError` → 500 | `22P02` → `null` (the organization controller then answers "logo not found") | a malformed id can never match |
+| `getByDataHash` with several images per hash | natural (insertion) order | `created_at, id` | equivalent; `data_hash` is not unique on either backend (file-management dedupes uploads by hash) |
+| `updateImageWithTopics` return | updated doc (`new: true`) | updated entity | parity |
+| `getHashesByTopic` | `topics.id` compared to an ObjectId | jsonb containment `topics @> [{"id": uuid}]` | same predicate as sentence |
+| revision `content` | populate of the `content` virtual | `loadContentTree` loads the image row (`content-tree.ts`) | parity-recorded (`revision:image`) |
+| `type` | `ContentModelEnum.Image` default (`"Image"`) | `type text DEFAULT 'Image'` | parity (unlike sentence/speech, whose `type` is lowercase on both) |
+
+Image is **global** (no `nameSpace` on the Mongo schema) and has **no soft-delete plugin and no delete method**; the PG table carries the §2 triple for uniformity. `claim_revision_id uuid` is nullable (badge and organization logos have no revision), btree-indexed per D3; `topics` jsonb has a GIN index. `ImageModule` stays a static `@Module` with the `DB_TYPE` branch inline: it forwardRefs the report cycle. `toImageEntity` lives in `server/claim/postgres/content.entity.ts` with the other content mappers. No `shared/image.rules.ts`: the `data_hash` check is the shared `GetByDataHashDto`, and the report classification merge is three lines both content types (sentence, image) inline. Validation: `GET` / `PUT api/image/:data_hash` take `dataHash` and the same topics array schema as the sentence `PUT` (the topic drawer sends both the same body); the baseline loses 3 lines. Pre-existing and left as-is: `GET api/image/:data_hash` carries no public marker while `GET api/sentence/:data_hash` has `Auth({ public: true })`; whether anonymous image reads should be allowed is a product call outside the port.
+
 **Claim-revision module (Phase 2 MR 1) divergences:**
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
 | `getRevision(match)` | any Mongo filter | `_id` / `claimId` / `contentId`, else `NotImplementedError` | loud per §1.5 |
-| `create` with `Image` / `Debate` | creates the image / debate document | `NotImplementedError` | Phase 2 MR 2 |
+| `create` with `Image` | creates the image document through `ImageService.create` | same, through the `"ImageService"` token | parity (Phase 2 MR 2a) |
+| `create` with `Debate` | creates the debate document | `NotImplementedError` | Phase 2 MR 2b |
 | `create` with an unknown `contentModel` or without `date` | no content document, then `contentId` / `date` required ValidationError (400); a missing date still writes the content and sources first | `BadRequestException` (400) before any write | same code; PG validates the date first so a 400 leaves no orphan rows |
 | `create` relinking an existing source (`updateTargetId`) | fire-and-forget | awaited | same final state, deterministic tests |
 | malformed revision id (`getRevision`, `getRevisionById`) | CastError → `NotFoundException` (the catch became reachable once the queries were awaited, a sanctioned move-only exception) | `22P02` mapped → `NotFoundException` through `server/database/postgres/invalid-uuid.ts` | parity kept on the wire |
@@ -302,7 +320,7 @@ Report is **global**; the classification check is the shared rule `shared/report
 
 | Behavior | Mongo (authoritative, untouched) | Postgres | Why |
 |---|---|---|---|
-| `listAll`, `getById`, `getByClaimSlug` / `getByPersonalityIdAndClaimSlug` with `population = true`, reads with a `revisionId` | `postProcess` annotates sentences from claim-review + review-task and adds review stats | `NotImplementedError("postProcess(claim-review, review-task)")` **after** the row lookup (a missing claim is still a 404) | needs `claim-review` (Phase 3) and `review-task.getReviewTasksByClaimId` (Phase 5, or a leaf read in Phase 3); returning unannotated content would be silently wrong |
+| `listAll` (including the repository `filters` path with `q` / `contentModel` / `topic` / date range / `reviewStatus` / `sortBy` and its `contentModelCounts`), `getById`, `getByClaimSlug` / `getByPersonalityIdAndClaimSlug` with `population = true`, reads with a `revisionId` | `postProcess` annotates sentences from claim-review + review-task and adds review stats | `NotImplementedError("postProcess(claim-review, review-task)")` **after** the row lookup (a missing claim is still a 404) | needs `claim-review` (Phase 3) and `review-task.getReviewTasksByClaimId` (Phase 5, or a leaf read in Phase 3); returning unannotated content would be silently wrong |
 | `population = false` reads (`getByClaimSlug(slug, undefined, false)`, …) | flattened latest revision + `personalities { _id, name }` + `sources { _id, href, targetId }` | same shape (parity-recorded) | the SSR pages use this path |
 | `update` | throws `TypeError` (`toObject` on a `.lean()` doc) — broken, no frontend caller | `NotImplementedError` | port when a caller exists |
 | history + state-event writes on `create` / `update` / `delete` / hide | written | deferred until Phase 6 | `getHistoryParams` rejects non-ObjectId ids |
@@ -329,7 +347,7 @@ Foreign-key *columns* dictate what must exist before what (constraints come late
 ✅ Phase 0    Foundation + personality (this MR)
 ✅ Phase 0.5  Leaf tables: source ✅ / topic ✅ / badge ✅ / group ✅ (landed with Phase 1) [S]
 ✅ Phase 1    verification-request + group + pgvector + parity recorder/CLI + real-PG CI + DB_METRICS [M]
-🔶 Phase 2    claim + claim-revision + content types (+ report leaf)         [L] → MR 1 ✅ claim, claim-revision, sentence/paragraph/speech/unattributed, report; MR 2: image, debate, admin-editor
+🔶 Phase 2    claim + claim-revision + content types (+ report leaf)         [L] → MR 1 ✅ claim, claim-revision, sentence/paragraph/speech/unattributed, report; MR 2a ✅ image; MR 2b: debate + transcript drafts; MR 2c: admin-editor
    Phase 3    claim-review                                                 [M] → personality = zero 501s ★ first cutover-eligible
    ── CUTOVER MILESTONE A: deployments using only {personality, claim, claim-review, VR} can flip ──
    Phase 4    users + roles/badges                                         [M]
