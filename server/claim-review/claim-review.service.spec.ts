@@ -5,7 +5,6 @@ import { ClaimReviewService } from "./claim-review.service";
 import { ClaimReview } from "./schemas/claim-review.schema";
 import { HistoryService } from "../history/history.service";
 import { UtilService } from "../util";
-import { ImageService } from "../claim/types/image/image.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { ReviewTaskTypeEnum } from "../types/enums";
@@ -73,7 +72,7 @@ describe("ClaimReviewService (Unit)", () => {
                 { provide: HistoryService, useValue: mockHistoryService },
                 { provide: UtilService, useValue: mockUtilService },
                 { provide: "SentenceService", useValue: mockSentenceService },
-                { provide: ImageService, useValue: mockImageService },
+                { provide: "ImageService", useValue: mockImageService },
                 {
                     provide: EditorParseService,
                     useValue: mockEditorParseService,

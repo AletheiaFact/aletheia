@@ -42,6 +42,7 @@ const backends: Array<{
             return new PostgresTopicService(
                 db,
                 wikidataStub as any,
+                {} as any,
                 {} as any
             ) as unknown as ITopicService;
         },

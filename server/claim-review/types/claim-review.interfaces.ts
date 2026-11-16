@@ -2,7 +2,7 @@ import type { ISentence } from "../../interfaces/claim-content.interface";
 import { User } from "../../entities/user.entity";
 import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { Report } from "../../report/mongo/schemas/report.schema";
-import { Image } from "../../claim/types/image/schemas/image.schema";
+import { Image } from "../../claim/types/image/mongo/schemas/image.schema";
 import { ContentModelEnum } from "../../types/enums";
 
 interface claim {

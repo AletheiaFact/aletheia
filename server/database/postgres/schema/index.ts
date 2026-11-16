@@ -13,4 +13,5 @@ export * from "../../../claim/types/sentence/postgres/schema/sentence.schema";
 export * from "../../../claim/types/paragraph/postgres/schema/paragraph.schema";
 export * from "../../../claim/types/speech/postgres/schema/speech.schema";
 export * from "../../../claim/types/unattributed/postgres/schema/unattributed.schema";
+export * from "../../../claim/types/image/postgres/schema/image.schema";
 export * from "../../../report/postgres/schema/report.schema";

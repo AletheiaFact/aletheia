@@ -1,11 +1,16 @@
 import { randomUUID } from "crypto";
-import { ConflictException, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    NotFoundException,
+} from "@nestjs/common";
 import { Types } from "mongoose";
 import type { IClaimService } from "../interfaces/claim.service.interface";
 import type { IClaimRevisionService } from "../interfaces/claim-revision.service.interface";
 import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import type { ISpeechService } from "../interfaces/speech.service.interface";
 import type { IReportService } from "../interfaces/report.service.interface";
+import type { IImageService } from "../interfaces/image.service.interface";
 import type { ISourceService } from "../interfaces/source.service.interface";
 import type { IGroupService } from "../interfaces/group.service.interface";
 import { MongoClaimService } from "./mongo/claim.service";
@@ -14,6 +19,7 @@ import { MongoSentenceService } from "./types/sentence/mongo/sentence.service";
 import { MongoParagraphService } from "./types/paragraph/mongo/paragraph.service";
 import { MongoSpeechService } from "./types/speech/mongo/speech.service";
 import { MongoUnattributedService } from "./types/unattributed/mongo/unattributed.service";
+import { MongoImageService } from "./types/image/mongo/image.service";
 import { MongoReportService } from "../report/mongo/report.service";
 import { MongoSourceService } from "../source/mongo/source.service";
 import { MongoGroupService } from "../group/mongo/group.service";
@@ -55,6 +61,7 @@ type Stack = {
     revisionService: IClaimRevisionService;
     sentenceService: ISentenceService;
     speechService: ISpeechService;
+    imageService: IImageService;
     reportService: IReportService;
     sourceService: ISourceService;
     groupService: IGroupService;
@@ -69,7 +76,6 @@ const reportSourceStub = {
 // Mongo-only collaborators the claim family never reaches on these paths
 // (history and state-event are deferred to Phase 6, review data to Phase 3).
 const mongoStubs = {
-    imageService: {} as any,
     debateService: {} as any,
     claimReviewService: {
         getReviewClassificationCountsByClaimId: async () => [],
@@ -129,6 +135,12 @@ const backends: Array<{
                 new UtilService()
             );
             const speechService = new MongoSpeechService(models.speech as any);
+            const imageService = new MongoImageService(
+                adminRequest(new Types.ObjectId().toString()),
+                models.image as any,
+                HistoryServiceMock as any,
+                reportService
+            );
             const parser = new ParserService(
                 speechService,
                 new MongoParagraphService(models.paragraph as any),
@@ -140,7 +152,7 @@ const backends: Array<{
                 models.claimRevision as any,
                 sourceService,
                 parser,
-                mongoStubs.imageService,
+                imageService,
                 mongoStubs.debateService,
                 new UtilService()
             );
@@ -160,6 +172,7 @@ const backends: Array<{
                 revisionService,
                 sentenceService,
                 speechService,
+                imageService,
                 reportService,
                 sourceService,
                 groupService,
@@ -526,6 +539,101 @@ describe.each(backends)(
             expect(speech).not.toHaveProperty("isDraft");
             expect(speech.content[0].content[0]).not.toHaveProperty("isDraft");
             expect(idOf(sentenceId)).toBeTruthy();
+        });
+
+        const imageUpload = (hash = "a".repeat(32)) => ({
+            DataHash: hash,
+            Key: `${hash}.png`,
+            Extension: "png",
+            FileURL: `https://files.test/${hash}.png`,
+        });
+
+        it("create with an Image content stores the upload and the revision reads it back", async () => {
+            const upload = imageUpload();
+            const created = await stack.claimService.create(
+                speechBody({ contentModel: "Image", content: upload })
+            );
+            expect(created.contentModel).toBe("Image");
+
+            const revision = await stack.revisionService.getRevisionById(
+                idOf(created.latestRevision)
+            );
+            expect(revision!.content).toHaveLength(1);
+            const [picture] = revision!.content;
+            expect(picture.type).toBe("Image");
+            expect(picture.data_hash).toBe(upload.DataHash);
+            expect(picture.content).toBe(upload.FileURL);
+            expect(picture.props).toEqual({
+                key: upload.Key,
+                extension: "png",
+            });
+            expect(idOf(picture.claimRevisionId)).toBe(idOf(revision));
+            parity.record("revision:image", backend, revision);
+
+            const byContent = await stack.revisionService.getByContentId(
+                idOf(picture)
+            );
+            expect(idOf(byContent)).toBe(idOf(revision));
+        });
+
+        it("images are reachable by data_hash and by id, and carry topics and the report classification", async () => {
+            const upload = imageUpload("b".repeat(32));
+            const created = await stack.imageService.create(upload);
+            expect(created.claimRevisionId ?? null).toBeNull();
+            expect(
+                (await stack.imageService.getById(idOf(created)))!.content
+            ).toBe(upload.FileURL);
+            expect(
+                await stack.imageService.getById(makeMissingId())
+            ).toBeNull();
+
+            const found = await stack.imageService.getByDataHash(
+                upload.DataHash
+            );
+            expect(found.props.classification).toBeUndefined();
+            expect(found.props.key).toBe(upload.Key);
+            parity.record("image:getByDataHash", backend, found);
+
+            const topicId = makeTopicId();
+            const tagged = await stack.imageService.updateImageWithTopics(
+                [{ id: topicId, label: "Saúde", value: "Q1" }],
+                upload.DataHash
+            );
+            expect(tagged!.topics).toHaveLength(1);
+            expect(
+                await stack.imageService.getHashesByTopic(String(topicId))
+            ).toEqual([upload.DataHash]);
+            expect(
+                await stack.imageService.getHashesByTopic(makeMissingId())
+            ).toEqual([]);
+
+            await stack.reportService.create({
+                data_hash: upload.DataHash,
+                reportModel: "Fact-checking",
+                usersId: makeId(),
+                summary: "Checked",
+                sources: ["https://report.test"],
+                classification: "false",
+            });
+            await vi.waitFor(async () => {
+                const classified = await stack.imageService.getByDataHash(
+                    upload.DataHash
+                );
+                expect(classified.props.classification).toBe("false");
+            });
+
+            await expect(
+                stack.imageService.getByDataHash("f".repeat(32))
+            ).rejects.toBeInstanceOf(NotFoundException);
+            await expect(
+                stack.imageService.getByDataHash("not-a-hash")
+            ).rejects.toBeInstanceOf(BadRequestException);
+            await expect(
+                stack.imageService.updateImageWithTopics(
+                    "x" as any,
+                    upload.DataHash
+                )
+            ).rejects.toBeInstanceOf(BadRequestException);
         });
 
         it("speech and claim-revision reads resolve the content tree and the content id", async () => {

@@ -16,6 +16,7 @@ import type {
 import type { IClaimRevision } from "../../../interfaces/claim-revision.interface";
 import type { IFindAllOptions } from "../../../interfaces/personality.interface";
 import type { ISourceService } from "../../../interfaces/source.service.interface";
+import type { IImageService } from "../../../interfaces/image.service.interface";
 import { DRIZZLE } from "../../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../../database/postgres/connection";
 import { NotImplementedError } from "../../../database/errors";
@@ -65,6 +66,7 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
         @Inject("SourceService") private readonly sourceService: ISourceService,
+        @Inject("ImageService") private readonly imageService: IImageService,
         private readonly parserService: ParserService,
         private readonly configService: ConfigService
     ) {}
@@ -238,7 +240,13 @@ export class PostgresClaimRevisionService implements IClaimRevisionService {
                 );
                 return String(content._id);
             }
-            case ContentModelEnum.Image:
+            case ContentModelEnum.Image: {
+                const created = await this.imageService.create(
+                    input.content,
+                    revisionId
+                );
+                return String(created._id);
+            }
             case ContentModelEnum.Debate:
                 throw new NotImplementedError(
                     "postgres",

@@ -51,9 +51,8 @@ import { TargetModel } from "../history/schema/history.schema";
 import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
-import type { ISentence } from "../interfaces/claim-content.interface";
-import { ImageService } from "./types/image/image.service";
-import { ImageDocument } from "./types/image/schemas/image.schema";
+import type { IImage, ISentence } from "../interfaces/claim-content.interface";
+import type { IImageService } from "../interfaces/image.service.interface";
 import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { DebateService } from "./types/debate/debate.service";
@@ -81,7 +80,8 @@ export class ClaimController {
         private configService: ConfigService,
         private viewService: ViewService,
         private captchaService: CaptchaService,
-        private imageService: ImageService,
+        @Inject("ImageService")
+        private imageService: IImageService,
         private debateService: DebateService,
         private editorService: EditorService,
         private parserService: ParserService,
@@ -388,7 +388,7 @@ export class ClaimController {
         req: BaseRequest,
         res: Response,
         claim: any,
-        content: ISentence | ImageDocument,
+        content: ISentence | IImage,
         personality: any = null
     ) {
         const hideDescriptions: Record<string, any> = {};

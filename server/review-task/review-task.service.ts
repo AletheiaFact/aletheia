@@ -20,7 +20,7 @@ import type { ISentenceService } from "../interfaces/sentence.service.interface"
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { buildDateQuery } from "../../src/utils/date.utils";
 import { Roles } from "../auth/ability/ability.factory";
-import { ImageService } from "../claim/types/image/image.service";
+import type { IImageService } from "../interfaces/image.service.interface";
 import {
     ContentModelEnum,
     ReportModelEnum,
@@ -30,7 +30,7 @@ import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
 import { CommentEnum } from "./comment/schema/comment.schema";
 import { User } from "../users/schemas/user.schema";
-import { Image } from "../claim/types/image/schemas/image.schema";
+import { Image } from "../claim/types/image/mongo/schemas/image.schema";
 import type { ISentence } from "../interfaces/claim-content.interface";
 import { Source } from "../source/mongo/schemas/source.schema";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
@@ -89,7 +89,8 @@ export class ReviewTaskService {
         private ReviewTaskModel: Model<ReviewTaskDocument>,
         private effects: ReviewTaskEffectsService,
         @Inject("SentenceService") private sentenceService: ISentenceService,
-        private imageService: ImageService,
+        @Inject("ImageService")
+        private imageService: IImageService,
         private editorParseService: EditorParseService,
         private commentService: CommentService,
         private featureFlagService: FeatureFlagService

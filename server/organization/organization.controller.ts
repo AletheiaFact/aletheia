@@ -10,7 +10,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { objectId } from "../../lib/schemas";
 import { AdminOnly, FactCheckerOnly } from "../auth/decorators/auth.decorator";
-import { ImageService } from "../claim/types/image/image.service";
+import type { IImageService } from "../interfaces/image.service.interface";
 import { ZodBody, ZodParam, ZodQuery } from "../common/validation";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import type { IOrganizationService } from "../interfaces/organization.service.interface";
@@ -29,7 +29,8 @@ export class OrganizationController {
     constructor(
         @Inject("OrganizationService")
         private readonly organizationService: IOrganizationService,
-        private readonly imageService: ImageService,
+        @Inject("ImageService")
+        private readonly imageService: IImageService,
         private readonly featureFlagService: FeatureFlagService
     ) {}
 

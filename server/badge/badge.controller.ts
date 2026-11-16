@@ -9,7 +9,7 @@ import {
     Res,
 } from "@nestjs/common";
 import type { Request, Response } from "express";
-import { ImageService } from "../claim/types/image/image.service";
+import type { IImageService } from "../interfaces/image.service.interface";
 import { parse } from "url";
 
 import { ViewService } from "../view/view.service";
@@ -35,7 +35,8 @@ export class BadgeController {
     constructor(
         @Inject("BadgeService") private badgeService: IBadgeService,
         private viewService: ViewService,
-        private imageService: ImageService,
+        @Inject("ImageService")
+        private imageService: IImageService,
         private usersService: UsersService,
         private util: UtilService,
         private configService: ConfigService,

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ClaimController } from "./claim.controller";
-import { ImageService } from "./types/image/image.service";
 import {
     mockClaimService,
     mockImageService,
@@ -43,7 +42,7 @@ describe("ClaimController (Unit)", () => {
                 { provide: ConfigService, useValue: {} },
                 { provide: ViewService, useValue: {} },
                 { provide: CaptchaService, useValue: {} },
-                { provide: ImageService, useValue: imageService },
+                { provide: "ImageService", useValue: imageService },
                 { provide: DebateService, useValue: {} },
                 { provide: EditorService, useValue: {} },
                 { provide: ParserService, useValue: {} },

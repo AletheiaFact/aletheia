@@ -14,6 +14,7 @@ import type {
 } from "../../../../interfaces/sentence.service.interface";
 import type { ISentence } from "../../../../interfaces/claim-content.interface";
 import type { IReportService } from "../../../../interfaces/report.service.interface";
+import { withReportClassification } from "../../../../report/shared/report.rules";
 import { DRIZZLE } from "../../../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../../../database/postgres/connection";
 import { toError } from "../../../../util/error-handling";
@@ -75,12 +76,7 @@ export class PostgresSentenceService implements ISentenceService {
             throw new NotFoundException();
         }
         const entity = toSentenceEntity(row);
-        entity.props = {
-            classification: report?.classification,
-            classificationMethodology:
-                report?.classificationMethodology ?? undefined,
-            ...entity.props,
-        };
+        entity.props = withReportClassification(entity.props, report);
         return entity;
     }
 

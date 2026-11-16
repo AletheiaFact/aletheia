@@ -13,9 +13,11 @@ import { sentence } from "../types/sentence/postgres/schema/sentence.schema";
 import { paragraph } from "../types/paragraph/postgres/schema/paragraph.schema";
 import { speech } from "../types/speech/postgres/schema/speech.schema";
 import { unattributed } from "../types/unattributed/postgres/schema/unattributed.schema";
+import { image } from "../types/image/postgres/schema/image.schema";
 import type { SpeechRow } from "../types/speech/postgres/schema/speech.schema";
 import type { UnattributedRow } from "../types/unattributed/postgres/schema/unattributed.schema";
 import {
+    toImageEntity,
     toParagraphEntity,
     toSentenceEntity,
     toSpeechEntity,
@@ -99,6 +101,14 @@ export async function loadContentTree(
                 .where(eq(unattributed.id, contentId))
                 .limit(1);
             return row ? [await loadUnattributedTree(db, row)] : [];
+        }
+        case ContentModelEnum.Image: {
+            const [row] = await db
+                .select()
+                .from(image)
+                .where(eq(image.id, contentId))
+                .limit(1);
+            return row ? [toImageEntity(row)] : [];
         }
         default:
             throw new NotImplementedError(

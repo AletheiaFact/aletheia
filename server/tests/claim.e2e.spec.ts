@@ -288,6 +288,32 @@ describe("ClaimController (e2e)", () => {
         imageClaimId = response.body?._id || response.body?.path;
     });
 
+    it("/api/image/:data_hash (GET, PUT) - reads the image and validates the hash and topics", async () => {
+        const hash = "388de39144cdc9fc50dac06e6b84bf88";
+        const found = await request(app.getHttpServer())
+            .get(`/api/image/${hash}`)
+            .expect(200);
+        expect(found.body.data_hash).toBe(hash);
+        expect(found.body.props.key).toBe("imageTest1.png");
+
+        const badHash = await request(app.getHttpServer())
+            .get("/api/image/not-a-hash")
+            .expect(400);
+        expect(badHash.body.message).toBe("Validation failed");
+
+        const badTopics = await request(app.getHttpServer())
+            .put(`/api/image/${hash}`)
+            .send({ topics: "saude" })
+            .expect(400);
+        expect(badTopics.body.message).toBe("Validation failed");
+
+        const tagged = await request(app.getHttpServer())
+            .put(`/api/image/${hash}`)
+            .send(["saude"])
+            .expect(200);
+        expect(tagged.body.topics).toEqual(["saude"]);
+    });
+
     /**
      * Test: Image Claim Creation without Personality
      * Purpose: Validates creation of image-type claim without personality association
@@ -772,9 +798,9 @@ describe("ClaimController (e2e)", () => {
             }).expect(200);
 
             expect(body.totalClaims).toBe(2);
-            expect(
-                body.claims.map((claim: any) => claim.contentModel)
-            ).toEqual([ContentModelEnum.Image, ContentModelEnum.Image]);
+            expect(body.claims.map((claim: any) => claim.contentModel)).toEqual(
+                [ContentModelEnum.Image, ContentModelEnum.Image]
+            );
             expect(body.contentModelCounts).toEqual({
                 [ContentModelEnum.Speech]: 1,
                 [ContentModelEnum.Image]: 2,
@@ -825,7 +851,9 @@ describe("ClaimController (e2e)", () => {
         });
 
         it("filters by review status and claim date", async () => {
-            const withReviews = await list({ reviewStatus: "with" }).expect(200);
+            const withReviews = await list({ reviewStatus: "with" }).expect(
+                200
+            );
             expect(withReviews.body.totalClaims).toBe(0);
 
             const without = await list({ reviewStatus: "without" }).expect(200);

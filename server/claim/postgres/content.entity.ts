@@ -1,4 +1,5 @@
 import type {
+    IImage,
     IParagraph,
     ISentence,
     ISpeech,
@@ -8,6 +9,7 @@ import type { SentenceRow } from "../types/sentence/postgres/schema/sentence.sch
 import type { ParagraphRow } from "../types/paragraph/postgres/schema/paragraph.schema";
 import type { SpeechRow } from "../types/speech/postgres/schema/speech.schema";
 import type { UnattributedRow } from "../types/unattributed/postgres/schema/unattributed.schema";
+import type { ImageRow } from "../types/image/postgres/schema/image.schema";
 
 // Mongo stores `isDraft` only on drafts and unsets it on approval, so the
 // key is present only when it is true.
@@ -86,4 +88,15 @@ export function toUnattributedEntity(
         _id: row.id,
         content: content ?? contentIds,
     } as IUnattributed;
+}
+
+export function toImageEntity(row: ImageRow): IImage {
+    const { dataHash, legacyObjectId, isDeleted, deletedAt, topics, ...rest } =
+        row;
+    return {
+        ...rest,
+        _id: row.id,
+        data_hash: dataHash,
+        topics: topics ?? undefined,
+    } as IImage;
 }
