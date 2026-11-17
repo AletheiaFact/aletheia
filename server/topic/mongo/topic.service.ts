@@ -5,7 +5,7 @@ import { Topic, TopicDocument } from "./schemas/topic.schema";
 import type { ISentenceService } from "../../interfaces/sentence.service.interface";
 import { ContentModelEnum } from "../../types/enums";
 import { TopicData } from "../types/topic.interfaces";
-import { ImageService } from "../../claim/types/image/image.service";
+import type { IImageService } from "../../interfaces/image.service.interface";
 import { WikidataService } from "../../wikidata/wikidata.service";
 import { toError } from "../../util/error-handling";
 import { ImpactArea } from "../constants/impact-areas";
@@ -30,7 +30,8 @@ export class MongoTopicService implements ITopicService {
         private readonly TopicModel: Model<TopicDocument>,
         @Inject("SentenceService")
         private readonly sentenceService: ISentenceService,
-        private readonly imageService: ImageService,
+        @Inject("ImageService")
+        private readonly imageService: IImageService,
         private readonly wikidataService: WikidataService
     ) {}
 

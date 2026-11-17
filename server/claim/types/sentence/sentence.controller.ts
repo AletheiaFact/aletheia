@@ -4,8 +4,8 @@ import { ApiTags } from "@nestjs/swagger";
 import { Auth } from "../../../auth/decorators/auth.decorator";
 import { ZodBody, ZodParam } from "../../../common/validation";
 import { dataHash } from "../../../../lib/schemas";
-import { SentenceTopicsSchema } from "../../dto/claim.dto";
-import type { SentenceTopicsDto } from "../../dto/claim.dto";
+import { ContentTopicsSchema } from "../../dto/claim.dto";
+import type { ContentTopicsDto } from "../../dto/claim.dto";
 
 @Controller()
 export class SentenceController {
@@ -24,7 +24,7 @@ export class SentenceController {
     @Put("api/sentence/:data_hash")
     update(
         @ZodParam("data_hash", dataHash) data_hash: string,
-        @ZodBody(SentenceTopicsSchema) topics: SentenceTopicsDto
+        @ZodBody(ContentTopicsSchema) topics: ContentTopicsDto
     ) {
         return this.sentenceService.updateSentenceWithTopics(topics, data_hash);
     }

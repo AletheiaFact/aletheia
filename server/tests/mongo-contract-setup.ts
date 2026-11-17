@@ -61,7 +61,11 @@ import {
     UnattributedDocument,
     UnattributedSchema,
 } from "../claim/types/unattributed/mongo/schemas/unattributed.schema";
-import { Image, ImageSchema } from "../claim/types/image/schemas/image.schema";
+import {
+    Image,
+    ImageDocument,
+    ImageSchema,
+} from "../claim/types/image/mongo/schemas/image.schema";
 import {
     Debate,
     DebateSchema,
@@ -101,6 +105,7 @@ export type ClaimModels = {
     speech: Model<SpeechDocument>;
     unattributed: Model<UnattributedDocument>;
     report: Model<ReportDocument>;
+    image: Model<ImageDocument>;
 };
 
 /** One MongoMemoryServer + connection per worker, shared by every module. */
@@ -150,6 +155,7 @@ export async function getTestClaimModels(): Promise<ClaimModels> {
             UnattributedSchema
         ),
         report: connection.model<ReportDocument>(Report.name, ReportSchema),
+        image: connection.models.Image as Model<ImageDocument>,
     };
     return claimModels;
 }

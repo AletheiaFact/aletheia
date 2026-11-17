@@ -1,0 +1,31 @@
+{
+    "unitsPerEm": 2048,
+    "typo": { "ascender": 1638, "descender": -410, "lineGap": 0 },
+    "files": {
+        "Noticia_Text/noticiatext-regular-latin": {
+            "ascent": 2167,
+            "descent": 633
+        },
+        "Noticia_Text/noticiatext-bold-latin": {
+            "ascent": 2202,
+            "descent": 633
+        },
+        "Open_Sans/opensans-italic-latin": {
+            "ascent": 1569,
+            "descent": 536
+        },
+        "Open_Sans/opensans-regular-latin": {
+            "ascent": 1569,
+            "descent": 536
+        },
+        "Open_Sans/opensans-semibold-latin": {
+            "ascent": 1569,
+            "descent": 532
+        },
+        "Open_Sans/opensans-bold-latin": { "ascent": 1569, "descent": 532 },
+        "Open_Sans/opensans-extrabold-latin": {
+            "ascent": 1589,
+            "descent": 532
+        }
+    }
+}

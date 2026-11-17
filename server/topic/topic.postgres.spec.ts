@@ -17,6 +17,12 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             })),
         };
 
+        const imageService = {
+            updateImageWithTopics: vi.fn(async (topics: any[]) => ({
+                topics,
+            })),
+        };
+
         beforeEach(async () => {
             await resetTestDrizzle();
             db = await getTestDrizzle();
@@ -24,18 +30,25 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             service = new PostgresTopicService(
                 db,
                 {} as any,
-                sentenceService as any
+                sentenceService as any,
+                imageService as any
             );
         });
 
-        it("create with contentModel=Image is a loud 501 until the image table ports", async () => {
-            await expect(
-                service.create({
-                    contentModel: ContentModelEnum.Image,
-                    topics: ["x"],
-                    data_hash: "abc",
-                })
-            ).rejects.toBeInstanceOf(NotImplementedError);
+        it("create with contentModel=Image attaches the created refs to the image", async () => {
+            const result = await service.create({
+                contentModel: ContentModelEnum.Image,
+                topics: [{ label: "Saúde", value: "Q1" }],
+                data_hash: "abc",
+            });
+            expect(imageService.updateImageWithTopics).toHaveBeenCalledWith(
+                [expect.objectContaining({ label: "Saúde", value: "Q1" })],
+                "abc"
+            );
+            expect(
+                sentenceService.updateSentenceWithTopics
+            ).not.toHaveBeenCalled();
+            expect(result.topics).toHaveLength(1);
         });
 
         it("create with any other contentModel attaches the created refs to the sentence", async () => {

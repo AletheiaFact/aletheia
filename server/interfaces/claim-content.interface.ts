@@ -50,3 +50,18 @@ export interface IUnattributed {
     updatedAt?: Date;
     [key: string]: any;
 }
+
+export interface IImage {
+    _id?: any;
+    id?: any;
+    type: string;
+    data_hash: string;
+    props: Record<string, any>;
+    /** The file URL. */
+    content: string;
+    topics?: any[];
+    claimRevisionId?: any;
+    createdAt?: Date;
+    updatedAt?: Date;
+    [key: string]: any;
+}

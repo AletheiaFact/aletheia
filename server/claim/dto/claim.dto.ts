@@ -126,7 +126,9 @@ export type ClaimCreatePageQueryDto = z.output<
     typeof ClaimCreatePageQuerySchema
 >;
 
-export const SentenceTopicsSchema = z.array(
+// Topics body of PUT api/sentence/:data_hash and api/image/:data_hash; the
+// topic drawer sends both the same array.
+export const ContentTopicsSchema = z.array(
     z.union([
         z.string(),
         z.looseObject({
@@ -136,4 +138,4 @@ export const SentenceTopicsSchema = z.array(
         }),
     ])
 );
-export type SentenceTopicsDto = z.output<typeof SentenceTopicsSchema>;
+export type ContentTopicsDto = z.output<typeof ContentTopicsSchema>;

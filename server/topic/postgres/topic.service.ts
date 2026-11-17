@@ -12,6 +12,7 @@ import type {
 } from "../../interfaces/topic.service.interface";
 import { ITopic } from "../../interfaces/topic.interface";
 import type { ISentenceService } from "../../interfaces/sentence.service.interface";
+import type { IImageService } from "../../interfaces/image.service.interface";
 import { ContentModelEnum } from "../../types/enums";
 import { TopicData } from "../types/topic.interfaces";
 import { ImpactArea } from "../constants/impact-areas";
@@ -57,7 +58,9 @@ export class PostgresTopicService implements ITopicService {
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
         private readonly wikidataService: WikidataService,
         @Inject("SentenceService")
-        private readonly sentenceService: ISentenceService
+        private readonly sentenceService: ISentenceService,
+        @Inject("ImageService")
+        private readonly imageService: IImageService
     ) {}
 
     /**
@@ -161,12 +164,6 @@ export class PostgresTopicService implements ITopicService {
         { contentModel, topics, data_hash }: TopicCreateInput,
         language: string = DEFAULT_TOPIC_LANGUAGE
     ): Promise<any> {
-        if (contentModel === ContentModelEnum.Image) {
-            throw new NotImplementedError(
-                "postgres",
-                `create(contentModel=${contentModel})`
-            );
-        }
         try {
             // Sequential on purpose: Mongo's Promise.all races duplicate
             // entries in one batch into E11000; here the second entry finds
@@ -199,6 +196,12 @@ export class PostgresTopicService implements ITopicService {
                     label: created.name,
                     value: created.wikidataId ?? undefined,
                 });
+            }
+            if (contentModel === ContentModelEnum.Image) {
+                return this.imageService.updateImageWithTopics(
+                    createdTopics,
+                    data_hash!
+                );
             }
             if (contentModel) {
                 return this.sentenceService.updateSentenceWithTopics(

@@ -26,7 +26,7 @@ import { ReportDocument } from "../report/mongo/schemas/report.schema";
 import type { ISentenceService } from "../interfaces/sentence.service.interface";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
-import { ImageService } from "../claim/types/image/image.service";
+import type { IImageService } from "../interfaces/image.service.interface";
 import {
     ContentModelEnum,
     ReportModelEnum,
@@ -59,7 +59,8 @@ export class ClaimReviewService {
         private historyService: HistoryService,
         private util: UtilService,
         @Inject("SentenceService") private sentenceService: ISentenceService,
-        private imageService: ImageService,
+        @Inject("ImageService")
+        private imageService: IImageService,
         private editorParseService: EditorParseService,
         private wikidata: WikidataService
     ) {}
@@ -177,7 +178,9 @@ export class ClaimReviewService {
 
         if (classification?.length) {
             stages.push({
-                $match: { "reportFields.classification": { $in: classification } },
+                $match: {
+                    "reportFields.classification": { $in: classification },
+                },
             });
         }
 

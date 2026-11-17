@@ -10,6 +10,7 @@ import { Model, PipelineStage, Types } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import type { IReportService } from "../../../../interfaces/report.service.interface";
+import { withReportClassification } from "../../../../report/shared/report.rules";
 import { UtilService } from "../../../../util";
 import { toError } from "../../../../util/error-handling";
 
@@ -50,12 +51,7 @@ export class MongoSentenceService {
             isDraft: { $ne: true },
         });
         if (sentence) {
-            sentence.props = {
-                classification: report?.classification,
-                classificationMethodology:
-                    report?.classificationMethodology ?? undefined,
-                ...sentence.props,
-            };
+            sentence.props = withReportClassification(sentence.props, report);
             return sentence;
         } else {
             throw new NotFoundException();

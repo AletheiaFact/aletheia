@@ -8,22 +8,25 @@ import {
     Scope,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { HistoryService } from "../../../history/history.service";
-import { toError } from "../../../util/error-handling";
+import { HistoryService } from "../../../../history/history.service";
+import { toError } from "../../../../util/error-handling";
 import { Model, Types } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import {
     TargetModel,
     HistoryType,
-} from "../../../history/schema/history.schema";
+} from "../../../../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
-import type { IReportService } from "../../../interfaces/report.service.interface";
-import type { BaseRequest } from "../../../types";
-import { GetByDataHashDto } from "../../dto/get-by-datahash.dto";
+import type { IReportService } from "../../../../interfaces/report.service.interface";
+import type { BaseRequest } from "../../../../types";
+import { GetByDataHashDto } from "../../../dto/get-by-datahash.dto";
+import type { IImageService } from "../../../../interfaces/image.service.interface";
+import { imageFromUpload } from "../../../shared/image.rules";
+import { withReportClassification } from "../../../../report/shared/report.rules";
 
 @Injectable({ scope: Scope.REQUEST })
-export class ImageService {
-    private readonly logger = new Logger(ImageService.name);
+export class MongoImageService implements IImageService {
+    private readonly logger = new Logger(MongoImageService.name);
 
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
@@ -35,12 +38,7 @@ export class ImageService {
 
     async create(image: Record<string, any>, claimRevisionId: any = null) {
         const imageSchema = {
-            data_hash: image.DataHash,
-            props: {
-                key: image.Key,
-                extension: image.Extension,
-            },
-            content: image.FileURL,
+            ...imageFromUpload(image),
             claimRevisionId: claimRevisionId,
         };
 
@@ -75,12 +73,7 @@ export class ImageService {
             data_hash: validatedHash,
         });
         if (image) {
-            image.props = {
-                classification: report?.classification,
-                classificationMethodology:
-                    report?.classificationMethodology ?? undefined,
-                ...image.props,
-            };
+            image.props = withReportClassification(image.props, report);
             return image;
         } else {
             throw new NotFoundException();
