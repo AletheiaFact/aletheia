@@ -81,6 +81,10 @@ analysis (fotoforensics.com), video (InVID, Amnesty's citizen evidence
 metadata tool). If a check needs a tool you cannot run, release with
 `needs-human` and say which.
 
+For what was **said** in a video, get the transcript with `video.md` before
+deciding a person is needed: it covers captions, their reliability and
+citing a timestamp.
+
 ## What to record for each source
 
 - URL (the page you actually read).
