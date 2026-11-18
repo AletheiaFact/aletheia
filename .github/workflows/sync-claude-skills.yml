@@ -1,0 +1,66 @@
+name: Sync Claude skills
+
+# Copies the skills listed in SKILLS into the private marketplace repository
+# (AletheiaFact/claude-plugins) whenever they change on master. claude.ai
+# syncs that repository on every push to its default branch and delivers the
+# plugin to the organization (claude.ai, Cowork and Claude Code).
+#
+# Needs the CLAUDE_PLUGINS_TOKEN secret: a fine-grained token with
+# "Contents: read and write" on AletheiaFact/claude-plugins only.
+on:
+    push:
+        branches: [master]
+        paths:
+            - ".claude/skills/aletheia-fact-check/**"
+            - ".github/workflows/sync-claude-skills.yml"
+    workflow_dispatch:
+
+concurrency:
+    group: sync-claude-skills
+    cancel-in-progress: false
+
+permissions:
+    contents: read
+
+env:
+    PLUGINS_REPO: AletheiaFact/claude-plugins
+    PLUGIN_DIR: plugins/aletheia-skills/skills
+    # Space-separated folder names under .claude/skills/. Add a name here
+    # and to `paths` above to publish another skill.
+    SKILLS: aletheia-fact-check
+
+jobs:
+    sync:
+        name: Push skills to the marketplace repository
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/checkout@v7
+              with:
+                  repository: ${{ env.PLUGINS_REPO }}
+                  token: ${{ secrets.CLAUDE_PLUGINS_TOKEN }}
+                  path: plugins-repo
+
+            - name: Copy skills
+              run: |
+                  set -euo pipefail
+                  mkdir -p "plugins-repo/$PLUGIN_DIR"
+                  for skill in $SKILLS; do
+                      test -f ".claude/skills/$skill/SKILL.md"
+                      rsync -a --delete ".claude/skills/$skill/" "plugins-repo/$PLUGIN_DIR/$skill/"
+                  done
+
+            - name: Commit and push
+              working-directory: plugins-repo
+              run: |
+                  set -euo pipefail
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  if git diff --cached --quiet; then
+                      echo "Skills already up to date."
+                      exit 0
+                  fi
+                  git commit -m "sync skills from AletheiaFact/aletheia@${GITHUB_SHA::7}"
+                  git push
