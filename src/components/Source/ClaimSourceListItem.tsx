@@ -1,6 +1,7 @@
 import { Grid, ListItem } from "@mui/material";
 
 import React from "react";
+import { isSafeLinkUrl } from "../../utils/ValidateUrl";
 
 const ClaimSourceListItem = ({ source, index }) => {
     const { href } = source;
@@ -12,7 +13,11 @@ const ClaimSourceListItem = ({ source, index }) => {
                     <span style={{ marginRight: 4 }}>
                         {source?.props?.sup || source?.sup || index}.
                     </span>
-                    <a href={href} target="_blank" rel="noopener noreferrer">
+                    <a
+                        href={isSafeLinkUrl(href) ? href : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {href}
                     </a>
                 </ListItem>
@@ -20,7 +25,11 @@ const ClaimSourceListItem = ({ source, index }) => {
                 <ListItem id={source}>
                     {/* TODO: Remove this ternary when source migration is done */}
                     {index}.{" "}
-                    <a href={source} target="_blank" rel="noopener noreferrer">
+                    <a
+                        href={isSafeLinkUrl(source) ? source : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {source}
                     </a>
                 </ListItem>

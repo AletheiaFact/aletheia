@@ -52,3 +52,23 @@ export const sanitizeUrl = (url: string | undefined): string => {
         return "";
     }
 };
+
+/**
+ * Guards for user-supplied URLs before they reach an href or src. Each takes
+ * one value and returns a boolean, so `isSafeX(url) ? url : undefined` keeps
+ * the original string when it passes.
+ */
+
+/** An absolute http(s) URL, so `javascript:` and `data:` links never render. */
+export const isSafeLinkUrl = (url: unknown): url is string =>
+    typeof url === "string" && /^https?:\/\//i.test(url);
+
+/** An image source that can't run script: http(s), blob, data:image or a same-origin path. */
+export const isSafeImageSrc = (src: unknown): src is string =>
+    typeof src === "string" &&
+    /^(https?:\/\/|blob:|data:image\/|\/(?!\/))/i.test(src);
+
+/** An https link to a Wikipedia page. */
+export const isSafeWikipediaUrl = (url: unknown): url is string =>
+    typeof url === "string" &&
+    /^https:\/\/([a-z0-9-]+\.)*wikipedia\.org(\/|$)/i.test(url);

@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Typography, Divider } from "@mui/material";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
+import { isSafeWikipediaUrl } from "../../utils/ValidateUrl";
 
 interface PersonalityInfo {
     summarized: boolean;
@@ -16,6 +17,9 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
     const { t } = useTranslation();
     const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
+    const wikipediaHref = isSafeWikipediaUrl(personality.wikipedia)
+        ? personality.wikipedia
+        : undefined;
     return (
         <Grid item
             xs={componentStyle.titleSpan}
@@ -82,7 +86,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         </b>
                     </Typography>
                 )}
-            {!summarized && personality.wikipedia && (
+            {!summarized && wikipediaHref && (
                 <a
                     style={{
                         fontWeight: "bold",
@@ -92,7 +96,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         textDecoration: "underline",
                     }}
                     target="_blank"
-                    href={personality.wikipedia}
+                    href={wikipediaHref}
                     rel="noreferrer"
                 >
                     {t("personality:wikipediaPage")}

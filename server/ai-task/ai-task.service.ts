@@ -32,7 +32,7 @@ export class AiTaskService {
                     ).join(", ")}`
                 );
             }
-            return this.aiTaskModel.find({ state }).exec();
+            return this.aiTaskModel.find({ state: { $eq: state } }).exec();
         }
 
         return this.aiTaskModel.find({}).exec();
