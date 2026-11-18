@@ -15,9 +15,7 @@ const FooterCtaActions = () => {
         >
             <Link
                 onClick={() => trackUmamiEvent("cta-footer-committee-invitation-button", "committee-invitation")}
-                href="https://forms.gle/AnTuCzXtPTrsXHGVA"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/committee-invitation#join"
                 underline="none"
                 className="footer-primary-cta-link"
                 data-cy="testFooterCtaPrimaryLink"
