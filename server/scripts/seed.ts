@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { UsersService } from "../users/users.service";
 import loadConfig from "../configLoader";
 import { WinstonLogger } from "../winstonLogger";
+import { seedSampleData } from "./seed-sample-data";
 
 async function initApp() {
     const options = loadConfig();
@@ -41,6 +42,11 @@ async function initApp() {
             seedSingleUser(userData, userData.password)
         )
     );
+
+    // Opt-in: CI and Cypress seed users only.
+    if (process.env.SEED_SAMPLE_DATA === "true") {
+        await seedSampleData(app, users, (message) => logger.log(message));
+    }
 
     logger.log("Seed is finished");
     await app.close();

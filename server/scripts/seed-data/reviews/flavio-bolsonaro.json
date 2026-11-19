@@ -1,0 +1,63 @@
+[
+  {
+    "claimTitle": "Discurso de Flávio Bolsonaro nos EUA",
+    "sentence": "O resultado: o Brasil está vivendo outra crise econômica devastadora, uma crise de segurança pública com enorme expansão de cartéis narcoterroristas e múltiplos escândalos de corrupção envolvendo até membros da família de Lula\"",
+    "classification": "false",
+    "reportModel": "Fact-checking",
+    "date": "2026-06-30T12:55:40.615Z",
+    "isPartial": false,
+    "questions": [
+      "O Brasil está vivendo uma crise econômica devastadora?",
+      "Há múltiplos escândalos de corrupção envolvem até membros da família do presidente da república?"
+    ],
+    "summary": "Durante discurso político, foi afirmado que o Brasil vive uma \"crise econômica devastadora\". Para verificar essa alegação, utilizei dados oficiais do Fundo Monetário Internacional (FMI) e do IBGE.\n PIB (Produto Interno Bruto) PIB acumulado em 2025: R$ 12,7 trilhões (IBGE).\nCrescimento em 2025: 2,3% (IBGE – Contas Nacionais Trimestrais).\nProjeção para 2026: 1,9% de expansão (FMI – World Economic Outlook, abril 2026).\nPosição global: O Brasil deve retornar ao Top 10 das maiores economias do mundo em 2026 (FMI).\nInflação (IPCA) Março de 2026: 0,88% (IBGE).\nAcumulado em 12 meses: 4,14% (IBGE).\nProjeção para 2026: 4,71% (Banco Central – Boletim Focus, abril 2026).\n\nEstes dados mostram que o Brasil apresenta crescimento moderado, mas consistente. Não há evidência de colapso econômico.\n\nNo discurso, Flávio Bolsonaro também afirma que existem “múltiplos escândalos de corrupção envolvendo até membros da própria família de Lula”. Essa alegação não se sustenta em dados oficiais. O que há, até abril de 2026, são investigações em andamento, especialmente sobre o filho do presidente, Fábio Luís Lula da Silva, conhecido como Lulinha. A CPMI do INSS aprovou em fevereiro de 2026 a quebra de sigilo bancário e fiscal de Lulinha para apurar um esquema bilionário de fraudes em aposentadorias e empréstimos consignados (Poder360, 2026). No entanto, até o momento, não há provas de ligação financeira direta entre ele e o esquema, apenas suspeitas de proximidade com operadores investigados, como o “Careca do INSS” (Folha de S.Paulo, 2026).\n\nAlém disso, não existem registros de condenações ou escândalos comprovados envolvendo familiares de Lula. O próprio presidente declarou publicamente que \"não haverá proteção a familiares caso surjam evidências concretas:  \"Se tiver filho meu envolvido em fraude, será investigado. Quem estiver envolvido vai pagar o preço” (CNN Brasil, 2026).\n\nA afirmação de que há “múltiplos escândalos de corrupção envolvendo a família de Lula” é enganosa.",
+    "report": "Os dados oficiais do IBGE, do Banco Central e do FMI indicam que a economia brasileira apresentou crescimento moderado e projeções positivas, não havendo evidências que sustentem a afirmação de que o país vive uma \"crise econômica devastadora\". Embora existam desafios econômicos, está distante de um cenário de colapso.\n\nQuanto à fala de que há \"múltiplos escândalos de corrupção envolvendo membros da família de Lula\", a consulta aos registros oficiais mostrou que existem investigações em andamento, mas não foram encontradas condenações ou comprovações que sustentem a existência de múltiplos escândalos envolvendo familiares do presidente. Dessa forma, a afirmação apresenta como fato situações que ainda não foram comprovadas.",
+    "verification": "Foram identificadas as principais alegações presentes no discurso político. Para verificar a situação econômica do país, foram consultados os indicadores oficiais do Instituto Brasileiro de Geografia e Estatística (IBGE), o relatório Focus do Banco Central do Brasil e do Fundo Monetário Internacional (FMI), incluindo dados sobre PIB, inflação e projeções de crescimento econômico.  Quanto à alegação de que existem \"múltiplos escândalos de corrupção envolvendo membros da família de Lula\", foram consultados o Requerimento nº 2939/2026 da CPMI do INSS e os registros oficiais do Senado Federal. Os documentos mostram que houve a aprovação de requerimento para quebra dos sigilos bancário e fiscal de Fábio Luís Lula da Silva no âmbito da CPMI do INSS, com o objetivo de subsidiar uma investigação em andamento. Contudo, os documentos oficiais não apontam condenação ou responsabilização definitiva de familiares do presidente, como insinuou Flávio Bolsonaro.",
+    "sources": [
+      {
+        "href": "https://www.imf.org/en/publications/weo/issues/2026/04/14/world-economic-outlook-april-2026?cid=ca-com-homepage-sm26-WEOEA2026001#Gdp"
+      },
+      {
+        "href": "https://www.ibge.gov.br/explica/inflacao.php?utm_source=copilot.com"
+      },
+      {
+        "href": "https://www.bcb.gov.br/publicacoes/focus"
+      },
+      {
+        "href": "https://www.pdffiller.com/s/88W9jx5CtY"
+      },
+      {
+        "href": "https://www12.senado.leg.br/noticias/materias/2026/02/26/sob-protestos-cpmi-aprova-quebra-de-sigilos-de-lulinha"
+      }
+    ]
+  },
+  {
+    "claimTitle": "Discurso de Flávio nos EUA.",
+    "sentence": "Tudo isso sob uma enxurrada de dinheiro da Usaid e interferência massiva do governo Biden.",
+    "classification": "misleading",
+    "reportModel": "Fact-checking",
+    "date": "2026-06-30T13:55:39.253Z",
+    "isPartial": false,
+    "questions": [
+      "Há provas de que a USAID financiou a campanha de Lula nas eleições de 2022?",
+      "Existem registros oficiais de repasses da USAID para partidos políticos ou campanhas eleitorais no Brasil?",
+      "Os recursos enviados pela USAID tinham relação com o processo eleitoral brasileiro?",
+      "A legislação brasileira permite financiamento estrangeiro de campanhas eleitorais?",
+      "Há evidências de interferência da USAID no resultado das eleições presidenciais de 2022?"
+    ],
+    "summary": "A afirmação feita por Flávio Bolsonaro de que a eleição do presidente Luiz Inácio Lula da Silva teria contado com uma “enxurrada de dinheiro” da USAID é infundada e não possui comprovação documental.\n\nA análise de registros públicos de repasses internacionais, contratos e dados oficiais disponíveis no portal ForeignAssistance.gov (Via matéria do Estadão) não encontrou qualquer evidência de financiamento eleitoral, repasses para campanhas políticas ou transferências destinadas ao Partido dos Trabalhadores (PT) ou à campanha presidencial de Lula em 2022.\n\nLevantamento realizado pelo Estadão mostrou que os recursos enviados pela USAID ao Brasil durante o período fiscal de 2022, aproximadamente US$ 29,2 milhões. Foram destinados principalmente a programas de saúde pública, assistência humanitária, acolhimento de migrantes venezuelanos, preservação ambiental na Amazônia, pesquisa agrícola e combate ao crime organizado.\n\nEntre os principais repasses identificados estão:\n\nUS$ 8 milhões para ações de combate ao HIV/AIDS; US$ 7,5 milhões para fortalecimento de serviços de saúde; US$ 5 milhões destinados ao Unicef para apoio humanitário relacionado à crise migratória venezuelana; recursos voltados à conservação ambiental e gestão sustentável na Amazônia.\n\nA checagem também analisou contratos ativos entre 2018 e 2023 e igualmente não encontrou projetos relacionados às eleições brasileiras ou apoio político-partidário.\n\nAlém disso, a legislação eleitoral brasileira proíbe financiamento estrangeiro de campanhas. A Resolução nº 23.607/2019 do Tribunal Superior Eleitoral (TSE) veta doações provenientes do exterior para candidatos e partidos políticos.\n\nNão há provas públicas que sustentem a alegação de que a USAID financiou a campanha de Lula ou interferiu nas eleições presidenciais de 2022. As evidências disponíveis indicam que os recursos da agência foram direcionados a programas sociais, ambientais e humanitários sem relação com o processo eleitoral brasileiro. Ou seja, Flávio fez uma afirmação falsa.",
+    "report": "A declaração do senador Flávio Bolsonaro de que a campanha presidencial de Luiz Inácio Lula da Silva teria recebido uma “enxurrada de dinheiro” da USAID foi verificada a partir da análise de documentos públicos, bases oficiais de repasses internacionais, legislação eleitoral brasileira e reportagens de checagem produzidas por veículos jornalísticos.\n\nPara realizar a verificação, foi consultado o portal oficial ForeignAssistance.gov, plataforma do governo dos Estados Unidos que reúne informações sobre recursos enviados por órgãos federais norte-americanos para outros países, incluindo a USAID. A análise concentrou-se nos repasses feitos ao Brasil durante o período fiscal de 2022, ano das eleições presidenciais brasileiras. O objetivo era identificar possíveis transferências destinadas a partidos políticos, campanhas eleitorais, candidatos ou organizações diretamente ligadas ao processo eleitoral.\n\nOs dados encontrados mostram que aproximadamente US$ 29,2 milhões enviados pela USAID ao Brasil naquele período foram destinados principalmente a programas de saúde pública, assistência humanitária, preservação ambiental e apoio social. Entre os principais repasses identificados estavam recursos voltados ao combate ao HIV/AIDS, fortalecimento de serviços de saúde, acolhimento de migrantes venezuelanos por meio do UNICEF, além de iniciativas relacionadas à conservação da Amazônia e combate ao crime organizado.\n\n\nOs dados referentes foram encontrados através de uma matério do Estadão",
+    "verification": "Através de uma matéria do Estadão e da tradução que engloba dados públicos da USAID.",
+    "sources": [
+      {
+        "href": "https://www.estadao.com.br/estadao-verifica/usaid-financiou-durante-eleicoes-brasil-2022-entenda/"
+      },
+      {
+        "href": "https://foreignassistance.gov/cd/brazil/2022/obligations/0"
+      },
+      {
+        "href": "https://www.tse.jus.br/legislacao/compilada/res/2019/resolucao-no-23-607-de-17-de-dezembro-de-2019"
+      }
+    ]
+  }
+]
