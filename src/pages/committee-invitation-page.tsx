@@ -9,6 +9,8 @@ import { GetLocale } from "../utils/GetLocale";
 import CommitteInvitationPage from "../components/CommitteInvitation/CommitteInvitationPage";
 import actions from "../store/actions";
 import { CaptchaClientConfig } from "../types/Captcha";
+import localConfig from "../../config/localConfig";
+import { getSiteFeatures } from "../utils/siteFeatures";
 
 const CommitteeInvitationPage: NextPage<{
     sitekey: string;
@@ -21,13 +23,19 @@ const CommitteeInvitationPage: NextPage<{
 
     return (
         <>
-            <Seo title={t("committeeInvitation:title")} description={t("committeeInvitation:hero.description")} />
+            <Seo
+                title={t("committeeInvitation:title")}
+                description={t("committeeInvitation:hero.description")}
+            />
             <CommitteInvitationPage />
         </>
     );
 };
 
 export async function getServerSideProps({ locale, locales, req, query }) {
+    if (!getSiteFeatures(localConfig).showCommittee) {
+        return { notFound: true };
+    }
     locale = GetLocale(req, locale, locales);
     query = JSON.parse(query.props);
 
