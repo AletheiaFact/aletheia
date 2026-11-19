@@ -7,12 +7,15 @@ import FooterLegal from "./FooterLegal";
 import FooterBox from "./Footer.style";
 import { useFooterData } from "./hooks/useFooterData";
 import localConfig from "../../../config/localConfig";
+import { getSiteFeatures } from "../../utils/siteFeatures";
 
 const Footer = () => {
     const { isMobile, isMainNamespace } = useFooterData();
     const router = useRouter();
+    // Both footer CTA links go to the committee.
     const showFooterCta =
         localConfig.footer.showCallToAction &&
+        getSiteFeatures(localConfig).showCommittee &&
         router.pathname !== "/committee-invitation-page";
 
     return (

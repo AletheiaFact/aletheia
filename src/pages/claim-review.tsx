@@ -4,6 +4,8 @@ import { buildReviewRating } from "../utils/buildReviewRating";
 import AffixCopilotButton from "../components/AffixButton/AffixCopilotButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { GetLocale } from "../utils/GetLocale";
+import localConfig from "../../config/localConfig";
+import { getSiteFeatures } from "../utils/siteFeatures";
 import JsonLd from "../components/JsonLd";
 import { NextPage } from "next";
 import React from "react";
@@ -82,17 +84,15 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const review = content?.props?.classification;
 
+    const { organization } = getSiteFeatures(localConfig);
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
-        url: "https://aletheiafact.org",
+        url: organization.url,
         author: {
             "@type": "Organization",
-            url: "https://aletheiafact.org",
-            sameAs: [
-                "https://www.facebook.com/AletheiaFactorg-107521791638412",
-                "https://www.instagram.com/aletheiafact",
-            ],
+            url: organization.url,
+            sameAs: organization.sameAs,
         },
         claimReviewed: content.content,
         reviewRating: buildReviewRating({

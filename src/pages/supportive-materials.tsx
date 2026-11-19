@@ -16,6 +16,8 @@ import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import Image from "next/image";
 import colors from "../styles/colors";
+import localConfig from "../../config/localConfig";
+import { getSiteFeatures } from "../utils/siteFeatures";
 
 const staticLinks = [
     {
@@ -39,9 +41,14 @@ const staticLinks = [
         link: "/relatorio-comite-nacional-1sem2026.html",
         image: "/comite-thumb.png",
         actionLabel: "Ver relatório",
+        isCommitteeMaterial: true,
     },
     // Add more links as needed
-];
+].filter(
+    (material) =>
+        !material.isCommitteeMaterial ||
+        getSiteFeatures(localConfig).showCommittee
+);
 
 const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
     const { t } = useTranslation();
@@ -58,7 +65,8 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                         fontSize: "40px",
                         marginTop: "20px",
                         fontWeight: "bold",
-                    }}>
+                    }}
+                >
                     {t("materials:title")}
                 </Typography>
             </Grid>
@@ -97,7 +105,10 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                     </div>
                 ) : (
                     staticLinks.map(
-                        ({ title, description, link, image, actionLabel }, index) => (
+                        (
+                            { title, description, link, image, actionLabel },
+                            index
+                        ) => (
                             <Card
                                 key={title}
                                 sx={{
