@@ -12392,7 +12392,7 @@ __metadata:
     globals: ^17.3.0
     helmet: ^6.0.0
     husky: ^9
-    i18next: ^21.6.10
+    i18next: ^26.3.4
     jotai: ^1.9.2
     jotai-xstate: ^0.3.0
     js-cookie: ^3.0.1
@@ -19181,7 +19181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^21.6.10, i18next@npm:^21.6.12":
+"i18next@npm:^21.6.12":
   version: 21.10.0
   resolution: "i18next@npm:21.10.0"
   dependencies:
@@ -19196,6 +19196,18 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.20.6
   checksum: 175f8ab7fac2abcee147b00cc2d8e7d4fa9b05cdc227f02cac841fc2fd9545ed4a6d88774f594f8ad12dc944e4d34cc8e88aa00c8b9947baef9e859d93abd305
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^26.3.4":
+  version: 26.3.4
+  resolution: "i18next@npm:26.3.4"
+  peerDependencies:
+    typescript: ^5 || ^6
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 08fb3cd474fe8725c5a7c8d0a31bbaaf8c9d906f0ec1306cc1e131d517334629f2e2de6e548b8d537c359f58537a9e9b835cf86a32897819bff3a2c6378310ca
   languageName: node
   linkType: hard
 
