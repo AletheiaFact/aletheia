@@ -28,9 +28,19 @@ const shouldShowPersonalityPage = () => {
 const shouldShowClaimAndReportPages = () => {
     cy.visit(claimUrl);
     cy.title().should("contain", claim.title);
+    // Clicking a sentence opens the review drawer; its "see full page"
+    // button links to the report page. Load that page from the server: the
+    // server looks the personality up again there, which used to 404.
     cy.get("[data-cy=frase1]").click();
-    cy.url().should("contain", `${claimUrl}/sentence/`);
-    cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
+    cy.get(locators.claim.BTN_SEE_FULL_REVIEW)
+        .should("have.attr", "href")
+        .and("contain", `${claimUrl}/sentence/`)
+        .then((reportUrl) => {
+            // cy.visit fails on a 4xx/5xx answer; a redirect to /404 fails
+            // the pathname check.
+            cy.visit(String(reportUrl));
+            cy.location("pathname").should("contain", `${claimUrl}/sentence/`);
+        });
 };
 
 const shouldListPersonality = () => {
