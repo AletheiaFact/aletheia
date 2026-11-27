@@ -410,7 +410,8 @@ describe("MongoPersonalityService.update", () => {
         };
         const wikidata = {
             checkItem: vi.fn(
-                checkItem ?? (async () => ({ status: "ok", props: {} }))
+                checkItem ??
+                    (async () => ({ status: "ok", props: { name: "X" } }))
             ),
             clearCache: vi.fn(async () => undefined),
             fetchProperties: vi.fn(async () => ({ twitterAccounts: [] })),

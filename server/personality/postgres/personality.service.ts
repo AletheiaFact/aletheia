@@ -1,9 +1,4 @@
-import {
-    Injectable,
-    Inject,
-    NotFoundException,
-    ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Inject, Logger, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type {
     IPersonalityService,
@@ -18,6 +13,8 @@ import {
 import { DRIZZLE } from "../../database/postgres/postgres.provider";
 import type { DrizzleClient } from "../../database/postgres/connection";
 import { NotImplementedError } from "../../database/errors";
+import { DuplicateKeyError } from "../../database/errors";
+import { toError } from "../../util/error-handling";
 import { rethrowUniqueViolation } from "../../database/postgres/unique-violation";
 import { eq, and, sql, desc, asc } from "drizzle-orm";
 import {
@@ -25,6 +22,10 @@ import {
     defaultDescription,
     extractClaimWithTextSummary,
     wikidataCreationError,
+    wikidataUnavailableError,
+    isExpectedCreationFailure,
+    diffEditableFields,
+    storedPersonalityView,
 } from "../shared/personality.rules";
 import type { WikidataCreationStatus } from "../shared/personality.rules";
 import { personality } from "./schema/personality.schema";
@@ -41,6 +42,8 @@ export function toPersonalityEntity(row: PersonalityRow): IPersonality {
 
 @Injectable()
 export class PostgresPersonalityService implements IPersonalityService {
+    private readonly logger = new Logger("PersonalityService");
+
     constructor(
         @Inject(DRIZZLE) private readonly db: DrizzleClient,
         private readonly wikidata: WikidataService,
@@ -79,12 +82,16 @@ export class PostgresPersonalityService implements IPersonalityService {
             checked = await this.wikidata.checkItem(wikidataId, "pt", {
                 fresh: true,
             });
-        } catch {
-            throw new ServiceUnavailableException(
-                "Wikidata is unavailable, try again later"
+        } catch (error) {
+            this.logger.error(
+                `Wikidata check failed for ${wikidataId}: ${
+                    toError(error).message
+                }`
             );
+            throw wikidataUnavailableError();
         }
         let status: WikidataCreationStatus = checked.status;
+        if (status === "ok" && !checked.props.name) status = "no_label";
         if (status === "ok") {
             // Relink (excludePersonalityId set): a soft-deleted holder blocks
             // too, to match Mongo, whose unique index covers deleted rows
@@ -196,16 +203,20 @@ export class PostgresPersonalityService implements IPersonalityService {
             if (!restoreDeleted) throw wikidataCreationError("in_use");
             // Intentionally restores without a Wikidata check: reads tolerate
             // a dead item and the stored data is kept.
-            const [restored] = await this.db
-                .update(personality)
-                .set({
-                    isDeleted: false,
-                    deletedAt: null,
-                    updatedAt: new Date(),
-                })
-                .where(eq(personality.id, deleted.id))
-                .returning();
-            return this.toEntity(restored);
+            try {
+                const [restored] = await this.db
+                    .update(personality)
+                    .set({
+                        isDeleted: false,
+                        deletedAt: null,
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(personality.id, deleted.id))
+                    .returning();
+                return this.toEntity(restored);
+            } catch (error) {
+                this.rethrowMapped(error);
+            }
         }
 
         const props = await this.loadCreatableItem(wikidata);
@@ -282,10 +293,15 @@ export class PostgresPersonalityService implements IPersonalityService {
             .limit(1);
         if (existingBySlug) {
             if (wikidataId && !existingBySlug.wikidata) {
-                const usable = await this.loadCreatableItem(wikidataId).then(
-                    () => true,
-                    () => false
-                );
+                // Relink mode: a soft-deleted holder of the id blocks too,
+                // to match Mongo's unique index.
+                let usable = false;
+                try {
+                    await this.loadCreatableItem(wikidataId, existingBySlug.id);
+                    usable = true;
+                } catch (error) {
+                    if (!isExpectedCreationFailure(error)) throw error;
+                }
                 if (usable) {
                     try {
                         const [updated] = await this.db
@@ -298,7 +314,14 @@ export class PostgresPersonalityService implements IPersonalityService {
                             .returning();
                         return this.toEntity(updated);
                     } catch (error) {
-                        this.rethrowMapped(error);
+                        // Lost a race for the id: keep the personality as is.
+                        try {
+                            this.rethrowMapped(error);
+                        } catch (mapped) {
+                            if (!(mapped instanceof DuplicateKeyError)) {
+                                throw mapped;
+                            }
+                        }
                     }
                 }
             }
@@ -311,7 +334,13 @@ export class PostgresPersonalityService implements IPersonalityService {
                 { wikidata: wikidataId },
                 { restoreDeleted: false }
             );
-        } catch {
+        } catch (error) {
+            if (!isExpectedCreationFailure(error)) throw error;
+            this.logger.warn(
+                `Not creating personality "${data.name}" (${wikidataId}): ${
+                    toError(error).message
+                }`
+            );
             return null;
         }
     }
@@ -396,14 +425,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         if (!stored)
             throw new NotFoundException(`Personality not found: ${id}`);
 
-        const changes: Partial<
-            Pick<PersonalityInsert, "name" | "description" | "wikidata">
-        > = {};
-        for (const key of ["name", "description", "wikidata"] as const) {
-            if (body[key] !== undefined && body[key] !== stored[key]) {
-                changes[key] = body[key];
-            }
-        }
+        const changes = diffEditableFields(stored, body);
         if (Object.keys(changes).length === 0) return this.toEntity(stored);
 
         if (changes.wikidata) {
@@ -451,37 +473,18 @@ export class PostgresPersonalityService implements IPersonalityService {
         if (!stored)
             throw new NotFoundException(`Personality not found: ${id}`);
 
-        let wikidataStatus:
-            | "ok"
-            | "deleted"
-            | "not_allowed_type"
+        let check:
+            | Awaited<ReturnType<WikidataService["checkItem"]>>
             | "unavailable"
-            | "none" = "none";
-        let props: { name?: string; description?: string } = {};
+            | null = null;
         if (stored.wikidata) {
             try {
-                const checked = await this.wikidata.checkItem(
-                    stored.wikidata,
-                    "pt"
-                );
-                wikidataStatus = checked.status;
-                props = checked.props;
+                check = await this.wikidata.checkItem(stored.wikidata, "pt");
             } catch {
-                wikidataStatus = "unavailable";
+                check = "unavailable";
             }
         }
-        const provides = wikidataStatus === "ok";
-        return {
-            _id: stored.id,
-            name: stored.name,
-            description: stored.description,
-            wikidata: stored.wikidata ?? null,
-            wikidataStatus,
-            wikidataProvides: {
-                name: provides && !!props.name,
-                description: provides && !!props.description,
-            },
-        };
+        return storedPersonalityView(stored, check);
     }
     async hideOrUnhidePersonality(
         id: string,

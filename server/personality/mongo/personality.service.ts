@@ -5,7 +5,6 @@ import {
     Scope,
     NotFoundException,
     InternalServerErrorException,
-    ServiceUnavailableException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -14,6 +13,10 @@ import {
     deriveSlug,
     extractClaimWithTextSummary,
     wikidataCreationError,
+    wikidataUnavailableError,
+    isExpectedCreationFailure,
+    diffEditableFields,
+    storedPersonalityView,
     WikidataCreationStatus,
 } from "../shared/personality.rules";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
@@ -89,11 +92,10 @@ export class MongoPersonalityService {
                     toError(error).message
                 }`
             );
-            throw new ServiceUnavailableException(
-                "Wikidata is unavailable, try again later"
-            );
+            throw wikidataUnavailableError();
         }
         let status: WikidataCreationStatus = checked.status;
+        if (status === "ok" && !checked.props.name) status = "no_label";
         if (status === "ok") {
             // Relink (excludePersonalityId set): a soft-deleted holder blocks
             // too. Creation: only active holders block; a deleted holder is
@@ -286,16 +288,30 @@ export class MongoPersonalityService {
         if (existingBySlug) {
             this.logger.log(`Found existing personality by slug: ${slug}`);
             if (wikidataId && !existingBySlug.wikidata) {
-                const usable = await this.loadCreatableItem(wikidataId).then(
-                    () => true,
-                    () => false
-                );
+                // Relink mode: a soft-deleted holder of the id blocks too,
+                // since the unique index covers deleted rows.
+                let usable = false;
+                try {
+                    await this.loadCreatableItem(
+                        wikidataId,
+                        String(existingBySlug._id)
+                    );
+                    usable = true;
+                } catch (error) {
+                    if (!isExpectedCreationFailure(error)) throw error;
+                }
                 if (usable) {
                     existingBySlug.wikidata = wikidataId;
-                    await existingBySlug.save();
-                    this.logger.log(
-                        `Updated personality ${slug} with wikidata: ${wikidataId}`
-                    );
+                    try {
+                        await existingBySlug.save();
+                        this.logger.log(
+                            `Updated personality ${slug} with wikidata: ${wikidataId}`
+                        );
+                    } catch (error) {
+                        // Lost a race for the id: keep the personality as is.
+                        if (!isExpectedCreationFailure(error)) throw error;
+                        existingBySlug.set("wikidata", undefined);
+                    }
                 }
             }
             return existingBySlug;
@@ -308,6 +324,7 @@ export class MongoPersonalityService {
                 { restoreDeleted: false }
             );
         } catch (error) {
+            if (!isExpectedCreationFailure(error)) throw error;
             this.logger.warn(
                 `Not creating personality "${
                     personalityData.name
@@ -573,12 +590,7 @@ export class MongoPersonalityService {
             );
         }
 
-        const changes: Record<string, string> = {};
-        for (const key of ["name", "description", "wikidata"] as const) {
-            if (body[key] !== undefined && body[key] !== stored[key]) {
-                changes[key] = body[key] as string;
-            }
-        }
+        const changes = diffEditableFields(stored, body);
 
         if (Object.keys(changes).length === 0) {
             return this.postProcess(stored, this.req.language || "pt");
@@ -637,38 +649,26 @@ export class MongoPersonalityService {
             );
         }
 
-        let wikidataStatus:
-            | "ok"
-            | "deleted"
-            | "not_allowed_type"
+        let check:
+            | Awaited<ReturnType<WikidataService["checkItem"]>>
             | "unavailable"
-            | "none" = "none";
-        let props: { name?: string; description?: string } = {};
+            | null = null;
         if (stored.wikidata) {
             try {
-                const checked = await this.wikidata.checkItem(
-                    stored.wikidata,
-                    "pt"
-                );
-                wikidataStatus = checked.status;
-                props = checked.props;
+                check = await this.wikidata.checkItem(stored.wikidata, "pt");
             } catch {
-                wikidataStatus = "unavailable";
+                check = "unavailable";
             }
         }
-        const provides = wikidataStatus === "ok";
-
-        return {
-            _id: String(stored._id),
-            name: stored.name,
-            description: stored.description,
-            wikidata: stored.wikidata ?? null,
-            wikidataStatus,
-            wikidataProvides: {
-                name: provides && !!props.name,
-                description: provides && !!props.description,
+        return storedPersonalityView(
+            {
+                id: String(stored._id),
+                name: stored.name,
+                description: stored.description,
+                wikidata: stored.wikidata ?? null,
             },
-        };
+            check
+        );
     }
 
     async hideOrUnhidePersonality(

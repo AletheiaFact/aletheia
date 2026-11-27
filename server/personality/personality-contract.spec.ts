@@ -61,14 +61,20 @@ const wikidataStub = {
     // postProcess must receive an object WITHOUT isAllowedProp === false,
     // otherwise Mongo getById filters the row out and returns undefined.
     fetchProperties: async () => ({}),
-    checkItem: async (id: string) =>
-        id === "Q404"
-            ? { status: "deleted", props: {} }
-            : {
-                  status: "ok",
-                  props: { name: `Person ${id}`, description: `About ${id}` },
-              },
-    clearCache: async () => undefined,
+    checkItem: async (id: string) => {
+        if (id === "Q404") return { status: "deleted", props: {} };
+        // Allowed item without a label in pt or en.
+        if (id === "Q405") return { status: "ok", props: {} };
+        // Item with a name but no description.
+        if (id === "Q406") {
+            return { status: "ok", props: { name: `Person ${id}` } };
+        }
+        return {
+            status: "ok",
+            props: { name: `Person ${id}`, description: `About ${id}` },
+        };
+    },
+    clearCache: vi.fn(async () => undefined),
 } as any;
 
 const backends: Array<{
@@ -193,12 +199,15 @@ describe.each(backends)(
             expect(updated.slug).toBe(c.slug);
             expect(updated.name).toBe("Grace Hopper");
         });
-        it("update keeps the slug and writes stored values", async () => {
+        it("update writes the edited value onto the stored row", async () => {
             const created: any = await service.create({ wikidata: "Q11" });
             const updated: any = await service.update(idOf(created), {
                 name: "Renamed",
             });
             expect(updated.slug).toBe(created.slug);
+            // getStored reads the stored row, not the Wikidata-merged copy.
+            const stored: any = await (service as any).getStored(idOf(created));
+            expect(stored.name).toBe("Renamed");
         });
         it("update with no changes returns the stored values without writing", async () => {
             const c: any = await service.create({ wikidata: "Q5" });
@@ -446,6 +455,113 @@ describe.each(backends)(
             await expect(
                 (service as any).getStored(makeMissingId())
             ).rejects.toBeInstanceOf(NotFoundException);
+        });
+
+        it("create rejects an item without a name", async () => {
+            await expect(
+                service.create({ wikidata: "Q405" })
+            ).rejects.toMatchObject({ status: 400 });
+        });
+
+        it("update relink rejects an item without a name", async () => {
+            const a: any = await service.create({ wikidata: "Q7" });
+            await expect(
+                service.update(idOf(a), { wikidata: "Q405" })
+            ).rejects.toMatchObject({ status: 400 });
+        });
+
+        it("create falls back to the default description", async () => {
+            const created: any = await service.create({ wikidata: "Q406" });
+            expect(created.description).toBe("Personality: Person Q406");
+        });
+
+        it("update relink clears the cache for the old and new ids", async () => {
+            const a: any = await service.create({ wikidata: "Q6" });
+            wikidataStub.clearCache.mockClear();
+            await service.update(idOf(a), { wikidata: "Q66" });
+            const cleared = wikidataStub.clearCache.mock.calls.map(
+                (call: any[]) => call[0]
+            );
+            expect(cleared).toEqual(expect.arrayContaining(["Q6", "Q66"]));
+        });
+
+        it("getStored reports a deleted Wikidata item", async () => {
+            const a: any = await service.create({ wikidata: "Q14" });
+            const original = wikidataStub.checkItem;
+            wikidataStub.checkItem = async () => ({
+                status: "deleted",
+                props: {},
+            });
+            try {
+                const stored: any = await (service as any).getStored(idOf(a));
+                expect(stored.wikidataStatus).toBe("deleted");
+                expect(stored.wikidataProvides).toEqual({
+                    name: false,
+                    description: false,
+                });
+            } finally {
+                wikidataStub.checkItem = original;
+            }
+        });
+
+        it("getStored reports unavailable when the check throws", async () => {
+            const a: any = await service.create({ wikidata: "Q15" });
+            const original = wikidataStub.checkItem;
+            wikidataStub.checkItem = async () => {
+                throw new Error("down");
+            };
+            try {
+                const stored: any = await (service as any).getStored(idOf(a));
+                expect(stored.wikidataStatus).toBe("unavailable");
+            } finally {
+                wikidataStub.checkItem = original;
+            }
+        });
+
+        it("getStored reports none for a personality without Wikidata", async () => {
+            const seeded = await seedWithoutWikidata("No Item");
+            const stored: any = await (service as any).getStored(idOf(seeded));
+            expect(stored.wikidataStatus).toBe("none");
+            expect(stored.wikidata).toBeNull();
+        });
+
+        it("findOrCreatePersonality returns null when Wikidata is unavailable", async () => {
+            const original = wikidataStub.checkItem;
+            wikidataStub.checkItem = async () => {
+                throw new Error("down");
+            };
+            try {
+                await expect(
+                    service.findOrCreatePersonality({
+                        name: "Ada",
+                        wikidata: { id: "Q12" },
+                    })
+                ).resolves.toBeNull();
+            } finally {
+                wikidataStub.checkItem = original;
+            }
+        });
+
+        it("findOrCreatePersonality skips the slug backfill for a deleted item", async () => {
+            const seeded = await seedWithoutWikidata("Ada Lovelace");
+            const result: any = await service.findOrCreatePersonality({
+                name: "Ada Lovelace",
+                wikidata: { id: "Q404" },
+            });
+            expect(idOf(result)).toBe(idOf(seeded));
+            expect(result.wikidata ?? null).toBeNull();
+        });
+
+        it("findOrCreatePersonality skips the slug backfill when a deleted personality holds the item", async () => {
+            const holder = await service.create({ wikidata: "Q7259" });
+            await service.delete(idOf(holder));
+            const seeded = await seedWithoutWikidata("Ada Lovelace");
+            const result: any = await service.findOrCreatePersonality({
+                name: "Ada Lovelace",
+                wikidata: { id: "Q7259" },
+            });
+            expect(idOf(result)).toBe(idOf(seeded));
+            expect(result.wikidata ?? null).toBeNull();
         });
     }
 );
