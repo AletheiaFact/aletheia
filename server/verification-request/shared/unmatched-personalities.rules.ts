@@ -34,3 +34,55 @@ export function removeUnmatched(
     const list = current.filter((u) => key(u.name) !== key(name));
     return { list, found: list.length !== current.length };
 }
+
+/** Longest name the dismiss/link endpoint accepts (nonEmptyText(200)). */
+const MAX_NAME_LENGTH = 200;
+
+/**
+ * Splits the AI's personalities, after Wikidata resolution, into the ones that
+ * became personalities and the names that did not. Names are trimmed, blank
+ * ones skipped and long ones cut to 200 characters, so the dismiss endpoint
+ * can always resolve what is stored.
+ */
+export function splitResolvedPersonalities<P>(
+    resolved: Array<{
+        name: string;
+        wikidataId?: string | null;
+        personality: P | null;
+    }>
+): { matched: P[]; matchedNames: string[]; unmatched: UnmatchedPersonality[] } {
+    const matched: P[] = [];
+    const matchedNames: string[] = [];
+    const unmatched: UnmatchedPersonality[] = [];
+    for (const r of resolved) {
+        const name = (r.name ?? "").trim().slice(0, MAX_NAME_LENGTH).trim();
+        if (r.personality) {
+            matched.push(r.personality);
+            if (name) matchedNames.push(name);
+        } else if (name) {
+            unmatched.push({
+                name,
+                ...(r.wikidataId && { wikidataCandidate: r.wikidataId }),
+            });
+        }
+    }
+    return { matched, matchedNames, unmatched };
+}
+
+/**
+ * New unmatched list after an identification run: a name the AI matched now
+ * leaves the list (case-insensitive), then the names it could not match are
+ * added. A name a fact-checker dismissed earlier is not remembered, so it
+ * returns if the AI names it again.
+ */
+export function mergeAfterRun(
+    existing: UnmatchedPersonality[],
+    matchedNames: string[],
+    added: UnmatchedPersonality[]
+): UnmatchedPersonality[] {
+    const matched = new Set(matchedNames.map(key));
+    return addUnmatched(
+        existing.filter((u) => !matched.has(key(u.name))),
+        added
+    );
+}

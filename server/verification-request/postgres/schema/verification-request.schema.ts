@@ -1,3 +1,4 @@
+import type { UnmatchedPersonality } from "../../shared/unmatched-personalities.rules";
 import {
     pgTable,
     uuid,
@@ -52,7 +53,7 @@ export const verificationRequest = pgTable(
             .notNull()
             .default(sql`'{}'::uuid[]`),
         unmatchedPersonalities: jsonb("unmatched_personalities")
-            .$type<Array<{ name: string; wikidataCandidate?: string }>>()
+            .$type<UnmatchedPersonality[]>()
             .notNull()
             .default([]),
         stateRetries: jsonb("state_retries")

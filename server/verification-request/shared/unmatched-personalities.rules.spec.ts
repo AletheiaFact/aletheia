@@ -1,6 +1,8 @@
 import {
     addUnmatched,
+    mergeAfterRun,
     removeUnmatched,
+    splitResolvedPersonalities,
     UnmatchedPersonality,
 } from "./unmatched-personalities.rules";
 
@@ -30,5 +32,51 @@ describe("removeUnmatched", () => {
             list: [{ name: "Bia" }],
             found: false,
         });
+    });
+});
+
+describe("splitResolvedPersonalities", () => {
+    it("splits matched from unmatched, keeping the candidate only when given", () => {
+        expect(
+            splitResolvedPersonalities([
+                { name: "Ana", personality: { id: 1 } },
+                { name: "Bia", wikidataId: "Q7", personality: null },
+                { name: "Caio", wikidataId: null, personality: null },
+            ])
+        ).toEqual({
+            matched: [{ id: 1 }],
+            matchedNames: ["Ana"],
+            unmatched: [
+                { name: "Bia", wikidataCandidate: "Q7" },
+                { name: "Caio" },
+            ],
+        });
+    });
+
+    it("trims names, skips blank ones and truncates to 200 characters", () => {
+        const long = "x".repeat(250);
+        const result = splitResolvedPersonalities([
+            { name: "  Ana  ", personality: null },
+            { name: "   ", personality: null },
+            { name: "", personality: { id: 2 } },
+            { name: long, personality: null },
+        ]);
+        expect(result.unmatched).toEqual([
+            { name: "Ana" },
+            { name: "x".repeat(200) },
+        ]);
+        expect(result.matched).toEqual([{ id: 2 }]);
+    });
+});
+
+describe("mergeAfterRun", () => {
+    it("drops names this run matched and adds the new unmatched ones", () => {
+        expect(
+            mergeAfterRun(
+                [{ name: "Ana" }, { name: "Bia" }],
+                ["ana"],
+                [{ name: "Caio" }, { name: "bia" }]
+            )
+        ).toEqual([{ name: "Bia" }, { name: "Caio" }]);
     });
 });

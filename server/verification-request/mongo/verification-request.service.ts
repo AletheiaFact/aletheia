@@ -47,8 +47,9 @@ import { EMBEDDINGS_PROVIDER } from "../../llm/llm.tokens";
 import type { EmbeddingsProvider } from "../../llm/llm.types";
 
 import {
-    addUnmatched,
+    mergeAfterRun,
     removeUnmatched,
+    splitResolvedPersonalities,
     UnmatchedPersonality,
 } from "../shared/unmatched-personalities.rules";
 import type { UnmatchedPersonalityActionDto } from "../dto/verification-request.dto";
@@ -401,7 +402,10 @@ export class MongoVerificationRequestService
             }
 
             // Extract value based on field type
-            let unmatchedToAdd: UnmatchedPersonality[] = [];
+            let identifiedRun: {
+                matchedNames: string[];
+                unmatched: UnmatchedPersonality[];
+            } | null = null;
             let valueToUpdate: any;
             switch (field) {
                 case "embedding":
@@ -435,26 +439,16 @@ export class MongoVerificationRequestService
                                 })
                             )
                         );
-                        const personalityIds = resolved
-                            .filter(
-                                (
-                                    r
-                                ): r is typeof r & {
-                                    personality: NonNullable<
-                                        typeof r.personality
-                                    >;
-                                } => !!r.personality
-                            )
-                            .map((r) => r.personality._id);
-                        unmatchedToAdd = resolved
-                            .filter((r) => !r.personality)
-                            .map((r) => ({
-                                name: r.personalityData.name,
-                                ...(r.personalityData.wikidata?.id && {
-                                    wikidataCandidate:
-                                        r.personalityData.wikidata.id,
-                                }),
-                            }));
+                        const { matched, matchedNames, unmatched } =
+                            splitResolvedPersonalities(
+                                resolved.map((r) => ({
+                                    name: r.personalityData.name,
+                                    wikidataId: r.personalityData.wikidata?.id,
+                                    personality: r.personality,
+                                }))
+                            );
+                        const personalityIds = matched.map((p) => p._id);
+                        identifiedRun = { matchedNames, unmatched };
 
                         valueToUpdate = personalityIds;
                         this.logger.log(
@@ -579,10 +573,18 @@ export class MongoVerificationRequestService
                 );
             }
 
-            if (field === "identifiedData" && unmatchedToAdd.length > 0) {
-                updateData.$set.unmatchedPersonalities = addUnmatched(
-                    verificationRequest.unmatchedPersonalities ?? [],
-                    unmatchedToAdd
+            if (field === "identifiedData" && identifiedRun) {
+                // The Wikidata calls above can take a while, so merge into a
+                // fresh read taken right before the write.
+                const fresh = await this.VerificationRequestModel.findById(
+                    targetId
+                )
+                    .select("unmatchedPersonalities")
+                    .lean();
+                updateData.$set.unmatchedPersonalities = mergeAfterRun(
+                    fresh?.unmatchedPersonalities ?? [],
+                    identifiedRun.matchedNames,
+                    identifiedRun.unmatched
                 );
             }
 
@@ -1097,8 +1099,12 @@ export class MongoVerificationRequestService
             );
         }
 
-        const update: any = { $set: { unmatchedPersonalities: list } };
-        let linkedId: unknown;
+        // The stored spelling, so the conditional update matches exactly.
+        const storedName = previous.find((u) => !list.includes(u))!.name;
+
+        const update: any = {
+            $pull: { unmatchedPersonalities: { name: storedName } },
+        };
         if (body.action === "link") {
             if (!isValidObjectId(body.personalityId)) {
                 throw new NotFoundException(
@@ -1113,26 +1119,39 @@ export class MongoVerificationRequestService
                     `Personality ${body.personalityId} not found`
                 );
             }
-            linkedId = personality._id;
-            update.$addToSet = { identifiedData: linkedId };
+            update.$addToSet = { identifiedData: personality._id };
         }
 
-        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
-            verificationRequestId,
+        // One conditional write: if another request already took this name
+        // (or the request is gone) nothing matches and nothing is written.
+        const updated = await this.VerificationRequestModel.findOneAndUpdate(
+            {
+                _id: verificationRequestId,
+                "unmatchedPersonalities.name": storedName,
+            },
             update,
             { new: true }
         ).exec();
+        if (!updated) {
+            throw new NotFoundException(
+                `No unmatched personality "${body.name}"`
+            );
+        }
 
+        const snapshot = (vr: { toObject: () => any }) => {
+            const { unmatchedPersonalities, identifiedData } = vr.toObject();
+            return {
+                unmatchedPersonalities: unmatchedPersonalities ?? [],
+                identifiedData: identifiedData ?? [],
+            };
+        };
         const history = this.historyService.getHistoryParams(
             verificationRequestId,
             TargetModel.VerificationRequest,
             this.req.user?._id,
             HistoryType.Update,
-            {
-                unmatchedPersonalities: list,
-                ...(linkedId ? { linkedPersonality: linkedId } : {}),
-            },
-            { unmatchedPersonalities: previous }
+            snapshot(updated),
+            snapshot(verificationRequest)
         );
         await this.historyService.createHistory(history as any);
 

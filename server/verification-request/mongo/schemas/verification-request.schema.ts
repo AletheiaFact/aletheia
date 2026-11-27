@@ -1,3 +1,4 @@
+import type { UnmatchedPersonality } from "../../shared/unmatched-personalities.rules";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Group } from "../../../group/mongo/schemas/group.schema";
@@ -117,7 +118,7 @@ export class VerificationRequest {
         required: false,
         default: [],
     })
-    unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+    unmatchedPersonalities: UnmatchedPersonality[];
 
     @Prop({
         required: false,

@@ -1039,6 +1039,40 @@ describe.each(backends)(
                     ]);
                 });
 
+                it("linking a personality already in identifiedData does not duplicate it", async () => {
+                    const vr = await unmatchedVr();
+                    const linked = await seed.personality("Ana Silva");
+                    stubs.personalityService.getById.mockResolvedValue(linked);
+                    for (const name of ["Ana", "Bia"]) {
+                        await service.resolveUnmatchedPersonality(idOf(vr), {
+                            action: "link",
+                            name,
+                            personalityId: idOf(linked),
+                        });
+                    }
+                    const after = await service.findByDataHash(vr.data_hash);
+                    expect(names(after.identifiedData)).toEqual(["Ana Silva"]);
+                    expect(after.unmatchedPersonalities).toHaveLength(0);
+                });
+
+                it("a later identifiedData run merges into the list and drops names it now matches", async () => {
+                    const vr = await unmatchedVr();
+                    stubs.personalityService.findOrCreatePersonality.mockImplementation(
+                        async (data: { name: string }) =>
+                            data.name === "Ana" ? seed.personality("Ana") : null
+                    );
+                    await service.updateFieldByAiTask(
+                        { targetId: idOf(vr), field: "identifiedData" },
+                        { personalities: [{ name: "Ana" }, { name: "Caio" }] }
+                    );
+                    const after = await service.findByDataHash(vr.data_hash);
+                    expect(names(after.identifiedData)).toEqual(["Ana"]);
+                    expect(names(after.unmatchedPersonalities)).toEqual([
+                        "Bia",
+                        "Caio",
+                    ]);
+                });
+
                 it("dismiss only removes the name", async () => {
                     const vr = await unmatchedVr();
                     await service.resolveUnmatchedPersonality(idOf(vr), {
@@ -1075,6 +1109,13 @@ describe.each(backends)(
                             action: "link",
                             name: "Ana",
                             personalityId: randomUUID(),
+                        })
+                    ).rejects.toBeInstanceOf(NotFoundException);
+                    await expect(
+                        service.resolveUnmatchedPersonality(idOf(vr), {
+                            action: "link",
+                            name: "Ana",
+                            personalityId: new Types.ObjectId().toString(),
                         })
                     ).rejects.toBeInstanceOf(NotFoundException);
                     const after = await service.findByDataHash(vr.data_hash);
