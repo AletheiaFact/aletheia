@@ -51,6 +51,10 @@ export const verificationRequest = pgTable(
             .array()
             .notNull()
             .default(sql`'{}'::uuid[]`),
+        unmatchedPersonalities: jsonb("unmatched_personalities")
+            .$type<Array<{ name: string; wikidataCandidate?: string }>>()
+            .notNull()
+            .default([]),
         stateRetries: jsonb("state_retries")
             .$type<Record<string, number>>()
             .notNull()

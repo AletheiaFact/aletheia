@@ -68,6 +68,10 @@ import {
     topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
+import {
+    addUnmatched,
+    UnmatchedPersonality,
+} from "../shared/unmatched-personalities.rules";
 import { verificationRequest } from "./schema/verification-request.schema";
 import type {
     VerificationRequestInsert,
@@ -680,7 +684,14 @@ export class PostgresVerificationRequestService
                 return this.toEntity(current, {}, true);
             }
 
-            const valueToUpdate = await this.resolveAiFieldValue(field, result);
+            const resolvedValue: any = await this.resolveAiFieldValue(
+                field,
+                result
+            );
+            const valueToUpdate =
+                field === "identifiedData" ? resolvedValue.ids : resolvedValue;
+            const unmatchedToAdd: UnmatchedPersonality[] =
+                field === "identifiedData" ? resolvedValue.unmatched : [];
 
             const validation = validateAiTaskResult(
                 field,
@@ -709,6 +720,14 @@ export class PostgresVerificationRequestService
                     } || ${JSON.stringify({ [field]: resultHash })}::jsonb`,
                     statesExecuted: this.appendUnique(field),
                     pendingAiTasks: sql`${verificationRequest.pendingAiTasks} - ${field}`,
+                    ...(unmatchedToAdd.length > 0
+                        ? {
+                              unmatchedPersonalities: addUnmatched(
+                                  current.unmatchedPersonalities ?? [],
+                                  unmatchedToAdd
+                              ),
+                          }
+                        : {}),
                     ...(field === "severity"
                         ? { status: VerificationRequestStatus.IN_TRIAGE }
                         : {}),
@@ -782,24 +801,40 @@ export class PostgresVerificationRequestService
         }
     }
 
-    private async resolveIdentifiedData(result: any): Promise<string[]> {
+    private async resolveIdentifiedData(
+        result: any
+    ): Promise<{ ids: string[]; unmatched: UnmatchedPersonality[] }> {
         if (!result?.personalities || !Array.isArray(result.personalities)) {
             this.logger.warn(
                 "No personalities identified or unexpected format, setting empty array"
             );
-            return [];
+            return { ids: [], unmatched: [] };
         }
-        return Promise.all(
+        const resolved = await Promise.all(
             result.personalities.map(
-                async (p: { name: string; wikidata?: any }) =>
-                    idOf(
+                async (p: { name: string; wikidata?: any }) => ({
+                    p,
+                    personality:
                         await this.personalityService.findOrCreatePersonality({
                             name: p.name,
                             wikidata: p.wikidata,
-                        })
-                    )
+                        }),
+                })
             )
         );
+        return {
+            ids: resolved
+                .filter((r) => r.personality)
+                .map((r) => idOf(r.personality)),
+            unmatched: resolved
+                .filter((r) => !r.personality)
+                .map((r) => ({
+                    name: r.p.name,
+                    ...(r.p.wikidata?.id && {
+                        wikidataCandidate: r.p.wikidata.id,
+                    }),
+                })),
+        };
     }
 
     private createSources(
@@ -891,7 +926,6 @@ export class PostgresVerificationRequestService
         await this.triggerStateMachineForMissingState(vr, state);
     }
 
-
     // Built on demand rather than injected: the state machine already depends
     // on this service, and injecting it back made a request-scoped DI cycle in
     // which Nest handed out an unconstructed placeholder of this service.
@@ -911,9 +945,7 @@ export class PostgresVerificationRequestService
             return;
         }
         try {
-            await (this.createStateMachine() as any)[event](
-                idOf(vr)
-            );
+            await (this.createStateMachine() as any)[event](idOf(vr));
         } catch (error) {
             const err = toError(error);
             this.logger.error(

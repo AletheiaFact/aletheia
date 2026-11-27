@@ -107,6 +107,19 @@ export class VerificationRequest {
     identifiedData: mongoose.Types.ObjectId[];
 
     @Prop({
+        type: [
+            {
+                _id: false,
+                name: { type: String, required: true },
+                wikidataCandidate: { type: String, required: false },
+            },
+        ],
+        required: false,
+        default: [],
+    })
+    unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+
+    @Prop({
         required: false,
         type: Map,
         of: Number,

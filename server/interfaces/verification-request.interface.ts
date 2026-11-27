@@ -21,6 +21,7 @@ export interface IVerificationRequest {
     status: string;
     statesExecuted?: string[];
     identifiedData?: any[];
+    unmatchedPersonalities?: { name: string; wikidataCandidate?: string }[];
     stateRetries?: any;
     stateErrors?: Array<{
         state: string;

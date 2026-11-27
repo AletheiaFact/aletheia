@@ -46,6 +46,10 @@ import type { IPersonalityService } from "../../interfaces/personality.service.i
 import { EMBEDDINGS_PROVIDER } from "../../llm/llm.tokens";
 import type { EmbeddingsProvider } from "../../llm/llm.types";
 
+import {
+    addUnmatched,
+    UnmatchedPersonality,
+} from "../shared/unmatched-personalities.rules";
 import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import {
     calculateAverageDuration,
@@ -395,6 +399,7 @@ export class MongoVerificationRequestService
             }
 
             // Extract value based on field type
+            let unmatchedToAdd: UnmatchedPersonality[] = [];
             let valueToUpdate: any;
             switch (field) {
                 case "embedding":
@@ -410,24 +415,36 @@ export class MongoVerificationRequestService
                         result?.personalities &&
                         Array.isArray(result.personalities)
                     ) {
-                        const personalityIds = await Promise.all(
+                        const resolved = await Promise.all(
                             result.personalities.map(
                                 async (personalityData: {
                                     name: string;
                                     wikidata?: any;
-                                }) => {
-                                    const personality =
+                                }) => ({
+                                    personalityData,
+                                    personality:
                                         await this.personalityService.findOrCreatePersonality(
                                             {
                                                 name: personalityData.name,
                                                 wikidata:
                                                     personalityData.wikidata,
                                             }
-                                        );
-                                    return (personality as any)._id;
-                                }
+                                        ),
+                                })
                             )
                         );
+                        const personalityIds = resolved
+                            .filter((r) => r.personality)
+                            .map((r) => (r.personality as any)._id);
+                        unmatchedToAdd = resolved
+                            .filter((r) => !r.personality)
+                            .map((r) => ({
+                                name: r.personalityData.name,
+                                ...(r.personalityData.wikidata?.id && {
+                                    wikidataCandidate:
+                                        r.personalityData.wikidata.id,
+                                }),
+                            }));
 
                         valueToUpdate = personalityIds;
                         this.logger.log(
@@ -549,6 +566,13 @@ export class MongoVerificationRequestService
                 updateData.$set.status = "In Triage";
                 this.logger.log(
                     `Transitioning VR ${targetId} status to IN_TRIAGE after severity definition`
+                );
+            }
+
+            if (field === "identifiedData" && unmatchedToAdd.length > 0) {
+                updateData.$set.unmatchedPersonalities = addUnmatched(
+                    verificationRequest.unmatchedPersonalities ?? [],
+                    unmatchedToAdd
                 );
             }
 

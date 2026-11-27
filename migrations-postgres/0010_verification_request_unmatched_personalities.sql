@@ -1,0 +1,1 @@
+ALTER TABLE "verification_request" ADD COLUMN "unmatched_personalities" jsonb DEFAULT '[]'::jsonb NOT NULL;

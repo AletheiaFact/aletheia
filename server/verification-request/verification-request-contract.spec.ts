@@ -966,6 +966,42 @@ describe.each(backends)(
                 expect(emptied.identifiedData).toEqual([]);
             });
 
+            it("updateFieldByAiTask keeps names without a Wikidata match as unmatched instead of identifying them", async () => {
+                stubs.personalityService.findOrCreatePersonality.mockImplementation(
+                    async (data: { name: string }) =>
+                        data.name === "Bartolomeu Almeida"
+                            ? null
+                            : seed.personality(data.name)
+                );
+                const vr = await service.create(base());
+                await service.updateFieldByAiTask(
+                    { targetId: idOf(vr), field: "identifiedData" },
+                    {
+                        personalities: [
+                            { name: "Ana" },
+                            {
+                                name: "Bartolomeu Almeida",
+                                wikidata: { id: "Q123" },
+                            },
+                        ],
+                    }
+                );
+                const after = await service.findByDataHash(vr.data_hash);
+                expect(after.identifiedData.map((p: any) => p.name)).toEqual([
+                    "Ana",
+                ]);
+                expect(
+                    after.unmatchedPersonalities.map(
+                        ({ name, wikidataCandidate }: any) => ({
+                            name,
+                            wikidataCandidate,
+                        })
+                    )
+                ).toEqual([
+                    { name: "Bartolomeu Almeida", wikidataCandidate: "Q123" },
+                ]);
+            });
+
             it("updateFieldByAiTask with severity moves the status to In Triage", async () => {
                 const vr = await service.create(base());
                 const updated = await service.updateFieldByAiTask(
