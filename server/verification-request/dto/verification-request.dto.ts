@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
     entityId,
     legacyBodyFlag,
+    nonEmptyText,
     pageQuery,
     pageSizeQuery,
     queryArray,
@@ -104,3 +105,18 @@ export type VerificationRequestTopicsDto = z.output<
 >;
 
 export const RemoveFromGroupSchema = z.strictObject({ group: entityId });
+
+export const UnmatchedPersonalityActionSchema = z.discriminatedUnion("action", [
+    z.strictObject({
+        action: z.literal("link"),
+        name: nonEmptyText(200),
+        personalityId: entityId,
+    }),
+    z.strictObject({
+        action: z.literal("dismiss"),
+        name: nonEmptyText(200),
+    }),
+]);
+export type UnmatchedPersonalityActionDto = z.output<
+    typeof UnmatchedPersonalityActionSchema
+>;

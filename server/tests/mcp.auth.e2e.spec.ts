@@ -4,6 +4,7 @@ import {
     callTool,
     m2mUser,
     regularUser,
+    uniqueQid,
     useMcpTestHelper,
 } from "./utils/McpTestHelper";
 
@@ -50,9 +51,7 @@ describe("MCP auth and namespace access (e2e)", () => {
         it("blocks writes for a Regular (read-only) user (I3)", async () => {
             authState.user = regularUser();
             const body = await callTool(mcp.app, "create_personality", {
-                name: "Read Only Person",
-                description: "should not be created",
-                wikidata: "Q-regular-block",
+                wikidata: uniqueQid(),
             });
             expect(body.result.isError).toBe(true);
             expect(body.result.content[0].text).toMatch(
@@ -63,9 +62,7 @@ describe("MCP auth and namespace access (e2e)", () => {
         it("allows writes for an admin user (I3)", async () => {
             authState.user = adminUser();
             const body = await callTool(mcp.app, "create_personality", {
-                name: `MCP Admin Person ${Date.now()}`,
-                description: "created via MCP by admin",
-                wikidata: `Q-admin-${Date.now()}`,
+                wikidata: uniqueQid(),
             });
             expect(body.result.isError).toBeFalsy();
         });

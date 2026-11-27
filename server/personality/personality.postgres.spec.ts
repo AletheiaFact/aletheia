@@ -1,11 +1,33 @@
 import { PostgresPersonalityService } from "./postgres/personality.service";
 import { getTestDrizzle, resetTestDrizzle } from "../tests/postgres-setup";
-import { DuplicateKeyError, NotImplementedError } from "../database/errors";
+import { NotImplementedError } from "../database/errors";
+import { personality } from "./postgres/schema/personality.schema";
+import { deriveSlug } from "./shared/personality.rules";
 
 describe.skipIf(process.env.DB_TYPE !== "postgres")(
     "personality postgres-only",
     () => {
         let service: PostgresPersonalityService;
+        // create() only accepts a Wikidata item now, so listing and counting
+        // fixtures are inserted straight into the table.
+        const seed = async (row: {
+            name: string;
+            slug?: string;
+            description?: string;
+            isHidden?: boolean;
+        }) => {
+            const db = await getTestDrizzle();
+            const [inserted] = await db
+                .insert(personality)
+                .values({
+                    name: row.name,
+                    slug: row.slug ?? deriveSlug(row.name),
+                    description: row.description ?? "x",
+                    isHidden: row.isHidden ?? false,
+                })
+                .returning();
+            return inserted;
+        };
 
         beforeEach(async () => {
             await resetTestDrizzle();
@@ -25,12 +47,12 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         });
 
         it("findAll fuzzy-matches a 1-edit typo on name", async () => {
-            await service.create({
+            await seed({
                 name: "Ada Lovelace",
                 slug: "ada-lovelace",
                 description: "x",
             });
-            await service.create({
+            await seed({
                 name: "Alan Turing",
                 slug: "alan-turing",
                 description: "y",
@@ -46,11 +68,11 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         });
 
         it("findAll excludes hidden personalities from results and totalRows (Mongo $match parity)", async () => {
-            await service.create({
+            await seed({
                 name: "Grace Hopper",
                 description: "visible",
             });
-            await service.create({
+            await seed({
                 name: "Grace Hoppers",
                 description: "hidden",
                 isHidden: true,
@@ -73,7 +95,7 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
 
         it("listAll without query returns recent rows paginated", async () => {
             for (let i = 0; i < 5; i++) {
-                await service.create({
+                await seed({
                     name: `P${i}`,
                     slug: `p${i}`,
                     description: "x",
@@ -87,7 +109,7 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
 
         it("listAll with pageSize=0 returns ALL rows (Mongo limit(0) parity — sitemap)", async () => {
             for (let i = 0; i < 4; i++) {
-                await service.create({
+                await seed({
                     name: `Q${i}`,
                     slug: `q${i}`,
                     description: "x",
@@ -117,12 +139,12 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
         });
 
         it("count excludes hidden rows by default and includes them when asked", async () => {
-            const a = await service.create({
+            const a = await seed({
                 name: "Visible",
                 slug: "visible",
                 description: "x",
             });
-            const b = await service.create({
+            const b = await seed({
                 name: "Hidden",
                 slug: "hidden",
                 description: "x",
@@ -143,57 +165,6 @@ describe.skipIf(process.env.DB_TYPE !== "postgres")(
             await expect(
                 service.count({ name: { $regex: "x" }, isDeleted: false })
             ).rejects.toBeInstanceOf(NotImplementedError);
-        });
-
-        it("create defaults description to empty string when omitted (documented divergence: Mongo requires it)", async () => {
-            const created = await service.create({ name: "No Desc" });
-            expect((created as any).description).toBe("");
-        });
-
-        it("a soft-deleted wikidata does not block findOrCreate of a live one (documented divergence: Mongo's sparse unique index also covers deleted rows and throws E11000)", async () => {
-            const first = await service.create({
-                name: "Ada",
-                description: "x",
-                wikidata: "Q42",
-            });
-            await service.delete((first as any).id);
-
-            // Must NOT throw a unique-violation — the partial index excludes
-            // soft-deleted rows. (findOrCreatePersonality has no restore
-            // branch on either backend.)
-            const second = await service.findOrCreatePersonality({
-                name: "Ada Again",
-                wikidata: { id: "Q42" },
-            });
-            expect((second as any)._id).toBeDefined();
-            expect((second as any)._id).not.toBe((first as any)._id);
-        });
-
-        it("create with an already-live wikidata throws DuplicateKeyError naming the field", async () => {
-            await service.create({
-                name: "First",
-                description: "x",
-                wikidata: "Q42",
-            });
-            await expect(
-                service.create({
-                    name: "Second",
-                    description: "y",
-                    wikidata: "Q42",
-                })
-            ).rejects.toMatchObject(
-                expect.objectContaining({
-                    name: "DuplicateKeyError",
-                    fields: ["wikidata"],
-                })
-            );
-            await expect(
-                service.create({
-                    name: "Second",
-                    description: "y",
-                    wikidata: "Q42",
-                })
-            ).rejects.toBeInstanceOf(DuplicateKeyError);
         });
     }
 );

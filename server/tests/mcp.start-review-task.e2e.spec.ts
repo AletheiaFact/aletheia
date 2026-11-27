@@ -6,6 +6,7 @@ import {
     callTool,
     regularUser,
     useMcpTestHelper,
+    uniqueQid,
 } from "./utils/McpTestHelper";
 
 // Sentences are the leaves of a claim's content tree: paragraphs also
@@ -43,9 +44,7 @@ describe("MCP start_review_task (e2e)", () => {
     const createClaim = async () => {
         const stamp = randomUUID();
         const personality = await callOk("create_personality", {
-            name: `Workflow Person ${stamp}`,
-            description: "Workflow e2e",
-            wikidata: `Q-workflow-${stamp}`,
+            wikidata: uniqueQid(),
         });
         const claim = await callOk("create_claim", {
             title: `Workflow claim ${stamp}`,

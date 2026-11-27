@@ -7,22 +7,22 @@ import { ViewMode } from "../components/FilterToggleButtons";
 import { Personality } from "./Personality";
 
 export enum FilterType {
-  TOPIC = "topic",
-  IMPACT_AREA = "impactArea",
+    TOPIC = "topic",
+    IMPACT_AREA = "impactArea",
 }
 
 interface PaginationSettings {
-  pageSize: number;
-  page: number;
-};
+    pageSize: number;
+    page: number;
+}
 interface TopicOption {
-  name: string;
-  matchedAlias?: string | null;
+    name: string;
+    matchedAlias?: string | null;
 }
 interface FilterItem {
-  label: string;
-  value: string;
-  type: FilterType;
+    label: string;
+    value: string;
+    type: FilterType;
 }
 
 type verificationRequestStatus = "Pre Triage" | "In Triage" | "Posted";
@@ -32,93 +32,95 @@ type PaginationModel = Record<verificationRequestStatus, PaginationSettings>;
 type SeverityLevel = "low" | "medium" | "high" | "critical";
 
 interface VerificationRequest {
-  data_hash: string;
-  content: string;
-  isSensitive: boolean;
-  rejected: boolean;
-  group: Group;
-  date: Date;
-  source?: Source[] | string[];
-  sourceChannel: string;
-  _id?: string;
-  publicationDate: string;
-  heardFrom: string;
-  reportType?: string;
-  impactArea?: Topic;
-  status: string;
-  topics: Topic[];
-  identifiedData: Personality[];
-};
+    data_hash: string;
+    content: string;
+    isSensitive: boolean;
+    rejected: boolean;
+    group: Group;
+    date: Date;
+    source?: Source[] | string[];
+    sourceChannel: string;
+    _id?: string;
+    publicationDate: string;
+    heardFrom: string;
+    reportType?: string;
+    impactArea?: Topic;
+    status: string;
+    topics: Topic[];
+    identifiedData: Personality[];
+    unmatchedPersonalities?: { name: string; wikidataCandidate?: string }[];
+}
 interface FiltersState {
-  loading: Record<verificationRequestStatus, boolean>;
-  filteredRequests: Record<verificationRequestStatus, VerificationRequest[]>;
-  totalVerificationRequests: Record<verificationRequestStatus, number>;
-  isInitialLoad: boolean;
-  priorityFilter: string;
-  sourceChannelFilter: string;
-  filterValue: string[];
-  filterType: string;
-  anchorEl: HTMLElement | null;
-  paginationModel: PaginationModel;
-  autoCompleteTopicsResults?: TopicOption[];
-  topicFilterUsed: string[];
-  impactAreaFilterUsed: string[];
-  applyFilters: boolean;
-  viewMode: ViewMode;
-  canViewBoard: boolean;
-  startDate: Date | null;
-  endDate: Date | null;
+    loading: Record<verificationRequestStatus, boolean>;
+    filteredRequests: Record<verificationRequestStatus, VerificationRequest[]>;
+    totalVerificationRequests: Record<verificationRequestStatus, number>;
+    isInitialLoad: boolean;
+    priorityFilter: string;
+    sourceChannelFilter: string;
+    filterValue: string[];
+    filterType: string;
+    anchorEl: HTMLElement | null;
+    paginationModel: PaginationModel;
+    autoCompleteTopicsResults?: TopicOption[];
+    topicFilterUsed: string[];
+    impactAreaFilterUsed: string[];
+    applyFilters: boolean;
+    viewMode: ViewMode;
+    canViewBoard: boolean;
+    startDate: Date | null;
+    endDate: Date | null;
 }
 interface FiltersActions {
-  setIsInitialLoad: (initial: boolean) => void;
-  fetchData: (status: verificationRequestStatus) => Promise<void>;
-  setPriorityFilter: (value: string) => void;
-  setSourceChannelFilter: (value: string) => void;
-  setFilterValue: (value: string[]) => void;
-  setFilterType: (type: string) => void;
-  setAnchorEl: (el: HTMLElement | null) => void;
-  setPaginationModel: React.Dispatch<React.SetStateAction<PaginationModel>>;
-  setApplyFilters: (apply: boolean) => void;
-  fetchTopicList: (term: string) => Promise<void>;
-  createFilterChangeHandler: (
-    setter: (v: any) => void
-  ) => (newValue: any) => void;
-  dispatch: (action: { type: ActionTypes; [key: string]: any }) => void;
-  t: (key: string) => string;
-  setViewMode: (mode: ViewMode) => void;
-  setStartDate: (date: Date | null) => void;
-  setEndDate: (date: Date | null) => void;
+    setIsInitialLoad: (initial: boolean) => void;
+    fetchData: (status: verificationRequestStatus) => Promise<void>;
+    updateRequest: (id: string, patch: Record<string, unknown>) => void;
+    setPriorityFilter: (value: string) => void;
+    setSourceChannelFilter: (value: string) => void;
+    setFilterValue: (value: string[]) => void;
+    setFilterType: (type: string) => void;
+    setAnchorEl: (el: HTMLElement | null) => void;
+    setPaginationModel: React.Dispatch<React.SetStateAction<PaginationModel>>;
+    setApplyFilters: (apply: boolean) => void;
+    fetchTopicList: (term: string) => Promise<void>;
+    createFilterChangeHandler: (
+        setter: (v: any) => void
+    ) => (newValue: any) => void;
+    dispatch: (action: { type: ActionTypes; [key: string]: any }) => void;
+    t: (key: string) => string;
+    setViewMode: (mode: ViewMode) => void;
+    setStartDate: (date: Date | null) => void;
+    setEndDate: (date: Date | null) => void;
 }
 interface FiltersContext {
-  state: FiltersState;
-  actions: FiltersActions;
+    state: FiltersState;
+    actions: FiltersActions;
 }
 interface StatsCount {
-  total?: number;
-  totalThisMonth?: number;
-  verified: number;
-  inAnalysis: number;
-  pending: number;
+    total?: number;
+    totalThisMonth?: number;
+    verified: number;
+    inAnalysis: number;
+    pending: number;
 }
 interface StatsSourceChannels {
-  label: string;
-  value: number;
-  percentage: number;
+    label: string;
+    value: number;
+    percentage: number;
 }
 interface StatsRecentActivity {
-  id: string;
-  status: string;
-  sourceChannel: string;
-  data_hash: string;
-  timestamp: Date;
+    id: string;
+    status: string;
+    sourceChannel: string;
+    data_hash: string;
+    timestamp: Date;
 }
 
 interface StatsSourceChannelsProps {
-  statsCounts?: StatsCount;
-  statsSourceChannels: StatsSourceChannels[];
+    statsCounts?: StatsCount;
+    statsSourceChannels: StatsSourceChannels[];
 }
 interface StatsRecentActivityProps {
-  statsRecentActivity: StatsRecentActivity[];
+    statsRecentActivity: StatsRecentActivity[];
 }
 interface IEditVerificationRequestDrawer {
     open: boolean;
@@ -127,34 +129,34 @@ interface IEditVerificationRequestDrawer {
     onSave: (updatedRequest: VerificationRequest) => void;
 }
 interface IInputExtraSourcesList {
-  defaultSources: UnifiedDefaultValue;
-  onChange: (value: string[]) => void;
-  disabled: boolean;
-  placeholder: string;
-  dataCy?: string;
+    defaultSources: UnifiedDefaultValue;
+    onChange: (value: string[]) => void;
+    disabled: boolean;
+    placeholder: string;
+    dataCy?: string;
 }
 interface IReportTypeSelect {
-  onChange: (value: UnifiedDefaultValue) => void;
-  defaultValue: UnifiedDefaultValue;
-  placeholder: string;
-  style?: React.CSSProperties;
-  isDisabled: boolean;
-  dataCy?: string;
+    onChange: (value: UnifiedDefaultValue) => void;
+    defaultValue: UnifiedDefaultValue;
+    placeholder: string;
+    style?: React.CSSProperties;
+    isDisabled: boolean;
+    dataCy?: string;
 }
 
 interface SelectOption {
-  value: string;
-  label: string;
+    value: string;
+    label: string;
 }
 
 interface IOptionsSelect {
-  options: SelectOption[];
-  onChange: (value: string | undefined) => void;
-  defaultValue?: string;
-  placeholder?: string;
-  style?: React.CSSProperties;
-  isDisabled: boolean;
-  dataCy?: string;
+    options: SelectOption[];
+    onChange: (value: string | undefined) => void;
+    defaultValue?: string;
+    placeholder?: string;
+    style?: React.CSSProperties;
+    isDisabled: boolean;
+    dataCy?: string;
 }
 
 interface IDynamicVerificationRequestForm {
@@ -169,23 +171,23 @@ interface IDynamicVerificationRequestForm {
 }
 
 export type {
-  VerificationRequest,
-  FiltersState,
-  FiltersActions,
-  FiltersContext,
-  PaginationModel,
-  SeverityLevel,
-  FilterItem,
-  TopicOption,
-  StatsCount,
-  StatsSourceChannels,
-  StatsRecentActivity,
-  StatsSourceChannelsProps,
-  StatsRecentActivityProps,
-  IEditVerificationRequestDrawer,
-  IInputExtraSourcesList,
-  IReportTypeSelect,
-  SelectOption,
-  IOptionsSelect,
-  IDynamicVerificationRequestForm
+    VerificationRequest,
+    FiltersState,
+    FiltersActions,
+    FiltersContext,
+    PaginationModel,
+    SeverityLevel,
+    FilterItem,
+    TopicOption,
+    StatsCount,
+    StatsSourceChannels,
+    StatsRecentActivity,
+    StatsSourceChannelsProps,
+    StatsRecentActivityProps,
+    IEditVerificationRequestDrawer,
+    IInputExtraSourcesList,
+    IReportTypeSelect,
+    SelectOption,
+    IOptionsSelect,
+    IDynamicVerificationRequestForm,
 };

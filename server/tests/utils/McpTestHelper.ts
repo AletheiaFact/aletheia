@@ -17,6 +17,7 @@ import { TestConfigOptions } from "./TestConfigOptions";
 import { SeedTestUser } from "./SeedTestUser";
 import { SeedTestNameSpace } from "./SeedTestNameSpace";
 import { AdminUserMock } from "./AdminUserMock";
+import { WikidataService } from "../../wikidata/wikidata.service";
 import { VerificationRequestStateMachineService } from "../../verification-request/state-machine/verification-request.state-machine.service";
 
 export const MCP_ACCEPT = "application/json, text/event-stream";
@@ -59,6 +60,23 @@ const McpAuthGuardMock = {
 export const verificationRequestStateMachineMock = {
     request: vi.fn().mockResolvedValue({ status: "pre-triage", ok: true }),
 };
+
+// Personalities are created from Wikidata, so the e2e suites never reach the
+// real API: every item resolves to "Person <id>".
+export const WikidataServiceStub: Partial<WikidataService> = {
+    queryWikibaseEntities: async () => [],
+    fetchProperties: async () => ({}),
+    checkItem: async (id: string, _language?: string, _options?: unknown) => ({
+        status: "ok",
+        props: { name: `Person ${id}`, description: `About ${id}` },
+    }),
+    clearCache: async () => undefined,
+};
+
+let qidCounter = 0;
+// A unique numeric Wikidata id per call (one item backs one personality).
+export const uniqueQid = () =>
+    `Q${Date.now()}${String(qidCounter++).padStart(4, "0")}`;
 
 export function rpc(method: string, params: any = {}, id = 1) {
     return { jsonrpc: "2.0", id, method, params };
@@ -116,6 +134,8 @@ export function useMcpTestHelper() {
             .useValue(McpAuthGuardMock)
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
+            .overrideProvider(WikidataService)
+            .useValue(WikidataServiceStub)
             .overrideProvider(VerificationRequestStateMachineService)
             .useValue(verificationRequestStateMachineMock)
             .compile();

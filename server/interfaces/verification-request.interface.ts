@@ -1,3 +1,4 @@
+import type { UnmatchedPersonality } from "../verification-request/shared/unmatched-personalities.rules";
 export interface IVerificationRequest {
     _id?: any;
     id?: any;
@@ -21,6 +22,7 @@ export interface IVerificationRequest {
     status: string;
     statesExecuted?: string[];
     identifiedData?: any[];
+    unmatchedPersonalities?: UnmatchedPersonality[];
     stateRetries?: any;
     stateErrors?: Array<{
         state: string;

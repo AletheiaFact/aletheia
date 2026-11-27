@@ -6,6 +6,7 @@ import {
     authState,
     callTool,
     useMcpTestHelper,
+    uniqueQid,
 } from "./McpTestHelper";
 
 // A reviewer who did not write the report (four-eyes).
@@ -102,9 +103,7 @@ export function useMcpQueueHelper() {
     const createClaim = async (content: string) => {
         const stamp = randomUUID();
         const personality = await callOk("create_personality", {
-            name: `Queue Person ${stamp}`,
-            description: "Queue e2e",
-            wikidata: `Q-queue-${stamp}`,
+            wikidata: uniqueQid(),
         });
         return callOk("create_claim", {
             title: `Queue claim ${stamp}`,

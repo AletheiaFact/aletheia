@@ -28,6 +28,7 @@ import type {
     VerificationRequestFilters,
     VerificationRequestListOptions,
 } from "../../interfaces/verification-request.service.interface";
+import type { UnmatchedPersonalityActionDto } from "../dto/verification-request.dto";
 import type { IVerificationRequest } from "../../interfaces/verification-request.interface";
 import type { ISourceService } from "../../interfaces/source.service.interface";
 import type { IGroupService } from "../../interfaces/group.service.interface";
@@ -68,6 +69,12 @@ import {
     topicWikidataKey,
     validateAiTaskResult,
 } from "../shared/verification-request.rules";
+import {
+    mergeAfterRun,
+    removeUnmatched,
+    splitResolvedPersonalities,
+    UnmatchedPersonality,
+} from "../shared/unmatched-personalities.rules";
 import { verificationRequest } from "./schema/verification-request.schema";
 import type {
     VerificationRequestInsert,
@@ -122,6 +129,12 @@ const UUID_RE =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const isUuid = (id: any) => typeof id === "string" && UUID_RE.test(id);
+type IdentifiedResolution = {
+    ids: string[];
+    matchedNames: string[];
+    unmatched: UnmatchedPersonality[];
+};
+
 const idOf = (x: any): string => String(x?._id ?? x?.id ?? x);
 const escapeLike = (str: string) => str.replace(/[\\%_]/g, String.raw`\$&`);
 const vectorLiteral = (v: number[]) => `[${v.join(",")}]`;
@@ -680,7 +693,15 @@ export class PostgresVerificationRequestService
                 return this.toEntity(current, {}, true);
             }
 
-            const valueToUpdate = await this.resolveAiFieldValue(field, result);
+            // Wikidata calls happen here, before any lock is taken.
+            let identified: IdentifiedResolution | null = null;
+            let valueToUpdate: any;
+            if (field === "identifiedData") {
+                identified = await this.resolveIdentifiedData(result);
+                valueToUpdate = identified.ids;
+            } else {
+                valueToUpdate = await this.resolveAiFieldValue(field, result);
+            }
 
             const validation = validateAiTaskResult(
                 field,
@@ -700,22 +721,47 @@ export class PostgresVerificationRequestService
 
             const column =
                 AI_FIELD_COLUMNS[field as keyof typeof AI_FIELD_COLUMNS];
-            const [updated] = await this.db
-                .update(verificationRequest)
-                .set({
-                    [column]: valueToUpdate,
-                    stateFingerprints: sql`${
-                        verificationRequest.stateFingerprints
-                    } || ${JSON.stringify({ [field]: resultHash })}::jsonb`,
-                    statesExecuted: this.appendUnique(field),
-                    pendingAiTasks: sql`${verificationRequest.pendingAiTasks} - ${field}`,
-                    ...(field === "severity"
-                        ? { status: VerificationRequestStatus.IN_TRIAGE }
-                        : {}),
-                    updatedAt: new Date(),
-                })
-                .where(eq(verificationRequest.id, targetId))
-                .returning();
+            const [updated] = await this.db.transaction(async (tx) => {
+                // Merge the unmatched names into a fresh, locked read so a
+                // concurrent link/dismiss is not overwritten.
+                let unmatchedPatch: Record<string, unknown> = {};
+                if (identified) {
+                    const [fresh] = await tx
+                        .select({
+                            unmatched:
+                                verificationRequest.unmatchedPersonalities,
+                        })
+                        .from(verificationRequest)
+                        .where(eq(verificationRequest.id, targetId))
+                        .for("update");
+                    unmatchedPatch = {
+                        unmatchedPersonalities: mergeAfterRun(
+                            fresh?.unmatched ?? [],
+                            identified.matchedNames,
+                            identified.unmatched
+                        ),
+                    };
+                }
+                return tx
+                    .update(verificationRequest)
+                    .set({
+                        [column]: valueToUpdate,
+                        stateFingerprints: sql`${
+                            verificationRequest.stateFingerprints
+                        } || ${JSON.stringify({
+                            [field]: resultHash,
+                        })}::jsonb`,
+                        statesExecuted: this.appendUnique(field),
+                        pendingAiTasks: sql`${verificationRequest.pendingAiTasks} - ${field}`,
+                        ...unmatchedPatch,
+                        ...(field === "severity"
+                            ? { status: VerificationRequestStatus.IN_TRIAGE }
+                            : {}),
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(verificationRequest.id, targetId))
+                    .returning();
+            });
             if (!updated) {
                 throw new BadRequestException(
                     `Verification request ${targetId} not found after update`
@@ -750,7 +796,10 @@ export class PostgresVerificationRequestService
             case "embedding":
                 return result;
             case "identifiedData":
-                return this.resolveIdentifiedData(result);
+                // Handled by updateFieldByAiTask (it needs the unmatched names).
+                throw new BadRequestException(
+                    "identifiedData is resolved by updateFieldByAiTask"
+                );
             case "topics":
                 if (!Array.isArray(result)) {
                     throw new BadRequestException(
@@ -782,24 +831,31 @@ export class PostgresVerificationRequestService
         }
     }
 
-    private async resolveIdentifiedData(result: any): Promise<string[]> {
+    private async resolveIdentifiedData(
+        result: any
+    ): Promise<IdentifiedResolution> {
         if (!result?.personalities || !Array.isArray(result.personalities)) {
             this.logger.warn(
                 "No personalities identified or unexpected format, setting empty array"
             );
-            return [];
+            return { ids: [], matchedNames: [], unmatched: [] };
         }
-        return Promise.all(
+        const resolved = await Promise.all(
             result.personalities.map(
-                async (p: { name: string; wikidata?: any }) =>
-                    idOf(
+                async (p: { name: string; wikidata?: any }) => ({
+                    name: p.name,
+                    wikidataId: p.wikidata?.id as string | undefined,
+                    personality:
                         await this.personalityService.findOrCreatePersonality({
                             name: p.name,
                             wikidata: p.wikidata,
-                        })
-                    )
+                        }),
+                })
             )
         );
+        const { matched, matchedNames, unmatched } =
+            splitResolvedPersonalities(resolved);
+        return { ids: matched.map(idOf), matchedNames, unmatched };
     }
 
     private createSources(
@@ -891,7 +947,6 @@ export class PostgresVerificationRequestService
         await this.triggerStateMachineForMissingState(vr, state);
     }
 
-
     // Built on demand rather than injected: the state machine already depends
     // on this service, and injecting it back made a request-scoped DI cycle in
     // which Nest handed out an unconstructed placeholder of this service.
@@ -911,9 +966,7 @@ export class PostgresVerificationRequestService
             return;
         }
         try {
-            await (this.createStateMachine() as any)[event](
-                idOf(vr)
-            );
+            await (this.createStateMachine() as any)[event](idOf(vr));
         } catch (error) {
             const err = toError(error);
             this.logger.error(
@@ -950,6 +1003,75 @@ export class PostgresVerificationRequestService
         updated: { content: string[] }
     ): string[] {
         return findRemovedIds(initial, updated);
+    }
+
+    /**
+     * Resolves a name the AI identified but could not match on Wikidata.
+     * Postgres writes no history for verification requests yet (documented
+     * divergence from Mongo).
+     */
+    async resolveUnmatchedPersonality(
+        verificationRequestId: string,
+        body: UnmatchedPersonalityActionDto
+    ) {
+        // Looked up before the transaction: the personality service uses the
+        // same pool and must not wait on the row lock.
+        let linkedId: string | undefined;
+        if (body.action === "link") {
+            if (!isUuid(body.personalityId)) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            const personality = await this.personalityService.getById(
+                body.personalityId
+            );
+            if (!personality) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            linkedId = idOf(personality);
+        }
+
+        const updated = await this.db.transaction(async (tx) => {
+            const [current] = await tx
+                .select()
+                .from(verificationRequest)
+                .where(eq(verificationRequest.id, verificationRequestId))
+                .for("update");
+            if (!current) {
+                throw new NotFoundException(
+                    `Verification request ${verificationRequestId} not found`
+                );
+            }
+            const { list, found } = removeUnmatched(
+                current.unmatchedPersonalities ?? [],
+                body.name
+            );
+            if (!found) {
+                throw new NotFoundException(
+                    `No unmatched personality "${body.name}"`
+                );
+            }
+            const patch: Record<string, any> = {
+                unmatchedPersonalities: list,
+                updatedAt: new Date(),
+            };
+            if (linkedId && !current.identifiedDataIds.includes(linkedId)) {
+                patch.identifiedDataIds = [
+                    ...current.identifiedDataIds,
+                    linkedId,
+                ];
+            }
+            const [row] = await tx
+                .update(verificationRequest)
+                .set(patch)
+                .where(eq(verificationRequest.id, verificationRequestId))
+                .returning();
+            return row;
+        });
+        return this.toEntity(updated);
     }
 
     async removeVerificationRequestFromGroup(

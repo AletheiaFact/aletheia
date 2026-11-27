@@ -2,6 +2,12 @@ import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
 import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/ApiResponse";
+
+export interface ResolveUnmatchedResponse {
+    unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+    identifiedData: string[];
+}
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -232,6 +238,34 @@ const getPersonalitiesWithWikidata = (
         });
 };
 
+const resolveUnmatchedPersonality = (
+    id: string,
+    body:
+        | { action: "link"; name: string; personalityId: string }
+        | { action: "dismiss"; name: string },
+    t: TranslationFn
+): Promise<ResolveUnmatchedResponse> =>
+    request
+        .put(`/${id}/personalities`, body)
+        .then((response) => {
+            MessageManager.showMessage(
+                "success",
+                t(
+                    body.action === "link"
+                        ? "verificationRequest:unmatchedLinked"
+                        : "verificationRequest:unmatchedDismissed"
+                )
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:unmatchedError")
+            );
+            throw err;
+        });
+
 const verificationRequestApi = {
     createVerificationRequest,
     get,
@@ -243,6 +277,7 @@ const verificationRequestApi = {
     deleteVerificationRequestTopic,
     getVerificationRequestStats,
     getPersonalitiesWithWikidata,
+    resolveUnmatchedPersonality,
 };
 
 export default verificationRequestApi;

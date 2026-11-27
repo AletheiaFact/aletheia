@@ -42,6 +42,7 @@ import reviewTaskApi from "../../api/reviewTaskApi";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import PersonalitiesSection from "./PersonalitiesSection";
+import UnmatchedPersonalitiesSection from "./UnmatchedPersonalitiesSection";
 import { usePersonalities } from "../../hooks/usePersonalities";
 import {
     getSeverityColor,
@@ -54,10 +55,14 @@ interface VerificationRequestDetailDrawerProps {
     open: boolean;
     onClose: () => void;
     onUpdate?: (oldStatus: string, newStatus: string) => void;
+    onRequestChange?: (patch: {
+        unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+        identifiedData: string[];
+    }) => void;
 }
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose, onUpdate }) => {
+    ({ verificationRequest, open, onClose, onUpdate, onRequestChange }) => {
         const { t, i18n } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -190,53 +195,56 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
         const metaChipData = currentRequest
             ? [
-                {
-                    icon: <Filter style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|reportType`,
-                    label: t("verificationRequest:tagReportType"),
-                    label_value: t(
-                        `claimForm:${currentRequest.reportType || "undefined"
-                        }`
-                    ),
-                    style: {
-                        backgroundColor: colors.secondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Share style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|receptionChannel`,
-                    label: t("verificationRequest:tagSourceChannel"),
-                    label_value: t(
-                        `verificationRequest:${currentRequest.sourceChannel}`,
-                        { defaultValue: currentRequest.sourceChannel },
-                    ),
-                    style: {
-                        backgroundColor: colors.primary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <Public style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|impactArea`,
-                    label: t("verificationRequest:tagImpactArea"),
-                    label_value: currentRequest.impactArea?.name,
-                    style: {
-                        backgroundColor: colors.neutralSecondary,
-                        color: colors.white,
-                    },
-                },
-                {
-                    icon: <WarningAmber style={{ fontSize: 18 }} />,
-                    key: `${currentRequest._id}|severity`,
-                    label: t("verificationRequest:tagSeverity"),
-                    label_value: getSeverityLabel(currentRequest.severity, t),
-                    style: {
-                        backgroundColor: getSeverityColor(currentRequest.severity),
-                        color: colors.white,
-                    },
-                },
-            ]
+                  {
+                      icon: <Filter style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|reportType`,
+                      label: t("verificationRequest:tagReportType"),
+                      label_value: t(
+                          `claimForm:${
+                              currentRequest.reportType || "undefined"
+                          }`
+                      ),
+                      style: {
+                          backgroundColor: colors.secondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Share style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|receptionChannel`,
+                      label: t("verificationRequest:tagSourceChannel"),
+                      label_value: t(
+                          `verificationRequest:${currentRequest.sourceChannel}`,
+                          { defaultValue: currentRequest.sourceChannel }
+                      ),
+                      style: {
+                          backgroundColor: colors.primary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <Public style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|impactArea`,
+                      label: t("verificationRequest:tagImpactArea"),
+                      label_value: currentRequest.impactArea?.name,
+                      style: {
+                          backgroundColor: colors.neutralSecondary,
+                          color: colors.white,
+                      },
+                  },
+                  {
+                      icon: <WarningAmber style={{ fontSize: 18 }} />,
+                      key: `${currentRequest._id}|severity`,
+                      label: t("verificationRequest:tagSeverity"),
+                      label_value: getSeverityLabel(currentRequest.severity, t),
+                      style: {
+                          backgroundColor: getSeverityColor(
+                              currentRequest.severity
+                          ),
+                          color: colors.white,
+                      },
+                  },
+              ]
             : [];
 
         return (
@@ -462,7 +470,7 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
 
                                     {currentRequest?.identifiedData &&
                                         currentRequest.identifiedData.length >
-                                        0 && (
+                                            0 && (
                                             <PersonalitiesSection
                                                 personalities={personalities}
                                                 isLoading={loadingPersonalities}
@@ -474,6 +482,34 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                                 onRetry={retryPersonalities}
                                             />
                                         )}
+
+                                    <UnmatchedPersonalitiesSection
+                                        verificationRequestId={
+                                            currentRequest?._id
+                                        }
+                                        unmatched={
+                                            currentRequest?.unmatchedPersonalities ??
+                                            []
+                                        }
+                                        canResolve={canApprove}
+                                        onResolved={(updated) => {
+                                            const patch = {
+                                                unmatchedPersonalities:
+                                                    updated.unmatchedPersonalities ??
+                                                    [],
+                                                identifiedData:
+                                                    updated.identifiedData ??
+                                                    currentRequest?.identifiedData ??
+                                                    [],
+                                            };
+                                            setCurrentRequest((previous) => ({
+                                                ...previous,
+                                                ...patch,
+                                            }));
+                                            onRequestChange?.(patch);
+                                            retryPersonalities();
+                                        }}
+                                    />
                                 </Grid>
                             </Grid>
 

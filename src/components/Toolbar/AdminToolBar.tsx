@@ -11,6 +11,7 @@ import { TargetModel } from "../../types/enums";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import PersonalityEditDrawer from "../Personality/PersonalityEditDrawer";
 
 //TODO: Make admin tool bar dynamic and react based on target
 const AdminToolBar = ({
@@ -26,6 +27,7 @@ const AdminToolBar = ({
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [warningDescription, setWarningDescription] = useState(
         hideDescriptions?.[target]
@@ -136,6 +138,18 @@ const AdminToolBar = ({
                                 </Button>
                             </div>
                         )}
+                        {target === TargetModel.Personality && (
+                            <div className="toolbar-item">
+                                <Button
+                                    onClick={() => setIsEditOpen(true)}
+                                    title={t("personality:editTitle")}
+                                    aria-label={t("personality:editTitle")}
+                                    data-cy="personalityEditButton"
+                                >
+                                    <Edit fontSize="small" />
+                                </Button>
+                            </div>
+                        )}
                     </Toolbar>
                 </AdminToolBarStyle>
 
@@ -150,6 +164,14 @@ const AdminToolBar = ({
                     </div>
                 )}
             </Grid>
+
+            {target === TargetModel.Personality && content?._id && (
+                <PersonalityEditDrawer
+                    personalityId={content._id}
+                    open={isEditOpen}
+                    onClose={() => setIsEditOpen(false)}
+                />
+            )}
 
             <ToolbarActionsModal
                 open={isHideModalVisible}

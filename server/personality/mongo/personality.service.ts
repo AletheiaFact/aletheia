@@ -7,11 +7,18 @@ import {
     InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, isValidObjectId } from "mongoose";
 import {
     defaultDescription,
     deriveSlug,
     extractClaimWithTextSummary,
+    wikidataCreationError,
+    wikidataUnavailableError,
+    isExpectedCreationFailure,
+    diffEditableFields,
+    storedPersonalityView,
+    WikidataCreationStatus,
+    usableAiWikidataId,
 } from "../shared/personality.rules";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../../wikidata/wikidata.service";
@@ -30,15 +37,10 @@ import {
 } from "../../interfaces/personality.interface";
 import { escapeRegex } from "../../util/regex.util";
 import { toError } from "../../util/error-handling";
-import { CreatePersonalityDTO } from "../dto/create-personality.dto";
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoPersonalityService {
     private readonly logger = new Logger("PersonalityService");
-    private readonly optionsToUpdate = {
-        new: true,
-        upsert: true,
-    };
 
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
@@ -50,6 +52,67 @@ export class MongoPersonalityService {
         private readonly wikidata: WikidataService,
         private readonly util: UtilService
     ) {}
+
+    /**
+     * The personality that holds a Wikidata id, if any. The unique sparse
+     * index on `wikidata` also covers soft-deleted rows, so a relink must
+     * look at them too (`includeDeleted`).
+     */
+    protected findHolderOfWikidata(
+        wikidataId: string,
+        includeDeleted: boolean
+    ) {
+        return this.PersonalityModel.findOne({
+            wikidata: wikidataId,
+            // The soft-delete plugin adds `isDeleted: false` to any find
+            // that does not mention the field, so deleted rows must be
+            // asked for explicitly ($in null also matches a missing field).
+            isDeleted: includeDeleted ? { $in: [true, false, null] } : false,
+        });
+    }
+
+    /**
+     * Checks that a Wikidata item can back a personality and returns its
+     * data. Throws 400 (deleted / not an allowed type), 409 (used by another
+     * active personality) or 503 (Wikidata unavailable: never create
+     * unchecked). The check bypasses the cache so a stale entry cannot let a
+     * deleted item through.
+     */
+    private async loadCreatableItem(
+        wikidataId: string,
+        excludePersonalityId?: string
+    ) {
+        let checked;
+        try {
+            checked = await this.wikidata.checkItem(wikidataId, "pt", {
+                fresh: true,
+            });
+        } catch (error) {
+            this.logger.error(
+                `Wikidata check failed for ${wikidataId}: ${
+                    toError(error).message
+                }`
+            );
+            throw wikidataUnavailableError();
+        }
+        let status: WikidataCreationStatus = checked.status;
+        if (status === "ok" && !checked.props.name) status = "no_label";
+        if (status === "ok") {
+            // Relink (excludePersonalityId set): a soft-deleted holder blocks
+            // too. Creation: only active holders block; a deleted holder is
+            // restored by create() on the admin path.
+            const inUse = await this.findHolderOfWikidata(
+                wikidataId,
+                excludePersonalityId !== undefined
+            );
+            if (inUse && String(inUse._id) !== excludePersonalityId) {
+                status = "in_use";
+            }
+        }
+        const error = wikidataCreationError(status);
+        if (error) throw error;
+        return checked.props;
+    }
 
     async getWikidataEntities(regex: string, language: string) {
         return await this.wikidata.queryWikibaseEntities(
@@ -136,51 +199,57 @@ export class MongoPersonalityService {
     }
 
     /**
-     * This function will create a new personality and save it to the dataBase.
-     * Also creates a History Module that tracks creation of personalities.
-     * @param personality PersonalityBody received of the client.
-     * @returns Return a new personality.
+     * Creates a personality from a Wikidata item. Name and description come
+     * from Wikidata, never from the client. On the admin path a soft-deleted
+     * personality with the same item is restored instead; the AI path passes
+     * `restoreDeleted: false` and gets a 409 so it never undoes an admin
+     * deletion.
      */
-    async create(personality: CreatePersonalityDTO & { slug?: string }) {
-        try {
-            // Only look up a soft-deleted match when a wikidata id is present:
-            // findOne({ isDeleted: true, wikidata: undefined }) has its
-            // undefined key stripped by Mongoose and would match (and restore)
-            // an arbitrary soft-deleted personality.
-            const personalityExists = personality.wikidata
-                ? await this.getDeletedPersonalityByWikidata(
-                      personality.wikidata
-                  )
-                : null;
-
-            if (personalityExists) {
-                return personalityExists.restore();
-            } else {
-                personality.slug = deriveSlug(personality.name);
-                const newPersonality = new this.PersonalityModel(personality);
-                this.logger.log(
-                    `Attempting to create new personality with data ${personality}`
-                );
-
-                const user = this.req.user?._id;
-
-                const history = this.historyService.getHistoryParams(
-                    newPersonality._id,
-                    TargetModel.Personality,
-                    user,
-                    HistoryType.Create,
-                    personality
-                );
-
-                await this.historyService.createHistory(history as any);
-
-                return newPersonality.save();
+    async create(
+        { wikidata }: { wikidata: string },
+        { restoreDeleted = true }: { restoreDeleted?: boolean } = {}
+    ): Promise<PersonalityDocument> {
+        const deleted = await this.getDeletedPersonalityByWikidata(wikidata);
+        if (deleted) {
+            if (!restoreDeleted) {
+                throw wikidataCreationError("in_use");
             }
+            // Intentionally restores without a Wikidata check: reads tolerate
+            // a dead item and the stored data is kept.
+            return (await deleted.restore()) as unknown as PersonalityDocument;
+        }
+
+        const props = await this.loadCreatableItem(wikidata);
+        const name = props.name as string;
+        const newPersonality = new this.PersonalityModel({
+            name,
+            slug: deriveSlug(name),
+            description: defaultDescription(name, props.description),
+            wikidata,
+            isHidden: false,
+        });
+
+        let saved: PersonalityDocument;
+        try {
+            saved = await newPersonality.save();
         } catch (error) {
-            const err = toError(error);
-            this.logger.error(`Error creating personality: ${err.message}`);
+            // Lost a race for the Wikidata id (unique index).
+            if ((error as { code?: unknown })?.code === 11000) {
+                throw wikidataCreationError("in_use");
+            }
             throw error;
         }
+
+        const history = this.historyService.getHistoryParams(
+            newPersonality._id,
+            TargetModel.Personality,
+            this.req.user?._id,
+            HistoryType.Create,
+            { name, wikidata }
+        );
+        await this.historyService.createHistory(history as any);
+
+        return saved;
     }
 
     getDeletedPersonalityByWikidata(wikidata: string) {
@@ -191,9 +260,10 @@ export class MongoPersonalityService {
     }
 
     /**
-     * Find or create a personality based on AI task result
-     * @param personalityData - Data from AI task processor with name, wikidata info, etc.
-     * @returns The found or created personality document
+     * Finds or creates a personality for an AI identification result.
+     * Returns null, and creates nothing, when the AI gives no Wikidata id,
+     * or the item is deleted, of another type, used elsewhere, or Wikidata is
+     * unavailable. The caller records the name as unmatched.
      */
     async findOrCreatePersonality(personalityData: {
         name: string;
@@ -202,8 +272,8 @@ export class MongoPersonalityService {
             label?: string;
             description?: string;
         };
-    }): Promise<PersonalityDocument> {
-        const wikidataId = personalityData.wikidata?.id || null;
+    }): Promise<PersonalityDocument | null> {
+        const wikidataId = usableAiWikidataId(personalityData.wikidata?.id);
 
         if (wikidataId) {
             const existing = await this.PersonalityModel.findOne({
@@ -228,30 +298,50 @@ export class MongoPersonalityService {
         if (existingBySlug) {
             this.logger.log(`Found existing personality by slug: ${slug}`);
             if (wikidataId && !existingBySlug.wikidata) {
-                existingBySlug.wikidata = wikidataId;
-                await existingBySlug.save();
-                this.logger.log(
-                    `Updated personality ${slug} with wikidata: ${wikidataId}`
-                );
+                // Relink mode: a soft-deleted holder of the id blocks too,
+                // since the unique index covers deleted rows.
+                let usable = false;
+                try {
+                    await this.loadCreatableItem(
+                        wikidataId,
+                        String(existingBySlug._id)
+                    );
+                    usable = true;
+                } catch (error) {
+                    if (!isExpectedCreationFailure(error)) throw error;
+                }
+                if (usable) {
+                    existingBySlug.wikidata = wikidataId;
+                    try {
+                        await existingBySlug.save();
+                        this.logger.log(
+                            `Updated personality ${slug} with wikidata: ${wikidataId}`
+                        );
+                    } catch (error) {
+                        // Lost a race for the id: keep the personality as is.
+                        if (!isExpectedCreationFailure(error)) throw error;
+                        existingBySlug.set("wikidata", undefined);
+                    }
+                }
             }
             return existingBySlug;
         }
 
-        const newPersonality = new this.PersonalityModel({
-            name: personalityData.name,
-            slug,
-            description: defaultDescription(
-                personalityData.name,
-                personalityData.wikidata?.description
-            ),
-            wikidata: wikidataId,
-            isHidden: false,
-        });
-
-        await newPersonality.save();
-        this.logger.log(`Created new personality: ${personalityData.name}`);
-
-        return newPersonality;
+        if (!wikidataId) return null;
+        try {
+            return await this.create(
+                { wikidata: wikidataId },
+                { restoreDeleted: false }
+            );
+        } catch (error) {
+            if (!isExpectedCreationFailure(error)) throw error;
+            this.logger.warn(
+                `Not creating personality "${
+                    personalityData.name
+                }" (${wikidataId}): ${toError(error).message}`
+            );
+            return null;
+        }
     }
 
     async getById(
@@ -490,41 +580,124 @@ export class MongoPersonalityService {
     }
 
     /**
-     * This function overwrites personality data with the new data,
-     * keeping data that has not changed.
-     * Also creates a History Module that tracks updation of personalities.
-     * @param personalityId Personality id which wants updated.
-     * @param newPersonalityBody PersonalityBody received of the client.
-     * @returns Return changed personality.
+     * Admin edit of the stored fields. Writes onto the stored document, never
+     * the Wikidata-merged copy, and never changes the slug (links to the
+     * personality, its claims and reports keep working). A new Wikidata id
+     * must pass the creation rule; both cache entries are cleared so the page
+     * shows the new item at once.
      */
-    async update(personalityId: string, newPersonalityBody: any) {
-        // eslint-disable-next-line no-useless-catch
-        if (newPersonalityBody.name) {
-            newPersonalityBody.slug = deriveSlug(newPersonalityBody.name);
+    async update(
+        personalityId: string,
+        body: { name?: string; description?: string; wikidata?: string }
+    ) {
+        if (!isValidObjectId(personalityId)) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
         }
-        const personality = await this.getById(personalityId);
-        const previousPersonality = { ...personality };
-        const newPersonality = Object.assign(personality, newPersonalityBody);
-        const personalityUpdate = await this.PersonalityModel.findByIdAndUpdate(
-            personalityId,
-            newPersonality,
-            this.optionsToUpdate
+        const stored: any = await this.PersonalityModel.findOne({
+            _id: personalityId,
+            isDeleted: false,
+        }).lean();
+        if (!stored) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
+
+        const changes = diffEditableFields(stored, body);
+
+        if (Object.keys(changes).length === 0) {
+            return this.postProcess(stored, this.req.language || "pt");
+        }
+
+        if (changes.wikidata) {
+            await this.loadCreatableItem(changes.wikidata, String(stored._id));
+        }
+
+        let updated: any;
+        try {
+            updated = await this.PersonalityModel.findOneAndUpdate(
+                { _id: personalityId, isDeleted: false },
+                { $set: changes },
+                { new: true }
+            ).lean();
+        } catch (error) {
+            // Lost a race for the Wikidata id (unique index).
+            if ((error as { code?: unknown })?.code === 11000) {
+                throw wikidataCreationError("in_use");
+            }
+            throw error;
+        }
+        if (!updated) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
+
+        if (changes.wikidata) {
+            if (stored.wikidata) {
+                await this.wikidata.clearCache(stored.wikidata);
+            }
+            await this.wikidata.clearCache(changes.wikidata);
+        }
+
+        const before = Object.fromEntries(
+            Object.keys(changes).map((key) => [key, stored[key]])
         );
-        this.logger.log(`Updated personality with data ${newPersonality}`);
-
-        const user = this.req.user?._id;
-
         const history = this.historyService.getHistoryParams(
             personalityId,
             TargetModel.Personality,
-            user,
+            this.req.user?._id,
             HistoryType.Update,
-            personalityUpdate,
-            previousPersonality
+            changes,
+            before
         );
         await this.historyService.createHistory(history as any);
 
-        return personalityUpdate;
+        return this.postProcess(updated, this.req.language || "pt");
+    }
+
+    /**
+     * Stored fields for the admin edit form, with what Wikidata currently
+     * provides, so the form never shows the Wikidata-merged values.
+     */
+    async getStored(personalityId: string) {
+        if (!isValidObjectId(personalityId)) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
+        const stored: any = await this.PersonalityModel.findOne({
+            _id: personalityId,
+            isDeleted: false,
+        }).lean();
+        if (!stored) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
+
+        let check:
+            | Awaited<ReturnType<WikidataService["checkItem"]>>
+            | "unavailable"
+            | null = null;
+        if (stored.wikidata) {
+            try {
+                check = await this.wikidata.checkItem(stored.wikidata, "pt");
+            } catch {
+                check = "unavailable";
+            }
+        }
+        return storedPersonalityView(
+            {
+                id: String(stored._id),
+                name: stored.name,
+                description: stored.description,
+                wikidata: stored.wikidata ?? null,
+            },
+            check
+        );
     }
 
     async hideOrUnhidePersonality(

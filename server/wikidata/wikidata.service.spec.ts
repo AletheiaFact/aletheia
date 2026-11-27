@@ -347,4 +347,142 @@ describe("WikidataService", () => {
             ).resolves.toEqual([]);
         });
     });
+
+    describe("checkItem", () => {
+        it("reports a valid item as ok", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: { entities: { Q1: human("Q1") } },
+            });
+
+            const result = await service.checkItem("Q1", "pt");
+
+            expect(result.status).toBe("ok");
+            expect(result.props.name).toBe("Rosane de Oliveira");
+        });
+
+        it("reports a deleted item", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: { entities: { Q9: { id: "Q9", missing: "" } } },
+            });
+
+            await expect(service.checkItem("Q9", "pt")).resolves.toMatchObject({
+                status: "deleted",
+            });
+        });
+
+        it("reports a disallowed type", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: {
+                    entities: {
+                        Q2: {
+                            id: "Q2",
+                            labels: { pt: { value: "Fonseca" } },
+                            claims: {
+                                P31: [
+                                    {
+                                        mainsnak: {
+                                            datavalue: {
+                                                // Q101352 is the Wikidata class "family name".
+                                                value: { id: "Q101352" },
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            });
+
+            await expect(service.checkItem("Q2", "pt")).resolves.toMatchObject({
+                status: "not_allowed_type",
+            });
+        });
+
+        it("bypasses the cache when fresh is requested", async () => {
+            const cached = {
+                props: { name: "Stale", isAllowedProp: true },
+            };
+            const { service, cacheModel, get } = makeService(
+                { [WIKIDATA]: { entities: { Q1: human("Q1") } } },
+                cached
+            );
+            const deleteMany = vi.fn(() => ({
+                exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
+            }));
+            (cacheModel as any).deleteMany = deleteMany;
+
+            const result = await service.checkItem("Q1", "pt", {
+                fresh: true,
+            });
+
+            expect(get).toHaveBeenCalledTimes(1);
+            expect(cacheModel.findOne).not.toHaveBeenCalled();
+            expect(cacheModel.findOneAndUpdate).toHaveBeenCalledWith(
+                { wikidataId: "Q1", language: "pt" },
+                {
+                    $set: expect.objectContaining({
+                        wikidataId: "Q1",
+                        language: "pt",
+                        props: expect.objectContaining({
+                            name: "Rosane de Oliveira",
+                        }),
+                    }),
+                },
+                { upsert: true }
+            );
+            // Other languages are dropped only after the new answer is stored.
+            expect(deleteMany).toHaveBeenCalledWith({
+                wikidataId: "Q1",
+                language: { $ne: "pt" },
+            });
+            expect(
+                cacheModel.findOneAndUpdate.mock.invocationCallOrder[0]
+            ).toBeLessThan(deleteMany.mock.invocationCallOrder[0]);
+            expect(result.props.name).toBe("Rosane de Oliveira");
+        });
+
+        it("leaves the cache untouched when a fresh check fails", async () => {
+            const { service, cacheModel } = makeService(
+                { [WIKIDATA]: "You are making too many requests to the API." },
+                { props: { name: "Cached", isAllowedProp: true } }
+            );
+            const deleteMany = vi.fn(() => ({
+                exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
+            }));
+            (cacheModel as any).deleteMany = deleteMany;
+
+            await expect(
+                service.checkItem("Q1", "pt", { fresh: true })
+            ).rejects.toBeInstanceOf(WikidataUnavailableError);
+
+            expect(deleteMany).not.toHaveBeenCalled();
+            expect(cacheModel.findOneAndUpdate).not.toHaveBeenCalled();
+        });
+
+        it("throws when Wikidata is unavailable", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: "You are making too many requests to the API.",
+            });
+
+            await expect(service.checkItem("Q1", "pt")).rejects.toBeInstanceOf(
+                WikidataUnavailableError
+            );
+        });
+    });
+
+    describe("clearCache", () => {
+        it("deletes every cached language of the item", async () => {
+            const { service, cacheModel } = makeService({});
+            (cacheModel as any).deleteMany = vi.fn(() => ({
+                exec: vi.fn().mockResolvedValue({ deletedCount: 2 }),
+            }));
+
+            await service.clearCache("Q1");
+
+            expect((cacheModel as any).deleteMany).toHaveBeenCalledWith({
+                wikidataId: "Q1",
+            });
+        });
+    });
 });

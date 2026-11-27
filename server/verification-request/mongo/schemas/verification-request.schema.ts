@@ -1,3 +1,4 @@
+import type { UnmatchedPersonality } from "../../shared/unmatched-personalities.rules";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Group } from "../../../group/mongo/schemas/group.schema";
@@ -105,6 +106,19 @@ export class VerificationRequest {
         ref: "Personality",
     })
     identifiedData: mongoose.Types.ObjectId[];
+
+    @Prop({
+        type: [
+            {
+                _id: false,
+                name: { type: String, required: true },
+                wikidataCandidate: { type: String, required: false },
+            },
+        ],
+        required: false,
+        default: [],
+    })
+    unmatchedPersonalities: UnmatchedPersonality[];
 
     @Prop({
         required: false,

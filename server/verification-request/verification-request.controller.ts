@@ -32,6 +32,8 @@ import {
     RemoveFromGroupSchema,
     SearchVerificationRequestsQueryDto,
     SearchVerificationRequestsQuerySchema,
+    UnmatchedPersonalityActionDto,
+    UnmatchedPersonalityActionSchema,
     UpdateVerificationRequestDto,
     UpdateVerificationRequestSchema,
     VerificationRequestIdParam,
@@ -379,6 +381,21 @@ export class VerificationRequestController {
         return this.verificationRequestService.removeVerificationRequestFromGroup(
             verificationRequestId,
             group
+        );
+    }
+
+    @FactCheckerOnly()
+    @ApiTags("verification-request")
+    @Put("api/verification-request/:verificationRequestId/personalities")
+    resolveUnmatchedPersonality(
+        @ZodParam("verificationRequestId", VerificationRequestIdParam)
+        verificationRequestId: string,
+        @ZodBody(UnmatchedPersonalityActionSchema)
+        body: UnmatchedPersonalityActionDto
+    ) {
+        return this.verificationRequestService.resolveUnmatchedPersonality(
+            verificationRequestId,
+            body
         );
     }
 

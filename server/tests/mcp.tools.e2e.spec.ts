@@ -2,6 +2,7 @@ import { AdminUserMock } from "./utils/AdminUserMock";
 import {
     callTool,
     useMcpTestHelper,
+    uniqueQid,
     verificationRequestStateMachineMock,
 } from "./utils/McpTestHelper";
 
@@ -19,15 +20,13 @@ describe("MCP tools (e2e)", () => {
         expect(payload).toHaveProperty("claims");
     });
 
-    it("creates a personality with a slug derived from its name", async () => {
+    it("creates a personality from a Wikidata item, with a slug derived from its name", async () => {
         const body = await callTool(mcp.app, "create_personality", {
-            name: `MCP Test Person ${Date.now()}`,
-            description: "Created via MCP e2e",
-            wikidata: `Q999999${Date.now()}`,
+            wikidata: uniqueQid(),
         });
         expect(body.result.isError).toBeFalsy();
         const created = JSON.parse(body.result.content[0].text);
-        expect(created.slug).toMatch(/^mcp-test-person/);
+        expect(created.slug).toMatch(/^person-q/);
     });
 
     it("creates a source attributed to the authenticated user", async () => {

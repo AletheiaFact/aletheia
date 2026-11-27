@@ -46,6 +46,13 @@ import type { IPersonalityService } from "../../interfaces/personality.service.i
 import { EMBEDDINGS_PROVIDER } from "../../llm/llm.tokens";
 import type { EmbeddingsProvider } from "../../llm/llm.types";
 
+import {
+    mergeAfterRun,
+    removeUnmatched,
+    splitResolvedPersonalities,
+    UnmatchedPersonality,
+} from "../shared/unmatched-personalities.rules";
+import type { UnmatchedPersonalityActionDto } from "../dto/verification-request.dto";
 import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import {
     calculateAverageDuration,
@@ -395,6 +402,10 @@ export class MongoVerificationRequestService
             }
 
             // Extract value based on field type
+            let identifiedRun: {
+                matchedNames: string[];
+                unmatched: UnmatchedPersonality[];
+            } | null = null;
             let valueToUpdate: any;
             switch (field) {
                 case "embedding":
@@ -410,24 +421,34 @@ export class MongoVerificationRequestService
                         result?.personalities &&
                         Array.isArray(result.personalities)
                     ) {
-                        const personalityIds = await Promise.all(
+                        const resolved = await Promise.all(
                             result.personalities.map(
                                 async (personalityData: {
                                     name: string;
                                     wikidata?: any;
-                                }) => {
-                                    const personality =
+                                }) => ({
+                                    personalityData,
+                                    personality:
                                         await this.personalityService.findOrCreatePersonality(
                                             {
                                                 name: personalityData.name,
                                                 wikidata:
                                                     personalityData.wikidata,
                                             }
-                                        );
-                                    return (personality as any)._id;
-                                }
+                                        ),
+                                })
                             )
                         );
+                        const { matched, matchedNames, unmatched } =
+                            splitResolvedPersonalities(
+                                resolved.map((r) => ({
+                                    name: r.personalityData.name,
+                                    wikidataId: r.personalityData.wikidata?.id,
+                                    personality: r.personality,
+                                }))
+                            );
+                        const personalityIds = matched.map((p) => p._id);
+                        identifiedRun = { matchedNames, unmatched };
 
                         valueToUpdate = personalityIds;
                         this.logger.log(
@@ -549,6 +570,21 @@ export class MongoVerificationRequestService
                 updateData.$set.status = "In Triage";
                 this.logger.log(
                     `Transitioning VR ${targetId} status to IN_TRIAGE after severity definition`
+                );
+            }
+
+            if (field === "identifiedData" && identifiedRun) {
+                // The Wikidata calls above can take a while, so merge into a
+                // fresh read taken right before the write.
+                const fresh = await this.VerificationRequestModel.findById(
+                    targetId
+                )
+                    .select("unmatchedPersonalities")
+                    .lean();
+                updateData.$set.unmatchedPersonalities = mergeAfterRun(
+                    fresh?.unmatchedPersonalities ?? [],
+                    identifiedRun.matchedNames,
+                    identifiedRun.unmatched
                 );
             }
 
@@ -1037,6 +1073,89 @@ export class MongoVerificationRequestService
                 $limit: parseInt(String(pageSize)),
             },
         ]);
+    }
+
+    /**
+     * Resolves a name the AI identified but could not match on Wikidata:
+     * "link" moves it into identifiedData as the chosen personality,
+     * "dismiss" only drops it from the unmatched list.
+     */
+    async resolveUnmatchedPersonality(
+        verificationRequestId: string,
+        body: UnmatchedPersonalityActionDto
+    ) {
+        const verificationRequest =
+            await this.VerificationRequestModel.findById(verificationRequestId);
+        if (!verificationRequest) {
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
+        }
+        const previous = verificationRequest.unmatchedPersonalities ?? [];
+        const { list, found } = removeUnmatched(previous, body.name);
+        if (!found) {
+            throw new NotFoundException(
+                `No unmatched personality "${body.name}"`
+            );
+        }
+
+        // The stored spelling, so the conditional update matches exactly.
+        const storedName = previous.find((u) => !list.includes(u))!.name;
+
+        const update: any = {
+            $pull: { unmatchedPersonalities: { name: storedName } },
+        };
+        if (body.action === "link") {
+            if (!isValidObjectId(body.personalityId)) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            const personality = await this.personalityService.getById(
+                body.personalityId
+            );
+            if (!personality) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            update.$addToSet = { identifiedData: personality._id };
+        }
+
+        // One conditional write: if another request already took this name
+        // (or the request is gone) nothing matches and nothing is written.
+        const updated = await this.VerificationRequestModel.findOneAndUpdate(
+            {
+                _id: verificationRequestId,
+                "unmatchedPersonalities.name": storedName,
+            },
+            update,
+            { new: true }
+        ).exec();
+        if (!updated) {
+            throw new NotFoundException(
+                `No unmatched personality "${body.name}"`
+            );
+        }
+
+        const snapshot = (vr: { toObject: () => any }) => {
+            const { unmatchedPersonalities, identifiedData } = vr.toObject();
+            return {
+                unmatchedPersonalities: unmatchedPersonalities ?? [],
+                identifiedData: identifiedData ?? [],
+            };
+        };
+        const history = this.historyService.getHistoryParams(
+            verificationRequestId,
+            TargetModel.VerificationRequest,
+            this.req.user?._id,
+            HistoryType.Update,
+            snapshot(updated),
+            snapshot(verificationRequest)
+        );
+        await this.historyService.createHistory(history as any);
+
+        return updated;
     }
 
     async updateVerificationRequestWithTopics(
