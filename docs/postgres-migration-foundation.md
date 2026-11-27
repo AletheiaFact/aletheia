@@ -179,6 +179,9 @@ All completion items landed on 2026-09-18:
 | role-based hidden filtering on `getById`/`getPersonalityBySlug` | non-admin requests get `isHidden: false` injected via `util.getParamsBasedOnUserRole` (REQUEST-scoped) | returns hidden personalities to everyone (service is not REQUEST-scoped) | port role-aware querying when a phase needs PG serving public traffic — before Cutover Milestone A. `findAll`/`count` exclude hidden by default; `listAll` honors the caller-supplied `isHidden` filter |
 | duplicate wikidata on `update` | raw `E11000` → 500 | `DuplicateKeyError` → 409 | PG maps at the boundary; Mongo move-only |
 | `hideOrUnhidePersonality` return value | pre-update doc (`findByIdAndUpdate` without `new: true`) | updated row | callers ignore the body; PG returns the saner value |
+| `update` history | writes `Update` history with stored before/after values | not written (as `hideOrUnhidePersonality`) | personality history lands with the history module port |
+| `create` history | writes `Create` history | not written | same: history module port |
+| `findHolderOfWikidata` (in-use check for create/relink) | the soft-delete plugin adds `isDeleted: false` to every find, so deleted holders are asked for with `isDeleted: { $in: [true, false, null] }` | plain query on the partial unique index, deleted rows filtered or included explicitly | the plugin filter would otherwise hide a soft-deleted holder, and relink must refuse it (409 `in_use`) |
 
 **Source module (Phase 0.5) divergences:**
 
@@ -257,6 +260,8 @@ Badge is **global** (no `nameSpace`), has **no soft-delete plugin and no delete 
 | `date` default | `@Prop({ default: new Date() })` is evaluated once at class load (one timestamp for every row created without `date` since boot) | `defaultNow()` per row | PG is the intended semantics |
 | `updateFieldByAiTask` progress estimate | averages the transitions read before the new one is pushed (n-1) | re-reads after the push (n) | estimate only; `estimatedCompletion` is dropped from parity |
 | `getStats` snapshot | one `$facet` pipeline | three statements outside a transaction | counts can disagree under concurrent writes; dashboard tolerance |
+| `unmatchedPersonalities` | embedded array of `{ name, wikidataCandidate? }` on the document | `unmatched_personalities` jsonb column (migration 0010) | same wire shape |
+| `resolveUnmatchedPersonality` history | writes `Update` history with before/after `unmatchedPersonalities` and `identifiedData` | not written, like the module's other writes | deferred until Phase 6 ports history |
 
 Verification requests are **global** (no `nameSpace` on the Mongo schema; the DTO's `nameSpace` was already dropped by the strict schema). Reference columns per D3: `impact_area_id`/`topic_ids` → topic, `identified_data_ids` → personality, `source_ids` → source, `group_id` → `content_group`, all btree/GIN indexed. The Mongo `pre("find")` source populate becomes an explicit batched select on every `find`-shaped read (`listAll`, `findAll`, `findBySourceUrl`), matching which Mongo reads were populated. The stats service ports as its own token (`"VerificationRequestStatsService"`). `VerificationRequestModule.register()` keeps the `forwardRef` cycle with the state-machine service through the string token. Pre-existing Mongo quirk left as-is: `PUT /:id` with a string `impactArea` stores a string (the `@Prop` uses the bson class, not the SchemaType), so the Mongo `listAll` impact-area filter cannot match it; the contract suite sets impact areas through the AI path.
 
