@@ -35,6 +35,7 @@ import {
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
+import { toError } from "../util/error-handling";
 import {
     IlistAll,
     IListAllQuery,
@@ -702,23 +703,41 @@ export class ClaimReviewService {
         };
     }
 
+    /**
+     * Adds Wikidata data (label, image) to the personality of a review.
+     * Wikidata is optional: a personality without a Wikidata id, with a
+     * deleted or retyped item, or a failed request keeps its stored fields,
+     * so one personality never hides the review or fails the review list.
+     */
     async personalityPostProcess(personality: any) {
-        if (personality) {
+        if (!personality?.wikidata) {
+            return personality;
+        }
+        try {
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
                 language: this.req.language || "en",
             });
 
             if (wikidataExtract.isAllowedProp === false) {
-                return;
+                return personality;
             }
 
-            return {
-                ...personality,
-                ...wikidataExtract,
-            };
+            const definedWikidataFields = Object.fromEntries(
+                Object.entries(wikidataExtract).filter(
+                    ([, value]) => value !== undefined
+                )
+            );
+            return { ...personality, ...definedWikidataFields };
+        } catch (error) {
+            this.logger.error(
+                `Wikidata fetch failed for personality ${personality._id} ` +
+                    `(wikidataId: ${personality.wikidata}): ${
+                        toError(error).message
+                    }`
+            );
+            return personality;
         }
-        return personality;
     }
 
     /**
