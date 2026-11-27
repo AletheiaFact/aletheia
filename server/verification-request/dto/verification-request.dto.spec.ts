@@ -3,6 +3,7 @@ import {
     ListVerificationRequestsQuerySchema,
     RemoveFromGroupSchema,
     SearchVerificationRequestsQuerySchema,
+    UnmatchedPersonalityActionSchema,
     UpdateVerificationRequestSchema,
     VerificationRequestIdParam,
     VerificationRequestTopicsSchema,
@@ -225,5 +226,32 @@ describe("verification-request DTO schemas", () => {
                     .success
             ).toBe(false);
         });
+    });
+});
+
+describe("UnmatchedPersonalityActionSchema", () => {
+    it("accepts link and dismiss", () => {
+        expect(
+            UnmatchedPersonalityActionSchema.safeParse({
+                action: "link",
+                name: "Ana",
+                personalityId: "64b000000000000000000001",
+            }).success
+        ).toBe(true);
+        expect(
+            UnmatchedPersonalityActionSchema.safeParse({
+                action: "dismiss",
+                name: "Ana",
+            }).success
+        ).toBe(true);
+    });
+    it.each([
+        { action: "link", name: "Ana" },
+        { action: "remove", name: "Ana" },
+        { action: "dismiss", name: "" },
+    ])("rejects %j", (body) => {
+        expect(UnmatchedPersonalityActionSchema.safeParse(body).success).toBe(
+            false
+        );
     });
 });

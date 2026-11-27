@@ -1,3 +1,4 @@
+import type { UnmatchedPersonalityActionDto } from "../verification-request/dto/verification-request.dto";
 import type { IVerificationRequest } from "./verification-request.interface";
 import type {
     StatsCount,
@@ -72,6 +73,10 @@ export type IVerificationRequestService = {
         id: string,
         groupId: string
     ): Promise<IVerificationRequest>;
+    resolveUnmatchedPersonality(
+        verificationRequestId: string,
+        body: UnmatchedPersonalityActionDto
+    ): Promise<any>;
     update(
         id: string,
         body: Record<string, any>,

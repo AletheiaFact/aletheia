@@ -48,8 +48,10 @@ import type { EmbeddingsProvider } from "../../llm/llm.types";
 
 import {
     addUnmatched,
+    removeUnmatched,
     UnmatchedPersonality,
 } from "../shared/unmatched-personalities.rules";
+import type { UnmatchedPersonalityActionDto } from "../dto/verification-request.dto";
 import type { IVerificationRequestService } from "../../interfaces/verification-request.service.interface";
 import {
     calculateAverageDuration,
@@ -1061,6 +1063,67 @@ export class MongoVerificationRequestService
                 $limit: parseInt(String(pageSize)),
             },
         ]);
+    }
+
+    /**
+     * Resolves a name the AI identified but could not match on Wikidata:
+     * "link" moves it into identifiedData as the chosen personality,
+     * "dismiss" only drops it from the unmatched list.
+     */
+    async resolveUnmatchedPersonality(
+        verificationRequestId: string,
+        body: UnmatchedPersonalityActionDto
+    ) {
+        const verificationRequest =
+            await this.VerificationRequestModel.findById(verificationRequestId);
+        if (!verificationRequest) {
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
+        }
+        const previous = verificationRequest.unmatchedPersonalities ?? [];
+        const { list, found } = removeUnmatched(previous, body.name);
+        if (!found) {
+            throw new NotFoundException(
+                `No unmatched personality "${body.name}"`
+            );
+        }
+
+        const update: any = { $set: { unmatchedPersonalities: list } };
+        let linkedId: unknown;
+        if (body.action === "link") {
+            const personality = await this.personalityService.getById(
+                body.personalityId
+            );
+            if (!personality) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            linkedId = (personality as any)._id ?? (personality as any).id;
+            update.$addToSet = { identifiedData: linkedId };
+        }
+
+        const updated = await this.VerificationRequestModel.findByIdAndUpdate(
+            verificationRequestId,
+            update,
+            { new: true }
+        ).exec();
+
+        const history = this.historyService.getHistoryParams(
+            verificationRequestId,
+            TargetModel.VerificationRequest,
+            this.req.user?._id,
+            HistoryType.Update,
+            {
+                unmatchedPersonalities: list,
+                ...(linkedId ? { linkedPersonality: linkedId } : {}),
+            },
+            { unmatchedPersonalities: previous }
+        );
+        await this.historyService.createHistory(history as any);
+
+        return updated;
     }
 
     async updateVerificationRequestWithTopics(

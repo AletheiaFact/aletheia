@@ -28,6 +28,7 @@ import type {
     VerificationRequestFilters,
     VerificationRequestListOptions,
 } from "../../interfaces/verification-request.service.interface";
+import type { UnmatchedPersonalityActionDto } from "../dto/verification-request.dto";
 import type { IVerificationRequest } from "../../interfaces/verification-request.interface";
 import type { ISourceService } from "../../interfaces/source.service.interface";
 import type { IGroupService } from "../../interfaces/group.service.interface";
@@ -70,6 +71,7 @@ import {
 } from "../shared/verification-request.rules";
 import {
     addUnmatched,
+    removeUnmatched,
     UnmatchedPersonality,
 } from "../shared/unmatched-personalities.rules";
 import { verificationRequest } from "./schema/verification-request.schema";
@@ -982,6 +984,56 @@ export class PostgresVerificationRequestService
         updated: { content: string[] }
     ): string[] {
         return findRemovedIds(initial, updated);
+    }
+
+    /**
+     * Resolves a name the AI identified but could not match on Wikidata.
+     * Postgres writes no history for verification requests yet (documented
+     * divergence from Mongo).
+     */
+    async resolveUnmatchedPersonality(
+        verificationRequestId: string,
+        body: UnmatchedPersonalityActionDto
+    ) {
+        const current = await this.findRow(verificationRequestId);
+        if (!current) {
+            throw new NotFoundException(
+                `Verification request ${verificationRequestId} not found`
+            );
+        }
+        const { list, found } = removeUnmatched(
+            current.unmatchedPersonalities ?? [],
+            body.name
+        );
+        if (!found) {
+            throw new NotFoundException(
+                `No unmatched personality "${body.name}"`
+            );
+        }
+        const patch: Record<string, any> = {
+            unmatchedPersonalities: list,
+            updatedAt: new Date(),
+        };
+        if (body.action === "link") {
+            const personality = await this.personalityService.getById(
+                body.personalityId
+            );
+            if (!personality) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
+            const id = idOf(personality);
+            if (!current.identifiedDataIds.includes(id)) {
+                patch.identifiedDataIds = [...current.identifiedDataIds, id];
+            }
+        }
+        const [updated] = await this.db
+            .update(verificationRequest)
+            .set(patch)
+            .where(eq(verificationRequest.id, verificationRequestId))
+            .returning();
+        return this.toEntity(updated);
     }
 
     async removeVerificationRequestFromGroup(

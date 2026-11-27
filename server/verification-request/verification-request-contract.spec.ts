@@ -86,6 +86,7 @@ function buildStubs(seed: Seed, makeId: () => string) {
         findOrCreatePersonality: vi.fn(async (data: { name: string }) =>
             seed.personality(data.name)
         ),
+        getById: vi.fn(async (_id: string): Promise<any> => undefined),
     };
     const aiTaskService = {
         create: vi.fn(async () => ({ _id: makeId() })),
@@ -1000,6 +1001,87 @@ describe.each(backends)(
                 ).toEqual([
                     { name: "Bartolomeu Almeida", wikidataCandidate: "Q123" },
                 ]);
+            });
+
+            describe("resolveUnmatchedPersonality", () => {
+                const unmatchedVr = async () => {
+                    stubs.personalityService.findOrCreatePersonality.mockImplementation(
+                        async () => null
+                    );
+                    const vr = await service.create(base());
+                    await service.updateFieldByAiTask(
+                        { targetId: idOf(vr), field: "identifiedData" },
+                        {
+                            personalities: [
+                                { name: "Ana" },
+                                { name: "Bia", wikidata: { id: "Q7" } },
+                            ],
+                        }
+                    );
+                    return vr;
+                };
+                const names = (list: any[]) =>
+                    list.map(({ name }: any) => name);
+
+                it("link moves the name into identifiedData", async () => {
+                    const vr = await unmatchedVr();
+                    const linked = await seed.personality("Ana Silva");
+                    stubs.personalityService.getById.mockResolvedValue(linked);
+                    await service.resolveUnmatchedPersonality(idOf(vr), {
+                        action: "link",
+                        name: "ana",
+                        personalityId: idOf(linked),
+                    });
+                    const after = await service.findByDataHash(vr.data_hash);
+                    expect(names(after.identifiedData)).toEqual(["Ana Silva"]);
+                    expect(names(after.unmatchedPersonalities)).toEqual([
+                        "Bia",
+                    ]);
+                });
+
+                it("dismiss only removes the name", async () => {
+                    const vr = await unmatchedVr();
+                    await service.resolveUnmatchedPersonality(idOf(vr), {
+                        action: "dismiss",
+                        name: "Bia",
+                    });
+                    const after = await service.findByDataHash(vr.data_hash);
+                    expect(after.identifiedData).toEqual([]);
+                    expect(names(after.unmatchedPersonalities)).toEqual([
+                        "Ana",
+                    ]);
+                });
+
+                it("404s for an unknown name, a deleted personality and a missing request", async () => {
+                    const vr = await unmatchedVr();
+                    await expect(
+                        service.resolveUnmatchedPersonality(idOf(vr), {
+                            action: "dismiss",
+                            name: "Nobody",
+                        })
+                    ).rejects.toBeInstanceOf(NotFoundException);
+                    stubs.personalityService.getById.mockResolvedValue(
+                        undefined
+                    );
+                    await expect(
+                        service.resolveUnmatchedPersonality(idOf(vr), {
+                            action: "link",
+                            name: "Ana",
+                            personalityId: makeId(),
+                        })
+                    ).rejects.toBeInstanceOf(NotFoundException);
+                    const after = await service.findByDataHash(vr.data_hash);
+                    expect(names(after.unmatchedPersonalities)).toEqual([
+                        "Ana",
+                        "Bia",
+                    ]);
+                    await expect(
+                        service.resolveUnmatchedPersonality(makeMissingId(), {
+                            action: "dismiss",
+                            name: "Ana",
+                        })
+                    ).rejects.toBeInstanceOf(NotFoundException);
+                });
             });
 
             it("updateFieldByAiTask with severity moves the status to In Triage", async () => {
