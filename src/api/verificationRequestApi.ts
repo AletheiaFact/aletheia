@@ -232,6 +232,34 @@ const getPersonalitiesWithWikidata = (
         });
 };
 
+const resolveUnmatchedPersonality = (
+    id: string,
+    body:
+        | { action: "link"; name: string; personalityId: string }
+        | { action: "dismiss"; name: string },
+    t
+) =>
+    request
+        .put(`/${id}/personalities`, body)
+        .then((response) => {
+            MessageManager.showMessage(
+                "success",
+                t(
+                    body.action === "link"
+                        ? "verificationRequest:unmatchedLinked"
+                        : "verificationRequest:unmatchedDismissed"
+                )
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            MessageManager.showMessage(
+                "error",
+                t("verificationRequest:unmatchedError")
+            );
+            throw err;
+        });
+
 const verificationRequestApi = {
     createVerificationRequest,
     get,
@@ -243,6 +271,7 @@ const verificationRequestApi = {
     deleteVerificationRequestTopic,
     getVerificationRequestStats,
     getPersonalitiesWithWikidata,
+    resolveUnmatchedPersonality,
 };
 
 export default verificationRequestApi;

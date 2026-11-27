@@ -126,5 +126,12 @@
     "viewPersonalityPage": "Ver página da personalidade {{name}}",
     "submittedAt": "Enviado em <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
     "requestStatus": "Status da solicitação: ",
-    "cardLinkToFullRequest": "veja a denúncia completa"
+    "cardLinkToFullRequest": "veja a denúncia completa",
+    "unmatchedTitle": "Pessoas não encontradas no Wikidata",
+    "unmatchedLink": "Vincular",
+    "unmatchedDismiss": "Descartar",
+    "unmatchedLinkTitle": "Vincular \"{{name}}\" a uma personalidade",
+    "unmatchedLinked": "Personalidade vinculada",
+    "unmatchedDismissed": "Nome descartado",
+    "unmatchedError": "Não foi possível atualizar a solicitação"
 }

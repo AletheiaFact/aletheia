@@ -126,5 +126,12 @@
     "viewPersonalityPage": "View personality page for {{name}}",
     "submittedAt": "Submitted on <bold>{{date}}</bold> via <bold>{{channel}}</bold>",
     "requestStatus": "Request status: ",
-    "cardLinkToFullRequest": "see full verification request"
+    "cardLinkToFullRequest": "see full verification request",
+    "unmatchedTitle": "People not found on Wikidata",
+    "unmatchedLink": "Link",
+    "unmatchedDismiss": "Dismiss",
+    "unmatchedLinkTitle": "Link \"{{name}}\" to a personality",
+    "unmatchedLinked": "Personality linked",
+    "unmatchedDismissed": "Name dismissed",
+    "unmatchedError": "Could not update the request"
 }
