@@ -15,7 +15,7 @@ import { AbilitiesGuardMock } from "./mocks/AbilitiesGuardMock";
 import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
-
+import { WikidataService } from "../wikidata/wikidata.service";
 
 /**
  * PersonalityController E2E Test Suite
@@ -69,6 +69,31 @@ describe("PersonalityController (e2e)", () => {
             .useValue(AbilitiesGuardMock)
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
+            .overrideProvider(WikidataService)
+            .useValue({
+                fetchProperties: async () => ({
+                    name: "Barack Obama",
+                    description:
+                        "President of the United States from 2009 to 2017",
+                    isAllowedProp: true,
+                    avatar: "https://example.org/obama.jpg",
+                    twitterAccounts: [],
+                }),
+                checkItem: async (
+                    _id: string,
+                    _language?: string,
+                    _options?: unknown
+                ) => ({
+                    status: "ok",
+                    props: {
+                        name: "Barack Obama",
+                        description:
+                            "President of the United States from 2009 to 2017",
+                    },
+                }),
+                clearCache: async () => undefined,
+                queryWikibaseEntities: async () => [],
+            })
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -111,7 +136,7 @@ describe("PersonalityController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body?.personalities.length).toEqual(0);
-                expect(body).toHaveProperty('personalities');
+                expect(body).toHaveProperty("personalities");
                 expect(Array.isArray(body.personalities)).toBe(true);
             });
     });
@@ -121,7 +146,7 @@ describe("PersonalityController (e2e)", () => {
      *
      * Purpose: Validates personality creation with Wikidata linkage for standardized data
      * Business Logic:
-     * - Creates new personality with required fields (name, description, wikidata)
+     * - Creates a personality from a Wikidata id alone (name and description come from Wikidata, stubbed here)
      * - Links to Wikidata entity Q76 (Barack Obama) for data consistency
      * - Generates unique ObjectId for database storage
      * - Returns created personality with all provided data
@@ -136,19 +161,17 @@ describe("PersonalityController (e2e)", () => {
     it("/api/personality (POST) - Create Personality", () => {
         return request(app.getHttpServer())
             .post("/api/personality")
-            .send({
-                name: "Barack Obama",
-                description: "President of the United States from 2009 to 2017",
-                wikidata: "Q76",
-            })
+            .send({ wikidata: "Q76" })
             .expect(201)
             .expect(({ body }) => {
                 personalityId = body?._id;
-                expect(body).toHaveProperty('_id');
+                expect(body).toHaveProperty("_id");
                 expect(body?.wikidata).toEqual("Q76");
-                expect(body?.description).toEqual("President of the United States from 2009 to 2017");
+                expect(body?.description).toEqual(
+                    "President of the United States from 2009 to 2017"
+                );
                 expect(personalityId).toBeDefined();
-                expect(body).toHaveProperty('slug');
+                expect(body).toHaveProperty("slug");
             });
     });
 
@@ -182,11 +205,11 @@ describe("PersonalityController (e2e)", () => {
             .expect(({ body }) => {
                 expect(body?.personalities.length).toEqual(1);
                 expect(body?.personalities[0]?.wikidata).toEqual("Q76");
-                expect(body).toHaveProperty('personalities');
-                expect(body.personalities[0]).toHaveProperty('description');
-                expect(body.personalities[0]).toHaveProperty('_id');
-                expect(body.personalities[0]).toHaveProperty('avatar');
-                expect(body.personalities[0]).toHaveProperty('slug');
+                expect(body).toHaveProperty("personalities");
+                expect(body.personalities[0]).toHaveProperty("description");
+                expect(body.personalities[0]).toHaveProperty("_id");
+                expect(body.personalities[0]).toHaveProperty("avatar");
+                expect(body.personalities[0]).toHaveProperty("slug");
                 expect(body.personalities[0].slug).toEqual("barack-obama");
             });
     });
@@ -215,12 +238,12 @@ describe("PersonalityController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 expect(body?._id).toEqual(personalityId);
-                expect(body).toHaveProperty('description');
-                expect(body).toHaveProperty('wikidata');
+                expect(body).toHaveProperty("description");
+                expect(body).toHaveProperty("wikidata");
                 expect(body?.wikidata).toEqual("Q76");
-                expect(body).toHaveProperty('slug');
+                expect(body).toHaveProperty("slug");
                 expect(body?.slug).toEqual("barack-obama");
-                expect(body).toHaveProperty('avatar');
+                expect(body).toHaveProperty("avatar");
             });
     });
 
@@ -278,6 +301,30 @@ describe("PersonalityController (e2e)", () => {
         // This is a known limitation when using role-based filtering in getById
         // Accept either 200 (success) or 500 (service limitation) for now
         expect([200, 500]).toContain(response.status);
+    });
+
+    it("/api/personality/:id (PUT) - keeps the slug on rename", () => {
+        return request(app.getHttpServer())
+            .put(`/api/personality/${personalityId}`)
+            .send({ name: "Barack H. Obama" })
+            .expect(200)
+            .expect(({ body }) => {
+                expect(body.slug).toEqual("barack-obama");
+            });
+    });
+
+    it("/api/personality/:id (PUT) - rejects isHidden", () => {
+        return request(app.getHttpServer())
+            .put(`/api/personality/${personalityId}`)
+            .send({ isHidden: true })
+            .expect(400);
+    });
+
+    it("/api/personality (POST) - rejects a missing Wikidata id", () => {
+        return request(app.getHttpServer())
+            .post("/api/personality")
+            .send({})
+            .expect(400);
     });
 
     /**
@@ -374,7 +421,7 @@ describe("PersonalityController (e2e)", () => {
         return request(app.getHttpServer())
             .post("/api/personality")
             .send({
-                // Missing name and wikidata
+                // Missing the Wikidata id
                 description: "Test description without required fields",
             })
             .expect(400);

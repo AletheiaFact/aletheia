@@ -222,12 +222,11 @@ export const StartReviewTaskSchema = z.object({
 
 export const ListClassificationMethodologiesSchema = z.object({});
 
-export const CreatePersonalitySchema = PersonalitySchema.pick({
-    name: true,
-    description: true,
-    wikidata: true,
-}).extend({
-    name: z.string().min(2),
+// Name and description come from Wikidata; only the item id is needed.
+export const CreatePersonalitySchema = z.object({
+    wikidata: z.string().regex(/^Q\d+$/),
+    name: z.string().optional(),
+    description: z.string().optional(),
 });
 
 export const CreateSourceSchema = SourceZodSchema.pick({

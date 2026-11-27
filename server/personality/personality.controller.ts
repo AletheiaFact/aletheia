@@ -18,8 +18,19 @@ import type { Request, Response } from "express";
 import { SkipThrottle } from "@nestjs/throttler";
 import { ViewService } from "../view/view.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
-import { CreatePersonalityDTO } from "./dto/create-personality.dto";
-import { Public, AdminOnly } from "../auth/decorators/auth.decorator";
+import {
+    CreatePersonalityDto,
+    CreatePersonalitySchema,
+    PersonalityIdParam,
+    UpdatePersonalityDto,
+    UpdatePersonalitySchema,
+} from "./dto/personality.dto";
+import { ZodBody, ZodParam } from "../common/validation";
+import {
+    Public,
+    AdminOnly,
+    FactCheckerOnly,
+} from "../auth/decorators/auth.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
@@ -28,7 +39,6 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import { toError } from "../util/error-handling";
-import { DuplicateKeyError } from "../database/errors";
 
 @Controller(":namespace?")
 export class PersonalityController {
@@ -50,28 +60,11 @@ export class PersonalityController {
         return this.personalityService.combinedListAll(getPersonalities);
     }
 
+    @FactCheckerOnly()
     @ApiTags("personality")
     @Post("api/personality")
-    async create(@Body() createPersonality: CreatePersonalityDTO) {
-        try {
-            return await this.personalityService.create(createPersonality);
-        } catch (error) {
-            // Backend-neutral duplicate-key errors (Postgres path) surface as
-            // HTTP 409 via AllExceptionsFilter. The Mongo path below keeps its
-            // historical swallow-and-log behavior (documented divergence).
-            if (error instanceof DuplicateKeyError) {
-                throw error;
-            }
-            const err = toError(error);
-            if (
-                err.name === "MongoError" &&
-                err.keyPattern &&
-                err.keyPattern.wikidata
-            ) {
-                err.message = `Personality with wikidata id ${err.keyValue?.wikidata} already exists`;
-            }
-            this.logger.error(err.message, err.stack);
-        }
+    create(@ZodBody(CreatePersonalitySchema) body: CreatePersonalityDto) {
+        return this.personalityService.create(body);
     }
 
     @Public()
@@ -92,13 +85,21 @@ export class PersonalityController {
             });
     }
 
+    @AdminOnly()
     @ApiTags("personality")
     @Put("api/personality/:id")
-    async update(
-        @Param("id") personalityId: string,
-        @Body() body: Partial<CreatePersonalityDTO>
+    update(
+        @ZodParam("id", PersonalityIdParam) personalityId: string,
+        @ZodBody(UpdatePersonalitySchema) body: UpdatePersonalityDto
     ) {
         return this.personalityService.update(personalityId, body);
+    }
+
+    @AdminOnly()
+    @ApiTags("personality")
+    @Get("api/personality/:id/stored")
+    getStored(@ZodParam("id", PersonalityIdParam) personalityId: string) {
+        return this.personalityService.getStored(personalityId);
     }
 
     @AdminOnly()

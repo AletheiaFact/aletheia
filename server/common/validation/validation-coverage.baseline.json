@@ -34,8 +34,6 @@
     "PersonalityController.get param:id",
     "PersonalityController.get query",
     "PersonalityController.getReviewStats param:id",
-    "PersonalityController.update body",
-    "PersonalityController.update param:id",
     "PersonalityController.updateHiddenStatus body",
     "PersonalityController.updateHiddenStatus param:id",
     "ReviewTaskController.addComment body",

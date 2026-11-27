@@ -74,15 +74,14 @@ export function registerWriteContentTools(
     server.registerTool(
         "create_personality",
         {
-            description: "Create a public figure (personality)",
+            description:
+                "Create a public figure (personality) from a Wikidata item (Q id); name and description come from Wikidata",
             inputSchema: CreatePersonalitySchema.shape as any,
         },
         safeTool("create_personality", async (args) => {
             assertCanWrite(deps.abilityFactory, deps.request.user);
             return jsonResult(
                 await deps.personalityService.create({
-                    name: args.name,
-                    description: args.description,
                     wikidata: args.wikidata,
                 })
             );

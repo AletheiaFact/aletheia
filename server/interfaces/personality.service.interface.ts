@@ -4,6 +4,7 @@ import {
     IFindAllResult,
     IPersonality,
 } from "./personality.interface";
+import type { StoredPersonalityView } from "../personality/shared/personality.rules";
 
 /**
  * Backend-neutral reference to a personality: either its id as a string or
@@ -25,7 +26,10 @@ export type IPersonalityService = {
         withSuggestions: boolean,
         filter?: any
     ): Promise<IPersonality[]>;
-    create(personality: any): Promise<IPersonality>;
+    create(
+        personality: { wikidata: string },
+        options?: { restoreDeleted?: boolean }
+    ): Promise<IPersonality>;
     getDeletedPersonalityByWikidata(wikidata: string): Promise<any>;
     findOrCreatePersonality(personalityData: {
         name: string;
@@ -34,7 +38,7 @@ export type IPersonalityService = {
             label?: string;
             description?: string;
         };
-    }): Promise<IPersonality>;
+    }): Promise<IPersonality | null>;
     getById(
         personalityId: PersonalityRef,
         options?: { language?: string; nameSpace?: string }
@@ -45,8 +49,9 @@ export type IPersonalityService = {
     getReviewStats(_id: string): Promise<any>;
     update(
         personalityId: string,
-        newPersonalityBody: any
+        body: { name?: string; description?: string; wikidata?: string }
     ): Promise<IPersonality>;
+    getStored(personalityId: string): Promise<StoredPersonalityView>;
     hideOrUnhidePersonality(
         personalityId: string,
         isHidden: boolean,

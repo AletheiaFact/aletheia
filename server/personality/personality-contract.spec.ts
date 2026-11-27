@@ -206,7 +206,7 @@ describe.each(backends)(
             });
             expect(updated.slug).toBe(created.slug);
             // getStored reads the stored row, not the Wikidata-merged copy.
-            const stored: any = await (service as any).getStored(idOf(created));
+            const stored: any = await service.getStored(idOf(created));
             expect(stored.name).toBe("Renamed");
         });
         it("update with no changes returns the stored values without writing", async () => {
@@ -340,10 +340,7 @@ describe.each(backends)(
             const first = await service.create({ wikidata: "Q7259" });
             await service.delete(idOf(first));
 
-            const again = await (service as any).create(
-                { wikidata: "Q7259" },
-                {}
-            );
+            const again = await service.create({ wikidata: "Q7259" }, {});
             expect(idOf(again)).toBe(idOf(first));
         });
 
@@ -352,10 +349,7 @@ describe.each(backends)(
             await service.delete(idOf(first));
 
             await expect(
-                (service as any).create(
-                    { wikidata: "Q7259" },
-                    { restoreDeleted: false }
-                )
+                service.create({ wikidata: "Q7259" }, { restoreDeleted: false })
             ).rejects.toMatchObject({ status: 409 });
         });
 
@@ -441,7 +435,7 @@ describe.each(backends)(
         it("getStored returns the stored values and what Wikidata provides", async () => {
             const c: any = await service.create({ wikidata: "Q13" });
             await service.update(idOf(c), { name: "Local Name" });
-            const stored: any = await (service as any).getStored(idOf(c));
+            const stored: any = await service.getStored(idOf(c));
             expect(stored.name).toBe("Local Name");
             expect(stored.wikidata).toBe("Q13");
             expect(stored.wikidataStatus).toBe("ok");
@@ -453,7 +447,7 @@ describe.each(backends)(
 
         it("getStored on a missing id throws NotFoundException", async () => {
             await expect(
-                (service as any).getStored(makeMissingId())
+                service.getStored(makeMissingId())
             ).rejects.toBeInstanceOf(NotFoundException);
         });
 
@@ -493,7 +487,7 @@ describe.each(backends)(
                 props: {},
             });
             try {
-                const stored: any = await (service as any).getStored(idOf(a));
+                const stored: any = await service.getStored(idOf(a));
                 expect(stored.wikidataStatus).toBe("deleted");
                 expect(stored.wikidataProvides).toEqual({
                     name: false,
@@ -511,7 +505,7 @@ describe.each(backends)(
                 throw new Error("down");
             };
             try {
-                const stored: any = await (service as any).getStored(idOf(a));
+                const stored: any = await service.getStored(idOf(a));
                 expect(stored.wikidataStatus).toBe("unavailable");
             } finally {
                 wikidataStub.checkItem = original;
@@ -520,7 +514,7 @@ describe.each(backends)(
 
         it("getStored reports none for a personality without Wikidata", async () => {
             const seeded = await seedWithoutWikidata("No Item");
-            const stored: any = await (service as any).getStored(idOf(seeded));
+            const stored: any = await service.getStored(idOf(seeded));
             expect(stored.wikidataStatus).toBe("none");
             expect(stored.wikidata).toBeNull();
         });
