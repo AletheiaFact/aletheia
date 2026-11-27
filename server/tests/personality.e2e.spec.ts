@@ -16,6 +16,7 @@ import { HistoryService } from "../history/history.service";
 import { HistoryServiceMock } from "./mocks/HistoryServiceMock";
 import { CleanupDatabase } from "./utils/CleanupDatabase";
 import { WikidataService } from "../wikidata/wikidata.service";
+import { WikidataServiceStub } from "./utils/McpTestHelper";
 
 /**
  * PersonalityController E2E Test Suite
@@ -37,6 +38,24 @@ import { WikidataService } from "../wikidata/wikidata.service";
  * 2. Individual retrieval → moderation actions (hide/unhide) → deletion
  * 3. Validates soft-delete behavior and data consistency
  */
+const personalityWikidataStub: Partial<WikidataService> = {
+    ...WikidataServiceStub,
+    fetchProperties: async () => ({
+        name: "Barack Obama",
+        description: "President of the United States from 2009 to 2017",
+        isAllowedProp: true,
+        avatar: "https://example.org/obama.jpg",
+        twitterAccounts: [],
+    }),
+    checkItem: async () => ({
+        status: "ok",
+        props: {
+            name: "Barack Obama",
+            description: "President of the United States from 2009 to 2017",
+        },
+    }),
+};
+
 describe("PersonalityController (e2e)", () => {
     let app: any;
     let personalityId: string;
@@ -70,30 +89,7 @@ describe("PersonalityController (e2e)", () => {
             .overrideProvider(HistoryService)
             .useValue(HistoryServiceMock)
             .overrideProvider(WikidataService)
-            .useValue({
-                fetchProperties: async () => ({
-                    name: "Barack Obama",
-                    description:
-                        "President of the United States from 2009 to 2017",
-                    isAllowedProp: true,
-                    avatar: "https://example.org/obama.jpg",
-                    twitterAccounts: [],
-                }),
-                checkItem: async (
-                    _id: string,
-                    _language?: string,
-                    _options?: unknown
-                ) => ({
-                    status: "ok",
-                    props: {
-                        name: "Barack Obama",
-                        description:
-                            "President of the United States from 2009 to 2017",
-                    },
-                }),
-                clearCache: async () => undefined,
-                queryWikibaseEntities: async () => [],
-            })
+            .useValue(personalityWikidataStub)
             .compile();
 
         app = moduleFixture.createNestApplication();
@@ -320,11 +316,24 @@ describe("PersonalityController (e2e)", () => {
             .expect(400);
     });
 
-    it("/api/personality (POST) - rejects a missing Wikidata id", () => {
+    it("/api/personality/:id (PUT) - rejects an invalid id", () => {
         return request(app.getHttpServer())
-            .post("/api/personality")
-            .send({})
+            .put("/api/personality/not-an-id")
+            .send({ name: "X" })
             .expect(400);
+    });
+
+    it("/api/personality/:id/stored (GET) - returns the stored values", () => {
+        return request(app.getHttpServer())
+            .get(`/api/personality/${personalityId}/stored`)
+            .expect(200)
+            .expect(({ body }) => {
+                expect(body).toHaveProperty("name");
+                expect(body).toHaveProperty("description");
+                expect(body).toHaveProperty("wikidata");
+                expect(body).toHaveProperty("wikidataStatus");
+                expect(body).toHaveProperty("wikidataProvides");
+            });
     });
 
     /**
@@ -420,10 +429,7 @@ describe("PersonalityController (e2e)", () => {
     it("/api/personality (POST) - Should validate required fields", () => {
         return request(app.getHttpServer())
             .post("/api/personality")
-            .send({
-                // Missing the Wikidata id
-                description: "Test description without required fields",
-            })
+            .send({})
             .expect(400);
     });
 

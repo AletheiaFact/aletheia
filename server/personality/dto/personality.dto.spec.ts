@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
     CreatePersonalitySchema,
     UpdatePersonalitySchema,
@@ -44,5 +45,16 @@ describe("UpdatePersonalitySchema", () => {
         { wikidata: "P31" },
     ])("rejects %j", (body) => {
         expect(UpdatePersonalitySchema.safeParse(body).success).toBe(false);
+    });
+});
+
+describe("UpdatePersonalitySchema docs", () => {
+    it("keeps the descriptions in the generated JSON schema", () => {
+        const json: any = z.toJSONSchema(UpdatePersonalitySchema, {
+            io: "input",
+        });
+        expect(json.description).toMatch(/at least one/);
+        expect(json.properties.name.description).toMatch(/Stored name/);
+        expect(json.properties.wikidata.description).toMatch(/Relink/);
     });
 });

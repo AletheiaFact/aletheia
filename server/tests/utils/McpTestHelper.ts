@@ -63,7 +63,7 @@ export const verificationRequestStateMachineMock = {
 
 // Personalities are created from Wikidata, so the e2e suites never reach the
 // real API: every item resolves to "Person <id>".
-export const WikidataServiceStub = {
+export const WikidataServiceStub: Partial<WikidataService> = {
     queryWikibaseEntities: async () => [],
     fetchProperties: async () => ({}),
     checkItem: async (id: string, _language?: string, _options?: unknown) => ({

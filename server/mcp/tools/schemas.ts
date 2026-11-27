@@ -2,8 +2,12 @@ import { z } from "zod";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 import { ReviewTaskTypeEnum } from "../../types/enums";
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
-import { dataHash, nonEmptyText, objectId } from "../../../lib/schemas";
-import { PersonalitySchema } from "../../interfaces/personality.interface";
+import {
+    dataHash,
+    nonEmptyText,
+    objectId,
+    wikidataId,
+} from "../../../lib/schemas";
 import { SourceZodSchema } from "../../source/schemas/source.zod";
 import { ClaimCreateZodSchema } from "../../claim/schemas/claim.zod";
 import { VerificationRequestCreateZodSchema } from "../../verification-request/schemas/verification-request.zod";
@@ -223,10 +227,11 @@ export const StartReviewTaskSchema = z.object({
 export const ListClassificationMethodologiesSchema = z.object({});
 
 // Name and description come from Wikidata; only the item id is needed.
+// Unknown keys are stripped, so older clients that still send them work.
 export const CreatePersonalitySchema = z.object({
-    wikidata: z.string().regex(/^Q\d+$/),
-    name: z.string().optional(),
-    description: z.string().optional(),
+    wikidata: wikidataId.describe(
+        "Wikidata item id, e.g. Q76; name and description come from Wikidata"
+    ),
 });
 
 export const CreateSourceSchema = SourceZodSchema.pick({
