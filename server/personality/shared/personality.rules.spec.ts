@@ -4,7 +4,6 @@ import {
     defaultDescription,
     extractClaimWithTextSummary,
     wikidataCreationError,
-    WIKIDATA_ID_PATTERN,
 } from "./personality.rules";
 
 describe("personality shared rules", () => {
@@ -43,15 +42,6 @@ describe("personality shared rules", () => {
                 { title: "x" },
             ]);
         });
-    });
-});
-
-describe("WIKIDATA_ID_PATTERN", () => {
-    it.each(["Q1", "Q142067648"])("accepts %s", (id) => {
-        expect(WIKIDATA_ID_PATTERN.test(id)).toBe(true);
-    });
-    it.each(["", "q1", "Q", "P31", "Q1 "])("rejects %j", (id) => {
-        expect(WIKIDATA_ID_PATTERN.test(id)).toBe(false);
     });
 });
 

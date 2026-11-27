@@ -382,6 +382,7 @@ describe("WikidataService", () => {
                                     {
                                         mainsnak: {
                                             datavalue: {
+                                                // Q101352 is the Wikidata class "family name".
                                                 value: { id: "Q101352" },
                                             },
                                         },
@@ -396,6 +397,34 @@ describe("WikidataService", () => {
             await expect(service.checkItem("Q2", "pt")).resolves.toMatchObject({
                 status: "not_allowed_type",
             });
+        });
+
+        it("bypasses the cache when fresh is requested", async () => {
+            const cached = {
+                props: { name: "Stale", isAllowedProp: true },
+            };
+            const { service, cacheModel, get } = makeService(
+                { [WIKIDATA]: { entities: { Q1: human("Q1") } } },
+                cached
+            );
+            // Model the cache: once deleted, the lookup finds nothing.
+            const deleteMany = vi.fn(() => {
+                (cacheModel as any).findOne = vi.fn(() => ({
+                    exec: vi.fn().mockResolvedValue(null),
+                }));
+                return { exec: vi.fn().mockResolvedValue({ deletedCount: 1 }) };
+            });
+            (cacheModel as any).deleteMany = deleteMany;
+
+            const result = await service.checkItem("Q1", "pt", {
+                fresh: true,
+            });
+
+            expect(deleteMany).toHaveBeenCalledWith({ wikidataId: "Q1" });
+            expect(deleteMany.mock.invocationCallOrder[0]).toBeLessThan(
+                get.mock.invocationCallOrder[0]
+            );
+            expect(result.props.name).toBe("Rosane de Oliveira");
         });
 
         it("throws when Wikidata is unavailable", async () => {

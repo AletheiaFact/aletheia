@@ -179,14 +179,23 @@ export class WikidataService {
      * Whether a Wikidata item can back a personality: "ok" (exists, allowed
      * type), "deleted" or "not_allowed_type". Throws when Wikidata gives no
      * usable answer, so a caller never treats "unknown" as "ok".
+     *
+     * Callers must validate the id format (Q followed by digits) first: an
+     * invalid id makes WikidataParamsSchema throw a ZodError (a 500).
+     * Creation and relink pass `{ fresh: true }` so they never rely on a
+     * cached answer (an item cached as ok and deleted since must be refused).
      */
     async checkItem(
         wikidataId: string,
-        language: string = "pt"
+        language: string = "pt",
+        options: { fresh?: boolean } = {}
     ): Promise<{
         status: "ok" | "deleted" | "not_allowed_type";
         props: WikidataProperties;
     }> {
+        if (options.fresh) {
+            await this.clearCache(wikidataId);
+        }
         const props = await this.fetchProperties({ wikidataId, language });
         if (props.isMissing) {
             return { status: "deleted", props };

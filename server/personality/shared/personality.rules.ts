@@ -10,7 +10,9 @@ import slugify from "slugify";
  * Postgres service implementations (see docs/postgres-migration-foundation.md,
  * Decision D2). Pure functions only: no `this`, no DI, and no imports from
  * mongoose, drizzle-orm, pg, or any schema file. If the same rule appears in
- * both backend implementations, it belongs here instead.
+ * both backend implementations, it belongs here instead. HTTP exception types
+ * from @nestjs/common are allowed, so both backends throw the same error
+ * envelope.
  */
 
 /**
@@ -45,9 +47,6 @@ export function extractClaimWithTextSummary(claims: any) {
         return { ...claim, content: claim.content.text };
     });
 }
-
-/** A Wikidata item id: Q followed by digits. */
-export const WIKIDATA_ID_PATTERN = /^Q\d+$/;
 
 /**
  * Why a Wikidata item cannot back a new personality (or a relink):
