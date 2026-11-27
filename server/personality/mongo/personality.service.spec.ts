@@ -121,3 +121,87 @@ describe("MongoPersonalityService.postProcess", () => {
         expect(result).toBeUndefined();
     });
 });
+
+describe("MongoPersonalityService.create", () => {
+    function makeCreateService(
+        checkItem: (...args: any[]) => Promise<any>,
+        existing: any = null
+    ) {
+        const saved: any[] = [];
+        const model: any = function (this: any, doc: any) {
+            Object.assign(this, doc, { _id: "64b000000000000000000009" });
+            this.save = async () => {
+                saved.push(this);
+                return this;
+            };
+        };
+        model.findOne = vi.fn(async (filter: any) =>
+            filter.isDeleted === false ? existing : null
+        );
+        const history = {
+            getHistoryParams: vi.fn(() => ({})),
+            createHistory: vi.fn(async () => undefined),
+        };
+        const wikidata = { checkItem: vi.fn(checkItem) };
+        const service = new MongoPersonalityService(
+            { params: {}, query: {}, user: { _id: "u1" } } as any,
+            model,
+            {} as any,
+            history as any,
+            wikidata as any,
+            new UtilService()
+        );
+        return { service, saved, wikidata };
+    }
+
+    it("creates with the name and description from Wikidata", async () => {
+        const { service, saved, wikidata } = makeCreateService(async () => ({
+            status: "ok",
+            props: { name: "Rosane de Oliveira", description: "jornalista" },
+        }));
+
+        await service.create({ wikidata: "Q142067648" });
+
+        expect(wikidata.checkItem).toHaveBeenCalledWith("Q142067648", "pt", {
+            fresh: true,
+        });
+        expect(saved[0]).toMatchObject({
+            name: "Rosane de Oliveira",
+            description: "jornalista",
+            slug: "rosane-de-oliveira",
+            wikidata: "Q142067648",
+        });
+    });
+
+    it("rejects a deleted item", async () => {
+        const { service } = makeCreateService(async () => ({
+            status: "deleted",
+            props: {},
+        }));
+
+        await expect(service.create({ wikidata: "Q9" })).rejects.toMatchObject({
+            status: 400,
+        });
+    });
+
+    it("rejects an item another personality uses", async () => {
+        const { service } = makeCreateService(
+            async () => ({ status: "ok", props: { name: "X" } }),
+            { _id: "other", wikidata: "Q1" }
+        );
+
+        await expect(service.create({ wikidata: "Q1" })).rejects.toMatchObject({
+            status: 409,
+        });
+    });
+
+    it("answers 503 when Wikidata is unavailable", async () => {
+        const { service } = makeCreateService(async () => {
+            throw new WikidataUnavailableError("Q1", "rate limited");
+        });
+
+        await expect(service.create({ wikidata: "Q1" })).rejects.toMatchObject({
+            status: 503,
+        });
+    });
+});
