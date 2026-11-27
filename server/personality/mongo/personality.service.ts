@@ -60,7 +60,10 @@ export class MongoPersonalityService {
     ) {
         return this.PersonalityModel.findOne({
             wikidata: wikidataId,
-            ...(includeDeleted ? {} : { isDeleted: false }),
+            // The soft-delete plugin adds `isDeleted: false` to any find
+            // that does not mention the field, so deleted rows must be
+            // asked for explicitly ($in null also matches a missing field).
+            isDeleted: includeDeleted ? { $in: [true, false, null] } : false,
         });
     }
 
@@ -201,11 +204,11 @@ export class MongoPersonalityService {
      */
     async create(
         { wikidata }: { wikidata: string },
-        options: { restoreDeleted?: boolean } = { restoreDeleted: true }
+        { restoreDeleted = true }: { restoreDeleted?: boolean } = {}
     ): Promise<PersonalityDocument> {
         const deleted = await this.getDeletedPersonalityByWikidata(wikidata);
         if (deleted) {
-            if (!options.restoreDeleted) {
+            if (!restoreDeleted) {
                 throw wikidataCreationError("in_use");
             }
             // Intentionally restores without a Wikidata check: reads tolerate
