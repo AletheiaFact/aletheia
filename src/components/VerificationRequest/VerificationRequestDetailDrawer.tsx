@@ -55,10 +55,14 @@ interface VerificationRequestDetailDrawerProps {
     open: boolean;
     onClose: () => void;
     onUpdate?: (oldStatus: string, newStatus: string) => void;
+    onRequestChange?: (patch: {
+        unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+        identifiedData: string[];
+    }) => void;
 }
 
 const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerProps> =
-    ({ verificationRequest, open, onClose, onUpdate }) => {
+    ({ verificationRequest, open, onClose, onUpdate, onRequestChange }) => {
         const { t, i18n } = useTranslation();
         const { vw } = useAppSelector((state) => state);
 
@@ -489,15 +493,20 @@ const VerificationRequestDetailDrawer: React.FC<VerificationRequestDetailDrawerP
                                         }
                                         canResolve={canApprove}
                                         onResolved={(updated) => {
-                                            setCurrentRequest((previous) => ({
-                                                ...previous,
+                                            const patch = {
                                                 unmatchedPersonalities:
-                                                    updated?.unmatchedPersonalities ??
+                                                    updated.unmatchedPersonalities ??
                                                     [],
                                                 identifiedData:
-                                                    updated?.identifiedData ??
-                                                    previous.identifiedData,
+                                                    updated.identifiedData ??
+                                                    currentRequest?.identifiedData ??
+                                                    [],
+                                            };
+                                            setCurrentRequest((previous) => ({
+                                                ...previous,
+                                                ...patch,
                                             }));
+                                            onRequestChange?.(patch);
                                             retryPersonalities();
                                         }}
                                     />

@@ -46,5 +46,7 @@
     "wikidataStatus_deleted": "Item do Wikidata: excluído",
     "wikidataStatus_not_allowed_type": "Item do Wikidata: tipo não permitido",
     "wikidataStatus_unavailable": "Item do Wikidata: indisponível agora",
-    "wikidataStatus_none": "Sem item do Wikidata"
+    "wikidataStatus_none": "Sem item do Wikidata",
+    "editWikidataCannotRemove": "O item do Wikidata não pode ser removido, só trocado",
+    "editLoadError": "Não foi possível carregar a personalidade"
 }

@@ -73,6 +73,7 @@ interface FiltersState {
 interface FiltersActions {
     setIsInitialLoad: (initial: boolean) => void;
     fetchData: (status: verificationRequestStatus) => Promise<void>;
+    updateRequest: (id: string, patch: Record<string, unknown>) => void;
     setPriorityFilter: (value: string) => void;
     setSourceChannelFilter: (value: string) => void;
     setFilterValue: (value: string[]) => void;

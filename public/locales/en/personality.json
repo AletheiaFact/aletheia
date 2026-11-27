@@ -46,5 +46,7 @@
     "wikidataStatus_deleted": "Wikidata item: deleted",
     "wikidataStatus_not_allowed_type": "Wikidata item: type not allowed",
     "wikidataStatus_unavailable": "Wikidata item: unavailable right now",
-    "wikidataStatus_none": "No Wikidata item"
+    "wikidataStatus_none": "No Wikidata item",
+    "editWikidataCannotRemove": "The Wikidata item cannot be removed, only replaced",
+    "editLoadError": "Could not load the personality"
 }

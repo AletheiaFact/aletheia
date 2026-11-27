@@ -2,6 +2,12 @@ import { ActionTypes } from "../store/types";
 import { MessageManager } from "../components/Messages";
 import { PersonalityWithWikidata } from "../types/PersonalityWithWikidata";
 import { createApiInstance } from "./apiFactory";
+import type { TranslationFn } from "../types/ApiResponse";
+
+export interface ResolveUnmatchedResponse {
+    unmatchedPersonalities: { name: string; wikidataCandidate?: string }[];
+    identifiedData: string[];
+}
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -237,8 +243,8 @@ const resolveUnmatchedPersonality = (
     body:
         | { action: "link"; name: string; personalityId: string }
         | { action: "dismiss"; name: string },
-    t
-) =>
+    t: TranslationFn
+): Promise<ResolveUnmatchedResponse> =>
     request
         .put(`/${id}/personalities`, body)
         .then((response) => {

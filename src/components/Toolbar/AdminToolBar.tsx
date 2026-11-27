@@ -143,6 +143,7 @@ const AdminToolBar = ({
                                 <Button
                                     onClick={() => setIsEditOpen(true)}
                                     title={t("personality:editTitle")}
+                                    aria-label={t("personality:editTitle")}
                                     data-cy="personalityEditButton"
                                 >
                                     <Edit fontSize="small" />

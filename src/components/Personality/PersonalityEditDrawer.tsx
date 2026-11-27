@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Drawer, Grid, TextField, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import personalityApi, { StoredPersonality } from "../../api/personality";
-import { MessageManager } from "../Messages";
+import Loading from "../Loading";
 
 interface Props {
     personalityId: string;
@@ -19,11 +19,13 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
         wikidata: "",
     });
     const [saving, setSaving] = useState(false);
+    const [loadFailed, setLoadFailed] = useState(false);
 
     useEffect(() => {
         if (!open) return;
         let cancelled = false;
         setStored(null);
+        setLoadFailed(false);
         personalityApi
             .getStoredPersonality(personalityId)
             .then((data) => {
@@ -36,12 +38,7 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
                 });
             })
             .catch(() => {
-                if (!cancelled) {
-                    MessageManager.showMessage(
-                        "error",
-                        t("personality:editError")
-                    );
-                }
+                if (!cancelled) setLoadFailed(true);
             });
         return () => {
             cancelled = true;
@@ -53,8 +50,16 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
             ? t("personality:editHintWikidataProvides")
             : t("personality:editHintShown");
 
+    const wikidataRemoved = !!stored?.wikidata && form.wikidata === "";
+    const canSave =
+        !!stored &&
+        !saving &&
+        form.name.trim() !== "" &&
+        form.description.trim() !== "" &&
+        !wikidataRemoved;
+
     const save = async () => {
-        if (!stored) return;
+        if (!canSave) return;
         const body: { name?: string; description?: string; wikidata?: string } =
             {};
         if (form.name !== stored.name) body.name = form.name;
@@ -75,16 +80,34 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
     };
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose}>
+        <Drawer
+            anchor="right"
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                role: "dialog",
+                "aria-labelledby": "personality-edit-title",
+            }}
+        >
             <Grid
                 container
                 direction="column"
                 gap={2}
                 sx={{ width: 420, maxWidth: "100vw", p: 3 }}
             >
-                <Typography variant="h6">
+                <Typography variant="h6" id="personality-edit-title">
                     {t("personality:editTitle")}
                 </Typography>
+                {!stored && !loadFailed && <Loading />}
+                {loadFailed && (
+                    <Typography
+                        variant="body2"
+                        color="error"
+                        data-cy="personalityEditLoadError"
+                    >
+                        {t("personality:editLoadError")}
+                    </Typography>
+                )}
                 {stored && (
                     <Typography
                         data-cy="personalityEditWikidataStatus"
@@ -100,6 +123,7 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     helperText={fieldHint("name")}
+                    autoFocus
                     inputProps={{
                         maxLength: 200,
                         "data-cy": "personalityEditName",
@@ -125,7 +149,12 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
                     onChange={(e) =>
                         setForm({ ...form, wikidata: e.target.value.trim() })
                     }
-                    helperText={t("personality:editWikidataHint")}
+                    error={wikidataRemoved}
+                    helperText={
+                        wikidataRemoved
+                            ? t("personality:editWikidataCannotRemove")
+                            : t("personality:editWikidataHint")
+                    }
                     inputProps={{ "data-cy": "personalityEditWikidata" }}
                 />
                 <Grid container gap={1} justifyContent="flex-end">
@@ -135,7 +164,7 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
                     <Button
                         variant="contained"
                         onClick={save}
-                        disabled={!stored || saving}
+                        disabled={!canSave}
                         data-cy="personalityEditSave"
                     >
                         {t("personality:editSave")}

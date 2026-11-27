@@ -147,7 +147,9 @@ const updatePersonality = (
             MessageManager.showMessage(
                 "error",
                 reason
-                    ? t(`personality:editError_${reason}`)
+                    ? t(`personality:editError_${reason}`, {
+                          defaultValue: t("personality:editError"),
+                      })
                     : t("personality:editError")
             );
             throw err;
