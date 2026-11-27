@@ -88,7 +88,7 @@ const createPersonality = (
     t: TranslationFn
 ): Promise<Personality | void> => {
     return request
-        .post(`/`, personality)
+        .post(`/`, { wikidata: personality.wikidata })
         .then((response) => {
             const { name } = response.data;
             MessageManager.showMessage(
@@ -113,6 +113,45 @@ const createPersonality = (
             );
         });
 };
+
+export interface StoredPersonality {
+    _id: string;
+    name: string;
+    description: string;
+    wikidata: string | null;
+    wikidataStatus:
+        | "ok"
+        | "deleted"
+        | "not_allowed_type"
+        | "unavailable"
+        | "none";
+    wikidataProvides: { name: boolean; description: boolean };
+}
+
+const getStoredPersonality = (id: string): Promise<StoredPersonality> =>
+    request.get(`/${id}/stored`).then((response) => response.data);
+
+const updatePersonality = (
+    id: string,
+    body: { name?: string; description?: string; wikidata?: string },
+    t: TranslationFn
+) =>
+    request
+        .put(`/${id}`, body)
+        .then((response) => {
+            MessageManager.showMessage("success", t("personality:editSuccess"));
+            return response.data;
+        })
+        .catch((err) => {
+            const reason = err?.response?.data?.message?.reason;
+            MessageManager.showMessage(
+                "error",
+                reason
+                    ? t(`personality:editError_${reason}`)
+                    : t("personality:editError")
+            );
+            throw err;
+        });
 
 const deletePersonality = (id: string, t: TranslationFn): Promise<void> => {
     return request
@@ -161,6 +200,8 @@ const personalitiesApi = {
     getPersonalities,
     getPersonality,
     createPersonality,
+    getStoredPersonality,
+    updatePersonality,
     deletePersonality,
     updatePersonalityHiddenStatus,
 };
