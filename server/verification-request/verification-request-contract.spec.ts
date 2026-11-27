@@ -1070,6 +1070,13 @@ describe.each(backends)(
                             personalityId: makeId(),
                         })
                     ).rejects.toBeInstanceOf(NotFoundException);
+                    await expect(
+                        service.resolveUnmatchedPersonality(idOf(vr), {
+                            action: "link",
+                            name: "Ana",
+                            personalityId: randomUUID(),
+                        })
+                    ).rejects.toBeInstanceOf(NotFoundException);
                     const after = await service.findByDataHash(vr.data_hash);
                     expect(names(after.unmatchedPersonalities)).toEqual([
                         "Ana",

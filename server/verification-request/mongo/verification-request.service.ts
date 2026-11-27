@@ -436,8 +436,16 @@ export class MongoVerificationRequestService
                             )
                         );
                         const personalityIds = resolved
-                            .filter((r) => r.personality)
-                            .map((r) => (r.personality as any)._id);
+                            .filter(
+                                (
+                                    r
+                                ): r is typeof r & {
+                                    personality: NonNullable<
+                                        typeof r.personality
+                                    >;
+                                } => !!r.personality
+                            )
+                            .map((r) => r.personality._id);
                         unmatchedToAdd = resolved
                             .filter((r) => !r.personality)
                             .map((r) => ({
@@ -1092,6 +1100,11 @@ export class MongoVerificationRequestService
         const update: any = { $set: { unmatchedPersonalities: list } };
         let linkedId: unknown;
         if (body.action === "link") {
+            if (!isValidObjectId(body.personalityId)) {
+                throw new NotFoundException(
+                    `Personality ${body.personalityId} not found`
+                );
+            }
             const personality = await this.personalityService.getById(
                 body.personalityId
             );
@@ -1100,7 +1113,7 @@ export class MongoVerificationRequestService
                     `Personality ${body.personalityId} not found`
                 );
             }
-            linkedId = (personality as any)._id ?? (personality as any).id;
+            linkedId = personality._id;
             update.$addToSet = { identifiedData: linkedId };
         }
 
