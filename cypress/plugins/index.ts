@@ -65,6 +65,28 @@ const removePersonality = (slug: string): Promise<null> =>
         return null;
     });
 
+// Adds a name the AI "could not match" to the first verification request and
+// returns that request's id. Specs that need it must run after
+// verificationRequest.cy.ts, which creates the request.
+const seedUnmatchedPersonality = (name: string): Promise<string> =>
+    withDb(async (db) => {
+        const result: any = await db
+            .collection("verificationrequests")
+            .findOneAndUpdate(
+                {},
+                { $set: { unmatchedPersonalities: [{ name }] } },
+                { returnDocument: "after" }
+            );
+        // The driver returns the document (v6) or { value } (older drivers).
+        const request = result?.value ?? result;
+        if (!request?._id) {
+            throw new Error(
+                "seedUnmatchedPersonality: no verification request exists; run it after verificationRequest.cy.ts"
+            );
+        }
+        return String(request._id);
+    });
+
 const plugin = (
     on: Cypress.PluginEvents,
     config: Cypress.PluginConfigOptions
@@ -76,6 +98,7 @@ const plugin = (
         countWikidataCache,
         seedPersonality,
         removePersonality,
+        seedUnmatchedPersonality,
     });
     return config;
 };
