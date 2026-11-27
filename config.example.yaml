@@ -35,6 +35,11 @@ services:
       throttle:
         ttl: 60
         limit: 1000
+      # Wikimedia endpoints (optional). Defaults: the public Wikidata and
+      # Commons APIs. Point them at the Cypress mock to run e2e locally:
+      # wikidata:
+      #   api_url: http://127.0.0.1:4590/wikidata/w/api.php
+      #   commons_api_url: http://127.0.0.1:4590/commons/w/api.php
       authentication_type: ory
       ory:
         url: ORY_SDK_URL

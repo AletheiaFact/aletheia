@@ -423,33 +423,47 @@ export class MongoPersonalityService {
             return personality;
         }
 
-        let wikidataExtract;
-        try {
-            wikidataExtract = await this.wikidata.fetchProperties({
-                wikidataId: personality.wikidata,
-                language,
-            });
-        } catch (error) {
-            const err = toError(error);
-            this.logger.error(
-                `Wikidata fetch failed for personality ${personality._id} ` +
-                    `(wikidataId: ${personality.wikidata}): ${err.message}`
-            );
-            throw error;
-        }
+        // Wikidata only adds data (label, image, wikipedia link) to a
+        // personality. A personality that is already in our database stays
+        // visible when its Wikidata item is deleted, changes type, or when
+        // Wikidata is down: it keeps the name and description we store.
+        // The type check only filters search suggestions (no `_id`), which
+        // are Wikidata entities that are not personalities yet.
+        const isSuggestion = !personality._id;
+        let definedWikidataFields: Record<string, unknown> = {};
 
-        if (wikidataExtract.isAllowedProp === false) {
-            this.logger.warn(
-                `Personality ${personality._id} filtered out: wikidata entity ${personality.wikidata} is not an allowed type`
-            );
-            return;
-        }
+        if (personality.wikidata) {
+            try {
+                const wikidataExtract = await this.wikidata.fetchProperties({
+                    wikidataId: personality.wikidata,
+                    language,
+                });
 
-        const definedWikidataFields = Object.fromEntries(
-            Object.entries(wikidataExtract).filter(
-                ([, value]) => value !== undefined
-            )
-        );
+                if (wikidataExtract.isAllowedProp === false) {
+                    if (isSuggestion) {
+                        return;
+                    }
+                    this.logger.warn(
+                        `Personality ${personality._id}: wikidata entity ${personality.wikidata} is not an allowed type; showing it without Wikidata data`
+                    );
+                } else {
+                    definedWikidataFields = Object.fromEntries(
+                        Object.entries(wikidataExtract).filter(
+                            ([, value]) => value !== undefined
+                        )
+                    );
+                }
+            } catch (error) {
+                const err = toError(error);
+                this.logger.error(
+                    `Wikidata fetch failed for personality ${personality._id} ` +
+                        `(wikidataId: ${personality.wikidata}): ${err.message}`
+                );
+                if (isSuggestion) {
+                    return;
+                }
+            }
+        }
 
         return Object.assign(personality, definedWikidataFields, {
             stats:
