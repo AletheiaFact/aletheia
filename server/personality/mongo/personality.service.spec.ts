@@ -205,3 +205,94 @@ describe("MongoPersonalityService.create", () => {
         });
     });
 });
+
+describe("MongoPersonalityService.findOrCreatePersonality", () => {
+    function makeFindService(opts: {
+        byWikidata?: any;
+        bySlug?: any;
+        checkItem?: (...args: any[]) => Promise<any>;
+    }) {
+        const model: any = function (this: any, doc: any) {
+            Object.assign(this, doc, { _id: "new" });
+            this.save = async () => this;
+        };
+        model.findOne = vi.fn(async (filter: any) => {
+            if (filter.wikidata) return opts.byWikidata ?? null;
+            if (filter.slug) return opts.bySlug ?? null;
+            return null;
+        });
+        const service = new MongoPersonalityService(
+            { params: {}, query: {} } as any,
+            model,
+            {} as any,
+            {
+                getHistoryParams: vi.fn(() => ({})),
+                createHistory: vi.fn(async () => undefined),
+            } as any,
+            {
+                checkItem: vi.fn(
+                    opts.checkItem ??
+                        (async () => ({ status: "ok", props: { name: "Ana" } }))
+                ),
+            } as any,
+            new UtilService()
+        );
+        return { service };
+    }
+
+    it("returns null when the AI gives no Wikidata id", async () => {
+        const { service } = makeFindService({});
+
+        await expect(
+            service.findOrCreatePersonality({ name: "Bartolomeu Almeida" })
+        ).resolves.toBeNull();
+    });
+
+    it("returns null when the item is deleted", async () => {
+        const { service } = makeFindService({
+            checkItem: async () => ({ status: "deleted", props: {} }),
+        });
+
+        await expect(
+            service.findOrCreatePersonality({
+                name: "Geraldo Castro",
+                wikidata: { id: "Q142068353" },
+            })
+        ).resolves.toBeNull();
+    });
+
+    it("returns null when Wikidata is unavailable", async () => {
+        const { service } = makeFindService({
+            checkItem: async () => {
+                throw new Error("timeout");
+            },
+        });
+
+        await expect(
+            service.findOrCreatePersonality({
+                name: "Ana",
+                wikidata: { id: "Q1" },
+            })
+        ).resolves.toBeNull();
+    });
+
+    it("still reuses a personality matched by slug", async () => {
+        const existing = { _id: "p1", slug: "ana", wikidata: "Q1" };
+        const { service } = makeFindService({ bySlug: existing });
+
+        await expect(
+            service.findOrCreatePersonality({ name: "Ana" })
+        ).resolves.toBe(existing);
+    });
+
+    it("creates from a valid item", async () => {
+        const { service } = makeFindService({});
+
+        const created = await service.findOrCreatePersonality({
+            name: "Ana",
+            wikidata: { id: "Q1" },
+        });
+
+        expect(created).toMatchObject({ name: "Ana", wikidata: "Q1" });
+    });
+});

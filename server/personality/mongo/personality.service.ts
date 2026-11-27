@@ -219,9 +219,10 @@ export class MongoPersonalityService {
     }
 
     /**
-     * Find or create a personality based on AI task result
-     * @param personalityData - Data from AI task processor with name, wikidata info, etc.
-     * @returns The found or created personality document
+     * Finds or creates a personality for an AI identification result.
+     * Returns null, and creates nothing, when the AI gives no Wikidata id,
+     * or the item is deleted, of another type, used elsewhere, or Wikidata is
+     * unavailable. The caller records the name as unmatched.
      */
     async findOrCreatePersonality(personalityData: {
         name: string;
@@ -230,7 +231,7 @@ export class MongoPersonalityService {
             label?: string;
             description?: string;
         };
-    }): Promise<PersonalityDocument> {
+    }): Promise<PersonalityDocument | null> {
         const wikidataId = personalityData.wikidata?.id || null;
 
         if (wikidataId) {
@@ -256,30 +257,34 @@ export class MongoPersonalityService {
         if (existingBySlug) {
             this.logger.log(`Found existing personality by slug: ${slug}`);
             if (wikidataId && !existingBySlug.wikidata) {
-                existingBySlug.wikidata = wikidataId;
-                await existingBySlug.save();
-                this.logger.log(
-                    `Updated personality ${slug} with wikidata: ${wikidataId}`
+                const usable = await this.loadCreatableItem(wikidataId).then(
+                    () => true,
+                    () => false
                 );
+                if (usable) {
+                    existingBySlug.wikidata = wikidataId;
+                    await existingBySlug.save();
+                    this.logger.log(
+                        `Updated personality ${slug} with wikidata: ${wikidataId}`
+                    );
+                }
             }
             return existingBySlug;
         }
 
-        const newPersonality = new this.PersonalityModel({
-            name: personalityData.name,
-            slug,
-            description: defaultDescription(
-                personalityData.name,
-                personalityData.wikidata?.description
-            ),
-            wikidata: wikidataId,
-            isHidden: false,
-        });
-
-        await newPersonality.save();
-        this.logger.log(`Created new personality: ${personalityData.name}`);
-
-        return newPersonality;
+        if (!wikidataId) return null;
+        try {
+            return (await this.create({
+                wikidata: wikidataId,
+            })) as unknown as PersonalityDocument;
+        } catch (error) {
+            this.logger.warn(
+                `Not creating personality "${
+                    personalityData.name
+                }" (${wikidataId}): ${toError(error).message}`
+            );
+            return null;
+        }
     }
 
     async getById(
