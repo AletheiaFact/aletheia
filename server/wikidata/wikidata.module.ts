@@ -4,6 +4,7 @@ import {
     WikidataService,
 } from "./wikidata.service";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ConfigModule } from "@nestjs/config";
 import { WikidataCache, WikidataCacheSchema } from "./schemas/wikidata.schema";
 import { IndexOptions } from "mongoose";
 
@@ -33,7 +34,7 @@ const WikidataCacheModel = MongooseModule.forFeatureAsync([
 ]);
 
 @Module({
-    imports: [WikidataCacheModel],
+    imports: [WikidataCacheModel, ConfigModule],
     exports: [WikidataService],
     providers: [WikidataService],
 })

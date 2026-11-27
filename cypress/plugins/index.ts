@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
-import { oprahWikidataId, wikidataCacheProps } from "../fixtures/wikidata";
+import { WIKIMEDIA_MOCK_PORT } from "../fixtures/wikidata";
+import { startWikimediaMock, wikimediaMockTasks } from "./wikimediaMock";
 
 const withDb = async <T>(
     fn: (db: ReturnType<MongoClient["db"]>) => Promise<T>
@@ -17,41 +18,19 @@ const withDb = async <T>(
     }
 };
 
-// Writes the cached props (WikidataCache schema) of one Wikidata id for each
-// language, so the server answers from the cache and never calls wikidata.org.
-const setWikidataCache = ({
-    wikidataId,
-    propsByLanguage,
-}: {
-    wikidataId: string;
-    propsByLanguage: Record<string, Record<string, unknown>>;
-}): Promise<null> =>
+// The server caches Wikidata answers (wikidatacaches). A spec that changes
+// what the mock answers for an item clears that item's cache first, so the
+// server asks the mock again.
+const clearWikidataCache = (wikidataId: string): Promise<null> =>
     withDb(async (db) => {
-        const cache = db.collection("wikidatacaches");
-        const now = new Date();
-        await Promise.all(
-            Object.entries(propsByLanguage).map(([language, props]) =>
-                cache.updateOne(
-                    { wikidataId, language },
-                    {
-                        $set: { props },
-                        $setOnInsert: { createdAt: now },
-                        $currentDate: { updatedAt: true },
-                    },
-                    { upsert: true }
-                )
-            )
-        );
+        await db.collection("wikidatacaches").deleteMany({ wikidataId });
         return null;
     });
 
-// Seeds the server's wikidata cache so personality pages render without the
-// server calling wikidata.org.
-const seedWikidataCache = (): Promise<null> =>
-    setWikidataCache({
-        wikidataId: oprahWikidataId,
-        propsByLanguage: wikidataCacheProps,
-    });
+const countWikidataCache = (wikidataId: string): Promise<number> =>
+    withDb((db) =>
+        db.collection("wikidatacaches").countDocuments({ wikidataId })
+    );
 
 // Inserts a personality straight into the database, for shapes the UI cannot
 // create (for example one without a Wikidata id).
@@ -90,9 +69,11 @@ const plugin = (
     on: Cypress.PluginEvents,
     config: Cypress.PluginConfigOptions
 ) => {
+    startWikimediaMock(WIKIMEDIA_MOCK_PORT);
     on("task", {
-        seedWikidataCache,
-        setWikidataCache,
+        ...wikimediaMockTasks,
+        clearWikidataCache,
+        countWikidataCache,
         seedPersonality,
         removePersonality,
     });

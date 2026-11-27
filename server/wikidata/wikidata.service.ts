@@ -1,5 +1,6 @@
 import { Model } from "mongoose";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, Optional } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { z } from "zod";
 import {
@@ -17,6 +18,16 @@ const WIKIMEDIA_HEADERS = {
     "User-Agent":
         "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
 };
+
+/**
+ * Default Wikimedia endpoints. `wikidata.api_url` and
+ * `wikidata.commons_api_url` in config.yaml override them; the e2e config
+ * points both at the mock server Cypress starts
+ * (`cypress/plugins/wikimediaMock.ts`).
+ */
+export const DEFAULT_WIKIDATA_API_URL = "https://www.wikidata.org/w/api.php";
+export const DEFAULT_COMMONS_API_URL =
+    "https://commons.wikimedia.org/w/api.php";
 
 /**
  * Wikimedia can answer slowly or not at all. A personality page must not
@@ -104,10 +115,27 @@ interface WikibaseSearchResult {
 
 @Injectable()
 export class WikidataService {
+    private readonly logger = new Logger(WikidataService.name);
+
     constructor(
         @InjectModel(WikidataCache.name)
-        private wikidataCache: Model<WikidataCacheDocument>
+        private wikidataCache: Model<WikidataCacheDocument>,
+        @Optional() private readonly configService?: ConfigService
     ) {}
+
+    private get wikidataApiUrl(): string {
+        return (
+            this.configService?.get<string>("wikidata.api_url") ||
+            DEFAULT_WIKIDATA_API_URL
+        );
+    }
+
+    private get commonsApiUrl(): string {
+        return (
+            this.configService?.get<string>("wikidata.commons_api_url") ||
+            DEFAULT_COMMONS_API_URL
+        );
+    }
 
     /**
      * Fetches Wikidata properties from cache or API
@@ -154,15 +182,12 @@ export class WikidataService {
     async requestProperties(
         params: WikidataParams
     ): Promise<WikidataProperties> {
-        const data = await this.wikimediaGet(
-            "https://www.wikidata.org/w/api.php",
-            {
-                action: "wbgetentities",
-                ids: params.wikidataId,
-                format: "json",
-                formatversion: "2",
-            }
-        );
+        const data = await this.wikimediaGet(this.wikidataApiUrl, {
+            action: "wbgetentities",
+            ids: params.wikidataId,
+            format: "json",
+            formatversion: "2",
+        });
         const parsed = WbGetEntitiesResponseSchema.safeParse(data);
         if (!parsed.success) {
             throw new WikidataUnavailableError(
@@ -340,54 +365,61 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(
+    async queryWikibaseEntities(
         query: string,
         language: string = "en",
         includeAliases: boolean = true
     ): Promise<WikibaseEntity[]> {
-        const params = {
-            action: "wbsearchentities",
-            search: query,
-            format: "json",
-            errorformat: "plaintext",
-            uselang: language,
-            language,
-            type: "item",
-            origin: "*",
-        };
-
-        return axios
-            .get(`https://www.wikidata.org/w/api.php`, {
-                params,
-                headers: WIKIMEDIA_HEADERS,
-            })
-            .then((response: any) => {
-                const { search }: { search: WikibaseSearchResult[] } =
-                    response && response.data;
-
-                return search.flatMap((searchResult: WikibaseSearchResult) => {
-                    if (!searchResult.label) {
-                        return [];
-                    }
-
-                    const result: WikibaseEntity = {
-                        name: searchResult.label,
-                        description: searchResult.description,
-                        wikidata: searchResult.id,
-                    };
-
-                    if (includeAliases) {
-                        const aliases = searchResult.aliases || [];
-                        const matchedAlias = aliases.find((alias) =>
-                            alias.toLowerCase().includes(query.toLowerCase())
-                        );
-                        result.aliases = aliases;
-                        result.matchedAlias = matchedAlias || null;
-                    }
-
-                    return [result];
-                });
+        // Suggestions are optional: when Wikidata fails (an HTTP error, a
+        // rate-limit page or an error object), the search still answers from
+        // our database, with no suggestions.
+        let data: any;
+        try {
+            data = await this.wikimediaGet(this.wikidataApiUrl, {
+                action: "wbsearchentities",
+                search: query,
+                format: "json",
+                errorformat: "plaintext",
+                uselang: language,
+                language,
+                type: "item",
+                origin: "*",
             });
+        } catch (error) {
+            this.logger.warn(
+                `Wikidata search failed for "${query}": ${
+                    error instanceof Error ? error.message : String(error)
+                }`
+            );
+            return [];
+        }
+
+        const search: WikibaseSearchResult[] = Array.isArray(data?.search)
+            ? data.search
+            : [];
+
+        return search.flatMap((searchResult: WikibaseSearchResult) => {
+            if (!searchResult.label) {
+                return [];
+            }
+
+            const result: WikibaseEntity = {
+                name: searchResult.label,
+                description: searchResult.description,
+                wikidata: searchResult.id,
+            };
+
+            if (includeAliases) {
+                const aliases = searchResult.aliases || [];
+                const matchedAlias = aliases.find((alias) =>
+                    alias.toLowerCase().includes(query.toLowerCase())
+                );
+                result.aliases = aliases;
+                result.matchedAlias = matchedAlias || null;
+            }
+
+            return [result];
+        });
     }
 
     /**
@@ -402,18 +434,15 @@ export class WikidataService {
         imageTitle: string,
         imageSize: number
     ): Promise<string | undefined> {
-        const data: any = await this.wikimediaGet(
-            "https://commons.wikimedia.org/w/api.php",
-            {
-                action: "query",
-                titles: `File:${imageTitle}`,
-                prop: "imageinfo",
-                iiprop: "url",
-                iiurlwidth: imageSize,
-                format: "json",
-                formatversion: "2",
-            }
-        );
+        const data: any = await this.wikimediaGet(this.commonsApiUrl, {
+            action: "query",
+            titles: `File:${imageTitle}`,
+            prop: "imageinfo",
+            iiprop: "url",
+            iiurlwidth: imageSize,
+            format: "json",
+            formatversion: "2",
+        });
         const thumburl = data?.query?.pages?.[0]?.imageinfo?.[0]?.thumburl;
         return typeof thumburl === "string" ? thumburl : undefined;
     }
