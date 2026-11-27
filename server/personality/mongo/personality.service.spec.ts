@@ -296,3 +296,147 @@ describe("MongoPersonalityService.findOrCreatePersonality", () => {
         expect(created).toMatchObject({ name: "Ana", wikidata: "Q1" });
     });
 });
+
+describe("MongoPersonalityService.update", () => {
+    const storedDoc = () => ({
+        _id: "p1",
+        name: "Geraldo Castro",
+        slug: "geraldo-castro",
+        description: "Radialista",
+        wikidata: "Q142068353",
+        isHidden: false,
+    });
+
+    function makeUpdateService(checkItem?: (...a: any[]) => Promise<any>) {
+        const stored = storedDoc();
+        const model: any = {
+            findOne: vi.fn((filter: any) => ({
+                lean: async () =>
+                    filter._id === "p1" && filter.isDeleted === false
+                        ? { ...stored }
+                        : null,
+            })),
+            findOneAndUpdate: vi.fn((_f: any, update: any) => ({
+                lean: async () => ({ ...stored, ...update.$set }),
+            })),
+        };
+        // loadCreatableItem's in-use lookup (no .lean())
+        const inUseLookup = vi.fn(async () => null);
+        const history = {
+            getHistoryParams: vi.fn((...args: any[]) => args),
+            createHistory: vi.fn(async () => undefined),
+        };
+        const wikidata = {
+            checkItem: vi.fn(
+                checkItem ?? (async () => ({ status: "ok", props: {} }))
+            ),
+            clearCache: vi.fn(async () => undefined),
+            fetchProperties: vi.fn(async () => ({ twitterAccounts: [] })),
+        };
+        const service = new MongoPersonalityService(
+            { params: {}, query: {}, user: { _id: "admin" } } as any,
+            model,
+            { agreggateClassification: async () => [] } as any,
+            history as any,
+            wikidata as any,
+            new UtilService()
+        );
+        (service as any).findActiveByWikidata = inUseLookup;
+        return { service, model, history, wikidata };
+    }
+
+    it("writes the submitted name and keeps the slug", async () => {
+        const { service, model } = makeUpdateService();
+
+        await service.update("p1", { name: "Geraldo Castro Silva" });
+
+        const update = model.findOneAndUpdate.mock.calls[0][1];
+        expect(update.$set).toEqual({ name: "Geraldo Castro Silva" });
+        expect(update.$set.slug).toBeUndefined();
+    });
+
+    it("records history with stored before/after values", async () => {
+        const { service, history } = makeUpdateService();
+
+        await service.update("p1", { description: "Radialista da Timbira FM" });
+
+        const [, , , , after, before] = history.getHistoryParams.mock.calls[0];
+        expect(before).toMatchObject({ description: "Radialista" });
+        expect(after).toMatchObject({
+            description: "Radialista da Timbira FM",
+        });
+    });
+
+    it("validates a relink and clears both cache entries", async () => {
+        const { service, wikidata } = makeUpdateService();
+
+        await service.update("p1", { wikidata: "Q2" });
+
+        expect(wikidata.checkItem).toHaveBeenCalledWith("Q2", "pt", {
+            fresh: true,
+        });
+        expect(wikidata.clearCache).toHaveBeenCalledWith("Q142068353");
+        expect(wikidata.clearCache).toHaveBeenCalledWith("Q2");
+    });
+
+    it("rejects a relink to a disallowed type", async () => {
+        const { service, model } = makeUpdateService(async () => ({
+            status: "not_allowed_type",
+            props: {},
+        }));
+
+        await expect(
+            service.update("p1", { wikidata: "Q101352" })
+        ).rejects.toMatchObject({ status: 400 });
+        expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it("404s for an unknown personality", async () => {
+        const { service } = makeUpdateService();
+
+        await expect(
+            service.update("nope", { name: "X" })
+        ).rejects.toMatchObject({ status: 404 });
+    });
+});
+
+describe("MongoPersonalityService.getStored", () => {
+    it("returns the stored fields and the Wikidata status", async () => {
+        const model: any = {
+            findOne: vi.fn(() => ({
+                lean: async () => ({
+                    _id: "p1",
+                    name: "Geraldo Castro",
+                    description: "Radialista",
+                    wikidata: "Q142068353",
+                }),
+            })),
+        };
+        const wikidata = {
+            checkItem: vi.fn(async () => ({
+                status: "deleted",
+                props: { twitterAccounts: [] },
+            })),
+        };
+        const service = new MongoPersonalityService(
+            { params: {}, query: {} } as any,
+            model,
+            {} as any,
+            {} as any,
+            wikidata as any,
+            new UtilService()
+        );
+
+        const result = await service.getStored("p1");
+
+        expect(wikidata.checkItem).toHaveBeenCalledWith("Q142068353", "pt");
+        expect(result).toEqual({
+            _id: "p1",
+            name: "Geraldo Castro",
+            description: "Radialista",
+            wikidata: "Q142068353",
+            wikidataStatus: "deleted",
+            wikidataProvides: { name: false, description: false },
+        });
+    });
+});
