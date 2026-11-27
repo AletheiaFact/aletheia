@@ -11,5 +11,9 @@
     "wikidata": "ID Wikidata",
     "saveButton": "Salvar personalidade",
     "updateButton": "Atualizar personalidade",
-    "clearButton": "Limpar campos"
+    "clearButton": "Limpar campos",
+    "error_deleted": "Esse item do Wikidata foi excluído",
+    "error_not_allowed_type": "Esse item do Wikidata não é uma pessoa, empresa, jornal ou governo",
+    "error_no_label": "Esse item do Wikidata não tem nome em português nem em inglês",
+    "error_in_use": "Outra personalidade já usa esse item do Wikidata"
 }

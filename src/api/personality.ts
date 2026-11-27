@@ -104,13 +104,19 @@ const createPersonality = (
                 // TODO: use Sentry instead
                 // console.log(err);
             }
-            const { data } = response;
+            const message = response?.data?.message;
+            const reason = message?.reason;
             MessageManager.showMessage(
                 "error",
-                data && data.message
-                    ? data.message
+                reason
+                    ? t(`personalityCreateForm:error_${reason}`, {
+                          defaultValue: t("personalityCreateForm:errorMessage"),
+                      })
+                    : typeof message === "string" && message
+                    ? message
                     : t("personalityCreateForm:errorMessage")
             );
+            throw err;
         });
 };
 

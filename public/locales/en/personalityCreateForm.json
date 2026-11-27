@@ -11,5 +11,9 @@
     "wikidata": "Wikidata ID",
     "saveButton": "Save personality",
     "updateButton": "Update personality",
-    "clearButton": "Clear fields"
+    "clearButton": "Clear fields",
+    "error_deleted": "That Wikidata item was deleted",
+    "error_not_allowed_type": "That Wikidata item is not a person, company, newspaper or government",
+    "error_no_label": "That Wikidata item has no name in Portuguese or English",
+    "error_in_use": "Another personality already uses that Wikidata item"
 }

@@ -20,12 +20,14 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
     });
     const [saving, setSaving] = useState(false);
     const [loadFailed, setLoadFailed] = useState(false);
+    const [saveReason, setSaveReason] = useState<string | null>(null);
 
     useEffect(() => {
         if (!open) return;
         let cancelled = false;
         setStored(null);
         setLoadFailed(false);
+        setSaveReason(null);
         personalityApi
             .getStoredPersonality(personalityId)
             .then((data) => {
@@ -71,10 +73,12 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
         }
         if (Object.keys(body).length === 0) return onClose();
         setSaving(true);
+        setSaveReason(null);
         try {
             await personalityApi.updatePersonality(personalityId, body, t);
             window.location.reload();
-        } catch {
+        } catch (err) {
+            setSaveReason(err?.response?.data?.message?.reason ?? null);
             setSaving(false);
         }
     };
@@ -146,13 +150,21 @@ const PersonalityEditDrawer = ({ personalityId, open, onClose }: Props) => {
                 <TextField
                     label={t("personality:editWikidata")}
                     value={form.wikidata}
-                    onChange={(e) =>
-                        setForm({ ...form, wikidata: e.target.value.trim() })
-                    }
-                    error={wikidataRemoved}
+                    onChange={(e) => {
+                        setSaveReason(null);
+                        setForm({
+                            ...form,
+                            wikidata: e.target.value.trim(),
+                        });
+                    }}
+                    error={wikidataRemoved || !!saveReason}
                     helperText={
                         wikidataRemoved
                             ? t("personality:editWikidataCannotRemove")
+                            : saveReason
+                            ? t(`personality:editError_${saveReason}`, {
+                                  defaultValue: t("personality:editError"),
+                              })
                             : t("personality:editWikidataHint")
                     }
                     inputProps={{ "data-cy": "personalityEditWikidata" }}

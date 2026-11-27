@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormControl, FormLabel, Grid } from '@mui/material';
+import { FormControl, FormLabel, Grid } from "@mui/material";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
 import { useTranslation } from "next-i18next";
@@ -37,10 +37,17 @@ const PersonalityCreateSearch = ({
         setIsLoading(true);
         try {
             setIsFormSubmitted(!isFormSubmitted);
-            const personalityCreated = await api.createPersonality(
-                personality,
-                t
-            );
+            let personalityCreated;
+            try {
+                personalityCreated = await api.createPersonality(
+                    personality,
+                    t
+                );
+            } catch (e) {
+                // The API layer already showed the error toast.
+                setIsFormSubmitted(false);
+                return;
+            }
             const { slug } = personalityCreated;
             const newPersonality = {
                 ...personality,
@@ -58,7 +65,8 @@ const PersonalityCreateSearch = ({
             } else {
                 router
                     .push(
-                        `/${nameSpace === NameSpaceEnum.Main ? "" : nameSpace
+                        `/${
+                            nameSpace === NameSpaceEnum.Main ? "" : nameSpace
                         }${path}`
                     )
                     .catch((e) => e);
@@ -120,9 +128,7 @@ const PersonalityCreateSearch = ({
                         marginBottom: "5px",
                     }}
                 >
-                    <Label>
-                        {t("personalityCreateForm:name")}
-                    </Label>
+                    <Label>{t("personalityCreateForm:name")}</Label>
                 </FormLabel>
                 <InputSearch
                     placeholder={t("header:search_placeholder")}
