@@ -37,10 +37,6 @@ import { toError } from "../../util/error-handling";
 @Injectable({ scope: Scope.REQUEST })
 export class MongoPersonalityService {
     private readonly logger = new Logger("PersonalityService");
-    private readonly optionsToUpdate = {
-        new: true,
-        upsert: true,
-    };
 
     constructor(
         @Inject(REQUEST) private readonly req: BaseRequest,
@@ -53,11 +49,18 @@ export class MongoPersonalityService {
         private readonly util: UtilService
     ) {}
 
-    /** The active personality that holds a Wikidata id, if any. */
-    protected findActiveByWikidata(wikidataId: string) {
+    /**
+     * The personality that holds a Wikidata id, if any. The unique sparse
+     * index on `wikidata` also covers soft-deleted rows, so a relink must
+     * look at them too (`includeDeleted`).
+     */
+    protected findHolderOfWikidata(
+        wikidataId: string,
+        includeDeleted: boolean
+    ) {
         return this.PersonalityModel.findOne({
             wikidata: wikidataId,
-            isDeleted: false,
+            ...(includeDeleted ? {} : { isDeleted: false }),
         });
     }
 
@@ -89,7 +92,13 @@ export class MongoPersonalityService {
         }
         let status: WikidataCreationStatus = checked.status;
         if (status === "ok") {
-            const inUse = await this.findActiveByWikidata(wikidataId);
+            // Relink (excludePersonalityId set): a soft-deleted holder blocks
+            // too. Creation: only active holders block; a deleted holder is
+            // restored by create() on the admin path.
+            const inUse = await this.findHolderOfWikidata(
+                wikidataId,
+                excludePersonalityId !== undefined
+            );
             if (inUse && String(inUse._id) !== excludePersonalityId) {
                 status = "in_use";
             }
@@ -185,13 +194,23 @@ export class MongoPersonalityService {
 
     /**
      * Creates a personality from a Wikidata item. Name and description come
-     * from Wikidata, never from the client. A soft-deleted personality with
-     * the same item is restored instead.
+     * from Wikidata, never from the client. On the admin path a soft-deleted
+     * personality with the same item is restored instead; the AI path passes
+     * `restoreDeleted: false` and gets a 409 so it never undoes an admin
+     * deletion.
      */
-    async create({ wikidata }: { wikidata: string }) {
+    async create(
+        { wikidata }: { wikidata: string },
+        options: { restoreDeleted?: boolean } = { restoreDeleted: true }
+    ): Promise<PersonalityDocument> {
         const deleted = await this.getDeletedPersonalityByWikidata(wikidata);
         if (deleted) {
-            return deleted.restore();
+            if (!options.restoreDeleted) {
+                throw wikidataCreationError("in_use");
+            }
+            // Intentionally restores without a Wikidata check: reads tolerate
+            // a dead item and the stored data is kept.
+            return (await deleted.restore()) as unknown as PersonalityDocument;
         }
 
         const props = await this.loadCreatableItem(wikidata);
@@ -204,6 +223,8 @@ export class MongoPersonalityService {
             isHidden: false,
         });
 
+        const saved = await newPersonality.save();
+
         const history = this.historyService.getHistoryParams(
             newPersonality._id,
             TargetModel.Personality,
@@ -213,7 +234,7 @@ export class MongoPersonalityService {
         );
         await this.historyService.createHistory(history as any);
 
-        return newPersonality.save();
+        return saved;
     }
 
     getDeletedPersonalityByWikidata(wikidata: string) {
@@ -279,9 +300,10 @@ export class MongoPersonalityService {
 
         if (!wikidataId) return null;
         try {
-            return (await this.create({
-                wikidata: wikidataId,
-            })) as unknown as PersonalityDocument;
+            return await this.create(
+                { wikidata: wikidataId },
+                { restoreDeleted: false }
+            );
         } catch (error) {
             this.logger.warn(
                 `Not creating personality "${
@@ -555,6 +577,10 @@ export class MongoPersonalityService {
             }
         }
 
+        if (Object.keys(changes).length === 0) {
+            return this.postProcess(stored, this.req.language || "pt");
+        }
+
         if (changes.wikidata) {
             await this.loadCreatableItem(changes.wikidata, String(stored._id));
         }
@@ -564,6 +590,11 @@ export class MongoPersonalityService {
             { $set: changes },
             { new: true }
         ).lean();
+        if (!updated) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
 
         if (changes.wikidata) {
             if (stored.wikidata) {

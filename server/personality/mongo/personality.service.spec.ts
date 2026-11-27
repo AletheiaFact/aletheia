@@ -151,7 +151,7 @@ describe("MongoPersonalityService.create", () => {
             wikidata as any,
             new UtilService()
         );
-        return { service, saved, wikidata };
+        return { service, saved, wikidata, model };
     }
 
     it("creates with the name and description from Wikidata", async () => {
@@ -171,6 +171,24 @@ describe("MongoPersonalityService.create", () => {
             slug: "rosane-de-oliveira",
             wikidata: "Q142067648",
         });
+    });
+
+    it("restores a soft-deleted personality without checking Wikidata", async () => {
+        const restored: any = { _id: "d1" };
+        restored.restore = vi.fn(async () => restored);
+        const { service, model, wikidata } = makeCreateService(async () => ({
+            status: "ok",
+            props: { name: "X" },
+        }));
+        model.findOne = vi.fn(async (filter: any) =>
+            filter.isDeleted === true ? restored : null
+        );
+
+        await expect(service.create({ wikidata: "Q5" })).resolves.toBe(
+            restored
+        );
+        expect(restored.restore).toHaveBeenCalled();
+        expect(wikidata.checkItem).not.toHaveBeenCalled();
     });
 
     it("rejects a deleted item", async () => {
@@ -237,7 +255,7 @@ describe("MongoPersonalityService.findOrCreatePersonality", () => {
             } as any,
             new UtilService()
         );
-        return { service };
+        return { service, model };
     }
 
     it("returns null when the AI gives no Wikidata id", async () => {
@@ -285,15 +303,76 @@ describe("MongoPersonalityService.findOrCreatePersonality", () => {
         ).resolves.toBe(existing);
     });
 
-    it("creates from a valid item", async () => {
-        const { service } = makeFindService({});
+    it("creates from a valid item using the Wikidata name", async () => {
+        const { service } = makeFindService({
+            checkItem: async () => ({
+                status: "ok",
+                props: { name: "Ana Silva" },
+            }),
+        });
 
         const created = await service.findOrCreatePersonality({
+            name: "Ana S.",
+            wikidata: { id: "Q1" },
+        });
+
+        expect(created).toMatchObject({ name: "Ana Silva", wikidata: "Q1" });
+    });
+
+    it("returns null when a soft-deleted personality holds the id", async () => {
+        const deleted: any = { _id: "d1", restore: vi.fn() };
+        const { service, model } = makeFindService({});
+        model.findOne = vi.fn(async (filter: any) =>
+            filter.isDeleted === true && filter.wikidata ? deleted : null
+        );
+
+        await expect(
+            service.findOrCreatePersonality({
+                name: "Ana",
+                wikidata: { id: "Q1" },
+            })
+        ).resolves.toBeNull();
+        expect(deleted.restore).not.toHaveBeenCalled();
+    });
+
+    it("attaches the AI id to a slug match when the item is usable", async () => {
+        const existing: any = {
+            _id: "p1",
+            slug: "ana",
+            wikidata: undefined,
+            save: vi.fn(async () => undefined),
+        };
+        const { service } = makeFindService({ bySlug: existing });
+
+        await service.findOrCreatePersonality({
             name: "Ana",
             wikidata: { id: "Q1" },
         });
 
-        expect(created).toMatchObject({ name: "Ana", wikidata: "Q1" });
+        expect(existing.wikidata).toBe("Q1");
+        expect(existing.save).toHaveBeenCalled();
+    });
+
+    it("leaves a slug match unattached when the item is deleted", async () => {
+        const existing: any = {
+            _id: "p1",
+            slug: "ana",
+            wikidata: undefined,
+            save: vi.fn(async () => undefined),
+        };
+        const { service } = makeFindService({
+            bySlug: existing,
+            checkItem: async () => ({ status: "deleted", props: {} }),
+        });
+
+        const result = await service.findOrCreatePersonality({
+            name: "Ana",
+            wikidata: { id: "Q1" },
+        });
+
+        expect(result).toBe(existing);
+        expect(existing.wikidata).toBeUndefined();
+        expect(existing.save).not.toHaveBeenCalled();
     });
 });
 
@@ -307,7 +386,10 @@ describe("MongoPersonalityService.update", () => {
         isHidden: false,
     });
 
-    function makeUpdateService(checkItem?: (...a: any[]) => Promise<any>) {
+    function makeUpdateService(
+        checkItem?: (...a: any[]) => Promise<any>,
+        holder: any = null
+    ) {
         const stored = storedDoc();
         const model: any = {
             findOne: vi.fn((filter: any) => ({
@@ -321,7 +403,7 @@ describe("MongoPersonalityService.update", () => {
             })),
         };
         // loadCreatableItem's in-use lookup (no .lean())
-        const inUseLookup = vi.fn(async () => null);
+        const inUseLookup = vi.fn(async (..._a: any[]) => holder);
         const history = {
             getHistoryParams: vi.fn((...args: any[]) => args),
             createHistory: vi.fn(async () => undefined),
@@ -341,8 +423,8 @@ describe("MongoPersonalityService.update", () => {
             wikidata as any,
             new UtilService()
         );
-        (service as any).findActiveByWikidata = inUseLookup;
-        return { service, model, history, wikidata };
+        (service as any).findHolderOfWikidata = inUseLookup;
+        return { service, model, history, wikidata, inUseLookup };
     }
 
     it("writes the submitted name and keeps the slug", async () => {
@@ -389,6 +471,60 @@ describe("MongoPersonalityService.update", () => {
             service.update("p1", { wikidata: "Q101352" })
         ).rejects.toMatchObject({ status: 400 });
         expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it("rejects a relink to an id another personality holds (409)", async () => {
+        const { service, model, inUseLookup } = makeUpdateService(undefined, {
+            _id: "other",
+        });
+
+        await expect(
+            service.update("p1", { wikidata: "Q2" })
+        ).rejects.toMatchObject({ status: 409 });
+        expect(inUseLookup).toHaveBeenCalledWith("Q2", true);
+        expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it("allows a relink when the holder is the same personality", async () => {
+        const { service, model } = makeUpdateService(undefined, {
+            _id: "p1",
+        });
+
+        await service.update("p1", { wikidata: "Q2" });
+
+        expect(model.findOneAndUpdate).toHaveBeenCalled();
+    });
+
+    it("does not check or clear caches for an unchanged wikidata id", async () => {
+        const { service, wikidata } = makeUpdateService();
+
+        await service.update("p1", {
+            name: "Geraldo C.",
+            wikidata: "Q142068353",
+        });
+
+        expect(wikidata.checkItem).not.toHaveBeenCalled();
+        expect(wikidata.clearCache).not.toHaveBeenCalled();
+    });
+
+    it("writes nothing and records no history when nothing changed", async () => {
+        const { service, model, history } = makeUpdateService();
+
+        await service.update("p1", { name: "Geraldo Castro" });
+
+        expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+        expect(history.createHistory).not.toHaveBeenCalled();
+    });
+
+    it("404s when the personality is deleted before the write", async () => {
+        const { service, model, history, wikidata } = makeUpdateService();
+        model.findOneAndUpdate = vi.fn(() => ({ lean: async () => null }));
+
+        await expect(
+            service.update("p1", { wikidata: "Q2" })
+        ).rejects.toMatchObject({ status: 404 });
+        expect(wikidata.clearCache).not.toHaveBeenCalled();
+        expect(history.createHistory).not.toHaveBeenCalled();
     });
 
     it("404s for an unknown personality", async () => {
