@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import personality from "../../fixtures/personality";
+import locators from "../../support/locators";
 import { oprah, oprahWikidataId } from "../../fixtures/wikidata";
 
 /**
@@ -82,6 +83,36 @@ describe("Admin edits a personality", () => {
 });
 
 describe("Fact-checker resolves an unmatched name", () => {
+    it("links the name to an existing personality from the drawer", () => {
+        cy.login();
+        cy.task<string>("seedUnmatchedPersonality", "Oprah W.").then((id) => {
+            // seedUnmatchedPersonality picks a request without telling which
+            // one; read its content to find its card on the board.
+            cy.request(`/api/verification-request/${id}`)
+                .its("body.content")
+                .then((content: string) => {
+                    const snippet = content.split("\n")[0].trim().slice(0, 30);
+                    cy.visit("/verification-request");
+                    cy.contains(
+                        "[data-cy^=testVerificationRequestCardContent]",
+                        snippet
+                    ).click();
+                });
+        });
+
+        const row = "[data-cy=unmatchedRow][data-name='Oprah W.']";
+        cy.get(row).should("exist");
+        cy.get(`${row} [data-cy=unmatchedLink]`).click();
+        cy.get(
+            `.MuiDialog-root ${locators.personality.INPUT_SEARCH_PERSONALITY}`
+        ).type("Oprah");
+        // The stored personality is listed before Wikidata suggestions.
+        cy.get(`.MuiDialog-root ${locators.personality.SELECT_PERSONALITY}`)
+            .first()
+            .click();
+        cy.get(row).should("not.exist");
+    });
+
     it("dismisses the name", () => {
         cy.login();
         cy.task<string>("seedUnmatchedPersonality", "Oprah W.").then((id) => {
