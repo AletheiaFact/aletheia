@@ -193,10 +193,30 @@ export class WikidataService {
         status: "ok" | "deleted" | "not_allowed_type";
         props: WikidataProperties;
     }> {
+        let props: WikidataProperties;
         if (options.fresh) {
-            await this.clearCache(wikidataId);
+            // Fetch first: a failed request throws and leaves the cache as it
+            // was. On success this language's entry is replaced, and the other
+            // languages are dropped so none keeps an older answer.
+            const params = WikidataParamsSchema.parse({
+                wikidataId,
+                language,
+            }) as WikidataParams;
+            props = await this.requestProperties(params);
+            await this.wikidataCache.findOneAndUpdate(
+                { wikidataId: params.wikidataId, language: params.language },
+                { $set: { ...params, props } },
+                { upsert: true }
+            );
+            await this.wikidataCache
+                .deleteMany({
+                    wikidataId: params.wikidataId,
+                    language: { $ne: params.language },
+                })
+                .exec();
+        } else {
+            props = await this.fetchProperties({ wikidataId, language });
         }
-        const props = await this.fetchProperties({ wikidataId, language });
         if (props.isMissing) {
             return { status: "deleted", props };
         }

@@ -386,6 +386,16 @@ describe.each(backends)(
             ).resolves.toBeNull();
         });
 
+        it("findOrCreatePersonality treats a malformed AI id as no id", async () => {
+            await expect(
+                service.findOrCreatePersonality({
+                    name: "Garbled",
+                    wikidata: { id: "not-a-qid" },
+                })
+            ).resolves.toBeNull();
+            expect(await service.count()).toBe(0);
+        });
+
         it("findOrCreatePersonality returns null, not a restore, when a soft-deleted personality holds the id", async () => {
             const first = await service.create({ wikidata: "Q7259" });
             await service.delete(idOf(first));

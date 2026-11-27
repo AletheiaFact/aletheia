@@ -53,6 +53,15 @@ describe("splitResolvedPersonalities", () => {
         });
     });
 
+    it("drops a candidate that is not a Wikidata id", () => {
+        expect(
+            splitResolvedPersonalities([
+                { name: "Bia", wikidataId: "banana", personality: null },
+                { name: "Caio", wikidataId: "q7", personality: null },
+            ]).unmatched
+        ).toEqual([{ name: "Bia" }, { name: "Caio" }]);
+    });
+
     it("trims names, skips blank ones and truncates to 200 characters", () => {
         const long = "x".repeat(250);
         const result = splitResolvedPersonalities([

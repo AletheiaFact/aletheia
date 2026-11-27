@@ -7,7 +7,7 @@ import {
     InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, isValidObjectId } from "mongoose";
 import {
     defaultDescription,
     deriveSlug,
@@ -18,6 +18,7 @@ import {
     diffEditableFields,
     storedPersonalityView,
     WikidataCreationStatus,
+    usableAiWikidataId,
 } from "../shared/personality.rules";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../../wikidata/wikidata.service";
@@ -228,7 +229,16 @@ export class MongoPersonalityService {
             isHidden: false,
         });
 
-        const saved = await newPersonality.save();
+        let saved: PersonalityDocument;
+        try {
+            saved = await newPersonality.save();
+        } catch (error) {
+            // Lost a race for the Wikidata id (unique index).
+            if ((error as { code?: unknown })?.code === 11000) {
+                throw wikidataCreationError("in_use");
+            }
+            throw error;
+        }
 
         const history = this.historyService.getHistoryParams(
             newPersonality._id,
@@ -263,7 +273,7 @@ export class MongoPersonalityService {
             description?: string;
         };
     }): Promise<PersonalityDocument | null> {
-        const wikidataId = personalityData.wikidata?.id || null;
+        const wikidataId = usableAiWikidataId(personalityData.wikidata?.id);
 
         if (wikidataId) {
             const existing = await this.PersonalityModel.findOne({
@@ -580,6 +590,11 @@ export class MongoPersonalityService {
         personalityId: string,
         body: { name?: string; description?: string; wikidata?: string }
     ) {
+        if (!isValidObjectId(personalityId)) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
         const stored: any = await this.PersonalityModel.findOne({
             _id: personalityId,
             isDeleted: false,
@@ -600,11 +615,20 @@ export class MongoPersonalityService {
             await this.loadCreatableItem(changes.wikidata, String(stored._id));
         }
 
-        const updated: any = await this.PersonalityModel.findOneAndUpdate(
-            { _id: personalityId, isDeleted: false },
-            { $set: changes },
-            { new: true }
-        ).lean();
+        let updated: any;
+        try {
+            updated = await this.PersonalityModel.findOneAndUpdate(
+                { _id: personalityId, isDeleted: false },
+                { $set: changes },
+                { new: true }
+            ).lean();
+        } catch (error) {
+            // Lost a race for the Wikidata id (unique index).
+            if ((error as { code?: unknown })?.code === 11000) {
+                throw wikidataCreationError("in_use");
+            }
+            throw error;
+        }
         if (!updated) {
             throw new NotFoundException(
                 `Personality not found: ${personalityId}`
@@ -639,6 +663,11 @@ export class MongoPersonalityService {
      * provides, so the form never shows the Wikidata-merged values.
      */
     async getStored(personalityId: string) {
+        if (!isValidObjectId(personalityId)) {
+            throw new NotFoundException(
+                `Personality not found: ${personalityId}`
+            );
+        }
         const stored: any = await this.PersonalityModel.findOne({
             _id: personalityId,
             isDeleted: false,

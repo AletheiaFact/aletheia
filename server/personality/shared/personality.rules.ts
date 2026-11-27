@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import slugify from "slugify";
 import { DuplicateKeyError } from "../../database/errors";
+import { wikidataId as wikidataIdSchema } from "../../../lib/schemas";
 
 /**
  * Backend-agnostic personality business rules, shared by the Mongo and
@@ -205,4 +206,13 @@ export function storedPersonalityView(
             description: provides && !!check.props.description,
         },
     };
+}
+
+/**
+ * The Wikidata id the AI gave, or null when it is missing or malformed. A
+ * malformed id is treated as no id so it never reaches Wikidata or a write.
+ */
+export function usableAiWikidataId(id: unknown): string | null {
+    const parsed = wikidataIdSchema.safeParse(id);
+    return parsed.success ? parsed.data : null;
 }

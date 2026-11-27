@@ -26,6 +26,7 @@ import {
     isExpectedCreationFailure,
     diffEditableFields,
     storedPersonalityView,
+    usableAiWikidataId,
 } from "../shared/personality.rules";
 import type { WikidataCreationStatus } from "../shared/personality.rules";
 import { personality } from "./schema/personality.schema";
@@ -262,7 +263,7 @@ export class PostgresPersonalityService implements IPersonalityService {
         name: string;
         wikidata?: { id?: string; label?: string; description?: string };
     }): Promise<IPersonality | null> {
-        const wikidataId = data.wikidata?.id || null;
+        const wikidataId = usableAiWikidataId(data.wikidata?.id);
         if (wikidataId) {
             const [existing] = await this.db
                 .select()

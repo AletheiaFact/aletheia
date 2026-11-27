@@ -1,3 +1,5 @@
+import { wikidataId } from "../../../lib/schemas";
+
 /**
  * Names the AI identified in a verification request but could not match to a
  * valid Wikidata item. Personalities are only created from Wikidata, so these
@@ -60,9 +62,10 @@ export function splitResolvedPersonalities<P>(
             matched.push(r.personality);
             if (name) matchedNames.push(name);
         } else if (name) {
+            const candidate = wikidataId.safeParse(r.wikidataId).data;
             unmatched.push({
                 name,
-                ...(r.wikidataId && { wikidataCandidate: r.wikidataId }),
+                ...(candidate && { wikidataCandidate: candidate }),
             });
         }
     }

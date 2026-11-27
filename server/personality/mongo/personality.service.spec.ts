@@ -154,6 +154,29 @@ describe("MongoPersonalityService.create", () => {
         return { service, saved, wikidata, model };
     }
 
+    it("turns a duplicate-key error on save into a 409 in_use", async () => {
+        const { service, model } = makeCreateService(async () => ({
+            status: "ok",
+            props: { name: "Rosane de Oliveira" },
+        }));
+        const ctor = model;
+        const raced: any = function (this: any, doc: any) {
+            Object.assign(this, doc, { _id: "x" });
+            this.save = async () => {
+                throw { code: 11000 };
+            };
+        };
+        raced.findOne = ctor.findOne;
+        (service as any).PersonalityModel = raced;
+
+        await expect(
+            service.create({ wikidata: "Q142067648" })
+        ).rejects.toMatchObject({
+            status: 409,
+            response: { reason: "in_use" },
+        });
+    });
+
     it("creates with the name and description from Wikidata", async () => {
         const { service, saved, wikidata } = makeCreateService(async () => ({
             status: "ok",
@@ -266,6 +289,25 @@ describe("MongoPersonalityService.findOrCreatePersonality", () => {
         ).resolves.toBeNull();
     });
 
+    it("treats a malformed AI id as no id", async () => {
+        const checkItem = vi.fn(async () => ({
+            status: "ok",
+            props: { name: "Ana" },
+        }));
+        const { service, model } = makeFindService({ checkItem });
+
+        await expect(
+            service.findOrCreatePersonality({
+                name: "Ana",
+                wikidata: { id: "not-an-id" },
+            })
+        ).resolves.toBeNull();
+        expect(checkItem).not.toHaveBeenCalled();
+        expect(model.findOne).not.toHaveBeenCalledWith(
+            expect.objectContaining({ wikidata: expect.anything() })
+        );
+    });
+
     it("returns null when the item is deleted", async () => {
         const { service } = makeFindService({
             checkItem: async () => ({ status: "deleted", props: {} }),
@@ -376,9 +418,11 @@ describe("MongoPersonalityService.findOrCreatePersonality", () => {
     });
 });
 
+const P1 = "64b0000000000000000000a1";
+
 describe("MongoPersonalityService.update", () => {
     const storedDoc = () => ({
-        _id: "p1",
+        _id: P1,
         name: "Geraldo Castro",
         slug: "geraldo-castro",
         description: "Radialista",
@@ -394,7 +438,7 @@ describe("MongoPersonalityService.update", () => {
         const model: any = {
             findOne: vi.fn((filter: any) => ({
                 lean: async () =>
-                    filter._id === "p1" && filter.isDeleted === false
+                    filter._id === P1 && filter.isDeleted === false
                         ? { ...stored }
                         : null,
             })),
@@ -431,7 +475,7 @@ describe("MongoPersonalityService.update", () => {
     it("writes the submitted name and keeps the slug", async () => {
         const { service, model } = makeUpdateService();
 
-        await service.update("p1", { name: "Geraldo Castro Silva" });
+        await service.update(P1, { name: "Geraldo Castro Silva" });
 
         const update = model.findOneAndUpdate.mock.calls[0][1];
         expect(update.$set).toEqual({ name: "Geraldo Castro Silva" });
@@ -441,7 +485,7 @@ describe("MongoPersonalityService.update", () => {
     it("records history with stored before/after values", async () => {
         const { service, history } = makeUpdateService();
 
-        await service.update("p1", { description: "Radialista da Timbira FM" });
+        await service.update(P1, { description: "Radialista da Timbira FM" });
 
         const [, , , , after, before] = history.getHistoryParams.mock.calls[0];
         expect(before).toMatchObject({ description: "Radialista" });
@@ -453,7 +497,7 @@ describe("MongoPersonalityService.update", () => {
     it("validates a relink and clears both cache entries", async () => {
         const { service, wikidata } = makeUpdateService();
 
-        await service.update("p1", { wikidata: "Q2" });
+        await service.update(P1, { wikidata: "Q2" });
 
         expect(wikidata.checkItem).toHaveBeenCalledWith("Q2", "pt", {
             fresh: true,
@@ -469,7 +513,7 @@ describe("MongoPersonalityService.update", () => {
         }));
 
         await expect(
-            service.update("p1", { wikidata: "Q101352" })
+            service.update(P1, { wikidata: "Q101352" })
         ).rejects.toMatchObject({ status: 400 });
         expect(model.findOneAndUpdate).not.toHaveBeenCalled();
     });
@@ -480,7 +524,7 @@ describe("MongoPersonalityService.update", () => {
         });
 
         await expect(
-            service.update("p1", { wikidata: "Q2" })
+            service.update(P1, { wikidata: "Q2" })
         ).rejects.toMatchObject({ status: 409 });
         expect(inUseLookup).toHaveBeenCalledWith("Q2", true);
         expect(model.findOneAndUpdate).not.toHaveBeenCalled();
@@ -488,10 +532,10 @@ describe("MongoPersonalityService.update", () => {
 
     it("allows a relink when the holder is the same personality", async () => {
         const { service, model } = makeUpdateService(undefined, {
-            _id: "p1",
+            _id: P1,
         });
 
-        await service.update("p1", { wikidata: "Q2" });
+        await service.update(P1, { wikidata: "Q2" });
 
         expect(model.findOneAndUpdate).toHaveBeenCalled();
     });
@@ -499,7 +543,7 @@ describe("MongoPersonalityService.update", () => {
     it("does not check or clear caches for an unchanged wikidata id", async () => {
         const { service, wikidata } = makeUpdateService();
 
-        await service.update("p1", {
+        await service.update(P1, {
             name: "Geraldo C.",
             wikidata: "Q142068353",
         });
@@ -511,7 +555,7 @@ describe("MongoPersonalityService.update", () => {
     it("writes nothing and records no history when nothing changed", async () => {
         const { service, model, history } = makeUpdateService();
 
-        await service.update("p1", { name: "Geraldo Castro" });
+        await service.update(P1, { name: "Geraldo Castro" });
 
         expect(model.findOneAndUpdate).not.toHaveBeenCalled();
         expect(history.createHistory).not.toHaveBeenCalled();
@@ -522,17 +566,45 @@ describe("MongoPersonalityService.update", () => {
         model.findOneAndUpdate = vi.fn(() => ({ lean: async () => null }));
 
         await expect(
-            service.update("p1", { wikidata: "Q2" })
+            service.update(P1, { wikidata: "Q2" })
         ).rejects.toMatchObject({ status: 404 });
         expect(wikidata.clearCache).not.toHaveBeenCalled();
         expect(history.createHistory).not.toHaveBeenCalled();
+    });
+
+    it("turns a duplicate-key error on the relink write into a 409", async () => {
+        const { service, model, wikidata } = makeUpdateService();
+        model.findOneAndUpdate = vi.fn(() => ({
+            lean: async () => {
+                throw { code: 11000 };
+            },
+        }));
+
+        await expect(
+            service.update(P1, { wikidata: "Q2" })
+        ).rejects.toMatchObject({
+            status: 409,
+            response: { reason: "in_use" },
+        });
+        expect(wikidata.clearCache).not.toHaveBeenCalled();
+    });
+
+    it("404s for an id that is not an ObjectId, without querying", async () => {
+        const { service, model } = makeUpdateService();
+
+        await expect(
+            service.update("6c0e2f9e-1d2b-4c1a-9a53-0d6b6b1f0f11", {
+                name: "X",
+            })
+        ).rejects.toMatchObject({ status: 404 });
+        expect(model.findOne).not.toHaveBeenCalled();
     });
 
     it("404s for an unknown personality", async () => {
         const { service } = makeUpdateService();
 
         await expect(
-            service.update("nope", { name: "X" })
+            service.update("64b0000000000000000000ff", { name: "X" })
         ).rejects.toMatchObject({ status: 404 });
     });
 });
@@ -542,7 +614,7 @@ describe("MongoPersonalityService.getStored", () => {
         const model: any = {
             findOne: vi.fn(() => ({
                 lean: async () => ({
-                    _id: "p1",
+                    _id: P1,
                     name: "Geraldo Castro",
                     description: "Radialista",
                     wikidata: "Q142068353",
@@ -564,16 +636,33 @@ describe("MongoPersonalityService.getStored", () => {
             new UtilService()
         );
 
-        const result = await service.getStored("p1");
+        const result = await service.getStored(P1);
 
         expect(wikidata.checkItem).toHaveBeenCalledWith("Q142068353", "pt");
         expect(result).toEqual({
-            _id: "p1",
+            _id: P1,
             name: "Geraldo Castro",
             description: "Radialista",
             wikidata: "Q142068353",
             wikidataStatus: "deleted",
             wikidataProvides: { name: false, description: false },
         });
+    });
+
+    it("404s for an id that is not an ObjectId, without querying", async () => {
+        const findOne = vi.fn();
+        const service = new MongoPersonalityService(
+            { params: {}, query: {} } as any,
+            { findOne } as any,
+            {} as any,
+            {} as any,
+            {} as any,
+            new UtilService()
+        );
+
+        await expect(
+            service.getStored("6c0e2f9e-1d2b-4c1a-9a53-0d6b6b1f0f11")
+        ).rejects.toMatchObject({ status: 404 });
+        expect(findOne).not.toHaveBeenCalled();
     });
 });
