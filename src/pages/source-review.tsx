@@ -1,6 +1,8 @@
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import { GetLocale } from "../utils/GetLocale";
+import localConfig from "../../config/localConfig";
+import { getSiteFeatures } from "../utils/siteFeatures";
 import { NextPage } from "next";
 import React from "react";
 import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
@@ -70,17 +72,15 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
     const review = source?.props?.classification;
 
     //TODO: Improve source review schema
+    const { organization } = getSiteFeatures(localConfig);
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "MediaReview",
-        url: "https://aletheiafact.org",
+        url: organization.url,
         author: {
             "@type": "Organization",
-            url: "https://aletheiafact.org",
-            sameAs: [
-                "https://www.facebook.com/AletheiaFactorg-107521791638412",
-                "https://www.instagram.com/aletheiafact",
-            ],
+            url: organization.url,
+            sameAs: organization.sameAs,
         },
         originalMediaLink: source.href,
         reviewRating: buildReviewRating({

@@ -23,6 +23,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import BalanceOutlinedIcon from "@mui/icons-material/BalanceOutlined";
 
 import { isAdmin, isStaff } from "../../utils/GetUserPermission";
+import localConfig from "../../../config/localConfig";
+import { getSiteFeatures } from "../../utils/siteFeatures";
 import { Cookies } from "react-cookie-consent";
 import ReactCountryFlag from "react-country-flag";
 import { UseHeaderDataReturn } from "../../types/header";
@@ -88,7 +90,6 @@ export const useHeaderData = (): UseHeaderDataReturn => {
         }
         handleClose();
     };
-
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -160,49 +161,57 @@ export const useHeaderData = (): UseHeaderDataReturn => {
 
     const myAccountSections = buildMyAccountSections();
 
-    const navigationConfig = useMemo(() => ({
-        main: [
-            {
-                key: "verificationRequest",
-                path: `${baseHref}/verification-request`,
-                dataCy: "testVerificationRequestNavLink",
-            },
-            {
-                key: "event",
-                path: `${baseHref}/event`,
-                dataCy: "testEventNavLink",
-            },
-        ],
-        repository: [
-            {
-                title: "repository",
-                items: [
-                    {
-                        icon: <PortraitOutlinedIcon />,
-                        key: "personality",
-                        path: `${baseHref}/personality`,
-                        showIcon: false,
-                    },
-                    {
-                        icon: <FactCheckOutlinedIcon />,
-                        key: "claim",
-                        path: `${baseHref}/claim`,
-                        showIcon: false,
-                    },
-                ]
-            }
-        ]
-    }), [baseHref]);
+    const navigationConfig = useMemo(
+        () => ({
+            main: [
+                {
+                    key: "verificationRequest",
+                    path: `${baseHref}/verification-request`,
+                    dataCy: "testVerificationRequestNavLink",
+                },
+                {
+                    key: "event",
+                    path: `${baseHref}/event`,
+                    dataCy: "testEventNavLink",
+                },
+            ],
+            repository: [
+                {
+                    title: "repository",
+                    items: [
+                        {
+                            icon: <PortraitOutlinedIcon />,
+                            key: "personality",
+                            path: `${baseHref}/personality`,
+                            showIcon: false,
+                        },
+                        {
+                            icon: <FactCheckOutlinedIcon />,
+                            key: "claim",
+                            path: `${baseHref}/claim`,
+                            showIcon: false,
+                        },
+                    ],
+                },
+            ],
+        }),
+        [baseHref]
+    );
 
+    const { showAboutPage } = getSiteFeatures(localConfig);
     const menuInstitutionSections = [
         {
             title: "platform",
             items: [
-                {
-                    icon: <InfoOutlinedIcon />,
-                    key: "aboutUs",
-                    path: "/about",
-                },
+                ...(showAboutPage
+                    ? [
+                          {
+                              icon: <InfoOutlinedIcon />,
+                              key: "aboutUs",
+                              path: "/about",
+                          },
+                      ]
+                    : []),
                 {
                     icon: <MenuBookOutlinedIcon />,
                     key: "supportiveMaterials",
@@ -235,7 +244,12 @@ export const useHeaderData = (): UseHeaderDataReturn => {
                     value: "pt",
                     label: "Português",
                     displayAbbreviation: "BR",
-                    icon: <ReactCountryFlag countryCode="BR" style={{ fontSize: "18px" }} />,
+                    icon: (
+                        <ReactCountryFlag
+                            countryCode="BR"
+                            style={{ fontSize: "18px" }}
+                        />
+                    ),
                     key: "portuguese",
                     action: () => changeLanguage("pt"),
                     dataCy: "testLanguagePt",
@@ -244,7 +258,12 @@ export const useHeaderData = (): UseHeaderDataReturn => {
                     value: "en",
                     label: "English",
                     displayAbbreviation: "US",
-                    icon: <ReactCountryFlag countryCode="GB" style={{ fontSize: "18px" }} />,
+                    icon: (
+                        <ReactCountryFlag
+                            countryCode="GB"
+                            style={{ fontSize: "18px" }}
+                        />
+                    ),
                     key: "english",
                     action: () => changeLanguage("en"),
                     dataCy: "testLanguageEn",
@@ -268,7 +287,7 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             languageSections,
             language,
             user,
-            isLoadingUser
+            isLoadingUser,
         },
         actions: {
             t,
@@ -276,6 +295,6 @@ export const useHeaderData = (): UseHeaderDataReturn => {
             setAnchorEl,
             onLogout,
             changeLanguage,
-        }
+        },
     };
 };

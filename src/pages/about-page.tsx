@@ -6,6 +6,8 @@ import React from "react";
 import About from "../components/About/About";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import localConfig from "../../config/localConfig";
+import { getSiteFeatures } from "../utils/siteFeatures";
 
 const AboutPage: NextPage<{ data: string }> = () => {
     const { t } = useTranslation();
@@ -18,6 +20,9 @@ const AboutPage: NextPage<{ data: string }> = () => {
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
+    if (!getSiteFeatures(localConfig).showAboutPage) {
+        return { notFound: true };
+    }
     locale = GetLocale(req, locale, locales);
     query = JSON.parse(query.props);
     return {
