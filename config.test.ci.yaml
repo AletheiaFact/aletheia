@@ -16,6 +16,11 @@ services:
       throttle:
         ttl: 60
         limit: 1000
+      # Wikimedia mock started by Cypress (cypress/plugins/wikimediaMock.ts),
+      # so e2e runs never call wikidata.org or commons.wikimedia.org.
+      wikidata:
+        api_url: http://127.0.0.1:4590/wikidata/w/api.php
+        commons_api_url: http://127.0.0.1:4590/commons/w/api.php
       authentication_type: ory
       ory:
         url: http://localhost:4433

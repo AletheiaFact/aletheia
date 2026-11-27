@@ -345,4 +345,59 @@ describe("ClaimReviewService (Unit)", () => {
             );
         });
     });
+    describe("personalityPostProcess", () => {
+        const personality = {
+            _id: "p-1",
+            slug: "geraldo-castro",
+            name: "Geraldo Castro",
+            description: "Radialista",
+            wikidata: "Q142068353",
+        };
+
+        it("keeps the stored name when the Wikidata item is deleted", async () => {
+            mockWikidataService.fetchProperties.mockResolvedValueOnce({
+                name: undefined,
+                description: undefined,
+                twitterAccounts: [],
+            });
+
+            const result = await service.personalityPostProcess(personality);
+
+            expect(result.name).toBe("Geraldo Castro");
+            expect(result.description).toBe("Radialista");
+        });
+
+        it("keeps the personality when the item is not an allowed type", async () => {
+            mockWikidataService.fetchProperties.mockResolvedValueOnce({
+                isAllowedProp: false,
+                twitterAccounts: [],
+            });
+
+            const result = await service.personalityPostProcess(personality);
+
+            expect(result).toEqual(personality);
+        });
+
+        it("keeps the personality when Wikidata fails", async () => {
+            mockWikidataService.fetchProperties.mockRejectedValueOnce(
+                new Error("rate limited")
+            );
+
+            const result = await service.personalityPostProcess(personality);
+
+            expect(result).toEqual(personality);
+        });
+
+        it("does not call Wikidata without a Wikidata id", async () => {
+            mockWikidataService.fetchProperties.mockClear();
+
+            const result = await service.personalityPostProcess({
+                ...personality,
+                wikidata: null,
+            });
+
+            expect(result.name).toBe("Geraldo Castro");
+            expect(mockWikidataService.fetchProperties).not.toHaveBeenCalled();
+        });
+    });
 });

@@ -1,5 +1,6 @@
 import { Model } from "mongoose";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, Optional } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { z } from "zod";
 import {
@@ -17,6 +18,46 @@ const WIKIMEDIA_HEADERS = {
     "User-Agent":
         "Aletheia/1.0 (https://github.com/AletheiaFact/aletheia; contato@aletheiafact.org)",
 };
+
+/**
+ * Default Wikimedia endpoints. `wikidata.api_url` and
+ * `wikidata.commons_api_url` in config.yaml override them; the e2e config
+ * points both at the mock server Cypress starts
+ * (`cypress/plugins/wikimediaMock.ts`).
+ */
+export const DEFAULT_WIKIDATA_API_URL = "https://www.wikidata.org/w/api.php";
+export const DEFAULT_COMMONS_API_URL =
+    "https://commons.wikimedia.org/w/api.php";
+
+/**
+ * Wikimedia can answer slowly or not at all. A personality page must not
+ * wait on it for long, because the data from Wikidata is optional.
+ */
+const WIKIMEDIA_TIMEOUT_MS = 10000;
+
+/**
+ * The cache keeps an entry for this long (TTL index on `createdAt`, set in
+ * `wikidata.module.ts`). Wikidata labels and images change slowly, and each
+ * refetch counts against the Wikimedia rate limit.
+ */
+export const WIKIDATA_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
+
+/**
+ * A valid `wbgetentities` answer always has an `entities` object. When
+ * Wikimedia rate-limits or fails, it can send a plain-text page or an
+ * `{ error }` object instead. That is not data about the entity, so it must
+ * not be cached.
+ */
+const WbGetEntitiesResponseSchema = z.object({
+    entities: z.record(z.string(), z.unknown()),
+});
+
+export class WikidataUnavailableError extends Error {
+    constructor(wikidataId: string, reason: string) {
+        super(`Wikidata gave no usable answer for ${wikidataId}: ${reason}`);
+        this.name = "WikidataUnavailableError";
+    }
+}
 
 const SUPPORTED_LANGUAGES = ["pt", "en", "pt-br"] as const;
 type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -74,10 +115,27 @@ interface WikibaseSearchResult {
 
 @Injectable()
 export class WikidataService {
+    private readonly logger = new Logger(WikidataService.name);
+
     constructor(
         @InjectModel(WikidataCache.name)
-        private wikidataCache: Model<WikidataCacheDocument>
+        private wikidataCache: Model<WikidataCacheDocument>,
+        @Optional() private readonly configService?: ConfigService
     ) {}
+
+    private get wikidataApiUrl(): string {
+        return (
+            this.configService?.get<string>("wikidata.api_url") ||
+            DEFAULT_WIKIDATA_API_URL
+        );
+    }
+
+    private get commonsApiUrl(): string {
+        return (
+            this.configService?.get<string>("wikidata.commons_api_url") ||
+            DEFAULT_COMMONS_API_URL
+        );
+    }
 
     /**
      * Fetches Wikidata properties from cache or API
@@ -99,10 +157,9 @@ export class WikidataService {
             .exec();
 
         if (!wikidataCache) {
+            // Throws WikidataUnavailableError when Wikimedia does not answer
+            // with entity data, so a failed request is never cached.
             const props = await this.requestProperties(validatedParams);
-            if (props.isAllowedProp === false) {
-                return props;
-            }
             await this.wikidataCache.findOneAndUpdate(
                 {
                     wikidataId: validatedParams.wikidataId,
@@ -125,20 +182,54 @@ export class WikidataService {
     async requestProperties(
         params: WikidataParams
     ): Promise<WikidataProperties> {
-        const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
-            params: {
-                action: "wbgetentities",
-                ids: encodeURIComponent(params.wikidataId),
-                format: "json",
-                formatversion: "2",
-            },
-            headers: WIKIMEDIA_HEADERS,
+        const data = await this.wikimediaGet(this.wikidataApiUrl, {
+            action: "wbgetentities",
+            ids: params.wikidataId,
+            format: "json",
+            formatversion: "2",
         });
-        const entities = data && data.entities;
+        const parsed = WbGetEntitiesResponseSchema.safeParse(data);
+        if (!parsed.success) {
+            throw new WikidataUnavailableError(
+                params.wikidataId,
+                "response has no entities"
+            );
+        }
         return this.extractProperties(
-            entities && entities[params.wikidataId],
+            this.pickEntity(parsed.data.entities, params.wikidataId),
             params.language
         );
+    }
+
+    /**
+     * Wikidata follows a redirect (a merged item) and keys the answer by the
+     * target id, not by the id we asked for. We ask for one id, so the only
+     * entity in the answer is the one we want.
+     */
+    private pickEntity(
+        entities: Record<string, unknown>,
+        wikidataId: string
+    ): unknown {
+        if (entities[wikidataId]) {
+            return entities[wikidataId];
+        }
+        const values = Object.values(entities);
+        return values.length === 1 ? values[0] : undefined;
+    }
+
+    /**
+     * Single exit point for HTTP calls to Wikimedia, so tests can stub it.
+     */
+    protected async wikimediaGet(
+        url: string,
+        params: Record<string, string | number>
+    ): Promise<unknown> {
+        const { data } = await axios.get(url, {
+            params,
+            headers: WIKIMEDIA_HEADERS,
+            timeout: WIKIMEDIA_TIMEOUT_MS,
+        });
+        return data;
     }
 
     /**
@@ -160,7 +251,9 @@ export class WikidataService {
             avatar: undefined,
             twitterAccounts: [],
         };
-        if (!wikidata) {
+        // A deleted item comes back as { id, missing: "" }: there is nothing
+        // to extract, and no reason to hide a personality we already have.
+        if (!wikidata || wikidata.missing !== undefined) {
             return wikidataProps;
         }
 
@@ -205,10 +298,10 @@ export class WikidataService {
         const hasP31Claims =
             wikidata.claims?.P31 && wikidata.claims?.P31?.length > 0;
         if (hasP31Claims) {
-            const isAllowedProp = wikidata.claims?.P31?.some((claim: any) => {
-                const instance = claim.mainsnak.datavalue.value;
-                return allowedInstances.includes(instance.id);
-            });
+            // "no value" and "unknown value" claims have no datavalue.
+            const isAllowedProp = wikidata.claims.P31.some((claim: any) =>
+                allowedInstances.includes(claim?.mainsnak?.datavalue?.value?.id)
+            );
 
             wikidataProps.isAllowedProp = isAllowedProp;
         } else {
@@ -217,16 +310,18 @@ export class WikidataService {
 
         // Extract image if it exists
         const wikidataPropImage = wikidata.claims?.P18 || wikidata.claims?.P154;
-        if (wikidataPropImage) {
-            const fileName = wikidataPropImage[0].mainsnak.datavalue.value;
+        const fileName = wikidataPropImage?.[0]?.mainsnak?.datavalue?.value;
+        if (typeof fileName === "string") {
             wikidataProps.image = await this.getCommonsThumbURL(fileName, 400);
             wikidataProps.avatar = await this.getCommonsThumbURL(fileName, 100);
         }
         // Extract Twitter accounts if they exist
-        if (wikidata?.claims?.P2002) {
+        if (Array.isArray(wikidata.claims.P2002)) {
             wikidata.claims.P2002.forEach((claim: any) => {
-                const twitterAccount = claim.mainsnak.datavalue.value;
-                wikidataProps.twitterAccounts.push(twitterAccount);
+                const twitterAccount = claim?.mainsnak?.datavalue?.value;
+                if (typeof twitterAccount === "string") {
+                    wikidataProps.twitterAccounts.push(twitterAccount);
+                }
             });
         }
 
@@ -270,58 +365,67 @@ export class WikidataService {
         );
     }
 
-    queryWikibaseEntities(
+    async queryWikibaseEntities(
         query: string,
         language: string = "en",
         includeAliases: boolean = true
     ): Promise<WikibaseEntity[]> {
-        const params = {
-            action: "wbsearchentities",
-            search: query,
-            format: "json",
-            errorformat: "plaintext",
-            uselang: language,
-            language,
-            type: "item",
-            origin: "*",
-        };
-
-        return axios
-            .get(`https://www.wikidata.org/w/api.php`, {
-                params,
-                headers: WIKIMEDIA_HEADERS,
-            })
-            .then((response: any) => {
-                const { search }: { search: WikibaseSearchResult[] } =
-                    response && response.data;
-
-                return search.flatMap((searchResult: WikibaseSearchResult) => {
-                    if (!searchResult.label) {
-                        return [];
-                    }
-
-                    const result: WikibaseEntity = {
-                        name: searchResult.label,
-                        description: searchResult.description,
-                        wikidata: searchResult.id,
-                    };
-
-                    if (includeAliases) {
-                        const aliases = searchResult.aliases || [];
-                        const matchedAlias = aliases.find((alias) =>
-                            alias.toLowerCase().includes(query.toLowerCase())
-                        );
-                        result.aliases = aliases;
-                        result.matchedAlias = matchedAlias || null;
-                    }
-
-                    return [result];
-                });
+        // Suggestions are optional: when Wikidata fails (an HTTP error, a
+        // rate-limit page or an error object), the search still answers from
+        // our database, with no suggestions.
+        let data: any;
+        try {
+            data = await this.wikimediaGet(this.wikidataApiUrl, {
+                action: "wbsearchentities",
+                search: query,
+                format: "json",
+                errorformat: "plaintext",
+                uselang: language,
+                language,
+                type: "item",
+                origin: "*",
             });
+        } catch (error) {
+            this.logger.warn(
+                `Wikidata search failed for "${query}": ${
+                    error instanceof Error ? error.message : String(error)
+                }`
+            );
+            return [];
+        }
+
+        const search: WikibaseSearchResult[] = Array.isArray(data?.search)
+            ? data.search
+            : [];
+
+        return search.flatMap((searchResult: WikibaseSearchResult) => {
+            if (!searchResult.label) {
+                return [];
+            }
+
+            const result: WikibaseEntity = {
+                name: searchResult.label,
+                description: searchResult.description,
+                wikidata: searchResult.id,
+            };
+
+            if (includeAliases) {
+                const aliases = searchResult.aliases || [];
+                const matchedAlias = aliases.find((alias) =>
+                    alias.toLowerCase().includes(query.toLowerCase())
+                );
+                result.aliases = aliases;
+                result.matchedAlias = matchedAlias || null;
+            }
+
+            return [result];
+        });
     }
 
     /**
-     * Gets the thumbnail URL from Wikimedia Commons
+     * Gets the thumbnail URL from Wikimedia Commons. A deleted file gives
+     * undefined. A failed request throws, so the caller does not cache a
+     * result that is only missing its image because Commons was down.
      * @param imageTitle - Title of the image on Commons
      * @param imageSize - Desired image width in pixels
      * @returns Thumbnail URL or undefined
@@ -330,27 +434,16 @@ export class WikidataService {
         imageTitle: string,
         imageSize: number
     ): Promise<string | undefined> {
-        const { data } = await axios.get(
-            "https://commons.wikimedia.org/w/api.php",
-            {
-                params: {
-                    action: "query",
-                    titles: `File:${imageTitle}`,
-                    prop: "imageinfo",
-                    iiprop: "url",
-                    iiurlwidth: imageSize,
-                    format: "json",
-                    formatversion: "2",
-                },
-                headers: WIKIMEDIA_HEADERS,
-            }
-        );
-        const { pages } = data && data.query;
-        if (pages.length <= 0) {
-            return;
-        }
-        const imageinfo =
-            pages[0] && pages[0].imageinfo && pages[0].imageinfo[0];
-        return imageinfo.thumburl;
+        const data: any = await this.wikimediaGet(this.commonsApiUrl, {
+            action: "query",
+            titles: `File:${imageTitle}`,
+            prop: "imageinfo",
+            iiprop: "url",
+            iiurlwidth: imageSize,
+            format: "json",
+            formatversion: "2",
+        });
+        const thumburl = data?.query?.pages?.[0]?.imageinfo?.[0]?.thumburl;
+        return typeof thumburl === "string" ? thumburl : undefined;
     }
 }
