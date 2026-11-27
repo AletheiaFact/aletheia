@@ -1,7 +1,10 @@
+import { BadRequestException, ConflictException } from "@nestjs/common";
 import {
     deriveSlug,
     defaultDescription,
     extractClaimWithTextSummary,
+    wikidataCreationError,
+    WIKIDATA_ID_PATTERN,
 } from "./personality.rules";
 
 describe("personality shared rules", () => {
@@ -40,5 +43,42 @@ describe("personality shared rules", () => {
                 { title: "x" },
             ]);
         });
+    });
+});
+
+describe("WIKIDATA_ID_PATTERN", () => {
+    it.each(["Q1", "Q142067648"])("accepts %s", (id) => {
+        expect(WIKIDATA_ID_PATTERN.test(id)).toBe(true);
+    });
+    it.each(["", "q1", "Q", "P31", "Q1 "])("rejects %j", (id) => {
+        expect(WIKIDATA_ID_PATTERN.test(id)).toBe(false);
+    });
+});
+
+describe("wikidataCreationError", () => {
+    it("returns nothing for an ok item", () => {
+        expect(wikidataCreationError("ok")).toBeUndefined();
+    });
+
+    it("maps a deleted item to a 400 with a reason", () => {
+        const error = wikidataCreationError("deleted");
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).getResponse()).toMatchObject({
+            reason: "deleted",
+        });
+    });
+
+    it("maps a disallowed type to a 400 with a reason", () => {
+        expect(
+            (
+                wikidataCreationError("not_allowed_type") as BadRequestException
+            ).getResponse()
+        ).toMatchObject({ reason: "not_allowed_type" });
+    });
+
+    it("maps an id in use to a 409", () => {
+        expect(wikidataCreationError("in_use")).toBeInstanceOf(
+            ConflictException
+        );
     });
 });

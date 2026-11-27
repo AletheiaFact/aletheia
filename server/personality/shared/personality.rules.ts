@@ -1,3 +1,8 @@
+import {
+    BadRequestException,
+    ConflictException,
+    HttpException,
+} from "@nestjs/common";
 import slugify from "slugify";
 
 /**
@@ -39,4 +44,48 @@ export function extractClaimWithTextSummary(claims: any) {
         }
         return { ...claim, content: claim.content.text };
     });
+}
+
+/** A Wikidata item id: Q followed by digits. */
+export const WIKIDATA_ID_PATTERN = /^Q\d+$/;
+
+/**
+ * Why a Wikidata item cannot back a new personality (or a relink):
+ * `ok` means it can.
+ */
+export type WikidataCreationStatus =
+    | "ok"
+    | "deleted"
+    | "not_allowed_type"
+    | "in_use";
+
+/**
+ * Maps a creation status to the HTTP error both backends throw. Personalities
+ * are only ever created from an existing Wikidata item of an allowed type
+ * (human, public company, online newspaper, government) that no other active
+ * personality uses.
+ */
+export function wikidataCreationError(
+    status: WikidataCreationStatus
+): HttpException | undefined {
+    switch (status) {
+        case "ok":
+            return undefined;
+        case "deleted":
+            return new BadRequestException({
+                message: "The Wikidata item was deleted",
+                reason: "deleted",
+            });
+        case "not_allowed_type":
+            return new BadRequestException({
+                message:
+                    "The Wikidata item is not a person, company, newspaper or government",
+                reason: "not_allowed_type",
+            });
+        case "in_use":
+            return new ConflictException({
+                message: "Another personality already uses this Wikidata item",
+                reason: "in_use",
+            });
+    }
 }
