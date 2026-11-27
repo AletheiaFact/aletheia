@@ -92,6 +92,7 @@ export interface WikidataProperties {
     name?: string;
     description?: string;
     isAllowedProp?: boolean;
+    isMissing?: boolean;
     image?: string;
     wikipedia?: string;
     avatar?: string;
@@ -175,6 +176,33 @@ export class WikidataService {
     }
 
     /**
+     * Whether a Wikidata item can back a personality: "ok" (exists, allowed
+     * type), "deleted" or "not_allowed_type". Throws when Wikidata gives no
+     * usable answer, so a caller never treats "unknown" as "ok".
+     */
+    async checkItem(
+        wikidataId: string,
+        language: string = "pt"
+    ): Promise<{
+        status: "ok" | "deleted" | "not_allowed_type";
+        props: WikidataProperties;
+    }> {
+        const props = await this.fetchProperties({ wikidataId, language });
+        if (props.isMissing) {
+            return { status: "deleted", props };
+        }
+        if (props.isAllowedProp !== true) {
+            return { status: "not_allowed_type", props };
+        }
+        return { status: "ok", props };
+    }
+
+    /** Drops every cached language of an item, so the next read refetches. */
+    async clearCache(wikidataId: string): Promise<void> {
+        await this.wikidataCache.deleteMany({ wikidataId }).exec();
+    }
+
+    /**
      * Requests Wikidata properties from the Wikidata API
      * @param params - Validated Wikidata parameters
      * @returns Wikidata properties object
@@ -251,10 +279,14 @@ export class WikidataService {
             avatar: undefined,
             twitterAccounts: [],
         };
-        // A deleted item comes back as { id, missing: "" }: there is nothing
-        // to extract, and no reason to hide a personality we already have.
-        if (!wikidata || wikidata.missing !== undefined) {
+        if (!wikidata) {
             return wikidataProps;
+        }
+        // A deleted item comes back as { id, missing: "" }: there is nothing
+        // to extract. The flag lets creation refuse it (checkItem); reads keep
+        // showing the stored personality.
+        if (wikidata.missing !== undefined) {
+            return { ...wikidataProps, isMissing: true };
         }
 
         // Get label for the personality name

@@ -347,4 +347,80 @@ describe("WikidataService", () => {
             ).resolves.toEqual([]);
         });
     });
+
+    describe("checkItem", () => {
+        it("reports a valid item as ok", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: { entities: { Q1: human("Q1") } },
+            });
+
+            const result = await service.checkItem("Q1", "pt");
+
+            expect(result.status).toBe("ok");
+            expect(result.props.name).toBe("Rosane de Oliveira");
+        });
+
+        it("reports a deleted item", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: { entities: { Q9: { id: "Q9", missing: "" } } },
+            });
+
+            await expect(service.checkItem("Q9", "pt")).resolves.toMatchObject({
+                status: "deleted",
+            });
+        });
+
+        it("reports a disallowed type", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: {
+                    entities: {
+                        Q2: {
+                            id: "Q2",
+                            labels: { pt: { value: "Fonseca" } },
+                            claims: {
+                                P31: [
+                                    {
+                                        mainsnak: {
+                                            datavalue: {
+                                                value: { id: "Q101352" },
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            });
+
+            await expect(service.checkItem("Q2", "pt")).resolves.toMatchObject({
+                status: "not_allowed_type",
+            });
+        });
+
+        it("throws when Wikidata is unavailable", async () => {
+            const { service } = makeService({
+                [WIKIDATA]: "You are making too many requests to the API.",
+            });
+
+            await expect(service.checkItem("Q1", "pt")).rejects.toBeInstanceOf(
+                WikidataUnavailableError
+            );
+        });
+    });
+
+    describe("clearCache", () => {
+        it("deletes every cached language of the item", async () => {
+            const { service, cacheModel } = makeService({});
+            (cacheModel as any).deleteMany = vi.fn(() => ({
+                exec: vi.fn().mockResolvedValue({ deletedCount: 2 }),
+            }));
+
+            await service.clearCache("Q1");
+
+            expect((cacheModel as any).deleteMany).toHaveBeenCalledWith({
+                wikidataId: "Q1",
+            });
+        });
+    });
 });
